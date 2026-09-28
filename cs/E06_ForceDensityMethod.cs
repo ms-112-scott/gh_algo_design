@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Rhino;
 using Rhino.Geometry;
 using Grasshopper.Kernel;
 

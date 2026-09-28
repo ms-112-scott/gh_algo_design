@@ -3084,18 +3084,58 @@ window.CATALOG = {
     "重複到零件數上限、前緣清空或嘗試次數用完；輸出依加入順序排列的零件 Mesh（即組裝順序）、連接圖線段與剩下的開放接頭平面。"
    ],
    "pseudo_code": [
-    "輸入 maxParts, rules, seed, boundSize, attractors, maxTries",
-    "零件庫 ← I、L 兩種零件（立方體＋接頭平面）；規則表 ← 解析(rules)",
-    "放入種子零件；前緣 ← 種子的所有接頭",
-    "當 零件數 < maxParts 且 前緣不空 且 嘗試 < maxTries：",
-    "  o ← 從前緣挑一個接頭（有 attractors 時取較近者）；從前緣移除 o",
-    "  對 每條適用 o 的規則 (子零件 b, 接頭 j)，順序打亂：",
-    "    對 轉角 rot ∈ {0,90,180,270}°：",
-    "      X ← PlaneToPlane(翻轉(b 的接頭 j) 再轉 rot, o 的平面)",
-    "      如果 b 經 X 後在邊界內 且 RTree 查無碰撞：",
-    "        加入零件；連接圖加邊 (o 的零件 → 新零件)",
-    "        前緣 ← 前緣 ＋ 新零件其餘接頭；跳出",
-    "回傳 零件 Mesh（加入順序）、連接圖、剩餘前緣"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 maxParts, rules, seed, boundSize, attractors, maxTries",
+    "    輸出 parts, graph, frontier, info",
+    "",
+    "    // 0. 防呆",
+    "    maxParts < 1 → 1；boundSize ≤ 1 → 12；maxTries < 1 → 5000",
+    "    沒接 attractors → 空清單",
+    "",
+    "    // 1. DATA 資料",
+    "    零件庫：I、L 兩種零件（小立方體＋接頭平面）",
+    "    rules → 規則表；空的 → 結束",
+    "    邊界盒：X、Y 在 ±boundSize/2，Z 在 0～boundSize",
+    "",
+    "    // 2. INIT 初始",
+    "    亂數（seed）",
+    "    放入種子零件 I（不移動），登記進空間索引",
+    "    它的接頭全部列入開放清單",
+    "",
+    "    // 3. LOOP 迭代",
+    "    當 零件數 < maxParts、還有開放接頭、嘗試 < maxTries：",
+    "      挑一個開放接頭，移出清單",
+    "      這個接頭能用的規則，打亂順序",
+    "      每條規則試 4 種轉角（0、90、180、270 度）：",
+    "        子零件的接頭對齊到這個接頭",
+    "        出界或撞到 → 換下一種",
+    "        放得下 → 加入零件、連線記進連接圖，停",
+    "      全部失敗 → 失敗數 +1",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    零件 Mesh（加入順序）→ parts",
+    "    連接圖 → graph",
+    "    剩下的開放接頭平面 → frontier",
+    "    零件數、嘗試、失敗、剩餘接頭 → info",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  BuildLibrary：I 三格直條、L 三格 L 形，各 4 個接頭（Z 朝外）",
+    "  Face：面中心＋法線 → 接頭平面",
+    "  Align：子接頭翻 180 度、轉 rot × 90 度，再對齊到母接頭",
+    "  Fits：每個小立方體中心都在邊界內、0.45 內沒有別的立方體嗎",
+    "  AddPart：放零件、登記空間索引，沒用到的接頭列入開放清單",
+    "  PickOpen：沒吸引點 → 隨機；有 → 抽 4 個，取最靠近吸引點的",
+    "  ParseRules：「母|接頭>子|接頭」→ 規則表；空字串 → 全部都能互接",
+    "  ReadEnd：「I|1」→ 零件、接頭編號",
+    "  CellsToMesh：小立方體稍微縮小 → Mesh，看得到接縫",
+    "  Shuffle：洗牌",
+    "",
+    "// ----- Script_Instance 外面 -----",
+    "PartType：名稱、小立方體中心、接頭平面、Mesh",
+    "Placed：零件種類、Mesh、中心",
+    "OpenConn：哪個零件、第幾個接頭、接頭平面",
+    "Rule：母零件、母接頭、子零件、子接頭"
    ],
    "key_params": [
     {
@@ -6729,20 +6769,43 @@ window.CATALOG = {
     "輸出形狀圖、載重箭頭、力圖、試算線，並以射線長度除以比例得到各段內力。"
    ],
    "pseudo_code": [
-    "輸入 span, loadCount, loadVariation, seed, sag, asArch",
-    "輸出 formLines, loadLines, forceLines, trialLines, forces",
-    "對 i ← 0 到 loadCount-1：  // DATA",
-    "  x[i] ← span·(i+0.5)/loadCount；P[i] ← 1 ± loadVariation 的亂數",
-    "loadLine ← 把 P[i] 由 (ox, 0) 往下首尾相接  // 力圖",
-    "trial ← DrawFunicular(A, 試算極點 O′)",
-    "K ← 從 O′ 畫閉合線的平行線交 loadLine  // 分出兩端反力",
-    "H ← 試算極距 × 試算最大縱距 / sag  // 縱距與極距成反比",
-    "pole ← (ox ± H, K.Y)  // asArch 決定左或右",
-    "formLines ← DrawFunicular(A, pole)",
-    "forces[j] ← |pole − loadLine[j]| / 比例  // 射線長度 = 內力",
-    "DrawFunicular(start, pole)  // RULE",
-    "  對 每個分點 loadLine[j]：沿平行於 pole − loadLine[j] 的方向畫到下一條載重作用線",
-    "  回傳 折線節點"
+    "#region Usings",
+    "  Rhino.Geometry.Intersect",
+    "",
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 span, loadCount, loadVariation, seed, sag, asArch",
+    "    輸出 formLines, loadLines, forceLines, trialLines, forces",
+    "",
+    "    // 0. 防呆",
+    "    span、sag ≤ 0 或 loadCount < 1 → 結束",
+    "",
+    "    // 1. DATA 資料",
+    "    亂數（seed）",
+    "    loadCount 個載重沿跨度等距排，大小 1 ± loadVariation",
+    "",
+    "    // 2. INIT 初始：力圖",
+    "    載重首尾相接往下畫 → 載重線（放在形狀圖右邊）",
+    "    asArch → 極點在左（拱）；否則在右（索）",
+    "",
+    "    // 3. LOOP 作圖：先試算、再修正",
+    "    隨便取一個試算極點 → 畫試算索多邊形",
+    "    左支承連到試算線右端 → 閉合線",
+    "    從試算極點畫閉合線的平行線，交載重線於 K（分出兩端反力）",
+    "    真極距 = 試算極距 × 試算線最大縱距 ÷ sag",
+    "    真極點放在 K 的水平線上 → 重畫索多邊形，剛好通過兩支承",
+    "    印出右端誤差、水平推力",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    索多邊形各段 → formLines",
+    "    各段內力 = 射線長度 ÷ 比例，拱取負值 → forces",
+    "    載重箭頭 → loadLines",
+    "    載重線＋極點射線 → forceLines",
+    "    試算線、閉合線、平行線 → trialLines",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  DrawFunicular：從 start 出發，每段平行於「極點 → 載重線分點」，交到下一條載重線",
+    "  IntersectVertical：直線和垂直線 x = x0 的交點"
    ],
    "key_params": [
     {
@@ -6948,7 +7011,7 @@ window.CATALOG = {
    "family": "E",
    "family_name": "排列與鬆弛",
    "file": "E06_ForceDensityMethod.cs",
-   "loc": 190,
+   "loc": 191,
    "logic": [
     "搜尋／求解"
    ],
@@ -6976,19 +7039,49 @@ window.CATALOG = {
     "把解出的座標寫回網格，並以「內力 = q × 長度」算出每根桿件的力，依大小由藍到紅上色輸出。"
    ],
    "pseudo_code": [
-    "輸入 baseMesh, anchors, forceDensity, edgeCableFactor, load, cgIterations",
-    "輸出 lines, formMesh, forces, colors, residual",
-    "// 1. 圖與力密度",
-    "edges ← baseMesh 的拓樸邊，每條 q ← forceDensity（裸邊 × edgeCableFactor）",
-    "isFixed ← anchors 最近頂點，或裸邊頂點",
-    "// 2. 組稀疏矩陣 D = Cnᵀ·Q·Cn",
-    "對 每條邊 (a, b, q)：自由端的 diag += q；兩端都自由時 D[a,b] ← −q",
-    "// 3. 三個方向各解一次線性方程組",
-    "對 axis 在 x, y, z：",
-    "  rhs ← load（只有 z）＋ Σ q × 固定鄰點座標",
-    "  u ← SolveCG(D, rhs, cgIterations)  // 共軛梯度",
-    "// 4. 輸出",
-    "forces ← q × 邊長；colors ← 依內力藍到紅"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 baseMesh, anchors, forceDensity, edgeCableFactor, load, cgIterations",
+    "    輸出 lines, formMesh, forces, colors, residual",
+    "",
+    "    // 0. 防呆",
+    "    沒有 baseMesh → 結束",
+    "    forceDensity ≤ 0 → 結束（CG 會失敗）",
+    "    cgIterations < 1 → 200",
+    "",
+    "    // 1. DATA 資料",
+    "    網格拓樸頂點 → 節點；拓樸邊 → 邊",
+    "    每條邊 q = forceDensity，裸邊再 × edgeCableFactor",
+    "    固定點：anchors 吸附到最近頂點；沒接 → 裸邊頂點",
+    "    自由點編號；沒有固定點或沒有自由點 → 結束",
+    "",
+    "    // 2. INIT 初始",
+    "    矩陣 D 的對角線：每個自由點加上相連邊的 q",
+    "",
+    "    // 3. LOOP 迭代",
+    "    x、y、z 各解一次 D·u = 外力＋固定點的貢獻：",
+    "      外力只有 z 方向，每個自由點 load",
+    "      共軛梯度法，最多 cgIterations 次",
+    "      解出的座標寫回自由點，記下殘差",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    每條邊的平衡線段 → lines",
+    "    內力 = q × 長度 → forces",
+    "    內力由藍到紅 → colors",
+    "    新座標寫回網格 → formMesh",
+    "    三次的殘差 → residual",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  Fields：錨點吸附容許 0.001",
+    "  SolveCG：共軛梯度法，D 對稱正定就會收斂",
+    "  MatVec：D × v，直接沿邊累加，不存整個矩陣",
+    "  FindFixed：anchors 找最近頂點，或取裸邊頂點",
+    "  Dot：內積",
+    "  Coord、SetCoord：取／設 x、y、z 其中一軸",
+    "  Ramp：0～1 → 藍到紅",
+    "",
+    "// ----- Script_Instance 外面 -----",
+    "Edge：兩端節點編號、力密度 q"
    ],
    "key_params": [
     {
@@ -8806,18 +8899,50 @@ window.CATALOG = {
     "輸出最佳配置的房間矩形、名稱、鄰接連線，以及從抖動到收斂的成本曲線。"
    ],
    "pseudo_code": [
-    "輸入 roomNames, adjacency, startTemp, coolingRate, iterations, seed",
-    "輸出 rooms, labels, links, costCurve, log",
-    "w ← ReadAdjacency(adjacency)  // 對稱矩陣 w[i,j]",
-    "slotOf ← 隨機排列(seed)；cost ← Cost(slotOf)；T ← startTemp",
-    "重複 iterations 次：",
-    "  a, b ← 兩個隨機格位（不能兩個都是空格）",
-    "  交換 a, b；Δ ← Cost(slotOf) − cost",
-    "  如果 Δ ≤ 0 或 亂數 < exp(−Δ / T)：cost ← cost + Δ；更新 best",
-    "  否則：交換回來",
-    "  每 StepsPerTemp 步：T ← T × coolingRate",
-    "rooms, links ← 依 best 畫矩形與連線；costCurve ← 成本歷程",
-    "Cost(slotOf) = Σ w[i,j] × 曼哈頓距離(slotOf[i], slotOf[j])  // QAP"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 roomNames, adjacency, startTemp, coolingRate, iterations, seed",
+    "    輸出 rooms, labels, links, costCurve, log",
+    "",
+    "    // 0. 防呆",
+    "    房間少於 2 個 → 結束",
+    "    coolingRate 不在 0～1 → 0.995；startTemp ≤ 0 → 10",
+    "    iterations 至少 1",
+    "",
+    "    // 1. DATA 資料",
+    "    adjacency → 鄰接權重表",
+    "    格位排成接近正方形（可以比房間多，多的是空格）",
+    "",
+    "    // 2. INIT 初始",
+    "    依 seed 隨機把房間放進格位",
+    "    算成本；目前最佳 = 它；溫度 = startTemp",
+    "",
+    "    // 3. LOOP 迭代",
+    "    重複 iterations 次：",
+    "      隨機挑兩個格位交換（兩個都空 → 重挑）",
+    "      算新成本，差值 Δ",
+    "      Δ ≤ 0 → 接受；Δ > 0 → 以機率 e^(−Δ/T) 接受",
+    "      接受 → 更新成本，更好就記成最佳",
+    "      不接受 → 換回來",
+    "      每 StepsPerTemp 步 → 溫度 × coolingRate",
+    "      溫度低於 MinTemp → 停",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    最佳配置的房間矩形 → rooms",
+    "    房間名稱 → labels",
+    "    有鄰接需求的連線 → links",
+    "    成本下降曲線 → costCurve",
+    "    起始成本、最佳成本、接受變差次數 → log",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  Fields：格位 4 m、內縮 0.15、每個溫度 50 步、MinTemp 0.0001、曲線 200 點",
+    "  Cost：Σ 權重 × 兩房間的曼哈頓距離",
+    "  SwapSlots：交換兩個格位的內容，空格也可以",
+    "  RandomPlacement：格位洗牌，取前 n 個",
+    "  SlotCenter：格位編號 → 中心點",
+    "  ReadAdjacency：「A,B,權重」→ 對稱表，名稱或編號都可以",
+    "  IndexOf：名稱或編號 → 房間編號",
+    "  DrawCurve：成本歷程 → Polyline"
    ],
    "key_params": [
     {
@@ -9047,20 +9172,44 @@ window.CATALOG = {
     "輸出 MST 線段、Steiner 網路、Steiner 點，並在 info 印出兩者總長與節省比例（通常省 2–4%，依 Gilbert–Pollak 猜想最多約 13.4%）；Steiner 部分是啟發式，不保證精確最佳。"
    ],
    "pseudo_code": [
-    "輸入 pts, pointCount, seed, size, steiner, relaxIterations",
-    "輸出 mstLines, steinerLines, steinerPoints, info",
-    "如果 pts 是空的：pts ← 以 seed 在 size × size 內撒 pointCount 個點",
-    "edges ← 所有點對 (a, b, 長度)，由短到長排序",
-    "parent[i] ← i  // 並查集：每個點自成一群",
-    "對 每條邊 (a, b)：",
-    "  如果 Find(a) ≠ Find(b)：加入樹、合併兩群  // 同群代表會成環，跳過",
-    "  如果 樹已有 n − 1 條邊：跳出",
-    "如果 steiner：",
-    "  當 樹上還有夾角 < 120° 的兩條邊 v–a、v–b：",
-    "    s ← Fermat(v, a, b)  // Weiszfeld 迭代",
-    "    拆掉 v–a、v–b，改接 s–v、s–a、s–b",
-    "  重複 relaxIterations 次：Steiner 點移到三鄰點的 Fermat 點，刪除退化點",
-    "回傳 MST、Steiner 網路、兩者總長"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 pts, pointCount, seed, size, steiner, relaxIterations",
+    "    輸出 mstLines, steinerLines, steinerPoints, info",
+    "",
+    "    // 0. 防呆",
+    "    沒有 pts → 依 seed 在 size × size 內撒 pointCount 個點",
+    "    少於 2 點 → 結束",
+    "",
+    "    // 1. DATA 資料",
+    "    所有點兩兩連成候選邊，由短到長排序",
+    "",
+    "    // 2. INIT 初始",
+    "    並查集：每個點自成一群",
+    "    節點、鄰接表先放原本的點",
+    "",
+    "    // 3. LOOP 迭代",
+    "    Kruskal：由短到長每條邊：",
+    "      兩端同一群 → 跳過（會成環）",
+    "      否則加入、合併兩群；滿 n − 1 條 → 停",
+    "    steiner → 改良：",
+    "      夾角 < 120 度的兩條邊 → 插入 Fermat 點改成三叉，直到不再變短",
+    "      重複 relaxIterations 次：Steiner 點移到三個鄰點的 Fermat 點，刪掉退化的",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    最小生成樹 → mstLines",
+    "    Steiner 網路 → steinerLines",
+    "    新加的點 → steinerPoints",
+    "    兩者總長、節省比例 → info",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  Fields：節點（前 n 個是原本的點）、鄰接表、是否還在、角度上限 120 度",
+    "  Find：找這群的代表，順便壓縮路徑",
+    "  InsertOneSteinerPoint：挑最小的夾角插 Fermat 點，拆兩條邊改接三條",
+    "  Fermat：Weiszfeld 迭代，到三點距離和最小的點",
+    "  RemoveDegenerate：度數 ≤ 2 或貼到鄰點 → 刪掉，鄰點直接接起來",
+    "  TotalLength：樹的總長",
+    "  Edge：兩端點編號、長度"
    ],
    "key_params": [
     {
@@ -9298,19 +9447,38 @@ window.CATALOG = {
     "把指標正規化成 0–1，塗在網格頂點上輸出彩色 Mesh（isovist 場），同時輸出觀察點的多邊形、射線與指標文字。"
    ],
    "pseudo_code": [
-    "輸入 walls, viewer, rayCount, maxDist, cellSize, metric",
-    "segs ← 把 walls 拆成直線段",
-    "iso ← CastIsovist(viewer)  // 觀察點的可視域",
-    "對 外框內每個格點 p（間距 cellSize）：",
-    "  poly ← CastIsovist(p)",
-    "  values[p] ← Measures(poly)[metric]  // 面積／周長／緊湊度／遮蔽邊",
-    "field ← 依 values 正規化上色的 Mesh",
-    "回傳 iso, rays, field, values",
-    "CastIsovist(p)：",
-    "  對 i ← 0 … rayCount−1：",
-    "    d ← (cos 2πi/rayCount, sin 2πi/rayCount)",
-    "    t ← min(maxDist, 每條 seg 的 RaySegment(p, d, seg))  // 最近的牆",
-    "    加入頂點 p + t·d  // 依角度順序，最後首尾相接"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 walls, viewer, rayCount, maxDist, cellSize, metric",
+    "    輸出 isovist, rays, field, values, info",
+    "",
+    "    // 0. 防呆",
+    "    沒有 walls → 結束",
+    "    rayCount < 8 → 8；maxDist ≤ 0 → 100",
+    "    cellSize ≤ 0 → 結束",
+    "",
+    "    // 1. DATA 資料",
+    "    walls 拆成直線段（折線取邊，曲線等分 32 段）",
+    "",
+    "    // 2. INIT 初始",
+    "    viewer 的 isovist、射線、四個指標",
+    "",
+    "    // 3. LOOP 迭代",
+    "    牆的外框內每隔 cellSize 放一個格點（超過 4 萬個 → 結束）",
+    "    每個格點：算 isovist → 取 metric 指定的指標記下",
+    "    格點連成 Mesh",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    指標正規化 0～1 → 深藍、洋紅、淡粉上色",
+    "    可視域 → isovist；射線 → rays",
+    "    彩色 Mesh → field；指標值 → values",
+    "    viewer 的面積、周長、緊湊度、遮蔽邊長度 → info",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  CastIsovist：等角度打 rayCount 條射線，各取最近的牆，交點連成封閉多邊形",
+    "  RaySegment：射線到線段交點的距離；沒交到 → -1",
+    "  Measures：面積（鞋帶公式）、周長、緊湊度、遮蔽邊長度",
+    "  Ramp：0～1 → 顏色"
    ],
    "key_params": [
     {
@@ -9539,18 +9707,41 @@ window.CATALOG = {
     "把高度場轉成 Mesh（四角都在基地內的格子才建面），用四角平均高度估計體積，並輸出太陽光線與每個時刻的高度角、方位角供檢查。"
    ],
    "pseudo_code": [
-    "輸入 site, fences, latitude, dayOfYear, startHour, endHour, hourStep, cellSize, fenceHeight, maxHeight",
-    "輸出 envelope, sunRays, heights, info",
-    "suns ← SunVectors(latitude, dayOfYear, startHour…endHour)  // 赤緯＋時角",
-    "對 每個格點 p（在 site 內）：",
-    "  best ← maxHeight",
-    "  對 每個太陽向量 s：",
-    "    d ← −(s.X, s.Y) 單位化  // 影子方向",
-    "    D ← 沿 d 射線到 fences 的最近距離",
-    "    如果 有交點：best ← min(best, fenceHeight + D × tan(高度角))",
-    "  h[p] ← max(0, best)  // 所有時刻的下包絡",
-    "envelope ← BuildMesh(h)  // 高度場 → Mesh",
-    "sunRays, info ← 太陽光線與高度角、方位角、體積"
+    "#region Usings",
+    "  Rhino.Geometry.Intersect",
+    "",
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 site, fences, latitude, dayOfYear, startHour, endHour, hourStep, cellSize, fenceHeight, maxHeight",
+    "    輸出 envelope, sunRays, heights, info",
+    "",
+    "    // 0. 防呆",
+    "    site 沒封閉或沒有 fences → 結束",
+    "    cellSize、hourStep ≤ 0 或 endHour < startHour → 結束",
+    "",
+    "    // 1. DATA 資料",
+    "    latitude、dayOfYear、startHour～endHour（每 hourStep）→ 太陽方向清單",
+    "    太陽都在地平線下 → 結束",
+    "    site 外框切成格點（間距 cellSize）",
+    "    射線長度 = 基地＋遮陰線外框對角線 × 2",
+    "",
+    "    // 3. LOOP 迭代",
+    "    每個在 site 內的格點：",
+    "      先設 maxHeight",
+    "      每個太陽方向：算允許高度，取最小",
+    "      負的 → 0，記下",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    高度場 → Mesh（四角都在基地內才建面），順便估體積 → envelope",
+    "    基地中心指向各時刻太陽的線 → sunRays",
+    "    各格點高度 → heights",
+    "    高度角、方位角、體積 → info",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  SunVectors：赤緯＋時角 → 指向太陽的單位向量；太低的不算",
+    "  HeightLimit：沿影子方向找最近的遮陰線 → fenceHeight ＋ 距離 × tan(高度角)；找不到 → 不限",
+    "  BuildMesh：格點高度 → Mesh，四角平均高度估體積",
+    "  Report：每個時刻的高度角、方位角＋體積"
    ],
    "key_params": [
     {
@@ -9786,19 +9977,47 @@ window.CATALOG = {
     "集水區：依高程由低到高，每格繼承下游格的出口編號；把面積最大的 basinCount 個集水區上色，輸出格子 Mesh 與流向箭頭。"
    ],
    "pseudo_code": [
-    "輸入 terrain, cellCount, fillSinks, streamThreshold, basinCount",
-    "z ← 由上往下打射線取樣 terrain  // nx × ny 高程格",
-    "如果 fillSinks：Priority-Flood(z)  // 優先佇列由邊界往內淹，窪地抬高 +ε",
-    "對 每一格 k：",
-    "  down[k] ← 八鄰居中 (z[k] − z[n]) ÷ 距離 最大者  // 沒有更低的 → 出口",
-    "acc ← 全部 1；order ← 依 z 由高到低排序",
-    "對 order 中的每一格 k：",
-    "  acc[down[k]] ← acc[down[k]] + acc[k]  // 同時累計 Strahler 河序",
-    "streams ← acc ≥ streamThreshold 的格子，從源頭或匯流點沿 down 追成 Polyline",
-    "對 order 反向（由低到高）的每一格 k：",
-    "  label[k] ← 如果 k 是出口 則 k 否則 label[down[k]]",
-    "basins ← 面積前 basinCount 名的集水區上色，其餘灰色",
-    "回傳 streams, orders, basins, flowLines, info"
+    "public class Script_Instance",
+    "  private void RunScript(…)",
+    "    輸入 terrain, cellCount, fillSinks, streamThreshold, basinCount",
+    "    輸出 streams, orders, basins, flowLines, info",
+    "",
+    "    // 0. 防呆",
+    "    terrain 轉不成 Mesh → 結束",
+    "    cellCount 限 4～400；basinCount 至少 1",
+    "",
+    "    // 1. DATA 資料",
+    "    長邊切 cellCount 格 → 格子大小",
+    "    每格中心從上往下打射線 → 高程；沒打到 → 無資料",
+    "",
+    "    // 2. INIT 初始",
+    "    fillSinks → Priority-Flood 填窪（窪地抬到溢流高度再多一點點）",
+    "    每格找 8 個鄰居中最陡的下坡 → 下游（D8）；沒有 → 出口",
+    "    格子依高程由高到低排序",
+    "",
+    "    // 3. LOOP 迭代",
+    "    每格降雨 1",
+    "    由高到低每一格：",
+    "      累積量 ≥ streamThreshold → 算 Strahler 河序",
+    "      水量加給下游，記下游有幾條河道流進來",
+    "    從源頭或匯流點沿下游追到下一個匯流點 → 一段河道",
+    "    由低到高每一格：沿用下游格的出口編號 → 集水區",
+    "",
+    "    // 4. OUTPUT 輸出",
+    "    河道 → streams；河序 → orders",
+    "    最大的 basinCount 個集水區上色、其餘灰色 → basins",
+    "    每格指向下游的短線 → flowLines",
+    "    格子數、填窪格數、最大累積量、河段數、集水區數 → info",
+    "",
+    "  // ----- RunScript 下方 -----",
+    "  Fields：8 個鄰居的偏移與距離（對角 √2）、格數、格子大小、外框",
+    "  PriorityFlood：從邊界往內淹，比周圍低的格子抬高；回傳抬了幾格",
+    "  IsEdge：在邊界上或旁邊沒資料嗎",
+    "  Id：欄列 → 格號",
+    "  P：格號 → 格子中心點",
+    "  Hue：數字 → 顏色",
+    "  ToMesh：Surface、Brep、Mesh 都轉成 Mesh",
+    "  MinHeap：二元堆積，每次取出最低的格子"
    ],
    "key_params": [
     {
@@ -18205,7 +18424,18 @@ window.CATALOG = {
     "Grasshopper",
     "C#"
    ],
-   "url": "https://github.com/Co-de-iT/Assembler"
+   "url": "https://github.com/Co-de-iT/Assembler",
+   "image": {
+    "file": "img/cases/B06-04.jpg",
+    "w": 900,
+    "h": 551,
+    "source": "McNeel Forum（Assembler 發表文）",
+    "author": "Alessio Erioli（Co-de-iT）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://discourse.mcneel.com/t/announcing-assembler-a-plugin-to-construct-and-manage-assemblages/144119",
+    "note": "Assembler 以準則驅動、確定性方式生成的範例 assemblage（1920×1175）"
+   }
   },
   {
    "id": "B06-05",
@@ -18436,7 +18666,18 @@ window.CATALOG = {
     "Unity",
     "Unreal Engine"
    ],
-   "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/"
+   "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+   "image": {
+    "file": "img/cases/B06-53.jpg",
+    "w": 900,
+    "h": 450,
+    "source": "Snap Map Builder User Guide（Dungeon Architect for Unity）",
+    "author": "Code Respawn",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+    "note": "使用手冊中的範例專案畫面：房間預製件拼接出的地城"
+   }
   },
   {
    "id": "C01-01",
@@ -27674,7 +27915,18 @@ window.CATALOG = {
    "tools": [
     "圖解靜力學（手繪作圖）"
    ],
-   "url": "https://trako.arch.rwth-aachen.de/cms/trako/forschung/bautechnikgeschichte/~mmso/maurice-koechlin-der-eigentliche-erfin/?lidx=1"
+   "url": "https://trako.arch.rwth-aachen.de/cms/trako/forschung/bautechnikgeschichte/~mmso/maurice-koechlin-der-eigentliche-erfin/?lidx=1",
+   "image": {
+    "file": "img/cases/E05-01.jpg",
+    "w": 371,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "見 Commons 檔案頁",
+    "license": "Wikimedia Commons（依檔案頁標示，1888 年照片應屬公有領域）",
+    "license_url": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_1888-12-26.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_1888-12-26.jpg",
+    "note": "1888 年 12 月施工中的艾菲爾鐵塔，可見外撇的塔腳輪廓（整合時請再確認授權）"
+   }
   },
   {
    "id": "E05-02",
@@ -28447,7 +28699,18 @@ window.CATALOG = {
     "JavaScript",
     "WebGL"
    ],
-   "url": "https://amandaghassaei.com/projects/shell_form_finding/"
+   "url": "https://amandaghassaei.com/projects/shell_form_finding/",
+   "image": {
+    "file": "img/cases/E06-51.jpg",
+    "w": 900,
+    "h": 360,
+    "source": "amandaghassaei.com",
+    "author": "Amanda Ghassaei",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://amandaghassaei.com/projects/shell_form_finding/",
+    "note": "Shell Form Finding 作品頁主圖：3D 列印的殼狀網格實體"
+   }
   },
   {
    "id": "E06-52",
@@ -31341,7 +31604,18 @@ window.CATALOG = {
    "tools": [
     "自寫程式"
    ],
-   "url": "https://www.saikit.org/static/projects/furniture/index.html"
+   "url": "https://www.saikit.org/static/projects/furniture/index.html",
+   "image": {
+    "file": "img/cases/F07-05.jpg",
+    "w": 800,
+    "h": 480,
+    "source": "Make it Home 專案頁",
+    "author": "Lap-Fai Yu 等",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.saikit.org/static/projects/furniture/index.html",
+    "note": "專案頁 teaser：自動最佳化後的室內家具配置"
+   }
   },
   {
    "id": "F07-06",
@@ -31449,7 +31723,18 @@ window.CATALOG = {
     "R",
     "Shiny"
    ],
-   "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/"
+   "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+   "image": {
+    "file": "img/cases/F07-51.jpg",
+    "w": 640,
+    "h": 640,
+    "source": "toddwschneider.com（og:image）",
+    "author": "Todd W. Schneider",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+    "note": "文章 og:image：退火求 TSP 路徑的動畫"
+   }
   },
   {
    "id": "F07-52",
@@ -31524,7 +31809,18 @@ window.CATALOG = {
     "Python",
     "C"
    ],
-   "url": "https://www.michaelfogleman.com/projects/graph-layout/"
+   "url": "https://www.michaelfogleman.com/projects/graph-layout/",
+   "image": {
+    "file": "img/cases/F07-53.jpg",
+    "w": 800,
+    "h": 800,
+    "source": "michaelfogleman.com",
+    "author": "Michael Fogleman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.michaelfogleman.com/projects/graph-layout/",
+    "note": "以模擬退火排出的節點連線圖"
+   }
   },
   {
    "id": "F07-54",
@@ -31599,7 +31895,18 @@ window.CATALOG = {
    "tools": [
     "Go"
    ],
-   "url": "https://github.com/fogleman/primitive"
+   "url": "https://github.com/fogleman/primitive",
+   "image": {
+    "file": "img/cases/F07-55.jpg",
+    "w": 900,
+    "h": 619,
+    "source": "GitHub fogleman/primitive README",
+    "author": "Michael Fogleman",
+    "license": "網頁預覽圖，教學引用（程式碼為 MIT 授權）",
+    "license_url": "",
+    "page": "https://github.com/fogleman/primitive",
+    "note": "README 首圖：以幾何圖形重建的照片"
+   }
   },
   {
    "id": "F08-01",
@@ -31642,7 +31949,18 @@ window.CATALOG = {
     "Grasshopper",
     "Kangaroo"
    ],
-   "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1"
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+   "image": {
+    "file": "img/cases/F08-01.jpg",
+    "w": 685,
+    "h": 308,
+    "source": "Nexus Network Journal（Springer）",
+    "author": "Georgios-Spyridon Athanasopoulos",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+    "note": "論文頁 og:image（Fig. 1），論文插圖"
+   }
   },
   {
    "id": "F08-02",
@@ -31943,7 +32261,18 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0"
+   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+   "image": {
+    "file": "img/cases/F08-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（The Coding Train）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+    "note": "影片縮圖"
+   }
   },
   {
    "id": "F08-54",
@@ -32086,7 +32415,18 @@ window.CATALOG = {
     "Grasshopper",
     "DeCodingSpaces"
    ],
-   "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/"
+   "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+   "image": {
+    "file": "img/cases/G01-03.jpg",
+    "w": 600,
+    "h": 600,
+    "source": "DeCodingSpaces Toolbox",
+    "author": "Martin Bielik",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+    "note": "都市街區中的 2D isovist 分析動態圖"
+   }
   },
   {
    "id": "G01-04",
@@ -32300,7 +32640,18 @@ window.CATALOG = {
     "JavaScript",
     "HTML5 Canvas"
    ],
-   "url": "https://ncase.me/sight-and-light/"
+   "url": "https://ncase.me/sight-and-light/",
+   "image": {
+    "file": "img/cases/G01-52.jpg",
+    "w": 522,
+    "h": 358,
+    "source": "ncase.me",
+    "author": "Nicky Case",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://ncase.me/sight-and-light/",
+    "note": "Sight & Light 教學頁的 og:image，2D 光影可視多邊形"
+   }
   },
   {
    "id": "G01-53",
@@ -32336,7 +32687,18 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d"
+   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d",
+   "image": {
+    "file": "img/cases/G01-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（The Coding Train）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=TOEi6T2mtHo",
+    "note": "Coding Challenge 145 2D Raycasting 影片縮圖"
+   }
   },
   {
    "id": "G01-54",
@@ -32372,7 +32734,18 @@ window.CATALOG = {
    "tools": [
     "Houdini"
    ],
-   "url": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/"
+   "url": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/",
+   "image": {
+    "file": "img/cases/G01-54.jpg",
+    "w": 900,
+    "h": 547,
+    "source": "Houdini Gubbins",
+    "author": "houdinigubbins",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/",
+    "note": "Houdini 中計算的 isovist 多邊形"
+   }
   },
   {
    "id": "G01-55",
@@ -32442,7 +32815,18 @@ window.CATALOG = {
     "帷幕"
    ],
    "tools": [],
-   "url": "https://studiogang.com/projects/40-tenth-ave"
+   "url": "https://studiogang.com/projects/40-tenth-ave",
+   "image": {
+    "file": "img/cases/G02-01.jpg",
+    "w": 852,
+    "h": 479,
+    "source": "Dezeen",
+    "author": "Studio Gang",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.dezeen.com/2017/02/27/studio-gang-reveals-high-line-hugging-solar-carve-tower-40-tenth-avenue-new-york/",
+    "note": "Solar Carve 塔樓渲染圖，可見依太陽角度削切的斜面與鑽石狀帷幕"
+   }
   },
   {
    "id": "G02-02",
@@ -32654,7 +33038,18 @@ window.CATALOG = {
     "TT Toolbox",
     "Galapagos"
    ],
-   "url": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/"
+   "url": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/",
+   "image": {
+    "file": "img/cases/G02-07.jpg",
+    "w": 900,
+    "h": 450,
+    "source": "Parametric Monkey",
+    "author": "Paul Wintour（Parametric Monkey）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/",
+    "note": "文章封面圖：日照法規檢查與可建包絡的研究圖"
+   }
   },
   {
    "id": "G02-51",
@@ -32693,7 +33088,18 @@ window.CATALOG = {
     "WebGL",
     "Mapbox GL JS"
    ],
-   "url": "https://shademap.app/about/"
+   "url": "https://shademap.app/about/",
+   "image": {
+    "file": "img/cases/G02-51.jpg",
+    "w": 900,
+    "h": 473,
+    "source": "ShadeMap",
+    "author": "Ted Piotrowski",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://shademap.app/about/",
+    "note": "ShadeMap 的 og:image，地圖上的地形與建築陰影"
+   }
   },
   {
    "id": "G02-52",
@@ -32781,7 +33187,18 @@ window.CATALOG = {
     "Blender",
     "Python"
    ],
-   "url": "https://extensions.blender.org/add-ons/sun-position/"
+   "url": "https://extensions.blender.org/add-ons/sun-position/",
+   "image": {
+    "file": "img/cases/G02-53.jpg",
+    "w": 580,
+    "h": 294,
+    "source": "BlenderNation",
+    "author": "Michael Martin（外掛作者）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.blendernation.com/2012/12/30/add-on-sun-position/",
+    "note": "Sun Position 外掛介面：以世界地圖選擇經緯度"
+   }
   },
   {
    "id": "G02-54",
@@ -32855,7 +33272,18 @@ window.CATALOG = {
     "Grasshopper",
     "Groundhog"
    ],
-   "url": "https://philipbelesky.com/projects/groundhog"
+   "url": "https://philipbelesky.com/projects/groundhog",
+   "image": {
+    "file": "img/cases/G03-01.jpg",
+    "w": 900,
+    "h": 468,
+    "source": "Groundhog 文件（Flow Catchments）",
+    "author": "Philip Belesky",
+    "license": "GPL v3（網站標示）；網頁預覽圖，教學引用",
+    "license_url": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "page": "https://groundhog.philipbelesky.com/documentation/flows-catchments/",
+    "note": "Groundhog Flow Catchments 元件的地形模型：流路與依終點合併的集水區；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
   },
   {
    "id": "G03-02",
@@ -32892,7 +33320,18 @@ window.CATALOG = {
     "Grasshopper",
     "Groundhog"
    ],
-   "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/"
+   "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+   "image": {
+    "file": "img/cases/G03-02.jpg",
+    "w": 900,
+    "h": 350,
+    "source": "Groundhog 專案頁（MAX IV Laboratory Landscape）",
+    "author": "Philip Belesky",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+    "note": "以 Grasshopper 重建的 MAX IV 波紋地形模型；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
   },
   {
    "id": "G03-03",
@@ -33081,7 +33520,18 @@ window.CATALOG = {
    "tools": [
     "C++"
    ],
-   "url": "https://rlguy.com/map_generation/"
+   "url": "https://rlguy.com/map_generation/",
+   "image": {
+    "file": "img/cases/G03-52.jpg",
+    "w": 600,
+    "h": 200,
+    "source": "Ryan L. Guy 作品頁",
+    "author": "Ryan L. Guy",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://rlguy.com/map_generation/",
+    "note": "地圖生成過程中的流向圖（flow map）；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
   },
   {
    "id": "G03-53",

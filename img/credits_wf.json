@@ -14,5 +14,173 @@
   "license_url": "https://github.com/ni1o1/pybdshadow/blob/main/LICENSE",
   "page": "https://github.com/ni1o1/pybdshadow",
   "note": "README 中以 matplotlib 繪製的建築與陰影多邊形示範圖"
+ },
+ "B06-04": {
+  "source": "McNeel Forum（Assembler 發表文）",
+  "author": "Alessio Erioli（Co-de-iT）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://discourse.mcneel.com/t/announcing-assembler-a-plugin-to-construct-and-manage-assemblages/144119",
+  "note": "Assembler 以準則驅動、確定性方式生成的範例 assemblage（1920×1175）"
+ },
+ "B06-53": {
+  "source": "Snap Map Builder User Guide（Dungeon Architect for Unity）",
+  "author": "Code Respawn",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+  "note": "使用手冊中的範例專案畫面：房間預製件拼接出的地城"
+ },
+ "E05-01": {
+  "source": "Wikimedia Commons",
+  "author": "見 Commons 檔案頁",
+  "license": "Wikimedia Commons（依檔案頁標示，1888 年照片應屬公有領域）",
+  "license_url": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_1888-12-26.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_1888-12-26.jpg",
+  "note": "1888 年 12 月施工中的艾菲爾鐵塔，可見外撇的塔腳輪廓（整合時請再確認授權）"
+ },
+ "E06-51": {
+  "source": "amandaghassaei.com",
+  "author": "Amanda Ghassaei",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://amandaghassaei.com/projects/shell_form_finding/",
+  "note": "Shell Form Finding 作品頁主圖：3D 列印的殼狀網格實體"
+ },
+ "F07-05": {
+  "source": "Make it Home 專案頁",
+  "author": "Lap-Fai Yu 等",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.saikit.org/static/projects/furniture/index.html",
+  "note": "專案頁 teaser：自動最佳化後的室內家具配置"
+ },
+ "F07-51": {
+  "source": "toddwschneider.com（og:image）",
+  "author": "Todd W. Schneider",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+  "note": "文章 og:image：退火求 TSP 路徑的動畫"
+ },
+ "F07-53": {
+  "source": "michaelfogleman.com",
+  "author": "Michael Fogleman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.michaelfogleman.com/projects/graph-layout/",
+  "note": "以模擬退火排出的節點連線圖"
+ },
+ "F07-55": {
+  "source": "GitHub fogleman/primitive README",
+  "author": "Michael Fogleman",
+  "license": "網頁預覽圖，教學引用（程式碼為 MIT 授權）",
+  "license_url": "",
+  "page": "https://github.com/fogleman/primitive",
+  "note": "README 首圖：以幾何圖形重建的照片"
+ },
+ "F08-01": {
+  "source": "Nexus Network Journal（Springer）",
+  "author": "Georgios-Spyridon Athanasopoulos",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+  "note": "論文頁 og:image（Fig. 1），論文插圖"
+ },
+ "F08-53": {
+  "source": "YouTube（The Coding Train）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+  "note": "影片縮圖"
+ },
+ "G01-03": {
+  "source": "DeCodingSpaces Toolbox",
+  "author": "Martin Bielik",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+  "note": "都市街區中的 2D isovist 分析動態圖"
+ },
+ "G01-52": {
+  "source": "ncase.me",
+  "author": "Nicky Case",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://ncase.me/sight-and-light/",
+  "note": "Sight & Light 教學頁的 og:image，2D 光影可視多邊形"
+ },
+ "G01-53": {
+  "source": "YouTube（The Coding Train）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.youtube.com/watch?v=TOEi6T2mtHo",
+  "note": "Coding Challenge 145 2D Raycasting 影片縮圖"
+ },
+ "G01-54": {
+  "source": "Houdini Gubbins",
+  "author": "houdinigubbins",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/",
+  "note": "Houdini 中計算的 isovist 多邊形"
+ },
+ "G02-01": {
+  "source": "Dezeen",
+  "author": "Studio Gang",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.dezeen.com/2017/02/27/studio-gang-reveals-high-line-hugging-solar-carve-tower-40-tenth-avenue-new-york/",
+  "note": "Solar Carve 塔樓渲染圖，可見依太陽角度削切的斜面與鑽石狀帷幕"
+ },
+ "G02-07": {
+  "source": "Parametric Monkey",
+  "author": "Paul Wintour（Parametric Monkey）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/",
+  "note": "文章封面圖：日照法規檢查與可建包絡的研究圖"
+ },
+ "G02-51": {
+  "source": "ShadeMap",
+  "author": "Ted Piotrowski",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://shademap.app/about/",
+  "note": "ShadeMap 的 og:image，地圖上的地形與建築陰影"
+ },
+ "G02-53": {
+  "source": "BlenderNation",
+  "author": "Michael Martin（外掛作者）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.blendernation.com/2012/12/30/add-on-sun-position/",
+  "note": "Sun Position 外掛介面：以世界地圖選擇經緯度"
+ },
+ "G03-01": {
+  "source": "Groundhog 文件（Flow Catchments）",
+  "author": "Philip Belesky",
+  "license": "GPL v3（網站標示）；網頁預覽圖，教學引用",
+  "license_url": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "page": "https://groundhog.philipbelesky.com/documentation/flows-catchments/",
+  "note": "Groundhog Flow Catchments 元件的地形模型：流路與依終點合併的集水區；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+ },
+ "G03-02": {
+  "source": "Groundhog 專案頁（MAX IV Laboratory Landscape）",
+  "author": "Philip Belesky",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+  "note": "以 Grasshopper 重建的 MAX IV 波紋地形模型；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+ },
+ "G03-52": {
+  "source": "Ryan L. Guy 作品頁",
+  "author": "Ryan L. Guy",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://rlguy.com/map_generation/",
+  "note": "地圖生成過程中的流向圖（flow map）；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
  }
 }
