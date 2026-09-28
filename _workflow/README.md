@@ -7,7 +7,7 @@
 | 工作流程 | 檔案 | 做什麼 | agent 數 |
 |---|---|---|---|
 | **gh-new-algos** | `.claude/workflows/gh-new-algos.js` | 探索可新增的**新家族與新演算法**：5 個方向探索（A/F、B/C、D/E、全新家族、外部教材稽核）→ 跨方向去重 → 審查查證 → 挑選編號 →（add）建立資料、卡片生成器、C# 範例 → 接進網站 | propose 12、add ≤ 11、auto ≤ 21 |
-| **gh-enrich** | `.claude/workflows/gh-enrich.js` | **既有演算法補充**變形與案例：依缺口挑單元 → 產出 → 機械去重＋審查查證 → 合併 → 補卡片圖 → 驗收推送 | 每次 ≤ 30 |
+| **gh-enrich** | `.claude/workflows/gh-enrich.js` | **既有演算法補充**變形與案例：依缺口挑單元 → 產出 → 機械去重＋審查查證 → 合併 → 補卡片圖 → 驗收推送。Opus 負責新變形、審查、難的卡片圖與驗收；Sonnet 負責案例搜尋查證、補網址、一般卡片圖與機械步驟（見 `SPEC.md` 的「模型分配」） | 每次 ≤ 30（約 Opus 10、Sonnet 20） |
 
 兩者都直接推送到 `main`，並用遠端分支 `wf-lock` 當鎖，不會同時執行。
 
@@ -20,6 +20,7 @@
 /gh-enrich      args: {"run": "R20260929-0300"}
 ```
 `run` 是台北時間的執行編號（workflow 腳本裡不能取得時間，所以要傳進去）。加 `"dry": true` 就只 commit 不推送。
+gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"models": false` 則全部沿用工作階段的模型。
 也可以直接用自然語言：「執行 /gh-enrich，run 用現在的台北時間」。
 
 ### 雲端排程（Claude app）

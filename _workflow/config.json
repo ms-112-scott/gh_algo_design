@@ -30,5 +30,19 @@
   "max_new_per_run": 8,
   "min_total_score": 14
  },
- "priority_new_algos": true
+ "priority_new_algos": true,
+ "models": {
+  "_說明": "gh-enrich 各角色使用的模型；與 .claude/workflows/gh-enrich.js 的 MODEL_DEFAULT、SPEC.md 的「模型分配」保持一致",
+  "prep": "sonnet",
+  "var": "opus",
+  "res": "sonnet",
+  "cc": "sonnet",
+  "fix": "sonnet",
+  "gate": "sonnet",
+  "review": "opus",
+  "merge": "sonnet",
+  "art": "sonnet",
+  "art_hard": "opus",
+  "finish": "opus"
+ }
 }

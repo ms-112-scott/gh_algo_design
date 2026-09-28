@@ -24,6 +24,20 @@ Claude app 的雲端排程工作階段可能**沒有** Workflow 工具；這時�
 
 名額：內容 ≤ 15 ＋ 審查 ≤ 3 ＋ 卡片圖 ≤ 8 ＋ 驗收 1 ＝ ≤ 27。
 
+### 模型分配（呼叫 Agent 時一定要指定 `model`）
+協調者本身維持排程設定的模型（Opus）。派出的 Agent 依角色指定：
+
+| 角色 | model | 理由 |
+|---|---|---|
+| VAR 新變形 | `opus` | 要理解演算法原理、分類既有變形並避開重複，需要創作判斷 |
+| 審查 | `opus` | 品質關卡；用不同模型交叉檢查 Sonnet 的產出 |
+| 卡片圖：新演算法補基本生成器（no_gen）或重畫（redo） | `opus` | 較難的程式與視覺判斷 |
+| 驗收（看總覽圖、寫 redo_art.json） | `opus` | 視覺品質把關 |
+| RES 建築／研究案例、CC creative coding 案例、FIX 補網址 | `sonnet` | 以大量搜尋與查證為主 |
+| 一般卡片圖 | `sonnet` | 依規格補畫；由 Opus 驗收把關 |
+
+設定值在 `_workflow/config.json` 的 `models`（與 `gh-enrich.js` 的 `MODEL_DEFAULT` 一致）。一次完整執行約 Opus 10、Sonnet 20。
+
 ## gh-new-algos（新家族／新演算法）
 依 `gh-new-algos.js` 的 mode（預設 propose）：
 - **propose**：準備（自己做，含 `python tools/wf_plan.py --index`）→ 5 個探索 Agent（JS 的 DIRECTIONS 與探索範本）→ 彙整 Agent → 最多 3 個候選審查 Agent → 挑選 Agent → 自己收尾（報告、commit、推送、釋放鎖）。

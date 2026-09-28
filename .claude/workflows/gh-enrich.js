@@ -1,6 +1,6 @@
 export const meta = {
   name: 'gh-enrich',
-  description: 'GH 演算法設計圖鑑：既有演算法補充變形與案例。依缺口挑單元 → 產出 → 去重與查證審查 → 合併 → 補卡片圖 → 驗收並推送 main。每次最多 30 個 agent。args: {run: "RYYYYMMDD-HHMM", dry?: true}',
+  description: 'GH 演算法設計圖鑑：既有演算法補充變形與案例。依缺口挑單元 → 產出 → 去重與查證審查 → 合併 → 補卡片圖 → 驗收並推送 main。每次最多 30 個 agent，Opus＋Sonnet 分工。args: {run: "RYYYYMMDD-HHMM", dry?: true, models?: {...}|false}',
   phases: ['準備', '內容產出', '去重審查', '合併', '卡片圖', '收尾'],
 }
 
@@ -9,6 +9,7 @@ export const meta = {
    - 用法（Claude Code，在 gh_algo_design 內）：/gh-enrich，args 例如 {"run": "R20260929-0300"}
      run 是台北時間的執行編號（腳本裡不能取得時間，所以由呼叫者提供）。
      dry: true → 不推送到 GitHub（其餘照做，方便測試）。
+     models：覆寫模型分配，例如 {"art": "opus"}；給 false 則不指定模型（全部沿用工作階段的模型）。
    - 所有 shell／git／python 工作都交給 agent（workflow 腳本本身不能讀寫檔案）。
    - 規格：_workflow/specs/*.md；工具：tools/wf_*.py；說明：_workflow/README.md
    - 雲端排程（沒有 Workflow 工具時）改照 _workflow/SPEC.md 執行相同流程。
@@ -23,6 +24,22 @@ if (typeof RUN !== 'string' || !/^R\d{8}-\d{4}$/.test(RUN)) {
 }
 const DRY = A.dry === true
 
+// ---------------- 模型分配：Opus 負責創作判斷與品質把關，Sonnet 負責搜尋、查證、畫圖與機械步驟
+//   Opus：VAR 新變形（要理解演算法並避開既有變形）、審查（跨模型交叉檢查 Sonnet 的產出）、
+//         新演算法的基本生成器或重畫（art_hard）、收尾（看總覽圖做視覺驗收、寫報告）
+//   Sonnet：準備、RES／CC 案例搜尋查證、FIX 補網址、去重關卡、合併、一般卡片圖
+// 與 _workflow/config.json 的 models、_workflow/SPEC.md 的「模型分配」保持一致。
+const MODEL_DEFAULT = {
+  prep: 'sonnet', var: 'opus', res: 'sonnet', cc: 'sonnet', fix: 'sonnet',
+  gate: 'sonnet', review: 'opus', merge: 'sonnet', art: 'sonnet', art_hard: 'opus', finish: 'opus',
+}
+const MODELS = A.models === false ? null
+  : Object.assign({}, MODEL_DEFAULT, (A.models && typeof A.models === 'object') ? A.models : {})
+function opt(role, o) {
+  return (MODELS && MODELS[role]) ? Object.assign({ model: MODELS[role] }, o) : o
+}
+const usage = { opus: 0, sonnet: 0, other: 0 }
+
 // ---------------- agent 名額：整個執行最多 30 個（含重試），用計數器硬性限制
 const MAX_AGENTS = 30
 const FIXED = 4                         // 準備、關卡、合併、收尾
@@ -36,6 +53,8 @@ function spawn(prompt, opts) {
     return Promise.resolve(null)
   }
   used += 1
+  const m = opts && opts.model
+  usage[m === 'opus' || m === 'sonnet' ? m : 'other'] += 1
   return agent(prompt, opts)
 }
 
@@ -93,7 +112,7 @@ const prep = await spawn([
   `5. python tools/wf_plan.py --select ${RUN} --stage1 ${N1} --stage3 ${N3}：stdout 第一行是本次計畫 JSON（也寫在 _workflow/runs/${RUN}.plan.json）；exit code 3 並印出 ALL_DONE 代表全部完成。`,
   `6. 若 ALL_DONE：python tools/wf_lock.py release，回報 all_done=true、ok=true。`,
   `回傳：ok、reason（一句話）、all_done、clip_baseline、stage1（plan 的 stage1 原樣，每個單元保留 id、type、algo、family、need）、stage3（plan 的 stage3 原樣）。`,
-].join('\n'), { label: '準備', schema: S_PREP })
+].join('\n'), opt('prep', { label: '準備', schema: S_PREP }))
 
 if (!prep || !prep.ok) {
   log(`準備失敗：${prep ? prep.reason : 'agent 無回應'}。本次結束（若鎖已取得，170 分鐘後自動過期）。`)
@@ -125,7 +144,7 @@ function contentPrompt(u) {
   ].join('\n')
 }
 const units = prep.stage1.filter(u => SPEC_OF[u.type]).slice(0, N1)
-const done = (await pipeline(units, u => spawn(contentPrompt(u), { label: u.id, schema: S_DONE }))).filter(Boolean)
+const done = (await pipeline(units, u => spawn(contentPrompt(u), opt(u.type.toLowerCase(), { label: u.id, schema: S_DONE })))).filter(Boolean)
 log(`內容產出：${done.length}/${units.length} 個單元完成，共 ${done.reduce((s, d) => s + (d.produced || 0), 0)} 筆`)
 
 // ================================================================ 3. 去重審查
@@ -137,7 +156,7 @@ if (done.length) {
     `你是 gh-enrich 工作流程的「去重關卡」。`, CTX,
     `執行 python tools/wf_dedup.py ${RUN}（第 2 層機械去重），它會寫 _workflow/stage/${RUN}/_dedup.json 並在 stdout 印出 JSON（stats、need_review、flags）。`,
     `不要修改任何暫存檔。回傳 ok、need_review（需要審查的暫存檔檔名清單，原樣）、pass、flag、reject 三個數字。`,
-  ].join('\n'), { label: '去重關卡', schema: S_GATE })
+  ].join('\n'), opt('gate', { label: '去重關卡', schema: S_GATE }))
 
   const files = gate && gate.ok ? gate.need_review : []
   const nb = Math.min(NREV, Math.ceil(files.length / 5), MAX_AGENTS - used - 2 - 1)   // 保留合併、收尾與至少 1 個卡片圖
@@ -150,7 +169,7 @@ if (done.length) {
     `機械檢查結果在 _workflow/stage/${RUN}/_dedup.json；reject 的項目不用審，flag 的要特別說明。`,
     `輸出檔（只能寫這一個）：_workflow/stage/${RUN}/_review_${n}.json。`,
     `回傳 file（輸出檔路徑）、accept、reject（數量）、note（最常見的拒絕原因）。`,
-  ].join('\n'), { label: `審查 #${n}`, schema: S_REV }))).filter(Boolean)
+  ].join('\n'), opt('review', { label: `審查 #${n}`, schema: S_REV })))).filter(Boolean)
   log(`去重：pass ${gate ? gate.pass : '?'}／flag ${gate ? gate.flag : '?'}／reject ${gate ? gate.reject : '?'}；審查 ${reviews.length} 批`)
 } else {
   log('沒有任何內容產出，略過去重審查。')
@@ -169,7 +188,7 @@ const merge = await spawn([
   GIT_PUSH,
   `6. python tools/wf_plan.py --art ${RUN} --stage3 ${N3}：重新計算合併後的缺圖，stdout 印出新的 stage3。`,
   `回傳：ok（步驟 1–5 都成功）、pushed、merged（{VAR, RES, CC, FIX} 各合併幾筆）、rejected（被拒總數）、images_queued、stage3（步驟 6 的結果原樣）、note（一句話，含 unreviewed 數量與任何錯誤）。`,
-].join('\n'), { label: '合併', schema: S_MERGE })
+].join('\n'), opt('merge', { label: '合併', schema: S_MERGE }))
 if (merge) log(`合併：${JSON.stringify(merge.merged)}，被拒 ${merge.rejected}，圖片排隊 ${merge.images_queued}，推送 ${merge.pushed ? '成功' : '未推送'}`)
 else log('合併 agent 失敗；卡片圖改用準備階段的清單。')
 
@@ -186,13 +205,13 @@ const arts = (await pipeline(artList.slice(0, nArt), u => spawn([
   (u.redo && u.redo.length) ? `要重畫的項目（_workflow/redo_art.json）：${JSON.stringify(u.redo)}` : ``,
   `只能修改 assets/art/${u.algo}.js；既有畫法不可改動（redo 清單除外）。不要 commit、不要 push。`,
   `完成後回傳 algo、var_done、case_done（補了幾張）、ok（artsheet 的 missingVar／missingCase／slow／errors 都為空）、note。`,
-].join('\n'), { label: `卡片圖 ${u.algo}`, schema: S_ARTDONE }))).filter(Boolean)
+].join('\n'), opt((u.no_gen || (u.redo && u.redo.length)) ? 'art_hard' : 'art', { label: `卡片圖 ${u.algo}`, schema: S_ARTDONE })))).filter(Boolean)
 log(`卡片圖：${arts.length}/${Math.min(artList.length, nArt)} 個演算法完成`)
 
 // ================================================================ 6. 收尾（一定執行，確保推送與釋放鎖）
 phase('收尾')
 const facts = {
-  run: RUN, agents_used_before_finish: used,
+  run: RUN, agents_used_before_finish: used, models: MODELS || '沿用工作階段模型', model_usage_before_finish: usage,
   content: done, gate: gate, reviews: reviews, merge: merge, art: arts,
   art_algos: artList.slice(0, nArt).map(u => u.algo), clip_baseline: prep.clip_baseline,
 }
@@ -205,15 +224,15 @@ const fin = await spawn([
   `   （格式 [{"algo","kind":"var|case","key":索引或案例編號,"reason","run"}]；保留原有項目，本次已重畫好的舊項目移除）。`,
   `2. python build.py；python tools/clipcheck.py：最後一行 TOTAL 不可大於 ${prep.clip_baseline}；變大就找出本次造成的問題並修正（只能改本次新增的 art 或資料），修不了就寫進報告。`,
   `3. python tools/wf_plan.py --no-art 取得剩餘缺口表。`,
-  `4. 寫 _workflow/runs/${RUN}.md：本次單元與結果、各類新增數、被拒數與主要原因、卡片圖結果、圖片排隊數（提醒在本機跑 python tools/fetch_images.py）、剩餘缺口表、需要人工處理的事（例如 FIX 查不到的案例、既有重複案例）。`,
+  `4. 寫 _workflow/runs/${RUN}.md：本次單元與結果、各模型使用數（見上面 JSON 的 model_usage_before_finish，另加收尾本身 1 個 ${MODELS ? MODELS.finish : ''}）、各類新增數、被拒數與主要原因、卡片圖結果、圖片排隊數（提醒在本機跑 python tools/fetch_images.py）、剩餘缺口表、需要人工處理的事（例如 FIX 查不到的案例、既有重複案例）。`,
   `5. git add -A、commit（「wf ${RUN}: 卡片圖與報告」）。`,
   GIT_PUSH,
   `6. python tools/wf_lock.py release（一定要做，即使前面失敗）。`,
   `回傳 pushed，以及 summary：5–8 行的繁體中文摘要（處理的家族與單元、各類新增數、被拒數與主因、卡片圖、剩餘缺口、需要人工處理的事）。`,
-].join('\n'), { label: '收尾', schema: S_FIN })
+].join('\n'), opt('finish', { label: '收尾', schema: S_FIN }))
 
 const result = {
-  ok: !!(fin && merge && merge.ok), run: RUN, agents: used,
+  ok: !!(fin && merge && merge.ok), run: RUN, agents: used, model_usage: usage,
   merged: merge ? merge.merged : null, rejected: merge ? merge.rejected : null,
   art: arts.map(a => `${a.algo}: 變形 ${a.var_done}、案例 ${a.case_done}${a.ok ? '' : '（未全數通過）'}`),
   pushed: !!(fin && fin.pushed),

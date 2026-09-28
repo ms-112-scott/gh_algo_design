@@ -20,6 +20,7 @@
    沒有就讀 _workflow/SPEC.md 的「gh-enrich」段落，用 Agent 工具照做，提示範本取自 .claude/workflows/gh-enrich.js（變數代入後原樣使用）。
 4. 硬性規則：
    - 本次最多呼叫 30 次 Agent（含重試），同時最多 16 個。
+   - 模型分配：依 _workflow/SPEC.md 的「模型分配」表，每次呼叫 Agent 都指定 model（VAR、審查、新生成器／重畫的卡片圖、驗收用 opus；RES、CC、FIX、一般卡片圖用 sonnet）。
    - 鎖：python tools/wf_lock.py acquire RUN --wait 9，仍 LOCKED 就重複，最多 5 次；仍被占用就不做任何修改，送出「本次因鎖被占用而略過」後結束。取得鎖後，結束前一定要 python tools/wf_lock.py release。
    - 要納入 gh-new-algos 新增的演算法與新家族：開工前一定 git pull 取得最新 main；wf_plan.py 會自動把它們排在 P0 之後優先處理。
    - 每次完成都推送到 main：推送前 git fetch origin main，有新提交就 git merge origin/main（data.js、演算法總表.md 衝突就 python build.py 後 git add；其他衝突就 git merge --abort 並回報）；然後 git push origin HEAD:main。不可 force push。
