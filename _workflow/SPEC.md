@@ -38,6 +38,17 @@ Claude app 的雲端排程工作階段可能**沒有** Workflow 工具；這時�
 
 設定值在 `_workflow/config.json` 的 `models`（與 `gh-enrich.js` 的 `MODEL_DEFAULT` 一致）。一次完整執行約 Opus 10、Sonnet 20。
 
+## gh-balance（數位研究／藝術設計 1:1、真實圖片、卡片圖重畫）
+正式流程是 `.claude/workflows/gh-balance.js`，**要在自己的電腦執行**（找圖要下載各網站圖片；雲端只能連 GitHub）。沒有 Workflow 工具時，照 JS 的提示範本用 Agent 工具做：
+1. **準備**（自己做）：git 同步、`python tools/wf_lock.py acquire RUN --wait 9`、`python tools/ct_index.py`、`python build.py`、clipcheck 基準、`python tools/bal_plan.py prep RUN`（units）、`python tools/bal_plan.py artvar RUN`（先行的變形圖單元）。
+2. **分類與替換**：units 每個一個 Agent（sonnet，`balance.md`）；同時派先行變形圖 Agent（opus，`artbal.md`，只畫變形）。
+3. **審查**：每 4 個演算法一個 Agent（opus，`balreview.md`），輸出 `BALREV_<第一個演算法>.json`。
+4. **合併**（自己做）：`python tools/bal_merge.py RUN` → `build.py` → `sanitize.py --check`、`zhcheck.py --all` → `wf_plan.py --index` → commit（不要 add assets/）、推送 → `python tools/bal_plan.py images RUN --per 18`。
+5. **找圖**：每個 image unit 一個 Agent（sonnet，`imgreal.md`）。
+6. **卡片圖**：等先行變形圖做完 → `build.py`、commit、推送 → `python tools/bal_plan.py art RUN` → 每個 art unit 一個 Agent（hard 用 opus，其餘 sonnet；`artbal.md`）。
+7. **收尾**（驗收交給 opus Agent）：`bal_plan.py status` 兩類相等、`imgdup.py`、artsheet 目視、抽查新照片、`sanitize`／`zhcheck`／`clipcheck`、寫 `_workflow/runs/RUN.md`、commit、推送、`python tools/wf_lock.py release`。
+同一個 RUN 可重跑續做（已完成的單元會略過）。同時執行最多 16 個 Agent。
+
 ## gh-new-algos（新家族／新演算法）
 依 `gh-new-algos.js` 的 mode（預設 propose）：
 - **propose**：準備（自己做，含 `python tools/wf_plan.py --index`）→ 5 個探索 Agent（JS 的 DIRECTIONS 與探索範本）→ 彙整 Agent → 最多 3 個候選審查 Agent → 挑選 Agent → 自己收尾（報告、commit、推送、釋放鎖）。

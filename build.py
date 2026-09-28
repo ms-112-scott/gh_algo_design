@@ -28,6 +28,14 @@ CATEGORIES = {
 }
 LOGICS = ["直接公式", "改寫／遞迴", "迭代模擬", "搜尋／求解", "幾何轉換"]
 DIFFICULTY = {1: "入門", 2: "基礎", 3: "中階", 4: "進階", 5: "研究級"}
+SOURCES = {"research": "數位研究", "art": "藝術設計"}   # 案例來源；兩類數量要相等（使用者 2026-09-29 決定）
+
+
+def source_of(c):
+    """案例來源；舊資料沒有 source 時，creative coding 標籤視為藝術設計。"""
+    if c.get("source") in SOURCES:
+        return c["source"]
+    return "art" if any("creative coding" in str(t).lower() for t in c.get("tags", [])) else "research"
 
 
 def clamp_level(v, default=3):
@@ -63,6 +71,8 @@ def main():
                 warnings.append(f"{c.get('id')}: 未知 category {c.get('category')}")
                 c["category"] = "modeling"
             c["categories_extra"] = [x for x in c.get("categories_extra", []) if x in CATEGORIES]
+            if c.get("source") is not None and c["source"] not in SOURCES:
+                warnings.append(f"{c.get('id')}: 未知 source {c.get('source')}")
             cases.append(c)
 
     # 案例圖片：img/cases/<案例編號>.jpg ＋ img/credits*.json 的出處與授權
@@ -78,6 +88,11 @@ def main():
                 warnings.append(f"{c['id']}: 有圖片但 credits*.json 沒有出處")
 
     cases.sort(key=lambda c: c.get("id", ""))
+    if any("source" in c for c in cases):
+        for c in cases:
+            if c.get("source") not in SOURCES:
+                warnings.append(f"{c.get('id')}: 缺少 source（research／art）")
+    n_src = {k: sum(1 for c in cases if source_of(c) == k) for k in SOURCES}
     known = set(algos)
     for c in cases:
         if c.get("algo") not in known:
@@ -88,6 +103,7 @@ def main():
         "categories": CATEGORIES,
         "logics": LOGICS,
         "difficulty": DIFFICULTY,
+        "sources": SOURCES,
         "algorithms": [algos[k] for k in sorted(algos)],
         "cases": cases,
     }
@@ -98,17 +114,19 @@ def main():
     lines = ["# GH 演算法設計圖鑑｜總表", "",
              f"演算法 {len(algos)} 個、案例 {len(cases)} 個、"
              f"變形食譜 {sum(len(a.get('variations', [])) for a in algos.values())} 條、"
-             f"專案種子 {sum(len(a.get('project_seeds', [])) for a in algos.values())} 個", "",
-             "| ID | 演算法 | 家族 | 邏輯 | 資料結構 | 難度 | 行數 | Tags | 案例數 |",
-             "|---|---|---|---|---|---|---|---|---|"]
+             f"專案種子 {sum(len(a.get('project_seeds', [])) for a in algos.values())} 個；"
+             f"案例來源：數位研究 {n_src['research']}、藝術設計 {n_src['art']}", "",
+             "| ID | 演算法 | 家族 | 邏輯 | 資料結構 | 難度 | 行數 | Tags | 案例數 | 研究／藝術 |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for k in sorted(algos):
         a = algos[k]
         n = sum(1 for c in cases if c.get("algo") == k)
+        na = sum(1 for c in cases if c.get("algo") == k and source_of(c) == "art")
         lines.append(
             f"| {k} | {a.get('name_zh','')} | {a['family']} {a['family_name']} | "
             f"{'、'.join(a.get('logic', []))} | {'、'.join(a.get('data_structure', []))} | "
             f"{'★' * a['difficulty']} {DIFFICULTY[a['difficulty']]} | {a.get('loc','')} | "
-            f"{' '.join('`'+t+'`' for t in a.get('tags', []))} | {n} |")
+            f"{' '.join('`'+t+'`' for t in a.get('tags', []))} | {n} | {n - na}／{na} |")
     lines += ["", "## 難度理由", ""]
     for k in sorted(algos):
         lines.append(f"- **{k} {algos[k].get('name_zh','')}**：{algos[k].get('difficulty_reason','')}")
@@ -116,7 +134,8 @@ def main():
 
     print(f"algorithms={len(algos)} cases={len(cases)} "
           f"empty_url={sum(1 for c in cases if not c.get('url'))} "
-          f"images={sum(1 for c in cases if c.get('image'))}")
+          f"images={sum(1 for c in cases if c.get('image'))} "
+          f"research={n_src['research']} art={n_src['art']}")
     for w in warnings:
         print("WARN", w)
     return 0

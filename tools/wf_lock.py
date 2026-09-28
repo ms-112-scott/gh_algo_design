@@ -78,6 +78,11 @@ def main():
             if not info or age_minutes(info) >= CFG.get("lock_stale_minutes", 170) or time.time() >= deadline:
                 break
             time.sleep(60)
+        if info and info.get("run") == run:   # 同一個 RUN 續跑：已經持有鎖，更新時間即可
+            git("push", "origin", "--delete", BR, check=False)
+            ok, info = push_lock(run)
+            print(f"ACQUIRED {run}（續用本 RUN 的鎖）" if ok else "LOCKED 更新鎖失敗")
+            sys.exit(0 if ok else 1)
         if info:
             age = age_minutes(info)
             if age < CFG.get("lock_stale_minutes", 170):

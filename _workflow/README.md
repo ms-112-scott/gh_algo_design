@@ -8,8 +8,11 @@
 |---|---|---|---|
 | **gh-new-algos** | `.claude/workflows/gh-new-algos.js` | 探索可新增的**新家族與新演算法**：5 個方向探索（A/F、B/C、D/E、全新家族、外部教材稽核）→ 跨方向去重 → 審查查證 → 挑選編號 →（add）建立資料、卡片生成器、C# 範例 → 接進網站 | propose 12、add ≤ 11、auto ≤ 21 |
 | **gh-enrich** | `.claude/workflows/gh-enrich.js` | **既有演算法補充**變形與案例：依缺口挑單元 → 產出 → 機械去重＋審查查證 → 合併 → 補卡片圖 → 驗收推送。Opus 負責新變形、審查、難的卡片圖與驗收；Sonnet 負責案例搜尋查證、補網址、一般卡片圖與機械步驟（見 `SPEC.md` 的「模型分配」） | 每次 ≤ 30（約 Opus 10、Sonnet 20） |
+| **gh-balance** | `.claude/workflows/gh-balance.js` | **數位研究／藝術設計 1:1＋每張卡片都有自己的圖**（2026-09-29）：每個演算法分類案例 → 以 p5.js／Processing 等藝術作品替換最弱的研究案例（總數不增加）→ Opus 審查 → 合併到剛好 1:1 → 每個案例找真實圖片（藝術案例用作品生成畫面，不用影片縮圖）→ 後段家族卡片圖重畫 → 驗收推送。**要在自己的電腦執行**（需要下載各網站圖片）；可用同一個 run 續跑 | 約 80–90（同時 ≤ 16） |
 
-兩者都直接推送到 `main`，並用遠端分支 `wf-lock` 當鎖，不會同時執行。
+三者都直接推送到 `main`，並用遠端分支 `wf-lock` 當鎖，不會同時執行。
+
+> 2026-09-29 起案例**不再新增**（`config.json` 的 `targets.res`、`targets.cc` 設為 0），gh-enrich 只會補變形與卡片圖。案例的「來源」改用 `source` 欄位（`research` 數位研究／`art` 藝術設計），兩類數量保持相等。
 
 ### 在 Claude Code 執行（CLI 或桌面版，需支援 Dynamic Workflows）
 在 repo 內：
@@ -18,6 +21,8 @@
 /gh-new-algos   args: {"run": "R20260929-1200", "mode": "add", "from": "R20260929-0900"}   ← 看過報告後建立
 /gh-new-algos   args: {"run": "R20260929-0900", "mode": "auto", "max_new": 6}               ← 一次做完
 /gh-enrich      args: {"run": "R20260929-0300"}
+/gh-balance     args: {"run": "R20260929-0900"}                      ← 數位研究／藝術設計 1:1、真實圖片、卡片圖重畫（在自己電腦）
+/gh-balance     args: {"run": "R20260929-0900", "only": ["images","art","finish"]}   ← 續跑或只跑後段
 ```
 `run` 是台北時間的執行編號（workflow 腳本裡不能取得時間，所以要傳進去）。加 `"dry": true` 就只 commit 不推送。
 gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"models": false` 則全部沿用工作階段的模型。
@@ -43,6 +48,7 @@ gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"mod
 | `specs/_common.md` | 所有 agent 的共用規則（不可捏造、繁體中文、查證方式、列舉值） |
 | `specs/var.md` `res.md` `cc.md` `fix.md` `review.md` `art.md` | gh-enrich 各類 agent 規格 |
 | `specs/imgfix.md` | 讓每張卡片都有自己的圖（先找真實圖片，找不到畫示意圖；可重畫重複的圖） |
+| `specs/balance.md` `balreview.md` `imgreal.md` `artbal.md` | gh-balance：分類與替換、審查、找真實圖片、後段家族卡片圖重畫 |
 | `specs/explore.md` `select.md` `candreview.md` `newalgo.md` `integrate.md` | gh-new-algos 各類 agent 規格 |
 | `index/` | 每個演算法的既有內容摘要（去重用），`_catalog.md` 為全目錄；由 `tools/wf_plan.py` 產生 |
 | `backlog.json` | 目前所有待做單元 |
@@ -68,6 +74,10 @@ gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"mod
 | `python tools/imgdup.py [編號…]` | 卡片圖重複檢查：沒有自己的圖、和演算法卡太像、同演算法內兩張太像、照片重複（明細寫進 `imgdup.json`） |
 | `python tools/wf_remove.py --reason "…" 案例編號…` | 使用者要求時移除案例（資料、圖片、出處、卡片畫法一起刪，並記進 `removed.json`、`rejected.json`） |
 | `python tools/fetch_images.py` | **在自己電腦上**下載排隊的圖片（雲端連不到大多數網站），之後跑 `python build.py` 並 commit |
+| `python tools/bal_plan.py prep\|review\|images\|art\|artvar RUN` | gh-balance 各階段的計畫（目標數、分組、已完成的自動略過）；`status` 看兩類數量 |
+| `python tools/bal_merge.py RUN [--dry-run]` | gh-balance 合併：套用分類、替換、全站剛好 1:1、新案例下載圖片 |
+| `python tools/setimg.py 編號 圖片網址 --preview`／`--page … --source …`／`--remove` | 下載預覽、登記或移除案例圖片（多個 agent 同時執行也安全） |
+| `python tools/ct_index.py 關鍵字` | The Coding Train 範例**執行畫面**索引（藝術設計案例的圖片來源） |
 
 ## 需要人工處理的事
 - 新演算法的 C# 範例（`cs/`）由 agent 撰寫，需在 Rhino 8 實測。

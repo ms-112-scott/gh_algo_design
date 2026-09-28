@@ -1,9 +1,10 @@
 {
  "targets": {
   "var": 16,
-  "res": 18,
-  "cc": 8,
-  "var_min": 12
+  "res": 0,
+  "cc": 0,
+  "var_min": 12,
+  "_說明": "2026-09-29 使用者決定案例不再新增，並以 gh-balance 讓數位研究／藝術設計 1:1；res、cc 目標設為 0，gh-enrich 不再新增案例（變形仍可補）。"
  },
  "unit_max": {
   "VAR": 6,

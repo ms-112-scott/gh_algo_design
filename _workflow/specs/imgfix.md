@@ -13,7 +13,7 @@
 
 ## 做法
 ### 案例（先找真實圖片，找不到才畫示意圖）
-1. 用 WebSearch／WebFetch 找**該作品本身**的圖片：作品頁的 og:image、Wikimedia Commons、論文的 CC BY 圖、GitHub README 的示範圖、YouTube 縮圖（`https://i.ytimg.com/vi/<影片ID>/hqdefault.jpg`）。必須是這件作品，不能是 logo、通用圖或別的作品。
+1. 用 WebSearch／WebFetch 找**該作品本身**的圖片：作品頁的 og:image、Wikimedia Commons、論文的 CC BY 圖、GitHub README 的示範圖。必須是這件作品，不能是 logo、通用圖或別的作品。**不可用 YouTube／Vimeo 縮圖、影片標題卡、講者人像或教學封面**（使用者 2026-09-29 決定）；藝術設計案例一定要用作品本身的演算法生成畫面（The Coding Train 的範例輸出圖在其 GitHub repo 的 `content/videos/<路徑>/images/`）。
 2. 圖片網址的主機是 `raw.githubusercontent.com`、`user-images.githubusercontent.com`、`github.com/…/raw/…`、`*.github.io`：雲端可以直接下載——
    `curl -sSL -m 30 -o /tmp/<編號>.img "<網址>"`，確認是圖片後
    `python tools/addimg.py <案例編號> /tmp/<編號>.img "<來源名稱>" "<授權>" "<出處頁網址>" "<一句話說明>"`

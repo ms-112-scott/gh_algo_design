@@ -32,6 +32,10 @@ window.CATALOG = {
   "4": "進階",
   "5": "研究級"
  },
+ "sources": {
+  "research": "數位研究",
+  "art": "藝術設計"
+ },
  "algorithms": [
   {
    "id": "A01",

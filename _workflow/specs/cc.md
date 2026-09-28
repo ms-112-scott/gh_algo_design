@@ -24,7 +24,7 @@
 - `tags` **一定要包含 `"creative coding"`**，再加上工具名（`"p5.js"`、`"Processing"`、`"openFrameworks"`、`"TouchDesigner"`、`"GLSL"`、`"three.js"`…）與特性標籤。
 - `tools` 填實際使用的工具。
 - `summary` 說明：這是什麼、演算法在其中怎麼被使用、跟 Grasshopper C# 基礎範例有什麼不同。
-- `image_candidate`：作品頁的 `og:image`／`twitter:image`；YouTube 用 `https://i.ytimg.com/vi/<影片ID>/hqdefault.jpg`；GitHub repo 用 README 裡的示範圖（`raw.githubusercontent.com` 網址最好，雲端可以直接下載）。授權欄：作品頁明確標示授權就照寫，否則寫 `網頁預覽圖，教學引用`。**不要自己下載圖片**，合併工具會處理。
+- `image_candidate`：**作品本身的演算法生成畫面**（使用者 2026-09-29 決定：不可用 YouTube／Vimeo 縮圖、影片標題卡、講者人像、教學封面）。來源：作品頁或藝術家網站的作品圖、OpenProcessing 草圖縮圖、The Coding Train GitHub repo `content/videos/<路徑>/images/` 的範例輸出圖；GitHub repo 用 README 裡的示範圖（`raw.githubusercontent.com` 網址最好，雲端可以直接下載）。授權欄：作品頁明確標示授權就照寫，否則寫 `網頁預覽圖，教學引用`。**不要自己下載圖片**，合併工具會處理。
 
 ## 輸出
 `_workflow/stage/<RUN>/CC_<演算法>.json`：

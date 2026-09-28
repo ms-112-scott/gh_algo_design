@@ -8,6 +8,9 @@ const ALG = Object.fromEntries(ALGOS.map(a => [a.id, a]));
 const CASES = CAT.cases;
 const CASES_OF = id => CASES.filter(c => c.algo === id);
 const isCC = c => (c.tags || []).some(t => /creative coding/i.test(t));
+// 案例來源：數位研究（research）／藝術設計（art）；舊資料沒有 source 欄位時，creative coding 標籤視為藝術設計
+const SRC = c => (c.source === "art" || c.source === "research") ? c.source : (isCC(c) ? "art" : "research");
+const SRC_NAME = {research:"數位研究", art:"藝術設計"};
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ico = (id, cls = "i") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
@@ -39,7 +42,7 @@ const tKw = t => `<span class="tg tg-kw">${esc(t)}</span>`;
 const chain = (...parts) => `<span class="chain">${parts.join('<span class="chev" aria-hidden="true">›</span>')}</span>`;
 const TYPE = {algo:["t-algo","i-algo","演算法"], var:["t-var","i-var","變形"], case:["t-case","i-case","案例"], seed:["t-seed","i-seed","專案發想"]};
 const badge = (type, inline) => { const [c,i,t] = TYPE[type]; return `<span class="badge ${c}${inline ? " inline" : ""}">${ico(i)}${t}</span>`; };
-const ccBadge = `<span class="cc-tag">${ico("i-code")}creative coding</span>`;
+const srcBadge = s => `<span class="cc-tag src-${s}">${ico(s === "art" ? "c-art-installation" : "i-book")}${SRC_NAME[s]}</span>`;
 
 function whatIcon(w = ""){
   if(/混合|搜尋/.test(w)) return "w-hybrid";
@@ -64,7 +67,7 @@ function bump(kind, key, n = 1){
   if(!key) return; prefs[kind][key] = (prefs[kind][key] || 0) + n;
   try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch(e){}
 }
-function bumpPin(p){ bump("algo", p.algo, 2); bump("fam", p.fam); bump("type", p.type); if(p.type === "case"){ bump("cat", p.cat?.[0]); bump("src", p.cc ? "cc" : "arch"); } }
+function bumpPin(p){ bump("algo", p.algo, 2); bump("fam", p.fam); bump("type", p.type); if(p.type === "case"){ bump("cat", p.cat?.[0]); bump("src", p.src); } }
 const pw = (kind, key) => prefs[kind][key] || 0;
 // 加權隨機排序（Efraimidis–Spirakis）：權重越大越可能排前面，但每次重新整理都不一樣
 const wkey = w => Math.pow(Math.random(), 1 / Math.max(.05, w));
@@ -117,9 +120,9 @@ function pinVar(a, i){
     <div class="cap"><b>${esc(v.title)}</b><div class="row2">${chain(tFam(a.family,true), tAlgo(a.id,true), tVar(i,a.id))}${dots(v.level)}</div></div>`};
 }
 function pinCase(c){
-  const a = ALG[c.algo], img = !!c.image, cc = isCC(c);
-  return {type:"case", key:c.id, algo:c.algo, fam:a.family, diff:c.difficulty, cat:[c.category, ...(c.categories_extra||[])], cc, search:[c.id,c.title,c.creator,c.summary,a.name_zh,...(c.tags||[]),...(c.tools||[])].join(" "), vis: img ? null : visual(c.algo,"case",num(c.id)), html:`
-    <div class="media">${badge("case")}${cc ? ccBadge : ""}
+  const a = ALG[c.algo], img = !!c.image, src = SRC(c);
+  return {type:"case", key:c.id, algo:c.algo, fam:a.family, diff:c.difficulty, cat:[c.category, ...(c.categories_extra||[])], src, search:[c.id,c.title,c.creator,c.summary,a.name_zh,SRC_NAME[src],...(c.tags||[]),...(c.tools||[])].join(" "), vis: img ? null : visual(c.algo,"case",num(c.id)), html:`
+    <div class="media">${badge("case")}${srcBadge(src)}
       ${img ? imgTag(c, true) : `<canvas></canvas><span class="demo-tag">示意</span>`}
       <div class="scrim"></div><span class="open">${ico("i-open")}開啟</span></div>
     <div class="cap"><b>${esc(c.title)}</b><div class="sub">${esc(String(c.creator||"").split(/[，,（(]/)[0])}${c.year ? "・"+esc(c.year) : ""}</div>
@@ -138,7 +141,7 @@ function pinSeed(a, i){
 let ALL_PINS = null;
 function allPins(){
   if(ALL_PINS) return ALL_PINS;
-  const itemW = p => 1 + pw("type", p.type)*.3 + (p.cat ? pw("cat", p.cat[0])*.6 : 0) + (p.type === "case" ? pw("src", p.cc ? "cc" : "arch")*.4 : 0);
+  const itemW = p => 1 + pw("type", p.type)*.3 + (p.cat ? pw("cat", p.cat[0])*.6 : 0) + (p.type === "case" ? pw("src", p.src)*.4 : 0);
   const order = wshuffle(ALGOS, a => 1 + pw("algo", a.id)*.8 + pw("fam", a.family)*.4);
   const Qs = order.map(a => {
     const V = wshuffle(a.variations.map((_,i) => pinVar(a,i)), itemW), C = wshuffle(CASES_OF(a.id).map(pinCase), itemW), S = wshuffle((a.project_seeds||[]).map((_,i) => pinSeed(a,i)), itemW), q = [pinAlgo(a)];
@@ -181,7 +184,7 @@ function renderChips(){
     line("r1", "卡片、來源與難度",
       g("卡片", all("type", state.type === "all") +
         ["algo","var","case","seed"].map(k => `<button class="fchip" data-type="${k}" aria-pressed="${state.type===k}">${badge(k, true)}</button>`).join("")),
-      g("來源", [["all","全部"],["arch","建築與研究"],["cc","Creative Coding"]].map(([k,t]) => `<button class="fchip" data-src="${k}" aria-pressed="${state.src===k}"><span class="tg tg-attr">${k === "cc" ? ico("i-code") : ""}${t}</span></button>`).join("")),
+      g("來源", [["all","全部"],["research","數位研究"],["art","藝術設計"]].map(([k,t]) => `<button class="fchip" data-src="${k}" aria-pressed="${state.src===k}"><span class="tg tg-attr">${k === "art" ? ico("c-art-installation") : k === "research" ? ico("i-book") : ""}${t}</span></button>`).join("")),
       g("難度", all("diff", !state.diff.size) + [1,2,3,4,5].map(d => `<button class="fchip" data-diff="${d}" aria-pressed="${state.diff.has(d)}"><span class="tg tg-attr tg-diff">${dots(d)}${CAT.difficulty[d]}</span></button>`).join(""))) +
     line("r2", "應用類型", g("應用類型", Object.keys(CAT.categories).map(c => `<button class="fchip" data-cat="${c}" aria-pressed="${state.cat===c}">${tCat(c)}</button>`).join(""))) +
     line("r3", "家族與演算法", g("家族・演算法", all("fam", !state.fam.size && !state.algo.size) + Object.keys(CAT.families).map(famGroup).join("")));
@@ -216,7 +219,7 @@ addEventListener("resize", () => document.querySelectorAll("#chips .clwrap").for
 function filterSummary(){
   const parts = [
     state.type !== "all" && TYPE[state.type][2],
-    state.src !== "all" && (state.src === "cc" ? "Creative Coding" : "建築與研究"),
+    state.src !== "all" && SRC_NAME[state.src],
     ...[...state.diff].sort().map(d => CAT.difficulty[d]),
     state.cat && CAT.categories[state.cat],
     ...[...state.fam].filter(f => ![...state.algo].some(id => ALG[id]?.family === f)).map(f => `${f} 家族`),
@@ -251,7 +254,7 @@ function filtered(){
     (!allow || allow.has(p.algo)) &&
     (!state.diff.size || state.diff.has(p.diff)) &&
     (!state.cat || (p.cat || []).includes(state.cat)) &&
-    (state.src === "all" || (p.type === "case" && (state.src === "cc" ? p.cc : !p.cc))) &&
+    (state.src === "all" || (p.type === "case" && p.src === state.src)) &&
     (!q || p.search.toLowerCase().includes(q)));
 }
 
@@ -587,7 +590,7 @@ function caseDetail(c){
     <div class="left">${img ? `${imgTag(c)}<div class="credit">${c.image.page ? `<a href="${esc(c.image.page)}" target="_blank" rel="noopener">${credit(c.image)}</a>` : credit(c.image)}</div>`
       : `<canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button><span class="ctrl-note"><span class="note-full">示意圖：以 ${a.id} 的網頁版程式重現概念，非原作</span><span class="note-short">示意圖・非原作</span></span></div></div>`}</div>
     <div class="right">
-      <div class="kicker">${badge("case", true)} ${chain(tFam(a.family,true), tAlgo(a.id))} ${tCat(c.category)}${isCC(c) ? ccBadge : ""}<span class="kick-m">案例・${a.id} ${esc(a.name_zh)}</span></div>
+      <div class="kicker">${badge("case", true)} ${chain(tFam(a.family,true), tAlgo(a.id))} ${tCat(c.category)}${srcBadge(SRC(c))}<span class="kick-m">案例・${a.id} ${esc(a.name_zh)}</span></div>
       <h2 style="font-size:28px">${esc(c.title)}</h2><div class="en">${esc(c.creator)}${c.year ? "・"+esc(c.year) : ""}</div>
       <div class="facts">
         <div class="fact"><div class="ico">${ico(SCALE_ICON[c.scale] || "c-3d-architecture")}</div><small>尺度</small>${c.scale ? tAttr(SCALE_ICON[c.scale] || "c-3d-architecture", c.scale, "尺度") : "—"}</div>
@@ -626,7 +629,7 @@ document.getElementById("legend").innerHTML = `
   <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div></details>
   <details class="lg-grp"${FOLD()}><summary class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</summary>
   <div class="lg"><span>${badge("case", true)}</span><p><b>④ 卡片類型</b>圓章，只出現在圖片左上：演算法（黑）／變形（虛線）／案例（白）／專案發想（黑）。</p></div>
-  <div class="lg"><span>${ccBadge}</span><p><b>來源</b>creative coding 案例（p5.js、Processing 等）在圖片右上多一個標記。</p></div>
+  <div class="lg"><span>${srcBadge("research")} ${srcBadge("art")}</span><p><b>來源</b>圖片右上的標記：數位研究（建築專案、論文、工具、分析）／藝術設計（p5.js、Processing 等 creative coding 作品、生成藝術、圖樣與裝置）。兩類案例數量相同。</p></div>
   <div class="lg"><span>${tCat("3d-architecture")}</span><p><b>⑤ 應用類型</b>灰底膠囊＋圖示。案例用在哪個領域（8 類）。</p></div>
   <div class="lg"><span>${tAttr("i-logic-rewrite","改寫／遞迴")}</span><p><b>⑥ 屬性</b>方角細框。邏輯、資料結構、尺度、工具、改哪裡。</p></div>
   <div class="lg"><span>${tKw("遞迴")}</span><p><b>⑦ 關鍵字</b>沒有框，# 開頭，用來搜尋。</p></div>
@@ -638,8 +641,8 @@ lg.querySelector(".lg-close").onclick = () => legendOn(false);
 document.addEventListener("click", e => { if(!lg.contains(e.target)) legendOn(false); });
 
 function wireInfo(){
-  const nV = ALGOS.reduce((s,a) => s + a.variations.length, 0), nS = ALGOS.reduce((s,a) => s + (a.project_seeds||[]).length, 0), nCC = CASES.filter(isCC).length;
-  sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length,"應用案例"],[nCC,"creative coding 案例"],[nV,"變形食譜"],[nS,"專案發想"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
+  const nV = ALGOS.reduce((s,a) => s + a.variations.length, 0), nS = ALGOS.reduce((s,a) => s + (a.project_seeds||[]).length, 0), nArt = CASES.filter(c => SRC(c) === "art").length;
+  sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length - nArt,"數位研究案例"],[nArt,"藝術設計案例"],[nV,"變形食譜"],[nS,"專案發想"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
   sheet.querySelector("#iFams").innerHTML = Object.keys(CAT.families).map(f => { const list = ALGOS.filter(a => a.family === f);
     return `<details class="ifam"${FOLD()}><summary>${tFam(f)}<span class="ifam-n">${list.length}</span></summary><div class="list">${list.map(a => `<button class="linkchip" data-open="algo:${a.id}">${tAlgo(a.id)}</button>`).join("")}</div></details>`; }).join("");
   if(MQ.matches) sheet.querySelectorAll("details.fold").forEach(d => d.open = false);
