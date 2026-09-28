@@ -31,6 +31,30 @@
         "因為所有弧都停在邊中點，相鄰格的弧必然首尾相接，整體浮現連續曲線與封閉圈。",
         "輸出所有圓弧（arcs）與每格外框（tiles）。"
       ],
+      "pseudo_code": [
+        "public class Script_Instance",
+        "  private void RunScript(…)",
+        "    輸入 columns, rows, tileSize, seed",
+        "    輸出 arcs, tiles",
+        "",
+        "    // 0. 防呆",
+        "    格數 < 1 或 tileSize ≤ 0 → 結束",
+        "",
+        "    // 1. DATA 資料",
+        "    隨機數（seed）、圓弧清單、格子外框清單",
+        "",
+        "    // 4. OUTPUT 輸出",
+        "    對每一格：",
+        "      擲硬幣決定轉不轉 90 度",
+        "      放兩段圓弧、記格子外框",
+        "    圓弧 → arcs",
+        "    外框 → tiles",
+        "",
+        "  // ----- RunScript 下方 -----",
+        "  TileArcs：左下＋右上，或右下＋左上，兩段半格圓弧",
+        "  QuarterArc：以圓心為中心轉 90 度 → 圓弧",
+        "  TileOutline：四個角連成框"
+      ],
       "key_params": [
         {
           "name": "columns / rows",
@@ -262,6 +286,32 @@
         "以外積 Z × 邊方向求得內側法向量，把邊方向與法向量按 cos/sin(contactAngle) 混合，得到朝角點 B 往內偏的兩條射線。",
         "RaysMeet 用 2D 行列式解兩射線交點；只保留兩者都往前（distance > 0）的交點。",
         "從兩個中點各連一條線到交點；因相鄰多邊形共用邊中點，所有星形自動連成一張連續網。"
+      ],
+      "pseudo_code": [
+        "public class Script_Instance",
+        "  private void RunScript(…)",
+        "    輸入 columns, rows, tileSize, contactAngle",
+        "    輸出 patternLines, tiles",
+        "",
+        "    // 0. 防呆",
+        "    格數 < 1 或 tileSize ≤ 0 → 結束",
+        "    contactAngle 不在 0～90 → 改 67.5",
+        "",
+        "    // 1. DATA 資料",
+        "    底圖多邊形（八角形＋小正方形）",
+        "    contactAngle 轉弧度",
+        "",
+        "    // 4. OUTPUT 輸出",
+        "    對每個多邊形：",
+        "      丟給 HankinLines 得星線",
+        "      外框首尾相連",
+        "    星線 → patternLines",
+        "    外框 → tiles",
+        "",
+        "  // ----- RunScript 下方 -----",
+        "  HankinLines：邊中點斜射（contactAngle），兩線交會 → 連線",
+        "  BuildTiling：每格中心放正八角形，格線交點放轉 45 度小正方形",
+        "  RaysMeet：兩射線的交點；平行或交在背後 → 沒有"
       ],
       "key_params": [
         {

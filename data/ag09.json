@@ -32,6 +32,31 @@
         "半徑 = spacing × √number；開根號讓每一圈的面積相同，點的密度因此均勻（Vogel 1979 的 Fermat 螺旋）。",
         "用極座標 (cos, sin) × 半徑得到 Point3d，並依編號由內到外放大圓的半徑作為視覺輸出。"
       ],
+      "pseudo_code": [
+        "public class Script_Instance",
+        "  private void RunScript(…)",
+        "    輸入 count, spacing, angle",
+        "    輸出 points, circles",
+        "",
+        "    // 0. 防呆",
+        "    count < 1 或 spacing ≤ 0 → 結束",
+        "    angle 沒接 → 用黃金角",
+        "",
+        "    // 1. DATA 資料",
+        "    點清單、圓清單",
+        "    angle 度 → 弧度",
+        "",
+        "    // 4. OUTPUT 輸出",
+        "    對編號 1～count 的每個點：",
+        "      丟給 PointAt 算位置",
+        "      以該點為圓心畫圓，越外圈越大（0.1～0.5 倍 spacing）",
+        "    點 → points",
+        "    圓 → circles",
+        "",
+        "  // ----- RunScript 下方 -----",
+        "  Fields：黃金角 137.508",
+        "  PointAt：編號 → 位置，轉 編號 × angle，離中心 spacing × √編號"
+      ],
       "key_params": [
         {
           "name": "count",
