@@ -575,4 +575,151 @@ ART.case["B02-14"] = function(g, W, H, r, c, U){
   g.strokeStyle = U.rgba(c, .9); g.lineWidth = 1; g.beginPath(); g.arc(px, py, pr + 4, 0, TAU); g.stroke();
 };
 ART.case["B02-14"].ratio = 1.1;
+
+/* ---------------- V13–V15 新增核心：三種脫離「隨機行走＋黏著」框架的規則 ---------------- */
+// 白蟻式晶格建造：整數格子上的代理人隨機走位，走到空格就依「面鄰格磚數＋正下方有無支撐」規則決定放不放磚
+// o: nx,ny,nz；seeds [[x,y,z]]；start；steps；maxBricks；minFace,maxFace
+function termite(r, o){
+  const nx = o.nx, ny = o.ny, nz = o.nz, id = (x,y,z) => (y*nz + z)*nx + x;
+  const built = new Uint8Array(nx*ny*nz), P = [];
+  const add = (x,y,z) => { built[id(x,y,z)] = 1; P.push({x, y, z}); };
+  o.seeds.forEach(s => { if(!built[id(s[0],s[1],s[2])]) add(s[0], s[1], s[2]); });
+  let x = o.start[0], y = o.start[1], z = o.start[2], bricks = P.length;
+  const D = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+  for(let st = 0; st < o.steps && bricks < o.maxBricks; st++){
+    // 每隔一段步數，代理人跳回結構上一顆已放的磚旁邊重新出發，避免在空曠處迷路浪費步數
+    if(st % 320 === 0 && P.length){ const q = P[(r()*P.length)|0]; x = q.x; y = q.y; z = q.z; }
+    const dx = ((r()*3)|0) - 1, dy = ((r()*3)|0) - 1, dz = ((r()*3)|0) - 1, nX = x + dx, nY = y + dy, nZ = z + dz;
+    if(nX >= 1 && nY >= 0 && nZ >= 1 && nX < nx-1 && nY < ny && nZ < nz-1 && !built[id(nX,nY,nZ)]){ x = nX; y = nY; z = nZ; }
+    if(built[id(x,y,z)]) continue;
+    let fn = 0;
+    for(const [ddx,ddy,ddz] of D){ const xx = x+ddx, yy = y+ddy, zz = z+ddz;
+      if(xx >= 0 && yy >= 0 && zz >= 0 && xx < nx && yy < ny && zz < nz && built[id(xx,yy,zz)]) fn++; }
+    const below = y === 0 || built[id(x,y-1,z)], archOK = !below && fn >= 2 && r() < .18;
+    if((below || archOK) && fn >= o.minFace && fn <= o.maxFace){ add(x, y, z); bricks++; }
+  }
+  return P;
+}
+// Eden 周界隨機生長：不做隨機行走，每輪直接從「周界」（貼著已長區域的空格）等機率挑一格長出
+// o: n；seeds [[x,y]]；count
+function eden(r, o){
+  const n = o.n, built = new Uint8Array(n*n), inFront = new Uint8Array(n*n), front = [], P = [];
+  const idx = (x,y) => y*n + x, D = [[1,0],[-1,0],[0,1],[0,-1]];
+  const pushFront = (x,y) => { if(x < 1 || y < 1 || x >= n-1 || y >= n-1) return; const i = idx(x,y); if(built[i] || inFront[i]) return; inFront[i] = 1; front.push([x,y]); };
+  const add = (x,y) => { built[idx(x,y)] = 1; P.push({x,y}); D.forEach(([dx,dy]) => pushFront(x+dx, y+dy)); };
+  o.seeds.forEach(([x,y]) => { if(!built[idx(x,y)]) add(x,y); });
+  for(let k = 0; k < o.count && front.length; k++){
+    const j = (r()*front.length)|0, [x,y] = front[j];
+    front[j] = front[front.length-1]; front.pop(); inFront[idx(x,y)] = 0;
+    if(built[idx(x,y)]){ k--; continue; }
+    add(x,y);
+  }
+  return P;
+}
+// Lévy flight 步長：出發後每一步的位移長度取自冪次律（Pareto），沿路徑逐格檢查是否碰到群集
+// o: n,m；seeds [[x,y]]；cx,cy；N；alpha；stepSize；maxJump；maxSteps；maxRad；budget；trails（可選，收集長跳線段做視覺化）
+function levy(r, o){
+  const n = o.n, m = o.m || n, G = new Int32Array(n*m), P = [];
+  const add = (x,y,p) => { G[y*n+x] = P.length + 1; P.push({x, y, p}); };
+  o.seeds.forEach(s => { if(!G[s[1]*n+s[0]]) add(s[0], s[1], -1); });
+  const cx = o.cx ?? n/2, cy = o.cy ?? m/2;
+  let rad = 2; for(const q of P) rad = Math.max(rad, Math.hypot(q.x-cx, q.y-cy));
+  let budget = o.budget || 300000;
+  while(P.length < o.N && budget > 0){
+    budget--;
+    const a0 = r()*TAU, R = rad + 4;
+    let x = cx + Math.cos(a0)*R, y = cy + Math.sin(a0)*R;
+    if(x < 1 || y < 1 || x > n-2 || y > m-2) continue;
+    const kill = rad + Math.max(14, rad*.7);
+    for(let st = 0; st < o.maxSteps; st++){
+      budget--;
+      const ang = r()*TAU, len = Math.min(o.maxJump, o.stepSize*Math.pow(Math.max(1e-6, 1-r()), -1/o.alpha));
+      const nx = x + Math.cos(ang)*len, ny = y + Math.sin(ang)*len;
+      const dist = Math.hypot(nx-x, ny-y), steps = Math.max(1, Math.min(200, Math.ceil(dist)));
+      let done = false;
+      for(let k = 1; k <= steps; k++){
+        const tx = x + (nx-x)*k/steps, ty = y + (ny-y)*k/steps, ix = Math.round(tx), iy = Math.round(ty);
+        if(ix < 1 || iy < 1 || ix > n-2 || iy > m-2){ done = true; break; }
+        const i = iy*n + ix, nb = G[i-1] || G[i+1] || G[i-n] || G[i+n];
+        if(nb){ add(ix, iy, nb-1); rad = Math.max(rad, Math.hypot(ix-cx, iy-cy));
+          if(o.trails && dist > o.stepSize*4 && o.trails.length < 60) o.trails.push([x, y, tx, ty, dist]);
+          done = true; break; }
+      }
+      if(done) break;
+      x = nx; y = ny;
+      if(Math.hypot(x-cx, y-cy) > kill) break;
+    }
+    if(rad > o.maxRad) break;
+  }
+  return P;
+}
+
+/* ---------------- 新增變形 V13–V15 ---------------- */
+// V13 白蟻式晶格建造：建築剖面圖──沿切面剖開，露出牆、柱、拱與內部空腔，左上角附平面圖標示切面位置
+ART.var["B02"][12] = function(g, W, H, r, c, U){
+  const nx = 26, ny = 16, nz = 26, seeds = [];
+  for(let gx = 0; gx < 3; gx++) for(let gz = 0; gz < 3; gz++) seeds.push([8 + gx*5, 0, 8 + gz*5]); // 3×3 柱網種子
+  for(let k = 0; k < 10; k++) seeds.push([9 + ((r()*9)|0), 0, 9 + ((r()*9)|0)]); // 地面隨機種子補牆體
+  const P = termite(r, {nx, ny, nz, seeds, start:[13,0,13], steps:70000, maxBricks:2200, minFace:0, maxFace:4});
+  const built = new Set(); P.forEach(q => built.add(q.x + "," + q.y + "," + q.z));
+  const has = (x,y,z) => built.has(x + "," + y + "," + z);
+  const zc = 13, S = Math.min(W/(nx*1.05), (H*.78)/ny), ox = W/2 - nx*S/2, gy = H*.86;
+  const sx = x => ox + x*S, sy = y => gy - (y+1)*S;
+  g.fillStyle = "#3A342C"; g.fillRect(0, gy, W, H - gy);
+  g.strokeStyle = "rgba(255,255,255,.06)"; for(let k = 0; k <= nx; k += 2){ g.beginPath(); g.moveTo(sx(k), gy); g.lineTo(sx(k), H); g.stroke(); }
+  for(let y = 0; y < ny; y++) for(let x = 0; x < nx; x++){ let behind = false; for(let z = zc+1; z < nz; z++) if(has(x,y,z)){ behind = true; break; }
+    if(behind){ g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(sx(x), sy(y), S+.5, S+.5); } }
+  for(let y = 0; y < ny; y++) for(let x = 0; x < nx; x++){ if(!has(x,y,zc)) continue;
+    const t = y/ny; g.fillStyle = mix("#8A7659", "#D9C79E", t*.6); g.fillRect(sx(x), sy(y), S+.5, S+.5);
+    g.save(); g.beginPath(); g.rect(sx(x), sy(y), S+.5, S+.5); g.clip();
+    g.strokeStyle = "rgba(60,45,25,.4)"; g.lineWidth = 1; for(let k = -S; k < S*2; k += 4){ g.beginPath(); g.moveTo(sx(x)+k, sy(y)+S); g.lineTo(sx(x)+k+S, sy(y)); g.stroke(); }
+    g.restore(); g.strokeStyle = "rgba(20,14,8,.55)"; g.lineWidth = 1; g.strokeRect(sx(x), sy(y), S+.5, S+.5); }
+  g.strokeStyle = U.rgba(c, .85); g.lineWidth = 2; g.beginPath(); g.moveTo(0, gy+2); g.lineTo(W, gy+2); g.stroke();
+  const iw = W*.22, ih = iw, ix = 10, iy = 10, ps = iw/nx;
+  g.fillStyle = "rgba(0,0,0,.45)"; g.fillRect(ix, iy, iw, ih); g.strokeStyle = "rgba(255,255,255,.3)"; g.strokeRect(ix, iy, iw, ih);
+  g.fillStyle = U.rgba(c, .8);
+  for(let z = 0; z < nz; z++) for(let x = 0; x < nx; x++){ let any = false; for(let y = 0; y < ny; y++) if(has(x,y,z)){ any = true; break; }
+    if(any) g.fillRect(ix + x*ps, iy + z*ps, ps+.3, ps+.3); }
+  g.strokeStyle = ACC; g.lineWidth = 1; g.beginPath(); g.moveTo(ix, iy + zc*ps); g.lineTo(ix + iw, iy + zc*ps); g.stroke();
+};
+// V14 Eden 周界隨機生長：左右並排兩只培養皿──左邊是有擴散篩選的 DLA 稀疏分枝，右邊是 Eden 生長的實心團塊
+ART.var["B02"][13] = function(g, W, H, r, c, U){
+  const pad = 10, dw = (W - pad*3)/2;
+  const mkDish = ox => { const cx = ox + dw/2, cy = H*.5, R = Math.min(dw, H*.82)/2 - 4;
+    g.fillStyle = "#171A16"; g.beginPath(); g.arc(cx, cy, R+6, 0, TAU); g.fill();
+    const ag = g.createRadialGradient(cx, cy, 0, cx, cy, R); ag.addColorStop(0, "rgba(120,150,90,.18)"); ag.addColorStop(1, "rgba(80,100,60,.05)");
+    g.fillStyle = ag; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill(); return {cx, cy, R}; };
+  const L = mkDish(pad), Rd = mkDish(pad*2 + dw);
+  const n1 = 70, P1 = dla(r, {n:n1, seeds:[[35,35]], N:500, maxRad:31, budget:700000}), s1 = (L.R*1.8)/n1, d1 = desc(P1);
+  tree(g, P1, q => [L.cx + (q.x-35)*s1, L.cy + (q.y-35)*s1], i => Math.min(2, .6 + Math.sqrt(d1[i])*.15), () => "rgba(226,242,228,.75)");
+  const n2 = 90, P2 = eden(r, {n:n2, seeds:[[45,45]], count:2300}), s2 = (Rd.R*1.85)/n2;
+  P2.forEach((q,i) => { const t = i/P2.length; g.fillStyle = mix(c, "#E2F2E4", t*.7); g.fillRect(Rd.cx + (q.x-45)*s2 - .6, Rd.cy + (q.y-45)*s2 - .6, s2*1.05, s2*1.05); });
+  [L, Rd].forEach(({cx, cy, R}) => { g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1.5; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.stroke();
+    g.fillStyle = "rgba(255,255,255,.08)"; g.beginPath(); g.ellipse(cx - R*.4, cy - R*.5, R*.28, R*.14, -.4, 0, TAU); g.fill(); });
+  g.strokeStyle = "rgba(255,255,255,.15)"; g.setLineDash([3,4]); g.beginPath(); g.moveTo(W/2, H*.1); g.lineTo(W/2, H*.9); g.stroke(); g.setLineDash([]);
+  g.fillStyle = ACC; g.beginPath(); g.arc(L.cx, L.cy, 2.2, 0, TAU); g.fill(); g.beginPath(); g.arc(Rd.cx, Rd.cy, 2.2, 0, TAU); g.fill();
+};
+// V15 Lévy flight 步長：低 alpha 的厚實團塊，背景是取樣到的長跳彗尾＋跳躍長度直方圖，右上角附高 alpha 的細碎版縮圖對照
+ART.var["B02"][14] = function(g, W, H, r, c, U){
+  const n = 90, m = Math.round(n*H/W), s = W/n, cx = n/2, cy = m/2, trails = [];
+  const P = levy(r, {n, m, seeds:[[cx|0, cy|0]], cx, cy, N:820, alpha:1.1, stepSize:1.3, maxJump:n*.8, maxSteps:60, maxRad:Math.min(n,m)*.46, budget:280000, trails});
+  const d = desc(P), f = q => [(q.x+.5)*s, (q.y+.5)*s];
+  g.lineCap = "round";
+  trails.sort((a,b) => a[4]-b[4]).forEach(([x0,y0,x1,y1,dist]) => {
+    const gr = g.createLinearGradient(x0*s, y0*s, x1*s, y1*s); gr.addColorStop(0, "rgba(255,255,255,0)"); gr.addColorStop(1, U.rgba(c, .55));
+    g.strokeStyle = gr; g.lineWidth = Math.min(2.2, .6 + dist*.02); g.beginPath(); g.moveTo(x0*s, y0*s); g.lineTo(x1*s, y1*s); g.stroke(); });
+  tree(g, P, f, i => Math.min(6, 1.6 + Math.sqrt(d[i])*.4), i => mix("#123018", c, Math.min(1, d[i]/40)));
+  g.fillStyle = "#fff"; g.beginPath(); g.arc(f(P[0])[0], f(P[0])[1], 2.5, 0, TAU); g.fill();
+  const iw = W*.24, ih = iw*m/n, ix = W - iw - 8, iy = 8;
+  g.fillStyle = "rgba(0,0,0,.45)"; g.fillRect(ix, iy, iw, ih); g.strokeStyle = "rgba(255,255,255,.3)"; g.strokeRect(ix, iy, iw, ih);
+  const n2 = 60, m2 = Math.round(n2*ih/iw), P2 = levy(r, {n:n2, m:m2, seeds:[[n2/2|0, m2/2|0]], N:260, alpha:2.6, stepSize:1, maxJump:n2*.5, maxSteps:50, maxRad:Math.min(n2,m2)*.44, budget:150000}), is = iw/n2;
+  tree(g, P2, q => [ix + (q.x+.5)*is, iy + (q.y+.5)*is], () => .7, () => "rgba(226,242,228,.8)");
+  const bw = W*.26, bh = H*.16, bx = 8, by = H - bh - 8;
+  g.fillStyle = "rgba(0,0,0,.4)"; g.fillRect(bx, by, bw, bh);
+  const bins = 10, cnt = new Array(bins).fill(0), maxLen = Math.log(n);
+  trails.forEach(([,,,,dist]) => { const k = Math.min(bins-1, Math.max(0, Math.floor(Math.log(Math.max(1,dist))/maxLen*bins))); cnt[k]++; });
+  const mxc = Math.max(1, ...cnt);
+  g.fillStyle = ACC; cnt.forEach((v,k) => { const bh2 = (v/mxc)*(bh-8); g.fillRect(bx + 4 + k*(bw-8)/bins, by + bh - 4 - bh2, (bw-8)/bins - 1, bh2); });
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.strokeRect(bx, by, bw, bh);
+};
 })();

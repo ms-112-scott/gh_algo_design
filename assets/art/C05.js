@@ -232,6 +232,78 @@ ART.var["C05"] = [
   },
 ];
 
+/* ---- V13、V14：新增於既有陣列之後，避免動到既有 12 個畫法的排列 ---- */
+// V13 逃逸時間分形場：Mandelbrot 全貌（滿版著色＋巢狀等值線）＋右上角同一 c 值的 Julia 局部框
+ART.var["C05"][12] = function(g, W, H, r, c){
+  const maxIter = 60;
+  const cxC = -.52 + (r()-.5)*.1, cyC = (r()-.5)*.08, zoom = 1 + r()*.35;
+  const ax = 1.5/zoom, ay = ax*H/W;
+  const n = 84, S = W/(n-1), m = Math.floor(H/S)+1;
+  const mIter = (i,j) => {
+    let x = 0, y = 0, x2 = 0, y2 = 0, k = 0;
+    const cx = cxC + (i/(n-1) - .5)*2*ax, cy = cyC + (j/(m-1) - .5)*2*ay;
+    while(x2 + y2 <= 4 && k < maxIter){ y = 2*x*y + cy; x = x2 - y2 + cx; x2 = x*x; y2 = y*y; k++; }
+    return k;
+  };
+  const f = grid(n, m, mIter);
+  // 底色：逃逸步數映射色階，集合內部最暗、外圍逐漸亮到近白
+  paint(g, 0, 0, W, H, 2.2, (u,v) => {
+    const i = Math.min(n-1, (u*n)|0), j = Math.min(m-1, (v*m)|0), it = f(i,j);
+    if(it >= maxIter) return [12,12,16,255];
+    const t = Math.pow(it/maxIter, .45), col = t < .55 ? mixc([12,12,16], U.rgb(c), t/.55) : mixc(U.rgb(c), [250,246,240], (t-.55)/.45);
+    return [col[0], col[1], col[2], 255];
+  });
+  // 巢狀等值線：門檻愈密集＝愈靠近邊界愈細碎
+  const T = (i,j) => [i*S, j*S], lv = [2,4,7,10,14,18,23,29,36,44,53];
+  g.lineWidth = 1; lv.forEach((L,k) => { g.strokeStyle = sh(c, .6 + k*.06, .3 + k*.05); iso(g, n, m, f, L, T); });
+  // 同一 c 點在畫面正中央（toC 中心即 cxC,cyC），加上十字標記
+  const mx = W/2, my = H/2;
+  g.strokeStyle = "#fff"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(mx-5,my); g.lineTo(mx+5,my); g.moveTo(mx,my-5); g.lineTo(mx,my+5); g.stroke();
+  // 右上角：同一 c 值的 Julia 局部框
+  const bs = Math.min(W,H)*.34, bx = W - bs - 10, by = 10;
+  g.setLineDash([3,3]); g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.beginPath(); g.moveTo(mx,my); g.lineTo(bx, by+bs); g.stroke(); g.setLineDash([]);
+  g.fillStyle = "#101015"; g.fillRect(bx, by, bs, bs);
+  const jn = 46, jS = bs/(jn-1);
+  const jf = grid(jn, jn, (i,j) => {
+    let x = (i/(jn-1) - .5)*3, y = (j/(jn-1) - .5)*3, x2 = x*x, y2 = y*y, k = 0;
+    while(x2 + y2 <= 4 && k < maxIter){ y = 2*x*y + cyC; x = x2 - y2 + cxC; x2 = x*x; y2 = y*y; k++; }
+    return k;
+  });
+  g.save(); g.beginPath(); g.rect(bx, by, bs, bs); g.clip();
+  [3,6,10,15,21,28,36].forEach((L,k) => { g.strokeStyle = sh(c, .8 + k*.08, .9); g.lineWidth = 1; iso(g, jn, jn, jf, L, (i,j) => [bx + i*jS, by + j*jS]); });
+  g.restore();
+  g.strokeStyle = "#fff"; g.lineWidth = 1.4; g.strokeRect(bx+.5, by+.5, bs-1, bs-1);
+};
+// V14 Superformula 形狀場：上方單一星形／花瓣剖面圖解（角度輻射線），下方多中心融合成的花瓣狀水池平面
+ART.var["C05"][13] = function(g, W, H, r, c){
+  function sform(th, m, n1, n2, n3, a, b){ const t = m*th/4; const term = Math.pow(Math.abs(Math.cos(t))/a, n2) + Math.pow(Math.abs(Math.sin(t))/b, n3); return Math.pow(term + 1e-6, -1/n1); }
+  const topH = H*.42, botY = topH + H*.06, botH = H - botY;
+  // ---- 上：單一超公式剖面，角度輻射線 + 外框刻度圓 ----
+  const m0 = 3 + ((r()*6)|0), n1 = .4 + r()*1.8, n2 = .6 + r()*2.6, n3 = .6 + r()*2.6;
+  const cx0 = W/2, cy0 = topH/2, R0 = Math.min(W, topH)*.4;
+  const N = 240; let mxR = 0; const raw = [];
+  for(let k = 0; k <= N; k++){ const th = k/N*TAU, rr = sform(th, m0, n1, n2, n3, 1, 1); raw.push(rr); mxR = Math.max(mxR, rr); }
+  const pts = raw.map((rr,k) => { const th = k/N*TAU, rs = rr/mxR*R0; return [cx0 + Math.cos(th)*rs, cy0 + Math.sin(th)*rs]; });
+  g.strokeStyle = "rgba(255,255,255,.1)"; g.lineWidth = 1;
+  for(let k = 0; k < 16; k++){ const th = k/16*TAU; g.beginPath(); g.moveTo(cx0, cy0); g.lineTo(cx0 + Math.cos(th)*R0*1.14, cy0 + Math.sin(th)*R0*1.14); g.stroke(); }
+  g.beginPath(); g.arc(cx0, cy0, R0*1.14, 0, TAU); g.strokeStyle = "rgba(255,255,255,.14)"; g.stroke();
+  g.fillStyle = sh(c, .55, .4); pl(g, pts, true); g.fill();
+  g.strokeStyle = "#fff"; g.lineWidth = 1.6; pl(g, pts, true); g.stroke();
+  g.fillStyle = c; g.beginPath(); g.arc(cx0, cy0, 2.4, 0, TAU); g.fill();
+  // ---- 下：多中心疊加，各自一組 m／n1／n2／n3／旋轉角，融合成花瓣狀水池平面 ----
+  const n = 90, S = W/(n-1), rows = Math.floor(botH/S)+1;
+  const K = 3 + ((r()*2)|0), cs = [];
+  for(let k = 0; k < K; k++) cs.push({ x: n*(.2 + r()*.6), y: rows*(.2 + r()*.6), m: 3 + ((r()*6)|0), n1: .5 + r()*1.6, n2: .7 + r()*2.2, n3: .7 + r()*2.2, rot: r()*TAU, R: n*(.1 + r()*.05) });
+  const f = grid(n, rows, (i,j) => { let s = 0; for(const b of cs){ const dx = i-b.x, dy = j-b.y, th = Math.atan2(dy,dx) - b.rot, d = Math.hypot(dx,dy) + .6, Rt = sform(th, b.m, b.n1, b.n2, b.n3, 1, 1)*b.R; s += (Rt*Rt)/(d*d); } return s; });
+  const T = (i,j) => [i*S, botY + j*S];
+  g.save(); g.beginPath(); g.rect(0, botY, W, botH); g.clip();
+  paint(g, 0, botY, W, botH, 2.4, (u,v) => { const i = Math.min(n-1, (u*n)|0), j = Math.min(rows-1, (v*rows)|0); return f(i,j) > 1 ? [...U.rgb(c), 55] : null; });
+  g.lineWidth = 1.3; [.6, 1, 1.5, 2.3].forEach((lv,k) => { g.strokeStyle = k === 1 ? "#fff" : sh(c, .9 + k*.12, .85); iso(g, n, rows, f, lv, T); });
+  g.restore();
+  cs.forEach(b => { const p = T(b.x, b.y); g.fillStyle = "#fff"; g.beginPath(); g.arc(p[0], p[1], 1.8, 0, TAU); g.fill(); });
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, botY); g.lineTo(W, botY); g.stroke();
+};
+
 /* ================= 無照片案例 ================= */
 // C05-01 Marching Cubes 醫學影像：CT 斷層切片＋等值輪廓，右下角一個立方體單元
 ART.case["C05-01"] = function(g, W, H, r, c){
