@@ -153,6 +153,36 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 .chip[aria-pressed=true]{background:var(--ink);color:#fff}
 .chip .dot{width:10px;height:10px;border-radius:50%}
 .chiprow .sep{width:1px;background:var(--line);margin:6px 4px;flex:none}
+/* 左右捲動提示：還有內容的那一側出現漸層與箭頭 */
+.clwrap{position:relative;min-width:0}
+.clwrap::before,.clwrap::after{content:"";position:absolute;top:0;bottom:0;width:56px;pointer-events:none;opacity:0;transition:opacity var(--t-fast);z-index:1}
+.clwrap::before{left:0;background:linear-gradient(90deg,var(--paper) 35%,rgba(245,242,236,0))}
+.clwrap::after{right:0;background:linear-gradient(270deg,var(--paper) 35%,rgba(245,242,236,0))}
+.clwrap.can-l::before,.clwrap.can-r::after{opacity:1}
+.clarr{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;opacity:0;pointer-events:none;box-shadow:0 2px 8px rgba(23,23,28,.10);transition:opacity var(--t-fast)}
+.clarr svg.i{width:16px;height:16px}
+.clarr.l{left:0}.clarr.r{right:0}
+.clwrap.can-l .clarr.l,.clwrap.can-r .clarr.r{opacity:1;pointer-events:auto}
+.clwrap.can-r .clarr.r{animation:nudge 1.4s var(--ease-out) 2}
+@keyframes nudge{0%,100%{transform:translate(0,-50%)}50%{transform:translate(5px,-50%)}}
+/* 家族＋演算法：家族可展開／合併，展開後演算法接在家族後面 */
+.famgroup{display:flex;align-items:center;gap:2px;flex:none;border-radius:14px;padding:0 2px;transition:background var(--t-fast)}
+.famgroup.open{background:#ECE8E0;padding-right:8px}
+.fexp{display:inline-flex;align-items:center;gap:1px;height:28px;min-width:28px;padding:0 5px;border:0;border-radius:999px;background:none;color:var(--mute);
+  font:700 11px "JetBrains Mono",ui-monospace,monospace}
+.fexp:hover{background:rgba(23,23,28,.07);color:var(--ink)}
+.fexp svg.i{width:14px;height:14px}
+.falgos{display:inline-flex;align-items:center;gap:2px;animation:fopen var(--t-med) var(--ease-out)}
+@keyframes fopen{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.fcount{font:700 11px "JetBrains Mono",ui-monospace,monospace;background:var(--ink);color:#fff;border-radius:999px;padding:1px 7px;margin-left:-2px}
+/* 虛擬碼 */
+.pseudo{margin:0;background:var(--tile);color:#E9E6DF;border-radius:var(--r-sm);padding:18px 20px;overflow-x:auto;
+  font:500 14px/1.75 "JetBrains Mono","Noto Sans TC",ui-monospace,monospace;white-space:pre;tab-size:2}
+.pseudo .kw{color:#fff;font-weight:700}
+.pseudo .op{color:var(--fam)}
+.pseudo .pv{color:#9FD2FF}
+.pseudo .cm{color:#8C8880}
 
 /* ---------- masonry ---------- */
 .feed{padding:12px 20px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));grid-auto-rows:4px;column-gap:16px}
@@ -397,6 +427,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
   .pin .cap b{font-size:13px}.sample-flag{display:none}
 }
 @media (prefers-reduced-motion:reduce){
+  .clwrap.can-r .clarr.r,.falgos{animation:none}
   *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
   .pin,.step,.arrow{opacity:1;transform:none}
 }
@@ -413,6 +444,8 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
   <symbol id="i-open" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
   <symbol id="i-algo" viewBox="0 0 24 24"><path d="M12 21V11M12 11 7 6M12 11l5-5M7 6V3M17 6V3M12 16l-4-3M12 16l4-3"/></symbol>
   <symbol id="i-var" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6M18 15V9"/><path d="m15 6 3-3 3 3"/></symbol>
   <symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
@@ -490,7 +523,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
     <div class="isteps">
       <div><b><svg class="i"><use href="#i-eye"/></svg>1　逛圖</b><p>瀑布流裡混著演算法、變形、案例與專案。看到喜歡的形，就是起點。</p></div>
       <div><b><svg class="i"><use href="#i-code"/></svg>2　看懂怎麼運作</b><p>點開演算法，用圖示拆解步驟、看關鍵參數與用到的 C# 觀念。</p></div>
-      <div><b><svg class="i"><use href="#i-var"/></svg>3　改成自己的</b><p>從變形挑一個改法，或參考案例與專案種子，組合出自己的演算法應用。</p></div>
+      <div><b><svg class="i"><use href="#i-var"/></svg>3　改成自己的</b><p>從變形挑一個改法，或參考案例與專案發想，組合出自己的演算法應用。</p></div>
     </div></section>
   <section class="sec"><h3><svg class="i"><use href="#i-grid"/></svg>六大家族 <small>家族看「長出來像什麼」；編號＝家族字母＋兩位數</small></h3><div class="ifams" id="iFams"></div></section>
   <section class="sec"><h3><svg class="i"><use href="#i-logic-iterate"/></svg>五種演算法邏輯 <small>看到一個演算法，先問：在變的是什麼、靠哪種邏輯算出來</small></h3>
