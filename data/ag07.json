@@ -153,6 +153,27 @@
           "what_changes": "規則／混合其他家族",
           "how": "改用網格計算電位場（Laplace 疊代，類似 C01 擴散），黏著位置依電場強度的 η 次方機率選擇，即 Dielectric Breakdown Model。",
           "result": "用參數 η 在緻密團塊與閃電狀細枝之間連續切換，更可控。"
+        },
+        {
+          "title": "白蟻式晶格建造（構形規則放磚）",
+          "level": 4,
+          "what_changes": "規則（黏著判斷改成依 26 鄰域構形查表）＋維度（連續空間 → 3D 整數晶格）",
+          "how": "把位置改成整數晶格座標，已放的磚存在 HashSet<(int x,int y,int z)> built；隨機方向改成從 26 個鄰格位移（dx,dy,dz ∈ {−1,0,1}，排除全 0）中亂數挑一個，且只能走進空格。每走一步，對所在空格掃 26 個鄰格，把「有磚」的位置依固定順序編成一個 int 位元遮罩 mask；新增輸入規則表 HashSet<int> buildRules（或簡化成：面鄰格有磚數在 minFace–maxFace 之間，且正下方有磚或 z == 0），若 buildRules.Contains(mask) 就 built.Add(cell)。和原本 DLA 不同的是：代理人放完磚不消失，只是從出發區重新出發繼續走，所以 MaxWalkSteps 改成總步數上限、另加 maxBricks 上限；原本的 FindNearest／stickDistance 對齊可以整段刪掉，因為晶格上是否相鄰直接查 HashSet。輸出時每個格子用 new Box(new BoundingBox(p, p + new Vector3d(1,1,1))) 轉成體素方塊，或依放磚順序輸出 List<int> 讓顏色表現先後。原本 DLA 其實就是「只要 mask != 0 就放」的特例，可以把這條規則當第一組對照。",
+          "result": "同樣是代理人亂走、碰到結構就決定要不要放，但換成構形規則後長出的不再是珊瑚樹枝，而是牆、柱、拱、分層樓板與內部空腔等像白蟻丘或蜂巢的有組織體素結構（Theraulaz 與 Bonabeau 1995 年的晶格群體 lattice swarms 即用這種查表規則生成類似巢穴的形態）。"
+        },
+        {
+          "title": "Eden 周界隨機生長",
+          "level": 2,
+          "what_changes": "規則（刪掉隨機行走，改成直接在群集周界隨機挑一格長出）",
+          "how": "改用 2D（或 3D）整數格子：built 用 HashSet<(int,int)> 存已長的格子，另一個 List<(int,int)> perimeter 加 HashSet 存「本身空、但至少有一個上下左右鄰格已長」的周界格。每一輪用 random.Next(perimeter.Count) 等機率挑一格，加進 built，並用「和最後一個元素交換再 RemoveAt」的方式 O(1) 移出周界清單，再檢查它的 4 個（3D 為 6 個）鄰格，是空的且不在周界就加入周界。整段 PointOnCircle 出發、逃逸圓、MaxWalkSteps 迴圈都刪掉，迴圈次數就是要長的格子數 count；父子連線可保留：新格記錄它相鄰且最早長出的那格當 stuckToIndex。進階可以不等機率挑，而是依格子鄰居數給權重（鄰居越多越容易長），比較外緣的粗糙度。",
+          "result": "得到一團接近圓形、內部完全實心、只有外緣凹凸不平的緻密團塊（像菌落、地衣或擴張中的聚落），可和同樣格子數的 DLA 並排比較「有擴散篩選」與「沒有擴散篩選」造成的形態差異，而且幾萬格也能瞬間算完。"
+        },
+        {
+          "title": "Lévy flight 步長（冪次律長跳）",
+          "level": 3,
+          "what_changes": "規則（隨機行走的步長分布由固定步長改成重尾冪次律）",
+          "how": "把每一步的 stepSize 改成從 Pareto 分布抽：len = stepSize × Math.Pow(1.0 − random.NextDouble(), −1.0 / alpha)，新增輸入 alpha（1.0–3.0，越小越常出現長跳），並用 maxJump 截斷避免飛出逃逸圓；方向仍用原本的隨機單位向量。因為長跳可能直接穿過群集，移動前要沿路徑檢查：把起點到終點切成每段不超過 stickDistance × 0.5 的小段，逐段呼叫 NearbyPointFinder／FindNearest，一旦找到 stickDistance 內的已黏點，就停在那一段並照原本規則黏住與對齊。原本「離群集越遠走越大步」的加速規則要關掉或只在逃逸圓外使用，否則看不出步長分布本身的影響。",
+          "result": "alpha 大時長跳很少，形態接近原本 DLA 的細碎樹枝；alpha 越小粒子越常直線長跳到群集外緣，較不容易被外側枝條擋住而鑽進凹處，枝條變粗、分支變少、整體更密實，趨近彈道聚集（ballistic aggregation）的外觀，用一個參數就能連續調整疏密。"
         }
       ],
       "project_seeds": [

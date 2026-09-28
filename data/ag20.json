@@ -140,6 +140,20 @@
           "what_changes": "規則（選擇方式）",
           "how": "每代輸出 9 組候選幾何排成九宮格，用 Value List 讓使用者點選喜歡的兩組當父母，取代 ScoreOf。",
           "result": "類似 Karl Sims Genetic Images 的美學演化，適合形式探索而非數值最佳化。"
+        },
+        {
+          "title": "換搜尋機制：粒子群最佳化（PSO）",
+          "level": 3,
+          "what_changes": "規則（搜尋機制：以速度更新取代選擇、交配、突變）",
+          "how": "保留 Candidate 的 Point3d[] 與 ScoreOf，另加 Vector3d[] velocity、Point3d[] pBest 與 double pBestScore 三個欄位；主迴圈刪掉精英保留、Tournament、均勻交配與 Mutate，改成每一代對每顆粒子的每個點做 v = w·v + c1·r1·(pBest − x) + c2·r2·(gBest − x)（新增輸入 inertia w 預設 0.72、c1 與 c2 預設 1.49，r1、r2 用同一個 Random 取 0–1），再 x += v；速度長度超過 maxSpeed 時用 Vector3d.Unitize 後乘 maxSpeed 截斷，點超出矩形邊界就夾回邊界並把該分量速度反向；算完 ScoreOf 若勝過 pBestScore 就把 points.Clone() 存進 pBest，再從所有 pBest 中取最高分更新 gBest。",
+          "result": "一樣輸出最佳點陣與收斂曲線，但整群方案像鳥群一樣朝目前最好的解飛去、收斂通常比 GA 快也較容易早熟；可和 F07 模擬退火（單點搜尋）並排，比較單點、族群（GA）、群體（PSO）三種搜尋在同一個 ScoreOf 上的收斂曲線，也是 Silvereye 這類 Grasshopper 最佳化外掛背後的機制。"
+        },
+        {
+          "title": "非支配排序多目標（NSGA-II／Pareto 前緣）",
+          "level": 4,
+          "what_changes": "規則（選擇方式：由單一分數排序改為非支配排序＋擁擠距離）",
+          "how": "Candidate 改存 double[] objectives 兩個目標（例如 f1 = ScoreOf 的最近距離要最大、f2 = 所有點到邊界 Curve 的平均距離要最小，用 Curve.ClosestPoint 求得）；寫 Dominates(a, b)（每個目標都不差且至少一個更好）與 FastNonDominatedSort：雙層迴圈算出每個方案被幾個方案支配、支配了誰，依序剝出第 1、2、3… 前緣並記錄 rank；每個前緣內依各目標排序，頭尾擁擠距離設為 double.PositiveInfinity，中間累加相鄰兩者的目標差 ÷ 該目標全距；Tournament 改成先比 rank 小者勝、同 rank 比擁擠距離大者勝；每代把父代與子代合併成 2N，依前緣逐層放入下一代，最後一層放不下時取擁擠距離大的；輸出第 1 前緣的方案，並把各方案 (f1, f2) 畫成 Point3d 散佈點。",
+          "result": "一次演化就得到一整條 Pareto 前緣：一端是最分散、一端是最貼邊，中間是各種取捨，散佈圖上的前緣點可以逐一點選回看對應的點陣配置，等於自己做出迷你 Octopus／Wallacei。"
         }
       ],
       "project_seeds": [
@@ -352,6 +366,20 @@
           "what_changes": "混合其他家族",
           "how": "把出入口座標當 F04 的基因，評分為所有房間到最近出口的最長 Dijkstra 距離（越小越好）。",
           "result": "自動找到讓最遠點逃生距離最短的出口配置。"
+        },
+        {
+          "title": "Fast Marching：Eikonal 平滑距離場",
+          "level": 4,
+          "what_changes": "規則（鄰居的距離更新公式）＋輸出（沿梯度回溯路徑）",
+          "how": "保留優先佇列的波前擴散，但鄰居改成上下左右 4 格，每格有 Far／Trial／Known 三種狀態（int[] state），Trial 格放進 PriorityQueue<int,double>（Rhino 7 的舊版 .NET 可用 SortedSet<(double,int)> 代替）。取出最小的 Trial 格標為 Known 後，對每個非 Known 鄰居改用 Eikonal 局部公式更新：a = min(T左, T右)、b = min(T上, T下)、f = 該格成本（預設 1，可直接沿用 V03 的影像成本）、h = cellSize；若 |a − b| ≥ h·f，T = min(a, b) + h·f，否則 T = (a + b + Math.Sqrt(2·h²·f² − (a − b)²)) / 2，比原值小才寫回並 Push。障礙格的 T 固定為 double.MaxValue 不參與取 min。跑完後把 T 當頂點 Z 值建 Mesh，用 Mesh.CreateContourCurves 取等距線；路徑改從終點以雙線性內插求 T 的梯度，每步沿 −∇T 前進半格，直到離起點小於一格，輸出 Polyline。",
+          "result": "等距線是真正的圓弧（不再是 Dijkstra 8 鄰居的八角形，約 8% 的方向誤差消失），回溯出的最短路徑可以走任意角度的平順斜線，不會貼著 45°／90° 的格線折來折去。"
+        },
+        {
+          "title": "網路中心性：closeness 與整合度",
+          "level": 3,
+          "what_changes": "迴圈（全點對最短路徑）＋輸出（每個節點的中心性指標）",
+          "how": "以 V05 的街道／路網圖為底：節點是街道曲線的端點與交點，邊是實際的街道段，存成 Dictionary<int, List<(int, double)>>。對每個節點各跑一次不設終點的 Dijkstra（公制距離），或把邊權全設 1 改跑 BFS（拓樸步數，即 Space syntax 的深度）。累加總深度 TD_i = Σ d(i, j)，得到平均深度 MD_i = TD_i /(n − 1)、closeness C_i = (n − 1)/ TD_i；Space syntax 整合度再算 RA = 2(MD − 1)/(n − 2)，以鑽石值 D_n = 2{n[log₂((n + 2)/3) − 1] + 1}/((n − 1)(n − 2)) 正規化成 RRA = RA / D_n，整合度 = 1 / RRA。加一個 radius 輸入，只累加深度 ≤ radius 的節點即得局部整合度（例如 R3）。最後把每條街道段依兩端節點的平均值用漸層色上色輸出，並 Print 整合度最高的前幾條。",
+          "result": "整個路網依「平均要走多遠（幾步）才能到其他所有地方」上色：主街與核心區呈暖色、死巷與邊緣呈冷色，可比較全域與局部整合度找出社區中心的位置。"
         }
       ],
       "project_seeds": [
@@ -561,6 +589,13 @@
           "what_changes": "規則（數值方法）",
           "how": "把 LorenzNext 的歐拉一步改成四階 Runge–Kutta（算 k1–k4 四次速度再加權平均）。",
           "result": "同樣 stepTime 下軌跡更準確、更不易發散，可比較兩種積分的差異。"
+        },
+        {
+          "title": "換公式：IFS 仿射變換組（Barnsley 蕨）",
+          "level": 2,
+          "what_changes": "規則（單一非線性公式改成依機率抽選的多條仿射變換）",
+          "how": "attractorType 新增一個分支，宣告 double[,] 係數表，每列 a、b、c、d、e、f、p 代表一條仿射變換 x' = a·x + b·y + e、y' = c·x + d·y + f 與被抽中的機率（Barnsley 蕨四列：0,0,0,0.16,0,0,0.01／0.85,0.04,−0.04,0.85,0,1.6,0.85／0.2,−0.26,0.23,0.22,0,1.6,0.07／−0.15,0.28,0.26,0.24,0,0.44,0.07）；迴圈中每一步用 Random.NextDouble() 取 0–1 的數，累加 p 找出落在哪一列，只套用那一列算下一點；前 20 步先丟掉不加入清單，讓點落到吸子上後再收集，其餘沿用 Clifford 的點清單輸出；也可以把係數表改成 Grasshopper 的數字清單輸入，讓學習者自己調葉片的傾斜與縮放。",
+          "result": "幾萬個點自動長出一片細節無窮的蕨葉點雲，改一列係數就變成不同的葉形、樹形或 Sierpinski 三角形，可接 V02 密度著色或當作立面開孔的點源。"
         }
       ],
       "project_seeds": [

@@ -119,6 +119,24 @@
    "what_changes": "輸出轉可製造幾何",
    "how": "Join 後的等值線用 Curve.Offset 做成有寬度的板條，或按高度排序輸出成 CNC／雷切路徑；可加上編號文字方便組裝。",
    "result": "可以直接雷切的等高線地形模型或疊層立面。"
+  },
+  {
+   "index": 12,
+   "code": "V13",
+   "title": "逃逸時間分形場（Mandelbrot／Julia）",
+   "level": 3,
+   "what_changes": "規則（FieldValue 改為逐點迭代的逃逸步數）",
+   "how": "新增輸入 double scale、Point3d origin、int maxIter、bool julia、double cRe、double cIm。FieldValue(x,y) 內先把格點換成複數座標 u=(x−origin.X)/scale、v=(y−origin.Y)/scale；Mandelbrot 模式令 z=0、c=u+vi，Julia 模式令 z=u+vi、c=cRe+cIm·i。用兩個 double 手寫迴圈 zr'=zr²−zi²+cr、zi'=2·zr·zi+ci，直到 zr²+zi²>4 或次數到 maxIter；未逃逸回傳 maxIter，逃逸則回傳平滑步數 n+1−Math.Log(Math.Log(Math.Sqrt(zr²+zi²)))/Math.Log(2)，避免整數步數造成階梯狀等值線。掃描、情況編號、內插程式碼完全不動；threshold 設在 5–30 之間，配合 V02 多條等值線可一次輸出多圈。邊界附近細節極多，cellSize 要夠小（例如 300×300 格），maxIter 建議 50–200 控制運算時間。",
+   "result": "沿 Mandelbrot 主心形與圓泡、或 Julia 集邊界層層外擴的巢狀等值線，越靠近邊界越細碎，可當分層雷切圖樣或地坪紋樣。"
+  },
+  {
+   "index": 13,
+   "code": "V14",
+   "title": "Superformula 形狀場（Gielis 超公式）",
+   "level": 2,
+   "what_changes": "規則（每個中心的半徑改成隨角度變化）",
+   "how": "新增輸入 m、n1、n2、n3、a、b（可為 List<double>，每個中心各一組）與 rotation。FieldValue 對每個中心算 dx、dy、ρ=Math.Sqrt(dx²+dy²)、θ=Math.Atan2(dy,dx)−rotation，再算 Gielis 半徑 r(θ)=Math.Pow(Math.Pow(Math.Abs(Math.Cos(m·θ/4)/a),n2)+Math.Pow(Math.Abs(Math.Sin(m·θ/4)/b),n3),−1/n1)×radius；原本的 radius²/ρ² 改成 (r(θ)/ρ)²，其餘累加、threshold=1 與掃描程式碼不動。ρ 接近 0 時直接給一個大值避免除以零。m 控制對稱瓣數，n1 小則尖、大則圓。",
+   "result": "每個中心不再是圓泡，而是星形、花瓣、圓角多邊形等輪廓，彼此靠近時仍像 metaball 一樣平滑融合，可做平面配置、水池或開孔圖樣。"
   }
  ],
  "project_seeds": [

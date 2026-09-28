@@ -1,0 +1,18 @@
+{
+ "B06-52": {
+  "source": "GitHub README（BenPyton/ProceduralDungeon）",
+  "author": "Benoit Pelletier",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/BenPyton/ProceduralDungeon",
+  "note": "README 中的生成結果動圖：房間經由門彼此串接成地城"
+ },
+ "G02-52": {
+  "source": "GitHub（ni1o1/pybdshadow README）",
+  "author": "Qing Yu",
+  "license": "BSD-3-Clause（程式碼授權；圖片為 README 示範圖）",
+  "license_url": "https://github.com/ni1o1/pybdshadow/blob/main/LICENSE",
+  "page": "https://github.com/ni1o1/pybdshadow",
+  "note": "README 中以 matplotlib 繪製的建築與陰影多邊形示範圖"
+ }
+}

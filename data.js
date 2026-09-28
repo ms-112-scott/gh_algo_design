@@ -5,7 +5,8 @@ window.CATALOG = {
   "C": "場與擴散",
   "D": "代理人",
   "E": "排列與鬆弛",
-  "F": "圖樣與最佳化"
+  "F": "圖樣與最佳化",
+  "G": "空間分析"
  },
  "categories": {
   "2d-pattern": "平面圖像／圖樣",
@@ -1342,6 +1343,13 @@ window.CATALOG = {
      "what_changes": "輸出轉成可製造幾何",
      "how": "把每個正方形向內 Offset 板厚並在接觸邊加卡榫缺口，依標籤分層排版到板材上並編號。",
      "result": "可雷射切割組裝的畢氏樹或分割立面模型。"
+    },
+    {
+     "title": "圖文法：房間鄰接圖的改寫",
+     "level": 4,
+     "what_changes": "規則／狀態：改寫對象從帶標籤的正方形換成「帶標籤的節點＋鄰接連線」組成的圖",
+     "how": "把 LabeledSquare 清單換成兩個欄位：List<string> labels（節點標籤）與 List<(int a,int b)> edges（鄰接）。起始只放一個標籤為 House 的節點。ApplyRules 改成逐節點比對標籤（只做單節點比對，避免在單一元件內寫完整的子圖比對）：House → Entry、Public、Private 三個節點並連成 Entry–Public–Private；Public → Living、Kitchen、Dining 並兩兩相連；Private → Hall 加上 n 個 Bed，每個 Bed 只連 Hall。被替換節點原本的外部連線，依規則指定的「接口節點」（例如 Public 換掉後由 Living 繼承）重新接上，這一步就是圖文法的嵌入規則。每一代同時改寫所有非終端標籤，沒有非終端標籤就提早停止。輸出時為每個節點給一個 Point3d，跑 50–100 次簡單力導向排佈（相連節點用彈簧拉近、所有節點兩兩互斥），再輸出 Line 當鄰接線、Circle 當房間泡泡（半徑依標籤查面積表）、TextDot 標出房名。",
+     "result": "從一個「住宅」節點逐代展開成入口—客廳—走道—臥室的泡泡圖（bubble diagram），同一組規則換個 Bed 數或順序就得到不同但合乎格局邏輯的平面關係圖。"
     }
    ],
    "project_seeds": [
@@ -1657,6 +1665,13 @@ window.CATALOG = {
      "what_changes": "輸出",
      "how": "把每條 Line 用 Pipe.CreatePipe 或 Brep.CreatePipe 轉成管狀實體，並在每格中心依 tile 類型放置彎頭、三通、十字接頭；最後統計每種接頭數量輸出料件表。",
      "result": "可 3D 列印或以標準管件組裝的管線裝置，附帶零件數量清單"
+    },
+    {
+     "title": "一維 Markov 鏈序列（n-gram 範例驅動）",
+     "level": 2,
+     "what_changes": "規則：相容規則由「是否可相鄰」改成從範例統計出的轉移機率，網格降為一維序列",
+     "how": "新增 string example 輸入（例如立面開間序列 \"WWDWWGWWDWW\"，W=牆、D=窗、G=門）與 int order（n，建議 2–4）、int length、int seed。先掃描範例，把每段長度 n−1 的前綴當 key，用 Dictionary<string, Dictionary<char,int>> 累計下一個字元出現的次數。生成時以範例前 n−1 個字元開頭，之後每一步取目前最後 n−1 個字元查表，依次數做加權隨機（累加次數後用 random.Next(total) 落在哪一段）決定下一個字元；若 key 在範例中沒出現過，就退回 order−1 的表再查（backoff），退到 0 階時依整體字元頻率抽。不需要熵挑格與傳播，因為是由左到右依序決定。輸出：用 Curve.DivideByCount(length, true) 沿一條基準線或建築外框切出等分點，依字元把對應的模組（Brep 輸入清單）以 Transform.PlaneToPlane 放到每一段，另外輸出生成的字串。",
+     "result": "輸入一小段手寫立面節奏，就沿著任意長度的外牆生成節奏相似、但不會整段照抄的牆窗門序列；n 越大越像原範例，n 越小越隨機。"
     }
    ],
    "project_seeds": [
@@ -2154,6 +2169,27 @@ window.CATALOG = {
      "what_changes": "規則／混合其他家族",
      "how": "改用網格計算電位場（Laplace 疊代，類似 C01 擴散），黏著位置依電場強度的 η 次方機率選擇，即 Dielectric Breakdown Model。",
      "result": "用參數 η 在緻密團塊與閃電狀細枝之間連續切換，更可控。"
+    },
+    {
+     "title": "白蟻式晶格建造（構形規則放磚）",
+     "level": 4,
+     "what_changes": "規則（黏著判斷改成依 26 鄰域構形查表）＋維度（連續空間 → 3D 整數晶格）",
+     "how": "把位置改成整數晶格座標，已放的磚存在 HashSet<(int x,int y,int z)> built；隨機方向改成從 26 個鄰格位移（dx,dy,dz ∈ {−1,0,1}，排除全 0）中亂數挑一個，且只能走進空格。每走一步，對所在空格掃 26 個鄰格，把「有磚」的位置依固定順序編成一個 int 位元遮罩 mask；新增輸入規則表 HashSet<int> buildRules（或簡化成：面鄰格有磚數在 minFace–maxFace 之間，且正下方有磚或 z == 0），若 buildRules.Contains(mask) 就 built.Add(cell)。和原本 DLA 不同的是：代理人放完磚不消失，只是從出發區重新出發繼續走，所以 MaxWalkSteps 改成總步數上限、另加 maxBricks 上限；原本的 FindNearest／stickDistance 對齊可以整段刪掉，因為晶格上是否相鄰直接查 HashSet。輸出時每個格子用 new Box(new BoundingBox(p, p + new Vector3d(1,1,1))) 轉成體素方塊，或依放磚順序輸出 List<int> 讓顏色表現先後。原本 DLA 其實就是「只要 mask != 0 就放」的特例，可以把這條規則當第一組對照。",
+     "result": "同樣是代理人亂走、碰到結構就決定要不要放，但換成構形規則後長出的不再是珊瑚樹枝，而是牆、柱、拱、分層樓板與內部空腔等像白蟻丘或蜂巢的有組織體素結構（Theraulaz 與 Bonabeau 1995 年的晶格群體 lattice swarms 即用這種查表規則生成類似巢穴的形態）。"
+    },
+    {
+     "title": "Eden 周界隨機生長",
+     "level": 2,
+     "what_changes": "規則（刪掉隨機行走，改成直接在群集周界隨機挑一格長出）",
+     "how": "改用 2D（或 3D）整數格子：built 用 HashSet<(int,int)> 存已長的格子，另一個 List<(int,int)> perimeter 加 HashSet 存「本身空、但至少有一個上下左右鄰格已長」的周界格。每一輪用 random.Next(perimeter.Count) 等機率挑一格，加進 built，並用「和最後一個元素交換再 RemoveAt」的方式 O(1) 移出周界清單，再檢查它的 4 個（3D 為 6 個）鄰格，是空的且不在周界就加入周界。整段 PointOnCircle 出發、逃逸圓、MaxWalkSteps 迴圈都刪掉，迴圈次數就是要長的格子數 count；父子連線可保留：新格記錄它相鄰且最早長出的那格當 stuckToIndex。進階可以不等機率挑，而是依格子鄰居數給權重（鄰居越多越容易長），比較外緣的粗糙度。",
+     "result": "得到一團接近圓形、內部完全實心、只有外緣凹凸不平的緻密團塊（像菌落、地衣或擴張中的聚落），可和同樣格子數的 DLA 並排比較「有擴散篩選」與「沒有擴散篩選」造成的形態差異，而且幾萬格也能瞬間算完。"
+    },
+    {
+     "title": "Lévy flight 步長（冪次律長跳）",
+     "level": 3,
+     "what_changes": "規則（隨機行走的步長分布由固定步長改成重尾冪次律）",
+     "how": "把每一步的 stepSize 改成從 Pareto 分布抽：len = stepSize × Math.Pow(1.0 − random.NextDouble(), −1.0 / alpha)，新增輸入 alpha（1.0–3.0，越小越常出現長跳），並用 maxJump 截斷避免飛出逃逸圓；方向仍用原本的隨機單位向量。因為長跳可能直接穿過群集，移動前要沿路徑檢查：把起點到終點切成每段不超過 stickDistance × 0.5 的小段，逐段呼叫 NearbyPointFinder／FindNearest，一旦找到 stickDistance 內的已黏點，就停在那一段並照原本規則黏住與對齊。原本「離群集越遠走越大步」的加速規則要關掉或只在逃逸圓外使用，否則看不出步長分布本身的影響。",
+     "result": "alpha 大時長跳很少，形態接近原本 DLA 的細碎樹枝；alpha 越小粒子越常直線長跳到群集外緣，較不容易被外側枝條擋住而鑽進凹處，枝條變粗、分支變少、整體更密實，趨近彈道聚集（ballistic aggregation）的外觀，用一個參數就能連續調整疏密。"
     }
    ],
    "project_seeds": [
@@ -2626,6 +2662,13 @@ window.CATALOG = {
      "what_changes": "輸出（可製造幾何）",
      "how": "把 circles 轉成 Curve 後以 Boundary Surfaces 與板材做布林差集，或在每點放置沿法向傾斜的矩形板片。",
      "result": "可送雷射切割或 CNC 的穿孔面板、可組裝的鱗片外皮。"
+    },
+    {
+     "title": "對數螺線掃掠成殼（Raup 貝殼）",
+     "level": 3,
+     "what_changes": "維度（2D 螺線點陣 → 截面沿 3D 對數螺線掃掠成曲面）＋規則（半徑公式改為指數）",
+     "how": "保留原本以 number 為索引的 for 迴圈，但角度改成小步進 theta = number × dTheta（例如 10°，不再用黃金角），半徑由 spacing × √number 改成 r = a × Math.Exp(b × theta)，其中 b = Math.Log(W) / (2π)，W 為每轉一圈的放大倍率；同時加上沿軸下移 z = −T × r（T 為平移率）。在每個站點建立局部平面 new Plane(center, radialDir, Vector3d.ZAxis)（center 由 D × r 決定截面離軸距離），把輸入的封閉截面曲線（預設 new Circle(Plane.WorldXY, 1).ToNurbsCurve()）用 Transform.Scale 放大 r 倍、再用 Transform.PlaneToPlane 搬到該平面，收集成 List<Curve> 後呼叫 Brep.CreateFromLoft(sections, Point3d.Unset, Point3d.Unset, LoftType.Normal, false) 得到殼面；新增輸入 W、D、T、turns 與截面曲線。想保留葉序味道，可再把 V04 的點陣用 surface 的 UV 散佈到殼面上。",
+     "result": "調整 Raup（1966）的三個參數即可在同一支程式裡得到鸚鵡螺般的平旋殼（T = 0）、高聳的錐螺（T 大）或開口很大的扇貝狀殼（W 大），可直接輸出為 3D 列印雕塑、燈罩或自相似的螺旋屋頂殼體。"
     }
    ],
    "project_seeds": [
@@ -2953,6 +2996,245 @@ window.CATALOG = {
    ]
   },
   {
+   "id": "B06",
+   "name_zh": "離散聚合（連接點規則生長）",
+   "name_en": "Discrete Aggregation (Connection-based Stochastic Aggregation)",
+   "family": "B",
+   "family_name": "生長",
+   "file": "B06_DiscreteAggregation.cs",
+   "loc": 253,
+   "logic": [
+    "迭代模擬",
+    "幾何轉換"
+   ],
+   "data_structure": [
+    "幾何",
+    "圖"
+   ],
+   "difficulty": 3,
+   "difficulty_reason": "253 行、單一元件，但有 PartType／Placed／OpenConn／Rule 四個自訂 class；要懂「平面＝座標框架」、先翻轉再 Transform.PlaneToPlane 的剛體對齊，還要用 RTree 做碰撞查詢、用字串解析規則表；數學只需要向量與旋轉，難在資料結構（開放接頭清單＋連接圖）的管理。",
+   "tags": [
+    "隨機",
+    "可重現種子",
+    "3D",
+    "鄰居搜尋",
+    "碰撞偵測",
+    "模組化",
+    "可拆組",
+    "圖結構"
+   ],
+   "one_liner": "每個零件身上有幾個「接頭平面」，電腦反覆挑一個還空著的接頭、依規則把新零件翻過來對齊接上，撞到既有零件或出界就放棄，於是一顆顆相同的積木自己長成可拆裝的量體。",
+   "how_it_works": [
+    "定義零件庫：每種零件＝幾個邊長 1 的小立方體（碰撞用）＋數個接頭平面（原點在面中心、Z 軸朝外），並把規則字串「母零件|接頭>子零件|接頭」解析成規則表。",
+    "放入種子零件，把它所有的接頭放進「開放接頭」清單，也就是生長前緣。",
+    "每一步從前緣挑一個接頭（純隨機，或抽 4 個取最靠近吸引點者），並把它從清單移除；找出適用這個接頭的規則並打亂順序。",
+    "對每條規則與 0／90／180／270° 四種轉角：把子零件的接頭平面繞自己的 X 軸翻 180°、再繞法線轉，用 Transform.PlaneToPlane 對齊到母接頭，得到子零件的擺放轉換。",
+    "用 RTree 查新零件每個立方體中心附近有沒有已放的立方體、並檢查是否在邊界盒內；通過就加入零件、在連接圖記一條「母→子」的邊、把子零件其餘接頭加入前緣，全部失敗就記為失敗接頭。",
+    "重複到零件數上限、前緣清空或嘗試次數用完；輸出依加入順序排列的零件 Mesh（即組裝順序）、連接圖線段與剩下的開放接頭平面。"
+   ],
+   "pseudo_code": [
+    "輸入 maxParts, rules, seed, boundSize, attractors, maxTries",
+    "零件庫 ← I、L 兩種零件（立方體＋接頭平面）；規則表 ← 解析(rules)",
+    "放入種子零件；前緣 ← 種子的所有接頭",
+    "當 零件數 < maxParts 且 前緣不空 且 嘗試 < maxTries：",
+    "  o ← 從前緣挑一個接頭（有 attractors 時取較近者）；從前緣移除 o",
+    "  對 每條適用 o 的規則 (子零件 b, 接頭 j)，順序打亂：",
+    "    對 轉角 rot ∈ {0,90,180,270}°：",
+    "      X ← PlaneToPlane(翻轉(b 的接頭 j) 再轉 rot, o 的平面)",
+    "      如果 b 經 X 後在邊界內 且 RTree 查無碰撞：",
+    "        加入零件；連接圖加邊 (o 的零件 → 新零件)",
+    "        前緣 ← 前緣 ＋ 新零件其餘接頭；跳出",
+    "回傳 零件 Mesh（加入順序）、連接圖、剩餘前緣"
+   ],
+   "key_params": [
+    {
+     "name": "maxParts",
+     "effect": "零件數上限；越多越像量體，但後期前緣上的接頭多半被擋住，失敗率上升"
+    },
+    {
+     "name": "rules",
+     "effect": "決定哪個接頭能接哪個零件的哪個接頭；只開放端對端規則會長成細長的枝條，開放上下接頭才會長高、長成團塊；空字串＝全部互接"
+    },
+    {
+     "name": "seed",
+     "effect": "同一個種子得到同一個聚合，可重現；換種子就換一種生長路徑"
+    },
+    {
+     "name": "boundSize",
+     "effect": "邊界盒大小（Z 從 0 開始，不會長到地面以下）；越小越擁擠、越容易填滿成實心塊"
+    },
+    {
+     "name": "attractors",
+     "effect": "有接時每步抽 4 個開放接頭、選最靠近吸引點的，聚合會朝吸引點伸長；不接則均勻四散"
+    },
+    {
+     "name": "maxTries",
+     "effect": "對齊嘗試次數上限，避免規則太嚴時一直失敗卡住；每次對齊與碰撞檢查算一次"
+    }
+   ],
+   "csharp_concepts": [
+    "自訂 class 與 List<class>（零件庫、已放零件、開放接頭）",
+    "Plane 當座標框架：new Plane(原點, X 軸, Y 軸)",
+    "Plane.Rotate 翻轉接頭（Plane 是 struct，改的是副本）",
+    "Transform.PlaneToPlane 與 Point3d.Transform／Mesh.Transform",
+    "RTree.Insert／Search 與 lambda 回呼（e.Cancel 提早結束）",
+    "string.Split＋int.TryParse 解析規則字串",
+    "泛型方法 Shuffle<T>(IList<T>) 打亂候選順序"
+   ],
+   "prerequisites": [
+    "座標系與平面（原點＋三個互相垂直的軸）",
+    "旋轉與平移組合成一個轉換",
+    "清單的新增、移除與隨機挑選",
+    "包圍盒與距離判斷（碰撞的基本概念）",
+    "B 家族：生長的概念（前緣逐步擴張）"
+   ],
+   "teaching_note": "建議從零實作的順序：先只寫一種直條零件與兩個端點接頭，手動用 PlaneToPlane 把第二根接到第一根，確認「先繞 X 軸翻 180° 再對齊」這一步（最常見的錯誤是忘了翻轉，新零件會和母零件重疊在同一側）；接著加入前緣清單與隨機迴圈，此時還不做碰撞，看它互相穿插；再加 RTree 碰撞與邊界，最後才加 L 形零件、規則字串與吸引點。要提醒：每個用過或失敗的接頭都要從前緣移除，否則迴圈會一直挑同一個被擋住的接頭；Plane 是 struct，Rotate 之後要用回同一個變數；零件數上千時，精確的 Mesh 相交會很慢，本範例把零件拆成小立方體、只查中心距離，就是用近似換速度。教學重點放在「開放接頭前緣」與「連接圖」兩個資料結構：它們讓聚合結果不只是一堆幾何，而是知道誰接誰、可以依序組裝與拆解的構件系統；這也是它和 A05 形狀文法（整代替換、縮放）及 A06 WFC（格子上的限制傳播）最大的不同。",
+   "variations": [
+    {
+     "title": "自訂 Rhino 幾何零件",
+     "level": 3,
+     "what_changes": "零件庫的來源（輸入）",
+     "how": "新增 List<Mesh> partMeshes 與 DataTree<Plane> partConns 兩個輸入，BuildLibrary 改成依輸入建立 PartType；碰撞改成先比 BoundingBox，重疊時再用 Intersection.MeshMeshFast 或在 Mesh 內取樣點以 Mesh.IsPointInside 檢查。",
+     "result": "可以用自己畫的木塊、曲面磚或家具構件當零件，聚合出不再是方塊感的形體。"
+    },
+    {
+     "title": "任意 Brep 邊界與障礙物",
+     "level": 2,
+     "what_changes": "邊界與禁區（輸入）",
+     "how": "把 BoundingBox 邊界換成 Brep boundary 輸入，Fits 裡改用 boundary.IsPointInside(p, tol, true)；另加 List<Brep> obstacles，任一立方體中心落在障礙物內就拒絕。",
+     "result": "聚合只在指定量體內生長，並繞開柱子、既有房間或預留的動線空間。"
+    },
+    {
+     "title": "接頭型別與相容表",
+     "level": 2,
+     "what_changes": "規則的描述方式（規則）",
+     "how": "每個接頭多存一個型別字元（例如 m／f／n），規則表改成型別相容表「m>f; f>m」，Rule 產生時自動展開所有型別相容的零件與接頭組合；n 型別代表封口，不接任何東西。",
+     "result": "不必逐條列出規則，就能控制公母接頭與封口端，零件種類增加時規則表不會爆炸。"
+    },
+    {
+     "title": "45° 斜接零件庫（Retsin 式）",
+     "level": 3,
+     "what_changes": "零件幾何與接頭角度（規則）",
+     "how": "新增直線、45°、90°、135° 四種梁段零件，接頭平面在斜切端面上；碰撞改成把零件沿中心線取樣點、用 RTree 以半徑 0.45 查詢，因為零件不再落在整數格點上。",
+     "result": "少數幾種梁段就能組成柱、梁、斜撐混合的連續構架，而不只是方塊堆疊。"
+    },
+    {
+     "title": "場驅動聚合：每步評分所有候選",
+     "level": 3,
+     "what_changes": "挑選接頭與規則的策略（規則）",
+     "how": "每一步不隨機挑，而是對前緣所有接頭 × 所有規則 × 四個轉角先算出擺放，只留通過碰撞的候選，用純量場函數（例如距離某條曲線、或 Perlin 雜訊值）在新零件中心取值，選分數最高者加入。",
+     "result": "聚合沿著場的高值區貼著長，形體可以被曲線或雜訊場精確引導，而不是隨機散開。"
+    },
+    {
+     "title": "閉合迴圈：接頭對接偵測",
+     "level": 3,
+     "what_changes": "前緣更新與連接圖（規則）",
+     "how": "新零件加入後，把它的每個接頭和前緣中所有接頭比對：原點距離 < 0.01 且兩個 ZAxis 內積 ≈ −1 時，兩個接頭都從前緣移除，並在連接圖多加一條邊。",
+     "result": "連接圖從樹變成有迴圈的網，結構上多了第二條傳力路徑，可以統計閉合數當作穩定度指標。"
+    },
+    {
+     "title": "階層聚合：群組變成新零件",
+     "level": 4,
+     "what_changes": "零件的尺度層級（維度）",
+     "how": "先跑一次小聚合（例如 6 個零件），把結果的所有立方體合併成一個新的 PartType，前緣剩下的開放接頭就是新零件的接頭；再用這個群組零件跑第二層聚合。",
+     "result": "得到「零件 → 單元 → 量體」的階層式構成，大尺度看是房間單元，小尺度仍是可拆的積木。"
+    },
+    {
+     "title": "重心與懸挑檢查",
+     "level": 4,
+     "what_changes": "加入零件前的可行性判斷（分析／評估）",
+     "how": "沿連接圖往上找每個零件的支撐路徑，新零件加入後計算它與其下游所有零件的合成重心，若重心投影超出支撐零件的立方體範圍一定距離（或懸挑層數超過 k）就拒絕；可用不同權重的零件做配重。",
+     "result": "聚合結果在每個組裝步驟都不會翻倒，可以長出受控的懸挑而不是亂飄的枝條。"
+    },
+    {
+     "title": "密度場導引（近似拓樸最佳化）",
+     "level": 4,
+     "what_changes": "生長方向的依據（混合）",
+     "how": "新增 Point3d 與 double 兩個清單當 3D 密度場取樣（可來自結構分析外掛或 C04 的 3D 雜訊），每步只接受新零件中心密度 > threshold 的候選，並優先挑密度最高者。",
+     "result": "零件集中在場的高密度區，像用積木近似出拓樸最佳化的材料分布。"
+    },
+    {
+     "title": "Timer 逐件生長動畫",
+     "level": 2,
+     "what_changes": "執行方式（時間／動畫）",
+     "how": "把 placed、open、cellTree、Random 改成 class 欄位，加 bool reset 與 bool run 輸入；run 時每次 RunScript 只做一次迴圈並呼叫 Component.ExpireSolution(true)，同時輸出前緣平面的 Z 軸箭頭。",
+     "result": "看得到前緣一路推進、哪些接頭被擋住而熄滅，適合說明「前緣」這個資料結構。"
+    },
+    {
+     "title": "組裝順序與機械手臂取放平面",
+     "level": 3,
+     "what_changes": "輸出（輸出／製造）",
+     "how": "對連接圖從種子做 BFS，得到由下往上、每個零件都接在已放零件上的順序；每個零件輸出一個取放平面（零件中心＋對齊後的 X 軸），並標出只有一條連接的葉節點當作可先拆的零件。",
+     "result": "得到可以直接交給機械手臂或人工照做的逐步組裝清單，以及反向的拆解順序。"
+    },
+    {
+     "title": "板材化：零件拆成 CNC 裁切件",
+     "level": 3,
+     "what_changes": "零件幾何的製造表達（輸出／製造）",
+     "how": "把每個 PartType 的立方體外殼換成 18 mm 厚的板件（用 Brep.CreateFromBox 做側板與隔板），在接頭平面上以 Circle 畫出螺栓孔，最後統計每種零件的數量並把板件攤平排版到 XY 平面。",
+     "result": "聚合結果直接轉成合板積木的裁切清單與孔位，數量統計顯示同一種零件被重複用了多少次。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "可拆組合板涼亭",
+     "brief": "以 2–3 種合板積木與螺栓接頭做離散聚合，限制在涼亭量體與出入口禁區內生長，加上重心檢查後輸出裁切清單，做 1:1 局部樣品並測試拆裝次數。",
+     "difficulty": 3,
+     "combine_with": []
+    },
+    {
+     "title": "日照導向的聚合遮陽構架",
+     "brief": "以日照或遮陰需求建立 3D 場，用場驅動聚合讓零件集中在需要遮蔭的位置，比較不同規則表得到的遮陽率與零件數。",
+     "difficulty": 4,
+     "combine_with": [
+      "C04"
+     ]
+    },
+    {
+     "title": "模組化集合住宅：聚合 vs WFC",
+     "brief": "同一組住宅單元分別用離散聚合（自由空間逐件接）與 WFC（格子上限制傳播）生成，比較兩者的連通性、日照面與可控性。",
+     "difficulty": 4,
+     "combine_with": [
+      "A06"
+     ]
+    },
+    {
+     "title": "演化聚合規則",
+     "brief": "把規則表的開關與吸引點位置編成基因，用 GA 找出懸挑最大、零件數最少、仍通過重心檢查的聚合，並列出前幾名方案的規則差異。",
+     "difficulty": 5,
+     "combine_with": [
+      "F04"
+     ]
+    },
+    {
+     "title": "社區參與的積木遊戲化設計",
+     "brief": "把零件與規則做成實體積木與網頁介面，讓參與者輪流挑開放接頭放零件，系統即時檢查碰撞與重心，最後把協作結果輸出成組裝順序。",
+     "difficulty": 3,
+     "combine_with": []
+    }
+   ],
+   "references": [
+    {
+     "title": "From Voxels to Parts: Hierarchical Discrete Modeling for Design and Assembly",
+     "author": "Andrea Rossi, Oliver Tessmann",
+     "year": "2018",
+     "url": "https://link.springer.com/chapter/10.1007/978-3-319-95588-9_86"
+    },
+    {
+     "title": "Discrete Assembly and Digital Materials in Architecture（eCAADe 2016）",
+     "author": "Gilles Retsin",
+     "year": "2016",
+     "url": "https://www.academia.edu/27897186/Discrete_Assembly_and_Digital_Materials_in_Architecture_ECAADE_2016"
+    },
+    {
+     "title": "Reversibly Assembled Cellular Composite Materials",
+     "author": "Kenneth C. Cheung, Neil Gershenfeld",
+     "year": "2013",
+     "url": "https://www.science.org/doi/10.1126/science.1240889"
+    }
+   ]
+  },
+  {
    "id": "C01",
    "name_zh": "反應擴散",
    "name_en": "Reaction-Diffusion (Gray-Scott)",
@@ -3110,6 +3392,20 @@ window.CATALOG = {
      "what_changes": "規則",
      "how": "替換 reaction 那兩行公式為其他活化－抑制模型，允許負值並移除 Clamp，或加入第三種化學物質。",
      "result": "得到螺旋波、行進波等 Gray-Scott 沒有的動態圖樣。"
+    },
+    {
+     "title": "純擴散穩態：多材料熱傳導與冷橋",
+     "level": 3,
+     "what_changes": "規則＋輸出：拿掉反應項、只留擴散，改成固定溫度邊界與每格不同導熱係數，跑到穩態後輸出溫度場與熱流",
+     "how": "把 chemicalA／B 換成單一 double[,] T 與 double[,] k；新增 List<Curve> materials 與 List<double> conductivity 輸入，格心用 Curve.Contains 判斷落在哪種材料並填入 k（例：混凝土 1.7、隔熱材 0.035、鋼 50 W/mK）。再加 Curve warmSide、coldSide 輸入，落在其內的格子標成固定格（Dirichlet），每步不更新、維持 20°C 與 −5°C；取消 % 週期邊界，外框格子改成絕熱（直接沿用自己的值當鄰居）。主迴圈改成 Gauss–Seidel／SOR 原地更新（不再雙緩衝）：四個方向的界面導熱係數取調和平均 kf = 2·k1·k2/(k1+k2)，新值 Tgs = Σ kf·T鄰 / Σ kf，再做 T += omega·(Tgs − T)，omega 約 1.8；每一輪記錄最大變化量，小於 tol（如 1e-4）就 break，steps 只當上限。最後以 q = −kf·(T鄰 − T)/cellSize 算每格熱流向量並輸出 Line，沿冷側邊界加總熱流得到每公尺熱損失，減去無冷橋對照組即為線性熱傳透係數 psi；溫度場接 C05 Marching Squares 取 1°C 間距等溫線，或在 12.6°C 處畫出結露風險線。",
+     "result": "得到牆體、樓板接頭斷面的彩色溫度分布、彎向鋼構或樓板懸挑的等溫線與熱流箭頭，並算出一個可比較不同斷熱做法的 psi 數值。"
+    },
+    {
+     "title": "守恆型相分離（Cahn–Hilliard）",
+     "level": 4,
+     "what_changes": "規則：兩物質反應方程換成單一濃度的守恆型四階方程，總量固定、只會重新分配",
+     "how": "把兩張表換成單一 double[,] c，INIT 時每格設為 c0 + 0.05·(random.NextDouble()−0.5)，新增輸入 c0（−1 到 1，決定兩相比例）、gamma（界面寬度，約 0.5–1）、dt（約 0.01）。每一步分兩次卷積：先用上下左右四鄰的五點拉普拉斯算 lapC，得化學勢 mu[r,c] = c³ − c − gamma·lapC；整張 mu 算完後，再對 mu 做一次五點拉普拉斯，更新 next = c + dt·lapMu（保留雙緩衝與 % 週期邊界，移除 0–1 的 Clamp，值域改為約 −1 到 1）。每隔數百步加總全部 c 輸出 totalMass，確認數值幾乎不變即代表守恆正確；若畫面出現棋盤狀爆值就把 dt 減半。輸出時頂點色以 c=0 為黑白分界，或把 c 接 C05 Marching Squares 取 c=0 的等值線當雙相界面。",
+     "result": "從均勻雜訊中浮現彼此互鎖的迷宮狀雙連續圖樣，隨步數增加紋路越粗、越少（粗化）；c0 偏離 0 時則變成大小不一的圓斑，兩相面積比始終維持輸入值。"
     }
    ],
    "project_seeds": [
@@ -3357,6 +3653,20 @@ window.CATALOG = {
      "what_changes": "狀態／規則",
      "how": "把 bool 改成 double（0–1），鄰居改用環形核加權平均，成長函數用高斯曲線，每步小幅更新；輸出用等值面或高度場取代方塊。",
      "result": "平滑、有機、會移動的「生物」形態，與 C01 反應擴散類似但規則來自 Lenia。"
+    },
+    {
+     "title": "六角格連續 CA（Reiter 雪花）",
+     "level": 3,
+     "what_changes": "規則：方格 8 鄰居改成六角格 6 鄰居，bool 狀態改成連續水量，並分成「可接收」與「不可接收」兩部分",
+     "how": "改用軸座標 (q, r) 的 double[,] s，六個鄰居偏移為 (+1,0)(−1,0)(0,+1)(0,−1)(+1,−1)(−1,+1)；格心位置 x = (q + r/2)·cellSize、y = r·(√3/2)·cellSize。新增輸入 alpha（擴散，約 1）、beta（背景水氣，0.3–0.9）、gamma（加水量，約 0.0001–0.01）。INIT 全部設 beta、中心設 1。每一步：一格若 s≥1 或任一鄰居 s≥1 就是可接收格；把 s 拆成 u（不可接收格＝s，可接收格＝0）與 v（可接收格＝s + gamma，其餘 0）；只讓 u 擴散：uNew = u + alpha/2·(六鄰居 u 平均 − u)；最後 next = uNew + v（雙緩衝）。取消 % 週期邊界，最外圈格子固定為 beta 當水氣來源。另開 int[,] frozenAt 記錄每格首次 s≥1 的步數；輸出時對凍結格用 6 點 Polyline 畫六邊形，依 frozenAt 上色或拉高，未凍結格不輸出。",
+     "result": "從中心一格長出六重對稱的晶體：beta 低時是實心六角板，beta 高時變成枝狀雪花，frozenAt 的顏色或高度呈現一圈圈生長年輪。"
+    },
+    {
+     "title": "交通 CA 時空圖與基本圖（Rule 184／NaSch）",
+     "level": 3,
+     "what_changes": "規則＋分析：一維格子的每格狀態改成「空格或車速 0–vmax」，粒子數守恆地移動，並掃描密度量測流量",
+     "how": "網格改成 int[] road（−1 為空，否則為車速），長度 L、環狀道路（索引用 % L）；新增輸入 density、vmax、pSlow、seed。每一代對每台車依序做 Nagel–Schreckenberg 四步：加速 v = Min(v+1, vmax)；煞車 v = Min(v, gap)（gap 為到前車的空格數）；以 Random.NextDouble() < pSlow 隨機減速 v = Max(v−1, 0)；再全部同時前進 v 格寫入新陣列（雙緩衝）。每代把有車的格子輸出成位於 (x, t) 的方格或矩形，依車速上色，就是時空圖。vmax=1、pSlow=0 時結果與 V02 以 rule=184 跑出的圖相同，可互相驗證。分析部分：外層迴圈讓 density 從 0.05 掃到 0.95，每個密度先跑 warmUp 代丟棄，再統計 T 代的平均流量 J = 車數 × 平均速度 / L，輸出 Point3d(density, J·scale, 0) 連成 Polyline，並輸出流量最大時的臨界密度。",
+     "result": "時空圖中車流為斜向條紋、塞車團塊是一條條往反方向傳遞的深色斜帶；基本圖呈先升後降的三角形曲線，可讀出道路或動線的臨界密度與最大通過量。"
     }
    ],
    "project_seeds": [
@@ -3853,6 +4163,13 @@ window.CATALOG = {
      "what_changes": "輸出",
      "how": "用兩張不同 seed 的 noise（例：高度與濕度）查表決定每格類型，對不同類型上色或放不同構件。",
      "result": "水域、草地、林地、建地的自然分區圖，可當景觀植栽配置草圖。"
+    },
+    {
+     "title": "Diamond-square 中點位移地形",
+     "level": 3,
+     "what_changes": "規則（高程生成法從 Perlin 取樣改為遞迴中點位移）",
+     "how": "新增輸入 int k（格數 size=2^k+1）、double roughness（H，0–1）與 seed。建 double[size,size] h，用 new Random(seed) 給四個角隨機高度（或新增 4 個角高度輸入讓設計者指定）；令 step=size−1、amp=height，while(step>1)：half=step/2，① Diamond 步：對每個方格中心 h[x+half,y+half]=四角平均+(rnd.NextDouble()*2−1)*amp；② Square 步：對每個邊中點取上下左右存在的 2–4 個鄰點平均再加同樣的隨機位移；然後 amp*=Math.Pow(2,−roughness)、step=half。最後把 h[i,j] 直接當 elevation 交給原本的 BuildGridMesh，取代 LayeredNoise 那段迴圈，width、depth 改為 size−1。",
+     "result": "一次生成整片的碎形山地，roughness 小時峰谷崎嶇、大時平緩起伏，同 seed 可重現；網格軸向會看到輕微的方塊狀折痕。"
     }
    ],
    "project_seeds": [
@@ -4095,6 +4412,20 @@ window.CATALOG = {
      "what_changes": "輸出轉可製造幾何",
      "how": "Join 後的等值線用 Curve.Offset 做成有寬度的板條，或按高度排序輸出成 CNC／雷切路徑；可加上編號文字方便組裝。",
      "result": "可以直接雷切的等高線地形模型或疊層立面。"
+    },
+    {
+     "title": "逃逸時間分形場（Mandelbrot／Julia）",
+     "level": 3,
+     "what_changes": "規則（FieldValue 改為逐點迭代的逃逸步數）",
+     "how": "新增輸入 double scale、Point3d origin、int maxIter、bool julia、double cRe、double cIm。FieldValue(x,y) 內先把格點換成複數座標 u=(x−origin.X)/scale、v=(y−origin.Y)/scale；Mandelbrot 模式令 z=0、c=u+vi，Julia 模式令 z=u+vi、c=cRe+cIm·i。用兩個 double 手寫迴圈 zr'=zr²−zi²+cr、zi'=2·zr·zi+ci，直到 zr²+zi²>4 或次數到 maxIter；未逃逸回傳 maxIter，逃逸則回傳平滑步數 n+1−Math.Log(Math.Log(Math.Sqrt(zr²+zi²)))/Math.Log(2)，避免整數步數造成階梯狀等值線。掃描、情況編號、內插程式碼完全不動；threshold 設在 5–30 之間，配合 V02 多條等值線可一次輸出多圈。邊界附近細節極多，cellSize 要夠小（例如 300×300 格），maxIter 建議 50–200 控制運算時間。",
+     "result": "沿 Mandelbrot 主心形與圓泡、或 Julia 集邊界層層外擴的巢狀等值線，越靠近邊界越細碎，可當分層雷切圖樣或地坪紋樣。"
+    },
+    {
+     "title": "Superformula 形狀場（Gielis 超公式）",
+     "level": 2,
+     "what_changes": "規則（每個中心的半徑改成隨角度變化）",
+     "how": "新增輸入 m、n1、n2、n3、a、b（可為 List<double>，每個中心各一組）與 rotation。FieldValue 對每個中心算 dx、dy、ρ=Math.Sqrt(dx²+dy²)、θ=Math.Atan2(dy,dx)−rotation，再算 Gielis 半徑 r(θ)=Math.Pow(Math.Pow(Math.Abs(Math.Cos(m·θ/4)/a),n2)+Math.Pow(Math.Abs(Math.Sin(m·θ/4)/b),n3),−1/n1)×radius；原本的 radius²/ρ² 改成 (r(θ)/ρ)²，其餘累加、threshold=1 與掃描程式碼不動。ρ 接近 0 時直接給一個大值避免除以零。m 控制對稱瓣數，n1 小則尖、大則圓。",
+     "result": "每個中心不再是圓泡，而是星形、花瓣、圓角多邊形等輪廓，彼此靠近時仍像 metaball 一樣平滑融合，可做平面配置、水池或開孔圖樣。"
     }
    ],
    "project_seeds": [
@@ -4346,6 +4677,13 @@ window.CATALOG = {
      "what_changes": "輸出：軌跡 → 圖（點＋連線）",
      "how": "每隔 k 步把距離小於 linkRadius 的兩隻鳥位置連一條 Line，累積成空間網格，再用 Kangaroo 或自寫彈簧鬆弛。",
      "result": "形成如蜘蛛網或纖維塔的立體網架，可作裝置或結構概念模型"
+    },
+    {
+     "title": "捕食者–獵物雙物種群聚",
+     "level": 4,
+     "what_changes": "規則：從單一物種變成兩個物種，加上 Reynolds 的 pursue／evade 轉向，以及出生與死亡規則讓族群數量會變",
+     "how": "在 Boid 類別加 int Species（0=獵物、1=捕食者）與 double Energy，新增輸入 predatorCount、predictT、fearRadius、catchRadius、breedEvery。獵物照原本三條規則，但分離／對齊／聚集只算同物種鄰居；另加 evade：對 fearRadius 內每個捕食者算預測位置 p.Position + p.Velocity * predictT，累加 (me.Position − 預測位置) 的單位向量乘 evadeWeight。捕食者不做對齊與聚集，只找最近的獵物，朝它的預測位置 prey.Position + prey.Velocity * predictT 轉向（pursue），maxSpeed 設為獵物的 1.1–1.3 倍、TurnStrength 較小以免原地打轉。同步更新移動後處理生死：距離小於 catchRadius 的獵物放進 dead 清單，迴圈結束後才從 List 移除，捕食者 Energy 增加；捕食者每步扣一點 Energy，歸零就移除；每隔 breedEvery 步隨機挑幾隻獵物在旁邊複製一隻（位置加小偏移、速度沿用），並設族群上限。被移除者的 Polyline 移到 finishedTrails 保留。輸出用 DataTree<Polyline> 依物種分兩個分支，另外輸出每一步兩物種數量的 List<int>，可接 Quick Graph 看族群曲線。",
+     "result": "獵物群被捕食者衝散成兩三股、再於後方重新合攏，捕食者軌跡像刀痕般穿過群體留下空隙；族群數量曲線呈現此消彼長的振盪。"
     }
    ],
    "project_seeds": [
@@ -5077,6 +5415,13 @@ window.CATALOG = {
      "what_changes": "規則（迭代 → 遞迴）",
      "how": "改用 Descartes 圓定理：從三個互切圓出發，遞迴計算每個空隙中與三圓相切的新圓，半徑小於門檻就停止。",
      "result": "所有圓精確相切、無限細分的分形圖樣（Apollonian gasket）。"
+    },
+    {
+     "title": "泡泡圖配置：鄰接圖彈簧（力導向）",
+     "level": 3,
+     "what_changes": "輸入（新增房間面積與鄰接圖）＋規則（互推之外加上鄰接彈簧吸引）",
+     "how": "新增 List<double> areas 與 List<string> adjacency（每筆寫成「0-3」表示房間 0 與 3 需相鄰）兩個輸入；圓數改為 areas.Count，半徑 r_i = Math.Sqrt(areas[i] / Math.PI)，不再隨機。每輪先照原本的重疊互推累加位移，再對每一組鄰接配對算 gap = 距離 − (r_i + r_j)：gap > 0 時兩圓沿連線各往對方移動 k·gap / 2（彈簧，k 約 0.1–0.3）；可選 Fruchterman–Reingold 版本，對所有配對加互斥 K²/d、鄰接配對加吸引 d²/K，並用逐輪遞減的溫度 temperature 限制單輪最大位移，避免震盪。邊界拉回沿用原本規則。收斂後輸出圓、鄰接連線（Line），並 Print「已相切的鄰接數／總鄰接數」與剩餘重疊量；圓心與半徑可直接接到 E03 V04 Power diagram 切出平面。",
+     "result": "每個房間以面積對應大小的圓出現，需要相鄰的房間彼此貼緊、不相關的房間被推開，得到可轉成平面格局的泡泡圖。"
     }
    ],
    "project_seeds": [
@@ -5532,6 +5877,13 @@ window.CATALOG = {
      "what_changes": "點的更新規則（混合其他家族）",
      "how": "把 Lloyd 的重心移動與 E01 Circle Packing 的排斥力或 D01 Boids 的鄰居規則加權相加，點會同時被重心拉、被其他點推。",
      "result": "可控制疏密又帶流動感的細胞圖樣，細胞會沿流向拉長。"
+    },
+    {
+     "title": "k-means 面板分群（模具類型合理化）",
+     "level": 3,
+     "what_changes": "維度（平面座標 → 面板特徵空間）＋輸出（面板依類型編號與替換）",
+     "how": "新增 Mesh 輸入（自由曲面用 Mesh.CreateFromSurface 或四邊面網格），對每個四邊形面算特徵向量 double[]：四條邊長與兩條對角線長（再加上四點到最佳平面的最大距離當翹曲量，用 Plane.FitPlaneToPoints 求），各維先減平均除以標準差做標準化。把原本的 sites 換成 k 個特徵空間中心（k 由輸入給，用 k-means++ 挑初始中心：第一個隨機，其後依到最近中心距離平方的比例抽樣）。每輪兩步正好對應 Lloyd：①分配：每個面板歸到特徵距離最近的中心（等於在特徵空間做 Voronoi 分區，但不需切出細胞）；②更新：中心移到該群所有面板特徵的平均值（等於重心）。沿用 V07 的收斂判斷，中心移動量小於 tolerance 就停。收斂後每群取最接近中心的面板當代表型，計算每片面板與代表型的最大邊長差並 Print；若超過容許誤差就把 k 加 1 重跑。輸出依群著色的 Mesh 與每型數量表。",
+     "result": "數百片各不相同的自由曲面面板被歸成少數幾種模具類型，並列出每型片數與最大尺寸誤差，可在「型數」與「誤差」之間找平衡。"
     }
    ],
    "project_seeds": [
@@ -5773,6 +6125,34 @@ window.CATALOG = {
      "what_changes": "加約束（位置投影）",
      "how": "每步更新位置後，用 Surface.ClosestPoint 把質點拉回輸入曲面上，重力改為 0、只保留彈簧。",
      "result": "在任意曲面上得到均勻分布的網格，可作為立面分割或 gridshell 桿件排布。"
+    },
+    {
+     "title": "四邊形網格平面化（PQ Mesh）",
+     "level": 4,
+     "what_changes": "加約束（每個四邊形面投影到自己的擬合平面）",
+     "how": "找形收斂後進入第二階段：用 int[4] 記錄每個四邊形面的四個質點索引（格點 i,j 的面為 here、here+1、here+pointsPerRow+1、here+pointsPerRow）。每一步對每個面取四點，呼叫 Plane.FitPlaneToPoints(pts, out Plane pl) 擬合平面，再用 pl.ClosestPoint(p) 得到各點的目標位置，把 (目標 − 目前位置) 累加到該質點的 Vector3d sum[] 與 int count[]；彈簧也改成算出兩端的目標位置一起累加（保住找形得到的形狀）。所有面與彈簧處理完，非固定質點一次移動 sum/count（投影後取平均，Shape-Up 的做法）。另外輸出每面平面度：兩條對角線用 Intersection.LineLine 求最近兩點距離，除以平均對角線長，接 Gradient 上色，最大值低於門檻（例如 0.1%）就 break。",
+     "result": "受壓殼的每一格四邊形都變成真正的平面，可直接用平板玻璃或平板面板覆蓋，平面度色圖從紅逐步退成綠。"
+    },
+    {
+     "title": "彎曲桿件與編織網殼",
+     "level": 4,
+     "what_changes": "規則（加入桿件彎曲剛度）＋輸出（上下交錯的編織實體）",
+     "how": "把格網的每一列、每一行各串成一根桿件，存成 List<int[]>（依序的質點索引）。每一步除了原本的軸向彈簧，再對每根桿件上連續三點 a、b、c 加彎曲力：F = bendK × ((a+c)/2 − b) 加到 b，並各把 −F/2 加到 a、c（合力為零，不會讓整體漂移）。桿件原長設為平直時的格距，把兩端錨點往內拉近，平直桿就被彈性彎成拱。收斂後依交叉點 (i+j)%2 決定上下：經向桿在交叉點沿局部法向（用相鄰兩邊 Vector3d.CrossProduct 求得）偏移 +r、緯向桿偏移 −r，下一個交叉點反過來；用 Curve.CreateInterpolatedCurve 把偏移後的點串成平順曲線，再以 Brep.CreatePipe 輸出圓管。",
+     "result": "一組原本平直的細桿被彎成平順的拱狀網殼，經緯桿件在每個交叉點上下交錯，看起來像竹編或藤編的大型籃狀結構。"
+    },
+    {
+     "title": "布料下垂與碰撞",
+     "level": 3,
+     "what_changes": "輸入（既有量體作為障礙物）＋規則（單向碰撞約束）",
+     "how": "新增 Mesh obstacle 輸入（桌子、椅子、既有建築量體）與 double friction；gravity 改成真正向下（負 Z），只固定布的一邊或幾個點，甚至全部不固定。另外加上跨一格的彎曲彈簧（here→here+2 與 here→here+2×pointsPerRow）避免布過度摺疊。每步更新位置後，對每個質點檢查 obstacle.IsPointInside(p, tol, false)：若穿入，用 obstacle.ClosestMeshPoint(p, 0) 取得最近點與面法向，把質點放到表面外 ε 處，並把速度拆成法向與切向，法向分量歸零、切向分量乘 (1 − friction)。也可加一個 p.Z < 0 就拉回 Z = 0 的地面約束。",
+     "result": "一塊平布從上方落下，披覆在量體或家具上，在稜角與邊緣自然形成皺褶與垂墜，可當作覆蓋既有建築的織物外皮或布幔裝置的造型。"
+    },
+    {
+     "title": "位置式動力學（PBD）求解器",
+     "level": 4,
+     "what_changes": "迴圈（由「力→速度→位置」改為直接修正位置的約束投影）",
+     "how": "移除力陣列，改成三段式：一、預測位置 q = p + v·dt + g·dt²（固定點 q = p）；二、內層迴圈跑 solverIterations 次，對每條彈簧做距離約束投影：Vector3d d = q[b] − q[a]；double len = d.Length；Vector3d corr = d × ((len − RestLength) / len × 0.5 × k)，q[a] += corr、q[b] −= corr（一端固定時整段修正給另一端，k 在 0~1 之間）；三、v = (q − p) / dt × damping，p = q。進一步可仿 Kangaroo 2 的架構：定義介面 IGoal { void Calculate(Point3d[] q, Vector3d[] move, double[] weight); }，彈簧、錨點、V12 的曲面約束各寫成一個 Goal，每一輪把所有 Goal 的移動量加權累加後取平均再套用，新增約束只要多寫一個類別。",
+     "result": "剛度 k 設到 1、dt 放大也不會數值爆炸，幾十步就收斂成同樣的受壓殼；而且長度、錨點、曲面等不同目標可以疊在同一個求解器裡，就是一個自寫的迷你 Kangaroo。"
     }
    ],
    "project_seeds": [
@@ -5858,6 +6238,497 @@ window.CATALOG = {
      "author": "Sigrid Adriaenssens, Philippe Block, Diederik Veenendaal, Chris Williams（編）",
      "year": "2014",
      "url": ""
+    }
+   ]
+  },
+  {
+   "id": "E05",
+   "name_zh": "圖解靜力學（索多邊形與力圖）",
+   "name_en": "Graphic Statics (Funicular Polygon & Force Diagram)",
+   "family": "E",
+   "family_name": "排列與鬆弛",
+   "file": "E05_GraphicStatics.cs",
+   "loc": 161,
+   "logic": [
+    "幾何轉換",
+    "直接公式"
+   ],
+   "data_structure": [
+    "幾何",
+    "圖（形狀圖與力圖對偶）"
+   ],
+   "difficulty": 2,
+   "difficulty_reason": "161 行、單一元件、無自訂 class，只有 DrawFunicular 與 IntersectVertical 兩個方法；核心只是「畫平行線、求與垂直線的交點」，但要先弄懂向量加法（載重線）、極點射線代表內力、以及縱距與極距成反比這三個靜力學觀念，屬於基礎。",
+   "tags": [
+    "結構找形",
+    "對偶圖",
+    "平衡",
+    "作圖法",
+    "受拉／受壓",
+    "一次完成"
+   ],
+   "one_liner": "不列方程式而是作圖：把載重首尾相接成一條載重線，從極點拉出射線，再照射線方向在形狀圖上畫平行線，就得到剛好只受拉的索或只受壓的拱，每段內力直接用射線長度讀出來。",
+   "how_it_works": [
+    "沿跨度 span 等距放 loadCount 個垂直載重，大小依 loadVariation 與 seed 隨機變化。",
+    "在旁邊的力圖上把載重向量首尾相接，排成一條垂直的載重線。",
+    "先隨便選一個試算極點，用 DrawFunicular 畫出試算索多邊形，連出閉合線，再從試算極點畫閉合線的平行線交載重線於 K，得到兩端支承反力的分界點。",
+    "真極點放在 K 的水平線上；因為縱距與極距成反比，用「試算最大縱距 ÷ 指定矢高 sag」反推真極距 H。",
+    "從左支承開始，每段都平行於「極點 → 載重線分點」的射線，用 Intersection.LineLine 交到下一條載重作用線，連成索多邊形；asArch 為真時極點換到另一側，得到純受壓的拱。",
+    "輸出形狀圖、載重箭頭、力圖、試算線，並以射線長度除以比例得到各段內力。"
+   ],
+   "pseudo_code": [
+    "輸入 span, loadCount, loadVariation, seed, sag, asArch",
+    "輸出 formLines, loadLines, forceLines, trialLines, forces",
+    "對 i ← 0 到 loadCount-1：  // DATA",
+    "  x[i] ← span·(i+0.5)/loadCount；P[i] ← 1 ± loadVariation 的亂數",
+    "loadLine ← 把 P[i] 由 (ox, 0) 往下首尾相接  // 力圖",
+    "trial ← DrawFunicular(A, 試算極點 O′)",
+    "K ← 從 O′ 畫閉合線的平行線交 loadLine  // 分出兩端反力",
+    "H ← 試算極距 × 試算最大縱距 / sag  // 縱距與極距成反比",
+    "pole ← (ox ± H, K.Y)  // asArch 決定左或右",
+    "formLines ← DrawFunicular(A, pole)",
+    "forces[j] ← |pole − loadLine[j]| / 比例  // 射線長度 = 內力",
+    "DrawFunicular(start, pole)  // RULE",
+    "  對 每個分點 loadLine[j]：沿平行於 pole − loadLine[j] 的方向畫到下一條載重作用線",
+    "  回傳 折線節點"
+   ],
+   "key_params": [
+    {
+     "name": "span",
+     "effect": "兩支承之間的跨度；力圖會自動縮放放在形狀圖右邊"
+    },
+    {
+     "name": "loadCount",
+     "effect": "載重數量；越多索多邊形越接近平滑曲線（均布載重得到拋物線）"
+    },
+    {
+     "name": "loadVariation",
+     "effect": "載重大小的隨機差異 0–1；0 時左右對稱，越大形狀越偏向重載那一側"
+    },
+    {
+     "name": "seed",
+     "effect": "同一種子得到同一組載重，可重現；換種子就換一組載重分布"
+    },
+    {
+     "name": "sag",
+     "effect": "指定矢高；矢高越小水平推力 H 越大、各段內力越大（扁拱推力大）"
+    },
+    {
+     "name": "asArch",
+     "effect": "false 為下垂受拉的索，true 把極點換到另一側得到上拱受壓的拱"
+    }
+   ],
+   "csharp_concepts": [
+    "Point3d 與 Vector3d 相加減（向量首尾相接）",
+    "Intersection.LineLine 求兩線交點（out 參數）",
+    "double[] 與 List<Point3d> 並用",
+    "helper 方法回傳 List（DrawFunicular）",
+    "Random(seed) 可重現亂數",
+    "三元運算子（asArch ? -1 : 1）",
+    "多個 ref object 輸出"
+   ],
+   "prerequisites": [
+    "向量加法與平行四邊形法則",
+    "力的平衡（合力為零、力多邊形封閉）",
+    "直線方程式與兩線交點",
+    "E 家族：排列與鬆弛的概念（可先看 E04 動態鬆弛）"
+   ],
+   "teaching_note": "建議從零實作的順序：先只畫載重線與一個固定極點的射線（力圖），再寫 DrawFunicular 畫出一條不一定落在右支承的索多邊形，讓學習者親眼看到「極點亂放，索就收不回來」；接著加閉合線與 K 點，把索拉回兩個等高支承；最後才加 sag 反推極距。常見錯誤是射線方向的正負號（本範例一律把方向翻成往右畫），以及把力圖和形狀圖的比例混在一起（forceScale 只用在力圖）。整個計算是一次作圖、沒有迭代，loadCount 再大也瞬間完成；可與 E04 動態鬆弛（迭代模擬）和 E06 力密度法（解線性方程組）並排比較，三者在同樣載重下應得到同一個形狀。",
+   "variations": [
+    {
+     "title": "不等高支承與三點通過",
+     "level": 2,
+     "what_changes": "支承條件（規則）",
+     "how": "新增 supportB（Point3d）輸入讓右支承可高可低；閉合線改成 A→trialEnd 與 A→B 兩條，K 點仍由試算極點畫閉合線平行線求得，但真極點改放在「過 K 且平行 A→B」的直線上；再新增 passPoint 輸入，用該點的縱距取代 sag 反推極距。",
+     "result": "索或拱可以跨過高低差（例如坡地步道橋），並保證通過指定的第三點（例如橋面中點）。"
+    },
+    {
+     "title": "斜向與任意方向載重",
+     "level": 2,
+     "what_changes": "載重方向（輸入）",
+     "how": "把載重從 double 改成 List<Vector3d> 輸入（例如加上水平風力），loadLine 每段加整個向量而不只是 Y 分量，載重作用線改成過載重點、方向為載重向量的直線，DrawFunicular 的 IntersectVertical 換成與這條作用線求 Intersection.LineLine。",
+     "result": "載重線不再是一條直線而是折線，索多邊形會往下風側偏，看得出風力如何讓拱或塔身不對稱。"
+    },
+    {
+     "title": "自重迭代逼近懸鏈線",
+     "level": 3,
+     "what_changes": "載重由形狀決定（規則＋迴圈）",
+     "how": "把整個作圖包進 for 迴圈：每輪用上一輪索多邊形各段長度 × 單位重算出載重（每段一半分給兩端節點），重畫載重線與索多邊形，直到節點位置變化小於 tolerance；載重作用點改成節點位置而非固定 x。",
+     "result": "從等分載重的拋物線逐步修正成自重作用下的懸鏈線，並能印出每輪的形狀差，示範「形狀決定載重、載重又決定形狀」。"
+    },
+    {
+     "title": "推力線放進拱厚（安全幾何）",
+     "level": 3,
+     "what_changes": "加入拱的內外弧並判斷（分析／評估）",
+     "how": "新增 intrados、extrados 兩條 Curve 輸入；對每條載重作用線用 Intersection.CurveLine 取內外弧高度，檢查索多邊形節點是否落在兩者之間；再用二分法調整 sag（等於調整水平推力）找出推力線仍在拱厚內的最小與最大推力。",
+     "result": "得到石拱的最小推力、最大推力兩條推力線與幾何安全係數，推力線碰到內外弧的位置就是可能形成鉸接的地方。"
+    },
+    {
+     "title": "Cremona 交互力圖（桁架）",
+     "level": 4,
+     "what_changes": "從單一索多邊形擴充到桁架內力（規則＋資料結構）",
+     "how": "輸入平面桁架的 Line 清單與節點載重，建立節點—桿件—面的資料結構（Bow 記號：每個面一個字母）；依節點逐一畫力多邊形，桿件在力圖上是兩個相鄰面字母點之間的線段，平行於形狀圖的桿件，用 Intersection.LineLine 定出新的面點。",
+     "result": "一張與桁架互為對偶的力圖，每根桿件的內力直接量線段長度，並依方向判斷拉或壓後上色。"
+    },
+    {
+     "title": "切片法分析拱頂",
+     "level": 3,
+     "what_changes": "2D 作圖 → 3D 殼體的一系列剖面（維度）",
+     "how": "輸入一個拱頂 Brep，用 Brep.CreateContourCurves 沿一個方向切成平行的拱片；每片依寬度算出自重載重，對每片各跑一次索多邊形作圖（以剖面平面 Plane 做座標轉換），把所有推力線放回 3D。",
+     "result": "一組貼在拱頂剖面上的推力線，快速看出哪一段殼太淺、推力線跑出殼厚。"
+    },
+    {
+     "title": "多面體 3D 圖解靜力學",
+     "level": 5,
+     "what_changes": "形狀圖與力圖都升到 3D（維度）",
+     "how": "改用多面體當力圖：每個封閉面代表一個節點的平衡，形狀圖的桿件垂直於力圖對應的面，面的面積代表內力；以 Mesh 表示力多面體，用 Mesh.FaceNormals 取得桿件方向，再以 Intersection 求節點位置。",
+     "result": "純受壓或純受拉的 3D 桿件結構（例如分枝柱或多面體框架），內力由力多面體的面積讀出。"
+    },
+    {
+     "title": "沿推力線切楔形石塊",
+     "level": 3,
+     "what_changes": "輸出（線 → 可製造的拱石）",
+     "how": "把拱的索多邊形用 Curve.Offset 往上下各偏移半個拱厚，沿推力線每隔一段取垂直於切線的切割線，用 Brep.CreateFromCornerPoints 或 Extrusion 做出每塊楔形石（voussoir），並輸出每塊的展開輪廓供 CNC 或雷切。",
+     "result": "接縫都垂直於推力線的拱石組，模型可以用雷切木塊或 3D 列印塊乾砌組裝驗證。"
+    },
+    {
+     "title": "拖曳極點即時互動",
+     "level": 2,
+     "what_changes": "極點由程式計算改成手動控制（時間／動畫）",
+     "how": "新增 polePoint（Point3d）輸入，接 GH 的 Point 參數或 Rhino 裡可拖曳的點，跳過 sag 反推，直接以此點當極點作圖；另外輸出索多邊形右端偏離支承的距離與水平推力，接 Panel 或 Quick Graph。",
+     "result": "拖動極點時索多邊形即時變深變淺、甚至收不回支承，直觀體會極點位置等於水平推力的選擇。"
+    },
+    {
+     "title": "內力決定截面與載重路徑",
+     "level": 3,
+     "what_changes": "加入構件尺寸與材料量評估（分析／評估）",
+     "how": "由 forces 與容許應力算出每段所需截面積，轉成 Pipe 半徑（Brep.CreatePipe）；並計算載重路徑 Σ|F|·L，對 sag 由小到大掃描一輪，輸出 sag–材料量曲線。",
+     "result": "看得到扁拱推力大、構件粗，高拱構件長；曲線最低點就是這組載重下最省材料的矢高。"
+    },
+    {
+     "title": "接 E06 力密度法對照",
+     "level": 3,
+     "what_changes": "與線性求解的找形方法串接（混合）",
+     "how": "把索多邊形每段的力密度 q = 內力 / 長度 算出來，當成 E06 力密度法的 q 輸入，建一條同樣節點與載重的一維網路解線性方程組，比較兩者節點座標差；再把 q 改成不相等，看 FDM 結果能否用力圖反推出來。",
+     "result": "驗證「幾何作圖」與「解矩陣」在 2D 會得到同一條索，並把 2D 力圖的直覺帶到 3D 力密度網。"
+    },
+    {
+     "title": "接 A05 形狀文法的分枝平衡",
+     "level": 4,
+     "what_changes": "以文法規則改寫結構拓樸（混合）",
+     "how": "定義幾條文法規則，例如「把一段受壓桿拆成兩支並在分叉點加一個節點」、「在載重點下加一根斜撐」；每套用一次規則，就用對應的力多邊形（向量首尾相接）重新求新節點位置，只保留力多邊形能封閉的結果。",
+     "result": "從同一組載重長出多種分枝柱、樹狀支撐等不同拓樸，但每一個都保持純受壓或純受拉的平衡。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "校園步道推力線拱橋",
+     "brief": "在真實基地（兩岸高低不同）以不等高支承與橋面載重畫出推力線，比較不同矢高的水平推力與材料量，做 1:20 雷切木塊乾砌模型驗證能否自立。",
+     "difficulty": 3,
+     "combine_with": [
+      "E04"
+     ]
+    },
+    {
+     "title": "三種找形方法並排比較",
+     "brief": "同一組載重分別用圖解靜力學、動態鬆弛與力密度法求形，並排輸出形狀、運算時間與可控制的參數，整理成一張方法比較圖。",
+     "difficulty": 3,
+     "combine_with": [
+      "E04",
+      "E06"
+     ]
+    },
+    {
+     "title": "磚拱涼亭與楔形拱石",
+     "brief": "以切片法分析拱頂，推力線放進拱厚後沿推力線切出拱石，輸出每塊拱石的尺寸表與組裝順序，做 3D 列印縮尺模型。",
+     "difficulty": 4,
+     "combine_with": [
+      "E06"
+     ]
+    },
+    {
+     "title": "互動圖解靜力學教具",
+     "brief": "做一個可拖曳極點、載重與支承的 Grasshopper 介面，同色顯示形狀圖與力圖的對應，線寬代表內力，讓非結構背景的學習者體會平衡。",
+     "difficulty": 2,
+     "combine_with": []
+    },
+    {
+     "title": "文法生成的分枝受壓柱",
+     "brief": "以形狀文法改寫柱的分枝拓樸，每一代都用力多邊形保持純受壓，產生一系列樹狀柱候選，再以載重路徑挑出最省材料的幾個做模型。",
+     "difficulty": 4,
+     "combine_with": [
+      "A05",
+      "F04"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Graphic statics（Wikipedia，含 Culmann 1864 年 Die graphische Statik 與 Cremona 力圖）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Graphic_statics"
+    },
+    {
+     "title": "Form and Forces: Designing Efficient, Expressive Structures",
+     "author": "Edward Allen, Waclaw Zalewski",
+     "year": "2009",
+     "url": "https://www.wiley.com/en-us/Form+and+Forces:+Designing+Efficient,+Expressive+Structures-p-9780470174654"
+    },
+    {
+     "title": "Algebraic graph statics",
+     "author": "Tom Van Mele, Philippe Block",
+     "year": "2014",
+     "url": "https://block.arch.ethz.ch/brg/files/2014-cad-vanmele-algebraic-graph-statics-preprint_1397824709.pdf"
+    },
+    {
+     "title": "COMPAS AGS：以代數圖解靜力學設計與分析 2D 結構（Python 開源套件）",
+     "author": "Block Research Group",
+     "year": "2017",
+     "url": "https://github.com/BlockResearchGroup/compas_ags"
+    }
+   ]
+  },
+  {
+   "id": "E06",
+   "name_zh": "力密度法（FDM）",
+   "name_en": "Force Density Method (FDM)",
+   "family": "E",
+   "family_name": "排列與鬆弛",
+   "file": "E06_ForceDensityMethod.cs",
+   "loc": 190,
+   "logic": [
+    "搜尋／求解"
+   ],
+   "data_structure": [
+    "圖（點＋連線）",
+    "矩陣"
+   ],
+   "difficulty": 4,
+   "difficulty_reason": "約 190 行、一個自訂 struct（Edge），要先把 Mesh 轉成「節點＋邊」的圖、分出自由點與固定點，再理解連接矩陣 C、力密度矩陣 Q 與 D = Cnᵀ·Q·Cn 的意義，並自寫共軛梯度法解線性方程組；數學門檻（線性代數、對稱正定矩陣）明顯高於 E04 的質點彈簧，屬於進階。",
+   "tags": [
+    "找形",
+    "線性方程組",
+    "圖",
+    "矩陣",
+    "收斂",
+    "3D",
+    "最佳化"
+   ],
+   "one_liner": "替索網裡每一根索指定「拉力 ÷ 長度」的力密度 q，整張網的平衡形狀就變成一組線性方程式，一次解出來，不必像動態鬆弛那樣慢慢晃到靜止。",
+   "how_it_works": [
+    "把輸入 Mesh 轉成圖：TopologyVertices 當節點、TopologyEdges 當邊，每條邊記下兩端節點編號。",
+    "決定固定點（指定錨點或裸邊頂點），其餘為自由點，並替每條邊指定力密度 q（裸邊邊索再乘 edgeCableFactor）。",
+    "組出稀疏矩陣 D = Cnᵀ·Q·Cn：每條邊把 q 加到兩端自由點的對角線，兩端都自由時在非對角位置填 −q；只接到固定點的邊則把 q × 固定點座標移到右手邊。",
+    "對 x、y、z 三個方向各解一次 D·u = p + 固定點貢獻（p 只有 z 向的 load），用共軛梯度法迭代到殘差夠小。",
+    "把解出的座標寫回網格，並以「內力 = q × 長度」算出每根桿件的力，依大小由藍到紅上色輸出。"
+   ],
+   "pseudo_code": [
+    "輸入 baseMesh, anchors, forceDensity, edgeCableFactor, load, cgIterations",
+    "輸出 lines, formMesh, forces, colors, residual",
+    "// 1. 圖與力密度",
+    "edges ← baseMesh 的拓樸邊，每條 q ← forceDensity（裸邊 × edgeCableFactor）",
+    "isFixed ← anchors 最近頂點，或裸邊頂點",
+    "// 2. 組稀疏矩陣 D = Cnᵀ·Q·Cn",
+    "對 每條邊 (a, b, q)：自由端的 diag += q；兩端都自由時 D[a,b] ← −q",
+    "// 3. 三個方向各解一次線性方程組",
+    "對 axis 在 x, y, z：",
+    "  rhs ← load（只有 z）＋ Σ q × 固定鄰點座標",
+    "  u ← SolveCG(D, rhs, cgIterations)  // 共軛梯度",
+    "// 4. 輸出",
+    "forces ← q × 邊長；colors ← 依內力藍到紅"
+   ],
+   "key_params": [
+    {
+     "name": "baseMesh",
+     "effect": "只取它的拓樸（誰連誰）決定索網的格子型式；座標只提供固定點位置與初始猜測"
+    },
+    {
+     "name": "anchors",
+     "effect": "固定點位置；空的時候自動固定所有裸邊頂點，改成四個角點就從盆形變成枕頭形"
+    },
+    {
+     "name": "forceDensity",
+     "effect": "內部邊的 q；q 與 load 的比值決定垂度，q 越大網越平、越小垂得越深"
+    },
+    {
+     "name": "edgeCableFactor",
+     "effect": "裸邊邊索的 q 倍率；大於 1 邊索拉直，小於 1 邊界往內彎成扇貝形"
+    },
+    {
+     "name": "load",
+     "effect": "每個自由點的 Z 向外力；負值往下得到懸垂網，正值往上得到受壓殼，0 得到只受預力的索網"
+    },
+    {
+     "name": "cgIterations",
+     "effect": "共軛梯度法最多步數；理論上自由點數步內收斂，看 residual 判斷是否夠準"
+    }
+   ],
+   "csharp_concepts": [
+    "struct 與 List<struct>",
+    "一維陣列當向量（double[]）",
+    "索引對照表（節點 → 未知數編號）",
+    "Mesh.TopologyVertices／TopologyEdges",
+    "稀疏矩陣只存非零項的矩陣乘向量",
+    "方法拆分與回傳值（SolveCG、MatVec）",
+    "System.Drawing.Color 上色"
+   ],
+   "prerequisites": [
+    "向量與座標分量（x、y、z 分開算）",
+    "矩陣乘向量與線性方程組 A·x = b 的概念",
+    "圖（節點、邊、鄰接）",
+    "力的平衡（節點上的合力為零）",
+    "E04 動態鬆弛找形（對照用）"
+   ],
+   "teaching_note": "建議從一維開始：先做一條兩端固定、中間 5 個點的懸索，手寫 5×5 的 D 矩陣用高斯消去解，親眼看到「一次解完」；再把一維換成 Mesh 拓樸、把高斯消去換成只沿邊做矩陣乘向量的共軛梯度法。常見錯誤：沒有任何固定點或有一群自由點完全連不到固定點（D 奇異、CG 發散）；q 給 0 或負值（D 不再正定，CG 不保證收斂，張拉整體要改用 LU 或高斯消去）；把 load 當成每單位面積而忘了乘上節點負擔面積。效能上，本範例不存 nf × nf 的完整矩陣，只存對角線與邊，1,000 個自由點以內可即時更新；更大的網要改用 Cholesky 等稀疏分解。和 E04 動態鬆弛（含 V06 Kinetic Damping）不同層次：E04 是一步步時間積分、控制材料剛度，FDM 是一次線性求解、直接控制每根桿件的「力 ÷ 長度」；和 E05 圖解靜力學則是同一個平衡問題的「解矩陣」與「幾何作圖」兩種寫法。",
+   "variations": [
+    {
+     "title": "吸引子漸變力密度",
+     "level": 2,
+     "what_changes": "輸入（每條邊的 q 改成空間變化）",
+     "how": "新增 List<Point3d> attractors 與 qNear、qFar 兩個輸入；建 edges 時取邊中點到最近吸引子的距離 d，q = qFar + (qNear − qFar)·exp(−d²/σ²)，其餘程式不變。",
+     "result": "吸引子附近的網被拉得較平、遠處垂得較深，一張網上出現局部隆起或凹陷的天窗與入口。"
+    },
+    {
+     "title": "零載重預力網：高低錨點一次解出馬鞍面",
+     "level": 2,
+     "what_changes": "規則（外力改為 0、錨點給不同高度）",
+     "how": "load 設 0，anchors 改成四個高低交錯的點（兩高兩低），baseMesh 用平面格網；只剩固定點貢獻留在右手邊，一次求解即得平衡形。",
+     "result": "不用任何迭代就得到雙曲拋物面般的預力索網，改一個錨點高度立刻重算。"
+    },
+    {
+     "title": "從線段網路建圖（不需要 Mesh）",
+     "level": 2,
+     "what_changes": "輸入（拓樸來源）",
+     "how": "把 baseMesh 換成 List<Line> network，用 Point3dList 與 ClosestIndex 在容差內合併端點建立節點，Line 的兩端索引就是 Edge 的 A、B；固定點改由度數為 1 的端點或 anchors 決定。",
+     "result": "手畫的任意索網、樹狀或放射狀線段網路都能直接找形，不受四邊形格網限制。"
+    },
+    {
+     "title": "內力決定索徑與索料清單",
+     "level": 2,
+     "what_changes": "輸出（構件化）",
+     "how": "對每條 line 依 forces 算半徑 r = rMin + k·√(f / fMax)，用 Brep.CreatePipe 產生管件；同時輸出「編號、長度、內力」的字串清單並依長度排序。",
+     "result": "得到粗細隨受力變化的 3D 索網模型與可直接下料的索長表。"
+    },
+    {
+     "title": "自重依負擔面積迭代更新",
+     "level": 3,
+     "what_changes": "規則（外力與形狀互相影響）",
+     "how": "在求解外包一個 for 迴圈跑 3–5 次：每次先用 formMesh 的面積（AreaMassProperties）把每個面的重量平分給其頂點，更新 rhs 的 z 分量再重解，直到頂點位移小於容差。",
+     "result": "得到接近「厚度均勻的殼在自重下」的形狀，比每點等載重更貼近混凝土殼或織物模板的真實載重。"
+    },
+    {
+     "title": "輪輻索網：外壓環＋內拉環",
+     "level": 3,
+     "what_changes": "維度（拓樸改成極座標網）",
+     "how": "不讀 Mesh，改用程式產生 rings × spokes 的極座標網格：最外圈為固定點（壓環），最內圈節點以一圈高 q 的環索相連（拉環）；徑向邊與環向邊各給不同 q，load 設 0 或小負值。",
+     "result": "得到體育場屋頂常見的自行車輪式索網，調 q 比例就能改變內環大小與屋面起伏。"
+    },
+    {
+     "title": "支承反力與推力箭頭",
+     "level": 3,
+     "what_changes": "分析（輸出支承力）",
+     "how": "求解後對每個固定點 i 計算反力 R_i = −Σ q·(x_j − x_i)（j 為相鄰節點），以 Line 由固定點畫出並依大小縮放，另輸出水平分量總和。",
+     "result": "一眼看出哪些支承要承受最大的水平推力，作為邊梁、拉桿或基礎尺寸的依據。"
+    },
+    {
+     "title": "拖曳錨點即時重解",
+     "level": 3,
+     "what_changes": "時間／互動（改用即時求解取代時間步進）",
+     "how": "把 anchors 接到 Rhino 裡可拖曳的點（Point 參數 Set one Point），RunScript 每次觸發都從頭組 D 並求解；另把上一次解存在 class 欄位當 CG 的初始猜測，拖曳時收斂更快。",
+     "result": "一邊拖錨點一邊看到網的平衡形立即更新，不像動態鬆弛需要 Timer 等它晃到靜止。"
+    },
+    {
+     "title": "等力網：迭代 q = 目標力 ÷ 長度",
+     "level": 4,
+     "what_changes": "規則（由固定 q 改為固定內力）",
+     "how": "外加迴圈：解完一次後把每條邊 q ← targetForce / 長度，再重組 D 重解，重複到所有桿件內力與 targetForce 差距小於 1%。",
+     "result": "得到每根索內力都相同的網，形狀接近最小曲面，適合用同一規格的索或繩。"
+    },
+    {
+     "title": "張拉整體：受壓桿給負力密度",
+     "level": 4,
+     "what_changes": "規則（q 可為負，求解器改用高斯消去）",
+     "how": "新增 List<Line> struts 當受壓桿並給負 q，其餘索給正 q；因 D 不再正定，把 SolveCG 換成對完整 double[nf,nf] 做部分樞軸高斯消去（或 LU 分解），並檢查主元是否接近 0。",
+     "result": "找出桿不相碰、索全受拉的張拉整體平衡形，看出正負力密度比例如何決定整體扭轉與高度。"
+    },
+    {
+     "title": "逆向找形：指定目標高度反推 q",
+     "level": 5,
+     "what_changes": "搜尋／求解（外層最佳化 q）",
+     "how": "新增 List<double> targetZ 給部分節點；把 q 當未知數，以有限差分估計 ∂z/∂q，用高斯—牛頓或簡單梯度下降反覆更新 q（限制 q > 0），每步都呼叫一次 FDM 求解。",
+     "result": "不再是「給 q 看形」，而是「給形找 q」：殼頂高度或特定點位置精準命中設計值，並得到施工需要的預力分布。"
+    },
+    {
+     "title": "混合 E03 Voronoi：不規則多邊形索網",
+     "level": 3,
+     "what_changes": "混合（拓樸來自其他演算法）",
+     "how": "先用 E03 Voronoi＋Lloyd 在基地輪廓內產生細胞，把所有細胞邊合併成線段網路（同「從線段網路建圖」），外框節點固定後以本範例求解。",
+     "result": "得到像蜂巢或泡泡般不規則分格的受壓殼或懸垂網，每個節點三叉，適合做多邊形面板或木格柵。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "三種找形法的同題比較",
+     "brief": "同一組平面、支承與載重，分別用 E05 圖解靜力學（2D 截面）、E04 動態鬆弛與本範例力密度法求形，比較形狀差異、運算時間與可控制的參數，整理成一張方法比較圖表。",
+     "difficulty": 3,
+     "combine_with": [
+      "E04",
+      "E05"
+     ]
+    },
+    {
+     "title": "校園索網遮陽棚",
+     "brief": "以校園某處的柱位與牆面掛點為錨點，用零載重預力網與等力網迭代找出索網形，輸出索長與內力清單，並用彈性繩做 1:20 實體模型量測垂度驗證。",
+     "difficulty": 3,
+     "combine_with": [
+      "E04"
+     ]
+    },
+    {
+     "title": "織物模板混凝土小殼",
+     "brief": "仿照索網加織物模板的原型殼流程：先以 FDM 找出受壓形，再依負擔面積迭代自重、輸出索網預力與模板裁片，最後以石膏或纖維水泥做縮尺殼。",
+     "difficulty": 4,
+     "combine_with": [
+      "E03"
+     ]
+    },
+    {
+     "title": "桌上型張拉整體雕塑",
+     "brief": "用負力密度找出三稜柱與多層張拉整體的平衡形，輸出桿長與索長，以木棒與彈性繩組裝，並比較不同力密度比例造成的扭轉角。",
+     "difficulty": 4,
+     "combine_with": [
+      "E05"
+     ]
+    },
+    {
+     "title": "指定高度的屋頂反推預力",
+     "brief": "給定殼頂與屋簷的目標高度，用逆向找形反推每條索的力密度，輸出支承反力與推力箭頭，討論預力分布與邊梁尺寸的取捨。",
+     "difficulty": 5,
+     "combine_with": [
+      "E04",
+      "F04"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "The force density method for form finding and computation of general networks（Computer Methods in Applied Mechanics and Engineering 3, 115–134）",
+     "author": "H.-J. Schek",
+     "year": "1974",
+     "url": "https://www.sciencedirect.com/science/article/pii/0045782574900450"
+    },
+    {
+     "title": "An overview and comparison of structural form finding methods for general networks（International Journal of Solids and Structures 49, 3741–3753）",
+     "author": "Diederik Veenendaal, Philippe Block",
+     "year": "2012",
+     "url": "https://www.sciencedirect.com/science/article/pii/S002076831200337X"
+    },
+    {
+     "title": "Force Densities Method（compas-FoFin 理論說明）",
+     "author": "Block Research Group（ETH Zurich）",
+     "year": "",
+     "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method"
     }
    ]
   },
@@ -6004,6 +6875,20 @@ window.CATALOG = {
      "what_changes": "輸出（加入圖論分析）",
      "how": "把所有弧 Join 成曲線，判斷 IsClosed 並計算長度或面積；依大小分層、上色或只保留最長的一條當路徑。",
      "result": "可以控制「島」與「長河」的比例，用於景觀步道、動線或燈光設計。"
+    },
+    {
+     "title": "鏡曲線：Kolam 與凱爾特結",
+     "level": 3,
+     "what_changes": "規則（磁磚種類由 2 種增為 3 種：兩種反射磚＋一種交叉磚），並在輸出加入上下交織",
+     "how": "每格的四個邊中點當成埠 N、E、S、W，三種磚就是三種配對：反射磚甲 {N–E, S–W}、反射磚乙 {N–W, S–E}（這兩種正好是原本的兩段四分之一弧），交叉磚 {N–S, E–W}（兩條穿過格心的直線或 S 形曲線）；把原本的 bool rotated 改成 int type = random.Next(3)，或用 mirrorH[,]、mirrorV[,] 兩個布林陣列讓使用者指定哪些格放鏡子。整個網格外圍再補一圈邊界磚：相鄰兩個外側埠用向外凸的半圓接起、角落格的兩個外側埠用 3/4 圓接起，讓曲線碰到邊界就折返。接著建立 Dictionary<(int col,int row,int port), (int col,int row,int port)> 記錄每個埠在格內的配對與跨格的相鄰埠，從任一未走過的埠出發一路追蹤，把沿途線段 Join 成一條封閉 PolyCurve，數出共有幾條曲線（Kolam 的「一筆畫」條件就是只有 1 條）。最後沿每條曲線依序走過交叉磚，交替標記上／下，對標記為下的那段用 Curve.Split 在格心兩側各剪掉 gap 長度，做出凱爾特結的斷線交織。輸出前可把整組幾何用 Transform.Rotation(Math.PI/4, …) 轉 45°，並在棋盤式間隔的磚角點上畫點（Kolam 的 pulli）。",
+     "result": "由單一或少數幾條封閉曲線纏繞整片網格的 Kolam／凱爾特結圖樣，交叉處上下交替，改變鏡子位置就能控制曲線條數與纏繞方式。"
+    },
+    {
+     "title": "複數共形映射（e^z／Möbius／Droste）",
+     "level": 4,
+     "what_changes": "維度／座標（平面到平面的共形座標轉換，取代原本的直角座標擺放）",
+     "how": "先照原版產生弧線，把每段 Arc 用 arc.ToNurbsCurve().DivideByCount(16, true, out double[] t) 取樣成點，每點轉成 System.Numerics.Complex z = new Complex(x * k, y * k)（k 為縮放），套用映射 w = f(z) 後再用 Curve.CreateInterpolatedCurve 接回曲線。三種 f：(1) 指數 w = Complex.Exp(z)：把網格高度設成 2π/k 的整數倍，垂直方向剛好繞一圈接縫、水平方向變成同心環且每圈等比縮小；(2) Möbius w = (a·z + b)/(c·z + d)，a、b、c、d 以四組 Complex 輸入並檢查 a·d − b·c ≠ 0，因為 Möbius 把圓映射成圓，每段弧只要映射起點、中點、終點三點，再用 new Arc(p0, pMid, p1) 就能得到精確圓弧；(3) Droste 螺旋：在 z 平面讓圖樣沿向量 P = ln(s) + 2πi 週期重複（格子寬高取 h，使 ln(s) = a·h、2π = b·h，每格方向以 (col − m·a, row − m·b) 折回 0 ≤ row < b 的代表格決定，確保平移 P 後相同），再套 w = Complex.Exp(β·z)，β = 2πi / (ln(s) + 2πi)，s 為每圈的縮放倍率。映射前要排除 w 的極點（Möbius 的 z = −d/c）附近的格子，避免曲線爆長。",
+     "result": "Truchet 曲線在局部仍保持直角相接，整體卻捲成同心環、繞向某一點無限縮小，或形成 Escher 式的 Droste 螺旋，可當圓形天花、地坪或穹頂的平面展開圖。"
     }
    ],
    "project_seeds": [
@@ -6223,6 +7108,13 @@ window.CATALOG = {
      "what_changes": "迴圈（加入遞迴）",
      "how": "把 Hankin 線切出的中心星形或多邊形當成新底圖，縮小角度再套一次 HankinLines，遞迴 2–3 層。",
      "result": "自相似的多層星形，接近波斯後期兩層級 girih 圖樣。"
+    },
+    {
+     "title": "疊紋（Moiré）：雙層星形板的干涉紋",
+     "level": 3,
+     "what_changes": "分析／評估（兩層同一圖樣只差微小旋轉或縮放，量化疊合後的透光分布與疊紋間距）",
+     "how": "以原版產生第一層線網，並用 V09 的 Curve.CreateBooleanRegions 取出星形開口當 openA；第二層用同一組曲線複製後套 Transform.Rotation(theta, center)（theta 約 1°–5°）或 Transform.Scale(center, 1 + eps)（eps 約 0.01–0.05），得到 openB。先用公式預估疊紋尺度：旋轉時疊紋間距 D = a / (2·sin(theta/2))，縮放時 D = a·a′ / |a − a′|（a、a′ 為兩層的 tileSize），把 D 輸出成數值並畫出一個 D×D 的參考框。接著在範圍內佈一個取樣點格（間距約 tileSize/8），用 curve.Contains(pt, Plane.WorldXY, tol) == PointContainment.Inside 判斷每點是否同時落在 openA 與 openB 的某個開口內，得到 0／1 透光值，再以邊長約 tileSize 的視窗做移動平均，把結果寫成 Mesh 頂點色（mesh.VertexColors.Add）的灰階圖。可再加 gap 與 eye 兩個輸入：把第二層上移 gap，以眼睛位置 eye 沿視線把第二層的開口投影回第一層平面（Transform.Projection 或沿射線求交點）再做判斷，觀察觀看者移動時疊紋的位移。",
+     "result": "兩片幾乎相同的星形穿孔板疊合後浮現遠大於單一星形的明暗波紋，並得到疊紋間距數值與透光率灰階圖，可作為雙層穿孔立面或屏風隨觀看角度變化的設計依據。"
     }
    ],
    "project_seeds": [
@@ -6686,6 +7578,20 @@ window.CATALOG = {
      "what_changes": "規則（選擇方式）",
      "how": "每代輸出 9 組候選幾何排成九宮格，用 Value List 讓使用者點選喜歡的兩組當父母，取代 ScoreOf。",
      "result": "類似 Karl Sims Genetic Images 的美學演化，適合形式探索而非數值最佳化。"
+    },
+    {
+     "title": "換搜尋機制：粒子群最佳化（PSO）",
+     "level": 3,
+     "what_changes": "規則（搜尋機制：以速度更新取代選擇、交配、突變）",
+     "how": "保留 Candidate 的 Point3d[] 與 ScoreOf，另加 Vector3d[] velocity、Point3d[] pBest 與 double pBestScore 三個欄位；主迴圈刪掉精英保留、Tournament、均勻交配與 Mutate，改成每一代對每顆粒子的每個點做 v = w·v + c1·r1·(pBest − x) + c2·r2·(gBest − x)（新增輸入 inertia w 預設 0.72、c1 與 c2 預設 1.49，r1、r2 用同一個 Random 取 0–1），再 x += v；速度長度超過 maxSpeed 時用 Vector3d.Unitize 後乘 maxSpeed 截斷，點超出矩形邊界就夾回邊界並把該分量速度反向；算完 ScoreOf 若勝過 pBestScore 就把 points.Clone() 存進 pBest，再從所有 pBest 中取最高分更新 gBest。",
+     "result": "一樣輸出最佳點陣與收斂曲線，但整群方案像鳥群一樣朝目前最好的解飛去、收斂通常比 GA 快也較容易早熟；可和 F07 模擬退火（單點搜尋）並排，比較單點、族群（GA）、群體（PSO）三種搜尋在同一個 ScoreOf 上的收斂曲線，也是 Silvereye 這類 Grasshopper 最佳化外掛背後的機制。"
+    },
+    {
+     "title": "非支配排序多目標（NSGA-II／Pareto 前緣）",
+     "level": 4,
+     "what_changes": "規則（選擇方式：由單一分數排序改為非支配排序＋擁擠距離）",
+     "how": "Candidate 改存 double[] objectives 兩個目標（例如 f1 = ScoreOf 的最近距離要最大、f2 = 所有點到邊界 Curve 的平均距離要最小，用 Curve.ClosestPoint 求得）；寫 Dominates(a, b)（每個目標都不差且至少一個更好）與 FastNonDominatedSort：雙層迴圈算出每個方案被幾個方案支配、支配了誰，依序剝出第 1、2、3… 前緣並記錄 rank；每個前緣內依各目標排序，頭尾擁擠距離設為 double.PositiveInfinity，中間累加相鄰兩者的目標差 ÷ 該目標全距；Tournament 改成先比 rank 小者勝、同 rank 比擁擠距離大者勝；每代把父代與子代合併成 2N，依前緣逐層放入下一代，最後一層放不下時取擁擠距離大的；輸出第 1 前緣的方案，並把各方案 (f1, f2) 畫成 Point3d 散佈點。",
+     "result": "一次演化就得到一整條 Pareto 前緣：一端是最分散、一端是最貼邊，中間是各種取捨，散佈圖上的前緣點可以逐一點選回看對應的點陣配置，等於自己做出迷你 Octopus／Wallacei。"
     }
    ],
    "project_seeds": [
@@ -6898,6 +7804,20 @@ window.CATALOG = {
      "what_changes": "混合其他家族",
      "how": "把出入口座標當 F04 的基因，評分為所有房間到最近出口的最長 Dijkstra 距離（越小越好）。",
      "result": "自動找到讓最遠點逃生距離最短的出口配置。"
+    },
+    {
+     "title": "Fast Marching：Eikonal 平滑距離場",
+     "level": 4,
+     "what_changes": "規則（鄰居的距離更新公式）＋輸出（沿梯度回溯路徑）",
+     "how": "保留優先佇列的波前擴散，但鄰居改成上下左右 4 格，每格有 Far／Trial／Known 三種狀態（int[] state），Trial 格放進 PriorityQueue<int,double>（Rhino 7 的舊版 .NET 可用 SortedSet<(double,int)> 代替）。取出最小的 Trial 格標為 Known 後，對每個非 Known 鄰居改用 Eikonal 局部公式更新：a = min(T左, T右)、b = min(T上, T下)、f = 該格成本（預設 1，可直接沿用 V03 的影像成本）、h = cellSize；若 |a − b| ≥ h·f，T = min(a, b) + h·f，否則 T = (a + b + Math.Sqrt(2·h²·f² − (a − b)²)) / 2，比原值小才寫回並 Push。障礙格的 T 固定為 double.MaxValue 不參與取 min。跑完後把 T 當頂點 Z 值建 Mesh，用 Mesh.CreateContourCurves 取等距線；路徑改從終點以雙線性內插求 T 的梯度，每步沿 −∇T 前進半格，直到離起點小於一格，輸出 Polyline。",
+     "result": "等距線是真正的圓弧（不再是 Dijkstra 8 鄰居的八角形，約 8% 的方向誤差消失），回溯出的最短路徑可以走任意角度的平順斜線，不會貼著 45°／90° 的格線折來折去。"
+    },
+    {
+     "title": "網路中心性：closeness 與整合度",
+     "level": 3,
+     "what_changes": "迴圈（全點對最短路徑）＋輸出（每個節點的中心性指標）",
+     "how": "以 V05 的街道／路網圖為底：節點是街道曲線的端點與交點，邊是實際的街道段，存成 Dictionary<int, List<(int, double)>>。對每個節點各跑一次不設終點的 Dijkstra（公制距離），或把邊權全設 1 改跑 BFS（拓樸步數，即 Space syntax 的深度）。累加總深度 TD_i = Σ d(i, j)，得到平均深度 MD_i = TD_i /(n − 1)、closeness C_i = (n − 1)/ TD_i；Space syntax 整合度再算 RA = 2(MD − 1)/(n − 2)，以鑽石值 D_n = 2{n[log₂((n + 2)/3) − 1] + 1}/((n − 1)(n − 2)) 正規化成 RRA = RA / D_n，整合度 = 1 / RRA。加一個 radius 輸入，只累加深度 ≤ radius 的節點即得局部整合度（例如 R3）。最後把每條街道段依兩端節點的平均值用漸層色上色輸出，並 Print 整合度最高的前幾條。",
+     "result": "整個路網依「平均要走多遠（幾步）才能到其他所有地方」上色：主街與核心區呈暖色、死巷與邊緣呈冷色，可比較全域與局部整合度找出社區中心的位置。"
     }
    ],
    "project_seeds": [
@@ -7107,6 +8027,13 @@ window.CATALOG = {
      "what_changes": "規則（數值方法）",
      "how": "把 LorenzNext 的歐拉一步改成四階 Runge–Kutta（算 k1–k4 四次速度再加權平均）。",
      "result": "同樣 stepTime 下軌跡更準確、更不易發散，可比較兩種積分的差異。"
+    },
+    {
+     "title": "換公式：IFS 仿射變換組（Barnsley 蕨）",
+     "level": 2,
+     "what_changes": "規則（單一非線性公式改成依機率抽選的多條仿射變換）",
+     "how": "attractorType 新增一個分支，宣告 double[,] 係數表，每列 a、b、c、d、e、f、p 代表一條仿射變換 x' = a·x + b·y + e、y' = c·x + d·y + f 與被抽中的機率（Barnsley 蕨四列：0,0,0,0.16,0,0,0.01／0.85,0.04,−0.04,0.85,0,1.6,0.85／0.2,−0.26,0.23,0.22,0,1.6,0.07／−0.15,0.28,0.26,0.24,0,0.44,0.07）；迴圈中每一步用 Random.NextDouble() 取 0–1 的數，累加 p 找出落在哪一列，只套用那一列算下一點；前 20 步先丟掉不加入清單，讓點落到吸子上後再收集，其餘沿用 Clifford 的點清單輸出；也可以把係數表改成 Grasshopper 的數字清單輸入，讓學習者自己調葉片的傾斜與縮放。",
+     "result": "幾萬個點自動長出一片細節無窮的蕨葉點雲，改一列係數就變成不同的葉形、樹形或 Sierpinski 三角形，可接 V02 密度著色或當作立面開孔的點源。"
     }
    ],
    "project_seeds": [
@@ -7189,6 +8116,1229 @@ window.CATALOG = {
      "author": "James Gleick",
      "year": "1987",
      "url": ""
+    }
+   ]
+  },
+  {
+   "id": "F07",
+   "name_zh": "模擬退火（以房間鄰接配置為例）",
+   "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+   "family": "F",
+   "family_name": "圖樣與最佳化",
+   "file": "F07_SimulatedAnnealing.cs",
+   "loc": 206,
+   "logic": [
+    "搜尋／求解",
+    "迭代模擬"
+   ],
+   "data_structure": [
+    "排列",
+    "矩陣",
+    "網格"
+   ],
+   "difficulty": 3,
+   "difficulty_reason": "206 行、單一元件、沒有自訂 class，核心只有 Cost／SwapSlots 兩個方法；但要理解排列（permutation）與雙向索引（slotOf／roomAt）、二維陣列鄰接矩陣，以及 exp(−Δ／T) 機率接受與冷卻排程，調參（起始溫度、冷卻率）需要一點直覺。",
+   "tags": [
+    "最佳化",
+    "隨機",
+    "可重現種子",
+    "收斂",
+    "平面配置",
+    "組合最佳化",
+    "機率"
+   ],
+   "one_liner": "只拿一個方案反覆小改：變好就收，變差也有機會收，但「溫度」越降越低、越來越不肯接受變差，於是能跳出小山谷找到更好的配置。",
+   "how_it_works": [
+    "準備 n 個房間與 cols × rows 個格位，把鄰接需求（例如「廚房,餐廳,5」）讀進對稱矩陣 w[i,j]。",
+    "成本 = Σ w[i,j] × 兩房間所在格位的曼哈頓距離（二次指派問題 QAP）；用洗牌產生一個隨機配置當起點，溫度 T ← startTemp。",
+    "每一步隨機挑兩個格位交換內容（空格也能換），重算成本得到差值 Δ。",
+    "Δ ≤ 0 直接接受；Δ > 0 以機率 exp(−Δ／T) 接受（Metropolis 準則），否則換回來；同時記住目前為止最好的配置。",
+    "每做 StepsPerTemp 步就把溫度乘上 coolingRate，直到 iterations 用完或溫度低於門檻。",
+    "輸出最佳配置的房間矩形、名稱、鄰接連線，以及從抖動到收斂的成本曲線。"
+   ],
+   "pseudo_code": [
+    "輸入 roomNames, adjacency, startTemp, coolingRate, iterations, seed",
+    "輸出 rooms, labels, links, costCurve, log",
+    "w ← ReadAdjacency(adjacency)  // 對稱矩陣 w[i,j]",
+    "slotOf ← 隨機排列(seed)；cost ← Cost(slotOf)；T ← startTemp",
+    "重複 iterations 次：",
+    "  a, b ← 兩個隨機格位（不能兩個都是空格）",
+    "  交換 a, b；Δ ← Cost(slotOf) − cost",
+    "  如果 Δ ≤ 0 或 亂數 < exp(−Δ / T)：cost ← cost + Δ；更新 best",
+    "  否則：交換回來",
+    "  每 StepsPerTemp 步：T ← T × coolingRate",
+    "rooms, links ← 依 best 畫矩形與連線；costCurve ← 成本歷程",
+    "Cost(slotOf) = Σ w[i,j] × 曼哈頓距離(slotOf[i], slotOf[j])  // QAP"
+   ],
+   "key_params": [
+    {
+     "name": "roomNames",
+     "effect": "房間數 n；格位自動取 ⌈√n⌉ 欄，n 越大解空間是 n! 級數成長，需要更多 iterations。"
+    },
+    {
+     "name": "adjacency",
+     "effect": "每行「房間A,房間B,權重」；權重就是設計意圖，換一張需求表就是換一個題目。"
+    },
+    {
+     "name": "startTemp",
+     "effect": "太低等於只會往下走的爬山法，容易卡在局部最佳；太高前期像亂數搜尋、浪費步數。約取一次交換平均 |Δ| 的 1–3 倍。"
+    },
+    {
+     "name": "coolingRate",
+     "effect": "0.9 降溫很快、結果不穩定；0.995 以上降得慢、解比較好但要更多 iterations。"
+    },
+    {
+     "name": "iterations",
+     "effect": "總交換嘗試次數；和冷卻率一起決定最後溫度，可看成本曲線是否已經走平。"
+    },
+    {
+     "name": "seed",
+     "effect": "同一個 seed 重現同一次退火；換幾個 seed 比較最佳成本，可看出結果的穩定度。"
+    }
+   ],
+   "csharp_concepts": [
+    "int[] 排列與雙向索引（slotOf／roomAt）",
+    "double[,] 二維陣列當鄰接矩陣",
+    "Random(seed) 與 NextDouble 機率判斷",
+    "Math.Exp 與溫度參數",
+    "陣列 Clone 保存最佳解",
+    "Fisher–Yates 洗牌",
+    "string.Split 與 TryParse 解析輸入"
+   ],
+   "prerequisites": [
+    "迴圈與陣列",
+    "二維陣列與對稱矩陣",
+    "指數函數 e^x 的形狀",
+    "F04 基因演算法的「評分函數」觀念"
+   ],
+   "teaching_note": "建議從零實作的順序：先寫 Cost 並手動排一組配置算成本；再加 SwapSlots 做「只接受變好」的爬山法，看它很快卡住；最後只加一行 exp(−Δ／T) 與降溫，就能對照出退火為什麼能跳出局部最佳。常見錯誤：交換後忘了同步更新 slotOf 與 roomAt 兩個索引、保存最佳解時沒 Clone（之後被改掉）、溫度單位和成本尺度不相稱（T 太小等於爬山法）。效能：範例每步都重算整個 O(n²) 成本，房間超過 30 個時可改成只重算被交換兩個房間相關的項（增量 Δ）。可以和 F04 對照：退火只有一個方案，靠溫度控制探索；基因演算法靠一整群方案與交配。",
+   "variations": [
+    {
+     "title": "不等面積房間：條帶式平面",
+     "level": 3,
+     "what_changes": "輸入加上房間面積，輸出從等大格位改成依排列順序切出的條帶（規則＋輸出）",
+     "how": "新增 List<double> areas；排列 slotOf 改成房間的排列順序，依序把房間塞進固定寬度的條帶（每條寬 stripWidth，房間長 = 面積 / 寬，滿了換下一條），用 Rectangle3d 算出中心點；成本改用中心點的 Point3d.DistanceTo，鄰域仍是交換兩個房間的順序。",
+     "result": "大小不一的房間排成幾條走道式平面，常一起用的房間自動靠在同一條或相鄰條帶上。"
+    },
+    {
+     "title": "連續鄰域：家具與構件擺放",
+     "level": 3,
+     "what_changes": "鄰域從「交換兩個格位」改成「隨機平移＋旋轉一件物件」（規則）",
+     "how": "每件家具存 Point3d 位置與 double 角度；每步隨機挑一件，位置加上 ±stepSize × T／startTemp 的位移、角度加減 90° 或小角度；成本加上重疊面積（用 Curve.PlanarClosedCurveRelationship 或包圍盒相交）、離牆距離、動線寬度等項。",
+     "result": "床、桌、櫃子從亂放逐漸貼牆、留出走道，高溫時大步亂跳、低溫時只做微調。"
+    },
+    {
+     "title": "2-opt 反轉路段：單線繪圖",
+     "level": 2,
+     "what_changes": "問題從房間配置換成走訪點的順序，鄰域改成反轉一段路徑（規則＋輸出）",
+     "how": "輸入點群（可接 E02 Poisson 或影像取樣），狀態是點的順序 int[]；每步隨機取 i < j，用 Array.Reverse(order, i, j − i + 1) 反轉，Δ 只需計算兩端被改動的兩條邊；輸出一條封閉 Polyline。",
+     "result": "一筆畫完的單線圖，交叉的線段在降溫過程中一條條被解開，適合繪圖機輸出。"
+    },
+    {
+     "title": "冷卻排程比較與重新加熱",
+     "level": 2,
+     "what_changes": "溫度更新公式（規則）",
+     "how": "新增 int schedule 輸入：0 幾何 T ← T·α、1 線性 T ← T0·(1 − k/K)、2 對數 T ← T0 / ln(k + 2)、3 重新加熱（連續 N 步沒有改善就把 T 設回 0.5·T0）；對同一組 seed 各跑一次，把四條成本曲線並排輸出。",
+     "result": "看出降溫太快會早早卡住、對數降溫最穩但最慢、重新加熱能從停滯中再爬出來。"
+    },
+    {
+     "title": "固定房間與不可用格位",
+     "level": 2,
+     "what_changes": "加入設計者給定的約束（輸入）",
+     "how": "新增 List<int> lockedRooms 與 lockedSlots（例如入口、樓梯核固定在某格）、List<int> blockedSlots（柱位或中庭）；挑交換對象時跳過鎖定與封閉的格位，初始排列時先放鎖定房間再洗牌其餘。",
+     "result": "入口與樓梯位置固定不動，其餘房間圍著它們重新排列，更接近真實平面作業。"
+    },
+    {
+     "title": "不規則基地＋走廊距離（接 F05）",
+     "level": 4,
+     "what_changes": "格位來源與距離函數（混合）",
+     "how": "格位改由邊界 Curve 內的格點取樣（Curve.Contains 過濾），先用 F05 Dijkstra 在走廊網格上算出所有格位兩兩之間的步行距離存成 double[,] dist，Cost 改查 dist[slotOf[i], slotOf[j]] 取代曼哈頓距離。",
+     "result": "L 形或有中庭的基地裡，房間依真實繞行距離排列，而不是直線距離。"
+    },
+    {
+     "title": "多樓層配置：垂直移動成本",
+     "level": 3,
+     "what_changes": "格位從 2D 格子升到多層（維度）",
+     "how": "新增 int floors 與 double floorPenalty；格位編號拆成 (x, y, z)，距離 = 曼哈頓水平距離 + floorPenalty × |Δz|（代表樓梯或電梯的代價）；輸出時每層用 Transform.Translation 往上疊，房間畫成 Box。",
+     "result": "常一起用的房間盡量在同一層，跨層需求高的房間自動集中在樓梯附近的上下格位。"
+    },
+    {
+     "title": "多目標懲罰：外牆、日照與面積",
+     "level": 3,
+     "what_changes": "成本函數加入空間性質評估（分析／評估）",
+     "how": "每個房間加 needsFacade、preferSouth 屬性；Cost 加上懲罰項：需要採光卻在內部格位 +P1、臥室不在南側 +P2；各項乘上權重 List<double> weights 後相加，log 分項印出各懲罰值。",
+     "result": "同一張鄰接表在不同權重下得到不同平面：重視採光時臥室全靠外牆，重視動線時則聚在中央。"
+    },
+    {
+     "title": "Timer 動畫：看見降溫過程",
+     "level": 2,
+     "what_changes": "把一次跑完改成逐幀推進（時間／動畫）",
+     "how": "把 slotOf、roomAt、T、cost 改成類別欄位，只在 reset 為 true 時初始化；每次 RunScript 只跑 stepsPerFrame 步並輸出目前（不是最佳）配置；接 GH Timer 元件，另外輸出目前溫度讓色彩隨 T 由紅轉藍。",
+     "result": "高溫時房間瘋狂跳動、降溫後只剩少數房間小幅交換，最後凍結成定案平面。"
+    },
+    {
+     "title": "單點、族群、群體：對照 F04",
+     "level": 4,
+     "what_changes": "搜尋機制（混合）",
+     "how": "把 Cost 抽成共用方法，同一題目分別用本範例退火、F04 基因演算法（排列交配用 order crossover）、以及粒子群（PSO，把連續座標排序成排列）各跑固定評分次數；三條「評分次數－最佳成本」曲線畫在同一張圖。",
+     "result": "一張比較圖說明單點搜尋、族群搜尋與群體搜尋的收斂速度與結果差異。"
+    },
+    {
+     "title": "泡泡圖轉牆線與門洞",
+     "level": 3,
+     "what_changes": "輸出從房間方塊轉成可製造的平面線稿（輸出／製造）",
+     "how": "對最佳配置逐一檢查相鄰格位：兩房間相鄰且 w > 0 時，在共用牆的 Line 中段挖出 doorWidth 的缺口（用 Line.PointAt 切兩段）；其餘共用牆完整保留，外牆用 Curve.JoinCurves 接成封閉輪廓，輸出可雷切的牆線。",
+     "result": "得到一張有門有牆的簡易平面，可直接雷切成 1:100 的房間配置模型。"
+    },
+    {
+     "title": "形狀退火：用 A05 規則當鄰域",
+     "level": 5,
+     "what_changes": "狀態從排列換成形狀，鄰域換成形狀文法規則（混合）",
+     "how": "沿用 A05 的形狀規則（例如「加一根桿件」「移動一個節點」「刪除一根桿件」），每步隨機挑一條規則套在隨機位置；成本 = 總桿長 + 懲罰（未連通、跨距過大），依 exp(−Δ／T) 決定是否保留新形狀。",
+     "result": "桁架或屋頂構架從簡單三角形逐步長出、再被修剪成省料的形，重現 eifForm 式的形狀退火。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "住宅泡泡圖自動排列器",
+     "brief": "訪談住戶列出房間與鄰接強度表，用退火找出三個不同 seed 的最佳配置，再轉成牆線與門洞，比較哪一版最符合生活動線。",
+     "difficulty": 2,
+     "combine_with": [
+      "A04"
+     ]
+    },
+    {
+     "title": "醫院部門配置：真實步行距離",
+     "brief": "以既有醫院樓層為基地，用 F05 在走廊上算部門間步行距離，當成 QAP 的距離矩陣，退火重新指派科室位置並比較總移動距離。",
+     "difficulty": 4,
+     "combine_with": [
+      "F05"
+     ]
+    },
+    {
+     "title": "小套房家具自動擺放",
+     "brief": "以連續鄰域移動與旋轉家具，成本包含重疊、動線寬度、面向窗戶與電視可視性，輸出三種生活型態的擺法。",
+     "difficulty": 3,
+     "combine_with": [
+      "E01"
+     ]
+    },
+    {
+     "title": "單線肖像繪圖機",
+     "brief": "用影像亮度撒點，再以 2-opt 退火求一筆畫路徑，輸出給繪圖機或雷射雕刻，比較不同冷卻率的線條品質。",
+     "difficulty": 3,
+     "combine_with": [
+      "E02",
+      "E03"
+     ]
+    },
+    {
+     "title": "搜尋法競技場：退火 vs 基因演算法",
+     "brief": "同一個平面配置題目，固定評分次數，比較退火與基因演算法的最佳成本分布，做成一張教學用的對照海報。",
+     "difficulty": 4,
+     "combine_with": [
+      "F04"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Optimization by Simulated Annealing",
+     "author": "S. Kirkpatrick, C. D. Gelatt Jr., M. P. Vecchi",
+     "year": "1983",
+     "url": "https://www.science.org/doi/10.1126/science.220.4598.671"
+    },
+    {
+     "title": "Hospital Layout as a Quadratic Assignment Problem",
+     "author": "Alwalid N. Elshafei",
+     "year": "1977",
+     "url": "https://link.springer.com/article/10.1057/jors.1977.29"
+    },
+    {
+     "title": "Galapagos: On the Logic and Limitations of Generic Solvers",
+     "author": "David Rutten",
+     "year": "2013",
+     "url": "https://onlinelibrary.wiley.com/doi/10.1002/ad.1568"
+    }
+   ]
+  },
+  {
+   "id": "F08",
+   "name_zh": "最小生成樹與 Steiner 樹",
+   "name_en": "Minimum Spanning Tree & Steiner Tree",
+   "family": "F",
+   "family_name": "圖樣與最佳化",
+   "file": "F08_SpanningSteinerTree.cs",
+   "loc": 226,
+   "logic": [
+    "搜尋／求解",
+    "幾何轉換"
+   ],
+   "data_structure": [
+    "圖",
+    "幾何"
+   ],
+   "difficulty": 3,
+   "difficulty_reason": "226 行、單一元件，自訂一個 Edge struct 與 Find／InsertOneSteinerPoint／Fermat／RemoveDegenerate／TotalLength 五個方法；MST 部分只要排序＋並查集，但 Steiner 部分要處理鄰接表的拆接、向量夾角與 Weiszfeld 迭代，還要理解「貪婪法為何能得到全域最佳」與「Steiner 問題是 NP-hard，只能用啟發式近似」。",
+   "tags": [
+    "圖",
+    "最佳化",
+    "貪婪法",
+    "並查集",
+    "網路",
+    "隨機",
+    "可重現種子"
+   ],
+   "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先把邊由短到長挑、會成環就跳過；再在分岔夾角太小的地方加入 120° 三叉的 Steiner 點，讓網路再縮短一些。",
+   "how_it_works": [
+    "讀入端點 pts（留空就用 seed 在 size × size 的正方形內撒 pointCount 個點），把所有點兩兩連成候選邊並依長度由短到長排序。",
+    "Kruskal：由短到長檢查每條邊，用並查集的 Find 判斷兩端是否已在同一群；不同群才加入並合併，同群代表會成環就跳過，加滿 n − 1 條邊就是最小生成樹。",
+    "Steiner 改良（steiner = true）：在樹上找出夾角小於 120° 的一對邊 v–a、v–b，用 Weiszfeld 迭代求三點的 Fermat 點 s，拆掉原本兩條邊、改接成 s 的三叉。",
+    "鬆弛 relaxIterations 次：每個 Steiner 點移到三個鄰點的 Fermat 點；度數降到 2 或貼到鄰點上的 Steiner 點刪除，並把鄰點重新接好。",
+    "輸出 MST 線段、Steiner 網路、Steiner 點，並在 info 印出兩者總長與節省比例（通常省 2–4%，依 Gilbert–Pollak 猜想最多約 13.4%）；Steiner 部分是啟發式，不保證精確最佳。"
+   ],
+   "pseudo_code": [
+    "輸入 pts, pointCount, seed, size, steiner, relaxIterations",
+    "輸出 mstLines, steinerLines, steinerPoints, info",
+    "如果 pts 是空的：pts ← 以 seed 在 size × size 內撒 pointCount 個點",
+    "edges ← 所有點對 (a, b, 長度)，由短到長排序",
+    "parent[i] ← i  // 並查集：每個點自成一群",
+    "對 每條邊 (a, b)：",
+    "  如果 Find(a) ≠ Find(b)：加入樹、合併兩群  // 同群代表會成環，跳過",
+    "  如果 樹已有 n − 1 條邊：跳出",
+    "如果 steiner：",
+    "  當 樹上還有夾角 < 120° 的兩條邊 v–a、v–b：",
+    "    s ← Fermat(v, a, b)  // Weiszfeld 迭代",
+    "    拆掉 v–a、v–b，改接 s–v、s–a、s–b",
+    "  重複 relaxIterations 次：Steiner 點移到三鄰點的 Fermat 點，刪除退化點",
+    "回傳 MST、Steiner 網路、兩者總長"
+   ],
+   "key_params": [
+    {
+     "name": "pts",
+     "effect": "要連接的端點；接上自己的點（建築出入口、柱位、燈點）就能算真實配置，留空才隨機撒點"
+    },
+    {
+     "name": "pointCount",
+     "effect": "隨機撒點數；候選邊數約 n²/2，n = 500 時約 12 萬條，排序仍很快"
+    },
+    {
+     "name": "seed",
+     "effect": "同一個種子得到同一組點與同一棵樹，可重現；換種子就換一組配置"
+    },
+    {
+     "name": "size",
+     "effect": "撒點範圍的邊長，也決定刪除退化 Steiner 點時的距離容許值（size × 0.0001）"
+    },
+    {
+     "name": "steiner",
+     "effect": "false = 只有 MST（只連既有點）；true = 允許新增中繼點，出現 120° 三叉、總長更短"
+    },
+    {
+     "name": "relaxIterations",
+     "effect": "Steiner 點鬆弛次數；0 次時三叉角度還不準，5–20 次通常已接近 120°"
+    }
+   ],
+   "csharp_concepts": [
+    "List<T>.Sort 搭配 lambda 比較式",
+    "struct（Edge）",
+    "int[] 並查集與路徑壓縮",
+    "鄰接表 List<List<int>>",
+    "Vector3d.VectorAngle",
+    "Point3d 與 Vector3d 的轉型與加權平均",
+    "class 欄位（fields）在方法之間共用資料"
+   ],
+   "prerequisites": [
+    "圖的基本概念：節點、邊、樹、環",
+    "排序與巢狀迴圈",
+    "向量夾角與距離",
+    "F05 最短路徑（對照「兩點之間」與「連起全部點」）"
+   ],
+   "teaching_note": "建議分三段從零實作：先只做 Kruskal，用 20 個點畫出 MST，讓學習者親手驗證「由短到長挑、會成環就跳過」；接著把並查集獨立成 Find 方法，加入路徑壓縮並比較 n = 50 與 n = 500 的速度；最後才加 Steiner 改良。常見錯誤：合併時寫成 parent[a] = b（應該合併兩個代表 ra、rb），以及拆邊時只從一邊的鄰接表移除。Steiner 部分務必說明它是啟發式：Kruskal 的貪婪法有切割性質保證最佳，但 Steiner 問題是 NP-hard，這裡的插點＋鬆弛只保證比 MST 短，不保證最短。3D 版本只要把點改成 3D 即可，程式不用改；超過 1,000 個點時改用 Delaunay 邊當候選邊。",
+   "variations": [
+    {
+     "title": "Prim：從一個根點往外長",
+     "level": 2,
+     "what_changes": "建樹規則（由全域排序改成從根點擴張）",
+     "how": "移除 edges 排序與並查集，改用 bool[] inTree 與 double[] best（每個點到樹的最短距離）；每輪挑 best 最小的點加入並更新其他點的 best；新增 root 輸入指定起點，另輸出加入順序 order。",
+     "result": "同一組點得到和 Kruskal 相同的樹，但長出的順序是從根點一圈圈向外擴張，可直接當分期施工或配送順序。"
+    },
+    {
+     "title": "只用 Delaunay 邊當候選邊",
+     "level": 3,
+     "what_changes": "候選邊的來源（效能）",
+     "how": "把兩兩連線換成 Grasshopper.Kernel.Geometry.Delaunay.Solver.Solve_Connectivity 取得的鄰接關係（MST 一定是 Delaunay 圖的子圖），候選邊從 n²/2 降到約 3n，再照原本流程排序＋並查集。",
+     "result": "5,000 個點也能在一秒內算出與暴力法完全相同的 MST，並可順便輸出 Delaunay 網格做對照。"
+    },
+    {
+     "title": "障礙物與邊界：穿牆的邊不能用",
+     "level": 2,
+     "what_changes": "候選邊的篩選（輸入）",
+     "how": "新增 obstacles（List<Curve>）與 boundary（Curve）輸入；建立候選邊時用 Rhino.Geometry.Intersect.Intersection.CurveCurve 檢查 Line 是否與障礙相交、用 boundary.Contains 檢查中點是否在界內，不合格就不加入 edges。",
+     "result": "避開水池、既有建築與基地外的生成樹，可能變成數棵樹（森林），用顏色標出被障礙切開的群。"
+    },
+    {
+     "title": "吸引子與地形加權的邊成本",
+     "level": 2,
+     "what_changes": "邊的權重（輸入）",
+     "how": "把 Edge.Length 改成 cost = 長度 × (1 + k × f)，f 可以是線段中點到 attractor 的距離倒數，或從 terrain（Mesh）用 Mesh.ClosestPoint 取兩端高差算出的坡度；排序改用 cost，輸出仍畫實際線段。",
+     "result": "網路會繞開陡坡或刻意靠近吸引子（如廣場、景觀節點），總長稍增但更貼近地形與使用需求。"
+    },
+    {
+     "title": "接上既有道路：預先合併的並查集",
+     "level": 3,
+     "what_changes": "初始狀態（輸入：既有網路）",
+     "how": "新增 roads（List<Curve>）；每個端點用 Curve.ClosestPoint 求到道路的最近點並加一條候選邊，所有道路節點在並查集中預先合併成同一群（union 到同一代表），再跑 Kruskal。",
+     "result": "新建築只需以最短的支路接到既有路網，輸出的是「補哪些路」而不是整張新網，適合基地擴建或管線接駁。"
+    },
+    {
+     "title": "度數上限：每個節點最多 3 叉",
+     "level": 3,
+     "what_changes": "加入條件（規則）",
+     "how": "新增 maxDegree 輸入與 int[] degree；Kruskal 加邊前檢查兩端 degree 都小於 maxDegree，否則跳過；因為不再保證全部連通，最後用剩下的最短可行邊補齊（啟發式，不保證最佳）。",
+     "result": "節點不再出現五、六條桿件擠在一起的情況，接頭種類變少，較容易做成實際構造節點。"
+    },
+    {
+     "title": "刪掉最長的邊來分群",
+     "level": 2,
+     "what_changes": "輸出後處理（分析）",
+     "how": "MST 完成後把邊依長度排序，刪掉最長的 k − 1 條（新增輸入 k），再用並查集重算每個點屬於哪一群，輸出各群的點與凸包（PolylineCurve）。",
+     "result": "得到 single-linkage 分群：一次把散布的樹木、設施或住戶自動分成 k 個聚落，並看出群與群之間的空隙。"
+    },
+    {
+     "title": "3D 生成樹 → 管件與節點接頭",
+     "level": 3,
+     "what_changes": "維度＋輸出／製造",
+     "how": "把撒點改在 Box 或 Brep 內（Brep.IsPointInside 拒絕取樣）產生 3D 點；每條邊用 Brep.CreatePipe 做桿件、每個節點放 Sphere，並輸出桿件長度清單（依長度分組編號）。",
+     "result": "懸吊式的 3D 生成樹吊燈或空間構架，附帶可直接下料的桿件長度表與節點數。"
+    },
+    {
+     "title": "3D Steiner 樹狀柱",
+     "level": 4,
+     "what_changes": "維度＋Steiner 規則（結構）",
+     "how": "端點改成屋頂下的多個支承點加上一個地面柱腳點；Fermat 與 VectorAngle 本來就適用 3D，直接執行 Steiner 改良，再把每段依其下方支承點數量給不同管徑。",
+     "result": "從一個柱腳分岔到多個屋頂支承點、分岔角接近 120° 的樹狀柱，桿件總長比直接放射狀連線更短。"
+    },
+    {
+     "title": "曲面上的測地生成樹",
+     "level": 4,
+     "what_changes": "維度（距離定義）",
+     "how": "點改成曲面上的點，候選邊長度改用 Surface.ShortPath 求得的測地線長度（只算 Delaunay 或 k 個最近鄰以控制計算量），加入的邊直接輸出該測地線 Curve。",
+     "result": "沿著殼體或起伏屋面爬行的生成樹，可當成屋面上的排水溝、肋梁或燈帶走向。"
+    },
+    {
+     "title": "繞行率評估與補邊（混 F05）",
+     "level": 4,
+     "what_changes": "分析／評估＋混合",
+     "how": "MST 完成後，用 F05 的 Dijkstra 在樹上算每對端點的路徑長，除以直線距離得到繞行率；把繞行率最高的點對依序補上一條直連邊，直到最大繞行率低於 detourLimit。",
+     "result": "在「最省材料的樹」與「每一對都不太繞路的網」之間取捨，輸出每次補邊後的總長與最大繞行率曲線。"
+    },
+    {
+     "title": "Kruskal 逐邊動畫與並查集著色",
+     "level": 2,
+     "what_changes": "時間／動畫",
+     "how": "把 Kruskal 迴圈改成每次 RunScript 只處理 step 條邊（配合 Timer 或 Slider），class 欄位保存 parent 與目前邊索引；每個點依 Find 的代表上色，被拒絕的成環邊用紅色短暫顯示。",
+     "result": "看得到一片片顏色不同的小樹由短邊開始長出、逐步合併成同一色的一整棵樹，清楚呈現貪婪法的過程。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "校園步道的最省網路",
+     "brief": "以各棟建築出入口為端點，比較 MST、Steiner 樹與現況步道的總長，再用人流模擬檢查繞行率，提出補邊與鋪面分級方案。",
+     "difficulty": 3,
+     "combine_with": [
+      "F05",
+      "D03"
+     ]
+    },
+    {
+     "title": "3D Steiner 樹狀柱亭",
+     "brief": "以屋頂板下的支承點產生 3D Steiner 樹狀柱，桿件依分岔層級給管徑，做 1:20 模型並比較與放射狀柱的材料用量。",
+     "difficulty": 4,
+     "combine_with": [
+      "E04"
+     ]
+    },
+    {
+     "title": "生成樹吊燈與節點列印",
+     "brief": "在球形或自由量體內撒 Poisson 點，連成 3D 生成樹，桿件用標準管材、節點 3D 列印，並控制每個節點的度數上限。",
+     "difficulty": 3,
+     "combine_with": [
+      "E02"
+     ]
+    },
+    {
+     "title": "聚落的佔據與連結",
+     "brief": "以 Voronoi 細胞代表地塊、以細胞中心為住戶端點，比較 MST、Steiner 樹與格子路網的道路總長與地塊可及性，討論基礎設施成本。",
+     "difficulty": 3,
+     "combine_with": [
+      "E03",
+      "F05"
+     ]
+    },
+    {
+     "title": "隨機權重迷宮花園",
+     "brief": "在格網上給邊隨機權重跑 Kruskal 產生完美迷宮，牆面轉成矮籬或座椅，再用最短路徑找出主要動線並加寬。",
+     "difficulty": 2,
+     "combine_with": [
+      "F05"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "On the shortest spanning subtree of a graph and the traveling salesman problem",
+     "author": "Joseph B. Kruskal",
+     "year": "1956",
+     "url": "https://doi.org/10.1090/S0002-9939-1956-0078686-7"
+    },
+    {
+     "title": "Steiner Minimal Trees",
+     "author": "E. N. Gilbert, H. O. Pollak",
+     "year": "1968",
+     "url": "https://doi.org/10.1137/0116001"
+    },
+    {
+     "title": "Euclidean minimum spanning tree（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Euclidean_minimum_spanning_tree"
+    },
+    {
+     "title": "Steiner tree problem（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+    }
+   ]
+  },
+  {
+   "id": "G01",
+   "name_zh": "Isovist 可視域與可見性圖分析",
+   "name_en": "Isovist & Visibility Graph Analysis (VGA)",
+   "family": "G",
+   "family_name": "空間分析",
+   "file": "G01_IsovistField.cs",
+   "loc": 193,
+   "logic": [
+    "幾何轉換",
+    "直接公式"
+   ],
+   "data_structure": [
+    "幾何",
+    "網格"
+   ],
+   "difficulty": 2,
+   "difficulty_reason": "193 行、單一元件、無自訂 class，只有 CastIsovist／RaySegment／Measures／Ramp 四個方法；核心數學是射線與線段求交（2D 外積解兩個未知數）和鞋帶公式，概念直觀，但格點數 × 射線數 × 牆段數的計算量要先講清楚。",
+   "tags": [
+    "射線投射",
+    "線段求交",
+    "形狀指標",
+    "場",
+    "空間分析",
+    "網格",
+    "基地分析"
+   ],
+   "one_liner": "從一點向四周打出射線，碰到牆就停，連起來就是「站在這裡看得到的範圍」；把平面上每一格都算一次，就得到顯示開闊、隱蔽與視覺連通程度的可視域地圖。",
+   "how_it_works": [
+    "把牆曲線拆成直線段：折線直接取每條邊，曲線先等分成小段近似。",
+    "從觀察點等角度打出 rayCount 條射線，每條射線和所有線段解 p + t·d = a + u·(b − a)，取 t > 0 且 0 ≤ u ≤ 1 中最小的 t；都沒打到就停在 maxDist。",
+    "依角度順序把交點連成封閉 Polyline，這就是可視域（isovist）多邊形。",
+    "計算形狀指標：鞋帶公式求面積、邊長總和為周長、4πA/P² 為緊湊度，相鄰射線距離跳動大的邊加總為遮蔽邊長度。",
+    "在牆的外框內以 cellSize 布格點，每個格點都重複第 2–4 步，取 metric 指定的指標。",
+    "把指標正規化成 0–1，塗在網格頂點上輸出彩色 Mesh（isovist 場），同時輸出觀察點的多邊形、射線與指標文字。"
+   ],
+   "pseudo_code": [
+    "輸入 walls, viewer, rayCount, maxDist, cellSize, metric",
+    "segs ← 把 walls 拆成直線段",
+    "iso ← CastIsovist(viewer)  // 觀察點的可視域",
+    "對 外框內每個格點 p（間距 cellSize）：",
+    "  poly ← CastIsovist(p)",
+    "  values[p] ← Measures(poly)[metric]  // 面積／周長／緊湊度／遮蔽邊",
+    "field ← 依 values 正規化上色的 Mesh",
+    "回傳 iso, rays, field, values",
+    "CastIsovist(p)：",
+    "  對 i ← 0 … rayCount−1：",
+    "    d ← (cos 2πi/rayCount, sin 2πi/rayCount)",
+    "    t ← min(maxDist, 每條 seg 的 RaySegment(p, d, seg))  // 最近的牆",
+    "    加入頂點 p + t·d  // 依角度順序，最後首尾相接"
+   ],
+   "key_params": [
+    {
+     "name": "walls",
+     "effect": "牆線與障礙物；缺口就是視線能穿出去的開口，牆越碎、場的變化越劇烈"
+    },
+    {
+     "name": "viewer",
+     "effect": "單一觀察點位置，輸出它的可視域多邊形與射線，方便和場對照"
+    },
+    {
+     "name": "rayCount",
+     "effect": "角度解析度；太少時遠處細牆會被射線漏掉、多邊形呈鋸齒，90–360 條較穩定，計算量隨它線性增加"
+    },
+    {
+     "name": "maxDist",
+     "effect": "視線最遠距離；戶外或大空間時沒打到牆的射線停在這裡，影響面積與遮蔽邊長度"
+    },
+    {
+     "name": "cellSize",
+     "effect": "可見性場的格點間距；減半時格點數變四倍、時間也約四倍"
+    },
+    {
+     "name": "metric",
+     "effect": "場要顯示的指標：0 面積（開闊度）、1 周長、2 緊湊度（越接近 1 越像圓）、3 遮蔽邊長度（看得到的「轉角後方」有多少）"
+    }
+   ],
+   "csharp_concepts": [
+    "List<Line> 與 Curve.TryGetPolyline／DivideByCount",
+    "out 參數一次回傳多個陣列",
+    "2D 外積解線段交點（平行判斷）",
+    "Polyline 首尾相接封閉",
+    "BoundingBox.Union 求外框",
+    "Mesh.Vertices／Faces／VertexColors 建彩色網格",
+    "System.Drawing.Color.FromArgb 做色階"
+   ],
+   "prerequisites": [
+    "巢狀迴圈與方法",
+    "向量與參數式直線 p + t·d",
+    "多邊形面積（鞋帶公式）概念",
+    "G 家族：以基地既有幾何逐點查詢的空間分析概念"
+   ],
+   "teaching_note": "建議從零分三步實作：先只寫 RaySegment，用一條射線和一面牆畫出交點；再加上角度迴圈得到單一觀察點的 isovist 多邊形，拖動 viewer 就能即時看到可視範圍改變；最後才加格點迴圈與上色，變成場。常見錯誤：忘記 t > 0 的條件，射線會打到背後的牆；u 的範圍判斷寫反；多邊形沒有首尾相接導致面積算錯；格點落在柱子或量體內部時要排除，否則會出現假的極小值。效能上計算量是格點數 × rayCount × 牆段數，先用粗格點（cellSize 大）和 90 條射線調整，定案再加密；要更快可改成只朝牆端點打射線（見變形），或用 RTree 先篩掉遠處的牆。",
+   "variations": [
+    {
+     "title": "端點射線：精確可視域多邊形",
+     "level": 2,
+     "what_changes": "射線方向（規則：等角度 → 朝牆端點）",
+     "how": "把 CastIsovist 的角度迴圈改成：收集所有線段端點，對每個端點算 Math.Atan2 角度，並加上 ±0.0001 弧度的兩條偏移射線；把角度排序（Array.Sort）後逐一求最近交點。rayCount 不再需要。",
+     "result": "多邊形頂點剛好落在牆角與遮蔽邊端點上，射線數大幅減少、遠處細縫也不會漏掉，面積為精確值。"
+    },
+    {
+     "title": "視錐 isovist：限制視角與朝向",
+     "level": 1,
+     "what_changes": "射線範圍（規則：360° → 視角 fov）",
+     "how": "新增 direction（Vector3d）與 fov（度）輸入；角度迴圈改成從 atan2(direction) − fov/2 掃到 + fov/2，多邊形頭尾都接回觀察點。",
+     "result": "得到扇形的視野範圍，可模擬人眼約 120°、監視器或窗戶的視角，場會依朝向呈方向性。"
+    },
+    {
+     "title": "完整形狀指標：徑向統計與 drift",
+     "level": 2,
+     "what_changes": "Measures 的輸出（分析）",
+     "how": "在 Measures 中多算射線長度的平均、標準差、偏度（dist 陣列統計），以及 drift：isovist 面積重心（AreaMassProperties.Compute(polyline 轉 PolylineCurve).Centroid）減觀察點的向量長度與方向；metric 增加到 0–7。",
+     "result": "每個格點多了「視線長短是否均勻」與「視覺重心往哪邊拉」的資訊，drift 向量可畫成箭頭場，指出空間會把人往哪裡吸引。"
+    },
+    {
+     "title": "動線上的 isovist 序列",
+     "level": 2,
+     "what_changes": "觀察點（輸入：單點 → 沿路徑取樣）＋輸出圖表",
+     "how": "新增 path（Curve）與 samples 輸入，用 path.DivideByCount 取點，對每點算 isovist 與指標；把指標當 Y、路徑長度當 X 輸出一條折線圖（Polyline），並在路徑上以圓的大小顯示面積。",
+     "result": "得到走過空間時「開 → 合 → 開」的視覺節奏曲線，可用來比較園林、展場或長廊的空間序列。"
+    },
+    {
+     "title": "可見性圖 VGA：互看得見就連邊，求平均深度",
+     "level": 3,
+     "what_changes": "輸出（場 → 圖）；混合 F05 BFS",
+     "how": "對所有格點兩兩做一次線段遮擋測試（格點連線與任何牆段有交點就看不到，可沿用 RaySegment 並限制 t < 兩點距離），看得到就存進 List<int>[] 鄰接表；再從每個格點做 BFS 求到其他格點的平均步數（平均深度），倒數當整合度上色。和 F05 的差別：圖的邊不是既有路網，而是由「互相看得到」產生。",
+     "result": "得到 space syntax 式的視覺整合度地圖：大廳、主走廊整合度高，死角與深處房間整合度低；n 個格點需 n² 次測試，建議格點 ≤ 1500。"
+    },
+    {
+     "title": "3D isovist：體積與球面射線",
+     "level": 4,
+     "what_changes": "維度（平面射線 → 球面射線、牆線 → Mesh）",
+     "how": "walls 改成 Mesh 輸入，射線方向改用 Fibonacci 球面分布（黃金角）產生 n 個 Vector3d，對每條用 Rhino.Geometry.Intersect.Intersection.MeshRay(mesh, new Ray3d(p, d)) 取距離；以各方向距離近似體積（Σ d³·4π/3n），並把交點做成點雲或凸殼。",
+     "result": "得到從一點看出去的立體可視空間，可比較樓梯井、挑空或中庭在垂直方向的開闊感。"
+    },
+    {
+     "title": "地形上的可視域（viewshed）",
+     "level": 3,
+     "what_changes": "輸入（牆線 → 地形高程）；混合 C04 地形",
+     "how": "輸入地形 Mesh 或 C04 產生的高程格網與觀察點眼高；對每個格點沿觀察點連線等距取樣，用 Mesh.ClosestPoint 或高程陣列插值取地面高度，檢查視線高度是否始終高於地面（記錄沿線最大仰角比較），看得到的格點標 1。",
+     "result": "得到山坡或基地上從瞭望點看得到的地面範圍，可用來選擇觀景台、檢查新建物會不會被看見。"
+    },
+    {
+     "title": "Monte Carlo 天空可視率",
+     "level": 3,
+     "what_changes": "射線方向與指標（分析：水平射線 → 半球隨機射線）",
+     "how": "輸入建築量體 Mesh；對每個地面格點用 Random(seed) 產生 N 條餘弦加權的上半球方向（u、v 取亂數，θ = asin(√u)），用 Intersection.MeshRay 檢查是否被擋，沒被擋的比例就是天空可視率，塗在格點上。",
+     "result": "得到街道峽谷或中庭地面「看得到多少天空」的分布圖，開闊廣場接近 1、窄巷接近 0，可作為熱舒適與日照的前置分析。"
+    },
+    {
+     "title": "牆面被看見程度回映",
+     "level": 2,
+     "what_changes": "輸出（格點場 → 牆面上色）",
+     "how": "在 CastIsovist 記錄每條射線打到的線段編號（hitSeg），格點迴圈中對打到的線段累加次數（int[] 計數陣列）；最後把每段牆以次數上色或依次數做 Pipe 粗細，並除以牆長正規化。",
+     "result": "看出哪些牆面、店面或展牆最常被看見，可用來決定招牌、展品或開窗位置。"
+    },
+    {
+     "title": "從 3D 量體切出視線高度的牆線",
+     "level": 1,
+     "what_changes": "輸入（手畫牆線 → 既有建築模型）",
+     "how": "新增 buildings（List<Brep>）與 eyeHeight 輸入，用 Brep.CreateContourCurves(brep, new Plane(new Point3d(0,0,eyeHeight), Vector3d.ZAxis)) 取得眼睛高度的剖切線，再接進原本的 walls 流程。",
+     "result": "直接從既有的 Rhino 建築或都市模型得到 1.6 m 高的平面牆線，不用重畫就能做可視域分析。"
+    },
+    {
+     "title": "美術館問題：最少觀察點覆蓋",
+     "level": 4,
+     "what_changes": "流程（分析 → 搜尋／最佳化）",
+     "how": "先把平面格點化，對每個候選點算 isovist 並記錄它看得到哪些格點（用 Polyline.ToPolylineCurve().Contains 判斷，存成 bool[]）；再用貪婪法反覆挑「新增覆蓋最多」的候選點，直到覆蓋率達 coverage 目標，輸出挑到的點與各自的 isovist。",
+     "result": "得到能看到整個平面所需的少數監視器或服務台位置，並能比較覆蓋率 90% 與 100% 需要的點數差距。"
+    },
+    {
+     "title": "可視度地景：場轉成 3D 列印模型",
+     "level": 2,
+     "what_changes": "輸出／製造（彩色網格 → 起伏實體）",
+     "how": "把每個格點 Mesh 頂點的 Z 改成指標值 × heightScale，外框四邊往下拉到 0 補側牆，用 Mesh.Offset 或 Mesh.CreateFromBox 封底成封閉 Mesh，輸出 STL；牆線另外 Extrusion 成薄片插在上面。",
+     "result": "開闊處隆起、隱蔽處下陷的可視度地形模型，可 3D 列印或以等高線雷切疊層，讓空間的視覺結構變成摸得到的模型。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "展場動線的視覺節奏設計",
+     "brief": "以 isovist 序列分析展場動線上每一步的可視面積與遮蔽邊，調整隔屏位置讓「開—合—開」的節奏落在重要展品前，並以人流模擬檢查停留點。",
+     "difficulty": 3,
+     "combine_with": [
+      "D03"
+     ]
+    },
+    {
+     "title": "校園廣場的可視度與座椅配置",
+     "brief": "計算廣場 isovist 場與緊湊度，在「看得到很多、背後有遮蔽」的格點放座椅（展望—庇護），用 Voronoi 把座位區分成可製造的鋪面單元。",
+     "difficulty": 3,
+     "combine_with": [
+      "E03"
+     ]
+    },
+    {
+     "title": "最少監視器與服務台配置",
+     "brief": "以美術館問題的貪婪法找出覆蓋整個樓層的最少觀察點，再用演化演算法微調位置，比較覆蓋率、視距與設備數量的取捨。",
+     "difficulty": 4,
+     "combine_with": [
+      "F04"
+     ]
+    },
+    {
+     "title": "老街視廊保存與新建量體檢核",
+     "brief": "在老街重要節點做 viewshed 與牆面可見度分析，找出不可被遮擋的視廊，再與太陽包絡疊合，得到兼顧日照與景觀的可建量體範圍。",
+     "difficulty": 4,
+     "combine_with": [
+      "G02"
+     ]
+    },
+    {
+     "title": "可視度地景雕塑",
+     "brief": "把一棟熟悉建築的平面做成 isovist 場，轉成起伏地形並 3D 列印或雷切疊層，搭配 VGA 整合度的等值線做成可觸摸的空間解說模型。",
+     "difficulty": 2,
+     "combine_with": [
+      "C04"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "To Take Hold of Space: Isovists and Isovist Fields",
+     "author": "Michael L. Benedikt",
+     "year": "1979",
+     "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:6:y:1979:i:1:p:47-65"
+    },
+    {
+     "title": "Isovist（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Isovist"
+    },
+    {
+     "title": "Visibility graph analysis（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Visibility_graph_analysis"
+    }
+   ]
+  },
+  {
+   "id": "G02",
+   "name_zh": "太陽包絡",
+   "name_en": "Solar Envelope",
+   "family": "G",
+   "family_name": "空間分析",
+   "file": "G02_SolarEnvelope.cs",
+   "loc": 189,
+   "logic": [
+    "直接公式",
+    "幾何轉換"
+   ],
+   "data_structure": [
+    "幾何",
+    "網格"
+   ],
+   "difficulty": 3,
+   "difficulty_reason": "189 行、單一元件、無自訂 class，只有 SunVectors／HeightLimit／BuildMesh／Report 四個方法；程式結構簡單（三層迴圈取最小值），難在要先理解太陽位置的三角公式（赤緯、時角 → 高度角、方位角）、影子方向與高度的關係（h = 遮陰線高度 + D·tanα），以及 Curve.Contains 與 Intersection.CurveCurve 的用法。",
+   "tags": [
+    "日照",
+    "法規約束",
+    "高度場",
+    "下包絡",
+    "射線",
+    "決定性",
+    "都市設計"
+   ],
+   "one_liner": "先用天文公式算出冬季關鍵時段的太陽方向，再從每個格點沿影子方向量到要保護的鄰地邊界，反推出一個在這些時段都不會遮到鄰居的最大可建量體。",
+   "how_it_works": [
+    "依緯度 latitude、日期 dayOfYear 與 startHour 到 endHour 的時刻，用赤緯與時角公式算出一組指向太陽的單位向量，太陽在地平線下的時刻直接略過。",
+    "在基地外框內以 cellSize 布格點，用 Curve.Contains 只留下基地內的點。",
+    "對每個格點與每個太陽向量：影子方向是太陽向量水平分量的反方向，沿這個方向射一條線找最近的遮陰線（fences），距離為 D；這一刻允許的高度是 fenceHeight + D × tan（高度角），沒碰到遮陰線就不受限。",
+    "每個格點對所有時刻取最小值（下包絡），再夾在 0 到 maxHeight 之間，得到高度場 h(x, y)。",
+    "把高度場轉成 Mesh（四角都在基地內的格子才建面），用四角平均高度估計體積，並輸出太陽光線與每個時刻的高度角、方位角供檢查。"
+   ],
+   "pseudo_code": [
+    "輸入 site, fences, latitude, dayOfYear, startHour, endHour, hourStep, cellSize, fenceHeight, maxHeight",
+    "輸出 envelope, sunRays, heights, info",
+    "suns ← SunVectors(latitude, dayOfYear, startHour…endHour)  // 赤緯＋時角",
+    "對 每個格點 p（在 site 內）：",
+    "  best ← maxHeight",
+    "  對 每個太陽向量 s：",
+    "    d ← −(s.X, s.Y) 單位化  // 影子方向",
+    "    D ← 沿 d 射線到 fences 的最近距離",
+    "    如果 有交點：best ← min(best, fenceHeight + D × tan(高度角))",
+    "  h[p] ← max(0, best)  // 所有時刻的下包絡",
+    "envelope ← BuildMesh(h)  // 高度場 → Mesh",
+    "sunRays, info ← 太陽光線與高度角、方位角、體積"
+   ],
+   "key_params": [
+    {
+     "name": "latitude",
+     "effect": "緯度越高，冬季太陽越低、tan（高度角）越小，同樣距離允許的高度越矮，包絡斜面越平緩"
+    },
+    {
+     "name": "dayOfYear",
+     "effect": "決定太陽赤緯；冬至（約 355）太陽最低、包絡最保守，改成春秋分或夏至包絡會明顯長高"
+    },
+    {
+     "name": "startHour / endHour",
+     "effect": "要保護日照的時段；時段越長，清晨與傍晚的低角度斜射越多，包絡東西兩側被削得越深"
+    },
+    {
+     "name": "cellSize",
+     "effect": "格點間距；越小越精細但計算量為格點數 × 時刻數 × 遮陰線數，減半時間約變四倍"
+    },
+    {
+     "name": "fenceHeight",
+     "effect": "遮陰線高度：0 表示保護鄰地地面，設成窗台高度則只保護窗戶以上，包絡整體抬高"
+    },
+    {
+     "name": "maxHeight",
+     "effect": "高度上限；影子方向上沒有鄰地的格點直接取這個值，形成包絡的平頂"
+    }
+   ],
+   "csharp_concepts": [
+    "Math.Sin／Cos／Asin／Atan2 與角度弧度換算",
+    "Vector3d 分量運算與 Unitize",
+    "Curve.Contains 與 PointContainment 列舉",
+    "Intersection.CurveCurve 與 IntersectionEvent",
+    "二維陣列 double[,] 存高度場",
+    "Mesh.Vertices／Faces 手動建網格",
+    "double.MaxValue 當作「沒有約束」的哨兵值"
+   ],
+   "prerequisites": [
+    "三角函數與角度弧度換算",
+    "向量的水平分量與單位化",
+    "巢狀迴圈與取最小值",
+    "基本日照概念：高度角、方位角、太陽軌跡"
+   ],
+   "teaching_note": "建議從零實作的順序：先只寫 SunVectors，把每個時刻的太陽向量畫成從原點出發的線，用冬至正午檢查高度角是否等於 90° − 緯度 − 23.44°；再寫單一格點、單一時刻的 HeightLimit，畫出影子方向射線與遮陰線交點；最後才加上三層迴圈與 Mesh。最常見的錯誤是方向弄反：沿「影子方向」（背離太陽）量到遮陰線得到的是不遮鄰居的日照權包絡，沿「朝太陽方向」量到鄰房得到的是日照收集包絡，兩者意義完全不同。其次是時間：範例用真太陽時，正午就是 12 點，若要用手錶時間要另外換算經度、時區與均時差。效能上格點數 × 時刻數 × 遮陰線數會很快變大，cellSize 先用粗的，確定形狀正確再加密。可以和 Ladybug 的 Solar Envelope 元件對照結果，說明自己寫的好處是能改規則（允許遮蔽幾小時、分段遮陰線高度、體素削減）。",
+   "variations": [
+    {
+     "title": "日照收集包絡（Solar Collection）",
+     "level": 3,
+     "what_changes": "約束方向與取值（規則）：從「不遮鄰居」改成「自己曬得到」",
+     "how": "HeightLimit 改成沿「朝太陽」的方向（s 的水平分量，不取負號）射線，和既有鄰房輪廓求交得距離 D，鄰房高度為 Hn 時，這一刻至少要 Hn − D × tan（高度角）才曬得到；對所有時刻取最大值，輸出的是下限曲面。",
+     "result": "得到一張「高於這個曲面才保證有日照」的下限高度場，靠近南側高樓的格點被抬得很高，可用來決定太陽能板或住宅樓層的最低位置。"
+    },
+    {
+     "title": "允許遮蔽 N 個時刻（第 k 小值）",
+     "level": 3,
+     "what_changes": "下包絡的取值規則（規則）",
+     "how": "把每個格點對所有時刻算出的允許高度存進 List<double> 並排序，新增 allowShaded 輸入；不取最小值，改取第 allowShaded + 1 小的值，例如 7 個時刻允許遮 2 個時刻就取排序後第 3 個。",
+     "result": "法規常見的「冬至至少 N 小時日照」寫法，包絡比嚴格版高出一截，可比較不同 N 值對可建體積的影響。"
+    },
+    {
+     "title": "多日期整季取樣",
+     "level": 2,
+     "what_changes": "太陽向量的取樣範圍（規則）",
+     "how": "dayOfYear 改成 List<int>（例如冬至、大寒、小雪三天），SunVectors 外層多一個日期迴圈，把所有日期的太陽向量併進同一個 suns 清單再做下包絡；也可以用開始日到結束日每隔 7 天取樣。",
+     "result": "包絡同時滿足整個冬季而不只冬至一天，東西兩側的削切角度會變得更平滑。"
+    },
+    {
+     "title": "分段遮陰線高度（保護鄰房窗台）",
+     "level": 2,
+     "what_changes": "遮陰線的輸入資料（輸入）",
+     "how": "把單一 fenceHeight 改成 List<double>，與 fences 一一對應；HeightLimit 找最近交點時記住是哪一條遮陰線，用那一條的高度計算，並在圖上把遮陰線抬到各自高度顯示。",
+     "result": "鄰地是停車場的段落可以放寬、鄰房一樓窗戶的段落要保護，包絡在不同段落出現高低不同的斜面。"
+    },
+    {
+     "title": "坡地與地形上的太陽包絡",
+     "level": 3,
+     "what_changes": "格點與遮陰線的基準高度（輸入）",
+     "how": "新增 terrain（Mesh）輸入，用 Intersection.MeshRay 或 Mesh.ClosestPoint 取每個格點與遮陰線交點的地面高程 zp、zf；允許高度改成 zf + fenceHeight + D × tanα − zp，輸出時頂點 Z 加回 zp。",
+     "result": "山坡上的包絡會順著地形傾斜，面向北坡的基地可建高度明顯被壓低。"
+    },
+    {
+     "title": "反向體素削減（Reverse Solar Envelope）",
+     "level": 4,
+     "what_changes": "表示法：2.5D 高度場 → 3D 體素（維度）",
+     "how": "把基地上空切成 cellSize 的 Box 體素；從鄰房立面上取樣點朝每個太陽向量發射射線（Ray3d），用射線與 BoundingBox 的相交測試找出被穿過的體素並刪除，剩下的體素用 Mesh.Append 合併輸出。",
+     "result": "可以削出懸挑、中空與內凹的量體，而不只是從地面往上長的高度場，同樣條件下可建體積通常更大。"
+    },
+    {
+     "title": "樓板切片與容積檢查",
+     "level": 2,
+     "what_changes": "輸出後的分析（分析／評估）",
+     "how": "用 Mesh.CreateContourCurves 或逐層高度 z = k × floorHeight 判斷格點 h ≥ z，得到每層可用的格子並以 cellSize² 加總面積；新增 targetFAR 輸入，Print 每層面積、總樓地板面積與容積率是否達標。",
+     "result": "看到包絡能塞下幾層樓、每層多大，並立刻知道日照權約束是否讓容積率不足。"
+    },
+    {
+     "title": "封閉實體與 3D 列印模型",
+     "level": 2,
+     "what_changes": "輸出幾何（輸出／製造）",
+     "how": "沿基地邊界的格點補上垂直側牆面與 Z = 0 的底面，用 mesh.Vertices.CombineIdentical 與 Mesh.IsClosed 確認封閉，再依模型比例縮放後匯出 STL；也可用 Mesh.CreateFromBox 把每格做成方柱合併。",
+     "result": "可以直接 3D 列印的包絡實體模型，放在基地模型上和周邊量體一起比較。"
+    },
+    {
+     "title": "逐時削切動畫",
+     "level": 2,
+     "what_changes": "計算流程（時間／動畫）",
+     "how": "把高度陣列 h 改成類別成員變數，新增 step 輸入並接 GH Timer 或滑桿；每次 RunScript 只多加入一個太陽向量並更新下包絡，同時輸出這一刻的影子方向射線。",
+     "result": "看到量體從方盒子開始，被早上、正午、下午的陽光一刀一刀削成斜面的過程，適合講解下包絡的意義。"
+    },
+    {
+     "title": "Monte Carlo 日照時數估計",
+     "level": 3,
+     "what_changes": "結果的驗證方式（分析／評估）",
+     "how": "在要保護的鄰地上取樣點，用 Random(seed) 在整個冬季隨機抽 N 組（日期, 時刻），算出太陽向量後從樣點朝太陽發射 Ray3d，以 Intersection.MeshRay 檢查是否被 envelope 擋住；被照到的比例 × 抽樣期間總日照時數就是估計日照時數。",
+     "result": "得到鄰地每個樣點的日照時數色彩圖，可驗證包絡確實只在允許的時段外造成遮蔭，N 越大估計越穩定。"
+    },
+    {
+     "title": "多地塊街廓包絡（接 A04）",
+     "level": 4,
+     "what_changes": "基地與遮陰線的來源（混合）",
+     "how": "先用 A04 遞迴分割把街廓切成多個地塊，對每個地塊把「其他地塊北側的邊界」當成 fences 各算一次包絡；可依地塊面積或順序調整 maxHeight，最後合併所有 Mesh。",
+     "result": "得到整個街廓高低錯落的包絡群，南側地塊較矮、北側地塊較高，重現 Knowles 以太陽包絡做分區的做法。"
+    },
+    {
+     "title": "手錶時間換算真太陽時",
+     "level": 2,
+     "what_changes": "時間輸入的換算（規則）",
+     "how": "新增 longitude 與 timeZone 輸入，用均時差近似式 EoT = 9.87 sin 2B − 7.53 cos B − 1.5 sin B（B = 360°(n − 81)/364）換算：真太陽時 = 手錶時間 + 4 分鐘 × (longitude − 15 × timeZone) + EoT，再代入時角公式。",
+     "result": "輸入「上午 9 點到下午 3 點」就對應到當地實際的太陽位置，東西向的削切角度與 Ladybug 等工具的結果更接近。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "冬至日照權街廓分區圖",
+     "brief": "以一個真實街廓為對象，用遞迴分割產生地塊，逐地塊計算太陽包絡並比較不同緯度、不同保護時段下的總可建體積與街道剖面。",
+     "difficulty": 4,
+     "combine_with": [
+      "A04"
+     ]
+    },
+    {
+     "title": "包絡內的塔樓量體演化",
+     "brief": "把太陽包絡當成硬約束，用基因演算法在包絡內配置幾棟塔樓的位置與高度，目標是樓地板面積最大、彼此遮蔭最少。",
+     "difficulty": 4,
+     "combine_with": [
+      "F04"
+     ]
+    },
+    {
+     "title": "高架公園旁的日照削切塔樓",
+     "brief": "參考 Solar Carve 的做法，以相鄰公園或廣場為要保護的遮陰線，先算日照權包絡，再和視野分析一起決定塔樓外形與削切面的分割。",
+     "difficulty": 3,
+     "combine_with": [
+      "G01"
+     ]
+    },
+    {
+     "title": "日照收集屋頂的太陽能板配置",
+     "brief": "用日照收集包絡找出屋頂上保證有日照的區域，再以 Poisson 圓盤取樣在該區域內均勻配置太陽能板或天窗。",
+     "difficulty": 3,
+     "combine_with": [
+      "E02"
+     ]
+    },
+    {
+     "title": "太陽包絡等高線模型",
+     "brief": "把高度場用 Marching Squares 畫成等高線，轉成可雷切的疊層基地模型，並標註每層的可建範圍，做為都市設計討論的實體工具。",
+     "difficulty": 2,
+     "combine_with": [
+      "C05"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Sun Rhythm Form",
+     "author": "Ralph L. Knowles",
+     "year": "1981",
+     "url": "https://archive.org/details/sunrhythmform0000know"
+    },
+    {
+     "title": "The solar envelope: its meaning for energy and buildings",
+     "author": "Ralph L. Knowles",
+     "year": "2003",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0378778802000762"
+    },
+    {
+     "title": "Solar azimuth angle（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Solar_azimuth_angle"
+    },
+    {
+     "title": "Solar access（Wikipedia）",
+     "author": "",
+     "year": "",
+     "url": "https://en.wikipedia.org/wiki/Solar_access"
+    }
+   ]
+  },
+  {
+   "id": "G03",
+   "name_zh": "地表逕流與集水區（D8 流向累積）",
+   "name_en": "Flow Accumulation & Watershed Delineation (D8)",
+   "family": "G",
+   "family_name": "空間分析",
+   "file": "G03_FlowAccumulationD8.cs",
+   "loc": 305,
+   "logic": [
+    "搜尋／求解"
+   ],
+   "data_structure": [
+    "網格",
+    "圖"
+   ],
+   "difficulty": 3,
+   "difficulty_reason": "305 行、單一元件，自訂一個二元堆積 class（MinHeap）與 PriorityFlood、IsEdge、ToMesh 等方法；要理解「每格一個下游指標」構成的樹、依高程排序的拓樸累加與優先佇列，數學只需要高差 ÷ 距離的坡度，但資料流比一般迴圈範例多一層。",
+   "tags": [
+    "網格",
+    "鄰居搜尋",
+    "排序",
+    "優先佇列",
+    "樹狀結構",
+    "地形",
+    "水文",
+    "景觀分析"
+   ],
+   "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
+   "how_it_works": [
+    "取樣：把 Surface／Brep 轉成 Mesh，在 cellCount 決定的格點上由上往下打射線（Intersection.MeshRay），得到高程陣列 z。",
+    "填窪：Priority-Flood 把所有邊界格放進優先佇列，每次取出最低的一格往內淹，比它低的鄰居抬到它的高度再加一點 ε，封閉窪地因此都有出路。",
+    "流向（D8）：每格比較八個鄰居的「高差 ÷ 距離」，取最大的那個當下游指標 down[k]；找不到更低鄰居的就是出口。",
+    "累積：依高程由高到低排序（Array.Sort），每格把自己的水量加到下游格，同時由上游河段的河序推出 Strahler 河序。",
+    "河網：累積量 ≥ streamThreshold 的格子是河道，從源頭或匯流點沿箭頭追到下一個匯流點，輸出一段段 Polyline 與河序。",
+    "集水區：依高程由低到高，每格繼承下游格的出口編號；把面積最大的 basinCount 個集水區上色，輸出格子 Mesh 與流向箭頭。"
+   ],
+   "pseudo_code": [
+    "輸入 terrain, cellCount, fillSinks, streamThreshold, basinCount",
+    "z ← 由上往下打射線取樣 terrain  // nx × ny 高程格",
+    "如果 fillSinks：Priority-Flood(z)  // 優先佇列由邊界往內淹，窪地抬高 +ε",
+    "對 每一格 k：",
+    "  down[k] ← 八鄰居中 (z[k] − z[n]) ÷ 距離 最大者  // 沒有更低的 → 出口",
+    "acc ← 全部 1；order ← 依 z 由高到低排序",
+    "對 order 中的每一格 k：",
+    "  acc[down[k]] ← acc[down[k]] + acc[k]  // 同時累計 Strahler 河序",
+    "streams ← acc ≥ streamThreshold 的格子，從源頭或匯流點沿 down 追成 Polyline",
+    "對 order 反向（由低到高）的每一格 k：",
+    "  label[k] ← 如果 k 是出口 則 k 否則 label[down[k]]",
+    "basins ← 面積前 basinCount 名的集水區上色，其餘灰色",
+    "回傳 streams, orders, basins, flowLines, info"
+   ],
+   "key_params": [
+    {
+     "name": "terrain",
+     "effect": "輸入地形（Surface、Brep 或 Mesh）；形狀決定水往哪裡流，可以直接接 C04 雜訊地形或實測 DEM 轉成的 Mesh"
+    },
+    {
+     "name": "cellCount",
+     "effect": "長邊格子數；越大河網越細緻，但計算量約與格子總數 × log 成正比，建議 40–150"
+    },
+    {
+     "name": "fillSinks",
+     "effect": "true 時先填窪，水系連成一片、出口都在邊界；false 時每個窪地各自成為內流集水區，可用來找積水處"
+    },
+    {
+     "name": "streamThreshold",
+     "effect": "成為河道的最小上游格數；調小出現許多細小支流，調大只剩主幹河"
+    },
+    {
+     "name": "basinCount",
+     "effect": "上色的最大集水區數；其餘小集水區（多半是邊緣零碎的）畫成灰色"
+    }
+   ],
+   "csharp_concepts": [
+    "一維陣列模擬二維格子（k = j·nx + i）",
+    "Array.Sort(keys, items) 依鍵值同步排序",
+    "自訂二元堆積 class（優先佇列）",
+    "Intersection.MeshRay 射線取樣",
+    "Dictionary<int,int> 統計集水區大小",
+    "Mesh 頂點色（VertexColors）",
+    "int[] 當指標構成樹狀結構"
+   ],
+   "prerequisites": [
+    "巢狀迴圈與二維格子索引",
+    "排序與比較函式",
+    "堆積／優先佇列的概念",
+    "坡度（高差 ÷ 水平距離）",
+    "C04 雜訊地形或任一種地形 Mesh 的建立"
+   ],
+   "teaching_note": "建議先不填窪，只寫 D8：在小格子（20×20）上畫出每格的箭頭，確認箭頭都指向下坡；再加排序累積，用線寬顯示累積量，學習者會看到河網「自己長出來」。接著故意做一個窪地，觀察河流在窪地斷掉，再加上 Priority-Flood 解決，最後才做集水區標記與 Strahler 河序。常見錯誤：對角鄰居忘了除以 √2，使河道偏向斜向；累積時沒有依高程排序，導致下游先被處理而少算水量；填窪時沒有加 ε，平地上的格子彼此等高、找不到下坡。效能上，射線取樣是最慢的部分（格子數 × 網格面數），cellCount 超過 200 時可以改用 Mesh.ClosestPoint 或先把地形簡化；優先佇列在 Rhino 8 可以改用 .NET 的 PriorityQueue<int,double>。",
+   "variations": [
+    {
+     "title": "D∞ 無限方向流向（Tarboton）",
+     "level": 4,
+     "what_changes": "流向規則：從單一鄰居改成在兩個鄰居之間分配",
+     "how": "在每格周圍切成 8 個三角面，對每個三角面算斜面最陡方向角 r 與坡度，取坡度最大的三角面；把 acc 依角度比例分給夾住該方向的兩個鄰居（down1、down2 與權重 w、1−w），累積迴圈改成 acc[down1] += w·acc[k]、acc[down2] += (1−w)·acc[k]。",
+     "result": "河網不再被限制在 45° 的鋸齒方向，平緩坡面上的匯流帶變得平滑，集水面積估計更接近真實地形。"
+    },
+    {
+     "title": "多流向分流（FD8／MFD）",
+     "level": 3,
+     "what_changes": "累積規則：水量分給所有下坡鄰居",
+     "how": "把 down[k] 改成 List<(int n, double w)>，對每個 z 更低的鄰居算 w = (坡度)^p，正規化後把 acc[k]·w 分給每個鄰居；新增 exponent p 輸入（1.1 左右接近 Freeman，越大越接近 D8），並加上「累積量超過門檻後改回單一流向」的開關。",
+     "result": "山坡上出現扇形散開的濕潤帶、河谷才收斂成線，適合畫坡面漫流與草溝分布，而不是只有一條條細河。"
+    },
+    {
+     "title": "降雨與不透水面權重",
+     "level": 2,
+     "what_changes": "輸入：每格的初始水量不再是 1",
+     "how": "新增 List<Curve> 屋頂、鋪面、綠地輪廓與對應的逕流係數（例如屋頂 0.9、柏油 0.85、草地 0.2），取樣時用 Curve.Contains 判斷每格落在哪一區，acc 初值改成 rain × 係數 × 格子面積。",
+     "result": "同一塊地形在硬鋪面多的一側河道明顯變粗，可以直接比較透水鋪面改造前後各出口的逕流量。"
+    },
+    {
+     "title": "建築與道路燒入地形",
+     "level": 3,
+     "what_changes": "輸入：在取樣後修改高程格",
+     "how": "新增建築 Brep 與道路 Curve 輸入：建築腳印內的格子抬高（z += 牆高，或直接設為無資料 NaN），道路中心線附近 2 格內降低 0.15 m（stream burning 的做法），再進入填窪與 D8。",
+     "result": "水流被建築擋住而繞行，並沿道路側溝集中，河網從自然地形的樹枝狀變成貼著街廓走的都市排水網。"
+    },
+    {
+     "title": "保留窪地：積水點與滯洪池",
+     "level": 3,
+     "what_changes": "分析：輸出填窪的差值而不是丟掉它",
+     "how": "同時保留原始 z 與填窪後的 zf，depth = zf − z > 0 的格子就是會積水的窪地；用 flood-fill（佇列）把相連的積水格分群，每群輸出面積、體積（Σdepth × 格子面積）與邊界 Polyline（接 C05 的等值線或直接畫格子邊）。",
+     "result": "得到基地上每個「藍點」積水區的位置與蓄水量，可直接當作雨水花園或滯洪池的候選位置。"
+    },
+    {
+     "title": "河序決定管徑與草溝寬度",
+     "level": 2,
+     "what_changes": "輸出：河道轉成有粗細的構件",
+     "how": "把每段 Polyline 依 Strahler 河序 o 設半徑 r = r0 × 1.6^(o−1)，用 Brep.CreatePipe 產生管件；或用 Curve.Offset 向兩側偏移成草溝平面，寬度依累積量 √acc 漸變，匯出給雷切或 3D 列印的地形模型。",
+     "result": "得到一套由源頭細、下游粗的排水管或生態草溝配置，模型上可以一眼讀出集水階層。"
+    },
+    {
+     "title": "畫一條溝，比較改造前後",
+     "level": 3,
+     "what_changes": "分析：設計介入與前後差異",
+     "how": "新增 List<Curve> swales（設計者畫的截水溝或土堤）：溝線附近的格子降低、堤線附近的格子抬高，分別跑兩次完整流程，輸出 Δacc = acc改造後 − acc原始 的彩色網格，並列出每個出口的流量變化。",
+     "result": "一張紅藍差異圖顯示截水溝把哪些坡面的水攔下、改送到哪個出口，方便反覆調整溝的位置與走向。"
+    },
+    {
+     "title": "河流侵蝕地形演化（stream power）",
+     "level": 4,
+     "what_changes": "時間：流量回頭改寫地形並重算",
+     "how": "外層加 steps 迴圈：每步先做 D8 與累積，再對每格 z -= K·acc^m·slope^n·dt（常用 m = 0.5、n = 1），並加上均勻抬升 U·dt；每 10 步把地形 Mesh 存進 DataTree 分支，用 Slider 選擇顯示。",
+     "result": "隨機地形慢慢被切出分枝狀山谷與稜線，河谷越來越深、網路越來越像真實流域，可以做成地景演化動畫。"
+    },
+    {
+     "title": "三角網格（TIN）上的流向",
+     "level": 3,
+     "what_changes": "維度：從規則格子改成不規則網格",
+     "how": "不取樣成格子，直接用 Mesh.TopologyVertices：每個頂點的鄰居改用 ConnectedTopologyVertices，坡度用實際的 3D 邊長算，排序與累積迴圈不變；可先用 E02 Poisson 取樣＋Delaunay 產生均勻的不規則網格。",
+     "result": "河網沒有 45° 的格子方向感，沿著任意走向的谷線蜿蜒，也能直接套在實測點雲轉成的 TIN 上。"
+    },
+    {
+     "title": "自由曲面屋頂排水",
+     "level": 3,
+     "what_changes": "維度：把地形換成建築屋頂曲面",
+     "how": "在屋頂 Surface 的 UV 參數域上建格（Surface.PointAt(u,v)），高程用點的世界座標 Z，鄰居距離改用 3D 距離；出口不是只在邊界，而是屋面邊緣最低點，輸出每個出口的集水面積當落水頭的配置依據。",
+     "result": "在薄殼或波浪屋面上畫出雨水的匯流線與各落水頭負擔的屋面範圍，可以檢查有沒有積水死角。"
+    },
+    {
+     "title": "沿稜線的步道（接 F05）",
+     "level": 4,
+     "what_changes": "混合：用集水分析當 F05 最短路徑的成本",
+     "how": "以本演算法算出 acc 與集水區編號，把「累積量大（易淹）」與「跨越集水區邊界次數」轉成每格成本 cost = 1 + a·log(acc)；把成本格交給 F05 Dijkstra，並讓集水區邊界（分水嶺）的格子成本最低。",
+     "result": "步道會避開谷底與河道、沿著分水嶺稜線走，不用額外排水設施，對應地景設計中「沿稜線走、跨谷少」的原則。"
+    },
+    {
+     "title": "濕度指數 TWI 植栽分區",
+     "level": 2,
+     "what_changes": "分析：由累積量與坡度算出新的指標場",
+     "how": "每格算 TWI = ln(acc × 格子面積 ÷ 格子寬 ÷ tanβ)，β 為該格到下游的坡度（tanβ 設下限 0.001 避免除以 0）；把 TWI 分成 3–5 段上色，輸出每段的格子中心點供植栽群落配置。",
+     "result": "得到從乾燥稜線到潮濕谷底的連續濕度分區圖，可對應旱生、中生、濕生植栽帶。"
+    }
+   ],
+   "project_seeds": [
+    {
+     "title": "校園雨水花園選址",
+     "brief": "以校園實測地形與建築、鋪面輪廓建立逕流係數，找出累積量大的匯流線與保留窪地，提出三處雨水花園與草溝，並比較設置前後各出口的逕流量。",
+     "difficulty": 3,
+     "combine_with": [
+      "C05"
+     ]
+    },
+    {
+     "title": "雜訊地形上的河網與聚落",
+     "brief": "用 C04 產生多組地形，跑 D8 取得河網與集水區，再以河道距離與坡度為條件用 E02 撒出聚落點，做成一系列可比較的虛構流域地圖。",
+     "difficulty": 3,
+     "combine_with": [
+      "C04",
+      "E02"
+     ]
+    },
+    {
+     "title": "流量刻畫的地景切片模型",
+     "brief": "以 stream power 迭代讓地形被河流侵蝕 50–200 步，取最終地形用 C05 等高線切片，雷切成疊層模型，河道依河序做不同深度的刻痕。",
+     "difficulty": 4,
+     "combine_with": [
+      "C04",
+      "C05"
+     ]
+    },
+    {
+     "title": "自由曲面屋頂的落水頭配置",
+     "brief": "在波浪或薄殼屋面上做曲面版 D8，找出匯流線與出口，依各出口的集水面積決定落水頭位置與管徑，並檢查有無積水死角。",
+     "difficulty": 4,
+     "combine_with": [
+      "E04"
+     ]
+    },
+    {
+     "title": "以集水區劃分的街廓與步道",
+     "brief": "用集水區邊界當街廓劃分的骨架、河道當綠帶，再以 F05 沿分水嶺規劃步道網，比較和格子狀街廓在逕流量與土方量上的差異。",
+     "difficulty": 4,
+     "combine_with": [
+      "F05",
+      "E03"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "The extraction of drainage networks from digital elevation data",
+     "author": "John F. O'Callaghan, David M. Mark",
+     "year": "1984",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0734189X84800110"
+    },
+    {
+     "title": "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm for Digital Elevation Models",
+     "author": "Richard Barnes, Clarence Lehman, David Mulla",
+     "year": "2014",
+     "url": "https://arxiv.org/abs/1511.04463"
+    },
+    {
+     "title": "A new method for the determination of flow directions and upslope areas in grid digital elevation models",
+     "author": "David G. Tarboton",
+     "year": "1997",
+     "url": "https://doi.org/10.1029/96WR03137"
     }
    ]
   }
@@ -15261,6 +17411,383 @@ window.CATALOG = {
     "OpenGL"
    ],
    "url": "https://github.com/joncooper/Substrate"
+  },
+  {
+   "id": "B06-01",
+   "algo": "B06",
+   "title": "Wasp：Discrete Design for Grasshopper",
+   "creator": "Andrea Rossi（TU Darmstadt DDU）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "構件",
+   "summary": "以 Python 撰寫的開源 Grasshopper 元件組（LGPL），把每個零件描述成幾何＋連接點位置與方向，連接點構成零件的拓樸圖，再用聚合規則「把一個零件對齊到另一個零件的某個連接上」，提供隨機聚合與場驅動聚合兩種程序，並處理碰撞避免。它就是本演算法的代表實作；和基礎範例相比，零件可以是任意 Rhino 幾何、規則與程序拆成獨立元件，也支援階層式零件與製造資訊。",
+   "variations": [
+    {
+     "name": "場驅動聚合",
+     "how": "把「隨機挑一個開放接頭」改成對所有候選擺放用 3D 場取值、選最高分者。",
+     "effect": "聚合沿場的高值區生長，可用曲線或點控制整體形態。"
+    },
+    {
+     "name": "任意幾何零件",
+     "how": "BuildLibrary 改從輸入的 Mesh 與接頭平面清單建立零件，碰撞改用 BoundingBox 快篩＋Mesh 相交。",
+     "effect": "零件不再是方塊，可直接用設計好的構件聚合。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "開源",
+    "3D",
+    "模組化",
+    "碰撞偵測",
+    "外掛"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "url": "https://github.com/ar0551/Wasp"
+  },
+  {
+   "id": "B06-02",
+   "algo": "B06",
+   "title": "Tallinn Architecture Biennale Pavilion（塔林建築雙年展展館）",
+   "creator": "Gilles Retsin Architecture",
+   "year": "2017",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "建築",
+   "summary": "以 18 mm 外用合板做出直線、45°、90°、135° 四種積木，共 80 個離散構件，錯縫組合成同時擔任柱、梁與外殼的 75 m² 展館，可懸挑約 4 m、四天內不用機具組完。它是由設計者依接合規則「手動」組合的離散構件，不是隨機聚合生成；在本演算法中是「少數零件＋接合規則＝可拆裝建築」這種離散構件思維的代表，可以把它的四種積木當成零件庫，再用基礎範例的前緣與碰撞檢查自動生成替代方案。",
+   "variations": [
+    {
+     "name": "四種斜接積木零件庫",
+     "how": "把 I、L 零件換成直線、45°、90°、135° 四種梁段，接頭平面放在斜切端面，碰撞改成沿中心線取樣點。",
+     "effect": "自動聚合出梁柱斜撐混合的構架，可和實際展館比較。"
+    },
+    {
+     "name": "錯縫規則",
+     "how": "規則只允許子零件接在母零件的側面中段接頭，禁止端對端直接相接。",
+     "effect": "得到像磚砌一樣錯縫、較能傳力的連續梁。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "離散構件",
+    "合板",
+    "可拆組",
+    "模組化"
+   ],
+   "tools": [],
+   "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/"
+  },
+  {
+   "id": "B06-03",
+   "algo": "B06",
+   "title": "Combinatorial Nest（Combo-Nest）",
+   "creator": "Jose Sanchez／Plethora Project（主設計 Brendan Ho）",
+   "year": "2019",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "建築",
+   "summary": "一個「離散、開放式」的構築系統：以 A 字形為原型的標準化材料單元透過排列組合在體積上生長，並用實體積木模型、指令卡與遊戲模擬介面讓大眾一起設計展館。本演算法在其中是「固定單元＋組合規則逐步長出量體」的機制；和基礎範例的隨機挑選不同，它把每一步的選擇交給參與者，電腦負責規則與可行性。",
+   "variations": [
+    {
+     "name": "人選接頭、電腦檢查",
+     "how": "把 PickOpen 換成讓使用者在 Rhino 中點選最近的開放接頭（Rhino.Input.RhinoGet.GetPoint），其餘對齊與碰撞流程不變。",
+     "effect": "多人輪流放零件的協作設計，電腦保證不會碰撞。"
+    },
+    {
+     "name": "圖案化規則",
+     "how": "規則表依週期（例如每 3 個零件）切換，交替使用不同的接頭組合。",
+     "effect": "聚合出現重複的母題（motif），而不是完全隨機的團塊。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "模組化",
+    "遊戲化",
+    "參與式設計",
+    "可拆組"
+   ],
+   "tools": [
+    "Common-hood（遊戲模擬）"
+   ],
+   "url": "https://www.plethora-project.com/combinatorial-nest"
+  },
+  {
+   "id": "B06-04",
+   "algo": "B06",
+   "title": "Assembler：建構與管理 assemblage 的 Grasshopper 外掛",
+   "creator": "Alessio Erioli（Co-de-iT）",
+   "year": "2022",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "以 C# 撰寫、GPL-3.0 授權的 Grasshopper 外掛，從零件與連接規則建立 assemblage，用「handle」描述接頭，並以可調整的 heuristics（評分準則）做確定性（非隨機）的逐步決策，同時記錄連接與遮擋的拓樸，可再對成果做構件與系統層級的分析。和基礎範例的隨機挑選相比，它每一步都依準則選出最佳候選，而且可用 C# 自訂準則與環境場。",
+   "variations": [
+    {
+     "name": "確定性評分取代隨機",
+     "how": "每步列出所有可行候選（前緣接頭 × 規則 × 轉角），用自訂函數評分（例如高度＋離吸引點距離），取最高分者；同分時才用 seed 決定。",
+     "effect": "相同輸入必得相同結果，形體由評分準則而非亂數主導。"
+    },
+    {
+     "name": "遮擋接頭記錄",
+     "how": "新零件加入後，檢查前緣中每個接頭外側 0.5 處是否已被佔據，被佔據的接頭移到 occluded 清單並輸出。",
+     "effect": "可以統計被封住的接頭比例，當作聚合緊密程度的指標。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "開源",
+    "外掛",
+    "確定性",
+    "評分準則",
+    "圖結構"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://github.com/Co-de-iT/Assembler"
+  },
+  {
+   "id": "B06-05",
+   "algo": "B06",
+   "title": "Aggregated Structures：以離散積木近似拓樸最佳化的材料分布",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "構件",
+   "summary": "IASS 2017 研討會論文：先以體素拓樸最佳化算出指定載重下的材料密度場，再用這個場驅動模組零件的聚合生長（梯度導向的聚合演算法），讓積木近似最佳化的材料配置，並評估組合體的穩定性、提出模組化的接合細部。本演算法在其中負責把連續的密度場轉成可逆組裝的離散構件；和基礎範例相比，挑選依據從亂數換成結構性能的場。",
+   "variations": [
+    {
+     "name": "密度場門檻",
+     "how": "新增密度場取樣輸入，只接受新零件中心密度高於 threshold 的候選，並沿密度梯度方向優先挑接頭。",
+     "effect": "零件集中在受力路徑上，形成像骨骼般的聚合。"
+    },
+    {
+     "name": "穩定性檢查",
+     "how": "每加入一個零件就沿連接圖計算合成重心，重心超出支撐範圍就拒絕。",
+     "effect": "組合體在每一步都能自立。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "結構",
+    "拓樸最佳化",
+    "場驅動",
+    "可拆組"
+   ],
+   "tools": [],
+   "url": "https://www.academia.edu/35602236/Aggregated_Structures_Approximating_Topology_Optimized_Material_Distribution_with_Discrete_Building_Blocks"
+  },
+  {
+   "id": "B06-06",
+   "algo": "B06",
+   "title": "Collaborative Assembly of Digital Materials（ACADIA 2017）",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "category": "fabrication",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "提出設計者與六軸機械手臂協作的離散結構組裝流程：一套不需寫程式的離散設計工具、在聚合過程中納入製造限制，以及一個讓設計者能在機械手臂組裝時即時修改設計的溝通平台。本演算法是其中「下一個零件放哪裡」的生成核心；和基礎範例相比，每一步除了碰撞之外還要檢查機械手臂能否取放，且設計與組裝同時進行。",
+   "variations": [
+    {
+     "name": "可取放性檢查",
+     "how": "在 Fits 之後再檢查新零件正上方一段距離內是否淨空（沿取放平面 Z 軸做 RTree 查詢），不淨空就拒絕。",
+     "effect": "只生成機械手臂由上往下放得進去的零件配置。"
+    },
+    {
+     "name": "逐件輸出給機器",
+     "how": "每加入一個零件就輸出它的取放平面與序號，用 Timer 一次推進一步。",
+     "effect": "設計與實體組裝同步推進，可在中途改規則。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "機械手臂",
+    "人機協作",
+    "數位材料",
+    "可拆組"
+   ],
+   "tools": [
+    "六軸機械手臂"
+   ],
+   "url": "https://www.academia.edu/35602244/Collaborative_Assembly_of_Digital_Materials"
+  },
+  {
+   "id": "B06-07",
+   "algo": "B06",
+   "title": "Sequential Modular Assembly：以不同重量模組做機械手臂懸挑組裝",
+   "creator": "Bastian Wibranek, Timm Glätzer, Leon Wietschorke, Oliver Tessmann（TU Darmstadt DDU）",
+   "year": "2020",
+   "category": "fabrication",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "構件",
+   "summary": "CAADRIA 2020 論文：使用具自我校準接合的模組，並設計不同重量的模組，以演算法計算讓模組聚合在每一個組裝步驟都保持平衡所需的配重，因此不用臨時支撐就能以機械手臂組出懸挑結構，也能拆解重用。本演算法對應其中的逐件聚合與組裝順序；和基礎範例相比，每一步多了重心平衡的判斷，零件也多了「重量」這個屬性。",
+   "variations": [
+    {
+     "name": "配重零件",
+     "how": "PartType 加上 Weight 欄位，新增一種重零件；當懸挑側重心超出支撐時，改從規則中挑重零件放在後側平衡。",
+     "effect": "用少量配重撐出更長的懸挑。"
+    },
+    {
+     "name": "組裝步驟平衡檢查",
+     "how": "依加入順序逐步累加重心，任一步不平衡就回退該零件。",
+     "effect": "得到每一步都穩定、可直接照做的組裝序列。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "機械手臂",
+    "懸挑",
+    "組裝順序",
+    "重心"
+   ],
+   "tools": [
+    "機械手臂"
+   ],
+   "url": "https://www.dg.architektur.tu-darmstadt.de/fachgebiet_ddu/archiv/ddu_newsarchiv_details_111424.en.jsp"
+  },
+  {
+   "id": "B06-51",
+   "algo": "B06",
+   "title": "Jigsaw Block（拼圖方塊結構生成）",
+   "creator": "Mojang Studios（Minecraft）",
+   "year": "2019",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "群體／都市",
+   "summary": "Minecraft Java 版 1.14 加入的拼圖方塊：每個結構片段上的拼圖方塊記錄自己的名稱、要接的目標名稱與模板池，生成時從池中挑一個片段、把對應的拼圖方塊對齊接上，一層層長出村莊、遺跡等大型結構，並有層數上限與優先權設定。這就是「接頭＋規則池＋深度上限」的離散聚合；和 Grasshopper C# 基礎範例相比，零件是方塊世界裡的建築片段，規則以名稱配對而非編號，且生成時要避免片段互相重疊。",
+   "variations": [
+    {
+     "name": "名稱配對規則",
+     "how": "接頭加上 name 與 target 字串，規則改成「target 等於對方 name 才能接」，並用模板池（零件清單＋權重）隨機挑子零件。",
+     "effect": "像村莊一樣由道路片段連出房屋片段，規則容易擴充。"
+    },
+    {
+     "name": "層數上限",
+     "how": "OpenConn 記錄深度，新零件的接頭深度＝母接頭深度＋1，超過 levels 就不再加入前緣。",
+     "effect": "控制結構從種子向外長多遠，避免無限蔓延。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Minecraft",
+    "遊戲",
+    "程序生成"
+   ],
+   "tools": [
+    "Minecraft"
+   ],
+   "url": "https://minecraft.wiki/w/Jigsaw_Block"
+  },
+  {
+   "id": "B06-52",
+   "algo": "B06",
+   "title": "ProceduralDungeon：Unreal Engine 程序地城外掛",
+   "creator": "Benoit Pelletier（BenPyton）",
+   "year": "2019",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "開源的 Unreal Engine 4／5 外掛（CeCILL-C 授權）：設計者先手工做好每個房間關卡並標出邊界與門的位置，生成時依可在 Blueprint 或 C++ 自訂的規則隨機挑下一個房間、把它的門對齊到既有房間的門，內建的重疊偵測確保房間不互相穿插。房間就是零件、門就是接頭；和 Grasshopper C# 基礎範例相比，它用遊戲引擎的關卡當零件，規則以程式回呼（選第一個房間、選下一個房間、是否繼續）表達。",
+   "variations": [
+    {
+     "name": "房間與門零件",
+     "how": "零件改成矩形房間（包圍盒）＋牆面中點的門平面，碰撞只比對房間包圍盒是否重疊。",
+     "effect": "快速生成走廊與房間串接的平面配置。"
+    },
+    {
+     "name": "終止條件回呼",
+     "how": "把 while 條件抽成 ContinueToAdd(placed) 方法，例如房間數達標且已放入出口房才停。",
+     "effect": "保證生成結果一定包含起點與出口等必要空間。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Unreal Engine",
+    "C++",
+    "遊戲",
+    "程序生成",
+    "開源"
+   ],
+   "tools": [
+    "Unreal Engine",
+    "C++",
+    "Blueprint"
+   ],
+   "url": "https://github.com/BenPyton/ProceduralDungeon",
+   "image": {
+    "file": "img/cases/B06-52.jpg",
+    "w": 499,
+    "h": 394,
+    "source": "GitHub README（BenPyton/ProceduralDungeon）",
+    "author": "Benoit Pelletier",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/BenPyton/ProceduralDungeon",
+    "note": "README 中的生成結果動圖：房間經由門彼此串接成地城"
+   }
+  },
+  {
+   "id": "B06-53",
+   "algo": "B06",
+   "title": "Dungeon Architect Snap Builder（房間預製件拼接）",
+   "creator": "Code Respawn",
+   "year": "2019",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "Unity／Unreal 的關卡生成工具 Dungeon Architect 中的 Snap Builder：把事先做好的房間與走廊預製件（module）在連接點（connection）上拼接，每個連接點同時指定接上時放門、沒接時封牆的預製件，並用圖文法（dungeon flow graph）規則控制整體路線。本演算法對應其中的模組拼接與開放連接點；和 Grasshopper C# 基礎範例相比，它多了一層圖文法決定「哪裡該接什麼房間」，並自動處理未使用接頭的封口。",
+   "variations": [
+    {
+     "name": "未用接頭自動封口",
+     "how": "迴圈結束後，對前緣剩下的每個接頭平面放一片牆板 Mesh；成功相接的接頭則放門框。",
+     "effect": "聚合結果外觀完整，不會留下開口，並能區分門與牆。"
+    },
+    {
+     "name": "圖文法控制路線",
+     "how": "先用一張簡單的圖（起點—走廊—房間—出口）決定零件種類序列，聚合時依序只允許下一個指定種類的零件。",
+     "effect": "隨機拼接仍保有設計好的空間序列。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "遊戲",
+    "程序生成",
+    "圖文法"
+   ],
+   "tools": [
+    "Unity",
+    "Unreal Engine"
+   ],
+   "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/"
   },
   {
    "id": "C01-01",
@@ -24465,6 +26992,892 @@ window.CATALOG = {
    }
   },
   {
+   "id": "E05-01",
+   "algo": "E05",
+   "title": "艾菲爾鐵塔：以圖解靜力學決定塔身輪廓",
+   "creator": "Maurice Koechlin（Gustave Eiffel 公司）",
+   "year": "1889",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "300 公尺鐵塔的主要設計者 Koechlin 在蘇黎世師承圖解靜力學創始人 Culmann，用圖解方法決定塔身曲線，讓塔腳在風力與自重下成為各段受力均衡的懸臂。和基礎範例不同，這裡的主要載重是水平風力，塔身輪廓等於把索多邊形轉九十度立起來。",
+   "variations": [
+    {
+     "name": "水平風載的索多邊形",
+     "how": "把載重向量改成水平方向（沿塔高分段的風力），載重作用線改成水平線，用同樣的極點射線作圖。",
+     "effect": "得到塔身外輪廓曲線，越往下越張開，直觀說明艾菲爾鐵塔腳部為何外撇。"
+    },
+    {
+     "name": "自重＋風力合成",
+     "how": "每個節點的載重改成自重（向下）加風力（水平）的向量和，載重線變成折線。",
+     "effect": "塔身輪廓略為不對稱，可比較有風、無風兩種輪廓的差別。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "塔",
+    "風力",
+    "歷史案例",
+    "懸臂"
+   ],
+   "tools": [
+    "圖解靜力學（手繪作圖）"
+   ],
+   "url": "https://trako.arch.rwth-aachen.de/cms/trako/forschung/bautechnikgeschichte/~mmso/maurice-koechlin-der-eigentliche-erfin/?lidx=1"
+  },
+  {
+   "id": "E05-02",
+   "algo": "E05",
+   "title": "Robert Maillart 的 Salginatobel 橋設計方法（1928）",
+   "creator": "Corentin Fivet、Denis Zastavni",
+   "year": "2012",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "這篇論文從 Maillart 的計算書重建瑞士 Salginatobel 三鉸拱橋的設計過程，指出他以圖解靜力學畫出半座橋的推力線，並用推力線在不同載重情況下的包絡決定拱與橋面的形狀。和基礎範例相比，它多了三鉸條件（推力線必須通過三個鉸）與多種活載重的比較。",
+   "variations": [
+    {
+     "name": "三鉸拱：推力線通過三點",
+     "how": "固定左右支承與拱頂鉸三點，用三點條件反求極點，而不是用 sag。",
+     "effect": "推力線一定通過三個鉸，拱形可直接由推力線決定。"
+    },
+    {
+     "name": "活載重包絡",
+     "how": "對半跨滿載、全跨滿載等數種載重各畫一條推力線，疊在一起取上下包絡。",
+     "effect": "得到拱必須包住的推力線範圍，拱在四分點附近最厚的原因一目了然。"
+    },
+    {
+     "name": "橋面填土載重由曲線輸入",
+     "how": "輸入橋面曲線與拱線，以兩者高差乘單位重算出每條作用線上的載重。",
+     "effect": "載重隨拱形改變，接近真實拱橋的自重分布。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "拱橋",
+    "推力線",
+    "三鉸拱",
+    "歷史案例"
+   ],
+   "tools": [
+    "圖解靜力學（手繪作圖）"
+   ],
+   "url": "https://www.ingentaconnect.com/content/iass/jiass/2012/00000053/00000001/art00005"
+  },
+  {
+   "id": "E05-03",
+   "algo": "E05",
+   "title": "As Hangs the Flexible Line：砌體拱的平衡",
+   "creator": "Philippe Block、Matt DeJong、John Ochsendorf",
+   "year": "2006",
+   "category": "performance",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "構件",
+   "summary": "從 Hooke「如懸垂的柔索，倒過來就是剛性的拱」出發，用推力線與圖解靜力學說明砌體拱的平衡與穩定：只要找得到一條落在拱厚內的推力線，拱就站得住。論文示範最小、最大推力兩種極端推力線，以及支承移動時鉸接的形成；和基礎範例相比，它把索多邊形放進有厚度的拱裡評估安全。",
+   "variations": [
+    {
+     "name": "最小／最大推力",
+     "how": "新增拱的內外弧曲線，二分法調整 sag，找出推力線剛好碰到內外弧的兩個極端。",
+     "effect": "得到拱推力的可行範圍與幾何安全係數。"
+    },
+    {
+     "name": "支承外移與鉸接",
+     "how": "把右支承稍微往外移，重新找能留在拱厚內的推力線，標出推力線碰到內外弧的位置。",
+     "effect": "看出拱在支承位移後出現的三個鉸，對應真實石拱的裂縫位置。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "推力線",
+    "砌體",
+    "穩定",
+    "安全評估"
+   ],
+   "tools": [
+    "圖解靜力學",
+    "互動參數模型"
+   ],
+   "url": "https://link.springer.com/article/10.1007/s00004-006-0015-9"
+  },
+  {
+   "id": "E05-04",
+   "algo": "E05",
+   "title": "Real-time limit analysis of vaulted masonry buildings",
+   "creator": "Philippe Block、Thierry Ciblac、John Ochsendorf",
+   "year": "2006",
+   "category": "performance",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "把推力線分析做成可即時操作的參數模型：拱與扶壁等構件的幾何一改，推力線與力圖立刻更新，馬上看出推力是否留在石材斷面內。和基礎範例相比，它把索多邊形串接到多個構件（拱推力傳到扶壁再傳到地面），並用於既有砌體建築的安全評估。",
+   "variations": [
+    {
+     "name": "拱推力傳進扶壁",
+     "how": "把拱在支承的反力（力圖中最後一條射線）當成扶壁頂端的斜向載重，再加上扶壁每層自重，往下畫第二條推力線。",
+     "effect": "看出推力線在扶壁中往外偏的程度，決定扶壁需要多寬。"
+    },
+    {
+     "name": "斷面安全檢查上色",
+     "how": "每條推力線段與構件斷面比較，偏心量超過斷面三分之一就標紅色。",
+     "effect": "即時看到哪一段最危險，調整幾何時馬上回饋。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "推力線",
+    "扶壁",
+    "古建築",
+    "即時回饋"
+   ],
+   "tools": [
+    "互動參數模型"
+   ],
+   "url": "https://web.mit.edu/masonry/papers/block_cibl_ochs_CAS.pdf"
+  },
+  {
+   "id": "E05-05",
+   "algo": "E05",
+   "title": "Structural optimization using graphic statics",
+   "creator": "Lauren L. Beghini、Juan Carrion、Alessandro Beghini、Arkadiusz Mazurek、William F. Baker",
+   "year": "2014",
+   "category": "performance",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "把圖解靜力學的形狀圖與交互力圖和結構最佳化結合：以力圖的幾何表達桿件內力，在保持平衡的前提下調整結構幾何，以材料量（載重路徑）為目標尋找較佳的形狀。和基礎範例相比，它不是只畫一條索，而是把力圖當成最佳化流程的一部分。",
+   "variations": [
+    {
+     "name": "掃描 sag 找最省材料",
+     "how": "對 sag 做一輪掃描，每次計算 Σ|F|·L，輸出曲線並取最小值。",
+     "effect": "得到這組載重下最省材料的矢高。"
+    },
+    {
+     "name": "桁架節點高度當變數",
+     "how": "改成 Cremona 力圖後，把上弦節點高度當變數，用簡單的爬山法調整並重畫力圖。",
+     "effect": "上弦慢慢變成接近索多邊形的曲線，腹桿內力趨近於零。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "最佳化",
+    "桁架",
+    "載重路徑",
+    "交互力圖"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/article/10.1007/s00158-013-1002-x"
+  },
+  {
+   "id": "E05-06",
+   "algo": "E05",
+   "title": "以形狀文法與圖解靜力學自動產生多樣平衡結構",
+   "creator": "Juney Lee、Caitlin Mueller、Corentin Fivet",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "構件",
+   "summary": "以形狀文法的規則逐步改寫結構拓樸（加桿、分叉、移動節點），每一步都用圖解靜力學的力圖維持平衡，自動產生大量彼此不同、但都平衡的橋與桁架候選。和基礎範例相比，拓樸不再固定，力圖成為篩選「可以站得住」設計的工具。",
+   "variations": [
+    {
+     "name": "分叉規則",
+     "how": "寫一條「把一段桿件在中點拆成兩支」的規則，拆完用力多邊形重新求分叉點位置。",
+     "effect": "從單一拱長出樹狀或多支撐的結構。"
+    },
+    {
+     "name": "隨機套用＋篩選",
+     "how": "用 Random 隨機挑規則連續套用數次，只保留力多邊形能封閉的結果。",
+     "effect": "一次產生數十個不同但都平衡的設計候選。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "形狀文法",
+    "設計探索",
+    "多樣性",
+    "平衡"
+   ],
+   "tools": [],
+   "url": "https://journals.sagepub.com/doi/10.1177/0266351116660798"
+  },
+  {
+   "id": "E05-07",
+   "algo": "E05",
+   "title": "Combinatorial Equilibrium Modeling（CEM）",
+   "creator": "Patrick Ole Ohlbrock、Joseph Schwartz",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "以圖解靜力學為基礎的找形方法：把結構拆成「軌跡」與「偏移邊」，由上而下逐節點做向量加法求出平衡形狀，可以同時控制受拉與受壓構件；作者並釋出 Grasshopper 外掛。和基礎範例相比，它把一條索多邊形擴充成任意拓樸的 3D 桿件網，並可指定部分構件的內力或長度。",
+   "variations": [
+    {
+     "name": "逐節點向量加法",
+     "how": "把載重線的首尾相接改成在每個節點把上方傳下來的力、外載與偏移邊力相加，得到往下一個節點的方向與長度。",
+     "effect": "由頂到地逐層長出平衡的塔或柱。"
+    },
+    {
+     "name": "拉壓混合",
+     "how": "允許部分射線方向相反（負內力），形狀圖中用不同顏色與線寬表示。",
+     "effect": "同一結構裡同時有受壓柱與受拉索，例如張拉整體或斜張結構。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "3D",
+    "拉壓混合",
+    "找形",
+    "Grasshopper 外掛"
+   ],
+   "tools": [
+    "Grasshopper",
+    "CEM"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1177/0266351116660799"
+  },
+  {
+   "id": "E05-08",
+   "algo": "E05",
+   "title": "Prefab, Concrete Polyhedral Frame：把 3D 圖解靜力學做成實體",
+   "creator": "Masoud Akbarzadeh、Mehrad Mahnia 等（Polyhedral Structures Laboratory）",
+   "year": "2017",
+   "category": "fabrication",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "構件",
+   "summary": "以多面體（3D）圖解靜力學找出純受壓的桿件框架，再把形狀拆成預鑄混凝土模組、做模板並組裝成實體原型。和基礎範例相比，形狀圖與力圖都升到三維：力圖是多面體，桿件垂直於力多面體的面，內力由面積決定。",
+   "variations": [
+    {
+     "name": "力多面體的面積 → 桿件截面",
+     "how": "以 Mesh 表示力多面體，取每個面的 AreaMassProperties，換算成對應桿件的截面大小。",
+     "effect": "受力大的桿件自動變粗，形狀即內力圖。"
+    },
+    {
+     "name": "節點模組化拆件",
+     "how": "以每個節點為中心，把相連桿件截到固定長度，輸出成可以單獨澆鑄的節點模組 Brep。",
+     "effect": "得到可預鑄、再用螺栓或後拉組裝的構件清單。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "3D",
+    "多面體",
+    "預鑄",
+    "受壓"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper"
+   ],
+   "url": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf"
+  },
+  {
+   "id": "E05-09",
+   "algo": "E05",
+   "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
+   "creator": "Lorenz Lachauer、Philippe Block（ETH Zurich Block Research Group）",
+   "year": "2014",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "構件",
+   "summary": "蘇黎世聯邦理工學院的線上學習平台，每一課都是一個可拖曳的圖解靜力學模型：移動支承、載重或極點，形狀圖與力圖同步更新。對應的論文 Interactive Equilibrium Modelling 說明以平衡為核心的互動建模。和基礎範例相比，它把作圖流程包成一系列由淺入深的互動課程。",
+   "variations": [
+    {
+     "name": "同色對應形狀圖與力圖",
+     "how": "每段索與對應射線用相同顏色輸出（Grasshopper 的 Custom Preview 接顏色清單）。",
+     "effect": "學習者一眼看出哪一條射線控制哪一段索。"
+    },
+    {
+     "name": "課程式參數鎖定",
+     "how": "把部分輸入（例如 loadCount）鎖住，只開放一兩個滑桿，做成一系列逐步開放的練習。",
+     "effect": "由淺入深的互動練習，適合自學。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "教學工具",
+    "互動",
+    "對偶圖"
+   ],
+   "tools": [
+    "網頁互動平台"
+   ],
+   "url": "https://block.arch.ethz.ch/eq/"
+  },
+  {
+   "id": "E05-51",
+   "algo": "E05",
+   "title": "Active Statics：互動圖解靜力學示範",
+   "creator": "Simon Greenwold（與 Edward Allen、Waclaw Zalewski 合作，MIT）",
+   "year": "2003",
+   "category": "drawing",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "八個可拖曳的互動示範（索、拱、桁架等），拖動形狀或載重時，力多邊形即時更新，並以顏色區分拉力與壓力。是早期以程式碼把圖解靜力學變成即時互動的經典，後來被許多結構教學引用；和 Grasshopper 範例相比，它在瀏覽器中以 Java applet 即時重畫，重點是手感與即時回饋。",
+   "variations": [
+    {
+     "name": "滑鼠拖曳極點",
+     "how": "把 sag 反推改成直接輸入可拖曳的極點，每次變動重畫形狀圖與力圖。",
+     "effect": "即時體會極點位置與水平推力的關係。"
+    },
+    {
+     "name": "拉壓雙色",
+     "how": "forces 為正畫紅色、為負畫藍色，線寬依絕對值。",
+     "effect": "一眼分辨受拉與受壓構件。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Java",
+    "互動",
+    "教學"
+   ],
+   "tools": [
+    "Java"
+   ],
+   "url": "http://acg.media.mit.edu/people/simong/statics/data/"
+  },
+  {
+   "id": "E05-52",
+   "algo": "E05",
+   "title": "i3DGS：互動式 3D／多面體圖解靜力學",
+   "creator": "Hua Chai、Wenxi Chen、Masoud Akbarzadeh（Polyhedral Structures Laboratory）",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "在瀏覽器中操作的 3D 圖解靜力學教學平台，以一組互為對偶的多面體形狀圖與力圖說明三維平衡，可旋轉、改變力多面體並看到形狀跟著變化。和 Grasshopper 範例相比，它把 2D 的索多邊形推廣到 3D，重點在直觀理解「面積代表內力」。",
+   "variations": [
+    {
+     "name": "2D 力圖擠出成 3D 示意",
+     "how": "把 2D 力圖的每條射線擠出成三角面，並在形狀圖旁邊以 Mesh 顯示，作為進入 3D 圖解靜力學前的過渡。",
+     "effect": "學習者先在熟悉的 2D 作圖上看到「面」的概念。"
+    },
+    {
+     "name": "多面體面積讀內力",
+     "how": "以 Mesh.CreateFromClosedPolyline 做出力多面體的面，計算面積並標在對應桿件旁。",
+     "effect": "三維版的「射線長度 = 內力」。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "3D",
+    "多面體",
+    "教學"
+   ],
+   "tools": [
+    "JavaScript（網頁互動）"
+   ],
+   "url": "https://psl.design.upenn.edu/i3dgs/"
+  },
+  {
+   "id": "E05-53",
+   "algo": "E05",
+   "title": "Parametric Graphic Statics with GeoGebra",
+   "creator": "EngineeringSkills.com",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "以 GeoGebra 的動態幾何建出參數化的圖解靜力學作圖：載重、極點與支承都是可拖曳的點，索多邊形與力多邊形用平行線與交點工具即時連動。和 Grasshopper 範例相比，它完全用作圖工具（不寫程式）表達同一套「平行線＋交點」邏輯，很適合當寫 C# 前的草稿。",
+   "variations": [
+    {
+     "name": "先在動態幾何軟體作圖再轉程式",
+     "how": "把 GeoGebra 中每個作圖步驟（平行線、交點）對應到 C# 的一行 Vector3d 與 Intersection.LineLine。",
+     "effect": "學習者能逐步對照作圖與程式碼。"
+    },
+    {
+     "name": "彎矩圖同步",
+     "how": "輸出索多邊形與閉合線之間的縱距，乘以極距 H 就是彎矩，畫成彎矩圖。",
+     "effect": "看到「索多邊形就是彎矩圖的形狀」這個重要關係。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "GeoGebra",
+    "動態幾何",
+    "教學"
+   ],
+   "tools": [
+    "GeoGebra"
+   ],
+   "url": "https://www.engineeringskills.com/posts/parametric-graphic-statics-with-geogebra"
+  },
+  {
+   "id": "E05-54",
+   "algo": "E05",
+   "title": "Disjointed Force Polyhedra 瀏覽器互動實作",
+   "creator": "Tarakesh Chandran",
+   "year": "2026",
+   "category": "drawing",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "在瀏覽器中執行的 3D 互動程式，依 Juney Lee、Tom Van Mele、Philippe Block 2018 年的 Disjointed force polyhedra 方法，以延伸高斯影像（EGI）與面積追蹤演算法產生分離的力多面體。和 Grasshopper 範例相比，它展示創作程式如何把 3D 圖解靜力學的論文方法重寫成可即時操作的視覺化。",
+   "variations": [
+    {
+     "name": "力多面體逐步調面積",
+     "how": "給每個面一個目標面積，迭代沿法向平移面直到面積接近目標。",
+     "effect": "力多面體的面積逐漸符合指定內力。"
+    },
+    {
+     "name": "形狀圖與力圖並排旋轉",
+     "how": "在 Grasshopper 中把形狀圖與力圖分別放在兩個相鄰的視圖位置，並共用同一組旋轉角度。",
+     "effect": "同時觀察兩張圖的對偶關係。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "3D",
+    "多面體"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/Tarakeshchandran/01_04_2026_GraphicStatics_DisjointedForcePolyhedra"
+  },
+  {
+   "id": "E06-01",
+   "algo": "E06",
+   "title": "慕尼黑奧林匹克屋頂：力密度法的誕生",
+   "creator": "H.-J. Schek、Klaus Linkwitz（找形計算）；Frei Otto、Günter Behnisch（屋頂設計）",
+   "year": "1972",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "慕尼黑奧林匹克屋頂的索網必須精確施工，只靠實體模型與攝影測量不夠，Schek 因此提出力密度法，把每根索預先指定 q = 力 ÷ 長度，讓平衡方程變成線性、可以一次解出。本案只談 FDM 在此案中的起源（屋頂本身已在 E04 收錄）；和基礎範例相比，真實屋頂是多片馬鞍索網、由桅杆吊點與邊索組成，而且 q 要依施工需求再做非線性調整。",
+   "variations": [
+    {
+     "name": "桅杆吊點＋零載重",
+     "how": "load 設 0，anchors 改成幾個高桅杆頂點與地面邊緣點，baseMesh 用覆蓋整個屋面的格網。",
+     "effect": "一次解出數片相連的預力馬鞍面。"
+    },
+    {
+     "name": "邊索分開控制",
+     "how": "把 edgeCableFactor 調高到 3–5，只固定邊索兩端而非整排裸邊。",
+     "effect": "邊界向內彎成帳篷屋頂典型的扇貝邊。"
+    },
+    {
+     "name": "索料清單",
+     "how": "輸出每條邊的長度與內力並編號。",
+     "effect": "從平衡形直接得到施工用的索長與預力。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "找形",
+    "線性方程組",
+    "預力索網"
+   ],
+   "tools": [
+    "早期電腦找形",
+    "實體模型"
+   ],
+   "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method"
+  },
+  {
+   "id": "E06-02",
+   "algo": "E06",
+   "title": "Design process for prototype concrete shells using a hybrid cable-net and fabric formwork",
+   "creator": "Diederik Veenendaal、Philippe Block（ETH Zurich BLOCK Research Group）",
+   "year": "2014",
+   "category": "fabrication",
+   "categories_extra": [
+    "performance",
+    "3d-architecture"
+   ],
+   "scale": "構件",
+   "summary": "Engineering Structures 75 期的論文，為 NEST HiLo 屋頂開發可重複使用的索網加織物模板，建造兩座原型混凝土殼。文中實作非線性延伸的力密度法，把力密度 q 當未知數，以高斯—牛頓最小平方法讓網逼近目標殼形，收斂後用「力密度 × 索長」直接得到灌漿後所需的預力。基礎範例是給 q 求形，這裡反過來是給形求 q，並要考慮濕混凝土的載重。",
+   "variations": [
+    {
+     "name": "給形求 q",
+     "how": "把 targetZ 當目標、q 當未知數，外層用有限差分與高斯—牛頓更新 q。",
+     "effect": "網形精準貼近指定的雙曲殼面，同時得到每根索的預力。"
+    },
+    {
+     "name": "濕混凝土載重",
+     "how": "load 改成節點負擔面積 × 殼厚 × 單位重，並在每輪求解後依新形狀重算。",
+     "effect": "得到灌漿後才會出現的最終形狀與索力。"
+    },
+    {
+     "name": "預力前後比較",
+     "how": "分別用無載重與有載重求一次，輸出兩組內力並排上色。",
+     "effect": "看出灌漿前後預力範圍的差異，作為張拉控制的依據。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "找形",
+    "逆向設計",
+    "數位製造",
+    "織物模板"
+   ],
+   "tools": [
+    "自寫程式",
+    "攝影測量"
+   ],
+   "url": "https://block.arch.ethz.ch/brg/files/2014-veendendaal-engstruct-design-process-for-prototype-concrete-shells-using-a-hybrid-cable-net-and-fabric-formwork_1402752074.pdf"
+  },
+  {
+   "id": "E06-03",
+   "algo": "E06",
+   "title": "COMPAS FD：以力密度法做約束找形",
+   "creator": "Tom Van Mele、Block Research Group（ETH Zurich）",
+   "year": "2021",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "BRG 以 Python 撰寫的開源套件，提供力密度法的平衡求解器與各種約束（例如節點限制在曲線或曲面上），可直接呼叫或透過 COMPAS FormFinder 圖形介面在 Rhino 中使用；PyPI 首個公開版本於 2021 年發布。基礎範例只做一次線性求解，這個套件則在求解之間交替套用幾何約束，讓自由節點同時滿足平衡與位置限制。",
+   "variations": [
+    {
+     "name": "節點約束在曲線上",
+     "how": "每次求解後把指定節點用 Curve.ClosestPoint 拉回曲線，再以新座標重組右手邊並重解，重複數次。",
+     "effect": "邊界節點沿著設計曲線滑動，同時保持平衡。"
+    },
+    {
+     "name": "稀疏矩陣改寫",
+     "how": "把 MatVec 的邊迴圈改成 CSR 格式（row 指標、col 索引、值三個陣列）。",
+     "effect": "矩陣乘向量更快，網格放大到數千個點仍可操作。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "找形",
+    "約束",
+    "開源"
+   ],
+   "tools": [
+    "Python",
+    "COMPAS",
+    "Rhino"
+   ],
+   "url": "https://github.com/blockresearchgroup/compas_fd"
+  },
+  {
+   "id": "E06-04",
+   "algo": "E06",
+   "title": "Adaptive force density method for form-finding problem of tensegrity structures",
+   "creator": "J. Y. Zhang、M. Ohsaki",
+   "year": "2006",
+   "category": "performance",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "刊於 International Journal of Solids and Structures 的論文，把力密度法用在張拉整體：受壓桿的力密度為負，力密度矩陣必須有足夠的秩缺陷才有非退化的平衡形，作者以特徵值分析與譜分解反覆修正可行的力密度，再由指定的獨立節點座標決定唯一形狀。基礎範例的 q 全為正、矩陣正定，這裡則必須處理不定矩陣與零特徵值。",
+   "variations": [
+    {
+     "name": "負力密度桿件",
+     "how": "新增受壓桿清單並給負 q，求解器改成對完整矩陣做帶樞軸的高斯消去。",
+     "effect": "得到桿受壓、索受拉的自平衡形。"
+    },
+    {
+     "name": "檢查矩陣秩",
+     "how": "用簡單的冪迭代或 Jacobi 法求 D 的最小幾個特徵值，確認是否接近 0。",
+     "effect": "判斷目前的力密度組合能否形成非退化的張拉整體。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "張拉整體",
+    "線性代數",
+    "找形"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S0020768305005858"
+  },
+  {
+   "id": "E06-05",
+   "algo": "E06",
+   "title": "Ariadne：Grasshopper 力密度逆向設計外掛",
+   "creator": "Adam Burke（MIT）",
+   "year": "2024",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "Adam Burke 在 MIT 開發的 Rhino 8 Grasshopper 外掛，以力密度法建立並求解索網，再搭配 Theseus 求解器做正向與逆向最佳化，可指定目標長度、內力或支承反力，最佳化過程中即時串流預覽。基礎範例只做正向求解；Ariadne 把 FDM 包在最佳化迴圈裡，自動找出滿足多個設計目標的 q。",
+   "variations": [
+    {
+     "name": "目標長度",
+     "how": "新增每條邊的目標長度，外層以梯度下降更新 q，使長度誤差平方和最小。",
+     "effect": "索長趨近指定值，方便用現成長度的繩索施工。"
+    },
+    {
+     "name": "目標反力",
+     "how": "對固定點算反力，把「反力不超過上限」加入目標函數。",
+     "effect": "控制支承受力，減輕邊梁或錨定的負擔。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "找形",
+    "逆向設計",
+    "最佳化"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Rhino 8",
+    "Rust"
+   ],
+   "url": "https://github.com/adam-t-burke/Ariadne"
+  },
+  {
+   "id": "E06-06",
+   "algo": "E06",
+   "title": "Grasshopper component for Force Density Method",
+   "creator": "ocabitza",
+   "year": "2023",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "構件",
+   "summary": "Food4Rhino 上的 Grasshopper 元件，輸入初始幾何、束制條件、載重與各桿件的力密度比例，求出索網與離散殼的平衡形。它和基礎範例同樣以 FDM 一次求解，差別在於以「力密度比例」作為輸入，並把載重與束制拆成獨立的資料，方便在 Grasshopper 中與其他元件串接。",
+   "variations": [
+    {
+     "name": "力密度比例輸入",
+     "how": "把 forceDensity 拆成全域基準 q0 與每條邊的比例清單 ratios，q = q0 × ratio。",
+     "effect": "可以只調某幾條邊的相對強弱，而不必重設整張網。"
+    },
+    {
+     "name": "逐點載重",
+     "how": "load 改成 List<Vector3d>，每個節點各自指定外力。",
+     "effect": "模擬吊掛物或局部集中載重。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "找形",
+    "Grasshopper 元件"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.food4rhino.com/en/app/force-density-method"
+  },
+  {
+   "id": "E06-07",
+   "algo": "E06",
+   "title": "FDMremote：Grasshopper 連接 Julia 的力密度求解與最佳化",
+   "creator": "Keith J. Lee",
+   "year": "2022",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "由 Grasshopper 端元件與 Julia 端伺服器組成的工具，Grasshopper 把網路資料傳給本機的 Julia 伺服器，由 FDM 套件做力密度求解與逆向最佳化，再把結果送回 Rhino 顯示。基礎範例在 C# 裡自己組矩陣與求解；這裡示範把求解器外移到數值計算語言，以處理較大的網與最佳化。",
+   "variations": [
+    {
+     "name": "求解器外移",
+     "how": "把 SolveCG 改成把 diag、edges、rhs 寫成 JSON 字串交給外部程式計算，再讀回座標。",
+     "effect": "理解 Grasshopper 前端與數值後端分工的架構。"
+    },
+    {
+     "name": "最佳化歷程輸出",
+     "how": "在逆向找形的每一步記下目標函數值並輸出成清單。",
+     "effect": "接 Quick Graph 看最佳化是否穩定下降。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "找形",
+    "最佳化",
+    "逆向設計"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Julia"
+   ],
+   "url": "https://github.com/keithjlee/FDMremote"
+  },
+  {
+   "id": "E06-08",
+   "algo": "E06",
+   "title": "Programming the Force Density Method",
+   "creator": "Krešimir Fresl、Petra Gidak（University of Zagreb）",
+   "year": "2012",
+   "category": "performance",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "論文指出力密度法中的力密度與位移法中的勁度係數在數學上相對應，因此把既有位移法分析程式稍加修改就能做力密度找形；文中以四個預力索網例子迭代求得最小網，並與實體縮尺模型比較，發現第一次求解的形狀常比最終收斂解更接近實體模型。基礎範例是固定 q 一次求解，這裡則進一步以迭代調整 q 逼近最小網。",
+   "variations": [
+    {
+     "name": "最小網迭代",
+     "how": "load 設 0，每輪把 q ← 1 ÷ 長度後重解，重複到形狀穩定。",
+     "effect": "得到接近最小長度網路的形狀。"
+    },
+    {
+     "name": "逐輪形狀比較",
+     "how": "把每一輪的 lines 分開輸出並上不同顏色。",
+     "effect": "看出第一次求解與收斂解的差異，對照實體模型。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "找形",
+    "線性方程組",
+    "預力索網"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.academia.edu/18363187/Programming_the_Force_Density_Method"
+  },
+  {
+   "id": "E06-51",
+   "algo": "E06",
+   "title": "Shell Form Finding：瀏覽器中的受壓殼找形工具",
+   "creator": "Amanda Ghassaei",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "performance",
+    "fabrication"
+   ],
+   "scale": "建築",
+   "summary": "在 MIT Computational Structural Design and Optimization（2016 秋）中開發的網頁工具：靜態模擬以力密度法解線性方程組得到平衡位置，動態模擬則以 GPU 片段著色器平行計算質點彈簧阻尼系統，可調整網格拓樸、固定點與外力，並匯出 STL 3D 列印。和 Grasshopper C# 基礎範例相比，它把 FDM 與動態鬆弛放在同一介面並排切換，並以 JavaScript／WebGL 在瀏覽器中即時互動。",
+   "variations": [
+    {
+     "name": "FDM 與動態鬆弛切換",
+     "how": "在同一個 C# 元件加一個 bool 輸入，切換呼叫 SolveCG 或 E04 的時間積分迴圈。",
+     "effect": "同一張網兩種方法結果並排比較，理解一次求解與逐步收斂的差別。"
+    },
+    {
+     "name": "依內力加厚輸出",
+     "how": "依 forces 對每條邊給不同半徑建管件，合併後輸出 STL。",
+     "effect": "得到可 3D 列印、受力大處較粗的殼格模型。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "WebGL",
+    "找形",
+    "互動"
+   ],
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "url": "https://amandaghassaei.com/projects/shell_form_finding/"
+  },
+  {
+   "id": "E06-52",
+   "algo": "E06",
+   "title": "ForceDensityAPI：Processing 力密度格殼探索程式",
+   "creator": "Alexandros Haridis（MIT）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "構件",
+   "summary": "以 Java／Processing 寫成的獨立程式，實作力密度法求解 36 個節點、25 個面、60 條邊的格網，理論依據來自 Klaus Linkwitz 的 FDM 著作，並附有以質點彈簧系統做動態找形的模式，用互動介面探索格殼的設計空間。基礎範例是 Grasshopper 元件；這裡把找形寫成即時繪圖的 Processing 草稿，重點在互動與設計空間探索。",
+   "variations": [
+    {
+     "name": "小網格手算對照",
+     "how": "把 baseMesh 換成 5×5 的格網，輸出 D 矩陣內容成文字表格。",
+     "effect": "可以和手算或教科書的矩陣逐項對照。"
+    },
+    {
+     "name": "設計空間取樣",
+     "how": "用兩個 q 比例各取 5 個值，排成 5×5 的格子並排輸出形狀。",
+     "effect": "一次看到 25 種格殼形態，挑出想要的比例。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Java",
+    "找形",
+    "互動"
+   ],
+   "tools": [
+    "Processing",
+    "Java"
+   ],
+   "url": "https://github.com/alexHaridis/ForceDensityAPI"
+  },
+  {
+   "id": "E06-53",
+   "algo": "E06",
+   "title": "Force_Density_Method：Python 實作與參數化力密度",
+   "creator": "Vahid Moosavi",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "依 Schek（1974）原始寫法以 Python 實作的力密度法，輸入連接圖（可用 NetworkX 格式）、固定點、節點外力與邊的力密度即可解出平衡座標；範例筆記本示範網格殼、依網路中心性指標指定力密度，以及固定點在圓上的屋頂。和基礎範例相比，它把 q 當成可由圖論指標計算的欄位，並大量產生形狀做比較。",
+   "variations": [
+    {
+     "name": "中心性決定 q",
+     "how": "對網路計算每條邊的介數中心性（經過該邊的最短路徑數），q = q0 × (1 + k × 中心性)。",
+     "effect": "主要傳力路徑自動被拉緊，形成清楚的主肋。"
+    },
+    {
+     "name": "圓形固定邊界",
+     "how": "把固定點改成半徑固定的一圈圓周節點，內部用放射狀網格。",
+     "effect": "得到圓形平面的碗形屋頂。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "Jupyter",
+    "找形",
+    "圖"
+   ],
+   "tools": [
+    "Python",
+    "Jupyter Notebook",
+    "NetworkX"
+   ],
+   "url": "https://github.com/sevamoo/Force_Density_Method"
+  },
+  {
    "id": "F01-01",
    "algo": "F01",
    "title": "Mémoire sur les combinaisons（Truchet 原始論文）",
@@ -27102,6 +30515,1961 @@ window.CATALOG = {
     "Visions of Chaos"
    ],
    "url": "https://softology.pro/voc.htm"
+  },
+  {
+   "id": "F07-01",
+   "algo": "F07",
+   "title": "Architectural Layout Design through Simulated Annealing Algorithm（以模擬退火做建築配置設計）",
+   "creator": "Hao Zheng、Yue Ren",
+   "year": "2020",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "群體／都市",
+   "summary": "CAADRIA 2020 論文，把住宅區配置中建築師憑直覺判斷的準則寫成六個懲罰與獎勵函數，再用模擬退火反覆移動建築物、以溫度控制是否接受變差的配置，並測試不同權重得出建議參數。和 Grasshopper C# 基礎範例相比，狀態是連續座標而非格位排列，成本是多項準則的加權和。",
+   "variations": [
+    {
+     "name": "格位排列改成連續座標",
+     "how": "每棟建築存 Point3d 與角度，鄰域改成隨機平移或旋轉一棟，步長隨溫度縮小。",
+     "effect": "配置不再被格子限制，可以產生錯落的住宅群。"
+    },
+    {
+     "name": "多項懲罰函數加權",
+     "how": "Cost 拆成重疊、棟距、日照、邊界退縮等函數，各乘上 List<double> weights 後相加。",
+     "effect": "調整權重即可看出不同設計準則對配置的影響。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "最佳化",
+    "平面配置",
+    "多目標",
+    "住宅"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://scholars.cityu.edu.hk/en/publications/publication(1549ded9-f19e-49b8-92b5-45803eaca025).html"
+  },
+  {
+   "id": "F07-02",
+   "algo": "F07",
+   "title": "Optimally Directed Shape Generation by Shape Annealing（形狀退火）",
+   "creator": "Jonathan Cagan、William J. Mitchell",
+   "year": "1993",
+   "category": "modeling",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "提出「形狀退火」：把形狀文法的規則當成模擬退火的鄰域，每一步隨機套用一條規則產生新形狀，再依目標函數與溫度決定是否接受，使文法生成被引導向較佳的設計。和基礎範例交換兩個格位不同，這裡的狀態是一個形狀、鄰域是文法規則。",
+   "variations": [
+    {
+     "name": "規則當鄰域",
+     "how": "把 SwapSlots 換成從 A05 規則表隨機挑一條、套在隨機可套用的位置。",
+     "effect": "生成過程有方向，不再是盲目的隨機文法。"
+    },
+    {
+     "name": "規則成功率調整",
+     "how": "記錄每條規則被接受的次數，下次依成功率加權挑選。",
+     "effect": "搜尋越來越常用有效的規則，收斂更快。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "最佳化",
+    "形狀文法",
+    "遞迴"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://doi.org/10.1068/b200005"
+  },
+  {
+   "id": "F07-03",
+   "algo": "F07",
+   "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
+   "creator": "Kristina Shea、Jonathan Cagan",
+   "year": "1997",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "把測地線圓頂的分割圖樣寫成形狀文法，再以形狀退火搜尋；改變目標（最大內部體積、最小表面積、構件種類最少、視覺一致）就得到不同風格的圓頂家族，既能重現傳統最佳解，也能找到新的空間形式。和基礎範例相比，成本來自結構與幾何評估，而非房間鄰接。",
+   "variations": [
+    {
+     "name": "換目標得到不同圓頂家族",
+     "how": "Cost 分別換成 −體積、表面積、構件長度種類數，各跑一次退火。",
+     "effect": "同一套規則產生外觀明顯不同的幾組圓頂。"
+    },
+    {
+     "name": "構件種類懲罰",
+     "how": "把桿長四捨五入到公差後用 HashSet<double> 統計種類數，加入成本。",
+     "effect": "結果更容易預製，構件規格收斂成少數幾種。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "最佳化",
+    "形狀文法",
+    "結構",
+    "3D"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32D86929FF89B256F5483E354CDA0156"
+  },
+  {
+   "id": "F07-04",
+   "algo": "F07",
+   "title": "eifForm：以形狀退火生成結構的設計系統",
+   "creator": "Kristina Shea（University of Cambridge）",
+   "year": "2000",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "構件",
+   "summary": "eifForm 的搜尋引擎就是結構形狀退火：每一步用有限元素分析評估目前設計、依過去表現挑一條文法規則套在隨機位置，較好的設計一定接受、較差的則依機率接受以跳出局部最佳，用來生成屋頂桁架、單層空間網架與圓頂。本演算法在其中扮演「決定要不要保留這一步」的角色；和基礎範例的差別是成本來自結構分析。",
+   "variations": [
+    {
+     "name": "簡化結構評分",
+     "how": "用總桿長＋最長無支撐跨距當成本，取代有限元素分析。",
+     "effect": "不需外掛也能在 Grasshopper 裡示範形狀退火桁架。"
+    },
+    {
+     "name": "接 Karamba 評分",
+     "how": "每步把桿件送進 Karamba 取得最大位移或質量，當成 Δ 的來源。",
+     "effect": "得到有真實結構依據的桁架形。"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "最佳化",
+    "結構",
+    "形狀文法",
+    "桁架"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf"
+  },
+  {
+   "id": "F07-05",
+   "algo": "F07",
+   "title": "Make it Home: Automatic Optimization of Furniture Arrangement（自動家具配置）",
+   "creator": "Lap-Fai Yu、Sai-Kit Yeung、Chi-Keung Tang、Demetri Terzopoulos、Tony F. Chan、Stanley J. Osher",
+   "year": "2011",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "SIGGRAPH 2011 論文：從範例室內場景學出家具之間的空間關係，組成包含可及性、可視性、動線等項目的成本函數，再以模擬退火（搭配 Metropolis–Hastings 狀態搜尋）自動產生客廳、臥室、餐廳等家具擺法。和基礎範例相比，鄰域是家具的連續移動與旋轉，而不是格位交換。",
+   "variations": [
+    {
+     "name": "移動＋旋轉鄰域",
+     "how": "每步隨機挑一件家具，位置加高斯位移、角度加 90° 或小角度，步長隨 T 縮小。",
+     "effect": "家具從亂放逐漸貼牆、成組、留出動線。"
+    },
+    {
+     "name": "成對關係成本",
+     "how": "為沙發－咖啡桌、床－床頭櫃等成對家具設定理想距離與朝向，偏離就加懲罰。",
+     "effect": "擺法呈現可辨認的生活場景，而不只是不重疊。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "最佳化",
+    "室內",
+    "家具配置"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.saikit.org/static/projects/furniture/index.html"
+  },
+  {
+   "id": "F07-06",
+   "algo": "F07",
+   "title": "Galapagos 的模擬退火求解器（論壇說明）",
+   "creator": "David Rutten（McNeel）",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "Grasshopper 內建的 Galapagos 除了演化求解器之外，還有一個模擬退火求解器；David Rutten 在論壇說明它從最高溫開始、溫度以對數速率下降、跳躍機率依標準模擬退火計算。它對滑桿參數做黑盒最佳化，和基礎範例自己寫排列與成本不同，但可以拿來對照同一題目的結果與收斂速度。",
+   "variations": [
+    {
+     "name": "滑桿版房間配置",
+     "how": "每個房間用一個整數滑桿代表格位，Galapagos 退火求解器最小化 C# 算出的成本並加入重複格位懲罰。",
+     "effect": "不寫退火迴圈也能體驗溫度與接受變差的效果。"
+    },
+    {
+     "name": "與自寫退火對照",
+     "how": "同一個成本函數、相同評分次數下，比較 Galapagos 退火、演化求解器與本範例的最佳成本。",
+     "effect": "理解黑盒求解器的便利與限制。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "最佳化",
+    "Galapagos",
+    "黑盒求解"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Galapagos"
+   ],
+   "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos"
+  },
+  {
+   "id": "F07-07",
+   "algo": "F07",
+   "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
+   "creator": "Jonathan Cagan",
+   "year": "1994",
+   "category": "fabrication",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "刊於 Computer-Aided Design 的研究，用形狀退火處理受約束的幾何背包問題：在有限的板面或容器裡放入形狀，使放入的價值最大且彼此不重疊。模擬退火負責在放置、移動、移除等操作之間決定是否接受變差的排法；和基礎範例相比，問題從鄰接成本變成排版與材料利用率，是數位製造中板材排版的前身。",
+   "variations": [
+    {
+     "name": "板材排版",
+     "how": "把雷切零件輪廓當物件，狀態是每件的位置與角度，成本 = 未使用面積 + 重疊懲罰。",
+     "effect": "零件擠進較少的板材，減少廢料。"
+    },
+    {
+     "name": "放入或移出操作",
+     "how": "鄰域加入「放入一件新零件」「移出一件零件」兩種操作，由亂數挑選。",
+     "effect": "在容量有限時自動取捨要放哪些零件。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "最佳化",
+    "排版",
+    "打包"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://doi.org/10.1016/0010-4485(94)90014-0"
+  },
+  {
+   "id": "F07-51",
+   "algo": "F07",
+   "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+   "creator": "Todd W. Schneider",
+   "year": "2014",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "群體／都市",
+   "summary": "用 R 與 Shiny 做的互動網頁：在地圖上挑城市、設定冷卻排程，就能看模擬退火一步步找出最短巡迴路線，旁邊同步畫出目前路徑長度與溫度的曲線，並用 1,000 次試驗比較退火與爬山法。和 Grasshopper C# 基礎範例相比，狀態是城市走訪順序，重點在把溫度、接受變差與成本曲線視覺化。",
+   "variations": [
+    {
+     "name": "成本與溫度雙曲線",
+     "how": "在範例輸出中額外記錄每個取樣點的 T，畫成第二條 Polyline。",
+     "effect": "可以直接看到溫度降低時成本抖動變小。"
+    },
+    {
+     "name": "退火 vs 爬山法直方圖",
+     "how": "把接受條件改成只收 Δ ≤ 0 當爬山法，兩種各跑 100 個 seed，統計最佳成本分布。",
+     "effect": "以數據說明接受變差的價值。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "R",
+    "Shiny",
+    "互動",
+    "動畫",
+    "TSP"
+   ],
+   "tools": [
+    "R",
+    "Shiny"
+   ],
+   "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/"
+  },
+  {
+   "id": "F07-52",
+   "algo": "F07",
+   "title": "Traveling Pixel（像素的旅行推銷員）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "用 Go 寫的小工具：以模擬退火找出走訪像素畫中所有黑色像素的最短路徑，再輸出成動畫 GIF，讓人看到一筆畫依序走過整張圖的順序。和基礎範例相比，點是影像像素、狀態是走訪順序，輸出是動畫而不是配置平面。",
+   "variations": [
+    {
+     "name": "影像像素當點",
+     "how": "讀 Bitmap，把暗於門檻的像素中心加入點清單，再用 2-opt 退火求順序。",
+     "effect": "像素圖變成一條連續路徑。"
+    },
+    {
+     "name": "走訪順序動畫",
+     "how": "用 Slider 控制顯示前 k 個點的 Polyline。",
+     "effect": "看到線條依序畫出整張圖。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Go",
+    "像素畫",
+    "TSP",
+    "動畫"
+   ],
+   "tools": [
+    "Go"
+   ],
+   "url": "https://www.michaelfogleman.com/projects/traveling-pixel/"
+  },
+  {
+   "id": "F07-53",
+   "algo": "F07",
+   "title": "Graph Layout（以模擬退火排版圖形）",
+   "creator": "Michael Fogleman",
+   "year": "2014",
+   "category": "drawing",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "物件",
+   "summary": "用 Python 與 C 實驗以模擬退火排出節點連線圖：成本加權了節點互相重疊、節點壓到連線、連線交叉、連線長度、總面積與節點階層違規等項，作者想做出比 Graphviz 預設更好看的版面。和基礎範例的房間鄰接配置概念最接近，只是目標是圖面好讀，而不是動線短。",
+   "variations": [
+    {
+     "name": "交叉數懲罰",
+     "how": "Cost 加上所有鄰接連線兩兩相交次數 × 權重（用 Line 交點判斷）。",
+     "effect": "房間泡泡圖的連線不再糾纏，圖面更易讀。"
+    },
+    {
+     "name": "階層排序",
+     "how": "指定每個節點的層級，違反上下順序就加懲罰。",
+     "effect": "得到由公共到私密、有方向性的空間關係圖。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "C",
+    "圖",
+    "資訊視覺化"
+   ],
+   "tools": [
+    "Python",
+    "C"
+   ],
+   "url": "https://www.michaelfogleman.com/projects/graph-layout/"
+  },
+  {
+   "id": "F07-54",
+   "algo": "F07",
+   "title": "Travelling Salesman Art With Simulated Annealing（模擬退火單線畫）",
+   "creator": "Matthew McGonagle",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "部落格教學：先依影像亮度做拒絕取樣撒點，再用模擬退火求一條封閉巡迴路線，鄰域是反轉兩個索引之間的路段、以 exp(−Δ／T) 接受變差、幾何降溫，最後畫出由一條線構成的肖像與字母。和基礎範例相比，狀態是點的順序，並示範只計算被改動兩條邊的 O(1) 成本差。",
+   "variations": [
+    {
+     "name": "亮度拒絕取樣撒點",
+     "how": "隨機取像素，亂數小於該像素暗度才保留成點。",
+     "effect": "暗部點多、亮部點少，一筆畫呈現明暗。"
+    },
+    {
+     "name": "O(1) 成本差",
+     "how": "反轉路段時只計算兩端被替換的兩條邊長差，不重算整條路徑。",
+     "effect": "數千個點也能在合理時間內完成退火。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "NumPy",
+    "單線畫",
+    "TSP"
+   ],
+   "tools": [
+    "Python",
+    "NumPy",
+    "Matplotlib"
+   ],
+   "url": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing"
+  },
+  {
+   "id": "F07-55",
+   "algo": "F07",
+   "title": "Primitive（以幾何圖形重建照片）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "用 Go 寫的工具，一次加入一個三角形、橢圓或矩形，讓畫面和目標照片的均方根誤差最小；每個圖形由隨機產生再反覆微調頂點、半徑或位置，最佳化可選爬山法或模擬退火（作者實測此題兩者效果接近、爬山法較快）。和基礎範例相比，成本來自像素誤差，鄰域是連續參數的小幅突變，並可對照爬山法與退火的差異。",
+   "variations": [
+    {
+     "name": "爬山法與退火切換",
+     "how": "加一個 bool 輸入：true 時用 exp(−Δ／T) 接受變差，false 時只接受變好。",
+     "effect": "同一題目直接比較兩種搜尋。"
+    },
+    {
+     "name": "立面開孔版",
+     "how": "目標影像改成日照或視線熱圖，圖形換成可切割的圓孔，逐一加入並微調。",
+     "effect": "得到以少數大小不一的開孔近似性能圖的立面。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Go",
+    "影像",
+    "向量圖"
+   ],
+   "tools": [
+    "Go"
+   ],
+   "url": "https://github.com/fogleman/primitive"
+  },
+  {
+   "id": "F08-01",
+   "algo": "F08",
+   "title": "Emerging Spanning Trees in the Work of Candilis–Josic–Woods（Candilis–Josic–Woods 作品中浮現的生成樹）",
+   "creator": "Georgios-Spyridon Athanasopoulos",
+   "year": "2020",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "群體／都市",
+   "summary": "刊於 Nexus Network Journal 的論文，用圖論重讀 Team X 成員 Candilis–Josic–Woods 的都市與建築設計，先定義最小生成樹（minimum spanning tree）、最短步行樹與 Steiner 樹，再以柏林自由大學這類 mat-building 的動線邏輯為對照。作者在 Rhino／Grasshopper 中以演算法近似歐氏 Steiner 樹，並用 Kangaroo 鬆弛點位，主張 Steiner 點可以成為「可被活化成空間、又方便步行」的節點；和基礎範例相同都是 MST＋Steiner 點，但端點來自建築配置、Steiner 點被詮釋成廣場與聚集空間。",
+   "variations": [
+    {
+     "name": "Steiner 點變成廣場",
+     "how": "把 steinerPoints 依其三條邊的長度總和給半徑，輸出圓形或多邊形廣場範圍",
+     "effect": "中繼點不只是轉折，而是可被使用的聚集空間"
+    },
+    {
+     "name": "MST、最短步行樹、Steiner 樹三圖並列",
+     "how": "同一組端點分別輸出 MST、以 F05 Dijkstra 從主入口算出的最短路徑樹、Steiner 網路，並排比較總長與平均步行距離",
+     "effect": "看出「省材料」與「少繞路」兩種樹的取捨"
+    },
+    {
+     "name": "Kangaroo 鬆弛取代 Weiszfeld",
+     "how": "把 Steiner 點與邊送進 Kangaroo 的長度目標（Length goal，目標長 0），端點錨定後求解",
+     "effect": "用物理鬆弛得到 120° 三叉，並可再加入障礙與偏好長度"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "圖",
+    "Steiner 樹",
+    "動線",
+    "都市設計"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1"
+  },
+  {
+   "id": "F08-02",
+   "algo": "F08",
+   "title": "Ivy：以加權網格表示法做網格分割與展開",
+   "creator": "Andrei Nejur、Kyle Steinfeld",
+   "year": "2016",
+   "category": "fabrication",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "論文與同名 Grasshopper 外掛 Ivy，把 Mesh 轉成加權的對偶圖（每個面是節點、相鄰面之間是帶權重的邊），再以 Kruskal 等建樹程序做網格分割（segmentation）與展開，外掛提供 MST Kruskal 元件計算網格圖的最小生成樹或森林。和基礎範例不同，這裡的節點是網格面而不是散點，邊權重是面與面之間的折角或其他分析值，生成樹決定哪些邊保留相連、哪些剪開，用來製作可展開的板片。",
+   "variations": [
+    {
+     "name": "網格面對偶圖",
+     "how": "以 Mesh.Faces 為節點、Mesh.TopologyEdges.GetConnectedFaces 找相鄰面建立邊，權重用兩面法向量夾角",
+     "effect": "把曲面網格變成可以跑 Kruskal 的圖"
+    },
+    {
+     "name": "生成樹決定剪開的邊",
+     "how": "MST 中的邊保持相連，不在樹上的網格邊全部剪開，再逐面展平",
+     "effect": "得到一整片不重疊（或少重疊）的展開圖"
+    },
+    {
+     "name": "權重上限切成多片",
+     "how": "只接受權重小於門檻的邊，Kruskal 結束後得到數棵樹",
+     "effect": "自動把網格分成數個較平的區塊，對應不同板材"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "網格分割",
+    "展開",
+    "圖",
+    "數位製造"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Ivy"
+   ],
+   "url": "https://www.academia.edu/33285328/Ivy_Bringing_a_Weighted-Mesh_Representation_to_Bear_on_Generative_Architectural_Design_Applications"
+  },
+  {
+   "id": "F08-03",
+   "algo": "F08",
+   "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns（以延伸最小生成樹描述局部都市形態）",
+   "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+   "year": "2018",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "刊於 International Journal of Geographical Information Science 的研究，以建築物為單元建立延伸的最小生成樹，用樹上邊的長度、方向與分布來量化建築群的局部都市形態，進而辨識不同的街區類型。和基礎範例相比，端點是建築物（而非單點），MST 在這裡是分析工具而不是設計成果：用來衡量密度、排列與群聚程度。",
+   "variations": [
+    {
+     "name": "以建築輪廓間距當邊長",
+     "how": "把 pts 換成建築外輪廓（List<Curve>），邊長改用兩輪廓間最近距離（Curve.ClosestPoints）",
+     "effect": "長條形或大型建築也能得到合理的鄰接關係"
+    },
+    {
+     "name": "MST 邊長統計地圖",
+     "how": "對每棟建築統計其相連 MST 邊長的平均與變異，依數值上色",
+     "effect": "一眼看出密集、鬆散與排列整齊的街區"
+    },
+    {
+     "name": "刪長邊找建築群",
+     "how": "刪除長度超過平均值數倍的 MST 邊，再用並查集分群",
+     "effect": "自動圈出建築聚落與空隙"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "都市形態",
+    "空間分析",
+    "圖"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.1080/13658816.2017.1384830"
+  },
+  {
+   "id": "F08-04",
+   "algo": "F08",
+   "title": "Minimum Spanning Tree（Grasshopper 曲線網路的最小生成樹工具）",
+   "creator": "Tuğrul Yazar（designcoding）",
+   "year": "2012",
+   "category": "modeling",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "designcoding 網站上的 Grasshopper 教學工具，輸入一組相連的線段網路，以 VB.NET 程式計算其最小生成樹並逐步說明。作者比較過 Kruskal、Prim 等做法後改用「反向刪除」（reverse-delete）：從最長的連線開始，若刪掉後兩端仍然相連就刪除。和基礎範例相反：不是由短到長加邊，而是由長到短刪邊，且輸入是既有的曲線網路而不是散點。",
+   "variations": [
+    {
+     "name": "反向刪除法",
+     "how": "把 edges 由長到短排序，逐條暫時移除並用 BFS 檢查兩端是否仍連通，連通就正式刪除",
+     "effect": "得到同一棵 MST，並能對照「加邊」與「刪邊」兩種貪婪法"
+    },
+    {
+     "name": "輸入既有路網",
+     "how": "以曲線網路的端點建立節點（Point3d 去重），每條曲線是一條邊、長度用 Curve.GetLength",
+     "effect": "直接在既有道路或管線網上找出最省的骨幹"
+    },
+    {
+     "name": "MultiPipe 實體化",
+     "how": "把結果線段交給管件或網格包覆工具生成連續實體",
+     "effect": "得到可列印的樹狀物件"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "圖",
+    "貪婪法",
+    "教學工具"
+   ],
+   "tools": [
+    "Grasshopper",
+    "VB.NET"
+   ],
+   "url": "https://www.designcoding.net/minimum-spanning-tree/"
+  },
+  {
+   "id": "F08-05",
+   "algo": "F08",
+   "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+   "creator": "Marc Barthelemy、Geoff Boeing",
+   "year": "2025",
+   "category": "urban-landscape",
+   "categories_extra": [],
+   "scale": "群體／都市",
+   "summary": "arXiv 上的研究論文，比較大量城市街道網路的共同性質後提出一個精簡的生成模型：先以一棵生成樹當骨幹，再逐步加邊，使節點度數分布符合實測資料。和基礎範例相比，生成樹在這裡是街網的起點而不是最終結果；在樹上再補邊，就從「最省」走向有迴路、較好走的真實街網。",
+   "variations": [
+    {
+     "name": "生成樹＋補邊",
+     "how": "MST 完成後，依序加入 Delaunay 候選邊中最短且不與現有邊相交的邊，直到平均度數達到目標值",
+     "effect": "從樹狀的骨幹長成有街廓的街網"
+    },
+    {
+     "name": "度數分布比對",
+     "how": "統計每個節點的度數，與目標分布（例如三叉路口與十字路口的比例）比較，差距大就調整補邊規則",
+     "effect": "讓生成的街網接近特定城市的路口組成"
+    },
+    {
+     "name": "街廓面積輸出",
+     "how": "補邊後找出平面圖的封閉面（Curve.CreateBooleanRegions 或自行走訪平面圖）",
+     "effect": "輸出街廓多邊形並統計面積分布"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "街道網路",
+    "都市形態",
+    "圖"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/abs/2509.21931"
+  },
+  {
+   "id": "F08-06",
+   "algo": "F08",
+   "title": "LeafVein：Grasshopper 圖論外掛（含最小生成樹）",
+   "creator": "Dachuan",
+   "year": "",
+   "category": "modeling",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "Food4Rhino 上的 Grasshopper 圖論外掛，可從幾何物件或地圖建立有向、無向或混合圖，提供最小生成樹、最短路徑（Dijkstra、A*）、連通元件、割點與割邊、TSP 啟發式等演算法，定位於建築與都市規劃的應用。和基礎範例相比，它把 MST 包成現成元件，能與其他圖論分析串接；自己寫的版本則能修改加邊規則（障礙、度數上限、Steiner 點）。",
+   "variations": [
+    {
+     "name": "MST 加割點分析",
+     "how": "先求 MST，再找出樹上的割點（度數大於 1 的節點都是），依其下游端點數排序",
+     "effect": "找出網路中最關鍵、一斷就分裂的節點"
+    },
+    {
+     "name": "MST 對照 TSP",
+     "how": "同一組點分別求 MST 與 TSP 路徑，比較總長（MST 總長是 TSP 的下限）",
+     "effect": "理解樹與單筆路徑的差別，選擇配送或巡檢路線形式"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "圖",
+    "外掛",
+    "都市設計"
+   ],
+   "tools": [
+    "Grasshopper",
+    "LeafVein"
+   ],
+   "url": "https://www.food4rhino.com/en/app/leafvein"
+  },
+  {
+   "id": "F08-51",
+   "algo": "F08",
+   "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+   "creator": "Jamis Buck",
+   "year": "2011",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Buckblog 迷宮生成系列文章之一，把格網上相鄰格子之間的牆當成隨機權重的邊，用 Kruskal 演算法與集合合併（以樹狀結構判斷兩格是否同一集合）打通牆面，得到每兩格之間恰好一條路的完美迷宮，並附互動示範。和基礎範例相比，點是規則格網、邊權重是亂數，MST 的「不成環又全連通」直接變成迷宮的「沒有迴圈、每格都到得了」。",
+   "variations": [
+    {
+     "name": "格網隨機權重",
+     "how": "把點改成 rows × cols 格網，只建立上下左右的候選邊，Edge.Length 改成 rnd.NextDouble()",
+     "effect": "得到完美迷宮的通道樹"
+    },
+    {
+     "name": "通道轉牆面",
+     "how": "保留不在樹上的格網邊，偏移成牆的矩形或擠出成 Brep",
+     "effect": "輸出可雷切或 3D 列印的迷宮牆"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Ruby",
+    "JavaScript",
+    "迷宮",
+    "隨機"
+   ],
+   "tools": [
+    "Ruby",
+    "JavaScript"
+   ],
+   "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm"
+  },
+  {
+   "id": "F08-52",
+   "algo": "F08",
+   "title": "Visualizing Algorithms（視覺化演算法：以生成樹生成迷宮）",
+   "creator": "Mike Bostock",
+   "year": "2014",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Mike Bostock 的互動長文，以動畫說明取樣、洗牌、排序與迷宮生成等演算法；迷宮一節指出所有做法都是在二維格網上生成一棵生成樹，並比較隨機 Prim（最小生成樹）與 Wilson 演算法（loop-erased random walk 產生均勻生成樹）等做法。和基礎範例相比，重點不在最短總長，而在不同建樹方法留下的紋理差異。",
+   "variations": [
+    {
+     "name": "同一格網三種建樹法",
+     "how": "在同一組格網候選邊上分別跑 Prim、DFS 與 Wilson，並排輸出",
+     "effect": "看出短枝多、長廊多與均勻三種迷宮紋理"
+    },
+    {
+     "name": "樹上距離上色",
+     "how": "從根點沿樹做 BFS，記錄每格深度並依深度給顏色或高度",
+     "effect": "迷宮變成色帶流動的圖樣或階梯地景"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "D3.js",
+    "JavaScript",
+    "迷宮",
+    "視覺化"
+   ],
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "url": "https://bost.ocks.org/mike/algorithms/"
+  },
+  {
+   "id": "F08-53",
+   "algo": "F08",
+   "title": "9.9: Minimum Spanning Tree (Prim's Algorithm) - p5.js Tutorial",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "The Coding Train 的 p5.js 教學影片，用 Prim 演算法把畫布上的一組點連成最小生成樹：維持「已連接」與「未連接」兩組點，每次找出兩組之間最短的一條邊加入。和基礎範例的 Kruskal 不同，Prim 從一個點往外長，不需要排序全部邊與並查集。",
+   "variations": [
+    {
+     "name": "互動加點重算",
+     "how": "把 pts 接到 Grasshopper 的點參數或 Human UI 的點擊輸入，每次變動就重算 Prim",
+     "effect": "邊拖曳點邊看生成樹即時改變"
+    },
+    {
+     "name": "依加入順序畫粗細",
+     "how": "記錄每條邊被 Prim 加入的順序，早加入的邊畫得較粗",
+     "effect": "呈現從根點向外生長的層次"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "互動",
+    "教學"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0"
+  },
+  {
+   "id": "F08-54",
+   "algo": "F08",
+   "title": "Spanning Trees（Houdini VEX 生成樹）",
+   "creator": "Sergen Eren",
+   "year": "2018",
+   "category": "modeling",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "構件",
+   "summary": "Sergen Eren 的 Houdini 教學文章，以 VEX 遞迴程式在幾何的連接關係上建立生成樹，文中以 Prim 演算法、點與點之間的距離為成本求最小成本生成樹，並作為後續網格展開（unfolding）教學的基礎。和基礎範例相比，它在 Houdini 的點與圖元屬性上直接操作，生成樹連接的是網格圖元而不是散點。",
+   "variations": [
+    {
+     "name": "圖元鄰接當候選邊",
+     "how": "以網格面的中心為節點、共用邊的相鄰面為候選邊，成本用中心距離",
+     "effect": "得到覆蓋所有面的生成樹，作為展開的剪裁依據"
+    },
+    {
+     "name": "以樹順序展開",
+     "how": "從根面沿樹逐一把子面繞共用邊旋轉到父面的平面上（Transform.Rotation）",
+     "effect": "一張網格變成平面展開圖"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "網格展開"
+   ],
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "url": "https://sergeneren.com/2018/09/24/spanning-trees/"
+  },
+  {
+   "id": "G01-01",
+   "algo": "G01",
+   "title": "Exploring Isovist Fields：建築與都市形態中的空間與形狀",
+   "creator": "Michael Batty",
+   "year": "2001",
+   "category": "performance",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "Batty 在規則格點上逐點計算 isovist，定義距離、面積、周長、緊湊度與凸性等量測，並以倫敦的案例把這些量測畫成 isovist 場，說明視野如何由實體幾何與人的移動交互形成。它就是本演算法「每一格算一次可視域再上色」的原型；和基礎範例相比，論文更著重比較多種指標之間的相關，以及用場的起伏讀出空間形態。",
+   "variations": [
+    {
+     "name": "多指標並列比較",
+     "how": "把 Measures 回傳的四個指標同時輸出成四張 Mesh（或 DataTree），並用散布圖（Point3d(面積, 周長)）看它們的相關。",
+     "effect": "看出哪些指標高度重疊、哪些真正描述不同的空間性質。"
+    },
+    {
+     "name": "最遠距離場",
+     "how": "新增 metric = 4：取 dist 陣列的最大值（看得最遠的方向），並另輸出該方向的 Line。",
+     "effect": "沿著長軸街道或走廊出現連續的高值帶，指出視覺軸線。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "場",
+    "形狀指標",
+    "都市分析",
+    "論文"
+   ],
+   "tools": [],
+   "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:123-150"
+  },
+  {
+   "id": "G01-02",
+   "algo": "G01",
+   "title": "From Isovists to Visibility Graphs：建築空間分析方法",
+   "creator": "Alasdair Turner、Maria Doxa、David O'Sullivan、Alan Penn",
+   "year": "2001",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "論文把一組格點上的 isovist 轉成「互相看得到就連邊」的可見性圖，用圖的鄰居數、群聚係數與平均深度描述建築空間的組構，後來成為 space syntax 的 VGA（可見性圖分析）方法。基礎範例只算單點的可視多邊形，這篇示範了下一步：把兩兩可見關係存成圖，再以圖論量測取代形狀量測。",
+   "variations": [
+    {
+     "name": "鄰居數＝可見格點數",
+     "how": "對每對格點做遮擋測試，把看得到的格點數當作連接度（neighbourhood size）上色。",
+     "effect": "和 isovist 面積相近但以離散格點計算，適合直接接圖論運算。"
+    },
+    {
+     "name": "群聚係數",
+     "how": "對每個格點的可見鄰居集合，計算鄰居之間互相看得到的比例（邊數 ÷ k(k−1)/2）。",
+     "effect": "凸的房間接近 1，視線在轉角處分岔的位置明顯偏低，能標出空間的「決策點」。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "圖",
+    "可見性圖",
+    "space syntax",
+    "論文"
+   ],
+   "tools": [],
+   "url": "https://discovery.ucl.ac.uk/160/"
+  },
+  {
+   "id": "G01-03",
+   "algo": "G01",
+   "title": "DeCodingSpaces：2D 與 3D isovist 可視性分析教學",
+   "creator": "Martin Bielik（DeCodingSpaces，Bauhaus-Universität Weimar）",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [
+    "urban-landscape",
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "DeCodingSpaces 工具箱的教學頁，示範用 Grasshopper 的 isovist 元件做單點 isovist、路徑上的 isovist、格點 isovist 場，以及把可見度回映到立面與建築上；2D 指標包含面積、周長、緊湊度、遮蔽度、徑向統計與 drift，3D 還有天空與地面比例。本案例取其 isovist 場的計算與指標：工具箱把基礎範例包成現成元件並提供更多指標，自己寫 C# 則能看到射線與求交的內部並自由改規則。",
+   "variations": [
+    {
+     "name": "路徑 isovist 累積可見範圍",
+     "how": "沿 path 取樣點，把每點的 isovist 多邊形做 Curve.CreateBooleanUnion，輸出走完一趟的總可見範圍。",
+     "effect": "看出一條動線讓人看過基地的哪些部分、漏掉哪些角落。"
+    },
+    {
+     "name": "立面可見度正規化",
+     "how": "累加每段牆被射線打到的次數後除以牆長，依比例上色店面或立面。",
+     "effect": "長牆不再因為長度而佔優勢，能公平比較各店面的曝光度。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "場",
+    "形狀指標",
+    "教學",
+    "Grasshopper 外掛"
+   ],
+   "tools": [
+    "Grasshopper",
+    "DeCodingSpaces"
+   ],
+   "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/"
+  },
+  {
+   "id": "G01-04",
+   "algo": "G01",
+   "title": "豫園遊覽動線的空間視覺經驗：以 isovist 與可見性圖計算分析",
+   "creator": "Rongrong Yu、Michael J. Ostwald",
+   "year": "2018",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "研究沿上海豫園的遊覽路線取樣，以 isovist、isovist 場與可見性圖量測空間與視覺性質如何隨步行改變，用來檢驗四種關於中國私家園林空間體驗的理論；結果顯示沿線並非規律的開合循環，而是先漸增、再遞減、最後略增。和基礎範例相比，重點在沿動線取樣並把指標排成時間序列，再與設計理論對照。",
+   "variations": [
+    {
+     "name": "路徑序列曲線",
+     "how": "沿遊覽路線等距取樣，對每點計算面積與遮蔽邊長度，輸出指標對路徑長度的折線圖。",
+     "effect": "把「步移景異」變成可以比較的曲線。"
+    },
+    {
+     "name": "漏窗與半透明障礙",
+     "how": "給牆段加一個 transparency 屬性，射線穿過漏窗時以機率（Random）決定是否繼續前進。",
+     "effect": "看得到但不完全看得到的園林屏障效果，場的邊界變得柔和。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "場",
+    "可見性圖",
+    "動線",
+    "園林",
+    "論文"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/pii/S2095263518300451"
+  },
+  {
+   "id": "G01-05",
+   "algo": "G01",
+   "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
+   "creator": "Michael J. Dawes、Michael J. Ostwald",
+   "year": "2014",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "研究以 isovist 沿動線分析 Wright 的五棟織物磚住宅（Millard、Storer、Freeman、Ennis、Lloyd Jones），推導十個空間量測，檢驗 Hildebrand 以展望—庇護理論提出的「Wright 空間」是否存在；結果只找到部分支持，其中 Freeman 住宅最符合。案例示範如何把 isovist 指標組合成「展望（看得多遠多廣）」與「庇護（背後被圍住的程度）」兩類量測。",
+   "variations": [
+    {
+     "name": "展望與庇護雙指標",
+     "how": "展望取 isovist 面積或最遠距離，庇護取射線中距離小於 refugeDist 的比例，兩者分別正規化後輸出成雙色場。",
+     "effect": "找出「看得開、背有靠」的位置，例如壁爐角落或窗邊座位。"
+    },
+    {
+     "name": "樓層平面批次比較",
+     "how": "把多個平面的牆線放進 DataTree，逐一計算同一組指標並輸出統計表。",
+     "effect": "用一致的量測比較不同住宅或不同設計方案。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "形狀指標",
+    "展望—庇護",
+    "住宅",
+    "論文"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0360132314001760"
+  },
+  {
+   "id": "G01-06",
+   "algo": "G01",
+   "title": "城市的數位意象：以 3D isovist 做 Lynch 式都市分析",
+   "creator": "Eugenio Morello、Carlo Ratti",
+   "year": "2009",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "作者以數值高程模型（DEM）在像素與體素上計算 3D isovist，並提出「isovisimatrix」，把 Kevin Lynch《城市意象》的可意象性分析變成可量化的視覺量測，用來評估新建物對都市視覺特性的影響。和基礎範例的平面射線不同，這裡射線在高程影像上前進，檢查視線是否被建築高度擋住。",
+   "variations": [
+    {
+     "name": "高程影像上的 3D 射線",
+     "how": "把城市量體轉成高程陣列 double[,]，射線以固定步長前進，比較視線高度與該格建築高度，被擋就停。",
+     "effect": "不用建 Mesh 也能算立體的可視範圍，適合大範圍都市模型。"
+    },
+    {
+     "name": "新建案前後比較",
+     "how": "同一組觀察點分別在有、無新建物的高程陣列上計算，輸出兩場相減的差值場。",
+     "effect": "直接標出新建物讓哪些街道失去天際線或地標視野。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "3D",
+    "場",
+    "都市分析",
+    "論文"
+   ],
+   "tools": [],
+   "url": "https://journals.sagepub.com/doi/10.1068/b34144t"
+  },
+  {
+   "id": "G01-07",
+   "algo": "G01",
+   "title": "SYNTACTIC：Space Syntax 設計外掛與 Isovist Bubble",
+   "creator": "Pirouz Nourian、Samaneh Rezvani（TU Delft）",
+   "year": "2015",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "SYNTACTIC 是把 space syntax 分析帶進平面配置設計的 Grasshopper 外掛；其中的 Isovist Bubble 是一個會保持固定面積、同時邊界始終是 isovist（可見邊界）的泡泡，把可視域從「分析結果」反過來變成「生成形體的規則」。和基礎範例相比，它讓 isovist 在設計過程中即時更新並驅動形狀。",
+   "variations": [
+    {
+     "name": "固定面積的可視泡泡",
+     "how": "以 isovist 多邊形為上限，把多邊形朝觀察點等比例縮放（Transform.Scale）直到面積等於 targetArea。",
+     "effect": "得到「看得到的範圍內、面積剛好」的房間草圖。"
+    },
+    {
+     "name": "拖動觀察點即時更新",
+     "how": "把 viewer 接 GH 的 Point 參數或 Timer，每次移動就重算 isovist 與面積。",
+     "effect": "在設計時直接感受隔間改變對可視範圍的影響。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "空間配置",
+    "space syntax",
+    "Grasshopper 外掛"
+   ],
+   "tools": [
+    "Grasshopper",
+    "SYNTACTIC"
+   ],
+   "url": "https://sites.google.com/site/pirouznourian/syntactic-design"
+  },
+  {
+   "id": "G01-51",
+   "algo": "G01",
+   "title": "2D Visibility（2D 可視範圍互動解說）",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "2012",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Red Blob Games 的互動文章，以一條繞觀察點旋轉 360° 的掃描線，在牆的起訖角度處停下，追蹤目前最近的牆，最近的牆一換就輸出一個可見三角形，拼起來就是可視範圍；文章也討論用 GPU 畫陰影與多個光源合成。和基礎範例的等角度射線相比，這是只在「關鍵角度」計算的掃描線演算法，精確又省計算，並用於遊戲的視野、火把照明與 AI 戰術判斷。",
+   "variations": [
+    {
+     "name": "角度掃描取代等角射線",
+     "how": "把所有牆端點依 Math.Atan2 排序，掃描時用 List 維護與掃描線相交的牆，只在最近牆改變時新增頂點。",
+     "effect": "頂點數等於真正的轉角數，計算量從射線數 × 牆數降到約 n log n。"
+    },
+    {
+     "name": "多光源疊加",
+     "how": "對多個觀察點各算一次 isovist，用 Mesh 半透明疊色或 Curve.CreateBooleanUnion 合併。",
+     "effect": "得到多盞燈或多位守衛的聯合照明／視野範圍。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "掃描線",
+    "互動解說",
+    "遊戲"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://www.redblobgames.com/articles/visibility/"
+  },
+  {
+   "id": "G01-52",
+   "algo": "G01",
+   "title": "Sight & Light：2D 視線與光影效果教學",
+   "creator": "Nicky Case",
+   "year": "2014",
+   "category": "drawing",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "物件",
+   "summary": "Nicky Case 的互動教學，逐步示範射線與線段的參數式求交、只朝線段端點（加上左右微偏的兩條）發射射線、依角度排序交點組成可視多邊形，最後從幾個略微偏移的位置各算一次多邊形疊成柔和陰影，當作遮罩合成前景與背景。內容源自遊戲《Nothing To Hide》；和基礎範例相比，它把可視域當成光照遮罩，重點在畫面效果。",
+   "variations": [
+    {
+     "name": "端點射線加微偏",
+     "how": "對每個牆端點打三條射線：正對端點與 ±0.00001 弧度，讓射線能擦過牆角繼續打到後面的牆。",
+     "effect": "多邊形在牆角處不再缺角，陰影邊緣準確。"
+    },
+    {
+     "name": "柔和陰影",
+     "how": "在觀察點周圍取 8–10 個小圓上的點，各算一次 isovist，以低透明度疊加 Mesh 或 Hatch。",
+     "effect": "可視域邊緣出現半影漸層，可用於光環境示意圖。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "HTML5 Canvas",
+    "光影",
+    "互動解說"
+   ],
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "url": "https://ncase.me/sight-and-light/"
+  },
+  {
+   "id": "G01-53",
+   "algo": "G01",
+   "title": "Coding Challenge #145：Ray Casting 2D（2D 射線投射）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Daniel Shiffman 在 p5.js 裡從零寫出 2D 射線投射：牆是線段物件（Boundary）、光源是發出一圈射線的粒子，每條射線用線段交點公式找最近的牆，並讓粒子隨滑鼠或雜訊移動，畫面即時呈現光線與陰影。流程和基礎範例的 CastIsovist 幾乎一一對應，差別在 p5.js 每一格動畫都重算一次，而且直接畫射線而不組多邊形。",
+   "variations": [
+    {
+     "name": "移動光源動畫",
+     "how": "把 viewer 接 GH Timer 與一條路徑，每次觸發沿路徑前進一步並重算射線。",
+     "effect": "看到射線隨觀察點移動掃過空間，適合做視域概念的教學動畫。"
+    },
+    {
+     "name": "隨機牆與雜訊漫遊",
+     "how": "用 Random(seed) 產生 n 段隨機牆，觀察點位置用 Perlin 類型的雜訊（或兩個不同頻率的 sin）更新。",
+     "effect": "每次按下種子就得到新的迷宮光影畫面。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "射線投射",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d"
+  },
+  {
+   "id": "G01-54",
+   "algo": "G01",
+   "title": "Houdini 中的 Isovist 與可見性圖",
+   "creator": "houdinigubbins（Houdini Gubbins 部落格）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "作者在 Houdini 中自行實作 isovist 與可見性圖：先比較每 1° 旋轉射線的圓形取樣與直接取樣環境幾何點的「邊點取樣」，後者只需 56 條射線就更精確；再把多點的結果做成面積、最遠距離、凸性等量測的場，並以鄰接矩陣存可見性圖。和基礎範例相比，它示範了程序化節點環境（HDK／VEX）裡的同一套流程與射線取樣策略的取捨。",
+   "variations": [
+    {
+     "name": "邊點取樣 vs 等角取樣對照",
+     "how": "同一平面各用等角 360 條射線與端點射線計算，輸出兩個多邊形與面積差。",
+     "effect": "直觀看出等角取樣在遠處與銳角處的誤差。"
+    },
+    {
+     "name": "凸性場",
+     "how": "新增指標：isovist 面積 ÷ 其凸包面積（用 PolylineCurve 的點做凸包後算面積）。",
+     "effect": "凸性低的位置代表視野被凹折切碎，常出現在柱列與轉角附近。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "場",
+    "可見性圖"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/"
+  },
+  {
+   "id": "G01-55",
+   "algo": "G01",
+   "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
+   "creator": "Byron Knoll",
+   "year": "2013",
+   "category": "modeling",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Byron Knoll 發布的開源 JavaScript 函式庫（公有領域），輸入一組線段與觀察點即可以 O(n log n) 的角度掃描求出可視多邊形，另附點在多邊形內判斷、多邊形轉線段與線段交點打斷等工具，並有 C# 等語言的移植版。和基礎範例相比，它先把相交的牆在交點處打斷，處理重疊、交叉的牆更穩健。",
+   "variations": [
+    {
+     "name": "先打斷交叉的牆",
+     "how": "對所有牆段兩兩用 Intersection.LineLine 找交點，把線段在交點處切開後再做 isovist。",
+     "effect": "手畫交錯的牆或開放的線條圖也能得到正確的可視域。"
+    },
+    {
+     "name": "可視域內外判斷",
+     "how": "用 isovist 的 PolylineCurve.Contains 判斷一組目標點（展品、座位）是否看得到，輸出 bool 清單。",
+     "effect": "快速統計從一個位置能看到幾件展品。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "函式庫",
+    "計算幾何"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/byronknoll/visibility-polygon-js"
+  },
+  {
+   "id": "G02-01",
+   "algo": "G02",
+   "title": "Solar Carve（40 Tenth Avenue）",
+   "creator": "Studio Gang",
+   "year": "2019",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "紐約 High Line 旁的辦公塔樓，Studio Gang 以太陽入射角度從方正量體上「削」出斜切面，讓大樓不把影子投到相鄰的 High Line 公園上，削出的斜面再以鑽石狀玻璃帷幕覆蓋。它是太陽包絡在單棟建築上的代表：保護對象是公園，約束來自關鍵時段的太陽方向；和基礎範例的高度場不同，削切面直接成為建築立面。",
+   "variations": [
+    {
+     "name": "以公園邊界當遮陰線",
+     "how": "把 fences 換成公園（或廣場）的邊界曲線，fenceHeight 設為 0，時段選公園使用尖峰（例如 10–16 點）。",
+     "effect": "得到只為保護公園日照而削出的斜面，而不是整個街區的包絡。"
+    },
+    {
+     "name": "削切面轉帷幕分割",
+     "how": "把包絡斜面的 Mesh 轉成 NURBS 或直接取面，再用菱形網格（UV 斜向分割）切成玻璃單元並依法向著色。",
+     "effect": "得到接近 Solar Carve 的鑽石狀帷幕分割，可統計板片種類。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "日照權",
+    "削切",
+    "高層建築",
+    "帷幕"
+   ],
+   "tools": [],
+   "url": "https://studiogang.com/projects/40-tenth-ave"
+  },
+  {
+   "id": "G02-02",
+   "algo": "G02",
+   "title": "SolCAD：產生太陽包絡的 3D 空間設計工具",
+   "creator": "Manu Juyal、Karen M. Kensek、Ralph L. Knowles",
+   "year": "2003",
+   "category": "modeling",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "ACADIA 2003 的研究成果，延續 Knowles 的太陽包絡概念，開發能在任意形狀基地上自動產生包絡的 3D 設計工具。和基礎範例一樣是「太陽方向＋鄰地邊界 → 最大可建量體」，但它處理任意多邊形基地與設計互動，是早期把演算法做成設計軟體的例子。",
+   "variations": [
+    {
+     "name": "任意多邊形基地",
+     "how": "site 輸入改成凹多邊形或含內院的區域（用 Curve.CreateBooleanDifference 挖出中庭），Contains 判斷仍可沿用。",
+     "effect": "非矩形街角地、L 形基地都能直接得到包絡。"
+    },
+    {
+     "name": "以地塊邊界自動產生遮陰線",
+     "how": "不手動輸入 fences，改用 site 本身的邊（Curve.DuplicateSegments）往外偏移一條街寬當遮陰線，只保留朝北的邊段。",
+     "effect": "輸入只要一條基地邊界，工具自動推出要保護的鄰地。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "設計工具",
+    "任意基地",
+    "日照權"
+   ],
+   "tools": [],
+   "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf"
+  },
+  {
+   "id": "G02-03",
+   "algo": "G02",
+   "title": "Ladybug SolarEnvelopeAdvanced 元件",
+   "creator": "Boris Plotnikov（協助：Guedi Capeluto、Chris Mackey、Mostapha Sadeghipour Roudsari）",
+   "year": "2015",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "Ladybug（Grasshopper 外掛）中的太陽包絡元件，可同時產生兩種包絡：日照權（不遮鄰居的最大高度）與日照收集（自己曬得到的最低高度），太陽向量由 EPW 氣象檔的日照時段篩選而來，輸出點雲與多重曲面。它把基礎範例的兩個方向（影子方向、朝太陽方向）包裝成同一個元件，適合拿來和自寫的 C# 結果互相對照。",
+   "variations": [
+    {
+     "name": "以氣象檔篩選太陽向量",
+     "how": "把 SunVectors 換成從 EPW 讀進的逐時太陽位置，只保留直射輻射大於門檻的時刻（例如 > 100 W/m²）。",
+     "effect": "陰天多的時刻不再當約束，包絡反映當地實際天氣。"
+    },
+    {
+     "name": "兩種包絡並列輸出",
+     "how": "同時算日照權上限與日照收集下限，兩張 Mesh 一起輸出，並把「上限低於下限」的格點標紅。",
+     "effect": "看出哪些位置既不遮鄰居、自己又曬得到，哪些位置根本不適合蓋。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "外掛元件",
+    "日照權",
+    "日照收集",
+    "氣象資料"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Ladybug"
+   ],
+   "url": "https://www.grasshopper3d.com/group/ladybug/forum/topics/new-solar-envelope-component-now-available"
+  },
+  {
+   "id": "G02-04",
+   "algo": "G02",
+   "title": "On the use of 'solar volume' for determining the urban fabric",
+   "creator": "Isaac G. Capeluto、Edna Shaviv",
+   "year": "2001",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "發表於 Solar Energy 的研究，以電腦模型 SustArc 計算在指定季節不妨礙建築與戶外空間日照的最大「太陽體積」（solar volume），並用來推導都市紋理與開發密度。它把太陽包絡從單一基地擴大到整片都市設計，同時保護建築與戶外空間的日照，並指出在尊重日照權下仍能達到相當的開發密度；基礎範例只處理一塊基地。",
+   "variations": [
+    {
+     "name": "同時保護戶外空間",
+     "how": "除了鄰地邊界，再把街道、廣場的邊界也加入 fences，並讓不同類型的遮陰線使用不同的保護時段（例如廣場只保護中午）。",
+     "effect": "街道與廣場也被納入日照權，包絡在廣場南側明顯降低。"
+    },
+    {
+     "name": "以包絡推算開發密度",
+     "how": "對每個地塊算包絡體積，除以樓高得到可建樓地板面積，再除以地塊面積得到最大容積率，輸出成地塊色彩圖。",
+     "effect": "把日照條件直接換算成都市計畫常用的密度指標。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "都市紋理",
+    "日照權",
+    "開發密度"
+   ],
+   "tools": [
+    "SustArc"
+   ],
+   "url": "https://cris.technion.ac.il/en/publications/on-the-use-of-solar-volume-for-determining-the-urban-fabric-2/"
+  },
+  {
+   "id": "G02-05",
+   "algo": "G02",
+   "title": "Solar Envelope Optimization Method for Complex Urban Environments",
+   "creator": "Francesco De Luca",
+   "year": "2016",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "以愛沙尼亞「直接日照權」法規為背景（鄰房立面需有一定比例的直射日照），結合參數化設計、環境模擬與多目標最佳化，為多個朝向、日照需求各不相同的鄰房立面產生太陽包絡。在塔林四棟住宅的測試中，最佳化後的包絡體積遠大於傳統固定時段的做法。和基礎範例相比，它不是固定幾點到幾點，而是依每個立面實測的日照時數決定要保護的時段。",
+   "variations": [
+    {
+     "name": "每段遮陰線各自的保護時段",
+     "how": "fences 每一條附帶自己的 startHour／endHour，HeightLimit 只對該遮陰線在自己時段內的太陽向量計算。",
+     "effect": "朝東的鄰房只保護上午、朝西的只保護下午，包絡不再被全時段一起壓低。"
+    },
+    {
+     "name": "以日照比例為約束",
+     "how": "改成對每個時段組合算包絡，再以 Monte Carlo 檢查鄰房立面樣點的日照比例是否 ≥ 門檻（例如 50%），在合格的組合中取體積最大者。",
+     "effect": "在符合法規比例的前提下找出最大可建量體。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "多目標最佳化",
+    "日照權",
+    "法規",
+    "住宅"
+   ],
+   "tools": [],
+   "url": "https://www.academia.edu/25648628/Solar_Envelope_Optimization_Method_for_Complex_Urban_Environments"
+  },
+  {
+   "id": "G02-06",
+   "algo": "G02",
+   "title": "Reverse Solar Envelope Method（反向太陽包絡法）",
+   "creator": "Francesco De Luca、Timur Dogan、Abel Sepúlveda",
+   "year": "2021",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "建築",
+   "summary": "發表於 Automation in Construction 的方法，不再用傳統的垂直剖面或高度場，而是把地塊上空切成三維體素，從鄰房立面朝太陽反向做射線投射，刪掉擋到必要日照的體素。論文指出 92.3% 的測試案例得到比傳統太陽包絡更大的體積，也能處理不同的日照法規與核心筒位置。基礎範例是 2.5D 高度場，這個方法是真正的 3D 削減。",
+   "variations": [
+    {
+     "name": "體素削減取代高度場",
+     "how": "把高度陣列換成 bool[,,] 體素，從鄰房立面樣點朝每個太陽向量做 3D DDA（逐格走訪）或 Ray3d 與 BoundingBox 測試，把經過的體素標為刪除。",
+     "effect": "可以出現懸挑、穿孔與凹陷的量體。"
+    },
+    {
+     "name": "保留核心筒",
+     "how": "新增 core（Curve）輸入，核心筒範圍內的體素不可刪除，射線若被核心筒擋住就改判為不可建並回報違規。",
+     "effect": "在固定核心筒位置下比較不同包絡，接近實務設計流程。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "體素",
+    "射線投射",
+    "日照權",
+    "法規"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580520310980"
+  },
+  {
+   "id": "G02-07",
+   "algo": "G02",
+   "title": "Solar & Planning Regulatory Provisions Compliance（CAADRIA 2017）",
+   "creator": "Suleiman Alhadidi、Heather Mitcheltree、Paul Wintour",
+   "year": "2017",
+   "category": "performance",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "CAADRIA 2017 的研究，由 Parametric Monkey 整理發表：把一般「先設計、再模擬」的流程反過來變成「先模擬、再生成」，以陰影投射分析量測新建築對鄰近住宅單元日照的影響，再把計算反推成符合法規的可建包絡。太陽計算在 Grasshopper 中用 C# 撰寫，並以 Elefront、TT Toolbox 的窮舉與 Galapagos 做多樓層的最佳化；比基礎範例多了逐單元的法規檢查。",
+   "variations": [
+    {
+     "name": "以住宅單元窗戶為保護點",
+     "how": "fences 改成鄰棟每戶主要開窗的點（List<Point3d>），每個點以 fenceHeight 表示窗台高度，約束改成「由窗戶朝太陽的射線不可穿過包絡」。",
+     "effect": "包絡依每一戶的日照需求逐點削減，而不是整條邊界。"
+    },
+    {
+     "name": "窮舉樓層組合",
+     "how": "包絡算好後把各樓層的退縮量當參數，用巢狀迴圈窮舉所有組合，保留符合日照時數且樓地板面積最大的前幾名。",
+     "effect": "得到一組可比較的合規方案，而不只一個最大包絡。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "法規檢查",
+    "陰影投射",
+    "反推設計"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#",
+    "Elefront",
+    "TT Toolbox",
+    "Galapagos"
+   ],
+   "url": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/"
+  },
+  {
+   "id": "G02-51",
+   "algo": "G02",
+   "title": "ShadeMap：任何日期與時刻的地形與建築陰影地圖",
+   "creator": "Ted Piotrowski",
+   "year": "2022",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "在瀏覽器裡即時顯示全球地形、建築與樹木陰影的網頁地圖，拖動時間滑桿就能看到陰影變化。作者說明核心是一支 WebGL 著色器：每個像素朝太陽方向做射線步進，途中碰到較高的地形或建築就判定在陰影中。它是太陽包絡的「反面」：基礎範例沿影子方向找鄰地來求高度上限，ShadeMap 則沿太陽方向檢查每個點是否被擋，也就是日照收集的判斷。",
+   "variations": [
+    {
+     "name": "高度場逐格射線步進",
+     "how": "把 envelope 高度場與周邊量體合成一張高度格網，對每個地面格點朝太陽方向每次前進半格，若該處高度 > 射線高度就記為陰影。",
+     "effect": "得到指定時刻的陰影圖，可檢查包絡是否真的沒有遮到鄰地。"
+    },
+    {
+     "name": "時間滑桿累積日照",
+     "how": "把逐時陰影結果加總成每格的日照小時數，用 Mesh 頂點顏色顯示。",
+     "effect": "從單一時刻的陰影變成整天的日照時數地圖。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "WebGL",
+    "JavaScript",
+    "陰影",
+    "射線步進",
+    "即時互動"
+   ],
+   "tools": [
+    "WebGL",
+    "Mapbox GL JS"
+   ],
+   "url": "https://shademap.app/about/"
+  },
+  {
+   "id": "G02-52",
+   "algo": "G02",
+   "title": "pybdshadow：建築陰影生成與日照分析的 Python 套件",
+   "creator": "Qing Yu",
+   "year": "2022",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "以大量建築輪廓與高度資料為輸入，依太陽位置（使用 suncalc-py）把每棟建築沿影子方向投影出陰影多邊形，並能在地面與屋頂格網上統計日照時數，以 keplergl 做互動視覺化。它和基礎範例共用同一個幾何關係（影長 = 高度 / tan 高度角），但方向相反：已知建築高度求影子，而太陽包絡是已知影子的界線求高度。",
+   "variations": [
+    {
+     "name": "由包絡反算影子多邊形",
+     "how": "取包絡 Mesh 的每個頂點沿影子方向平移 h / tanα 投到地面，收集後用凸包或 Curve.CreateBooleanUnion 合成陰影輪廓，和 fences 疊圖。",
+     "effect": "直接看到每個時刻的陰影尖端剛好碰到遮陰線，驗證包絡正確。"
+    },
+    {
+     "name": "屋頂格網日照時數",
+     "how": "在包絡頂面上布格點，對每個時刻檢查朝太陽的射線是否被周邊量體擋住，累加日照小時數。",
+     "effect": "得到包絡屋頂的日照分布，可用來安排屋頂花園或太陽能板。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Python",
+    "陰影",
+    "GIS",
+    "日照時數"
+   ],
+   "tools": [
+    "Python",
+    "GeoPandas",
+    "keplergl"
+   ],
+   "url": "https://github.com/ni1o1/pybdshadow",
+   "image": {
+    "file": "img/cases/G02-52.jpg",
+    "w": 725,
+    "h": 683,
+    "source": "GitHub（ni1o1/pybdshadow README）",
+    "author": "Qing Yu",
+    "license": "BSD-3-Clause（程式碼授權；圖片為 README 示範圖）",
+    "license_url": "https://github.com/ni1o1/pybdshadow/blob/main/LICENSE",
+    "page": "https://github.com/ni1o1/pybdshadow",
+    "note": "README 中以 matplotlib 繪製的建築與陰影多邊形示範圖"
+   }
+  },
+  {
+   "id": "G02-53",
+   "algo": "G02",
+   "title": "Blender Sun Position 外掛",
+   "creator": "Michael Martin 等（現由 Damien Picard 維護）",
+   "year": "2012",
+   "category": "modeling",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "建築",
+   "summary": "Blender 的日照位置外掛，依經緯度、日期與時刻，以 NOAA 線上計算器的公式把太陽燈放到正確的方向，並可顯示太陽軌跡與 analemma（八字形日行跡），常用於建築視覺化與日照研究。它只負責基礎範例的第一步（太陽位置），但示範了在 3D 動畫環境裡如何把同一組天文公式接到燈光與動畫時間軸。",
+   "variations": [
+    {
+     "name": "太陽軌跡與 analemma 視覺化",
+     "how": "SunVectors 對一年中每週同一時刻各算一個向量，把向量乘上半徑畫成點並用 Polyline 連起來。",
+     "effect": "在基地上空畫出八字形的 analemma，直觀看出季節對太陽高度的影響。"
+    },
+    {
+     "name": "動畫時間軸驅動包絡",
+     "how": "把時間做成 GH 滑桿或 Timer，逐步改變太陽向量並即時重算包絡與陰影。",
+     "effect": "像 Blender 的時間軸一樣播放一天的日照與包絡削切。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "Blender",
+    "Python",
+    "太陽位置",
+    "視覺化"
+   ],
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "url": "https://extensions.blender.org/add-ons/sun-position/"
+  },
+  {
+   "id": "G02-54",
+   "algo": "G02",
+   "title": "SunCalc：太陽位置與日照階段的 JavaScript 函式庫",
+   "creator": "Vladimir Agafonkin",
+   "year": "2011",
+   "category": "drawing",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "物件",
+   "summary": "輕量、無相依的 JavaScript 函式庫，依 Jean Meeus《Astronomical Algorithms》的公式計算任一地點與時刻的太陽高度角、方位角與日出日落等階段，原本是同名網頁地圖 app 的核心。它對應基礎範例的 SunVectors，但公式來自完整的天文演算法、精度較高，適合拿來檢查自寫簡化公式的誤差。",
+   "variations": [
+    {
+     "name": "用 SunCalc 驗證簡化公式",
+     "how": "在同一組緯度與時刻，把 C# 的高度角、方位角印成表格，和 SunCalc 的 getPosition 結果比較，計算平均誤差。",
+     "effect": "知道簡化公式在哪些季節、時段誤差較大，決定是否要加上均時差修正。"
+    },
+    {
+     "name": "日出日落決定保護時段",
+     "how": "先算當天日出、日落時刻，startHour／endHour 改成「日出後 2 小時到日落前 2 小時」自動產生。",
+     "effect": "不同緯度、不同日期自動得到合理的保護時段。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "太陽位置",
+    "函式庫"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/mourner/suncalc"
+  },
+  {
+   "id": "G03-01",
+   "algo": "G03",
+   "title": "Groundhog：景觀建築的 Grasshopper 外掛與知識庫",
+   "creator": "Philip Belesky（RMIT 大學景觀建築）",
+   "year": "2018",
+   "category": "modeling",
+   "categories_extra": [
+    "urban-landscape",
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "Groundhog 是為景觀建築設計的 Grasshopper 外掛，提供坡度計算、地表逕流路徑（Flow Paths）與集水區（Flow Catchments）等分析元件，並附上以參數化方式重建知名地景作品的教學。它的逕流是從取樣點沿最陡下坡一路追蹤，集水區則依各路徑的終點分組、以 Voronoi 細胞合併而成；和基礎範例「每一格都有下游指標、依高程排序累加」相比，Groundhog 是逐條追線的做法，較直觀但不會得到整張累積量場。",
+   "variations": [
+    {
+     "name": "取樣點追線改成全格累積",
+     "how": "把 Groundhog 式「每個點沿下坡走到底」改成基礎範例的 down[] 陣列＋排序累積，路徑的重疊次數就等於累積量。",
+     "effect": "同樣的地形一次得到所有格子的集水面積，河道粗細不必再靠路徑疊加估計。"
+    },
+    {
+     "name": "終點分組的集水區",
+     "how": "保留基礎範例的 label[]，但像 Groundhog 一樣只在指定的取樣點上輸出，並用 E03 Voronoi 把同一出口的細胞合併成多邊形。",
+     "effect": "得到較平滑、可直接放進平面圖的集水區邊界線。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "景觀分析",
+    "外掛",
+    "地形",
+    "教學資源"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Groundhog"
+   ],
+   "url": "https://philipbelesky.com/projects/groundhog"
+  },
+  {
+   "id": "G03-02",
+   "algo": "G03",
+   "title": "MAX IV 實驗室地景（Groundhog 參數化重建）",
+   "creator": "Snøhetta（原設計）；Philip Belesky（Groundhog 重建）",
+   "year": "2016",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "Snøhetta 為 MAX IV 同步輻射實驗室設計的波紋狀土丘地景，Groundhog 的專案頁以參數化方式重建其地形，並說明如此起伏的整地附帶管理地表逕流的效益，另以 Grasshopper 定義量測雨水的排放與滯留。它示範了地景設計中「地形形狀先決定、再用水文分析檢查」的流程；若把重建的地形接到基礎範例，可以看到每條溝谷的累積量與各低窪處的集水範圍。",
+   "variations": [
+    {
+     "name": "波紋地形的積水點",
+     "how": "以正弦波疊加產生重建地形，fillSinks 設為 false，統計每個內流窪地的集水格數與填窪深度。",
+     "effect": "找出波谷中會積水的位置與蓄水量，對應滯留設計。"
+    },
+    {
+     "name": "波長與逕流比較",
+     "how": "用 Slider 改變土丘的波長與振幅，每次重算並記錄邊界出口的總累積量與最大河序。",
+     "effect": "得到地形參數與逕流集中程度的關係曲線，協助在造型與排水之間取捨。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "地形",
+    "整地",
+    "雨水管理",
+    "景觀分析"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Groundhog"
+   ],
+   "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/"
+  },
+  {
+   "id": "G03-03",
+   "algo": "G03",
+   "title": "Rainwater+：整合進設計軟體的都市雨水管理工具",
+   "creator": "Yujiao Chen, Holly W. Samuelson, Zheming Tong",
+   "year": "2016",
+   "category": "performance",
+   "categories_extra": [
+    "modeling",
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "刊於 Journal of Environmental Management 的研究，開發以 Rhino＋Grasshopper 為平台的開源雨水工具 Rainwater+，讓建築與景觀設計者在早期設計就能估算逕流量，並視覺化逕流的流向，協助配置低衝擊開發（LID）設施，文中附兩個案例示範。基礎範例只處理地形上的流向與累積，Rainwater+ 則把逕流量計算與設計工作流程結合；可把它的逕流係數概念加到基礎範例的初始水量上。",
+   "variations": [
+    {
+     "name": "LID 設施截流",
+     "how": "新增雨水花園或透水鋪面的輪廓輸入，落在其中的格子在累積時只把 (1 − 截流率) × acc 交給下游。",
+     "effect": "河網在 LID 設施下游明顯變細，可比較不同配置的削減效果。"
+    },
+    {
+     "name": "流向箭頭的設計圖面",
+     "how": "把 flowLines 依累積量分級上色並只在每 3 格畫一支，輸出成平面圖圖層。",
+     "effect": "得到設計初期可直接討論的逕流方向圖。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "雨水管理",
+    "低衝擊開發",
+    "性能分析",
+    "早期設計"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Rainwater+"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S0301479716302468"
+  },
+  {
+   "id": "G03-04",
+   "algo": "G03",
+   "title": "支援永續都市綠地設計的整合雨水分析模型",
+   "creator": "J. Jia, S. Zlatanova, K. Zhang, H. Liu",
+   "year": "2022",
+   "category": "performance",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "發表於 ISPRS Annals（第 17 屆 3D GeoInfo 研討會）的論文，指出傳統水文模型對設計者門檻太高，因此在 Rhino＋Grasshopper 中以粒子系統模擬並量化都市綠地的雨水逕流，輸入包含地形、建築腳印等都市物件，並檢驗迭代次數、降雨事件與粒子大小的敏感度。論文本身是粒子模擬，並非 D8 實作；它的角色是把逕流分析整合進綠地設計，和基礎範例比較可以看出「粒子沿坡滾動」與「每格一個下游指標再排序累加」兩種做法的差異。",
+   "variations": [
+    {
+     "name": "粒子與 D8 對照",
+     "how": "在同一地形上撒雨滴粒子沿 Mesh 最陡方向移動，記錄每格被經過的次數，和基礎範例的 acc 並排上色比較。",
+     "effect": "看出粒子法需要大量迭代才會收斂，而 D8 一次排序就得到完整累積量。"
+    },
+    {
+     "name": "建築腳印當阻擋",
+     "how": "把建築輪廓內的格子設成 NaN（無資料），IsEdge 會把它們旁邊的格子當成出口。",
+     "effect": "逕流在建築周邊匯集，可找出需要排水設施的牆腳位置。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "雨水管理",
+    "都市綠地",
+    "粒子模擬",
+    "性能分析"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper"
+   ],
+   "url": "https://isprs-annals.copernicus.org/articles/X-4-W2-2022/153/2022/"
+  },
+  {
+   "id": "G03-05",
+   "algo": "G03",
+   "title": "結合水文與土方成本效益的地形改造多目標最佳化",
+   "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
+   "year": "2024",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "以 DEM 水文分析結合 NSGA-II 多目標最佳化來改造地形，同時追求最小化最大流速、最大化逕流路徑長度與最小化土方成本，用於降低降雨侵蝕與逕流動能的雨水管理。它把流向與逕流路徑當成地形設計的評估函數；基礎範例只算一次分析，這裡則是每個候選地形都要重跑一次流向，再交給演算法篩選。",
+   "variations": [
+    {
+     "name": "接 F04 基因演算法",
+     "how": "把地形用少數控制點（高度當基因）描述，每個個體跑一次 D8，適應度 = 最長流路長度 − a × 土方量，交給 F04 演化。",
+     "effect": "自動找出讓水繞行較長、流速較慢且土方較省的整地方案。"
+    },
+    {
+     "name": "最長流路輸出",
+     "how": "在累積迴圈裡同時記錄每格到源頭的最長路徑長度 L[k] = max(L[k], L[上游] + 距離)，出口處的 L 就是最長流路。",
+     "effect": "得到可當作最佳化目標的逕流路徑長度指標。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "最佳化",
+    "整地",
+    "雨水管理",
+    "多目標"
+   ],
+   "tools": [
+    "DEM 水文分析",
+    "NSGA-II"
+   ],
+   "url": "https://arxiv.org/abs/2401.02698"
+  },
+  {
+   "id": "G03-51",
+   "algo": "G03",
+   "title": "Fantasy map generator（terrain.js）",
+   "creator": "Martin O'Leary",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "地景",
+   "summary": "Martin O'Leary 為推特機器人 @unchartedatlas 寫的奇幻地圖生成程式，以 JavaScript＋D3.js 在 Voronoi 不規則網格上生成地形：每個點找最低的鄰居當下坡（downhill），用反覆迭代填平窪地（fillSinks），再依高度排序把水量（flux）往下游累加，流量大的地方畫成河流並用來侵蝕地形。它和基礎範例是同一套流向累積邏輯，但網格是不規則的 Voronoi 點而不是方格，輸出是手繪風格的地圖。",
+   "variations": [
+    {
+     "name": "方格換成不規則點",
+     "how": "把基礎範例的八鄰居改成 Delaunay 鄰接（用 E03 或 E02 取樣點建網格），down 取最低鄰居。",
+     "effect": "河道走向不再有 45° 的格子感，更像手繪地圖。"
+    },
+    {
+     "name": "流量回頭侵蝕",
+     "how": "每輪以 z -= k × √flux × 坡度 侵蝕後再重算 downhill 與 flux，重複數次。",
+     "effect": "河谷被切深，海岸與山脊輪廓更自然。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "D3.js",
+    "程序地圖",
+    "Voronoi",
+    "地形"
+   ],
+   "tools": [
+    "JavaScript",
+    "D3.js"
+   ],
+   "url": "https://github.com/mewo2/terrain"
+  },
+  {
+   "id": "G03-52",
+   "algo": "G03",
+   "title": "Fantasy Map Generator（C++ 實作）",
+   "creator": "Ryan L. Guy",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "地景",
+   "summary": "以 C++ 實作 Martin O'Leary 的奇幻地圖方法：先用 Planchon-Darboux 演算法填平窪地，確保每個點都有下坡路徑，再追蹤水往地圖邊緣流的流向圖（flow map），以流量（flux）決定河流位置並依流量與坡度侵蝕地形，最後加上城市、國界與地名標註。和基礎範例相比，它用不同的填窪法（Planchon-Darboux 迭代而非優先佇列），並把流量結果延伸到城市選址等後續規則。",
+   "variations": [
+    {
+     "name": "兩種填窪法比較",
+     "how": "把基礎範例的 Priority-Flood 換成 Planchon-Darboux：所有內部格先設成無限高，反覆降到「鄰居 + ε」直到不再變化，記錄迭代次數與時間。",
+     "effect": "看出優先佇列版一次完成、迭代版需要多輪掃描的效能差異。"
+    },
+    {
+     "name": "流量決定聚落位置",
+     "how": "每格分數 = √acc × 平坦度，扣除靠近既有聚落的分數後取最高分，重複放置數個聚落點。",
+     "effect": "聚落自然落在河流匯流處與平緩河谷。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "C++",
+    "程序地圖",
+    "填窪",
+    "地形"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://rlguy.com/map_generation/"
+  },
+  {
+   "id": "G03-53",
+   "algo": "G03",
+   "title": "HeightField Flow Field 節點",
+   "creator": "SideFX",
+   "year": "2018",
+   "category": "modeling",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "地景",
+   "summary": "Houdini 17.0 起提供的高度場節點，依高度圖產生累積流量（flow）與平均流向（flow dir）圖層：先在部分格子降雨，再讓水沿下坡散開（Smooth 模式向所有下坡方向擴散、Granular 模式保持成束），可選擇依流量刻出谷地。它相當於多流向版本的流量累積，常用來當地形材質與植被分布的遮罩；和基礎範例的單一方向 D8 相比，結果較柔和，但沒有明確的樹狀河網與集水區編號。",
+   "variations": [
+    {
+     "name": "流量當遮罩",
+     "how": "把基礎範例的 acc 取 log 後正規化到 0–1，寫進 Mesh 頂點色或當作 C04 地形的材質混合權重。",
+     "effect": "谷地自動變成濕潤的深色、稜線保持乾燥，地形立刻有真實感。"
+    },
+    {
+     "name": "依流量刻谷",
+     "how": "每格 z -= depth × (log acc ÷ log maxAcc)，只做一次，不再迭代。",
+     "effect": "快速得到有河谷的地形，效果類似節點的 Adjust Height 選項。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "高度場",
+    "多流向",
+    "地形"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heightfield_flowfield.html"
   }
  ]
 };

@@ -1,0 +1,638 @@
+{
+  "agent": "ag_F08",
+  "algorithms": [
+    {
+      "id": "F08",
+      "name_zh": "最小生成樹與 Steiner 樹",
+      "name_en": "Minimum Spanning Tree & Steiner Tree",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F08_SpanningSteinerTree.cs",
+      "loc": 226,
+      "logic": [
+        "搜尋／求解",
+        "幾何轉換"
+      ],
+      "data_structure": [
+        "圖",
+        "幾何"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "226 行、單一元件，自訂一個 Edge struct 與 Find／InsertOneSteinerPoint／Fermat／RemoveDegenerate／TotalLength 五個方法；MST 部分只要排序＋並查集，但 Steiner 部分要處理鄰接表的拆接、向量夾角與 Weiszfeld 迭代，還要理解「貪婪法為何能得到全域最佳」與「Steiner 問題是 NP-hard，只能用啟發式近似」。",
+      "tags": [
+        "圖",
+        "最佳化",
+        "貪婪法",
+        "並查集",
+        "網路",
+        "隨機",
+        "可重現種子"
+      ],
+      "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先把邊由短到長挑、會成環就跳過；再在分岔夾角太小的地方加入 120° 三叉的 Steiner 點，讓網路再縮短一些。",
+      "how_it_works": [
+        "讀入端點 pts（留空就用 seed 在 size × size 的正方形內撒 pointCount 個點），把所有點兩兩連成候選邊並依長度由短到長排序。",
+        "Kruskal：由短到長檢查每條邊，用並查集的 Find 判斷兩端是否已在同一群；不同群才加入並合併，同群代表會成環就跳過，加滿 n − 1 條邊就是最小生成樹。",
+        "Steiner 改良（steiner = true）：在樹上找出夾角小於 120° 的一對邊 v–a、v–b，用 Weiszfeld 迭代求三點的 Fermat 點 s，拆掉原本兩條邊、改接成 s 的三叉。",
+        "鬆弛 relaxIterations 次：每個 Steiner 點移到三個鄰點的 Fermat 點；度數降到 2 或貼到鄰點上的 Steiner 點刪除，並把鄰點重新接好。",
+        "輸出 MST 線段、Steiner 網路、Steiner 點，並在 info 印出兩者總長與節省比例（通常省 2–4%，依 Gilbert–Pollak 猜想最多約 13.4%）；Steiner 部分是啟發式，不保證精確最佳。"
+      ],
+      "pseudo_code": [
+        "輸入 pts, pointCount, seed, size, steiner, relaxIterations",
+        "輸出 mstLines, steinerLines, steinerPoints, info",
+        "如果 pts 是空的：pts ← 以 seed 在 size × size 內撒 pointCount 個點",
+        "edges ← 所有點對 (a, b, 長度)，由短到長排序",
+        "parent[i] ← i  // 並查集：每個點自成一群",
+        "對 每條邊 (a, b)：",
+        "  如果 Find(a) ≠ Find(b)：加入樹、合併兩群  // 同群代表會成環，跳過",
+        "  如果 樹已有 n − 1 條邊：跳出",
+        "如果 steiner：",
+        "  當 樹上還有夾角 < 120° 的兩條邊 v–a、v–b：",
+        "    s ← Fermat(v, a, b)  // Weiszfeld 迭代",
+        "    拆掉 v–a、v–b，改接 s–v、s–a、s–b",
+        "  重複 relaxIterations 次：Steiner 點移到三鄰點的 Fermat 點，刪除退化點",
+        "回傳 MST、Steiner 網路、兩者總長"
+      ],
+      "key_params": [
+        {
+          "name": "pts",
+          "effect": "要連接的端點；接上自己的點（建築出入口、柱位、燈點）就能算真實配置，留空才隨機撒點"
+        },
+        {
+          "name": "pointCount",
+          "effect": "隨機撒點數；候選邊數約 n²/2，n = 500 時約 12 萬條，排序仍很快"
+        },
+        {
+          "name": "seed",
+          "effect": "同一個種子得到同一組點與同一棵樹，可重現；換種子就換一組配置"
+        },
+        {
+          "name": "size",
+          "effect": "撒點範圍的邊長，也決定刪除退化 Steiner 點時的距離容許值（size × 0.0001）"
+        },
+        {
+          "name": "steiner",
+          "effect": "false = 只有 MST（只連既有點）；true = 允許新增中繼點，出現 120° 三叉、總長更短"
+        },
+        {
+          "name": "relaxIterations",
+          "effect": "Steiner 點鬆弛次數；0 次時三叉角度還不準，5–20 次通常已接近 120°"
+        }
+      ],
+      "csharp_concepts": [
+        "List<T>.Sort 搭配 lambda 比較式",
+        "struct（Edge）",
+        "int[] 並查集與路徑壓縮",
+        "鄰接表 List<List<int>>",
+        "Vector3d.VectorAngle",
+        "Point3d 與 Vector3d 的轉型與加權平均",
+        "class 欄位（fields）在方法之間共用資料"
+      ],
+      "prerequisites": [
+        "圖的基本概念：節點、邊、樹、環",
+        "排序與巢狀迴圈",
+        "向量夾角與距離",
+        "F05 最短路徑（對照「兩點之間」與「連起全部點」）"
+      ],
+      "teaching_note": "建議分三段從零實作：先只做 Kruskal，用 20 個點畫出 MST，讓學習者親手驗證「由短到長挑、會成環就跳過」；接著把並查集獨立成 Find 方法，加入路徑壓縮並比較 n = 50 與 n = 500 的速度；最後才加 Steiner 改良。常見錯誤：合併時寫成 parent[a] = b（應該合併兩個代表 ra、rb），以及拆邊時只從一邊的鄰接表移除。Steiner 部分務必說明它是啟發式：Kruskal 的貪婪法有切割性質保證最佳，但 Steiner 問題是 NP-hard，這裡的插點＋鬆弛只保證比 MST 短，不保證最短。3D 版本只要把點改成 3D 即可，程式不用改；超過 1,000 個點時改用 Delaunay 邊當候選邊。",
+      "variations": [
+        {
+          "title": "Prim：從一個根點往外長",
+          "level": 2,
+          "what_changes": "建樹規則（由全域排序改成從根點擴張）",
+          "how": "移除 edges 排序與並查集，改用 bool[] inTree 與 double[] best（每個點到樹的最短距離）；每輪挑 best 最小的點加入並更新其他點的 best；新增 root 輸入指定起點，另輸出加入順序 order。",
+          "result": "同一組點得到和 Kruskal 相同的樹，但長出的順序是從根點一圈圈向外擴張，可直接當分期施工或配送順序。"
+        },
+        {
+          "title": "只用 Delaunay 邊當候選邊",
+          "level": 3,
+          "what_changes": "候選邊的來源（效能）",
+          "how": "把兩兩連線換成 Grasshopper.Kernel.Geometry.Delaunay.Solver.Solve_Connectivity 取得的鄰接關係（MST 一定是 Delaunay 圖的子圖），候選邊從 n²/2 降到約 3n，再照原本流程排序＋並查集。",
+          "result": "5,000 個點也能在一秒內算出與暴力法完全相同的 MST，並可順便輸出 Delaunay 網格做對照。"
+        },
+        {
+          "title": "障礙物與邊界：穿牆的邊不能用",
+          "level": 2,
+          "what_changes": "候選邊的篩選（輸入）",
+          "how": "新增 obstacles（List<Curve>）與 boundary（Curve）輸入；建立候選邊時用 Rhino.Geometry.Intersect.Intersection.CurveCurve 檢查 Line 是否與障礙相交、用 boundary.Contains 檢查中點是否在界內，不合格就不加入 edges。",
+          "result": "避開水池、既有建築與基地外的生成樹，可能變成數棵樹（森林），用顏色標出被障礙切開的群。"
+        },
+        {
+          "title": "吸引子與地形加權的邊成本",
+          "level": 2,
+          "what_changes": "邊的權重（輸入）",
+          "how": "把 Edge.Length 改成 cost = 長度 × (1 + k × f)，f 可以是線段中點到 attractor 的距離倒數，或從 terrain（Mesh）用 Mesh.ClosestPoint 取兩端高差算出的坡度；排序改用 cost，輸出仍畫實際線段。",
+          "result": "網路會繞開陡坡或刻意靠近吸引子（如廣場、景觀節點），總長稍增但更貼近地形與使用需求。"
+        },
+        {
+          "title": "接上既有道路：預先合併的並查集",
+          "level": 3,
+          "what_changes": "初始狀態（輸入：既有網路）",
+          "how": "新增 roads（List<Curve>）；每個端點用 Curve.ClosestPoint 求到道路的最近點並加一條候選邊，所有道路節點在並查集中預先合併成同一群（union 到同一代表），再跑 Kruskal。",
+          "result": "新建築只需以最短的支路接到既有路網，輸出的是「補哪些路」而不是整張新網，適合基地擴建或管線接駁。"
+        },
+        {
+          "title": "度數上限：每個節點最多 3 叉",
+          "level": 3,
+          "what_changes": "加入條件（規則）",
+          "how": "新增 maxDegree 輸入與 int[] degree；Kruskal 加邊前檢查兩端 degree 都小於 maxDegree，否則跳過；因為不再保證全部連通，最後用剩下的最短可行邊補齊（啟發式，不保證最佳）。",
+          "result": "節點不再出現五、六條桿件擠在一起的情況，接頭種類變少，較容易做成實際構造節點。"
+        },
+        {
+          "title": "刪掉最長的邊來分群",
+          "level": 2,
+          "what_changes": "輸出後處理（分析）",
+          "how": "MST 完成後把邊依長度排序，刪掉最長的 k − 1 條（新增輸入 k），再用並查集重算每個點屬於哪一群，輸出各群的點與凸包（PolylineCurve）。",
+          "result": "得到 single-linkage 分群：一次把散布的樹木、設施或住戶自動分成 k 個聚落，並看出群與群之間的空隙。"
+        },
+        {
+          "title": "3D 生成樹 → 管件與節點接頭",
+          "level": 3,
+          "what_changes": "維度＋輸出／製造",
+          "how": "把撒點改在 Box 或 Brep 內（Brep.IsPointInside 拒絕取樣）產生 3D 點；每條邊用 Brep.CreatePipe 做桿件、每個節點放 Sphere，並輸出桿件長度清單（依長度分組編號）。",
+          "result": "懸吊式的 3D 生成樹吊燈或空間構架，附帶可直接下料的桿件長度表與節點數。"
+        },
+        {
+          "title": "3D Steiner 樹狀柱",
+          "level": 4,
+          "what_changes": "維度＋Steiner 規則（結構）",
+          "how": "端點改成屋頂下的多個支承點加上一個地面柱腳點；Fermat 與 VectorAngle 本來就適用 3D，直接執行 Steiner 改良，再把每段依其下方支承點數量給不同管徑。",
+          "result": "從一個柱腳分岔到多個屋頂支承點、分岔角接近 120° 的樹狀柱，桿件總長比直接放射狀連線更短。"
+        },
+        {
+          "title": "曲面上的測地生成樹",
+          "level": 4,
+          "what_changes": "維度（距離定義）",
+          "how": "點改成曲面上的點，候選邊長度改用 Surface.ShortPath 求得的測地線長度（只算 Delaunay 或 k 個最近鄰以控制計算量），加入的邊直接輸出該測地線 Curve。",
+          "result": "沿著殼體或起伏屋面爬行的生成樹，可當成屋面上的排水溝、肋梁或燈帶走向。"
+        },
+        {
+          "title": "繞行率評估與補邊（混 F05）",
+          "level": 4,
+          "what_changes": "分析／評估＋混合",
+          "how": "MST 完成後，用 F05 的 Dijkstra 在樹上算每對端點的路徑長，除以直線距離得到繞行率；把繞行率最高的點對依序補上一條直連邊，直到最大繞行率低於 detourLimit。",
+          "result": "在「最省材料的樹」與「每一對都不太繞路的網」之間取捨，輸出每次補邊後的總長與最大繞行率曲線。"
+        },
+        {
+          "title": "Kruskal 逐邊動畫與並查集著色",
+          "level": 2,
+          "what_changes": "時間／動畫",
+          "how": "把 Kruskal 迴圈改成每次 RunScript 只處理 step 條邊（配合 Timer 或 Slider），class 欄位保存 parent 與目前邊索引；每個點依 Find 的代表上色，被拒絕的成環邊用紅色短暫顯示。",
+          "result": "看得到一片片顏色不同的小樹由短邊開始長出、逐步合併成同一色的一整棵樹，清楚呈現貪婪法的過程。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "校園步道的最省網路",
+          "brief": "以各棟建築出入口為端點，比較 MST、Steiner 樹與現況步道的總長，再用人流模擬檢查繞行率，提出補邊與鋪面分級方案。",
+          "difficulty": 3,
+          "combine_with": [
+            "F05",
+            "D03"
+          ]
+        },
+        {
+          "title": "3D Steiner 樹狀柱亭",
+          "brief": "以屋頂板下的支承點產生 3D Steiner 樹狀柱，桿件依分岔層級給管徑，做 1:20 模型並比較與放射狀柱的材料用量。",
+          "difficulty": 4,
+          "combine_with": [
+            "E04"
+          ]
+        },
+        {
+          "title": "生成樹吊燈與節點列印",
+          "brief": "在球形或自由量體內撒 Poisson 點，連成 3D 生成樹，桿件用標準管材、節點 3D 列印，並控制每個節點的度數上限。",
+          "difficulty": 3,
+          "combine_with": [
+            "E02"
+          ]
+        },
+        {
+          "title": "聚落的佔據與連結",
+          "brief": "以 Voronoi 細胞代表地塊、以細胞中心為住戶端點，比較 MST、Steiner 樹與格子路網的道路總長與地塊可及性，討論基礎設施成本。",
+          "difficulty": 3,
+          "combine_with": [
+            "E03",
+            "F05"
+          ]
+        },
+        {
+          "title": "隨機權重迷宮花園",
+          "brief": "在格網上給邊隨機權重跑 Kruskal 產生完美迷宮，牆面轉成矮籬或座椅，再用最短路徑找出主要動線並加寬。",
+          "difficulty": 2,
+          "combine_with": [
+            "F05"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "On the shortest spanning subtree of a graph and the traveling salesman problem",
+          "author": "Joseph B. Kruskal",
+          "year": "1956",
+          "url": "https://doi.org/10.1090/S0002-9939-1956-0078686-7"
+        },
+        {
+          "title": "Steiner Minimal Trees",
+          "author": "E. N. Gilbert, H. O. Pollak",
+          "year": "1968",
+          "url": "https://doi.org/10.1137/0116001"
+        },
+        {
+          "title": "Euclidean minimum spanning tree（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Euclidean_minimum_spanning_tree"
+        },
+        {
+          "title": "Steiner tree problem（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "F08-01",
+      "algo": "F08",
+      "title": "Emerging Spanning Trees in the Work of Candilis–Josic–Woods（Candilis–Josic–Woods 作品中浮現的生成樹）",
+      "creator": "Georgios-Spyridon Athanasopoulos",
+      "year": "2020",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "刊於 Nexus Network Journal 的論文，用圖論重讀 Team X 成員 Candilis–Josic–Woods 的都市與建築設計，先定義最小生成樹（minimum spanning tree）、最短步行樹與 Steiner 樹，再以柏林自由大學這類 mat-building 的動線邏輯為對照。作者在 Rhino／Grasshopper 中以演算法近似歐氏 Steiner 樹，並用 Kangaroo 鬆弛點位，主張 Steiner 點可以成為「可被活化成空間、又方便步行」的節點；和基礎範例相同都是 MST＋Steiner 點，但端點來自建築配置、Steiner 點被詮釋成廣場與聚集空間。",
+      "variations": [
+        {
+          "name": "Steiner 點變成廣場",
+          "how": "把 steinerPoints 依其三條邊的長度總和給半徑，輸出圓形或多邊形廣場範圍",
+          "effect": "中繼點不只是轉折，而是可被使用的聚集空間"
+        },
+        {
+          "name": "MST、最短步行樹、Steiner 樹三圖並列",
+          "how": "同一組端點分別輸出 MST、以 F05 Dijkstra 從主入口算出的最短路徑樹、Steiner 網路，並排比較總長與平均步行距離",
+          "effect": "看出「省材料」與「少繞路」兩種樹的取捨"
+        },
+        {
+          "name": "Kangaroo 鬆弛取代 Weiszfeld",
+          "how": "把 Steiner 點與邊送進 Kangaroo 的長度目標（Length goal，目標長 0），端點錨定後求解",
+          "effect": "用物理鬆弛得到 120° 三叉，並可再加入障礙與偏好長度"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "圖",
+        "Steiner 樹",
+        "動線",
+        "都市設計"
+      ],
+      "tools": [
+        "Rhino",
+        "Grasshopper",
+        "Kangaroo"
+      ],
+      "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1"
+    },
+    {
+      "id": "F08-02",
+      "algo": "F08",
+      "title": "Ivy：以加權網格表示法做網格分割與展開",
+      "creator": "Andrei Nejur、Kyle Steinfeld",
+      "year": "2016",
+      "category": "fabrication",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "論文與同名 Grasshopper 外掛 Ivy，把 Mesh 轉成加權的對偶圖（每個面是節點、相鄰面之間是帶權重的邊），再以 Kruskal 等建樹程序做網格分割（segmentation）與展開，外掛提供 MST Kruskal 元件計算網格圖的最小生成樹或森林。和基礎範例不同，這裡的節點是網格面而不是散點，邊權重是面與面之間的折角或其他分析值，生成樹決定哪些邊保留相連、哪些剪開，用來製作可展開的板片。",
+      "variations": [
+        {
+          "name": "網格面對偶圖",
+          "how": "以 Mesh.Faces 為節點、Mesh.TopologyEdges.GetConnectedFaces 找相鄰面建立邊，權重用兩面法向量夾角",
+          "effect": "把曲面網格變成可以跑 Kruskal 的圖"
+        },
+        {
+          "name": "生成樹決定剪開的邊",
+          "how": "MST 中的邊保持相連，不在樹上的網格邊全部剪開，再逐面展平",
+          "effect": "得到一整片不重疊（或少重疊）的展開圖"
+        },
+        {
+          "name": "權重上限切成多片",
+          "how": "只接受權重小於門檻的邊，Kruskal 結束後得到數棵樹",
+          "effect": "自動把網格分成數個較平的區塊，對應不同板材"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "網格分割",
+        "展開",
+        "圖",
+        "數位製造"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Ivy"
+      ],
+      "url": "https://www.academia.edu/33285328/Ivy_Bringing_a_Weighted-Mesh_Representation_to_Bear_on_Generative_Architectural_Design_Applications"
+    },
+    {
+      "id": "F08-03",
+      "algo": "F08",
+      "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns（以延伸最小生成樹描述局部都市形態）",
+      "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "刊於 International Journal of Geographical Information Science 的研究，以建築物為單元建立延伸的最小生成樹，用樹上邊的長度、方向與分布來量化建築群的局部都市形態，進而辨識不同的街區類型。和基礎範例相比，端點是建築物（而非單點），MST 在這裡是分析工具而不是設計成果：用來衡量密度、排列與群聚程度。",
+      "variations": [
+        {
+          "name": "以建築輪廓間距當邊長",
+          "how": "把 pts 換成建築外輪廓（List<Curve>），邊長改用兩輪廓間最近距離（Curve.ClosestPoints）",
+          "effect": "長條形或大型建築也能得到合理的鄰接關係"
+        },
+        {
+          "name": "MST 邊長統計地圖",
+          "how": "對每棟建築統計其相連 MST 邊長的平均與變異，依數值上色",
+          "effect": "一眼看出密集、鬆散與排列整齊的街區"
+        },
+        {
+          "name": "刪長邊找建築群",
+          "how": "刪除長度超過平均值數倍的 MST 邊，再用並查集分群",
+          "effect": "自動圈出建築聚落與空隙"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "都市形態",
+        "空間分析",
+        "圖"
+      ],
+      "tools": [],
+      "url": "https://doi.org/10.1080/13658816.2017.1384830"
+    },
+    {
+      "id": "F08-04",
+      "algo": "F08",
+      "title": "Minimum Spanning Tree（Grasshopper 曲線網路的最小生成樹工具）",
+      "creator": "Tuğrul Yazar（designcoding）",
+      "year": "2012",
+      "category": "modeling",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "designcoding 網站上的 Grasshopper 教學工具，輸入一組相連的線段網路，以 VB.NET 程式計算其最小生成樹並逐步說明。作者比較過 Kruskal、Prim 等做法後改用「反向刪除」（reverse-delete）：從最長的連線開始，若刪掉後兩端仍然相連就刪除。和基礎範例相反：不是由短到長加邊，而是由長到短刪邊，且輸入是既有的曲線網路而不是散點。",
+      "variations": [
+        {
+          "name": "反向刪除法",
+          "how": "把 edges 由長到短排序，逐條暫時移除並用 BFS 檢查兩端是否仍連通，連通就正式刪除",
+          "effect": "得到同一棵 MST，並能對照「加邊」與「刪邊」兩種貪婪法"
+        },
+        {
+          "name": "輸入既有路網",
+          "how": "以曲線網路的端點建立節點（Point3d 去重），每條曲線是一條邊、長度用 Curve.GetLength",
+          "effect": "直接在既有道路或管線網上找出最省的骨幹"
+        },
+        {
+          "name": "MultiPipe 實體化",
+          "how": "把結果線段交給管件或網格包覆工具生成連續實體",
+          "effect": "得到可列印的樹狀物件"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "圖",
+        "貪婪法",
+        "教學工具"
+      ],
+      "tools": [
+        "Grasshopper",
+        "VB.NET"
+      ],
+      "url": "https://www.designcoding.net/minimum-spanning-tree/"
+    },
+    {
+      "id": "F08-05",
+      "algo": "F08",
+      "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+      "creator": "Marc Barthelemy、Geoff Boeing",
+      "year": "2025",
+      "category": "urban-landscape",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "arXiv 上的研究論文，比較大量城市街道網路的共同性質後提出一個精簡的生成模型：先以一棵生成樹當骨幹，再逐步加邊，使節點度數分布符合實測資料。和基礎範例相比，生成樹在這裡是街網的起點而不是最終結果；在樹上再補邊，就從「最省」走向有迴路、較好走的真實街網。",
+      "variations": [
+        {
+          "name": "生成樹＋補邊",
+          "how": "MST 完成後，依序加入 Delaunay 候選邊中最短且不與現有邊相交的邊，直到平均度數達到目標值",
+          "effect": "從樹狀的骨幹長成有街廓的街網"
+        },
+        {
+          "name": "度數分布比對",
+          "how": "統計每個節點的度數，與目標分布（例如三叉路口與十字路口的比例）比較，差距大就調整補邊規則",
+          "effect": "讓生成的街網接近特定城市的路口組成"
+        },
+        {
+          "name": "街廓面積輸出",
+          "how": "補邊後找出平面圖的封閉面（Curve.CreateBooleanRegions 或自行走訪平面圖）",
+          "effect": "輸出街廓多邊形並統計面積分布"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "街道網路",
+        "都市形態",
+        "圖"
+      ],
+      "tools": [],
+      "url": "https://arxiv.org/abs/2509.21931"
+    },
+    {
+      "id": "F08-06",
+      "algo": "F08",
+      "title": "LeafVein：Grasshopper 圖論外掛（含最小生成樹）",
+      "creator": "Dachuan",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "Food4Rhino 上的 Grasshopper 圖論外掛，可從幾何物件或地圖建立有向、無向或混合圖，提供最小生成樹、最短路徑（Dijkstra、A*）、連通元件、割點與割邊、TSP 啟發式等演算法，定位於建築與都市規劃的應用。和基礎範例相比，它把 MST 包成現成元件，能與其他圖論分析串接；自己寫的版本則能修改加邊規則（障礙、度數上限、Steiner 點）。",
+      "variations": [
+        {
+          "name": "MST 加割點分析",
+          "how": "先求 MST，再找出樹上的割點（度數大於 1 的節點都是），依其下游端點數排序",
+          "effect": "找出網路中最關鍵、一斷就分裂的節點"
+        },
+        {
+          "name": "MST 對照 TSP",
+          "how": "同一組點分別求 MST 與 TSP 路徑，比較總長（MST 總長是 TSP 的下限）",
+          "effect": "理解樹與單筆路徑的差別，選擇配送或巡檢路線形式"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "圖",
+        "外掛",
+        "都市設計"
+      ],
+      "tools": [
+        "Grasshopper",
+        "LeafVein"
+      ],
+      "url": "https://www.food4rhino.com/en/app/leafvein"
+    },
+    {
+      "id": "F08-51",
+      "algo": "F08",
+      "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+      "creator": "Jamis Buck",
+      "year": "2011",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Buckblog 迷宮生成系列文章之一，把格網上相鄰格子之間的牆當成隨機權重的邊，用 Kruskal 演算法與集合合併（以樹狀結構判斷兩格是否同一集合）打通牆面，得到每兩格之間恰好一條路的完美迷宮，並附互動示範。和基礎範例相比，點是規則格網、邊權重是亂數，MST 的「不成環又全連通」直接變成迷宮的「沒有迴圈、每格都到得了」。",
+      "variations": [
+        {
+          "name": "格網隨機權重",
+          "how": "把點改成 rows × cols 格網，只建立上下左右的候選邊，Edge.Length 改成 rnd.NextDouble()",
+          "effect": "得到完美迷宮的通道樹"
+        },
+        {
+          "name": "通道轉牆面",
+          "how": "保留不在樹上的格網邊，偏移成牆的矩形或擠出成 Brep",
+          "effect": "輸出可雷切或 3D 列印的迷宮牆"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Ruby",
+        "JavaScript",
+        "迷宮",
+        "隨機"
+      ],
+      "tools": [
+        "Ruby",
+        "JavaScript"
+      ],
+      "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm"
+    },
+    {
+      "id": "F08-52",
+      "algo": "F08",
+      "title": "Visualizing Algorithms（視覺化演算法：以生成樹生成迷宮）",
+      "creator": "Mike Bostock",
+      "year": "2014",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Mike Bostock 的互動長文，以動畫說明取樣、洗牌、排序與迷宮生成等演算法；迷宮一節指出所有做法都是在二維格網上生成一棵生成樹，並比較隨機 Prim（最小生成樹）與 Wilson 演算法（loop-erased random walk 產生均勻生成樹）等做法。和基礎範例相比，重點不在最短總長，而在不同建樹方法留下的紋理差異。",
+      "variations": [
+        {
+          "name": "同一格網三種建樹法",
+          "how": "在同一組格網候選邊上分別跑 Prim、DFS 與 Wilson，並排輸出",
+          "effect": "看出短枝多、長廊多與均勻三種迷宮紋理"
+        },
+        {
+          "name": "樹上距離上色",
+          "how": "從根點沿樹做 BFS，記錄每格深度並依深度給顏色或高度",
+          "effect": "迷宮變成色帶流動的圖樣或階梯地景"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "D3.js",
+        "JavaScript",
+        "迷宮",
+        "視覺化"
+      ],
+      "tools": [
+        "D3.js",
+        "JavaScript"
+      ],
+      "url": "https://bost.ocks.org/mike/algorithms/"
+    },
+    {
+      "id": "F08-53",
+      "algo": "F08",
+      "title": "9.9: Minimum Spanning Tree (Prim's Algorithm) - p5.js Tutorial",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "The Coding Train 的 p5.js 教學影片，用 Prim 演算法把畫布上的一組點連成最小生成樹：維持「已連接」與「未連接」兩組點，每次找出兩組之間最短的一條邊加入。和基礎範例的 Kruskal 不同，Prim 從一個點往外長，不需要排序全部邊與並查集。",
+      "variations": [
+        {
+          "name": "互動加點重算",
+          "how": "把 pts 接到 Grasshopper 的點參數或 Human UI 的點擊輸入，每次變動就重算 Prim",
+          "effect": "邊拖曳點邊看生成樹即時改變"
+        },
+        {
+          "name": "依加入順序畫粗細",
+          "how": "記錄每條邊被 Prim 加入的順序，早加入的邊畫得較粗",
+          "effect": "呈現從根點向外生長的層次"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "互動",
+        "教學"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://www.youtube.com/watch?v=BxabnKrOjT0"
+    },
+    {
+      "id": "F08-54",
+      "algo": "F08",
+      "title": "Spanning Trees（Houdini VEX 生成樹）",
+      "creator": "Sergen Eren",
+      "year": "2018",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Sergen Eren 的 Houdini 教學文章，以 VEX 遞迴程式在幾何的連接關係上建立生成樹，文中以 Prim 演算法、點與點之間的距離為成本求最小成本生成樹，並作為後續網格展開（unfolding）教學的基礎。和基礎範例相比，它在 Houdini 的點與圖元屬性上直接操作，生成樹連接的是網格圖元而不是散點。",
+      "variations": [
+        {
+          "name": "圖元鄰接當候選邊",
+          "how": "以網格面的中心為節點、共用邊的相鄰面為候選邊，成本用中心距離",
+          "effect": "得到覆蓋所有面的生成樹，作為展開的剪裁依據"
+        },
+        {
+          "name": "以樹順序展開",
+          "how": "從根面沿樹逐一把子面繞共用邊旋轉到父面的平面上（Transform.Rotation）",
+          "effect": "一張網格變成平面展開圖"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "VEX",
+        "網格展開"
+      ],
+      "tools": [
+        "Houdini",
+        "VEX"
+      ],
+      "url": "https://sergeneren.com/2018/09/24/spanning-trees/"
+    }
+  ]
+}

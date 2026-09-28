@@ -16,5 +16,14 @@
   "title": "GAN-Physarum: La Dérive Numérique",
   "url_norm": "ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
   "reason": "神經網路相關，超出教學難度"
+ },
+ {
+  "run": "R20260929-0146",
+  "unit": "INTEGRATE:E06-54",
+  "algo": "E06",
+  "kind": "CC",
+  "title": "form-finding：瀏覽器原生 3D 找形引擎",
+  "url_norm": "github.com/damianbrenlla/form-finding",
+  "reason": "2026-08 新建的個人 repo，0 星 0 fork、僅約 10 天提交紀錄，證據與代表性不足（整合時查證後刪除）"
  }
 ]

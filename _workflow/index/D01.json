@@ -119,6 +119,15 @@
    "what_changes": "輸出：軌跡 → 圖（點＋連線）",
    "how": "每隔 k 步把距離小於 linkRadius 的兩隻鳥位置連一條 Line，累積成空間網格，再用 Kangaroo 或自寫彈簧鬆弛。",
    "result": "形成如蜘蛛網或纖維塔的立體網架，可作裝置或結構概念模型"
+  },
+  {
+   "index": 12,
+   "code": "V13",
+   "title": "捕食者–獵物雙物種群聚",
+   "level": 4,
+   "what_changes": "規則：從單一物種變成兩個物種，加上 Reynolds 的 pursue／evade 轉向，以及出生與死亡規則讓族群數量會變",
+   "how": "在 Boid 類別加 int Species（0=獵物、1=捕食者）與 double Energy，新增輸入 predatorCount、predictT、fearRadius、catchRadius、breedEvery。獵物照原本三條規則，但分離／對齊／聚集只算同物種鄰居；另加 evade：對 fearRadius 內每個捕食者算預測位置 p.Position + p.Velocity * predictT，累加 (me.Position − 預測位置) 的單位向量乘 evadeWeight。捕食者不做對齊與聚集，只找最近的獵物，朝它的預測位置 prey.Position + prey.Velocity * predictT 轉向（pursue），maxSpeed 設為獵物的 1.1–1.3 倍、TurnStrength 較小以免原地打轉。同步更新移動後處理生死：距離小於 catchRadius 的獵物放進 dead 清單，迴圈結束後才從 List 移除，捕食者 Energy 增加；捕食者每步扣一點 Energy，歸零就移除；每隔 breedEvery 步隨機挑幾隻獵物在旁邊複製一隻（位置加小偏移、速度沿用），並設族群上限。被移除者的 Polyline 移到 finishedTrails 保留。輸出用 DataTree<Polyline> 依物種分兩個分支，另外輸出每一步兩物種數量的 List<int>，可接 Quick Graph 看族群曲線。",
+   "result": "獵物群被捕食者衝散成兩三股、再於後方重新合攏，捕食者軌跡像刀痕般穿過群體留下空隙；族群數量曲線呈現此消彼長的振盪。"
   }
  ],
  "project_seeds": [

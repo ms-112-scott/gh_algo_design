@@ -1,0 +1,12 @@
+{"unit": "VAR:B04", "algo": "B04", "coverage_note": "既有 12 個變形分類：規則 2（V01 發散角、V02 半徑函數）、維度 3（V03 圓柱、V04 球面、V05 曲面 UV 映射）、輸入 3（V06 吸引子、V07 影像、V08 邊界裁切）、輸出／製造 2（V10 parastichy 連線、V12 開孔板／鱗片）、混合 1（V09 Voronoi）、時間／動畫 1（V11 Blooms，兼維度）、分析／評估 0。既有維度變形都是把「點陣」搬到圓柱、球面或曲面上，還沒有把螺線本身變成連續 3D 曲面的做法；本次依 gh-new-algos 建議補一個維度軸向的 Raup 貝殼掃掠變形。", "items": [
+{
+"title": "對數螺線掃掠成殼（Raup 貝殼）",
+"level": 3,
+"what_changes": "維度（2D 螺線點陣 → 截面沿 3D 對數螺線掃掠成曲面）＋規則（半徑公式改為指數）",
+"how": "保留原本以 number 為索引的 for 迴圈，但角度改成小步進 theta = number × dTheta（例如 10°，不再用黃金角），半徑由 spacing × √number 改成 r = a × Math.Exp(b × theta)，其中 b = Math.Log(W) / (2π)，W 為每轉一圈的放大倍率；同時加上沿軸下移 z = −T × r（T 為平移率）。在每個站點建立局部平面 new Plane(center, radialDir, Vector3d.ZAxis)（center 由 D × r 決定截面離軸距離），把輸入的封閉截面曲線（預設 new Circle(Plane.WorldXY, 1).ToNurbsCurve()）用 Transform.Scale 放大 r 倍、再用 Transform.PlaneToPlane 搬到該平面，收集成 List<Curve> 後呼叫 Brep.CreateFromLoft(sections, Point3d.Unset, Point3d.Unset, LoftType.Normal, false) 得到殼面；新增輸入 W、D、T、turns 與截面曲線。想保留葉序味道，可再把 V04 的點陣用 surface 的 UV 散佈到殼面上。",
+"result": "調整 Raup（1966）的三個參數即可在同一支程式裡得到鸚鵡螺般的平旋殼（T = 0）、高聳的錐螺（T 大）或開口很大的扇貝狀殼（W 大），可直接輸出為 3D 列印雕塑、燈罩或自相似的螺旋屋頂殼體。",
+"axis": "維度",
+"nearest_existing": "V02 改變半徑函數（Fermat → 阿基米德／指數）",
+"difference": "V02 只把平面點陣的半徑公式換成指數，結果仍是 2D 點；本變形把對數螺線當成 3D 掃掠路徑，讓截面等比放大並沿軸平移，輸出的是連續的殼體曲面，也不同於 V03、V04 只把點排到圓柱或球面上。"
+}
+]}

@@ -1,0 +1,17 @@
+{
+  "unit": "VAR:C04",
+  "algo": "C04",
+  "coverage_note": "既有 12 個變形依改動部位：維度 1（V07 3D noise 曲面取樣）、輸入 2（V04 吸引點遮罩、V05 影像混合）、規則 2（V01 脊狀、V02 Domain warping）、輸出／製造 4（V03 階梯化、V06 立面面板、V09 等高線、V12 閾值分區）、混合 2（V10 水力侵蝕、V11 接 C03）、時間／動畫 1（V08）、分析／評估 0。既有規則類變形都仍以 Perlin 取樣為核心，尚無「換掉高程生成法」的做法；本次補上中點位移（Diamond-square）這種遞迴細分的分形地形。",
+  "items": [
+    {
+      "title": "Diamond-square 中點位移地形",
+      "level": 3,
+      "what_changes": "規則（高程生成法從 Perlin 取樣改為遞迴中點位移）",
+      "how": "新增輸入 int k（格數 size=2^k+1）、double roughness（H，0–1）與 seed。建 double[size,size] h，用 new Random(seed) 給四個角隨機高度（或新增 4 個角高度輸入讓設計者指定）；令 step=size−1、amp=height，while(step>1)：half=step/2，① Diamond 步：對每個方格中心 h[x+half,y+half]=四角平均+(rnd.NextDouble()*2−1)*amp；② Square 步：對每個邊中點取上下左右存在的 2–4 個鄰點平均再加同樣的隨機位移；然後 amp*=Math.Pow(2,−roughness)、step=half。最後把 h[i,j] 直接當 elevation 交給原本的 BuildGridMesh，取代 LayeredNoise 那段迴圈，width、depth 改為 size−1。",
+      "result": "一次生成整片的碎形山地，roughness 小時峰谷崎嶇、大時平緩起伏，同 seed 可重現；網格軸向會看到輕微的方塊狀折痕。",
+      "axis": "規則",
+      "nearest_existing": "V01 脊狀雜訊（Ridged）",
+      "difference": "V01 仍逐點呼叫 Perlin 並改每層的值；本變形完全不用 Perlin，而是從四角開始每輪細分一半、亂數幅度按 2^−H 衰減，只能整格一次算出（格數限 2^k+1、無法任意點取樣），但可指定角點高度當控制點。"
+    }
+  ]
+}

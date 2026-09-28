@@ -119,6 +119,24 @@
    "what_changes": "狀態／規則",
    "how": "把 bool 改成 double（0–1），鄰居改用環形核加權平均，成長函數用高斯曲線，每步小幅更新；輸出用等值面或高度場取代方塊。",
    "result": "平滑、有機、會移動的「生物」形態，與 C01 反應擴散類似但規則來自 Lenia。"
+  },
+  {
+   "index": 12,
+   "code": "V13",
+   "title": "六角格連續 CA（Reiter 雪花）",
+   "level": 3,
+   "what_changes": "規則：方格 8 鄰居改成六角格 6 鄰居，bool 狀態改成連續水量，並分成「可接收」與「不可接收」兩部分",
+   "how": "改用軸座標 (q, r) 的 double[,] s，六個鄰居偏移為 (+1,0)(−1,0)(0,+1)(0,−1)(+1,−1)(−1,+1)；格心位置 x = (q + r/2)·cellSize、y = r·(√3/2)·cellSize。新增輸入 alpha（擴散，約 1）、beta（背景水氣，0.3–0.9）、gamma（加水量，約 0.0001–0.01）。INIT 全部設 beta、中心設 1。每一步：一格若 s≥1 或任一鄰居 s≥1 就是可接收格；把 s 拆成 u（不可接收格＝s，可接收格＝0）與 v（可接收格＝s + gamma，其餘 0）；只讓 u 擴散：uNew = u + alpha/2·(六鄰居 u 平均 − u)；最後 next = uNew + v（雙緩衝）。取消 % 週期邊界，最外圈格子固定為 beta 當水氣來源。另開 int[,] frozenAt 記錄每格首次 s≥1 的步數；輸出時對凍結格用 6 點 Polyline 畫六邊形，依 frozenAt 上色或拉高，未凍結格不輸出。",
+   "result": "從中心一格長出六重對稱的晶體：beta 低時是實心六角板，beta 高時變成枝狀雪花，frozenAt 的顏色或高度呈現一圈圈生長年輪。"
+  },
+  {
+   "index": 13,
+   "code": "V14",
+   "title": "交通 CA 時空圖與基本圖（Rule 184／NaSch）",
+   "level": 3,
+   "what_changes": "規則＋分析：一維格子的每格狀態改成「空格或車速 0–vmax」，粒子數守恆地移動，並掃描密度量測流量",
+   "how": "網格改成 int[] road（−1 為空，否則為車速），長度 L、環狀道路（索引用 % L）；新增輸入 density、vmax、pSlow、seed。每一代對每台車依序做 Nagel–Schreckenberg 四步：加速 v = Min(v+1, vmax)；煞車 v = Min(v, gap)（gap 為到前車的空格數）；以 Random.NextDouble() < pSlow 隨機減速 v = Max(v−1, 0)；再全部同時前進 v 格寫入新陣列（雙緩衝）。每代把有車的格子輸出成位於 (x, t) 的方格或矩形，依車速上色，就是時空圖。vmax=1、pSlow=0 時結果與 V02 以 rule=184 跑出的圖相同，可互相驗證。分析部分：外層迴圈讓 density 從 0.05 掃到 0.95，每個密度先跑 warmUp 代丟棄，再統計 T 代的平均流量 J = 車數 × 平均速度 / L，輸出 Point3d(density, J·scale, 0) 連成 Polyline，並輸出流量最大時的臨界密度。",
+   "result": "時空圖中車流為斜向條紋、塞車團塊是一條條往反方向傳遞的深色斜帶；基本圖呈先升後降的三角形曲線，可讀出道路或動線的臨界密度與最大通過量。"
   }
  ],
  "project_seeds": [

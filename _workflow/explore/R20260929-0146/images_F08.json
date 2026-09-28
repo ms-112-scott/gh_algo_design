@@ -1,0 +1,42 @@
+[
+  {
+    "case_id": "F08-01",
+    "url": "https://media.springernature.com/m685/springer-static/image/art%3A10.1007%2Fs00004-020-00520-1/MediaObjects/4_2020_520_Fig1_HTML.png",
+    "page": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+    "source": "Nexus Network Journal（Springer）",
+    "author": "Georgios-Spyridon Athanasopoulos",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "論文頁 og:image（Fig. 1），論文插圖"
+  },
+  {
+    "case_id": "F08-04",
+    "url": "https://www.designcoding.net/decoder/wp-content/uploads/2024/02/Minimum-Spanning-Tree-animation-square.gif",
+    "page": "https://www.designcoding.net/minimum-spanning-tree/",
+    "source": "designcoding",
+    "author": "Tuğrul Yazar",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "以 MultiPipe 呈現的最小生成樹動畫主圖"
+  },
+  {
+    "case_id": "F08-53",
+    "url": "https://i.ytimg.com/vi/BxabnKrOjT0/hqdefault.jpg",
+    "page": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+    "source": "YouTube（The Coding Train）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "影片縮圖"
+  },
+  {
+    "case_id": "F08-54",
+    "url": "https://sergeneren.com/images/2018-09-24-Spanning-Trees/divide.jpg",
+    "page": "https://sergeneren.com/2018/09/24/spanning-trees/",
+    "source": "sergeneren.com",
+    "author": "Sergen Eren",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "文章主圖（Houdini 生成樹教學），整合時請確認畫面內容"
+  }
+]

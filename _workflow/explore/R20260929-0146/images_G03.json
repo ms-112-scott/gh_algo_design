@@ -1,0 +1,32 @@
+[
+ {
+  "case_id": "G03-01",
+  "url": "https://groundhog.philipbelesky.com/assets/documentation/flows-catchments/model.jpg",
+  "page": "https://groundhog.philipbelesky.com/documentation/flows-catchments/",
+  "source": "Groundhog 文件（Flow Catchments）",
+  "author": "Philip Belesky",
+  "license": "GPL v3（網站標示）；網頁預覽圖，教學引用",
+  "license_url": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "note": "Groundhog Flow Catchments 元件的地形模型：流路與依終點合併的集水區"
+ },
+ {
+  "case_id": "G03-02",
+  "url": "https://groundhog.philipbelesky.com/assets/projects/max-iv-laboratory/model.png",
+  "page": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+  "source": "Groundhog 專案頁（MAX IV Laboratory Landscape）",
+  "author": "Philip Belesky",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "以 Grasshopper 重建的 MAX IV 波紋地形模型"
+ },
+ {
+  "case_id": "G03-52",
+  "url": "https://rlguy.com/map_generation/images/flowmap.jpg",
+  "page": "https://rlguy.com/map_generation/",
+  "source": "Ryan L. Guy 作品頁",
+  "author": "Ryan L. Guy",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "地圖生成過程中的流向圖（flow map）"
+ }
+]

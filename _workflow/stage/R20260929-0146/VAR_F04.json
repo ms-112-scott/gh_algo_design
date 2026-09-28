@@ -1,0 +1,27 @@
+{
+  "unit": "VAR:F04",
+  "algo": "F04",
+  "coverage_note": "既有變形依改動部位分類：維度 1（V04）、輸入 2（V03、V06）、規則 4（V01、V02、V05、V10）、輸出／製造 0、混合 1（V08）、時間／動畫 1（V07）、分析／評估 1（V09）。規則類都只換評分函數或基因編碼，搜尋機制本身（選擇、交配、突變）從未被替換，也沒有真正的多目標排序（V02 只是加權合成單一分數）；本次補兩個「換搜尋機制」的規則變形：粒子群最佳化與非支配排序（NSGA-II）。",
+  "items": [
+    {
+      "title": "換搜尋機制：粒子群最佳化（PSO）",
+      "level": 3,
+      "what_changes": "規則（搜尋機制：以速度更新取代選擇、交配、突變）",
+      "how": "保留 Candidate 的 Point3d[] 與 ScoreOf，另加 Vector3d[] velocity、Point3d[] pBest 與 double pBestScore 三個欄位；主迴圈刪掉精英保留、Tournament、均勻交配與 Mutate，改成每一代對每顆粒子的每個點做 v = w·v + c1·r1·(pBest − x) + c2·r2·(gBest − x)（新增輸入 inertia w 預設 0.72、c1 與 c2 預設 1.49，r1、r2 用同一個 Random 取 0–1），再 x += v；速度長度超過 maxSpeed 時用 Vector3d.Unitize 後乘 maxSpeed 截斷，點超出矩形邊界就夾回邊界並把該分量速度反向；算完 ScoreOf 若勝過 pBestScore 就把 points.Clone() 存進 pBest，再從所有 pBest 中取最高分更新 gBest。",
+      "result": "一樣輸出最佳點陣與收斂曲線，但整群方案像鳥群一樣朝目前最好的解飛去、收斂通常比 GA 快也較容易早熟；可和 F07 模擬退火（單點搜尋）並排，比較單點、族群（GA）、群體（PSO）三種搜尋在同一個 ScoreOf 上的收斂曲線，也是 Silvereye 這類 Grasshopper 最佳化外掛背後的機制。",
+      "axis": "規則",
+      "nearest_existing": "V05 基因改成滑桿參數",
+      "difference": "V05 只改基因的編碼方式（double[]），仍用 GA 的選擇、交配、突變搜尋；本變形不動編碼與評分，而是把整個搜尋機制換成粒子的速度、個體最佳（pBest）與群體最佳（gBest）更新，沒有父母與子代。"
+    },
+    {
+      "title": "非支配排序多目標（NSGA-II／Pareto 前緣）",
+      "level": 4,
+      "what_changes": "規則（選擇方式：由單一分數排序改為非支配排序＋擁擠距離）",
+      "how": "Candidate 改存 double[] objectives 兩個目標（例如 f1 = ScoreOf 的最近距離要最大、f2 = 所有點到邊界 Curve 的平均距離要最小，用 Curve.ClosestPoint 求得）；寫 Dominates(a, b)（每個目標都不差且至少一個更好）與 FastNonDominatedSort：雙層迴圈算出每個方案被幾個方案支配、支配了誰，依序剝出第 1、2、3… 前緣並記錄 rank；每個前緣內依各目標排序，頭尾擁擠距離設為 double.PositiveInfinity，中間累加相鄰兩者的目標差 ÷ 該目標全距；Tournament 改成先比 rank 小者勝、同 rank 比擁擠距離大者勝；每代把父代與子代合併成 2N，依前緣逐層放入下一代，最後一層放不下時取擁擠距離大的；輸出第 1 前緣的方案，並把各方案 (f1, f2) 畫成 Point3d 散佈點。",
+      "result": "一次演化就得到一整條 Pareto 前緣：一端是最分散、一端是最貼邊，中間是各種取捨，散佈圖上的前緣點可以逐一點選回看對應的點陣配置，等於自己做出迷你 Octopus／Wallacei。",
+      "axis": "規則",
+      "nearest_existing": "V02 多目標加權：分散又靠近邊界",
+      "difference": "V02 把兩個目標加權成單一分數，每次只得到一個解、換權重要重跑，且找不到前緣凹陷處的解；本變形不設權重，用非支配排序與擁擠距離同時保留整條前緣上分布均勻的多個解。"
+    }
+  ]
+}

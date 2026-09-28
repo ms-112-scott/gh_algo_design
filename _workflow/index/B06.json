@@ -1,0 +1,303 @@
+{
+ "id": "B06",
+ "name_zh": "離散聚合（連接點規則生長）",
+ "name_en": "Discrete Aggregation (Connection-based Stochastic Aggregation)",
+ "family": "B",
+ "one_liner": "每個零件身上有幾個「接頭平面」，電腦反覆挑一個還空著的接頭、依規則把新零件翻過來對齊接上，撞到既有零件或出界就放棄，於是一顆顆相同的積木自己長成可拆裝的量體。",
+ "how_it_works": [
+  "定義零件庫：每種零件＝幾個邊長 1 的小立方體（碰撞用）＋數個接頭平面（原點在面中心、Z 軸朝外），並把規則字串「母零件|接頭>子零件|接頭」解析成規則表。",
+  "放入種子零件，把它所有的接頭放進「開放接頭」清單，也就是生長前緣。",
+  "每一步從前緣挑一個接頭（純隨機，或抽 4 個取最靠近吸引點者），並把它從清單移除；找出適用這個接頭的規則並打亂順序。",
+  "對每條規則與 0／90／180／270° 四種轉角：把子零件的接頭平面繞自己的 X 軸翻 180°、再繞法線轉，用 Transform.PlaneToPlane 對齊到母接頭，得到子零件的擺放轉換。",
+  "用 RTree 查新零件每個立方體中心附近有沒有已放的立方體、並檢查是否在邊界盒內；通過就加入零件、在連接圖記一條「母→子」的邊、把子零件其餘接頭加入前緣，全部失敗就記為失敗接頭。",
+  "重複到零件數上限、前緣清空或嘗試次數用完；輸出依加入順序排列的零件 Mesh（即組裝順序）、連接圖線段與剩下的開放接頭平面。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "自訂 Rhino 幾何零件",
+   "level": 3,
+   "what_changes": "零件庫的來源（輸入）",
+   "how": "新增 List<Mesh> partMeshes 與 DataTree<Plane> partConns 兩個輸入，BuildLibrary 改成依輸入建立 PartType；碰撞改成先比 BoundingBox，重疊時再用 Intersection.MeshMeshFast 或在 Mesh 內取樣點以 Mesh.IsPointInside 檢查。",
+   "result": "可以用自己畫的木塊、曲面磚或家具構件當零件，聚合出不再是方塊感的形體。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "任意 Brep 邊界與障礙物",
+   "level": 2,
+   "what_changes": "邊界與禁區（輸入）",
+   "how": "把 BoundingBox 邊界換成 Brep boundary 輸入，Fits 裡改用 boundary.IsPointInside(p, tol, true)；另加 List<Brep> obstacles，任一立方體中心落在障礙物內就拒絕。",
+   "result": "聚合只在指定量體內生長，並繞開柱子、既有房間或預留的動線空間。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "接頭型別與相容表",
+   "level": 2,
+   "what_changes": "規則的描述方式（規則）",
+   "how": "每個接頭多存一個型別字元（例如 m／f／n），規則表改成型別相容表「m>f; f>m」，Rule 產生時自動展開所有型別相容的零件與接頭組合；n 型別代表封口，不接任何東西。",
+   "result": "不必逐條列出規則，就能控制公母接頭與封口端，零件種類增加時規則表不會爆炸。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "45° 斜接零件庫（Retsin 式）",
+   "level": 3,
+   "what_changes": "零件幾何與接頭角度（規則）",
+   "how": "新增直線、45°、90°、135° 四種梁段零件，接頭平面在斜切端面上；碰撞改成把零件沿中心線取樣點、用 RTree 以半徑 0.45 查詢，因為零件不再落在整數格點上。",
+   "result": "少數幾種梁段就能組成柱、梁、斜撐混合的連續構架，而不只是方塊堆疊。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "場驅動聚合：每步評分所有候選",
+   "level": 3,
+   "what_changes": "挑選接頭與規則的策略（規則）",
+   "how": "每一步不隨機挑，而是對前緣所有接頭 × 所有規則 × 四個轉角先算出擺放，只留通過碰撞的候選，用純量場函數（例如距離某條曲線、或 Perlin 雜訊值）在新零件中心取值，選分數最高者加入。",
+   "result": "聚合沿著場的高值區貼著長，形體可以被曲線或雜訊場精確引導，而不是隨機散開。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "閉合迴圈：接頭對接偵測",
+   "level": 3,
+   "what_changes": "前緣更新與連接圖（規則）",
+   "how": "新零件加入後，把它的每個接頭和前緣中所有接頭比對：原點距離 < 0.01 且兩個 ZAxis 內積 ≈ −1 時，兩個接頭都從前緣移除，並在連接圖多加一條邊。",
+   "result": "連接圖從樹變成有迴圈的網，結構上多了第二條傳力路徑，可以統計閉合數當作穩定度指標。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "階層聚合：群組變成新零件",
+   "level": 4,
+   "what_changes": "零件的尺度層級（維度）",
+   "how": "先跑一次小聚合（例如 6 個零件），把結果的所有立方體合併成一個新的 PartType，前緣剩下的開放接頭就是新零件的接頭；再用這個群組零件跑第二層聚合。",
+   "result": "得到「零件 → 單元 → 量體」的階層式構成，大尺度看是房間單元，小尺度仍是可拆的積木。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "重心與懸挑檢查",
+   "level": 4,
+   "what_changes": "加入零件前的可行性判斷（分析／評估）",
+   "how": "沿連接圖往上找每個零件的支撐路徑，新零件加入後計算它與其下游所有零件的合成重心，若重心投影超出支撐零件的立方體範圍一定距離（或懸挑層數超過 k）就拒絕；可用不同權重的零件做配重。",
+   "result": "聚合結果在每個組裝步驟都不會翻倒，可以長出受控的懸挑而不是亂飄的枝條。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "密度場導引（近似拓樸最佳化）",
+   "level": 4,
+   "what_changes": "生長方向的依據（混合）",
+   "how": "新增 Point3d 與 double 兩個清單當 3D 密度場取樣（可來自結構分析外掛或 C04 的 3D 雜訊），每步只接受新零件中心密度 > threshold 的候選，並優先挑密度最高者。",
+   "result": "零件集中在場的高密度區，像用積木近似出拓樸最佳化的材料分布。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "Timer 逐件生長動畫",
+   "level": 2,
+   "what_changes": "執行方式（時間／動畫）",
+   "how": "把 placed、open、cellTree、Random 改成 class 欄位，加 bool reset 與 bool run 輸入；run 時每次 RunScript 只做一次迴圈並呼叫 Component.ExpireSolution(true)，同時輸出前緣平面的 Z 軸箭頭。",
+   "result": "看得到前緣一路推進、哪些接頭被擋住而熄滅，適合說明「前緣」這個資料結構。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "組裝順序與機械手臂取放平面",
+   "level": 3,
+   "what_changes": "輸出（輸出／製造）",
+   "how": "對連接圖從種子做 BFS，得到由下往上、每個零件都接在已放零件上的順序；每個零件輸出一個取放平面（零件中心＋對齊後的 X 軸），並標出只有一條連接的葉節點當作可先拆的零件。",
+   "result": "得到可以直接交給機械手臂或人工照做的逐步組裝清單，以及反向的拆解順序。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "板材化：零件拆成 CNC 裁切件",
+   "level": 3,
+   "what_changes": "零件幾何的製造表達（輸出／製造）",
+   "how": "把每個 PartType 的立方體外殼換成 18 mm 厚的板件（用 Brep.CreateFromBox 做側板與隔板），在接頭平面上以 Circle 畫出螺栓孔，最後統計每種零件的數量並把板件攤平排版到 XY 平面。",
+   "result": "聚合結果直接轉成合板積木的裁切清單與孔位，數量統計顯示同一種零件被重複用了多少次。"
+  }
+ ],
+ "project_seeds": [
+  "可拆組合板涼亭",
+  "日照導向的聚合遮陽構架",
+  "模組化集合住宅：聚合 vs WFC",
+  "演化聚合規則",
+  "社區參與的積木遊戲化設計"
+ ],
+ "cases": [
+  {
+   "id": "B06-01",
+   "cc": false,
+   "title": "Wasp：Discrete Design for Grasshopper",
+   "creator": "Andrea Rossi（TU Darmstadt DDU）",
+   "year": "2017",
+   "url": "https://github.com/ar0551/Wasp",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-02",
+   "cc": false,
+   "title": "Tallinn Architecture Biennale Pavilion（塔林建築雙年展展館）",
+   "creator": "Gilles Retsin Architecture",
+   "year": "2017",
+   "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B06-03",
+   "cc": false,
+   "title": "Combinatorial Nest（Combo-Nest）",
+   "creator": "Jose Sanchez／Plethora Project（主設計 Brendan Ho）",
+   "year": "2019",
+   "url": "https://www.plethora-project.com/combinatorial-nest",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Common-hood（遊戲模擬）"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-04",
+   "cc": false,
+   "title": "Assembler：建構與管理 assemblage 的 Grasshopper 外掛",
+   "creator": "Alessio Erioli（Co-de-iT）",
+   "year": "2022",
+   "url": "https://github.com/Co-de-iT/Assembler",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-05",
+   "cc": false,
+   "title": "Aggregated Structures：以離散積木近似拓樸最佳化的材料分布",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "url": "https://www.academia.edu/35602236/Aggregated_Structures_Approximating_Topology_Optimized_Material_Distribution_with_Discrete_Building_Blocks",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B06-06",
+   "cc": false,
+   "title": "Collaborative Assembly of Digital Materials（ACADIA 2017）",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "url": "https://www.academia.edu/35602244/Collaborative_Assembly_of_Digital_Materials",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "六軸機械手臂"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-07",
+   "cc": false,
+   "title": "Sequential Modular Assembly：以不同重量模組做機械手臂懸挑組裝",
+   "creator": "Bastian Wibranek, Timm Glätzer, Leon Wietschorke, Oliver Tessmann（TU Darmstadt DDU）",
+   "year": "2020",
+   "url": "https://www.dg.architektur.tu-darmstadt.de/fachgebiet_ddu/archiv/ddu_newsarchiv_details_111424.en.jsp",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "機械手臂"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-51",
+   "cc": true,
+   "title": "Jigsaw Block（拼圖方塊結構生成）",
+   "creator": "Mojang Studios（Minecraft）",
+   "year": "2019",
+   "url": "https://minecraft.wiki/w/Jigsaw_Block",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Minecraft"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B06-52",
+   "cc": true,
+   "title": "ProceduralDungeon：Unreal Engine 程序地城外掛",
+   "creator": "Benoit Pelletier（BenPyton）",
+   "year": "2019",
+   "url": "https://github.com/BenPyton/ProceduralDungeon",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Unreal Engine",
+    "C++",
+    "Blueprint"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B06-53",
+   "cc": true,
+   "title": "Dungeon Architect Snap Builder（房間預製件拼接）",
+   "creator": "Code Respawn",
+   "year": "2019",
+   "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Unity",
+    "Unreal Engine"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "3d-architecture": 4,
+   "modeling": 2,
+   "fabrication": 2,
+   "performance": 1,
+   "urban-landscape": 1
+  },
+  "scale": {
+   "建築": 5,
+   "構件": 4,
+   "群體／都市": 1
+  },
+  "tools": {
+   "Grasshopper": 2,
+   "Unreal Engine": 2,
+   "Python": 1,
+   "Common-hood（遊戲模擬）": 1,
+   "C#": 1,
+   "六軸機械手臂": 1,
+   "機械手臂": 1,
+   "Minecraft": 1,
+   "C++": 1,
+   "Blueprint": 1,
+   "Unity": 1
+  }
+ },
+ "rejected": []
+}

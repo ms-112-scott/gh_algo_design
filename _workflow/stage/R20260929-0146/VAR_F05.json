@@ -1,0 +1,27 @@
+{
+  "unit": "VAR:F05",
+  "algo": "F05",
+  "coverage_note": "既有 10 個變形分類：維度 1（V06）、輸入 2（V03、V05）、規則 2（V01、V02）、輸出／製造 1（V08）、混合 1（V10）、時間／動畫 1（V09）、分析／評估 2（V04、V07）。規則面只改了搜尋順序與邊權，距離本身仍受 8 鄰居格子的八角形誤差限制；分析面只有單一距離場與指定起終點的流量計數，缺少「全點對」的網路中心性指標。本次補一個規則（Eikonal 更新）與一個分析（closeness／整合度）。",
+  "items": [
+    {
+      "title": "Fast Marching：Eikonal 平滑距離場",
+      "level": 4,
+      "what_changes": "規則（鄰居的距離更新公式）＋輸出（沿梯度回溯路徑）",
+      "how": "保留優先佇列的波前擴散，但鄰居改成上下左右 4 格，每格有 Far／Trial／Known 三種狀態（int[] state），Trial 格放進 PriorityQueue<int,double>（Rhino 7 的舊版 .NET 可用 SortedSet<(double,int)> 代替）。取出最小的 Trial 格標為 Known 後，對每個非 Known 鄰居改用 Eikonal 局部公式更新：a = min(T左, T右)、b = min(T上, T下)、f = 該格成本（預設 1，可直接沿用 V03 的影像成本）、h = cellSize；若 |a − b| ≥ h·f，T = min(a, b) + h·f，否則 T = (a + b + Math.Sqrt(2·h²·f² − (a − b)²)) / 2，比原值小才寫回並 Push。障礙格的 T 固定為 double.MaxValue 不參與取 min。跑完後把 T 當頂點 Z 值建 Mesh，用 Mesh.CreateContourCurves 取等距線；路徑改從終點以雙線性內插求 T 的梯度，每步沿 −∇T 前進半格，直到離起點小於一格，輸出 Polyline。",
+      "result": "等距線是真正的圓弧（不再是 Dijkstra 8 鄰居的八角形，約 8% 的方向誤差消失），回溯出的最短路徑可以走任意角度的平順斜線，不會貼著 45°／90° 的格線折來折去。",
+      "axis": "規則",
+      "nearest_existing": "V04 多起點距離場（可及性地圖）",
+      "difference": "V04 仍是格子圖上的 Dijkstra，距離只能沿 8 個方向累加、等距線呈八角形；本變形換成 Eikonal 局部解，距離場近似連續空間的歐氏距離，並改用梯度下降回溯路徑，而非沿「從哪一格走過來」倒推。"
+    },
+    {
+      "title": "網路中心性：closeness 與整合度",
+      "level": 3,
+      "what_changes": "迴圈（全點對最短路徑）＋輸出（每個節點的中心性指標）",
+      "how": "以 V05 的街道／路網圖為底：節點是街道曲線的端點與交點，邊是實際的街道段，存成 Dictionary<int, List<(int, double)>>。對每個節點各跑一次不設終點的 Dijkstra（公制距離），或把邊權全設 1 改跑 BFS（拓樸步數，即 Space syntax 的深度）。累加總深度 TD_i = Σ d(i, j)，得到平均深度 MD_i = TD_i /(n − 1)、closeness C_i = (n − 1)/ TD_i；Space syntax 整合度再算 RA = 2(MD − 1)/(n − 2)，以鑽石值 D_n = 2{n[log₂((n + 2)/3) − 1] + 1}/((n − 1)(n − 2)) 正規化成 RRA = RA / D_n，整合度 = 1 / RRA。加一個 radius 輸入，只累加深度 ≤ radius 的節點即得局部整合度（例如 R3）。最後把每條街道段依兩端節點的平均值用漸層色上色輸出，並 Print 整合度最高的前幾條。",
+      "result": "整個路網依「平均要走多遠（幾步）才能到其他所有地方」上色：主街與核心區呈暖色、死巷與邊緣呈冷色，可比較全域與局部整合度找出社區中心的位置。",
+      "axis": "分析／評估",
+      "nearest_existing": "V07 多組起終點＋流量疊加",
+      "difference": "V07 是對指定的起終點配對計算「經過次數」（接近 betweenness）；本變形對每個節點計算到所有其他節點的平均深度（closeness／integration）並做正規化。圖的邊是街道／路網的實際拓樸連接，與 G01 Isovist／VGA「兩格互相看得到就建邊」的可見性圖不同。"
+    }
+  ]
+}

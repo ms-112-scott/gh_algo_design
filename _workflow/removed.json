@@ -14,5 +14,13 @@
   "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
   "reason": "神經網路相關，超出教學難度",
   "at": "2026-09-28T23:48+08:00"
+ },
+ {
+  "id": "E06-54",
+  "algo": "E06",
+  "title": "form-finding：瀏覽器原生 3D 找形引擎",
+  "url": "https://github.com/damianbrenlla/form-finding",
+  "reason": "2026-08 新建的個人 repo，0 星 0 fork，證據與代表性不足",
+  "at": "2026-09-29T02:30+08:00"
  }
 ]

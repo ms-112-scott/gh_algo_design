@@ -201,6 +201,13 @@
           "what_changes": "輸出轉成可製造幾何",
           "how": "把每個正方形向內 Offset 板厚並在接觸邊加卡榫缺口，依標籤分層排版到板材上並編號。",
           "result": "可雷射切割組裝的畢氏樹或分割立面模型。"
+        },
+        {
+          "title": "圖文法：房間鄰接圖的改寫",
+          "level": 4,
+          "what_changes": "規則／狀態：改寫對象從帶標籤的正方形換成「帶標籤的節點＋鄰接連線」組成的圖",
+          "how": "把 LabeledSquare 清單換成兩個欄位：List<string> labels（節點標籤）與 List<(int a,int b)> edges（鄰接）。起始只放一個標籤為 House 的節點。ApplyRules 改成逐節點比對標籤（只做單節點比對，避免在單一元件內寫完整的子圖比對）：House → Entry、Public、Private 三個節點並連成 Entry–Public–Private；Public → Living、Kitchen、Dining 並兩兩相連；Private → Hall 加上 n 個 Bed，每個 Bed 只連 Hall。被替換節點原本的外部連線，依規則指定的「接口節點」（例如 Public 換掉後由 Living 繼承）重新接上，這一步就是圖文法的嵌入規則。每一代同時改寫所有非終端標籤，沒有非終端標籤就提早停止。輸出時為每個節點給一個 Point3d，跑 50–100 次簡單力導向排佈（相連節點用彈簧拉近、所有節點兩兩互斥），再輸出 Line 當鄰接線、Circle 當房間泡泡（半徑依標籤查面積表）、TextDot 標出房名。",
+          "result": "從一個「住宅」節點逐代展開成入口—客廳—走道—臥室的泡泡圖（bubble diagram），同一組規則換個 Bed 數或順序就得到不同但合乎格局邏輯的平面關係圖。"
         }
       ],
       "project_seeds": [

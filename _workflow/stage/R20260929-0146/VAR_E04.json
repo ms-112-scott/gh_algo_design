@@ -1,0 +1,47 @@
+{
+ "unit": "VAR:E04",
+ "algo": "E04",
+ "coverage_note": "既有 12 個變形依軸向分類：維度 1（V12 曲面上）、輸入 3（V01 錨點、V03 任意 Mesh、V05 吸引子）、規則 4（V02 對角彈簧、V04 預力、V06 Kinetic Damping、V11 法向壓力）、輸出／製造 1（V08）、混合 1（V10 接 E01）、時間／動畫 1（V07）、分析／評估 1（V09 應力視覺化）。缺的是面向製造的幾何約束（面板平面性）、桿件彎曲剛度、與外部量體的碰撞，以及取代顯式積分的投影式求解器；本批四個變形依 gh-new-algos 併入建議補上這些，分屬輸出／製造 1、規則 2、輸入 1。",
+ "items": [
+  {
+   "title": "四邊形網格平面化（PQ Mesh）",
+   "level": 4,
+   "what_changes": "加約束（每個四邊形面投影到自己的擬合平面）",
+   "how": "找形收斂後進入第二階段：用 int[4] 記錄每個四邊形面的四個質點索引（格點 i,j 的面為 here、here+1、here+pointsPerRow+1、here+pointsPerRow）。每一步對每個面取四點，呼叫 Plane.FitPlaneToPoints(pts, out Plane pl) 擬合平面，再用 pl.ClosestPoint(p) 得到各點的目標位置，把 (目標 − 目前位置) 累加到該質點的 Vector3d sum[] 與 int count[]；彈簧也改成算出兩端的目標位置一起累加（保住找形得到的形狀）。所有面與彈簧處理完，非固定質點一次移動 sum/count（投影後取平均，Shape-Up 的做法）。另外輸出每面平面度：兩條對角線用 Intersection.LineLine 求最近兩點距離，除以平均對角線長，接 Gradient 上色，最大值低於門檻（例如 0.1%）就 break。",
+   "result": "受壓殼的每一格四邊形都變成真正的平面，可直接用平板玻璃或平板面板覆蓋，平面度色圖從紅逐步退成綠。",
+   "axis": "輸出／製造",
+   "nearest_existing": "V12 曲面上的網：約束在基底曲面；V08 受壓殼 → 可製造構件",
+   "difference": "V12 是把單一質點投影到一張輸入曲面，本變形是把每個面的四個頂點投影到「該面自己擬合出的平面」，並把多個面對同一頂點的要求取平均；V08 只把四邊形輸出成板，不保證四點共平面，本變形才讓面板真的能平板製造。"
+  },
+  {
+   "title": "彎曲桿件與編織網殼",
+   "level": 4,
+   "what_changes": "規則（加入桿件彎曲剛度）＋輸出（上下交錯的編織實體）",
+   "how": "把格網的每一列、每一行各串成一根桿件，存成 List<int[]>（依序的質點索引）。每一步除了原本的軸向彈簧，再對每根桿件上連續三點 a、b、c 加彎曲力：F = bendK × ((a+c)/2 − b) 加到 b，並各把 −F/2 加到 a、c（合力為零，不會讓整體漂移）。桿件原長設為平直時的格距，把兩端錨點往內拉近，平直桿就被彈性彎成拱。收斂後依交叉點 (i+j)%2 決定上下：經向桿在交叉點沿局部法向（用相鄰兩邊 Vector3d.CrossProduct 求得）偏移 +r、緯向桿偏移 −r，下一個交叉點反過來；用 Curve.CreateInterpolatedCurve 把偏移後的點串成平順曲線，再以 Brep.CreatePipe 輸出圓管。",
+   "result": "一組原本平直的細桿被彎成平順的拱狀網殼，經緯桿件在每個交叉點上下交錯，看起來像竹編或藤編的大型籃狀結構。",
+   "axis": "規則",
+   "nearest_existing": "V02 對角彈簧與三角網",
+   "difference": "V02 仍然只有控制長度的軸向彈簧，桿件在節點處可以任意折角；本變形加上三點彎曲力讓每根桿件保持連續平順的彎曲，並輸出上下交錯的編織實體，而不是單純的線段網。"
+  },
+  {
+   "title": "布料下垂與碰撞",
+   "level": 3,
+   "what_changes": "輸入（既有量體作為障礙物）＋規則（單向碰撞約束）",
+   "how": "新增 Mesh obstacle 輸入（桌子、椅子、既有建築量體）與 double friction；gravity 改成真正向下（負 Z），只固定布的一邊或幾個點，甚至全部不固定。另外加上跨一格的彎曲彈簧（here→here+2 與 here→here+2×pointsPerRow）避免布過度摺疊。每步更新位置後，對每個質點檢查 obstacle.IsPointInside(p, tol, false)：若穿入，用 obstacle.ClosestMeshPoint(p, 0) 取得最近點與面法向，把質點放到表面外 ε 處，並把速度拆成法向與切向，法向分量歸零、切向分量乘 (1 − friction)。也可加一個 p.Z < 0 就拉回 Z = 0 的地面約束。",
+   "result": "一塊平布從上方落下，披覆在量體或家具上，在稜角與邊緣自然形成皺褶與垂墜，可當作覆蓋既有建築的織物外皮或布幔裝置的造型。",
+   "axis": "輸入",
+   "nearest_existing": "V12 曲面上的網：約束在基底曲面",
+   "difference": "V12 把每個質點每一步都強制吸回曲面（雙向、永遠貼合），本變形只在質點穿入障礙物時才推出（單向不等式約束），加上真實向下的重力與摩擦，布可以懸空、垂落、在邊緣起皺，而不是均勻貼在表面上。"
+  },
+  {
+   "title": "位置式動力學（PBD）求解器",
+   "level": 4,
+   "what_changes": "迴圈（由「力→速度→位置」改為直接修正位置的約束投影）",
+   "how": "移除力陣列，改成三段式：一、預測位置 q = p + v·dt + g·dt²（固定點 q = p）；二、內層迴圈跑 solverIterations 次，對每條彈簧做距離約束投影：Vector3d d = q[b] − q[a]；double len = d.Length；Vector3d corr = d × ((len − RestLength) / len × 0.5 × k)，q[a] += corr、q[b] −= corr（一端固定時整段修正給另一端，k 在 0~1 之間）；三、v = (q − p) / dt × damping，p = q。進一步可仿 Kangaroo 2 的架構：定義介面 IGoal { void Calculate(Point3d[] q, Vector3d[] move, double[] weight); }，彈簧、錨點、V12 的曲面約束各寫成一個 Goal，每一輪把所有 Goal 的移動量加權累加後取平均再套用，新增約束只要多寫一個類別。",
+   "result": "剛度 k 設到 1、dt 放大也不會數值爆炸，幾十步就收斂成同樣的受壓殼；而且長度、錨點、曲面等不同目標可以疊在同一個求解器裡，就是一個自寫的迷你 Kangaroo。",
+   "axis": "規則",
+   "nearest_existing": "V06 改用 Kinetic Damping 加速收斂",
+   "difference": "V06 仍是顯式的力積分，只改阻尼策略，stiffness 太大或 dt 太大照樣會發散；本變形改成直接把位置投影到滿足約束，穩定度與剛度脫鉤，並提供可擴充的多目標 Goal 架構（V12 與平面化都能當成其中一個 Goal）。"
+  }
+ ]
+}

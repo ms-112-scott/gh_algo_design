@@ -119,6 +119,15 @@
    "what_changes": "規則（迭代 → 遞迴）",
    "how": "改用 Descartes 圓定理：從三個互切圓出發，遞迴計算每個空隙中與三圓相切的新圓，半徑小於門檻就停止。",
    "result": "所有圓精確相切、無限細分的分形圖樣（Apollonian gasket）。"
+  },
+  {
+   "index": 12,
+   "code": "V13",
+   "title": "泡泡圖配置：鄰接圖彈簧（力導向）",
+   "level": 3,
+   "what_changes": "輸入（新增房間面積與鄰接圖）＋規則（互推之外加上鄰接彈簧吸引）",
+   "how": "新增 List<double> areas 與 List<string> adjacency（每筆寫成「0-3」表示房間 0 與 3 需相鄰）兩個輸入；圓數改為 areas.Count，半徑 r_i = Math.Sqrt(areas[i] / Math.PI)，不再隨機。每輪先照原本的重疊互推累加位移，再對每一組鄰接配對算 gap = 距離 − (r_i + r_j)：gap > 0 時兩圓沿連線各往對方移動 k·gap / 2（彈簧，k 約 0.1–0.3）；可選 Fruchterman–Reingold 版本，對所有配對加互斥 K²/d、鄰接配對加吸引 d²/K，並用逐輪遞減的溫度 temperature 限制單輪最大位移，避免震盪。邊界拉回沿用原本規則。收斂後輸出圓、鄰接連線（Line），並 Print「已相切的鄰接數／總鄰接數」與剩餘重疊量；圓心與半徑可直接接到 E03 V04 Power diagram 切出平面。",
+   "result": "每個房間以面積對應大小的圓出現，需要相鄰的房間彼此貼緊、不相關的房間被推開，得到可轉成平面格局的泡泡圖。"
   }
  ],
  "project_seeds": [

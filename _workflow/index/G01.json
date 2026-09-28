@@ -1,0 +1,320 @@
+{
+ "id": "G01",
+ "name_zh": "Isovist 可視域與可見性圖分析",
+ "name_en": "Isovist & Visibility Graph Analysis (VGA)",
+ "family": "G",
+ "one_liner": "從一點向四周打出射線，碰到牆就停，連起來就是「站在這裡看得到的範圍」；把平面上每一格都算一次，就得到顯示開闊、隱蔽與視覺連通程度的可視域地圖。",
+ "how_it_works": [
+  "把牆曲線拆成直線段：折線直接取每條邊，曲線先等分成小段近似。",
+  "從觀察點等角度打出 rayCount 條射線，每條射線和所有線段解 p + t·d = a + u·(b − a)，取 t > 0 且 0 ≤ u ≤ 1 中最小的 t；都沒打到就停在 maxDist。",
+  "依角度順序把交點連成封閉 Polyline，這就是可視域（isovist）多邊形。",
+  "計算形狀指標：鞋帶公式求面積、邊長總和為周長、4πA/P² 為緊湊度，相鄰射線距離跳動大的邊加總為遮蔽邊長度。",
+  "在牆的外框內以 cellSize 布格點，每個格點都重複第 2–4 步，取 metric 指定的指標。",
+  "把指標正規化成 0–1，塗在網格頂點上輸出彩色 Mesh（isovist 場），同時輸出觀察點的多邊形、射線與指標文字。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "端點射線：精確可視域多邊形",
+   "level": 2,
+   "what_changes": "射線方向（規則：等角度 → 朝牆端點）",
+   "how": "把 CastIsovist 的角度迴圈改成：收集所有線段端點，對每個端點算 Math.Atan2 角度，並加上 ±0.0001 弧度的兩條偏移射線；把角度排序（Array.Sort）後逐一求最近交點。rayCount 不再需要。",
+   "result": "多邊形頂點剛好落在牆角與遮蔽邊端點上，射線數大幅減少、遠處細縫也不會漏掉，面積為精確值。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "視錐 isovist：限制視角與朝向",
+   "level": 1,
+   "what_changes": "射線範圍（規則：360° → 視角 fov）",
+   "how": "新增 direction（Vector3d）與 fov（度）輸入；角度迴圈改成從 atan2(direction) − fov/2 掃到 + fov/2，多邊形頭尾都接回觀察點。",
+   "result": "得到扇形的視野範圍，可模擬人眼約 120°、監視器或窗戶的視角，場會依朝向呈方向性。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "完整形狀指標：徑向統計與 drift",
+   "level": 2,
+   "what_changes": "Measures 的輸出（分析）",
+   "how": "在 Measures 中多算射線長度的平均、標準差、偏度（dist 陣列統計），以及 drift：isovist 面積重心（AreaMassProperties.Compute(polyline 轉 PolylineCurve).Centroid）減觀察點的向量長度與方向；metric 增加到 0–7。",
+   "result": "每個格點多了「視線長短是否均勻」與「視覺重心往哪邊拉」的資訊，drift 向量可畫成箭頭場，指出空間會把人往哪裡吸引。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "動線上的 isovist 序列",
+   "level": 2,
+   "what_changes": "觀察點（輸入：單點 → 沿路徑取樣）＋輸出圖表",
+   "how": "新增 path（Curve）與 samples 輸入，用 path.DivideByCount 取點，對每點算 isovist 與指標；把指標當 Y、路徑長度當 X 輸出一條折線圖（Polyline），並在路徑上以圓的大小顯示面積。",
+   "result": "得到走過空間時「開 → 合 → 開」的視覺節奏曲線，可用來比較園林、展場或長廊的空間序列。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "可見性圖 VGA：互看得見就連邊，求平均深度",
+   "level": 3,
+   "what_changes": "輸出（場 → 圖）；混合 F05 BFS",
+   "how": "對所有格點兩兩做一次線段遮擋測試（格點連線與任何牆段有交點就看不到，可沿用 RaySegment 並限制 t < 兩點距離），看得到就存進 List<int>[] 鄰接表；再從每個格點做 BFS 求到其他格點的平均步數（平均深度），倒數當整合度上色。和 F05 的差別：圖的邊不是既有路網，而是由「互相看得到」產生。",
+   "result": "得到 space syntax 式的視覺整合度地圖：大廳、主走廊整合度高，死角與深處房間整合度低；n 個格點需 n² 次測試，建議格點 ≤ 1500。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "3D isovist：體積與球面射線",
+   "level": 4,
+   "what_changes": "維度（平面射線 → 球面射線、牆線 → Mesh）",
+   "how": "walls 改成 Mesh 輸入，射線方向改用 Fibonacci 球面分布（黃金角）產生 n 個 Vector3d，對每條用 Rhino.Geometry.Intersect.Intersection.MeshRay(mesh, new Ray3d(p, d)) 取距離；以各方向距離近似體積（Σ d³·4π/3n），並把交點做成點雲或凸殼。",
+   "result": "得到從一點看出去的立體可視空間，可比較樓梯井、挑空或中庭在垂直方向的開闊感。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "地形上的可視域（viewshed）",
+   "level": 3,
+   "what_changes": "輸入（牆線 → 地形高程）；混合 C04 地形",
+   "how": "輸入地形 Mesh 或 C04 產生的高程格網與觀察點眼高；對每個格點沿觀察點連線等距取樣，用 Mesh.ClosestPoint 或高程陣列插值取地面高度，檢查視線高度是否始終高於地面（記錄沿線最大仰角比較），看得到的格點標 1。",
+   "result": "得到山坡或基地上從瞭望點看得到的地面範圍，可用來選擇觀景台、檢查新建物會不會被看見。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "Monte Carlo 天空可視率",
+   "level": 3,
+   "what_changes": "射線方向與指標（分析：水平射線 → 半球隨機射線）",
+   "how": "輸入建築量體 Mesh；對每個地面格點用 Random(seed) 產生 N 條餘弦加權的上半球方向（u、v 取亂數，θ = asin(√u)），用 Intersection.MeshRay 檢查是否被擋，沒被擋的比例就是天空可視率，塗在格點上。",
+   "result": "得到街道峽谷或中庭地面「看得到多少天空」的分布圖，開闊廣場接近 1、窄巷接近 0，可作為熱舒適與日照的前置分析。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "牆面被看見程度回映",
+   "level": 2,
+   "what_changes": "輸出（格點場 → 牆面上色）",
+   "how": "在 CastIsovist 記錄每條射線打到的線段編號（hitSeg），格點迴圈中對打到的線段累加次數（int[] 計數陣列）；最後把每段牆以次數上色或依次數做 Pipe 粗細，並除以牆長正規化。",
+   "result": "看出哪些牆面、店面或展牆最常被看見，可用來決定招牌、展品或開窗位置。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "從 3D 量體切出視線高度的牆線",
+   "level": 1,
+   "what_changes": "輸入（手畫牆線 → 既有建築模型）",
+   "how": "新增 buildings（List<Brep>）與 eyeHeight 輸入，用 Brep.CreateContourCurves(brep, new Plane(new Point3d(0,0,eyeHeight), Vector3d.ZAxis)) 取得眼睛高度的剖切線，再接進原本的 walls 流程。",
+   "result": "直接從既有的 Rhino 建築或都市模型得到 1.6 m 高的平面牆線，不用重畫就能做可視域分析。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "美術館問題：最少觀察點覆蓋",
+   "level": 4,
+   "what_changes": "流程（分析 → 搜尋／最佳化）",
+   "how": "先把平面格點化，對每個候選點算 isovist 並記錄它看得到哪些格點（用 Polyline.ToPolylineCurve().Contains 判斷，存成 bool[]）；再用貪婪法反覆挑「新增覆蓋最多」的候選點，直到覆蓋率達 coverage 目標，輸出挑到的點與各自的 isovist。",
+   "result": "得到能看到整個平面所需的少數監視器或服務台位置，並能比較覆蓋率 90% 與 100% 需要的點數差距。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "可視度地景：場轉成 3D 列印模型",
+   "level": 2,
+   "what_changes": "輸出／製造（彩色網格 → 起伏實體）",
+   "how": "把每個格點 Mesh 頂點的 Z 改成指標值 × heightScale，外框四邊往下拉到 0 補側牆，用 Mesh.Offset 或 Mesh.CreateFromBox 封底成封閉 Mesh，輸出 STL；牆線另外 Extrusion 成薄片插在上面。",
+   "result": "開闊處隆起、隱蔽處下陷的可視度地形模型，可 3D 列印或以等高線雷切疊層，讓空間的視覺結構變成摸得到的模型。"
+  }
+ ],
+ "project_seeds": [
+  "展場動線的視覺節奏設計",
+  "校園廣場的可視度與座椅配置",
+  "最少監視器與服務台配置",
+  "老街視廊保存與新建量體檢核",
+  "可視度地景雕塑"
+ ],
+ "cases": [
+  {
+   "id": "G01-01",
+   "cc": false,
+   "title": "Exploring Isovist Fields：建築與都市形態中的空間與形狀",
+   "creator": "Michael Batty",
+   "year": "2001",
+   "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:123-150",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G01-02",
+   "cc": false,
+   "title": "From Isovists to Visibility Graphs：建築空間分析方法",
+   "creator": "Alasdair Turner、Maria Doxa、David O'Sullivan、Alan Penn",
+   "year": "2001",
+   "url": "https://discovery.ucl.ac.uk/160/",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G01-03",
+   "cc": false,
+   "title": "DeCodingSpaces：2D 與 3D isovist 可視性分析教學",
+   "creator": "Martin Bielik（DeCodingSpaces，Bauhaus-Universität Weimar）",
+   "year": "2019",
+   "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "DeCodingSpaces"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-04",
+   "cc": false,
+   "title": "豫園遊覽動線的空間視覺經驗：以 isovist 與可見性圖計算分析",
+   "creator": "Rongrong Yu、Michael J. Ostwald",
+   "year": "2018",
+   "url": "https://www.sciencedirect.com/science/article/pii/S2095263518300451",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G01-05",
+   "cc": false,
+   "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
+   "creator": "Michael J. Dawes、Michael J. Ostwald",
+   "year": "2014",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0360132314001760",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G01-06",
+   "cc": false,
+   "title": "城市的數位意象：以 3D isovist 做 Lynch 式都市分析",
+   "creator": "Eugenio Morello、Carlo Ratti",
+   "year": "2009",
+   "url": "https://journals.sagepub.com/doi/10.1068/b34144t",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G01-07",
+   "cc": false,
+   "title": "SYNTACTIC：Space Syntax 設計外掛與 Isovist Bubble",
+   "creator": "Pirouz Nourian、Samaneh Rezvani（TU Delft）",
+   "year": "2015",
+   "url": "https://sites.google.com/site/pirouznourian/syntactic-design",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "SYNTACTIC"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-51",
+   "cc": true,
+   "title": "2D Visibility（2D 可視範圍互動解說）",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "2012",
+   "url": "https://www.redblobgames.com/articles/visibility/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-52",
+   "cc": true,
+   "title": "Sight & Light：2D 視線與光影效果教學",
+   "creator": "Nicky Case",
+   "year": "2014",
+   "url": "https://ncase.me/sight-and-light/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-53",
+   "cc": true,
+   "title": "Coding Challenge #145：Ray Casting 2D（2D 射線投射）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-54",
+   "cc": true,
+   "title": "Houdini 中的 Isovist 與可見性圖",
+   "creator": "houdinigubbins（Houdini Gubbins 部落格）",
+   "year": "2017",
+   "url": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G01-55",
+   "cc": true,
+   "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
+   "creator": "Byron Knoll",
+   "year": "2013",
+   "url": "https://github.com/byronknoll/visibility-polygon-js",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 4,
+   "drawing": 3,
+   "performance": 2,
+   "urban-landscape": 2,
+   "3d-architecture": 1
+  },
+  "scale": {
+   "建築": 4,
+   "物件": 4,
+   "群體／都市": 3,
+   "地景": 1
+  },
+  "tools": {
+   "JavaScript": 3,
+   "Grasshopper": 2,
+   "DeCodingSpaces": 1,
+   "SYNTACTIC": 1,
+   "HTML5 Canvas": 1,
+   "p5.js": 1,
+   "Houdini": 1
+  }
+ },
+ "rejected": []
+}

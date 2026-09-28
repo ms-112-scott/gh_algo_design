@@ -1,0 +1,42 @@
+[
+ {
+  "case_id": "B06-04",
+  "url": "https://global.discourse-cdn.com/mcneel/uploads/default/original/4X/4/8/4/4840a7b08bacc70ebd154a4a8deb585a80b24fde.jpeg",
+  "page": "https://discourse.mcneel.com/t/announcing-assembler-a-plugin-to-construct-and-manage-assemblages/144119",
+  "source": "McNeel Forum（Assembler 發表文）",
+  "author": "Alessio Erioli（Co-de-iT）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "Assembler 以準則驅動、確定性方式生成的範例 assemblage（1920×1175）"
+ },
+ {
+  "case_id": "B06-51",
+  "url": "https://minecraft.wiki/images/Jigsaw_Block_%28S%29_JE3_BE2.png",
+  "page": "https://minecraft.wiki/w/Jigsaw_Block",
+  "source": "Minecraft Wiki",
+  "author": "Mojang Studios",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "拼圖方塊本身的方塊圖示（遊戲材質）"
+ },
+ {
+  "case_id": "B06-52",
+  "url": "https://github.com/BenPyton/ProceduralDungeon/wiki/Images/ProceduralDungeonResult.gif",
+  "page": "https://github.com/BenPyton/ProceduralDungeon",
+  "source": "GitHub README（BenPyton/ProceduralDungeon）",
+  "author": "Benoit Pelletier",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "README 中的生成結果動圖：房間經由門彼此串接成地城"
+ },
+ {
+  "case_id": "B06-53",
+  "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/images/unity/sample_01.jpg",
+  "page": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+  "source": "Snap Map Builder User Guide（Dungeon Architect for Unity）",
+  "author": "Code Respawn",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "使用手冊中的範例專案畫面：房間預製件拼接出的地城"
+ }
+]

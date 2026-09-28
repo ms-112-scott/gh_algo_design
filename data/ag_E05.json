@@ -1,0 +1,727 @@
+{
+  "agent": "ag_E05",
+  "algorithms": [
+    {
+      "id": "E05",
+      "name_zh": "圖解靜力學（索多邊形與力圖）",
+      "name_en": "Graphic Statics (Funicular Polygon & Force Diagram)",
+      "family": "E",
+      "family_name": "排列與鬆弛",
+      "file": "E05_GraphicStatics.cs",
+      "loc": 161,
+      "logic": [
+        "幾何轉換",
+        "直接公式"
+      ],
+      "data_structure": [
+        "幾何",
+        "圖（形狀圖與力圖對偶）"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "161 行、單一元件、無自訂 class，只有 DrawFunicular 與 IntersectVertical 兩個方法；核心只是「畫平行線、求與垂直線的交點」，但要先弄懂向量加法（載重線）、極點射線代表內力、以及縱距與極距成反比這三個靜力學觀念，屬於基礎。",
+      "tags": [
+        "結構找形",
+        "對偶圖",
+        "平衡",
+        "作圖法",
+        "受拉／受壓",
+        "一次完成"
+      ],
+      "one_liner": "不列方程式而是作圖：把載重首尾相接成一條載重線，從極點拉出射線，再照射線方向在形狀圖上畫平行線，就得到剛好只受拉的索或只受壓的拱，每段內力直接用射線長度讀出來。",
+      "how_it_works": [
+        "沿跨度 span 等距放 loadCount 個垂直載重，大小依 loadVariation 與 seed 隨機變化。",
+        "在旁邊的力圖上把載重向量首尾相接，排成一條垂直的載重線。",
+        "先隨便選一個試算極點，用 DrawFunicular 畫出試算索多邊形，連出閉合線，再從試算極點畫閉合線的平行線交載重線於 K，得到兩端支承反力的分界點。",
+        "真極點放在 K 的水平線上；因為縱距與極距成反比，用「試算最大縱距 ÷ 指定矢高 sag」反推真極距 H。",
+        "從左支承開始，每段都平行於「極點 → 載重線分點」的射線，用 Intersection.LineLine 交到下一條載重作用線，連成索多邊形；asArch 為真時極點換到另一側，得到純受壓的拱。",
+        "輸出形狀圖、載重箭頭、力圖、試算線，並以射線長度除以比例得到各段內力。"
+      ],
+      "pseudo_code": [
+        "輸入 span, loadCount, loadVariation, seed, sag, asArch",
+        "輸出 formLines, loadLines, forceLines, trialLines, forces",
+        "對 i ← 0 到 loadCount-1：  // DATA",
+        "  x[i] ← span·(i+0.5)/loadCount；P[i] ← 1 ± loadVariation 的亂數",
+        "loadLine ← 把 P[i] 由 (ox, 0) 往下首尾相接  // 力圖",
+        "trial ← DrawFunicular(A, 試算極點 O′)",
+        "K ← 從 O′ 畫閉合線的平行線交 loadLine  // 分出兩端反力",
+        "H ← 試算極距 × 試算最大縱距 / sag  // 縱距與極距成反比",
+        "pole ← (ox ± H, K.Y)  // asArch 決定左或右",
+        "formLines ← DrawFunicular(A, pole)",
+        "forces[j] ← |pole − loadLine[j]| / 比例  // 射線長度 = 內力",
+        "DrawFunicular(start, pole)  // RULE",
+        "  對 每個分點 loadLine[j]：沿平行於 pole − loadLine[j] 的方向畫到下一條載重作用線",
+        "  回傳 折線節點"
+      ],
+      "key_params": [
+        {
+          "name": "span",
+          "effect": "兩支承之間的跨度；力圖會自動縮放放在形狀圖右邊"
+        },
+        {
+          "name": "loadCount",
+          "effect": "載重數量；越多索多邊形越接近平滑曲線（均布載重得到拋物線）"
+        },
+        {
+          "name": "loadVariation",
+          "effect": "載重大小的隨機差異 0–1；0 時左右對稱，越大形狀越偏向重載那一側"
+        },
+        {
+          "name": "seed",
+          "effect": "同一種子得到同一組載重，可重現；換種子就換一組載重分布"
+        },
+        {
+          "name": "sag",
+          "effect": "指定矢高；矢高越小水平推力 H 越大、各段內力越大（扁拱推力大）"
+        },
+        {
+          "name": "asArch",
+          "effect": "false 為下垂受拉的索，true 把極點換到另一側得到上拱受壓的拱"
+        }
+      ],
+      "csharp_concepts": [
+        "Point3d 與 Vector3d 相加減（向量首尾相接）",
+        "Intersection.LineLine 求兩線交點（out 參數）",
+        "double[] 與 List<Point3d> 並用",
+        "helper 方法回傳 List（DrawFunicular）",
+        "Random(seed) 可重現亂數",
+        "三元運算子（asArch ? -1 : 1）",
+        "多個 ref object 輸出"
+      ],
+      "prerequisites": [
+        "向量加法與平行四邊形法則",
+        "力的平衡（合力為零、力多邊形封閉）",
+        "直線方程式與兩線交點",
+        "E 家族：排列與鬆弛的概念（可先看 E04 動態鬆弛）"
+      ],
+      "teaching_note": "建議從零實作的順序：先只畫載重線與一個固定極點的射線（力圖），再寫 DrawFunicular 畫出一條不一定落在右支承的索多邊形，讓學習者親眼看到「極點亂放，索就收不回來」；接著加閉合線與 K 點，把索拉回兩個等高支承；最後才加 sag 反推極距。常見錯誤是射線方向的正負號（本範例一律把方向翻成往右畫），以及把力圖和形狀圖的比例混在一起（forceScale 只用在力圖）。整個計算是一次作圖、沒有迭代，loadCount 再大也瞬間完成；可與 E04 動態鬆弛（迭代模擬）和 E06 力密度法（解線性方程組）並排比較，三者在同樣載重下應得到同一個形狀。",
+      "variations": [
+        {
+          "title": "不等高支承與三點通過",
+          "level": 2,
+          "what_changes": "支承條件（規則）",
+          "how": "新增 supportB（Point3d）輸入讓右支承可高可低；閉合線改成 A→trialEnd 與 A→B 兩條，K 點仍由試算極點畫閉合線平行線求得，但真極點改放在「過 K 且平行 A→B」的直線上；再新增 passPoint 輸入，用該點的縱距取代 sag 反推極距。",
+          "result": "索或拱可以跨過高低差（例如坡地步道橋），並保證通過指定的第三點（例如橋面中點）。"
+        },
+        {
+          "title": "斜向與任意方向載重",
+          "level": 2,
+          "what_changes": "載重方向（輸入）",
+          "how": "把載重從 double 改成 List<Vector3d> 輸入（例如加上水平風力），loadLine 每段加整個向量而不只是 Y 分量，載重作用線改成過載重點、方向為載重向量的直線，DrawFunicular 的 IntersectVertical 換成與這條作用線求 Intersection.LineLine。",
+          "result": "載重線不再是一條直線而是折線，索多邊形會往下風側偏，看得出風力如何讓拱或塔身不對稱。"
+        },
+        {
+          "title": "自重迭代逼近懸鏈線",
+          "level": 3,
+          "what_changes": "載重由形狀決定（規則＋迴圈）",
+          "how": "把整個作圖包進 for 迴圈：每輪用上一輪索多邊形各段長度 × 單位重算出載重（每段一半分給兩端節點），重畫載重線與索多邊形，直到節點位置變化小於 tolerance；載重作用點改成節點位置而非固定 x。",
+          "result": "從等分載重的拋物線逐步修正成自重作用下的懸鏈線，並能印出每輪的形狀差，示範「形狀決定載重、載重又決定形狀」。"
+        },
+        {
+          "title": "推力線放進拱厚（安全幾何）",
+          "level": 3,
+          "what_changes": "加入拱的內外弧並判斷（分析／評估）",
+          "how": "新增 intrados、extrados 兩條 Curve 輸入；對每條載重作用線用 Intersection.CurveLine 取內外弧高度，檢查索多邊形節點是否落在兩者之間；再用二分法調整 sag（等於調整水平推力）找出推力線仍在拱厚內的最小與最大推力。",
+          "result": "得到石拱的最小推力、最大推力兩條推力線與幾何安全係數，推力線碰到內外弧的位置就是可能形成鉸接的地方。"
+        },
+        {
+          "title": "Cremona 交互力圖（桁架）",
+          "level": 4,
+          "what_changes": "從單一索多邊形擴充到桁架內力（規則＋資料結構）",
+          "how": "輸入平面桁架的 Line 清單與節點載重，建立節點—桿件—面的資料結構（Bow 記號：每個面一個字母）；依節點逐一畫力多邊形，桿件在力圖上是兩個相鄰面字母點之間的線段，平行於形狀圖的桿件，用 Intersection.LineLine 定出新的面點。",
+          "result": "一張與桁架互為對偶的力圖，每根桿件的內力直接量線段長度，並依方向判斷拉或壓後上色。"
+        },
+        {
+          "title": "切片法分析拱頂",
+          "level": 3,
+          "what_changes": "2D 作圖 → 3D 殼體的一系列剖面（維度）",
+          "how": "輸入一個拱頂 Brep，用 Brep.CreateContourCurves 沿一個方向切成平行的拱片；每片依寬度算出自重載重，對每片各跑一次索多邊形作圖（以剖面平面 Plane 做座標轉換），把所有推力線放回 3D。",
+          "result": "一組貼在拱頂剖面上的推力線，快速看出哪一段殼太淺、推力線跑出殼厚。"
+        },
+        {
+          "title": "多面體 3D 圖解靜力學",
+          "level": 5,
+          "what_changes": "形狀圖與力圖都升到 3D（維度）",
+          "how": "改用多面體當力圖：每個封閉面代表一個節點的平衡，形狀圖的桿件垂直於力圖對應的面，面的面積代表內力；以 Mesh 表示力多面體，用 Mesh.FaceNormals 取得桿件方向，再以 Intersection 求節點位置。",
+          "result": "純受壓或純受拉的 3D 桿件結構（例如分枝柱或多面體框架），內力由力多面體的面積讀出。"
+        },
+        {
+          "title": "沿推力線切楔形石塊",
+          "level": 3,
+          "what_changes": "輸出（線 → 可製造的拱石）",
+          "how": "把拱的索多邊形用 Curve.Offset 往上下各偏移半個拱厚，沿推力線每隔一段取垂直於切線的切割線，用 Brep.CreateFromCornerPoints 或 Extrusion 做出每塊楔形石（voussoir），並輸出每塊的展開輪廓供 CNC 或雷切。",
+          "result": "接縫都垂直於推力線的拱石組，模型可以用雷切木塊或 3D 列印塊乾砌組裝驗證。"
+        },
+        {
+          "title": "拖曳極點即時互動",
+          "level": 2,
+          "what_changes": "極點由程式計算改成手動控制（時間／動畫）",
+          "how": "新增 polePoint（Point3d）輸入，接 GH 的 Point 參數或 Rhino 裡可拖曳的點，跳過 sag 反推，直接以此點當極點作圖；另外輸出索多邊形右端偏離支承的距離與水平推力，接 Panel 或 Quick Graph。",
+          "result": "拖動極點時索多邊形即時變深變淺、甚至收不回支承，直觀體會極點位置等於水平推力的選擇。"
+        },
+        {
+          "title": "內力決定截面與載重路徑",
+          "level": 3,
+          "what_changes": "加入構件尺寸與材料量評估（分析／評估）",
+          "how": "由 forces 與容許應力算出每段所需截面積，轉成 Pipe 半徑（Brep.CreatePipe）；並計算載重路徑 Σ|F|·L，對 sag 由小到大掃描一輪，輸出 sag–材料量曲線。",
+          "result": "看得到扁拱推力大、構件粗，高拱構件長；曲線最低點就是這組載重下最省材料的矢高。"
+        },
+        {
+          "title": "接 E06 力密度法對照",
+          "level": 3,
+          "what_changes": "與線性求解的找形方法串接（混合）",
+          "how": "把索多邊形每段的力密度 q = 內力 / 長度 算出來，當成 E06 力密度法的 q 輸入，建一條同樣節點與載重的一維網路解線性方程組，比較兩者節點座標差；再把 q 改成不相等，看 FDM 結果能否用力圖反推出來。",
+          "result": "驗證「幾何作圖」與「解矩陣」在 2D 會得到同一條索，並把 2D 力圖的直覺帶到 3D 力密度網。"
+        },
+        {
+          "title": "接 A05 形狀文法的分枝平衡",
+          "level": 4,
+          "what_changes": "以文法規則改寫結構拓樸（混合）",
+          "how": "定義幾條文法規則，例如「把一段受壓桿拆成兩支並在分叉點加一個節點」、「在載重點下加一根斜撐」；每套用一次規則，就用對應的力多邊形（向量首尾相接）重新求新節點位置，只保留力多邊形能封閉的結果。",
+          "result": "從同一組載重長出多種分枝柱、樹狀支撐等不同拓樸，但每一個都保持純受壓或純受拉的平衡。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "校園步道推力線拱橋",
+          "brief": "在真實基地（兩岸高低不同）以不等高支承與橋面載重畫出推力線，比較不同矢高的水平推力與材料量，做 1:20 雷切木塊乾砌模型驗證能否自立。",
+          "difficulty": 3,
+          "combine_with": [
+            "E04"
+          ]
+        },
+        {
+          "title": "三種找形方法並排比較",
+          "brief": "同一組載重分別用圖解靜力學、動態鬆弛與力密度法求形，並排輸出形狀、運算時間與可控制的參數，整理成一張方法比較圖。",
+          "difficulty": 3,
+          "combine_with": [
+            "E04",
+            "E06"
+          ]
+        },
+        {
+          "title": "磚拱涼亭與楔形拱石",
+          "brief": "以切片法分析拱頂，推力線放進拱厚後沿推力線切出拱石，輸出每塊拱石的尺寸表與組裝順序，做 3D 列印縮尺模型。",
+          "difficulty": 4,
+          "combine_with": [
+            "E06"
+          ]
+        },
+        {
+          "title": "互動圖解靜力學教具",
+          "brief": "做一個可拖曳極點、載重與支承的 Grasshopper 介面，同色顯示形狀圖與力圖的對應，線寬代表內力，讓非結構背景的學習者體會平衡。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "文法生成的分枝受壓柱",
+          "brief": "以形狀文法改寫柱的分枝拓樸，每一代都用力多邊形保持純受壓，產生一系列樹狀柱候選，再以載重路徑挑出最省材料的幾個做模型。",
+          "difficulty": 4,
+          "combine_with": [
+            "A05",
+            "F04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Graphic statics（Wikipedia，含 Culmann 1864 年 Die graphische Statik 與 Cremona 力圖）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Graphic_statics"
+        },
+        {
+          "title": "Form and Forces: Designing Efficient, Expressive Structures",
+          "author": "Edward Allen, Waclaw Zalewski",
+          "year": "2009",
+          "url": "https://www.wiley.com/en-us/Form+and+Forces:+Designing+Efficient,+Expressive+Structures-p-9780470174654"
+        },
+        {
+          "title": "Algebraic graph statics",
+          "author": "Tom Van Mele, Philippe Block",
+          "year": "2014",
+          "url": "https://block.arch.ethz.ch/brg/files/2014-cad-vanmele-algebraic-graph-statics-preprint_1397824709.pdf"
+        },
+        {
+          "title": "COMPAS AGS：以代數圖解靜力學設計與分析 2D 結構（Python 開源套件）",
+          "author": "Block Research Group",
+          "year": "2017",
+          "url": "https://github.com/BlockResearchGroup/compas_ags"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "E05-01",
+      "algo": "E05",
+      "title": "艾菲爾鐵塔：以圖解靜力學決定塔身輪廓",
+      "creator": "Maurice Koechlin（Gustave Eiffel 公司）",
+      "year": "1889",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "300 公尺鐵塔的主要設計者 Koechlin 在蘇黎世師承圖解靜力學創始人 Culmann，用圖解方法決定塔身曲線，讓塔腳在風力與自重下成為各段受力均衡的懸臂。和基礎範例不同，這裡的主要載重是水平風力，塔身輪廓等於把索多邊形轉九十度立起來。",
+      "variations": [
+        {
+          "name": "水平風載的索多邊形",
+          "how": "把載重向量改成水平方向（沿塔高分段的風力），載重作用線改成水平線，用同樣的極點射線作圖。",
+          "effect": "得到塔身外輪廓曲線，越往下越張開，直觀說明艾菲爾鐵塔腳部為何外撇。"
+        },
+        {
+          "name": "自重＋風力合成",
+          "how": "每個節點的載重改成自重（向下）加風力（水平）的向量和，載重線變成折線。",
+          "effect": "塔身輪廓略為不對稱，可比較有風、無風兩種輪廓的差別。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "塔",
+        "風力",
+        "歷史案例",
+        "懸臂"
+      ],
+      "tools": [
+        "圖解靜力學（手繪作圖）"
+      ],
+      "url": "https://trako.arch.rwth-aachen.de/cms/trako/forschung/bautechnikgeschichte/~mmso/maurice-koechlin-der-eigentliche-erfin/?lidx=1"
+    },
+    {
+      "id": "E05-02",
+      "algo": "E05",
+      "title": "Robert Maillart 的 Salginatobel 橋設計方法（1928）",
+      "creator": "Corentin Fivet、Denis Zastavni",
+      "year": "2012",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "這篇論文從 Maillart 的計算書重建瑞士 Salginatobel 三鉸拱橋的設計過程，指出他以圖解靜力學畫出半座橋的推力線，並用推力線在不同載重情況下的包絡決定拱與橋面的形狀。和基礎範例相比，它多了三鉸條件（推力線必須通過三個鉸）與多種活載重的比較。",
+      "variations": [
+        {
+          "name": "三鉸拱：推力線通過三點",
+          "how": "固定左右支承與拱頂鉸三點，用三點條件反求極點，而不是用 sag。",
+          "effect": "推力線一定通過三個鉸，拱形可直接由推力線決定。"
+        },
+        {
+          "name": "活載重包絡",
+          "how": "對半跨滿載、全跨滿載等數種載重各畫一條推力線，疊在一起取上下包絡。",
+          "effect": "得到拱必須包住的推力線範圍，拱在四分點附近最厚的原因一目了然。"
+        },
+        {
+          "name": "橋面填土載重由曲線輸入",
+          "how": "輸入橋面曲線與拱線，以兩者高差乘單位重算出每條作用線上的載重。",
+          "effect": "載重隨拱形改變，接近真實拱橋的自重分布。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拱橋",
+        "推力線",
+        "三鉸拱",
+        "歷史案例"
+      ],
+      "tools": [
+        "圖解靜力學（手繪作圖）"
+      ],
+      "url": "https://www.ingentaconnect.com/content/iass/jiass/2012/00000053/00000001/art00005"
+    },
+    {
+      "id": "E05-03",
+      "algo": "E05",
+      "title": "As Hangs the Flexible Line：砌體拱的平衡",
+      "creator": "Philippe Block、Matt DeJong、John Ochsendorf",
+      "year": "2006",
+      "category": "performance",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "構件",
+      "summary": "從 Hooke「如懸垂的柔索，倒過來就是剛性的拱」出發，用推力線與圖解靜力學說明砌體拱的平衡與穩定：只要找得到一條落在拱厚內的推力線，拱就站得住。論文示範最小、最大推力兩種極端推力線，以及支承移動時鉸接的形成；和基礎範例相比，它把索多邊形放進有厚度的拱裡評估安全。",
+      "variations": [
+        {
+          "name": "最小／最大推力",
+          "how": "新增拱的內外弧曲線，二分法調整 sag，找出推力線剛好碰到內外弧的兩個極端。",
+          "effect": "得到拱推力的可行範圍與幾何安全係數。"
+        },
+        {
+          "name": "支承外移與鉸接",
+          "how": "把右支承稍微往外移，重新找能留在拱厚內的推力線，標出推力線碰到內外弧的位置。",
+          "effect": "看出拱在支承位移後出現的三個鉸，對應真實石拱的裂縫位置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "推力線",
+        "砌體",
+        "穩定",
+        "安全評估"
+      ],
+      "tools": [
+        "圖解靜力學",
+        "互動參數模型"
+      ],
+      "url": "https://link.springer.com/article/10.1007/s00004-006-0015-9"
+    },
+    {
+      "id": "E05-04",
+      "algo": "E05",
+      "title": "Real-time limit analysis of vaulted masonry buildings",
+      "creator": "Philippe Block、Thierry Ciblac、John Ochsendorf",
+      "year": "2006",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "把推力線分析做成可即時操作的參數模型：拱與扶壁等構件的幾何一改，推力線與力圖立刻更新，馬上看出推力是否留在石材斷面內。和基礎範例相比，它把索多邊形串接到多個構件（拱推力傳到扶壁再傳到地面），並用於既有砌體建築的安全評估。",
+      "variations": [
+        {
+          "name": "拱推力傳進扶壁",
+          "how": "把拱在支承的反力（力圖中最後一條射線）當成扶壁頂端的斜向載重，再加上扶壁每層自重，往下畫第二條推力線。",
+          "effect": "看出推力線在扶壁中往外偏的程度，決定扶壁需要多寬。"
+        },
+        {
+          "name": "斷面安全檢查上色",
+          "how": "每條推力線段與構件斷面比較，偏心量超過斷面三分之一就標紅色。",
+          "effect": "即時看到哪一段最危險，調整幾何時馬上回饋。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "推力線",
+        "扶壁",
+        "古建築",
+        "即時回饋"
+      ],
+      "tools": [
+        "互動參數模型"
+      ],
+      "url": "https://web.mit.edu/masonry/papers/block_cibl_ochs_CAS.pdf"
+    },
+    {
+      "id": "E05-05",
+      "algo": "E05",
+      "title": "Structural optimization using graphic statics",
+      "creator": "Lauren L. Beghini、Juan Carrion、Alessandro Beghini、Arkadiusz Mazurek、William F. Baker",
+      "year": "2014",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "把圖解靜力學的形狀圖與交互力圖和結構最佳化結合：以力圖的幾何表達桿件內力，在保持平衡的前提下調整結構幾何，以材料量（載重路徑）為目標尋找較佳的形狀。和基礎範例相比，它不是只畫一條索，而是把力圖當成最佳化流程的一部分。",
+      "variations": [
+        {
+          "name": "掃描 sag 找最省材料",
+          "how": "對 sag 做一輪掃描，每次計算 Σ|F|·L，輸出曲線並取最小值。",
+          "effect": "得到這組載重下最省材料的矢高。"
+        },
+        {
+          "name": "桁架節點高度當變數",
+          "how": "改成 Cremona 力圖後，把上弦節點高度當變數，用簡單的爬山法調整並重畫力圖。",
+          "effect": "上弦慢慢變成接近索多邊形的曲線，腹桿內力趨近於零。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "桁架",
+        "載重路徑",
+        "交互力圖"
+      ],
+      "tools": [],
+      "url": "https://link.springer.com/article/10.1007/s00158-013-1002-x"
+    },
+    {
+      "id": "E05-06",
+      "algo": "E05",
+      "title": "以形狀文法與圖解靜力學自動產生多樣平衡結構",
+      "creator": "Juney Lee、Caitlin Mueller、Corentin Fivet",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "以形狀文法的規則逐步改寫結構拓樸（加桿、分叉、移動節點），每一步都用圖解靜力學的力圖維持平衡，自動產生大量彼此不同、但都平衡的橋與桁架候選。和基礎範例相比，拓樸不再固定，力圖成為篩選「可以站得住」設計的工具。",
+      "variations": [
+        {
+          "name": "分叉規則",
+          "how": "寫一條「把一段桿件在中點拆成兩支」的規則，拆完用力多邊形重新求分叉點位置。",
+          "effect": "從單一拱長出樹狀或多支撐的結構。"
+        },
+        {
+          "name": "隨機套用＋篩選",
+          "how": "用 Random 隨機挑規則連續套用數次，只保留力多邊形能封閉的結果。",
+          "effect": "一次產生數十個不同但都平衡的設計候選。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "形狀文法",
+        "設計探索",
+        "多樣性",
+        "平衡"
+      ],
+      "tools": [],
+      "url": "https://journals.sagepub.com/doi/10.1177/0266351116660798"
+    },
+    {
+      "id": "E05-07",
+      "algo": "E05",
+      "title": "Combinatorial Equilibrium Modeling（CEM）",
+      "creator": "Patrick Ole Ohlbrock、Joseph Schwartz",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "以圖解靜力學為基礎的找形方法：把結構拆成「軌跡」與「偏移邊」，由上而下逐節點做向量加法求出平衡形狀，可以同時控制受拉與受壓構件；作者並釋出 Grasshopper 外掛。和基礎範例相比，它把一條索多邊形擴充成任意拓樸的 3D 桿件網，並可指定部分構件的內力或長度。",
+      "variations": [
+        {
+          "name": "逐節點向量加法",
+          "how": "把載重線的首尾相接改成在每個節點把上方傳下來的力、外載與偏移邊力相加，得到往下一個節點的方向與長度。",
+          "effect": "由頂到地逐層長出平衡的塔或柱。"
+        },
+        {
+          "name": "拉壓混合",
+          "how": "允許部分射線方向相反（負內力），形狀圖中用不同顏色與線寬表示。",
+          "effect": "同一結構裡同時有受壓柱與受拉索，例如張拉整體或斜張結構。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "拉壓混合",
+        "找形",
+        "Grasshopper 外掛"
+      ],
+      "tools": [
+        "Grasshopper",
+        "CEM"
+      ],
+      "url": "https://journals.sagepub.com/doi/10.1177/0266351116660799"
+    },
+    {
+      "id": "E05-08",
+      "algo": "E05",
+      "title": "Prefab, Concrete Polyhedral Frame：把 3D 圖解靜力學做成實體",
+      "creator": "Masoud Akbarzadeh、Mehrad Mahnia 等（Polyhedral Structures Laboratory）",
+      "year": "2017",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "以多面體（3D）圖解靜力學找出純受壓的桿件框架，再把形狀拆成預鑄混凝土模組、做模板並組裝成實體原型。和基礎範例相比，形狀圖與力圖都升到三維：力圖是多面體，桿件垂直於力多面體的面，內力由面積決定。",
+      "variations": [
+        {
+          "name": "力多面體的面積 → 桿件截面",
+          "how": "以 Mesh 表示力多面體，取每個面的 AreaMassProperties，換算成對應桿件的截面大小。",
+          "effect": "受力大的桿件自動變粗，形狀即內力圖。"
+        },
+        {
+          "name": "節點模組化拆件",
+          "how": "以每個節點為中心，把相連桿件截到固定長度，輸出成可以單獨澆鑄的節點模組 Brep。",
+          "effect": "得到可預鑄、再用螺栓或後拉組裝的構件清單。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "多面體",
+        "預鑄",
+        "受壓"
+      ],
+      "tools": [
+        "Rhino",
+        "Grasshopper"
+      ],
+      "url": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf"
+    },
+    {
+      "id": "E05-09",
+      "algo": "E05",
+      "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
+      "creator": "Lorenz Lachauer、Philippe Block（ETH Zurich Block Research Group）",
+      "year": "2014",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "蘇黎世聯邦理工學院的線上學習平台，每一課都是一個可拖曳的圖解靜力學模型：移動支承、載重或極點，形狀圖與力圖同步更新。對應的論文 Interactive Equilibrium Modelling 說明以平衡為核心的互動建模。和基礎範例相比，它把作圖流程包成一系列由淺入深的互動課程。",
+      "variations": [
+        {
+          "name": "同色對應形狀圖與力圖",
+          "how": "每段索與對應射線用相同顏色輸出（Grasshopper 的 Custom Preview 接顏色清單）。",
+          "effect": "學習者一眼看出哪一條射線控制哪一段索。"
+        },
+        {
+          "name": "課程式參數鎖定",
+          "how": "把部分輸入（例如 loadCount）鎖住，只開放一兩個滑桿，做成一系列逐步開放的練習。",
+          "effect": "由淺入深的互動練習，適合自學。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "教學工具",
+        "互動",
+        "對偶圖"
+      ],
+      "tools": [
+        "網頁互動平台"
+      ],
+      "url": "https://block.arch.ethz.ch/eq/"
+    },
+    {
+      "id": "E05-51",
+      "algo": "E05",
+      "title": "Active Statics：互動圖解靜力學示範",
+      "creator": "Simon Greenwold（與 Edward Allen、Waclaw Zalewski 合作，MIT）",
+      "year": "2003",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "八個可拖曳的互動示範（索、拱、桁架等），拖動形狀或載重時，力多邊形即時更新，並以顏色區分拉力與壓力。是早期以程式碼把圖解靜力學變成即時互動的經典，後來被許多結構教學引用；和 Grasshopper 範例相比，它在瀏覽器中以 Java applet 即時重畫，重點是手感與即時回饋。",
+      "variations": [
+        {
+          "name": "滑鼠拖曳極點",
+          "how": "把 sag 反推改成直接輸入可拖曳的極點，每次變動重畫形狀圖與力圖。",
+          "effect": "即時體會極點位置與水平推力的關係。"
+        },
+        {
+          "name": "拉壓雙色",
+          "how": "forces 為正畫紅色、為負畫藍色，線寬依絕對值。",
+          "effect": "一眼分辨受拉與受壓構件。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Java",
+        "互動",
+        "教學"
+      ],
+      "tools": [
+        "Java"
+      ],
+      "url": "http://acg.media.mit.edu/people/simong/statics/data/"
+    },
+    {
+      "id": "E05-52",
+      "algo": "E05",
+      "title": "i3DGS：互動式 3D／多面體圖解靜力學",
+      "creator": "Hua Chai、Wenxi Chen、Masoud Akbarzadeh（Polyhedral Structures Laboratory）",
+      "year": "2020",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "在瀏覽器中操作的 3D 圖解靜力學教學平台，以一組互為對偶的多面體形狀圖與力圖說明三維平衡，可旋轉、改變力多面體並看到形狀跟著變化。和 Grasshopper 範例相比，它把 2D 的索多邊形推廣到 3D，重點在直觀理解「面積代表內力」。",
+      "variations": [
+        {
+          "name": "2D 力圖擠出成 3D 示意",
+          "how": "把 2D 力圖的每條射線擠出成三角面，並在形狀圖旁邊以 Mesh 顯示，作為進入 3D 圖解靜力學前的過渡。",
+          "effect": "學習者先在熟悉的 2D 作圖上看到「面」的概念。"
+        },
+        {
+          "name": "多面體面積讀內力",
+          "how": "以 Mesh.CreateFromClosedPolyline 做出力多面體的面，計算面積並標在對應桿件旁。",
+          "effect": "三維版的「射線長度 = 內力」。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "3D",
+        "多面體",
+        "教學"
+      ],
+      "tools": [
+        "JavaScript（網頁互動）"
+      ],
+      "url": "https://psl.design.upenn.edu/i3dgs/"
+    },
+    {
+      "id": "E05-53",
+      "algo": "E05",
+      "title": "Parametric Graphic Statics with GeoGebra",
+      "creator": "EngineeringSkills.com",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "以 GeoGebra 的動態幾何建出參數化的圖解靜力學作圖：載重、極點與支承都是可拖曳的點，索多邊形與力多邊形用平行線與交點工具即時連動。和 Grasshopper 範例相比，它完全用作圖工具（不寫程式）表達同一套「平行線＋交點」邏輯，很適合當寫 C# 前的草稿。",
+      "variations": [
+        {
+          "name": "先在動態幾何軟體作圖再轉程式",
+          "how": "把 GeoGebra 中每個作圖步驟（平行線、交點）對應到 C# 的一行 Vector3d 與 Intersection.LineLine。",
+          "effect": "學習者能逐步對照作圖與程式碼。"
+        },
+        {
+          "name": "彎矩圖同步",
+          "how": "輸出索多邊形與閉合線之間的縱距，乘以極距 H 就是彎矩，畫成彎矩圖。",
+          "effect": "看到「索多邊形就是彎矩圖的形狀」這個重要關係。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "GeoGebra",
+        "動態幾何",
+        "教學"
+      ],
+      "tools": [
+        "GeoGebra"
+      ],
+      "url": "https://www.engineeringskills.com/posts/parametric-graphic-statics-with-geogebra"
+    },
+    {
+      "id": "E05-54",
+      "algo": "E05",
+      "title": "Disjointed Force Polyhedra 瀏覽器互動實作",
+      "creator": "Tarakesh Chandran",
+      "year": "2026",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "在瀏覽器中執行的 3D 互動程式，依 Juney Lee、Tom Van Mele、Philippe Block 2018 年的 Disjointed force polyhedra 方法，以延伸高斯影像（EGI）與面積追蹤演算法產生分離的力多面體。和 Grasshopper 範例相比，它展示創作程式如何把 3D 圖解靜力學的論文方法重寫成可即時操作的視覺化。",
+      "variations": [
+        {
+          "name": "力多面體逐步調面積",
+          "how": "給每個面一個目標面積，迭代沿法向平移面直到面積接近目標。",
+          "effect": "力多面體的面積逐漸符合指定內力。"
+        },
+        {
+          "name": "形狀圖與力圖並排旋轉",
+          "how": "在 Grasshopper 中把形狀圖與力圖分別放在兩個相鄰的視圖位置，並共用同一組旋轉角度。",
+          "effect": "同時觀察兩張圖的對偶關係。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "3D",
+        "多面體"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/Tarakeshchandran/01_04_2026_GraphicStatics_DisjointedForcePolyhedra"
+    }
+  ]
+}

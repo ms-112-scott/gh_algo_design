@@ -1,0 +1,114 @@
+{
+ "VAR_A05.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_A06.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_B02.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_B02.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_B02.json#2": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_B04.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C01.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C01.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C02.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C02.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C04.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C05.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_C05.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_D01.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E01.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E03.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E04.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E04.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E04.json#2": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_E04.json#3": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F01.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F01.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F02.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F04.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F04.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F05.json#0": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F05.json#1": {
+  "status": "pass",
+  "reasons": []
+ },
+ "VAR_F06.json#0": {
+  "status": "pass",
+  "reasons": []
+ }
+}

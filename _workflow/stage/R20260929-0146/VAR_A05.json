@@ -1,0 +1,17 @@
+{
+  "unit": "VAR:A05",
+  "algo": "A05",
+  "coverage_note": "維度 2（V05、V06）、輸入 2（V07、V08）、規則 4（V01–V04）、輸出／製造 2（V09、V12）、混合 1（V11）、時間／動畫 1（V10）、分析 0；既有變形全部在改寫「幾何形狀」，還沒有把改寫對象換成拓撲關係（節點與連線）的版本，本輪補上圖文法。",
+  "items": [
+    {
+      "title": "圖文法：房間鄰接圖的改寫",
+      "level": 4,
+      "what_changes": "規則／狀態：改寫對象從帶標籤的正方形換成「帶標籤的節點＋鄰接連線」組成的圖",
+      "how": "把 LabeledSquare 清單換成兩個欄位：List<string> labels（節點標籤）與 List<(int a,int b)> edges（鄰接）。起始只放一個標籤為 House 的節點。ApplyRules 改成逐節點比對標籤（只做單節點比對，避免在單一元件內寫完整的子圖比對）：House → Entry、Public、Private 三個節點並連成 Entry–Public–Private；Public → Living、Kitchen、Dining 並兩兩相連；Private → Hall 加上 n 個 Bed，每個 Bed 只連 Hall。被替換節點原本的外部連線，依規則指定的「接口節點」（例如 Public 換掉後由 Living 繼承）重新接上，這一步就是圖文法的嵌入規則。每一代同時改寫所有非終端標籤，沒有非終端標籤就提早停止。輸出時為每個節點給一個 Point3d，跑 50–100 次簡單力導向排佈（相連節點用彈簧拉近、所有節點兩兩互斥），再輸出 Line 當鄰接線、Circle 當房間泡泡（半徑依標籤查面積表）、TextDot 標出房名。",
+      "result": "從一個「住宅」節點逐代展開成入口—客廳—走道—臥室的泡泡圖（bubble diagram），同一組規則換個 Bed 數或順序就得到不同但合乎格局邏輯的平面關係圖。",
+      "axis": "規則",
+      "nearest_existing": "V03 分割文法（split grammar）",
+      "difference": "V03 仍在切割幾何矩形、位置由切割決定；本變形只改寫房間之間的鄰接關係（拓撲），幾何位置最後才由力導向排出，可表達「臥室都接走道」這類無法用切割描述的關係。"
+    }
+  ]
+}

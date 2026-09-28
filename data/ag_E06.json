@@ -1,0 +1,664 @@
+{
+  "agent": "ag_E06",
+  "algorithms": [
+    {
+      "id": "E06",
+      "name_zh": "力密度法（FDM）",
+      "name_en": "Force Density Method (FDM)",
+      "family": "E",
+      "family_name": "排列與鬆弛",
+      "file": "E06_ForceDensityMethod.cs",
+      "loc": 190,
+      "logic": [
+        "搜尋／求解"
+      ],
+      "data_structure": [
+        "圖（點＋連線）",
+        "矩陣"
+      ],
+      "difficulty": 4,
+      "difficulty_reason": "約 190 行、一個自訂 struct（Edge），要先把 Mesh 轉成「節點＋邊」的圖、分出自由點與固定點，再理解連接矩陣 C、力密度矩陣 Q 與 D = Cnᵀ·Q·Cn 的意義，並自寫共軛梯度法解線性方程組；數學門檻（線性代數、對稱正定矩陣）明顯高於 E04 的質點彈簧，屬於進階。",
+      "tags": [
+        "找形",
+        "線性方程組",
+        "圖",
+        "矩陣",
+        "收斂",
+        "3D",
+        "最佳化"
+      ],
+      "one_liner": "替索網裡每一根索指定「拉力 ÷ 長度」的力密度 q，整張網的平衡形狀就變成一組線性方程式，一次解出來，不必像動態鬆弛那樣慢慢晃到靜止。",
+      "how_it_works": [
+        "把輸入 Mesh 轉成圖：TopologyVertices 當節點、TopologyEdges 當邊，每條邊記下兩端節點編號。",
+        "決定固定點（指定錨點或裸邊頂點），其餘為自由點，並替每條邊指定力密度 q（裸邊邊索再乘 edgeCableFactor）。",
+        "組出稀疏矩陣 D = Cnᵀ·Q·Cn：每條邊把 q 加到兩端自由點的對角線，兩端都自由時在非對角位置填 −q；只接到固定點的邊則把 q × 固定點座標移到右手邊。",
+        "對 x、y、z 三個方向各解一次 D·u = p + 固定點貢獻（p 只有 z 向的 load），用共軛梯度法迭代到殘差夠小。",
+        "把解出的座標寫回網格，並以「內力 = q × 長度」算出每根桿件的力，依大小由藍到紅上色輸出。"
+      ],
+      "pseudo_code": [
+        "輸入 baseMesh, anchors, forceDensity, edgeCableFactor, load, cgIterations",
+        "輸出 lines, formMesh, forces, colors, residual",
+        "// 1. 圖與力密度",
+        "edges ← baseMesh 的拓樸邊，每條 q ← forceDensity（裸邊 × edgeCableFactor）",
+        "isFixed ← anchors 最近頂點，或裸邊頂點",
+        "// 2. 組稀疏矩陣 D = Cnᵀ·Q·Cn",
+        "對 每條邊 (a, b, q)：自由端的 diag += q；兩端都自由時 D[a,b] ← −q",
+        "// 3. 三個方向各解一次線性方程組",
+        "對 axis 在 x, y, z：",
+        "  rhs ← load（只有 z）＋ Σ q × 固定鄰點座標",
+        "  u ← SolveCG(D, rhs, cgIterations)  // 共軛梯度",
+        "// 4. 輸出",
+        "forces ← q × 邊長；colors ← 依內力藍到紅"
+      ],
+      "key_params": [
+        {
+          "name": "baseMesh",
+          "effect": "只取它的拓樸（誰連誰）決定索網的格子型式；座標只提供固定點位置與初始猜測"
+        },
+        {
+          "name": "anchors",
+          "effect": "固定點位置；空的時候自動固定所有裸邊頂點，改成四個角點就從盆形變成枕頭形"
+        },
+        {
+          "name": "forceDensity",
+          "effect": "內部邊的 q；q 與 load 的比值決定垂度，q 越大網越平、越小垂得越深"
+        },
+        {
+          "name": "edgeCableFactor",
+          "effect": "裸邊邊索的 q 倍率；大於 1 邊索拉直，小於 1 邊界往內彎成扇貝形"
+        },
+        {
+          "name": "load",
+          "effect": "每個自由點的 Z 向外力；負值往下得到懸垂網，正值往上得到受壓殼，0 得到只受預力的索網"
+        },
+        {
+          "name": "cgIterations",
+          "effect": "共軛梯度法最多步數；理論上自由點數步內收斂，看 residual 判斷是否夠準"
+        }
+      ],
+      "csharp_concepts": [
+        "struct 與 List<struct>",
+        "一維陣列當向量（double[]）",
+        "索引對照表（節點 → 未知數編號）",
+        "Mesh.TopologyVertices／TopologyEdges",
+        "稀疏矩陣只存非零項的矩陣乘向量",
+        "方法拆分與回傳值（SolveCG、MatVec）",
+        "System.Drawing.Color 上色"
+      ],
+      "prerequisites": [
+        "向量與座標分量（x、y、z 分開算）",
+        "矩陣乘向量與線性方程組 A·x = b 的概念",
+        "圖（節點、邊、鄰接）",
+        "力的平衡（節點上的合力為零）",
+        "E04 動態鬆弛找形（對照用）"
+      ],
+      "teaching_note": "建議從一維開始：先做一條兩端固定、中間 5 個點的懸索，手寫 5×5 的 D 矩陣用高斯消去解，親眼看到「一次解完」；再把一維換成 Mesh 拓樸、把高斯消去換成只沿邊做矩陣乘向量的共軛梯度法。常見錯誤：沒有任何固定點或有一群自由點完全連不到固定點（D 奇異、CG 發散）；q 給 0 或負值（D 不再正定，CG 不保證收斂，張拉整體要改用 LU 或高斯消去）；把 load 當成每單位面積而忘了乘上節點負擔面積。效能上，本範例不存 nf × nf 的完整矩陣，只存對角線與邊，1,000 個自由點以內可即時更新；更大的網要改用 Cholesky 等稀疏分解。和 E04 動態鬆弛（含 V06 Kinetic Damping）不同層次：E04 是一步步時間積分、控制材料剛度，FDM 是一次線性求解、直接控制每根桿件的「力 ÷ 長度」；和 E05 圖解靜力學則是同一個平衡問題的「解矩陣」與「幾何作圖」兩種寫法。",
+      "variations": [
+        {
+          "title": "吸引子漸變力密度",
+          "level": 2,
+          "what_changes": "輸入（每條邊的 q 改成空間變化）",
+          "how": "新增 List<Point3d> attractors 與 qNear、qFar 兩個輸入；建 edges 時取邊中點到最近吸引子的距離 d，q = qFar + (qNear − qFar)·exp(−d²/σ²)，其餘程式不變。",
+          "result": "吸引子附近的網被拉得較平、遠處垂得較深，一張網上出現局部隆起或凹陷的天窗與入口。"
+        },
+        {
+          "title": "零載重預力網：高低錨點一次解出馬鞍面",
+          "level": 2,
+          "what_changes": "規則（外力改為 0、錨點給不同高度）",
+          "how": "load 設 0，anchors 改成四個高低交錯的點（兩高兩低），baseMesh 用平面格網；只剩固定點貢獻留在右手邊，一次求解即得平衡形。",
+          "result": "不用任何迭代就得到雙曲拋物面般的預力索網，改一個錨點高度立刻重算。"
+        },
+        {
+          "title": "從線段網路建圖（不需要 Mesh）",
+          "level": 2,
+          "what_changes": "輸入（拓樸來源）",
+          "how": "把 baseMesh 換成 List<Line> network，用 Point3dList 與 ClosestIndex 在容差內合併端點建立節點，Line 的兩端索引就是 Edge 的 A、B；固定點改由度數為 1 的端點或 anchors 決定。",
+          "result": "手畫的任意索網、樹狀或放射狀線段網路都能直接找形，不受四邊形格網限制。"
+        },
+        {
+          "title": "內力決定索徑與索料清單",
+          "level": 2,
+          "what_changes": "輸出（構件化）",
+          "how": "對每條 line 依 forces 算半徑 r = rMin + k·√(f / fMax)，用 Brep.CreatePipe 產生管件；同時輸出「編號、長度、內力」的字串清單並依長度排序。",
+          "result": "得到粗細隨受力變化的 3D 索網模型與可直接下料的索長表。"
+        },
+        {
+          "title": "自重依負擔面積迭代更新",
+          "level": 3,
+          "what_changes": "規則（外力與形狀互相影響）",
+          "how": "在求解外包一個 for 迴圈跑 3–5 次：每次先用 formMesh 的面積（AreaMassProperties）把每個面的重量平分給其頂點，更新 rhs 的 z 分量再重解，直到頂點位移小於容差。",
+          "result": "得到接近「厚度均勻的殼在自重下」的形狀，比每點等載重更貼近混凝土殼或織物模板的真實載重。"
+        },
+        {
+          "title": "輪輻索網：外壓環＋內拉環",
+          "level": 3,
+          "what_changes": "維度（拓樸改成極座標網）",
+          "how": "不讀 Mesh，改用程式產生 rings × spokes 的極座標網格：最外圈為固定點（壓環），最內圈節點以一圈高 q 的環索相連（拉環）；徑向邊與環向邊各給不同 q，load 設 0 或小負值。",
+          "result": "得到體育場屋頂常見的自行車輪式索網，調 q 比例就能改變內環大小與屋面起伏。"
+        },
+        {
+          "title": "支承反力與推力箭頭",
+          "level": 3,
+          "what_changes": "分析（輸出支承力）",
+          "how": "求解後對每個固定點 i 計算反力 R_i = −Σ q·(x_j − x_i)（j 為相鄰節點），以 Line 由固定點畫出並依大小縮放，另輸出水平分量總和。",
+          "result": "一眼看出哪些支承要承受最大的水平推力，作為邊梁、拉桿或基礎尺寸的依據。"
+        },
+        {
+          "title": "拖曳錨點即時重解",
+          "level": 3,
+          "what_changes": "時間／互動（改用即時求解取代時間步進）",
+          "how": "把 anchors 接到 Rhino 裡可拖曳的點（Point 參數 Set one Point），RunScript 每次觸發都從頭組 D 並求解；另把上一次解存在 class 欄位當 CG 的初始猜測，拖曳時收斂更快。",
+          "result": "一邊拖錨點一邊看到網的平衡形立即更新，不像動態鬆弛需要 Timer 等它晃到靜止。"
+        },
+        {
+          "title": "等力網：迭代 q = 目標力 ÷ 長度",
+          "level": 4,
+          "what_changes": "規則（由固定 q 改為固定內力）",
+          "how": "外加迴圈：解完一次後把每條邊 q ← targetForce / 長度，再重組 D 重解，重複到所有桿件內力與 targetForce 差距小於 1%。",
+          "result": "得到每根索內力都相同的網，形狀接近最小曲面，適合用同一規格的索或繩。"
+        },
+        {
+          "title": "張拉整體：受壓桿給負力密度",
+          "level": 4,
+          "what_changes": "規則（q 可為負，求解器改用高斯消去）",
+          "how": "新增 List<Line> struts 當受壓桿並給負 q，其餘索給正 q；因 D 不再正定，把 SolveCG 換成對完整 double[nf,nf] 做部分樞軸高斯消去（或 LU 分解），並檢查主元是否接近 0。",
+          "result": "找出桿不相碰、索全受拉的張拉整體平衡形，看出正負力密度比例如何決定整體扭轉與高度。"
+        },
+        {
+          "title": "逆向找形：指定目標高度反推 q",
+          "level": 5,
+          "what_changes": "搜尋／求解（外層最佳化 q）",
+          "how": "新增 List<double> targetZ 給部分節點；把 q 當未知數，以有限差分估計 ∂z/∂q，用高斯—牛頓或簡單梯度下降反覆更新 q（限制 q > 0），每步都呼叫一次 FDM 求解。",
+          "result": "不再是「給 q 看形」，而是「給形找 q」：殼頂高度或特定點位置精準命中設計值，並得到施工需要的預力分布。"
+        },
+        {
+          "title": "混合 E03 Voronoi：不規則多邊形索網",
+          "level": 3,
+          "what_changes": "混合（拓樸來自其他演算法）",
+          "how": "先用 E03 Voronoi＋Lloyd 在基地輪廓內產生細胞，把所有細胞邊合併成線段網路（同「從線段網路建圖」），外框節點固定後以本範例求解。",
+          "result": "得到像蜂巢或泡泡般不規則分格的受壓殼或懸垂網，每個節點三叉，適合做多邊形面板或木格柵。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "三種找形法的同題比較",
+          "brief": "同一組平面、支承與載重，分別用 E05 圖解靜力學（2D 截面）、E04 動態鬆弛與本範例力密度法求形，比較形狀差異、運算時間與可控制的參數，整理成一張方法比較圖表。",
+          "difficulty": 3,
+          "combine_with": [
+            "E04",
+            "E05"
+          ]
+        },
+        {
+          "title": "校園索網遮陽棚",
+          "brief": "以校園某處的柱位與牆面掛點為錨點，用零載重預力網與等力網迭代找出索網形，輸出索長與內力清單，並用彈性繩做 1:20 實體模型量測垂度驗證。",
+          "difficulty": 3,
+          "combine_with": [
+            "E04"
+          ]
+        },
+        {
+          "title": "織物模板混凝土小殼",
+          "brief": "仿照索網加織物模板的原型殼流程：先以 FDM 找出受壓形，再依負擔面積迭代自重、輸出索網預力與模板裁片，最後以石膏或纖維水泥做縮尺殼。",
+          "difficulty": 4,
+          "combine_with": [
+            "E03"
+          ]
+        },
+        {
+          "title": "桌上型張拉整體雕塑",
+          "brief": "用負力密度找出三稜柱與多層張拉整體的平衡形，輸出桿長與索長，以木棒與彈性繩組裝，並比較不同力密度比例造成的扭轉角。",
+          "difficulty": 4,
+          "combine_with": [
+            "E05"
+          ]
+        },
+        {
+          "title": "指定高度的屋頂反推預力",
+          "brief": "給定殼頂與屋簷的目標高度，用逆向找形反推每條索的力密度，輸出支承反力與推力箭頭，討論預力分布與邊梁尺寸的取捨。",
+          "difficulty": 5,
+          "combine_with": [
+            "E04",
+            "F04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "The force density method for form finding and computation of general networks（Computer Methods in Applied Mechanics and Engineering 3, 115–134）",
+          "author": "H.-J. Schek",
+          "year": "1974",
+          "url": "https://www.sciencedirect.com/science/article/pii/0045782574900450"
+        },
+        {
+          "title": "An overview and comparison of structural form finding methods for general networks（International Journal of Solids and Structures 49, 3741–3753）",
+          "author": "Diederik Veenendaal, Philippe Block",
+          "year": "2012",
+          "url": "https://www.sciencedirect.com/science/article/pii/S002076831200337X"
+        },
+        {
+          "title": "Force Densities Method（compas-FoFin 理論說明）",
+          "author": "Block Research Group（ETH Zurich）",
+          "year": "",
+          "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "E06-01",
+      "algo": "E06",
+      "title": "慕尼黑奧林匹克屋頂：力密度法的誕生",
+      "creator": "H.-J. Schek、Klaus Linkwitz（找形計算）；Frei Otto、Günter Behnisch（屋頂設計）",
+      "year": "1972",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "慕尼黑奧林匹克屋頂的索網必須精確施工，只靠實體模型與攝影測量不夠，Schek 因此提出力密度法，把每根索預先指定 q = 力 ÷ 長度，讓平衡方程變成線性、可以一次解出。本案只談 FDM 在此案中的起源（屋頂本身已在 E04 收錄）；和基礎範例相比，真實屋頂是多片馬鞍索網、由桅杆吊點與邊索組成，而且 q 要依施工需求再做非線性調整。",
+      "variations": [
+        {
+          "name": "桅杆吊點＋零載重",
+          "how": "load 設 0，anchors 改成幾個高桅杆頂點與地面邊緣點，baseMesh 用覆蓋整個屋面的格網。",
+          "effect": "一次解出數片相連的預力馬鞍面。"
+        },
+        {
+          "name": "邊索分開控制",
+          "how": "把 edgeCableFactor 調高到 3–5，只固定邊索兩端而非整排裸邊。",
+          "effect": "邊界向內彎成帳篷屋頂典型的扇貝邊。"
+        },
+        {
+          "name": "索料清單",
+          "how": "輸出每條邊的長度與內力並編號。",
+          "effect": "從平衡形直接得到施工用的索長與預力。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "找形",
+        "線性方程組",
+        "預力索網"
+      ],
+      "tools": [
+        "早期電腦找形",
+        "實體模型"
+      ],
+      "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method"
+    },
+    {
+      "id": "E06-02",
+      "algo": "E06",
+      "title": "Design process for prototype concrete shells using a hybrid cable-net and fabric formwork",
+      "creator": "Diederik Veenendaal、Philippe Block（ETH Zurich BLOCK Research Group）",
+      "year": "2014",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance",
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "Engineering Structures 75 期的論文，為 NEST HiLo 屋頂開發可重複使用的索網加織物模板，建造兩座原型混凝土殼。文中實作非線性延伸的力密度法，把力密度 q 當未知數，以高斯—牛頓最小平方法讓網逼近目標殼形，收斂後用「力密度 × 索長」直接得到灌漿後所需的預力。基礎範例是給 q 求形，這裡反過來是給形求 q，並要考慮濕混凝土的載重。",
+      "variations": [
+        {
+          "name": "給形求 q",
+          "how": "把 targetZ 當目標、q 當未知數，外層用有限差分與高斯—牛頓更新 q。",
+          "effect": "網形精準貼近指定的雙曲殼面，同時得到每根索的預力。"
+        },
+        {
+          "name": "濕混凝土載重",
+          "how": "load 改成節點負擔面積 × 殼厚 × 單位重，並在每輪求解後依新形狀重算。",
+          "effect": "得到灌漿後才會出現的最終形狀與索力。"
+        },
+        {
+          "name": "預力前後比較",
+          "how": "分別用無載重與有載重求一次，輸出兩組內力並排上色。",
+          "effect": "看出灌漿前後預力範圍的差異，作為張拉控制的依據。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "找形",
+        "逆向設計",
+        "數位製造",
+        "織物模板"
+      ],
+      "tools": [
+        "自寫程式",
+        "攝影測量"
+      ],
+      "url": "https://block.arch.ethz.ch/brg/files/2014-veendendaal-engstruct-design-process-for-prototype-concrete-shells-using-a-hybrid-cable-net-and-fabric-formwork_1402752074.pdf"
+    },
+    {
+      "id": "E06-03",
+      "algo": "E06",
+      "title": "COMPAS FD：以力密度法做約束找形",
+      "creator": "Tom Van Mele、Block Research Group（ETH Zurich）",
+      "year": "2021",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "BRG 以 Python 撰寫的開源套件，提供力密度法的平衡求解器與各種約束（例如節點限制在曲線或曲面上），可直接呼叫或透過 COMPAS FormFinder 圖形介面在 Rhino 中使用；PyPI 首個公開版本於 2021 年發布。基礎範例只做一次線性求解，這個套件則在求解之間交替套用幾何約束，讓自由節點同時滿足平衡與位置限制。",
+      "variations": [
+        {
+          "name": "節點約束在曲線上",
+          "how": "每次求解後把指定節點用 Curve.ClosestPoint 拉回曲線，再以新座標重組右手邊並重解，重複數次。",
+          "effect": "邊界節點沿著設計曲線滑動，同時保持平衡。"
+        },
+        {
+          "name": "稀疏矩陣改寫",
+          "how": "把 MatVec 的邊迴圈改成 CSR 格式（row 指標、col 索引、值三個陣列）。",
+          "effect": "矩陣乘向量更快，網格放大到數千個點仍可操作。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "找形",
+        "約束",
+        "開源"
+      ],
+      "tools": [
+        "Python",
+        "COMPAS",
+        "Rhino"
+      ],
+      "url": "https://github.com/blockresearchgroup/compas_fd"
+    },
+    {
+      "id": "E06-04",
+      "algo": "E06",
+      "title": "Adaptive force density method for form-finding problem of tensegrity structures",
+      "creator": "J. Y. Zhang、M. Ohsaki",
+      "year": "2006",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "刊於 International Journal of Solids and Structures 的論文，把力密度法用在張拉整體：受壓桿的力密度為負，力密度矩陣必須有足夠的秩缺陷才有非退化的平衡形，作者以特徵值分析與譜分解反覆修正可行的力密度，再由指定的獨立節點座標決定唯一形狀。基礎範例的 q 全為正、矩陣正定，這裡則必須處理不定矩陣與零特徵值。",
+      "variations": [
+        {
+          "name": "負力密度桿件",
+          "how": "新增受壓桿清單並給負 q，求解器改成對完整矩陣做帶樞軸的高斯消去。",
+          "effect": "得到桿受壓、索受拉的自平衡形。"
+        },
+        {
+          "name": "檢查矩陣秩",
+          "how": "用簡單的冪迭代或 Jacobi 法求 D 的最小幾個特徵值，確認是否接近 0。",
+          "effect": "判斷目前的力密度組合能否形成非退化的張拉整體。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "張拉整體",
+        "線性代數",
+        "找形"
+      ],
+      "tools": [
+        "自寫程式"
+      ],
+      "url": "https://www.sciencedirect.com/science/article/pii/S0020768305005858"
+    },
+    {
+      "id": "E06-05",
+      "algo": "E06",
+      "title": "Ariadne：Grasshopper 力密度逆向設計外掛",
+      "creator": "Adam Burke（MIT）",
+      "year": "2024",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "Adam Burke 在 MIT 開發的 Rhino 8 Grasshopper 外掛，以力密度法建立並求解索網，再搭配 Theseus 求解器做正向與逆向最佳化，可指定目標長度、內力或支承反力，最佳化過程中即時串流預覽。基礎範例只做正向求解；Ariadne 把 FDM 包在最佳化迴圈裡，自動找出滿足多個設計目標的 q。",
+      "variations": [
+        {
+          "name": "目標長度",
+          "how": "新增每條邊的目標長度，外層以梯度下降更新 q，使長度誤差平方和最小。",
+          "effect": "索長趨近指定值，方便用現成長度的繩索施工。"
+        },
+        {
+          "name": "目標反力",
+          "how": "對固定點算反力，把「反力不超過上限」加入目標函數。",
+          "effect": "控制支承受力，減輕邊梁或錨定的負擔。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "找形",
+        "逆向設計",
+        "最佳化"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Rhino 8",
+        "Rust"
+      ],
+      "url": "https://github.com/adam-t-burke/Ariadne"
+    },
+    {
+      "id": "E06-06",
+      "algo": "E06",
+      "title": "Grasshopper component for Force Density Method",
+      "creator": "ocabitza",
+      "year": "2023",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "Food4Rhino 上的 Grasshopper 元件，輸入初始幾何、束制條件、載重與各桿件的力密度比例，求出索網與離散殼的平衡形。它和基礎範例同樣以 FDM 一次求解，差別在於以「力密度比例」作為輸入，並把載重與束制拆成獨立的資料，方便在 Grasshopper 中與其他元件串接。",
+      "variations": [
+        {
+          "name": "力密度比例輸入",
+          "how": "把 forceDensity 拆成全域基準 q0 與每條邊的比例清單 ratios，q = q0 × ratio。",
+          "effect": "可以只調某幾條邊的相對強弱，而不必重設整張網。"
+        },
+        {
+          "name": "逐點載重",
+          "how": "load 改成 List<Vector3d>，每個節點各自指定外力。",
+          "effect": "模擬吊掛物或局部集中載重。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "找形",
+        "Grasshopper 元件"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.food4rhino.com/en/app/force-density-method"
+    },
+    {
+      "id": "E06-07",
+      "algo": "E06",
+      "title": "FDMremote：Grasshopper 連接 Julia 的力密度求解與最佳化",
+      "creator": "Keith J. Lee",
+      "year": "2022",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "由 Grasshopper 端元件與 Julia 端伺服器組成的工具，Grasshopper 把網路資料傳給本機的 Julia 伺服器，由 FDM 套件做力密度求解與逆向最佳化，再把結果送回 Rhino 顯示。基礎範例在 C# 裡自己組矩陣與求解；這裡示範把求解器外移到數值計算語言，以處理較大的網與最佳化。",
+      "variations": [
+        {
+          "name": "求解器外移",
+          "how": "把 SolveCG 改成把 diag、edges、rhs 寫成 JSON 字串交給外部程式計算，再讀回座標。",
+          "effect": "理解 Grasshopper 前端與數值後端分工的架構。"
+        },
+        {
+          "name": "最佳化歷程輸出",
+          "how": "在逆向找形的每一步記下目標函數值並輸出成清單。",
+          "effect": "接 Quick Graph 看最佳化是否穩定下降。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "找形",
+        "最佳化",
+        "逆向設計"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Julia"
+      ],
+      "url": "https://github.com/keithjlee/FDMremote"
+    },
+    {
+      "id": "E06-08",
+      "algo": "E06",
+      "title": "Programming the Force Density Method",
+      "creator": "Krešimir Fresl、Petra Gidak（University of Zagreb）",
+      "year": "2012",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "論文指出力密度法中的力密度與位移法中的勁度係數在數學上相對應，因此把既有位移法分析程式稍加修改就能做力密度找形；文中以四個預力索網例子迭代求得最小網，並與實體縮尺模型比較，發現第一次求解的形狀常比最終收斂解更接近實體模型。基礎範例是固定 q 一次求解，這裡則進一步以迭代調整 q 逼近最小網。",
+      "variations": [
+        {
+          "name": "最小網迭代",
+          "how": "load 設 0，每輪把 q ← 1 ÷ 長度後重解，重複到形狀穩定。",
+          "effect": "得到接近最小長度網路的形狀。"
+        },
+        {
+          "name": "逐輪形狀比較",
+          "how": "把每一輪的 lines 分開輸出並上不同顏色。",
+          "effect": "看出第一次求解與收斂解的差異，對照實體模型。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "找形",
+        "線性方程組",
+        "預力索網"
+      ],
+      "tools": [
+        "自寫程式"
+      ],
+      "url": "https://www.academia.edu/18363187/Programming_the_Force_Density_Method"
+    },
+    {
+      "id": "E06-51",
+      "algo": "E06",
+      "title": "Shell Form Finding：瀏覽器中的受壓殼找形工具",
+      "creator": "Amanda Ghassaei",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "performance",
+        "fabrication"
+      ],
+      "scale": "建築",
+      "summary": "在 MIT Computational Structural Design and Optimization（2016 秋）中開發的網頁工具：靜態模擬以力密度法解線性方程組得到平衡位置，動態模擬則以 GPU 片段著色器平行計算質點彈簧阻尼系統，可調整網格拓樸、固定點與外力，並匯出 STL 3D 列印。和 Grasshopper C# 基礎範例相比，它把 FDM 與動態鬆弛放在同一介面並排切換，並以 JavaScript／WebGL 在瀏覽器中即時互動。",
+      "variations": [
+        {
+          "name": "FDM 與動態鬆弛切換",
+          "how": "在同一個 C# 元件加一個 bool 輸入，切換呼叫 SolveCG 或 E04 的時間積分迴圈。",
+          "effect": "同一張網兩種方法結果並排比較，理解一次求解與逐步收斂的差別。"
+        },
+        {
+          "name": "依內力加厚輸出",
+          "how": "依 forces 對每條邊給不同半徑建管件，合併後輸出 STL。",
+          "effect": "得到可 3D 列印、受力大處較粗的殼格模型。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "WebGL",
+        "找形",
+        "互動"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL"
+      ],
+      "url": "https://amandaghassaei.com/projects/shell_form_finding/"
+    },
+    {
+      "id": "E06-52",
+      "algo": "E06",
+      "title": "ForceDensityAPI：Processing 力密度格殼探索程式",
+      "creator": "Alexandros Haridis（MIT）",
+      "year": "2017",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "以 Java／Processing 寫成的獨立程式，實作力密度法求解 36 個節點、25 個面、60 條邊的格網，理論依據來自 Klaus Linkwitz 的 FDM 著作，並附有以質點彈簧系統做動態找形的模式，用互動介面探索格殼的設計空間。基礎範例是 Grasshopper 元件；這裡把找形寫成即時繪圖的 Processing 草稿，重點在互動與設計空間探索。",
+      "variations": [
+        {
+          "name": "小網格手算對照",
+          "how": "把 baseMesh 換成 5×5 的格網，輸出 D 矩陣內容成文字表格。",
+          "effect": "可以和手算或教科書的矩陣逐項對照。"
+        },
+        {
+          "name": "設計空間取樣",
+          "how": "用兩個 q 比例各取 5 個值，排成 5×5 的格子並排輸出形狀。",
+          "effect": "一次看到 25 種格殼形態，挑出想要的比例。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "Java",
+        "找形",
+        "互動"
+      ],
+      "tools": [
+        "Processing",
+        "Java"
+      ],
+      "url": "https://github.com/alexHaridis/ForceDensityAPI"
+    },
+    {
+      "id": "E06-53",
+      "algo": "E06",
+      "title": "Force_Density_Method：Python 實作與參數化力密度",
+      "creator": "Vahid Moosavi",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "依 Schek（1974）原始寫法以 Python 實作的力密度法，輸入連接圖（可用 NetworkX 格式）、固定點、節點外力與邊的力密度即可解出平衡座標；範例筆記本示範網格殼、依網路中心性指標指定力密度，以及固定點在圓上的屋頂。和基礎範例相比，它把 q 當成可由圖論指標計算的欄位，並大量產生形狀做比較。",
+      "variations": [
+        {
+          "name": "中心性決定 q",
+          "how": "對網路計算每條邊的介數中心性（經過該邊的最短路徑數），q = q0 × (1 + k × 中心性)。",
+          "effect": "主要傳力路徑自動被拉緊，形成清楚的主肋。"
+        },
+        {
+          "name": "圓形固定邊界",
+          "how": "把固定點改成半徑固定的一圈圓周節點，內部用放射狀網格。",
+          "effect": "得到圓形平面的碗形屋頂。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "Jupyter",
+        "找形",
+        "圖"
+      ],
+      "tools": [
+        "Python",
+        "Jupyter Notebook",
+        "NetworkX"
+      ],
+      "url": "https://github.com/sevamoo/Force_Density_Method"
+    }
+  ]
+}

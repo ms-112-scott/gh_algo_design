@@ -144,6 +144,20 @@
           "what_changes": "輸出（加入圖論分析）",
           "how": "把所有弧 Join 成曲線，判斷 IsClosed 並計算長度或面積；依大小分層、上色或只保留最長的一條當路徑。",
           "result": "可以控制「島」與「長河」的比例，用於景觀步道、動線或燈光設計。"
+        },
+        {
+          "title": "鏡曲線：Kolam 與凱爾特結",
+          "level": 3,
+          "what_changes": "規則（磁磚種類由 2 種增為 3 種：兩種反射磚＋一種交叉磚），並在輸出加入上下交織",
+          "how": "每格的四個邊中點當成埠 N、E、S、W，三種磚就是三種配對：反射磚甲 {N–E, S–W}、反射磚乙 {N–W, S–E}（這兩種正好是原本的兩段四分之一弧），交叉磚 {N–S, E–W}（兩條穿過格心的直線或 S 形曲線）；把原本的 bool rotated 改成 int type = random.Next(3)，或用 mirrorH[,]、mirrorV[,] 兩個布林陣列讓使用者指定哪些格放鏡子。整個網格外圍再補一圈邊界磚：相鄰兩個外側埠用向外凸的半圓接起、角落格的兩個外側埠用 3/4 圓接起，讓曲線碰到邊界就折返。接著建立 Dictionary<(int col,int row,int port), (int col,int row,int port)> 記錄每個埠在格內的配對與跨格的相鄰埠，從任一未走過的埠出發一路追蹤，把沿途線段 Join 成一條封閉 PolyCurve，數出共有幾條曲線（Kolam 的「一筆畫」條件就是只有 1 條）。最後沿每條曲線依序走過交叉磚，交替標記上／下，對標記為下的那段用 Curve.Split 在格心兩側各剪掉 gap 長度，做出凱爾特結的斷線交織。輸出前可把整組幾何用 Transform.Rotation(Math.PI/4, …) 轉 45°，並在棋盤式間隔的磚角點上畫點（Kolam 的 pulli）。",
+          "result": "由單一或少數幾條封閉曲線纏繞整片網格的 Kolam／凱爾特結圖樣，交叉處上下交替，改變鏡子位置就能控制曲線條數與纏繞方式。"
+        },
+        {
+          "title": "複數共形映射（e^z／Möbius／Droste）",
+          "level": 4,
+          "what_changes": "維度／座標（平面到平面的共形座標轉換，取代原本的直角座標擺放）",
+          "how": "先照原版產生弧線，把每段 Arc 用 arc.ToNurbsCurve().DivideByCount(16, true, out double[] t) 取樣成點，每點轉成 System.Numerics.Complex z = new Complex(x * k, y * k)（k 為縮放），套用映射 w = f(z) 後再用 Curve.CreateInterpolatedCurve 接回曲線。三種 f：(1) 指數 w = Complex.Exp(z)：把網格高度設成 2π/k 的整數倍，垂直方向剛好繞一圈接縫、水平方向變成同心環且每圈等比縮小；(2) Möbius w = (a·z + b)/(c·z + d)，a、b、c、d 以四組 Complex 輸入並檢查 a·d − b·c ≠ 0，因為 Möbius 把圓映射成圓，每段弧只要映射起點、中點、終點三點，再用 new Arc(p0, pMid, p1) 就能得到精確圓弧；(3) Droste 螺旋：在 z 平面讓圖樣沿向量 P = ln(s) + 2πi 週期重複（格子寬高取 h，使 ln(s) = a·h、2π = b·h，每格方向以 (col − m·a, row − m·b) 折回 0 ≤ row < b 的代表格決定，確保平移 P 後相同），再套 w = Complex.Exp(β·z)，β = 2πi / (ln(s) + 2πi)，s 為每圈的縮放倍率。映射前要排除 w 的極點（Möbius 的 z = −d/c）附近的格子，避免曲線爆長。",
+          "result": "Truchet 曲線在局部仍保持直角相接，整體卻捲成同心環、繞向某一點無限縮小，或形成 Escher 式的 Droste 螺旋，可當圓形天花、地坪或穹頂的平面展開圖。"
         }
       ],
       "project_seeds": [
@@ -363,6 +377,13 @@
           "what_changes": "迴圈（加入遞迴）",
           "how": "把 Hankin 線切出的中心星形或多邊形當成新底圖，縮小角度再套一次 HankinLines，遞迴 2–3 層。",
           "result": "自相似的多層星形，接近波斯後期兩層級 girih 圖樣。"
+        },
+        {
+          "title": "疊紋（Moiré）：雙層星形板的干涉紋",
+          "level": 3,
+          "what_changes": "分析／評估（兩層同一圖樣只差微小旋轉或縮放，量化疊合後的透光分布與疊紋間距）",
+          "how": "以原版產生第一層線網，並用 V09 的 Curve.CreateBooleanRegions 取出星形開口當 openA；第二層用同一組曲線複製後套 Transform.Rotation(theta, center)（theta 約 1°–5°）或 Transform.Scale(center, 1 + eps)（eps 約 0.01–0.05），得到 openB。先用公式預估疊紋尺度：旋轉時疊紋間距 D = a / (2·sin(theta/2))，縮放時 D = a·a′ / |a − a′|（a、a′ 為兩層的 tileSize），把 D 輸出成數值並畫出一個 D×D 的參考框。接著在範圍內佈一個取樣點格（間距約 tileSize/8），用 curve.Contains(pt, Plane.WorldXY, tol) == PointContainment.Inside 判斷每點是否同時落在 openA 與 openB 的某個開口內，得到 0／1 透光值，再以邊長約 tileSize 的視窗做移動平均，把結果寫成 Mesh 頂點色（mesh.VertexColors.Add）的灰階圖。可再加 gap 與 eye 兩個輸入：把第二層上移 gap，以眼睛位置 eye 沿視線把第二層的開口投影回第一層平面（Transform.Projection 或沿射線求交點）再做判斷，觀察觀看者移動時疊紋的位移。",
+          "result": "兩片幾乎相同的星形穿孔板疊合後浮現遠大於單一星形的明暗波紋，並得到疊紋間距數值與透光率灰階圖，可作為雙層穿孔立面或屏風隨觀看角度變化的設計依據。"
         }
       ],
       "project_seeds": [

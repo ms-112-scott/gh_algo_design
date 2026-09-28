@@ -191,21 +191,6 @@
    "has_image": false
   },
   {
-   "id": "D02-05",
-   "cc": false,
-   "title": "GAN-Physarum: La Dérive Numérique",
-   "creator": "ecoLogicStudio（Claudia Pasquero, Marco Poletto）",
-   "year": "2022",
-   "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
-   "category": "urban-landscape",
-   "scale": "群體／都市",
-   "tools": [
-    "GAN",
-    "生物實驗"
-   ],
-   "has_image": false
-  },
-  {
    "id": "D02-06",
    "cc": false,
    "title": "bioTallinn 與 Paljassaare 半島黏菌規劃",
@@ -431,9 +416,9 @@
  "distribution": {
   "category": {
    "2d-pattern": 4,
-   "urban-landscape": 4,
    "art-installation": 3,
    "fabrication": 3,
+   "urban-landscape": 3,
    "modeling": 3,
    "performance": 2,
    "drawing": 1
@@ -441,12 +426,12 @@
   "scale": {
    "物件": 7,
    "地景": 5,
-   "群體／都市": 4,
+   "群體／都市": 3,
    "構件": 3,
    "建築": 1
   },
   "tools": {
-   "生物實驗": 5,
+   "生物實驗": 4,
    "3D 列印": 3,
    "openFrameworks": 3,
    "Python": 2,
@@ -460,7 +445,6 @@
    "GPU 模擬": 1,
    "Formlabs": 1,
    "脫蠟鑄造": 1,
-   "GAN": 1,
    "衛星資料": 1,
    "多代理人模型": 1,
    "GPU": 1,
@@ -473,5 +457,15 @@
    "Houdini": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:D02-05",
+   "algo": "D02",
+   "kind": "RES",
+   "title": "GAN-Physarum: La Dérive Numérique",
+   "url_norm": "ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
+   "reason": "神經網路相關，超出教學難度"
+  }
+ ]
 }

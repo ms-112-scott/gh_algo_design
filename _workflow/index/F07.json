@@ -1,0 +1,337 @@
+{
+ "id": "F07",
+ "name_zh": "模擬退火（以房間鄰接配置為例）",
+ "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+ "family": "F",
+ "one_liner": "只拿一個方案反覆小改：變好就收，變差也有機會收，但「溫度」越降越低、越來越不肯接受變差，於是能跳出小山谷找到更好的配置。",
+ "how_it_works": [
+  "準備 n 個房間與 cols × rows 個格位，把鄰接需求（例如「廚房,餐廳,5」）讀進對稱矩陣 w[i,j]。",
+  "成本 = Σ w[i,j] × 兩房間所在格位的曼哈頓距離（二次指派問題 QAP）；用洗牌產生一個隨機配置當起點，溫度 T ← startTemp。",
+  "每一步隨機挑兩個格位交換內容（空格也能換），重算成本得到差值 Δ。",
+  "Δ ≤ 0 直接接受；Δ > 0 以機率 exp(−Δ／T) 接受（Metropolis 準則），否則換回來；同時記住目前為止最好的配置。",
+  "每做 StepsPerTemp 步就把溫度乘上 coolingRate，直到 iterations 用完或溫度低於門檻。",
+  "輸出最佳配置的房間矩形、名稱、鄰接連線，以及從抖動到收斂的成本曲線。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "不等面積房間：條帶式平面",
+   "level": 3,
+   "what_changes": "輸入加上房間面積，輸出從等大格位改成依排列順序切出的條帶（規則＋輸出）",
+   "how": "新增 List<double> areas；排列 slotOf 改成房間的排列順序，依序把房間塞進固定寬度的條帶（每條寬 stripWidth，房間長 = 面積 / 寬，滿了換下一條），用 Rectangle3d 算出中心點；成本改用中心點的 Point3d.DistanceTo，鄰域仍是交換兩個房間的順序。",
+   "result": "大小不一的房間排成幾條走道式平面，常一起用的房間自動靠在同一條或相鄰條帶上。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "連續鄰域：家具與構件擺放",
+   "level": 3,
+   "what_changes": "鄰域從「交換兩個格位」改成「隨機平移＋旋轉一件物件」（規則）",
+   "how": "每件家具存 Point3d 位置與 double 角度；每步隨機挑一件，位置加上 ±stepSize × T／startTemp 的位移、角度加減 90° 或小角度；成本加上重疊面積（用 Curve.PlanarClosedCurveRelationship 或包圍盒相交）、離牆距離、動線寬度等項。",
+   "result": "床、桌、櫃子從亂放逐漸貼牆、留出走道，高溫時大步亂跳、低溫時只做微調。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "2-opt 反轉路段：單線繪圖",
+   "level": 2,
+   "what_changes": "問題從房間配置換成走訪點的順序，鄰域改成反轉一段路徑（規則＋輸出）",
+   "how": "輸入點群（可接 E02 Poisson 或影像取樣），狀態是點的順序 int[]；每步隨機取 i < j，用 Array.Reverse(order, i, j − i + 1) 反轉，Δ 只需計算兩端被改動的兩條邊；輸出一條封閉 Polyline。",
+   "result": "一筆畫完的單線圖，交叉的線段在降溫過程中一條條被解開，適合繪圖機輸出。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "冷卻排程比較與重新加熱",
+   "level": 2,
+   "what_changes": "溫度更新公式（規則）",
+   "how": "新增 int schedule 輸入：0 幾何 T ← T·α、1 線性 T ← T0·(1 − k/K)、2 對數 T ← T0 / ln(k + 2)、3 重新加熱（連續 N 步沒有改善就把 T 設回 0.5·T0）；對同一組 seed 各跑一次，把四條成本曲線並排輸出。",
+   "result": "看出降溫太快會早早卡住、對數降溫最穩但最慢、重新加熱能從停滯中再爬出來。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "固定房間與不可用格位",
+   "level": 2,
+   "what_changes": "加入設計者給定的約束（輸入）",
+   "how": "新增 List<int> lockedRooms 與 lockedSlots（例如入口、樓梯核固定在某格）、List<int> blockedSlots（柱位或中庭）；挑交換對象時跳過鎖定與封閉的格位，初始排列時先放鎖定房間再洗牌其餘。",
+   "result": "入口與樓梯位置固定不動，其餘房間圍著它們重新排列，更接近真實平面作業。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "不規則基地＋走廊距離（接 F05）",
+   "level": 4,
+   "what_changes": "格位來源與距離函數（混合）",
+   "how": "格位改由邊界 Curve 內的格點取樣（Curve.Contains 過濾），先用 F05 Dijkstra 在走廊網格上算出所有格位兩兩之間的步行距離存成 double[,] dist，Cost 改查 dist[slotOf[i], slotOf[j]] 取代曼哈頓距離。",
+   "result": "L 形或有中庭的基地裡，房間依真實繞行距離排列，而不是直線距離。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "多樓層配置：垂直移動成本",
+   "level": 3,
+   "what_changes": "格位從 2D 格子升到多層（維度）",
+   "how": "新增 int floors 與 double floorPenalty；格位編號拆成 (x, y, z)，距離 = 曼哈頓水平距離 + floorPenalty × |Δz|（代表樓梯或電梯的代價）；輸出時每層用 Transform.Translation 往上疊，房間畫成 Box。",
+   "result": "常一起用的房間盡量在同一層，跨層需求高的房間自動集中在樓梯附近的上下格位。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "多目標懲罰：外牆、日照與面積",
+   "level": 3,
+   "what_changes": "成本函數加入空間性質評估（分析／評估）",
+   "how": "每個房間加 needsFacade、preferSouth 屬性；Cost 加上懲罰項：需要採光卻在內部格位 +P1、臥室不在南側 +P2；各項乘上權重 List<double> weights 後相加，log 分項印出各懲罰值。",
+   "result": "同一張鄰接表在不同權重下得到不同平面：重視採光時臥室全靠外牆，重視動線時則聚在中央。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "Timer 動畫：看見降溫過程",
+   "level": 2,
+   "what_changes": "把一次跑完改成逐幀推進（時間／動畫）",
+   "how": "把 slotOf、roomAt、T、cost 改成類別欄位，只在 reset 為 true 時初始化；每次 RunScript 只跑 stepsPerFrame 步並輸出目前（不是最佳）配置；接 GH Timer 元件，另外輸出目前溫度讓色彩隨 T 由紅轉藍。",
+   "result": "高溫時房間瘋狂跳動、降溫後只剩少數房間小幅交換，最後凍結成定案平面。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "單點、族群、群體：對照 F04",
+   "level": 4,
+   "what_changes": "搜尋機制（混合）",
+   "how": "把 Cost 抽成共用方法，同一題目分別用本範例退火、F04 基因演算法（排列交配用 order crossover）、以及粒子群（PSO，把連續座標排序成排列）各跑固定評分次數；三條「評分次數－最佳成本」曲線畫在同一張圖。",
+   "result": "一張比較圖說明單點搜尋、族群搜尋與群體搜尋的收斂速度與結果差異。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "泡泡圖轉牆線與門洞",
+   "level": 3,
+   "what_changes": "輸出從房間方塊轉成可製造的平面線稿（輸出／製造）",
+   "how": "對最佳配置逐一檢查相鄰格位：兩房間相鄰且 w > 0 時，在共用牆的 Line 中段挖出 doorWidth 的缺口（用 Line.PointAt 切兩段）；其餘共用牆完整保留，外牆用 Curve.JoinCurves 接成封閉輪廓，輸出可雷切的牆線。",
+   "result": "得到一張有門有牆的簡易平面，可直接雷切成 1:100 的房間配置模型。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "形狀退火：用 A05 規則當鄰域",
+   "level": 5,
+   "what_changes": "狀態從排列換成形狀，鄰域換成形狀文法規則（混合）",
+   "how": "沿用 A05 的形狀規則（例如「加一根桿件」「移動一個節點」「刪除一根桿件」），每步隨機挑一條規則套在隨機位置；成本 = 總桿長 + 懲罰（未連通、跨距過大），依 exp(−Δ／T) 決定是否保留新形狀。",
+   "result": "桁架或屋頂構架從簡單三角形逐步長出、再被修剪成省料的形，重現 eifForm 式的形狀退火。"
+  }
+ ],
+ "project_seeds": [
+  "住宅泡泡圖自動排列器",
+  "醫院部門配置：真實步行距離",
+  "小套房家具自動擺放",
+  "單線肖像繪圖機",
+  "搜尋法競技場：退火 vs 基因演算法"
+ ],
+ "cases": [
+  {
+   "id": "F07-01",
+   "cc": false,
+   "title": "Architectural Layout Design through Simulated Annealing Algorithm（以模擬退火做建築配置設計）",
+   "creator": "Hao Zheng、Yue Ren",
+   "year": "2020",
+   "url": "https://scholars.cityu.edu.hk/en/publications/publication(1549ded9-f19e-49b8-92b5-45803eaca025).html",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-02",
+   "cc": false,
+   "title": "Optimally Directed Shape Generation by Shape Annealing（形狀退火）",
+   "creator": "Jonathan Cagan、William J. Mitchell",
+   "year": "1993",
+   "url": "https://doi.org/10.1068/b200005",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-03",
+   "cc": false,
+   "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
+   "creator": "Kristina Shea、Jonathan Cagan",
+   "year": "1997",
+   "url": "https://www.cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32D86929FF89B256F5483E354CDA0156",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-04",
+   "cc": false,
+   "title": "eifForm：以形狀退火生成結構的設計系統",
+   "creator": "Kristina Shea（University of Cambridge）",
+   "year": "2000",
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-05",
+   "cc": false,
+   "title": "Make it Home: Automatic Optimization of Furniture Arrangement（自動家具配置）",
+   "creator": "Lap-Fai Yu、Sai-Kit Yeung、Chi-Keung Tang、Demetri Terzopoulos、Tony F. Chan、Stanley J. Osher",
+   "year": "2011",
+   "url": "https://www.saikit.org/static/projects/furniture/index.html",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-06",
+   "cc": false,
+   "title": "Galapagos 的模擬退火求解器（論壇說明）",
+   "creator": "David Rutten（McNeel）",
+   "year": "2016",
+   "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "Galapagos"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-07",
+   "cc": false,
+   "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
+   "creator": "Jonathan Cagan",
+   "year": "1994",
+   "url": "https://doi.org/10.1016/0010-4485(94)90014-0",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-51",
+   "cc": true,
+   "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+   "creator": "Todd W. Schneider",
+   "year": "2014",
+   "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "R",
+    "Shiny"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-52",
+   "cc": true,
+   "title": "Traveling Pixel（像素的旅行推銷員）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "url": "https://www.michaelfogleman.com/projects/traveling-pixel/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Go"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-53",
+   "cc": true,
+   "title": "Graph Layout（以模擬退火排版圖形）",
+   "creator": "Michael Fogleman",
+   "year": "2014",
+   "url": "https://www.michaelfogleman.com/projects/graph-layout/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "C"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-54",
+   "cc": true,
+   "title": "Travelling Salesman Art With Simulated Annealing（模擬退火單線畫）",
+   "creator": "Matthew McGonagle",
+   "year": "2018",
+   "url": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "NumPy",
+    "Matplotlib"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F07-55",
+   "cc": true,
+   "title": "Primitive（以幾何圖形重建照片）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "url": "https://github.com/fogleman/primitive",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Go"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 4,
+   "modeling": 2,
+   "3d-architecture": 2,
+   "urban-landscape": 1,
+   "performance": 1,
+   "fabrication": 1,
+   "2d-pattern": 1
+  },
+  "scale": {
+   "物件": 5,
+   "建築": 3,
+   "群體／都市": 2,
+   "構件": 2
+  },
+  "tools": {
+   "自寫程式": 5,
+   "Python": 3,
+   "Go": 2,
+   "Grasshopper": 1,
+   "Galapagos": 1,
+   "R": 1,
+   "Shiny": 1,
+   "C": 1,
+   "NumPy": 1,
+   "Matplotlib": 1
+  }
+ },
+ "rejected": []
+}

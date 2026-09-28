@@ -2,5 +2,14 @@
  "units": {},
  "target_override": {},
  "fix_attempts": {},
- "runs": []
+ "runs": [
+  {
+   "run": "R20260929-0146",
+   "merged_at": "2026-09-29T02:49+08:00",
+   "merged": {
+    "VAR": 28
+   },
+   "rejected": {}
+  }
+ ]
 }

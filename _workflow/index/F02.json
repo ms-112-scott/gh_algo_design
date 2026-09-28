@@ -119,6 +119,15 @@
    "what_changes": "迴圈（加入遞迴）",
    "how": "把 Hankin 線切出的中心星形或多邊形當成新底圖，縮小角度再套一次 HankinLines，遞迴 2–3 層。",
    "result": "自相似的多層星形，接近波斯後期兩層級 girih 圖樣。"
+  },
+  {
+   "index": 12,
+   "code": "V13",
+   "title": "疊紋（Moiré）：雙層星形板的干涉紋",
+   "level": 3,
+   "what_changes": "分析／評估（兩層同一圖樣只差微小旋轉或縮放，量化疊合後的透光分布與疊紋間距）",
+   "how": "以原版產生第一層線網，並用 V09 的 Curve.CreateBooleanRegions 取出星形開口當 openA；第二層用同一組曲線複製後套 Transform.Rotation(theta, center)（theta 約 1°–5°）或 Transform.Scale(center, 1 + eps)（eps 約 0.01–0.05），得到 openB。先用公式預估疊紋尺度：旋轉時疊紋間距 D = a / (2·sin(theta/2))，縮放時 D = a·a′ / |a − a′|（a、a′ 為兩層的 tileSize），把 D 輸出成數值並畫出一個 D×D 的參考框。接著在範圍內佈一個取樣點格（間距約 tileSize/8），用 curve.Contains(pt, Plane.WorldXY, tol) == PointContainment.Inside 判斷每點是否同時落在 openA 與 openB 的某個開口內，得到 0／1 透光值，再以邊長約 tileSize 的視窗做移動平均，把結果寫成 Mesh 頂點色（mesh.VertexColors.Add）的灰階圖。可再加 gap 與 eye 兩個輸入：把第二層上移 gap，以眼睛位置 eye 沿視線把第二層的開口投影回第一層平面（Transform.Projection 或沿射線求交點）再做判斷，觀察觀看者移動時疊紋的位移。",
+   "result": "兩片幾乎相同的星形穿孔板疊合後浮現遠大於單一星形的明暗波紋，並得到疊紋間距數值與透光率灰階圖，可作為雙層穿孔立面或屏風隨觀看角度變化的設計依據。"
   }
  ],
  "project_seeds": [

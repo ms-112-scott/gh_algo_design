@@ -1,0 +1,52 @@
+[
+  {
+    "case_id": "G01-03",
+    "url": "https://toolbox.decodingspaces.net/wp-content/uploads/2018/05/2d-isovist_urban_01.gif",
+    "page": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+    "source": "DeCodingSpaces Toolbox",
+    "author": "Martin Bielik",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "都市街區中的 2D isovist 分析動態圖"
+  },
+  {
+    "case_id": "G01-07",
+    "url": "https://genesis-lab.dev/products/syntactic/featured.png",
+    "page": "https://genesis-lab.dev/products/syntactic/",
+    "source": "Genesis Lab",
+    "author": "Pirouz Nourian、Samaneh Rezvani",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "SYNTACTIC 外掛產品頁的代表圖"
+  },
+  {
+    "case_id": "G01-52",
+    "url": "https://ncase.github.io/sight-and-light/thumb.png",
+    "page": "https://ncase.me/sight-and-light/",
+    "source": "ncase.me",
+    "author": "Nicky Case",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Sight & Light 教學頁的 og:image，2D 光影可視多邊形"
+  },
+  {
+    "case_id": "G01-53",
+    "url": "https://i.ytimg.com/vi/TOEi6T2mtHo/hqdefault.jpg",
+    "page": "https://www.youtube.com/watch?v=TOEi6T2mtHo",
+    "source": "YouTube（The Coding Train）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Coding Challenge 145 2D Raycasting 影片縮圖"
+  },
+  {
+    "case_id": "G01-54",
+    "url": "https://houdinigubbins.wordpress.com/wp-content/uploads/2017/05/isovist.jpg",
+    "page": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/",
+    "source": "Houdini Gubbins",
+    "author": "houdinigubbins",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Houdini 中計算的 isovist 多邊形"
+  }
+]

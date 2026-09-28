@@ -1,0 +1,306 @@
+{
+ "id": "F08",
+ "name_zh": "最小生成樹與 Steiner 樹",
+ "name_en": "Minimum Spanning Tree & Steiner Tree",
+ "family": "F",
+ "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先把邊由短到長挑、會成環就跳過；再在分岔夾角太小的地方加入 120° 三叉的 Steiner 點，讓網路再縮短一些。",
+ "how_it_works": [
+  "讀入端點 pts（留空就用 seed 在 size × size 的正方形內撒 pointCount 個點），把所有點兩兩連成候選邊並依長度由短到長排序。",
+  "Kruskal：由短到長檢查每條邊，用並查集的 Find 判斷兩端是否已在同一群；不同群才加入並合併，同群代表會成環就跳過，加滿 n − 1 條邊就是最小生成樹。",
+  "Steiner 改良（steiner = true）：在樹上找出夾角小於 120° 的一對邊 v–a、v–b，用 Weiszfeld 迭代求三點的 Fermat 點 s，拆掉原本兩條邊、改接成 s 的三叉。",
+  "鬆弛 relaxIterations 次：每個 Steiner 點移到三個鄰點的 Fermat 點；度數降到 2 或貼到鄰點上的 Steiner 點刪除，並把鄰點重新接好。",
+  "輸出 MST 線段、Steiner 網路、Steiner 點，並在 info 印出兩者總長與節省比例（通常省 2–4%，依 Gilbert–Pollak 猜想最多約 13.4%）；Steiner 部分是啟發式，不保證精確最佳。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "Prim：從一個根點往外長",
+   "level": 2,
+   "what_changes": "建樹規則（由全域排序改成從根點擴張）",
+   "how": "移除 edges 排序與並查集，改用 bool[] inTree 與 double[] best（每個點到樹的最短距離）；每輪挑 best 最小的點加入並更新其他點的 best；新增 root 輸入指定起點，另輸出加入順序 order。",
+   "result": "同一組點得到和 Kruskal 相同的樹，但長出的順序是從根點一圈圈向外擴張，可直接當分期施工或配送順序。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "只用 Delaunay 邊當候選邊",
+   "level": 3,
+   "what_changes": "候選邊的來源（效能）",
+   "how": "把兩兩連線換成 Grasshopper.Kernel.Geometry.Delaunay.Solver.Solve_Connectivity 取得的鄰接關係（MST 一定是 Delaunay 圖的子圖），候選邊從 n²/2 降到約 3n，再照原本流程排序＋並查集。",
+   "result": "5,000 個點也能在一秒內算出與暴力法完全相同的 MST，並可順便輸出 Delaunay 網格做對照。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "障礙物與邊界：穿牆的邊不能用",
+   "level": 2,
+   "what_changes": "候選邊的篩選（輸入）",
+   "how": "新增 obstacles（List<Curve>）與 boundary（Curve）輸入；建立候選邊時用 Rhino.Geometry.Intersect.Intersection.CurveCurve 檢查 Line 是否與障礙相交、用 boundary.Contains 檢查中點是否在界內，不合格就不加入 edges。",
+   "result": "避開水池、既有建築與基地外的生成樹，可能變成數棵樹（森林），用顏色標出被障礙切開的群。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "吸引子與地形加權的邊成本",
+   "level": 2,
+   "what_changes": "邊的權重（輸入）",
+   "how": "把 Edge.Length 改成 cost = 長度 × (1 + k × f)，f 可以是線段中點到 attractor 的距離倒數，或從 terrain（Mesh）用 Mesh.ClosestPoint 取兩端高差算出的坡度；排序改用 cost，輸出仍畫實際線段。",
+   "result": "網路會繞開陡坡或刻意靠近吸引子（如廣場、景觀節點），總長稍增但更貼近地形與使用需求。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "接上既有道路：預先合併的並查集",
+   "level": 3,
+   "what_changes": "初始狀態（輸入：既有網路）",
+   "how": "新增 roads（List<Curve>）；每個端點用 Curve.ClosestPoint 求到道路的最近點並加一條候選邊，所有道路節點在並查集中預先合併成同一群（union 到同一代表），再跑 Kruskal。",
+   "result": "新建築只需以最短的支路接到既有路網，輸出的是「補哪些路」而不是整張新網，適合基地擴建或管線接駁。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "度數上限：每個節點最多 3 叉",
+   "level": 3,
+   "what_changes": "加入條件（規則）",
+   "how": "新增 maxDegree 輸入與 int[] degree；Kruskal 加邊前檢查兩端 degree 都小於 maxDegree，否則跳過；因為不再保證全部連通，最後用剩下的最短可行邊補齊（啟發式，不保證最佳）。",
+   "result": "節點不再出現五、六條桿件擠在一起的情況，接頭種類變少，較容易做成實際構造節點。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "刪掉最長的邊來分群",
+   "level": 2,
+   "what_changes": "輸出後處理（分析）",
+   "how": "MST 完成後把邊依長度排序，刪掉最長的 k − 1 條（新增輸入 k），再用並查集重算每個點屬於哪一群，輸出各群的點與凸包（PolylineCurve）。",
+   "result": "得到 single-linkage 分群：一次把散布的樹木、設施或住戶自動分成 k 個聚落，並看出群與群之間的空隙。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "3D 生成樹 → 管件與節點接頭",
+   "level": 3,
+   "what_changes": "維度＋輸出／製造",
+   "how": "把撒點改在 Box 或 Brep 內（Brep.IsPointInside 拒絕取樣）產生 3D 點；每條邊用 Brep.CreatePipe 做桿件、每個節點放 Sphere，並輸出桿件長度清單（依長度分組編號）。",
+   "result": "懸吊式的 3D 生成樹吊燈或空間構架，附帶可直接下料的桿件長度表與節點數。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "3D Steiner 樹狀柱",
+   "level": 4,
+   "what_changes": "維度＋Steiner 規則（結構）",
+   "how": "端點改成屋頂下的多個支承點加上一個地面柱腳點；Fermat 與 VectorAngle 本來就適用 3D，直接執行 Steiner 改良，再把每段依其下方支承點數量給不同管徑。",
+   "result": "從一個柱腳分岔到多個屋頂支承點、分岔角接近 120° 的樹狀柱，桿件總長比直接放射狀連線更短。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "曲面上的測地生成樹",
+   "level": 4,
+   "what_changes": "維度（距離定義）",
+   "how": "點改成曲面上的點，候選邊長度改用 Surface.ShortPath 求得的測地線長度（只算 Delaunay 或 k 個最近鄰以控制計算量），加入的邊直接輸出該測地線 Curve。",
+   "result": "沿著殼體或起伏屋面爬行的生成樹，可當成屋面上的排水溝、肋梁或燈帶走向。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "繞行率評估與補邊（混 F05）",
+   "level": 4,
+   "what_changes": "分析／評估＋混合",
+   "how": "MST 完成後，用 F05 的 Dijkstra 在樹上算每對端點的路徑長，除以直線距離得到繞行率；把繞行率最高的點對依序補上一條直連邊，直到最大繞行率低於 detourLimit。",
+   "result": "在「最省材料的樹」與「每一對都不太繞路的網」之間取捨，輸出每次補邊後的總長與最大繞行率曲線。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "Kruskal 逐邊動畫與並查集著色",
+   "level": 2,
+   "what_changes": "時間／動畫",
+   "how": "把 Kruskal 迴圈改成每次 RunScript 只處理 step 條邊（配合 Timer 或 Slider），class 欄位保存 parent 與目前邊索引；每個點依 Find 的代表上色，被拒絕的成環邊用紅色短暫顯示。",
+   "result": "看得到一片片顏色不同的小樹由短邊開始長出、逐步合併成同一色的一整棵樹，清楚呈現貪婪法的過程。"
+  }
+ ],
+ "project_seeds": [
+  "校園步道的最省網路",
+  "3D Steiner 樹狀柱亭",
+  "生成樹吊燈與節點列印",
+  "聚落的佔據與連結",
+  "隨機權重迷宮花園"
+ ],
+ "cases": [
+  {
+   "id": "F08-01",
+   "cc": false,
+   "title": "Emerging Spanning Trees in the Work of Candilis–Josic–Woods（Candilis–Josic–Woods 作品中浮現的生成樹）",
+   "creator": "Georgios-Spyridon Athanasopoulos",
+   "year": "2020",
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-02",
+   "cc": false,
+   "title": "Ivy：以加權網格表示法做網格分割與展開",
+   "creator": "Andrei Nejur、Kyle Steinfeld",
+   "year": "2016",
+   "url": "https://www.academia.edu/33285328/Ivy_Bringing_a_Weighted-Mesh_Representation_to_Bear_on_Generative_Architectural_Design_Applications",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Ivy"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-03",
+   "cc": false,
+   "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns（以延伸最小生成樹描述局部都市形態）",
+   "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+   "year": "2018",
+   "url": "https://doi.org/10.1080/13658816.2017.1384830",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F08-04",
+   "cc": false,
+   "title": "Minimum Spanning Tree（Grasshopper 曲線網路的最小生成樹工具）",
+   "creator": "Tuğrul Yazar（designcoding）",
+   "year": "2012",
+   "url": "https://www.designcoding.net/minimum-spanning-tree/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "VB.NET"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-05",
+   "cc": false,
+   "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+   "creator": "Marc Barthelemy、Geoff Boeing",
+   "year": "2025",
+   "url": "https://arxiv.org/abs/2509.21931",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F08-06",
+   "cc": false,
+   "title": "LeafVein：Grasshopper 圖論外掛（含最小生成樹）",
+   "creator": "Dachuan",
+   "year": "",
+   "url": "https://www.food4rhino.com/en/app/leafvein",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "LeafVein"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-51",
+   "cc": true,
+   "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+   "creator": "Jamis Buck",
+   "year": "2011",
+   "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Ruby",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-52",
+   "cc": true,
+   "title": "Visualizing Algorithms（視覺化演算法：以生成樹生成迷宮）",
+   "creator": "Mike Bostock",
+   "year": "2014",
+   "url": "https://bost.ocks.org/mike/algorithms/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-53",
+   "cc": true,
+   "title": "9.9: Minimum Spanning Tree (Prim's Algorithm) - p5.js Tutorial",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F08-54",
+   "cc": true,
+   "title": "Spanning Trees（Houdini VEX 生成樹）",
+   "creator": "Sergen Eren",
+   "year": "2018",
+   "url": "https://sergeneren.com/2018/09/24/spanning-trees/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "urban-landscape": 3,
+   "modeling": 3,
+   "2d-pattern": 2,
+   "fabrication": 1,
+   "drawing": 1
+  },
+  "scale": {
+   "群體／都市": 4,
+   "物件": 4,
+   "構件": 2
+  },
+  "tools": {
+   "Grasshopper": 4,
+   "JavaScript": 2,
+   "Rhino": 1,
+   "Kangaroo": 1,
+   "Ivy": 1,
+   "VB.NET": 1,
+   "LeafVein": 1,
+   "Ruby": 1,
+   "D3.js": 1,
+   "p5.js": 1,
+   "Houdini": 1,
+   "VEX": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,320 @@
+{
+ "id": "G02",
+ "name_zh": "太陽包絡",
+ "name_en": "Solar Envelope",
+ "family": "G",
+ "one_liner": "先用天文公式算出冬季關鍵時段的太陽方向，再從每個格點沿影子方向量到要保護的鄰地邊界，反推出一個在這些時段都不會遮到鄰居的最大可建量體。",
+ "how_it_works": [
+  "依緯度 latitude、日期 dayOfYear 與 startHour 到 endHour 的時刻，用赤緯與時角公式算出一組指向太陽的單位向量，太陽在地平線下的時刻直接略過。",
+  "在基地外框內以 cellSize 布格點，用 Curve.Contains 只留下基地內的點。",
+  "對每個格點與每個太陽向量：影子方向是太陽向量水平分量的反方向，沿這個方向射一條線找最近的遮陰線（fences），距離為 D；這一刻允許的高度是 fenceHeight + D × tan（高度角），沒碰到遮陰線就不受限。",
+  "每個格點對所有時刻取最小值（下包絡），再夾在 0 到 maxHeight 之間，得到高度場 h(x, y)。",
+  "把高度場轉成 Mesh（四角都在基地內的格子才建面），用四角平均高度估計體積，並輸出太陽光線與每個時刻的高度角、方位角供檢查。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "日照收集包絡（Solar Collection）",
+   "level": 3,
+   "what_changes": "約束方向與取值（規則）：從「不遮鄰居」改成「自己曬得到」",
+   "how": "HeightLimit 改成沿「朝太陽」的方向（s 的水平分量，不取負號）射線，和既有鄰房輪廓求交得距離 D，鄰房高度為 Hn 時，這一刻至少要 Hn − D × tan（高度角）才曬得到；對所有時刻取最大值，輸出的是下限曲面。",
+   "result": "得到一張「高於這個曲面才保證有日照」的下限高度場，靠近南側高樓的格點被抬得很高，可用來決定太陽能板或住宅樓層的最低位置。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "允許遮蔽 N 個時刻（第 k 小值）",
+   "level": 3,
+   "what_changes": "下包絡的取值規則（規則）",
+   "how": "把每個格點對所有時刻算出的允許高度存進 List<double> 並排序，新增 allowShaded 輸入；不取最小值，改取第 allowShaded + 1 小的值，例如 7 個時刻允許遮 2 個時刻就取排序後第 3 個。",
+   "result": "法規常見的「冬至至少 N 小時日照」寫法，包絡比嚴格版高出一截，可比較不同 N 值對可建體積的影響。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "多日期整季取樣",
+   "level": 2,
+   "what_changes": "太陽向量的取樣範圍（規則）",
+   "how": "dayOfYear 改成 List<int>（例如冬至、大寒、小雪三天），SunVectors 外層多一個日期迴圈，把所有日期的太陽向量併進同一個 suns 清單再做下包絡；也可以用開始日到結束日每隔 7 天取樣。",
+   "result": "包絡同時滿足整個冬季而不只冬至一天，東西兩側的削切角度會變得更平滑。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "分段遮陰線高度（保護鄰房窗台）",
+   "level": 2,
+   "what_changes": "遮陰線的輸入資料（輸入）",
+   "how": "把單一 fenceHeight 改成 List<double>，與 fences 一一對應；HeightLimit 找最近交點時記住是哪一條遮陰線，用那一條的高度計算，並在圖上把遮陰線抬到各自高度顯示。",
+   "result": "鄰地是停車場的段落可以放寬、鄰房一樓窗戶的段落要保護，包絡在不同段落出現高低不同的斜面。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "坡地與地形上的太陽包絡",
+   "level": 3,
+   "what_changes": "格點與遮陰線的基準高度（輸入）",
+   "how": "新增 terrain（Mesh）輸入，用 Intersection.MeshRay 或 Mesh.ClosestPoint 取每個格點與遮陰線交點的地面高程 zp、zf；允許高度改成 zf + fenceHeight + D × tanα − zp，輸出時頂點 Z 加回 zp。",
+   "result": "山坡上的包絡會順著地形傾斜，面向北坡的基地可建高度明顯被壓低。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "反向體素削減（Reverse Solar Envelope）",
+   "level": 4,
+   "what_changes": "表示法：2.5D 高度場 → 3D 體素（維度）",
+   "how": "把基地上空切成 cellSize 的 Box 體素；從鄰房立面上取樣點朝每個太陽向量發射射線（Ray3d），用射線與 BoundingBox 的相交測試找出被穿過的體素並刪除，剩下的體素用 Mesh.Append 合併輸出。",
+   "result": "可以削出懸挑、中空與內凹的量體，而不只是從地面往上長的高度場，同樣條件下可建體積通常更大。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "樓板切片與容積檢查",
+   "level": 2,
+   "what_changes": "輸出後的分析（分析／評估）",
+   "how": "用 Mesh.CreateContourCurves 或逐層高度 z = k × floorHeight 判斷格點 h ≥ z，得到每層可用的格子並以 cellSize² 加總面積；新增 targetFAR 輸入，Print 每層面積、總樓地板面積與容積率是否達標。",
+   "result": "看到包絡能塞下幾層樓、每層多大，並立刻知道日照權約束是否讓容積率不足。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "封閉實體與 3D 列印模型",
+   "level": 2,
+   "what_changes": "輸出幾何（輸出／製造）",
+   "how": "沿基地邊界的格點補上垂直側牆面與 Z = 0 的底面，用 mesh.Vertices.CombineIdentical 與 Mesh.IsClosed 確認封閉，再依模型比例縮放後匯出 STL；也可用 Mesh.CreateFromBox 把每格做成方柱合併。",
+   "result": "可以直接 3D 列印的包絡實體模型，放在基地模型上和周邊量體一起比較。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "逐時削切動畫",
+   "level": 2,
+   "what_changes": "計算流程（時間／動畫）",
+   "how": "把高度陣列 h 改成類別成員變數，新增 step 輸入並接 GH Timer 或滑桿；每次 RunScript 只多加入一個太陽向量並更新下包絡，同時輸出這一刻的影子方向射線。",
+   "result": "看到量體從方盒子開始，被早上、正午、下午的陽光一刀一刀削成斜面的過程，適合講解下包絡的意義。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "Monte Carlo 日照時數估計",
+   "level": 3,
+   "what_changes": "結果的驗證方式（分析／評估）",
+   "how": "在要保護的鄰地上取樣點，用 Random(seed) 在整個冬季隨機抽 N 組（日期, 時刻），算出太陽向量後從樣點朝太陽發射 Ray3d，以 Intersection.MeshRay 檢查是否被 envelope 擋住；被照到的比例 × 抽樣期間總日照時數就是估計日照時數。",
+   "result": "得到鄰地每個樣點的日照時數色彩圖，可驗證包絡確實只在允許的時段外造成遮蔭，N 越大估計越穩定。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "多地塊街廓包絡（接 A04）",
+   "level": 4,
+   "what_changes": "基地與遮陰線的來源（混合）",
+   "how": "先用 A04 遞迴分割把街廓切成多個地塊，對每個地塊把「其他地塊北側的邊界」當成 fences 各算一次包絡；可依地塊面積或順序調整 maxHeight，最後合併所有 Mesh。",
+   "result": "得到整個街廓高低錯落的包絡群，南側地塊較矮、北側地塊較高，重現 Knowles 以太陽包絡做分區的做法。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "手錶時間換算真太陽時",
+   "level": 2,
+   "what_changes": "時間輸入的換算（規則）",
+   "how": "新增 longitude 與 timeZone 輸入，用均時差近似式 EoT = 9.87 sin 2B − 7.53 cos B − 1.5 sin B（B = 360°(n − 81)/364）換算：真太陽時 = 手錶時間 + 4 分鐘 × (longitude − 15 × timeZone) + EoT，再代入時角公式。",
+   "result": "輸入「上午 9 點到下午 3 點」就對應到當地實際的太陽位置，東西向的削切角度與 Ladybug 等工具的結果更接近。"
+  }
+ ],
+ "project_seeds": [
+  "冬至日照權街廓分區圖",
+  "包絡內的塔樓量體演化",
+  "高架公園旁的日照削切塔樓",
+  "日照收集屋頂的太陽能板配置",
+  "太陽包絡等高線模型"
+ ],
+ "cases": [
+  {
+   "id": "G02-01",
+   "cc": false,
+   "title": "Solar Carve（40 Tenth Avenue）",
+   "creator": "Studio Gang",
+   "year": "2019",
+   "url": "https://studiogang.com/projects/40-tenth-ave",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G02-02",
+   "cc": false,
+   "title": "SolCAD：產生太陽包絡的 3D 空間設計工具",
+   "creator": "Manu Juyal、Karen M. Kensek、Ralph L. Knowles",
+   "year": "2003",
+   "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G02-03",
+   "cc": false,
+   "title": "Ladybug SolarEnvelopeAdvanced 元件",
+   "creator": "Boris Plotnikov（協助：Guedi Capeluto、Chris Mackey、Mostapha Sadeghipour Roudsari）",
+   "year": "2015",
+   "url": "https://www.grasshopper3d.com/group/ladybug/forum/topics/new-solar-envelope-component-now-available",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "Ladybug"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G02-04",
+   "cc": false,
+   "title": "On the use of 'solar volume' for determining the urban fabric",
+   "creator": "Isaac G. Capeluto、Edna Shaviv",
+   "year": "2001",
+   "url": "https://cris.technion.ac.il/en/publications/on-the-use-of-solar-volume-for-determining-the-urban-fabric-2/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "SustArc"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G02-05",
+   "cc": false,
+   "title": "Solar Envelope Optimization Method for Complex Urban Environments",
+   "creator": "Francesco De Luca",
+   "year": "2016",
+   "url": "https://www.academia.edu/25648628/Solar_Envelope_Optimization_Method_for_Complex_Urban_Environments",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G02-06",
+   "cc": false,
+   "title": "Reverse Solar Envelope Method（反向太陽包絡法）",
+   "creator": "Francesco De Luca、Timur Dogan、Abel Sepúlveda",
+   "year": "2021",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580520310980",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "G02-07",
+   "cc": false,
+   "title": "Solar & Planning Regulatory Provisions Compliance（CAADRIA 2017）",
+   "creator": "Suleiman Alhadidi、Heather Mitcheltree、Paul Wintour",
+   "year": "2017",
+   "url": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "C#",
+    "Elefront",
+    "TT Toolbox",
+    "Galapagos"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G02-51",
+   "cc": true,
+   "title": "ShadeMap：任何日期與時刻的地形與建築陰影地圖",
+   "creator": "Ted Piotrowski",
+   "year": "2022",
+   "url": "https://shademap.app/about/",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "WebGL",
+    "Mapbox GL JS"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G02-52",
+   "cc": true,
+   "title": "pybdshadow：建築陰影生成與日照分析的 Python 套件",
+   "creator": "Qing Yu",
+   "year": "2022",
+   "url": "https://github.com/ni1o1/pybdshadow",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Python",
+    "GeoPandas",
+    "keplergl"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "G02-53",
+   "cc": true,
+   "title": "Blender Sun Position 外掛",
+   "creator": "Michael Martin 等（現由 Damien Picard 維護）",
+   "year": "2012",
+   "url": "https://extensions.blender.org/add-ons/sun-position/",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "G02-54",
+   "cc": true,
+   "title": "SunCalc：太陽位置與日照階段的 JavaScript 函式庫",
+   "creator": "Vladimir Agafonkin",
+   "year": "2011",
+   "url": "https://github.com/mourner/suncalc",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "urban-landscape": 4,
+   "modeling": 3,
+   "3d-architecture": 2,
+   "performance": 1,
+   "drawing": 1
+  },
+  "scale": {
+   "群體／都市": 5,
+   "建築": 4,
+   "地景": 1,
+   "物件": 1
+  },
+  "tools": {
+   "Grasshopper": 2,
+   "Python": 2,
+   "Ladybug": 1,
+   "SustArc": 1,
+   "C#": 1,
+   "Elefront": 1,
+   "TT Toolbox": 1,
+   "Galapagos": 1,
+   "WebGL": 1,
+   "Mapbox GL JS": 1,
+   "GeoPandas": 1,
+   "keplergl": 1,
+   "Blender": 1,
+   "JavaScript": 1
+  }
+ },
+ "rejected": []
+}

@@ -159,6 +159,20 @@
           "what_changes": "規則",
           "how": "替換 reaction 那兩行公式為其他活化－抑制模型，允許負值並移除 Clamp，或加入第三種化學物質。",
           "result": "得到螺旋波、行進波等 Gray-Scott 沒有的動態圖樣。"
+        },
+        {
+          "title": "純擴散穩態：多材料熱傳導與冷橋",
+          "level": 3,
+          "what_changes": "規則＋輸出：拿掉反應項、只留擴散，改成固定溫度邊界與每格不同導熱係數，跑到穩態後輸出溫度場與熱流",
+          "how": "把 chemicalA／B 換成單一 double[,] T 與 double[,] k；新增 List<Curve> materials 與 List<double> conductivity 輸入，格心用 Curve.Contains 判斷落在哪種材料並填入 k（例：混凝土 1.7、隔熱材 0.035、鋼 50 W/mK）。再加 Curve warmSide、coldSide 輸入，落在其內的格子標成固定格（Dirichlet），每步不更新、維持 20°C 與 −5°C；取消 % 週期邊界，外框格子改成絕熱（直接沿用自己的值當鄰居）。主迴圈改成 Gauss–Seidel／SOR 原地更新（不再雙緩衝）：四個方向的界面導熱係數取調和平均 kf = 2·k1·k2/(k1+k2)，新值 Tgs = Σ kf·T鄰 / Σ kf，再做 T += omega·(Tgs − T)，omega 約 1.8；每一輪記錄最大變化量，小於 tol（如 1e-4）就 break，steps 只當上限。最後以 q = −kf·(T鄰 − T)/cellSize 算每格熱流向量並輸出 Line，沿冷側邊界加總熱流得到每公尺熱損失，減去無冷橋對照組即為線性熱傳透係數 psi；溫度場接 C05 Marching Squares 取 1°C 間距等溫線，或在 12.6°C 處畫出結露風險線。",
+          "result": "得到牆體、樓板接頭斷面的彩色溫度分布、彎向鋼構或樓板懸挑的等溫線與熱流箭頭，並算出一個可比較不同斷熱做法的 psi 數值。"
+        },
+        {
+          "title": "守恆型相分離（Cahn–Hilliard）",
+          "level": 4,
+          "what_changes": "規則：兩物質反應方程換成單一濃度的守恆型四階方程，總量固定、只會重新分配",
+          "how": "把兩張表換成單一 double[,] c，INIT 時每格設為 c0 + 0.05·(random.NextDouble()−0.5)，新增輸入 c0（−1 到 1，決定兩相比例）、gamma（界面寬度，約 0.5–1）、dt（約 0.01）。每一步分兩次卷積：先用上下左右四鄰的五點拉普拉斯算 lapC，得化學勢 mu[r,c] = c³ − c − gamma·lapC；整張 mu 算完後，再對 mu 做一次五點拉普拉斯，更新 next = c + dt·lapMu（保留雙緩衝與 % 週期邊界，移除 0–1 的 Clamp，值域改為約 −1 到 1）。每隔數百步加總全部 c 輸出 totalMass，確認數值幾乎不變即代表守恆正確；若畫面出現棋盤狀爆值就把 dt 減半。輸出時頂點色以 c=0 為黑白分界，或把 c 接 C05 Marching Squares 取 c=0 的等值線當雙相界面。",
+          "result": "從均勻雜訊中浮現彼此互鎖的迷宮狀雙連續圖樣，隨步數增加紋路越粗、越少（粗化）；c0 偏離 0 時則變成大小不一的圓斑，兩相面積比始終維持輸入值。"
         }
       ],
       "project_seeds": [

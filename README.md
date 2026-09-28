@@ -2,7 +2,7 @@
 
 為教學用途建立的 Grasshopper 生成式演算法收集網頁，供學習建築參數化建模使用。最初為國立陽明交通大學建築研究所（NYCU GIA）115-1「演算法設計」課程整理，現以通用形式公開。
 
-- 29 個演算法，分成六大家族（A 規則與語法、B 生長、C 場與擴散、D 代理人、E 排列與鬆弛、F 圖樣與最佳化）
+- 37 個演算法，分成七大家族（A 規則與語法、B 生長、C 場與擴散、D 代理人、E 排列與鬆弛、F 圖樣與最佳化、G 空間分析）
 - 每個演算法附變形食譜、建築與研究案例、creative coding 案例（p5.js、Processing、TouchDesigner、openFrameworks…）與延伸專案題目
 - 工具：Rhino 8、Grasshopper、C# Script 元件
 
@@ -17,7 +17,7 @@
 
 ## 編號規則
 
-- 家族：A–F
+- 家族：A–G
 - 演算法：家族字母＋兩位數，例如 `A01`
 - 變形：`演算法編號·V兩位數`，例如 `A01·V03`
 - 案例：`演算法編號-兩位數`，例如 `A01-12`；creative coding 案例從 51 開始，例如 `A01-51`
@@ -33,6 +33,7 @@
 | `assets/gia-logo*.svg` | 陽明交通大學建築研究所標誌 |
 | `data/*.json` | 原始資料：`ag*.json` 為演算法與建築／研究案例，`cc_*.json` 為 creative coding 案例 |
 | `assets/art/*.js` | 每個演算法的變形與無照片案例的獨立卡片畫法 |
+| `cs/*.cs` | 由 gh-new-algos 新增之演算法的 Grasshopper C# Script 基礎範例 |
 | `.claude/workflows/` | 內容擴充工作流程（見下方） |
 | `data.js` | 網頁讀取的合併檔，由 `build.py` 產生 |
 | `img/cases/` | 案例圖片，檔名＝案例編號 |

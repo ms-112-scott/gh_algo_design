@@ -22,7 +22,8 @@ const credit = im => [im.note, [im.source, im.author].filter(Boolean).join("／"
    1. 標籤產生器（全站只用這幾個函式產生標籤，確保同類同形）
    ================================================================ */
 const FAMC = {A:["#E4572E","#FBE6DF","#B8391A"],B:["#3FA34D","#E2F2E4","#2A7A36"],C:["#2F6FE4","#E1EAFB","#1F50B0"],
-              D:["#9152E0","#EEE3FB","#6D35B3"],E:["#F2A007","#FDF0D5","#A86A00"],F:["#14A38F","#D9F2EE","#0B7768"]};
+              D:["#9152E0","#EEE3FB","#6D35B3"],E:["#F2A007","#FDF0D5","#A86A00"],F:["#14A38F","#D9F2EE","#0B7768"],
+              G:["#C8378B","#F8E1EE","#962466"]};
 const fv = f => `--fc:${FAMC[f][0]};--ft:${FAMC[f][1]};--fd:${FAMC[f][2]};--fam:${FAMC[f][0]};--fam-deep:${FAMC[f][2]};--fam-tint:${FAMC[f][1]}`;
 const tFam = (f, short) => `<span class="tg tg-fam${short ? " short" : ""}" style="${fv(f)}" title="家族 ${f}｜${esc(CAT.families[f])}"><span class="L">${f}</span>${short ? "" : esc(CAT.families[f])}</span>`;
 const tAlgo = (id, short) => { const a = ALG[id] || {family:id[0], name_zh:""}; return `<span class="tg tg-algo${short ? " short" : ""}" style="${fv(a.family)}" title="演算法 ${id}｜${esc(a.name_zh)}"><span class="id">${id}</span>${short ? "" : `<span class="nm">${esc(a.name_zh)}</span>`}</span>`; };
@@ -269,7 +270,7 @@ function open(key){
     else if(kind === "var") sheet.innerHTML = varDetail(ALG[id], +n);
     else if(kind === "seed") sheet.innerHTML = seedDetail(ALG[id], +n);
     else { const c = CASES.find(c => c.id === key); if(!c) return; sheet.innerHTML = caseDetail(c); }
-    sheet.style.cssText = fv((ALG[id] || ALG[(key.match(/^[A-F]\d\d/)||["A01"])[0]] || {family:"A"}).family);
+    sheet.style.cssText = fv((ALG[id] || ALG[(key.match(/^[A-Z]\d\d/)||["A01"])[0]] || {family:"A"}).family);
     modal.classList.add("on"); modal.scrollTop = 0; document.body.style.overflow = "hidden";
     wireDetail(key);
     history.replaceState(null, "", "#" + key);
@@ -447,7 +448,7 @@ function seedDetail(a, i){
 document.getElementById("legend").innerHTML = `
   <h4>標籤怎麼看</h4><div style="font-size:13px;color:var(--mute)">形狀代表「哪一類」；只有身分鏈用家族色。</div>
   <div class="lg-sec">身分鏈：這張卡屬於誰（家族 › 演算法 › 變形）</div>
-  <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。依「長出來像什麼」分成六大家族 A–F。</p></div>
+  <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。依「長出來像什麼」分成七大家族 A–G。</p></div>
   <div class="lg"><span>${tAlgo("A01")}</span><p><b>② 演算法</b>分段膠囊。前段是編號，對應一支 Grasshopper C# 基礎範例（.cs）。</p></div>
   <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div>
   <div class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</div>

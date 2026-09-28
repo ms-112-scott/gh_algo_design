@@ -1,0 +1,339 @@
+{
+ "id": "E06",
+ "name_zh": "力密度法（FDM）",
+ "name_en": "Force Density Method (FDM)",
+ "family": "E",
+ "one_liner": "替索網裡每一根索指定「拉力 ÷ 長度」的力密度 q，整張網的平衡形狀就變成一組線性方程式，一次解出來，不必像動態鬆弛那樣慢慢晃到靜止。",
+ "how_it_works": [
+  "把輸入 Mesh 轉成圖：TopologyVertices 當節點、TopologyEdges 當邊，每條邊記下兩端節點編號。",
+  "決定固定點（指定錨點或裸邊頂點），其餘為自由點，並替每條邊指定力密度 q（裸邊邊索再乘 edgeCableFactor）。",
+  "組出稀疏矩陣 D = Cnᵀ·Q·Cn：每條邊把 q 加到兩端自由點的對角線，兩端都自由時在非對角位置填 −q；只接到固定點的邊則把 q × 固定點座標移到右手邊。",
+  "對 x、y、z 三個方向各解一次 D·u = p + 固定點貢獻（p 只有 z 向的 load），用共軛梯度法迭代到殘差夠小。",
+  "把解出的座標寫回網格，並以「內力 = q × 長度」算出每根桿件的力，依大小由藍到紅上色輸出。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "吸引子漸變力密度",
+   "level": 2,
+   "what_changes": "輸入（每條邊的 q 改成空間變化）",
+   "how": "新增 List<Point3d> attractors 與 qNear、qFar 兩個輸入；建 edges 時取邊中點到最近吸引子的距離 d，q = qFar + (qNear − qFar)·exp(−d²/σ²)，其餘程式不變。",
+   "result": "吸引子附近的網被拉得較平、遠處垂得較深，一張網上出現局部隆起或凹陷的天窗與入口。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "零載重預力網：高低錨點一次解出馬鞍面",
+   "level": 2,
+   "what_changes": "規則（外力改為 0、錨點給不同高度）",
+   "how": "load 設 0，anchors 改成四個高低交錯的點（兩高兩低），baseMesh 用平面格網；只剩固定點貢獻留在右手邊，一次求解即得平衡形。",
+   "result": "不用任何迭代就得到雙曲拋物面般的預力索網，改一個錨點高度立刻重算。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "從線段網路建圖（不需要 Mesh）",
+   "level": 2,
+   "what_changes": "輸入（拓樸來源）",
+   "how": "把 baseMesh 換成 List<Line> network，用 Point3dList 與 ClosestIndex 在容差內合併端點建立節點，Line 的兩端索引就是 Edge 的 A、B；固定點改由度數為 1 的端點或 anchors 決定。",
+   "result": "手畫的任意索網、樹狀或放射狀線段網路都能直接找形，不受四邊形格網限制。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "內力決定索徑與索料清單",
+   "level": 2,
+   "what_changes": "輸出（構件化）",
+   "how": "對每條 line 依 forces 算半徑 r = rMin + k·√(f / fMax)，用 Brep.CreatePipe 產生管件；同時輸出「編號、長度、內力」的字串清單並依長度排序。",
+   "result": "得到粗細隨受力變化的 3D 索網模型與可直接下料的索長表。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "自重依負擔面積迭代更新",
+   "level": 3,
+   "what_changes": "規則（外力與形狀互相影響）",
+   "how": "在求解外包一個 for 迴圈跑 3–5 次：每次先用 formMesh 的面積（AreaMassProperties）把每個面的重量平分給其頂點，更新 rhs 的 z 分量再重解，直到頂點位移小於容差。",
+   "result": "得到接近「厚度均勻的殼在自重下」的形狀，比每點等載重更貼近混凝土殼或織物模板的真實載重。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "輪輻索網：外壓環＋內拉環",
+   "level": 3,
+   "what_changes": "維度（拓樸改成極座標網）",
+   "how": "不讀 Mesh，改用程式產生 rings × spokes 的極座標網格：最外圈為固定點（壓環），最內圈節點以一圈高 q 的環索相連（拉環）；徑向邊與環向邊各給不同 q，load 設 0 或小負值。",
+   "result": "得到體育場屋頂常見的自行車輪式索網，調 q 比例就能改變內環大小與屋面起伏。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "支承反力與推力箭頭",
+   "level": 3,
+   "what_changes": "分析（輸出支承力）",
+   "how": "求解後對每個固定點 i 計算反力 R_i = −Σ q·(x_j − x_i)（j 為相鄰節點），以 Line 由固定點畫出並依大小縮放，另輸出水平分量總和。",
+   "result": "一眼看出哪些支承要承受最大的水平推力，作為邊梁、拉桿或基礎尺寸的依據。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "拖曳錨點即時重解",
+   "level": 3,
+   "what_changes": "時間／互動（改用即時求解取代時間步進）",
+   "how": "把 anchors 接到 Rhino 裡可拖曳的點（Point 參數 Set one Point），RunScript 每次觸發都從頭組 D 並求解；另把上一次解存在 class 欄位當 CG 的初始猜測，拖曳時收斂更快。",
+   "result": "一邊拖錨點一邊看到網的平衡形立即更新，不像動態鬆弛需要 Timer 等它晃到靜止。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "等力網：迭代 q = 目標力 ÷ 長度",
+   "level": 4,
+   "what_changes": "規則（由固定 q 改為固定內力）",
+   "how": "外加迴圈：解完一次後把每條邊 q ← targetForce / 長度，再重組 D 重解，重複到所有桿件內力與 targetForce 差距小於 1%。",
+   "result": "得到每根索內力都相同的網，形狀接近最小曲面，適合用同一規格的索或繩。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "張拉整體：受壓桿給負力密度",
+   "level": 4,
+   "what_changes": "規則（q 可為負，求解器改用高斯消去）",
+   "how": "新增 List<Line> struts 當受壓桿並給負 q，其餘索給正 q；因 D 不再正定，把 SolveCG 換成對完整 double[nf,nf] 做部分樞軸高斯消去（或 LU 分解），並檢查主元是否接近 0。",
+   "result": "找出桿不相碰、索全受拉的張拉整體平衡形，看出正負力密度比例如何決定整體扭轉與高度。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "逆向找形：指定目標高度反推 q",
+   "level": 5,
+   "what_changes": "搜尋／求解（外層最佳化 q）",
+   "how": "新增 List<double> targetZ 給部分節點；把 q 當未知數，以有限差分估計 ∂z/∂q，用高斯—牛頓或簡單梯度下降反覆更新 q（限制 q > 0），每步都呼叫一次 FDM 求解。",
+   "result": "不再是「給 q 看形」，而是「給形找 q」：殼頂高度或特定點位置精準命中設計值，並得到施工需要的預力分布。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "混合 E03 Voronoi：不規則多邊形索網",
+   "level": 3,
+   "what_changes": "混合（拓樸來自其他演算法）",
+   "how": "先用 E03 Voronoi＋Lloyd 在基地輪廓內產生細胞，把所有細胞邊合併成線段網路（同「從線段網路建圖」），外框節點固定後以本範例求解。",
+   "result": "得到像蜂巢或泡泡般不規則分格的受壓殼或懸垂網，每個節點三叉，適合做多邊形面板或木格柵。"
+  }
+ ],
+ "project_seeds": [
+  "三種找形法的同題比較",
+  "校園索網遮陽棚",
+  "織物模板混凝土小殼",
+  "桌上型張拉整體雕塑",
+  "指定高度的屋頂反推預力"
+ ],
+ "cases": [
+  {
+   "id": "E06-01",
+   "cc": false,
+   "title": "慕尼黑奧林匹克屋頂：力密度法的誕生",
+   "creator": "H.-J. Schek、Klaus Linkwitz（找形計算）；Frei Otto、Günter Behnisch（屋頂設計）",
+   "year": "1972",
+   "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "早期電腦找形",
+    "實體模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-02",
+   "cc": false,
+   "title": "Design process for prototype concrete shells using a hybrid cable-net and fabric formwork",
+   "creator": "Diederik Veenendaal、Philippe Block（ETH Zurich BLOCK Research Group）",
+   "year": "2014",
+   "url": "https://block.arch.ethz.ch/brg/files/2014-veendendaal-engstruct-design-process-for-prototype-concrete-shells-using-a-hybrid-cable-net-and-fabric-formwork_1402752074.pdf",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "自寫程式",
+    "攝影測量"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-03",
+   "cc": false,
+   "title": "COMPAS FD：以力密度法做約束找形",
+   "creator": "Tom Van Mele、Block Research Group（ETH Zurich）",
+   "year": "2021",
+   "url": "https://github.com/blockresearchgroup/compas_fd",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Python",
+    "COMPAS",
+    "Rhino"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-04",
+   "cc": false,
+   "title": "Adaptive force density method for form-finding problem of tensegrity structures",
+   "creator": "J. Y. Zhang、M. Ohsaki",
+   "year": "2006",
+   "url": "https://www.sciencedirect.com/science/article/pii/S0020768305005858",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-05",
+   "cc": false,
+   "title": "Ariadne：Grasshopper 力密度逆向設計外掛",
+   "creator": "Adam Burke（MIT）",
+   "year": "2024",
+   "url": "https://github.com/adam-t-burke/Ariadne",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "Rhino 8",
+    "Rust"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-06",
+   "cc": false,
+   "title": "Grasshopper component for Force Density Method",
+   "creator": "ocabitza",
+   "year": "2023",
+   "url": "https://www.food4rhino.com/en/app/force-density-method",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-07",
+   "cc": false,
+   "title": "FDMremote：Grasshopper 連接 Julia 的力密度求解與最佳化",
+   "creator": "Keith J. Lee",
+   "year": "2022",
+   "url": "https://github.com/keithjlee/FDMremote",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "Julia"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-08",
+   "cc": false,
+   "title": "Programming the Force Density Method",
+   "creator": "Krešimir Fresl、Petra Gidak（University of Zagreb）",
+   "year": "2012",
+   "url": "https://www.academia.edu/18363187/Programming_the_Force_Density_Method",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-51",
+   "cc": true,
+   "title": "Shell Form Finding：瀏覽器中的受壓殼找形工具",
+   "creator": "Amanda Ghassaei",
+   "year": "2016",
+   "url": "https://amandaghassaei.com/projects/shell_form_finding/",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-52",
+   "cc": true,
+   "title": "ForceDensityAPI：Processing 力密度格殼探索程式",
+   "creator": "Alexandros Haridis（MIT）",
+   "year": "2017",
+   "url": "https://github.com/alexHaridis/ForceDensityAPI",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Processing",
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E06-53",
+   "cc": true,
+   "title": "Force_Density_Method：Python 實作與參數化力密度",
+   "creator": "Vahid Moosavi",
+   "year": "2019",
+   "url": "https://github.com/sevamoo/Force_Density_Method",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Python",
+    "Jupyter Notebook",
+    "NetworkX"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 7,
+   "performance": 3,
+   "fabrication": 1
+  },
+  "scale": {
+   "建築": 6,
+   "構件": 5
+  },
+  "tools": {
+   "自寫程式": 3,
+   "Grasshopper": 3,
+   "Python": 2,
+   "早期電腦找形": 1,
+   "實體模型": 1,
+   "攝影測量": 1,
+   "COMPAS": 1,
+   "Rhino": 1,
+   "Rhino 8": 1,
+   "Rust": 1,
+   "Julia": 1,
+   "JavaScript": 1,
+   "WebGL": 1,
+   "Processing": 1,
+   "Java": 1,
+   "Jupyter Notebook": 1,
+   "NetworkX": 1
+  }
+ },
+ "rejected": [
+  {
+   "run": "R20260929-0146",
+   "unit": "INTEGRATE:E06-54",
+   "algo": "E06",
+   "kind": "CC",
+   "title": "form-finding：瀏覽器原生 3D 找形引擎",
+   "url_norm": "github.com/damianbrenlla/form-finding",
+   "reason": "2026-08 新建的個人 repo，0 星 0 fork、僅約 10 天提交紀錄，證據與代表性不足（整合時查證後刪除）"
+  }
+ ]
+}

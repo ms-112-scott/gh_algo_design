@@ -1,0 +1,52 @@
+[
+ {
+  "case_id": "G02-01",
+  "url": "https://static.dezeen.com/uploads/2017/02/40-tenth-ave-solar-carve-tower-studio-gang_dezeen_hero-852x479.jpg",
+  "page": "https://www.dezeen.com/2017/02/27/studio-gang-reveals-high-line-hugging-solar-carve-tower-40-tenth-avenue-new-york/",
+  "source": "Dezeen",
+  "author": "Studio Gang",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "Solar Carve 塔樓渲染圖，可見依太陽角度削切的斜面與鑽石狀帷幕"
+ },
+ {
+  "case_id": "G02-07",
+  "url": "https://parametricmonkey.com/wp-content/uploads/2018/06/SolarCompliance_Cover2_1600x800.jpg",
+  "page": "https://parametricmonkey.com/2018/06/13/solar-planning-compliance/",
+  "source": "Parametric Monkey",
+  "author": "Paul Wintour（Parametric Monkey）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "文章封面圖：日照法規檢查與可建包絡的研究圖"
+ },
+ {
+  "case_id": "G02-51",
+  "url": "https://shademap.app/og-image.png",
+  "page": "https://shademap.app/about/",
+  "source": "ShadeMap",
+  "author": "Ted Piotrowski",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "ShadeMap 的 og:image，地圖上的地形與建築陰影"
+ },
+ {
+  "case_id": "G02-52",
+  "url": "https://raw.githubusercontent.com/ni1o1/pybdshadow/main/image/README/1651741110878.png",
+  "page": "https://github.com/ni1o1/pybdshadow",
+  "source": "GitHub（ni1o1/pybdshadow README）",
+  "author": "Qing Yu",
+  "license": "BSD-3-Clause（程式碼授權；圖片為 README 示範圖）",
+  "license_url": "https://github.com/ni1o1/pybdshadow/blob/main/LICENSE",
+  "note": "README 中以 matplotlib 繪製的建築與陰影多邊形示範圖"
+ },
+ {
+  "case_id": "G02-53",
+  "url": "https://www.blendernation.com/wp-content/uploads/2012/12/FileScripts_3D_interaction_Sun_Position_WorldMap-580x294.jpeg",
+  "page": "https://www.blendernation.com/2012/12/30/add-on-sun-position/",
+  "source": "BlenderNation",
+  "author": "Michael Martin（外掛作者）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "note": "Sun Position 外掛介面：以世界地圖選擇經緯度"
+ }
+]
