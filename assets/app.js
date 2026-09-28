@@ -260,21 +260,21 @@ function filtered(){
    ================================================================ */
 const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {rootMargin:"60px"});
 function span(el){ const h = el.getBoundingClientRect().height; el.style.gridRowEnd = "span " + Math.ceil((h + 16) / 4); }
-function makePin(p, i){
+function makePin(p, i, container){
   const el = document.createElement("button");
   el.className = "pin" + (p.type === "seed" ? " seed" : ""); el.dataset.type = p.type; el.style.setProperty("--i", i % 12);
   el.innerHTML = p.html; el.dataset.key = p.key; el.setAttribute("aria-label", el.querySelector("b,h4")?.textContent || "");
   const cv = el.querySelector("canvas");
   if(cv && p.vis){ cv.style.aspectRatio = `1 / ${p.vis.ratio}`; cv._draw = () => { p.vis.draw(cv); span(el); }; lazyCv.observe(cv); if(p.vis.grow) el.addEventListener("mouseenter", () => p.vis.grow(cv)); }
   el.querySelector("img")?.addEventListener("load", () => span(el));
-  el.onclick = () => { bumpPin(p); open(p.key); };
+  el.onclick = () => { bumpPin(p); nav.list = container?._pins || null; open(p.key, {hint:true}); };
   return el;
 }
 function mountPins(container, pins, batch = 0){
   container.innerHTML = ""; container._pins = pins; container._n = 0;
   const more = () => {
     const end = batch ? Math.min(pins.length, container._n + batch) : pins.length;
-    for(let i = container._n; i < end; i++){ const el = makePin(pins[i], i - container._n); container.appendChild(el); requestAnimationFrame(() => span(el)); io.observe(el); }
+    for(let i = container._n; i < end; i++){ const el = makePin(pins[i], i - container._n, container); container.appendChild(el); requestAnimationFrame(() => span(el)); io.observe(el); }
     container._n = end;
   };
   more(); container._more = more;
@@ -295,7 +295,7 @@ document.getElementById("q").oninput = e => { state.q = e.target.value.trim().to
    6. 詳細頁
    ================================================================ */
 const modal = document.getElementById("modal"), sheet = document.getElementById("sheet");
-function open(key){
+function open(key, opt = {}){
   const go = () => {
     const [kind, id, n] = key.includes(":") ? key.split(":") : ["case", key];
     if(key === "info") sheet.innerHTML = document.getElementById("infoTpl").innerHTML;
@@ -308,18 +308,136 @@ function open(key){
       : kind === "seed" ? ALG[id].project_seeds[+n].title : (CASES.find(c => c.id === key)?.title || "");
     sheet.style.cssText = fv((ALG[id] || ALG[(key.match(/^[A-Z]\d\d/)||["A01"])[0]] || {family:"A"}).family);
     modal.classList.add("on"); modal.scrollTop = 0; document.body.style.overflow = "hidden";
+    modal.dataset.key = key;
     wireDetail(key);
+    updateNav(); if(opt.hint) swipeHint();
     history.replaceState(null, "", "#" + key);
   };
-  document.startViewTransition && !reduced ? document.startViewTransition(go) : go();
+  document.startViewTransition && !reduced && !opt.instant ? document.startViewTransition(go) : go();
 }
-function close(){ modal.classList.remove("on"); document.body.style.overflow = ""; history.replaceState(null, "", location.pathname); }
+function close(){
+  const key = modal.dataset.key; modal.classList.remove("on"); document.body.style.overflow = ""; history.replaceState(null, "", location.pathname);
+  if(nav.list && nav.list === feed._pins && key) revealInFeed(key);
+}
 document.getElementById("close").onclick = close;
 modal.onclick = e => { if(e.target === modal) close(); };
-addEventListener("keydown", e => { if(e.key === "Escape") close(); });
-document.getElementById("infoBtn").onclick = () => open("info");
+addEventListener("keydown", e => {
+  if(e.key === "Escape") close();
+  if(!modal.classList.contains("on") || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)) return;
+  if(e.key === "ArrowRight") slideTo(1); else if(e.key === "ArrowLeft") slideTo(-1);
+});
+document.getElementById("infoBtn").onclick = () => { nav.list = null; open("info"); };
 
-const factDiff = d => `<div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${d}/5</div><small>難度</small><b>${dots(d)} ${CAT.difficulty[d]}</b></div>`;
+/* ---- 卡片之間切換：左右滑（手機）／左右鍵與箭頭鈕（桌機）；在頂端往下拉關閉 ----
+   nav.list＝點開這張卡的那一排（圖庫或詳細頁裡的橫滑列），依它的順序換上一張／下一張 */
+const nav = {list: null};
+const navPrev = document.getElementById("navPrev"), navNext = document.getElementById("navNext");
+const navIndex = () => nav.list ? nav.list.findIndex(p => p.key === modal.dataset.key) : -1;
+const pinTitle = p => { const d = document.createElement("div"); d.innerHTML = p.html; return d.querySelector("b,h4")?.textContent || ""; };
+function updateNav(){
+  const i = navIndex(), prev = i > 0 ? nav.list[i - 1] : null, next = i >= 0 ? nav.list[i + 1] : null;
+  [[navPrev, prev, "上一張"], [navNext, next, "下一張"]].forEach(([b, p, t]) => { b.hidden = !p; if(p){ const n = `${t}：${pinTitle(p)}`; b.title = n; b.setAttribute("aria-label", n); } });
+  modal.dataset.pos = i >= 0 ? `${i + 1} / ${nav.list.length}` : "";
+}
+navPrev.onclick = () => slideTo(-1); navNext.onclick = () => slideTo(1);
+// 換卡動畫：目前這張往滑動方向滑出，下一張從另一側滑入
+const clearAnim = () => ["transform", "opacity", "transition"].forEach(k => sheet.style.removeProperty(k));
+function slideTo(step, fromDrag = 0){
+  const i = navIndex(), p = i >= 0 ? nav.list[i + step] : null;
+  if(!p){ bounceBack(); return false; }
+  bumpPin(p);
+  if(reduced){ open(p.key, {instant:true}); return true; }
+  const w = sheet.offsetWidth || innerWidth;
+  sheet.style.transition = "transform 170ms cubic-bezier(.4,0,1,1), opacity 170ms";
+  sheet.style.transform = `translateX(${-step * w * .6}px)`; sheet.style.opacity = "0";
+  setTimeout(() => {
+    open(p.key, {instant:true});
+    sheet.style.transition = "none"; sheet.style.transform = `translateX(${step * w * .35}px)`; sheet.style.opacity = "0";
+    sheet.offsetWidth;
+    sheet.style.transition = "transform 260ms var(--ease-out), opacity 200ms";
+    sheet.style.transform = "translateX(0)"; sheet.style.opacity = "1";
+    setTimeout(clearAnim, 280);
+  }, fromDrag ? 120 : 170);
+  return true;
+}
+function bounceBack(){
+  if(reduced){ clearAnim(); return; }
+  sheet.style.transition = "transform 280ms var(--ease-spring)"; sheet.style.transform = "translate(0,0)";
+  modal.style.removeProperty("background-color");
+  setTimeout(clearAnim, 300);
+}
+// 往下拉關閉：面板跟著手指往下，放開超過門檻就收起
+function dragClose(){
+  if(reduced){ clearAnim(); close(); return; }
+  sheet.style.transition = "transform 260ms cubic-bezier(.4,0,1,1)"; sheet.style.transform = `translateY(${innerHeight}px)`;
+  close();
+  setTimeout(() => { clearAnim(); modal.style.removeProperty("background-color"); }, 300);
+}
+// 關閉後讓圖庫停在最後看的那張卡
+function revealInFeed(key){
+  const idx = feed._pins.findIndex(p => p.key === key); if(idx < 0) return;
+  while(feed._n <= idx && feed._more) feed._more();
+  const el = [...feed.children].find(e => e.dataset.key === key); if(!el) return;
+  const r = el.getBoundingClientRect(), topH = document.getElementById("top").offsetHeight + 60;
+  if(r.top < topH || r.bottom > innerHeight) scrollTo({top: scrollY + r.top - innerHeight / 3, behavior: "auto"});
+}
+// 觸控手勢
+const hScroller = el => { for(let e = el; e && e !== modal; e = e.parentElement){ const ox = getComputedStyle(e).overflowX; if((ox === "auto" || ox === "scroll") && e.scrollWidth > e.clientWidth + 1) return e; } return null; };
+let tg = null;
+modal.addEventListener("touchstart", e => {
+  if(e.touches.length !== 1 || !modal.classList.contains("on")){ tg = null; return; }
+  const t = e.touches[0];
+  tg = {x0: t.clientX, y0: t.clientY, t0: performance.now(), mode: null, top: modal.scrollTop <= 0,
+        noX: !!hScroller(e.target) || !!e.target.closest("input,select,textarea,.jumpnav")};
+}, {passive: true});
+modal.addEventListener("touchmove", e => {
+  if(!tg) return;
+  const t = e.touches[0], dx = t.clientX - tg.x0, dy = t.clientY - tg.y0;
+  if(!tg.mode){
+    // 在頂端往下拉：第一個 touchmove 就接手，避免瀏覽器的回彈或下拉重新整理
+    if(tg.top && modal.scrollTop <= 0 && dy > 0 && dy >= Math.abs(dx) && e.cancelable) e.preventDefault();
+    if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+    if(!tg.noX && Math.abs(dx) > Math.abs(dy) * 1.3 && navIndex() >= 0 && e.cancelable) tg.mode = "x";
+    else if(tg.top && modal.scrollTop <= 0 && dy > 0 && dy > Math.abs(dx) && e.cancelable) tg.mode = "y";
+    else { tg.mode = "none"; return; }
+    sheet.style.transition = "none";
+  }
+  if(tg.mode === "none") return;
+  if(e.cancelable) e.preventDefault();
+  if(tg.mode === "x"){
+    const edge = !nav.list[navIndex() + (dx < 0 ? 1 : -1)];
+    sheet.style.transform = `translateX(${edge ? dx * .25 : dx}px)`;
+  } else {
+    const d = Math.max(0, dy) * .65;
+    sheet.style.transform = `translateY(${d}px) scale(${1 - Math.min(d, 400) / 4000})`;
+    modal.style.backgroundColor = `rgba(18,18,22,${.62 * Math.max(.15, 1 - d / 500)})`;
+  }
+}, {passive: false});
+const touchEnd = e => {
+  if(!tg || !tg.mode || tg.mode === "none"){ tg = null; return; }
+  const t = e.changedTouches[0], dx = t.clientX - tg.x0, dy = t.clientY - tg.y0, v = performance.now() - tg.t0;
+  const mode = tg.mode; tg = null;
+  if(mode === "x"){
+    const far = Math.abs(dx) > innerWidth * .22 || (Math.abs(dx) > 40 && Math.abs(dx) / v > .5);
+    if(!(far && slideTo(dx < 0 ? 1 : -1, dx))) bounceBack();
+  } else {
+    const d = Math.max(0, dy) * .65;
+    if(d > 110 || (d > 30 && dy / v > .6)) dragClose(); else bounceBack();
+  }
+};
+modal.addEventListener("touchend", touchEnd);
+modal.addEventListener("touchcancel", touchEnd);
+// 第一次打開卡片的手機提示（只顯示前三次）
+const HINT_KEY = "ghAlgoAtlas.swipeHint";
+function swipeHint(){
+  if(!MQ.matches || navIndex() < 0) return;
+  let n = 0; try { n = +localStorage.getItem(HINT_KEY) || 0; } catch(e){}
+  if(n >= 3) return;
+  try { localStorage.setItem(HINT_KEY, n + 1); } catch(e){}
+  const h = document.getElementById("swipeHint"); h.classList.add("on"); clearTimeout(swipeHint.t); swipeHint.t = setTimeout(() => h.classList.remove("on"), 2800);
+}
+
+const factDiff = d =>`<div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${d}/5</div><small>難度</small><b>${dots(d)} ${CAT.difficulty[d]}</b></div>`;
 
 /* ---- 演算法詳細頁 ---- */
 function algoDetail(a){
@@ -538,4 +656,4 @@ function wireInfo(){
    8. 啟動
    ================================================================ */
 renderChips(); renderFeed(); setTopH(); qHint();
-if(location.hash.length > 1) setTimeout(() => open(decodeURIComponent(location.hash.slice(1))), 60);
+if(location.hash.length > 1) setTimeout(() => { nav.list = feed._pins; open(decodeURIComponent(location.hash.slice(1))); }, 60);
