@@ -1,0 +1,421 @@
+{
+ "id": "D03",
+ "name_zh": "Pedestrian 人流模擬",
+ "name_en": "Pedestrian Simulation (Social Force Model)",
+ "family": "D",
+ "one_liner": "每個人都被「想去目的地」的力拉著走、被旁人和障礙物推開，幾十個人一起算，就能看到繞行、排隊與瓶頸壅塞。",
+ "how_it_works": [
+  "在每個出發點周圍隨機站 peoplePerStart 個人，全部投影到 XY 平面。",
+  "目標力：（想要的速度 − 現在的速度）÷ 反應時間，讓人逐漸加速到 walkSpeed 並朝向目的地。",
+  "人推人：對 6 倍半徑內的每個人，依身體間空隙 gap 以 exp(−gap / PushRange) 計算推開的力。",
+  "障礙力：靠近圓形障礙時被推開，並加上一個垂直分量，往目的地那一側繞過去。",
+  "先算完所有人的力，再一起更新：速度 += 力 × 時間步，限制最高速度，位置 += 速度 × 時間步，並記錄軌跡。",
+  "到達目的地附近就停下；全部抵達或跑完 steps 就結束，輸出每個人的軌跡 Polyline。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "牆面與走廊（線段障礙）",
+   "level": 2,
+   "what_changes": "輸入／規則",
+   "how": "新增 List<Curve> walls 輸入，對每道牆用 curve.ClosestPoint 找最近點，以與圓形障礙相同的指數衰減推開人。",
+   "result": "可以用平面圖的牆線直接模擬走廊、門口與樓梯口的人流。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "多出口疏散",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "把 goal 改成 List<Point3d> exits，每個人選最近（或加上擁擠度懲罰後成本最低）的出口，並統計各出口抵達時間。",
+   "result": "得到疏散時間與各出口負荷，可比較不同出口配置的安全性。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "雙向對流與車道形成",
+   "level": 2,
+   "what_changes": "狀態",
+   "how": "讓兩組人從兩端出發、目的地互換，其餘規則不變；可以加一點隨機擾動力。",
+   "result": "會自然出現同向行人排成一條條「車道」的自組織現象，適合解說湧現。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "導航場取代直線目標",
+   "level": 4,
+   "what_changes": "規則",
+   "how": "先在網格上以 BFS／Dijkstra 從目的地往外算距離場，目標力改為沿距離場梯度下降的方向，而不是直指目的地。",
+   "result": "人會在複雜平面（U 型走廊、多房間）中正確繞路，不會卡在凹角。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "空間格網加速",
+   "level": 3,
+   "what_changes": "資料結構",
+   "how": "用 Dictionary<(int,int), List<Person>> 以 personRadius×6 為格子大小做空間雜湊，人推人只查鄰近 9 格。",
+   "result": "人數可從數十人擴增到上千人，仍維持可互動的速度。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "人流熱圖",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "建立 int[,] 計數網格，每一步把每個人所在格子 +1，最後輸出網格點與正規化計數，接 Gradient 上色。",
+   "result": "得到停留時間與通行密度的熱圖，可找出壅塞點與主要動線。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "熱圖轉鋪面或屋頂形",
+   "level": 3,
+   "what_changes": "輸出／混合其他家族",
+   "how": "把熱圖值當作高度或密度：高密度區提高屋頂、或以 Voronoi（E 家族）點密度對應鋪面分割大小。",
+   "result": "動線越集中處屋頂越高、鋪面越細碎，形成由人流驅動的地景或頂棚。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲面／多樓層",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "把模擬移到曲面 UV 空間或 Mesh 上（每步後用 mesh.ClosestPoint 投影回表面），樓梯以連接點切換樓層。",
+   "result": "可模擬坡道、看台與多樓層車站的垂直動線。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "吸引點：展品與店面",
+   "level": 2,
+   "what_changes": "輸入／規則",
+   "how": "加入 List<Point3d> attractions 與停留時間，人在路途中若經過吸引點半徑內，有機率轉向並停留數秒再繼續前往目的地。",
+   "result": "得到展場或商店街的停留分布，評估展品配置是否造成堵塞。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "動畫化與即時調整",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 people 放到 class 欄位，搭配 GH Timer 每次只跑數步，並允許使用者拖動障礙點即時看人流改變。",
+   "result": "可以像 MassMotion 那樣即時觀察動線，方便設計討論。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "軌跡轉成可製造的地景",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "把所有軌跡平滑後依重疊次數加粗，用 Offset 與 Boolean Union 合併成步道輪廓，再擠出成地景模型或鋪面切割線。",
+   "result": "得到從使用行為推導出的「慾望路徑」步道系統，可 CNC 或雷切模型。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "Space syntax 可見度加權",
+   "level": 4,
+   "what_changes": "規則／混合其他家族",
+   "how": "先以視線分析計算每個網格點的可見範圍，人在選路時偏好可見度高的方向（對目標力加上可見度梯度）。",
+   "result": "人流更貼近真實行為，會集中在視野開闊的主軸上。"
+  }
+ ],
+ "project_seeds": [
+  "教室大樓下課人流診斷",
+  "出口前的柱子：越急越慢實驗",
+  "人流熱圖生成的車站頂棚",
+  "展場動線與停留配置最佳化",
+  "多樓層導航場疏散模擬"
+ ],
+ "cases": [
+  {
+   "id": "D03-01",
+   "cc": false,
+   "title": "社會力模型（Social Force Model）",
+   "creator": "Dirk Helbing, Péter Molnár",
+   "year": "1995",
+   "url": "",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-02",
+   "cc": false,
+   "title": "逃生恐慌模擬與「越急越慢」",
+   "creator": "Dirk Helbing, Illés Farkas, Tamás Vicsek",
+   "year": "2000",
+   "url": "",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-03",
+   "cc": false,
+   "title": "草地上的捷徑：人類步道系統的演化",
+   "creator": "Dirk Helbing, Joachim Keltsch, Péter Molnár",
+   "year": "1997",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-04",
+   "cc": false,
+   "title": "自然移動理論與軸線圖（Space Syntax）",
+   "creator": "Bill Hillier, Alan Penn 等",
+   "year": "1993",
+   "url": "",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "DepthmapX"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-05",
+   "cc": false,
+   "title": "Trafalgar Square 步行化改造中的人流分析",
+   "creator": "Space Syntax Ltd × Foster + Partners",
+   "year": "",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Space syntax 分析",
+    "現場觀測"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-06",
+   "cc": false,
+   "title": "麥加朝覲 Jamarat 橋的人潮災害研究",
+   "creator": "Dirk Helbing, Anders Johansson, Habib Z. Al-Abideen",
+   "year": "2007",
+   "url": "",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "影像追蹤",
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-07",
+   "cc": false,
+   "title": "MassMotion 行人模擬軟體",
+   "creator": "Oasys（Arup）",
+   "year": "",
+   "url": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "MassMotion"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-08",
+   "cc": false,
+   "title": "Pathfinder 疏散模擬",
+   "creator": "Thunderhead Engineering",
+   "year": "",
+   "url": "",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "Pathfinder"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-09",
+   "cc": false,
+   "title": "Arnhem Centraal 轉運站",
+   "creator": "UNStudio",
+   "year": "2015",
+   "url": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "動線分析"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-10",
+   "cc": false,
+   "title": "Quelea：Grasshopper 代理人外掛",
+   "creator": "Alex Fischer",
+   "year": "",
+   "url": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "Quelea"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-11",
+   "cc": false,
+   "title": "DecodingSpaces Toolbox",
+   "creator": "Reinhard König 等（Bauhaus-Universität Weimar）",
+   "year": "",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-12",
+   "cc": false,
+   "title": "視覺啟發式行人模型",
+   "creator": "Mehdi Moussaïd, Dirk Helbing, Guy Theraulaz",
+   "year": "2011",
+   "url": "",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-13",
+   "cc": false,
+   "title": "PEDSIM 開源行人模擬函式庫",
+   "creator": "Christian Gloor",
+   "year": "",
+   "url": "",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D03-51",
+   "cc": true,
+   "title": "Steering Behaviors For Autonomous Characters",
+   "creator": "Craig Reynolds",
+   "year": "1999",
+   "url": "https://www.red3d.com/cwr/steer/gdc99/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Java"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D03-52",
+   "cc": true,
+   "title": "5.7 Path Following（Nature of Code 影片）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2021",
+   "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D03-53",
+   "cc": true,
+   "title": "The Nature of Code 第 5 章：Autonomous Agents",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D03-54",
+   "cc": true,
+   "title": "Simple Crowd Simulation（Houdini 人群模擬）",
+   "creator": "bubble pins",
+   "year": "2020",
+   "url": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D03-55",
+   "cc": true,
+   "title": "People in a Crowd",
+   "creator": "Sonia Martin",
+   "year": "2014",
+   "url": "https://openprocessing.org/sketch/139678/",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "urban-landscape": 5,
+   "performance": 4,
+   "drawing": 4,
+   "modeling": 4,
+   "3d-architecture": 1
+  },
+  "scale": {
+   "群體／都市": 11,
+   "建築": 6,
+   "地景": 1
+  },
+  "tools": {
+   "數學模型": 5,
+   "Grasshopper": 2,
+   "p5.js": 2,
+   "DepthmapX": 1,
+   "Space syntax 分析": 1,
+   "現場觀測": 1,
+   "影像追蹤": 1,
+   "MassMotion": 1,
+   "Pathfinder": 1,
+   "動線分析": 1,
+   "Quelea": 1,
+   "C++": 1,
+   "Java": 1,
+   "Houdini": 1,
+   "Processing": 1
+  }
+ },
+ "rejected": []
+}

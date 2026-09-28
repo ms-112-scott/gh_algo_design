@@ -1,0 +1,463 @@
+{
+ "id": "A05",
+ "name_zh": "形狀文法",
+ "name_en": "Shape Grammar",
+ "family": "A",
+ "one_liner": "不改寫文字，而是直接把「帶標籤的形狀」換成新的形狀組合：一個大正方形 A 被換成定住的 B 加上兩個縮小旋轉的 A，反覆套用就長出畢氏樹。",
+ "how_it_works": [
+  "起始形狀：一個標籤為 A 的正方形（左下角、底邊方向、邊長）。",
+  "每一代把清單裡所有形狀同時丟進 ApplyRules：B、C 原樣保留；A 太小就改標籤成 C（葉）；A 夠大就變成 B，並在頂邊架出兩個新的 A。",
+  "兩個新 A 的邊長分別是 size·cos(angle) 與 size·sin(angle)，方向分別轉 angle 與 angle−90°，剛好和頂邊圍成直角三角形。",
+  "新清單取代舊清單；若已經沒有 A 就提早停止。",
+  "輸出每個正方形的封閉 Polyline 與標籤字串，可用標籤分色。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "隨機分叉角的畢氏樹",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "新增 seed 輸入並建立 Random，在規則 1 裡把 angle 換成 angle + random.NextDouble()*jitter，每個 A 各自決定角度。",
+   "result": "每一枝傾斜不同、像被風吹過的自然樹形，但同一 seed 可重現。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "多條規則競爭（機率文法）",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "在 ApplyRules 為 A 準備 2–3 條替換規則（分兩枝、分三枝、只長一枝），用機率或邊長區間選一條套用。",
+   "result": "同一顆種子長出風格一致但細節不同的一整個「家族」設計。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "分割文法（split grammar）",
+   "level": 2,
+   "what_changes": "規則／狀態",
+   "how": "把 LabeledSquare 換成矩形，規則改成「A → 沿長邊切成 n 份」，標籤分為 Floor、Bay、Window、Wall，最後一層輸出開口框。",
+   "result": "類似 CityEngine CGA 的立面分割：樓層→開間→窗牆。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "冰裂紋窗格（Ice-ray）",
+   "level": 3,
+   "what_changes": "狀態／規則",
+   "how": "形狀改成任意凸多邊形，規則為「A 若面積大於門檻 → 隨機選兩條邊，連一條線把它切成兩個 A」，面積小的變成 C。",
+   "result": "中式冰裂紋窗花，每片大小自然遞減。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "3D 畢氏樹（立方體版）",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "LabeledSquare 改成 LabeledBox，用 Plane 取代 Direction/Up，規則在頂面長出 2–4 個繞不同軸旋轉的小方塊，輸出 Box 或 Brep。",
+   "result": "立體分枝的方塊樹，可當雕塑或構架量體。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲面上的形狀文法",
+   "level": 3,
+   "what_changes": "維度／輸出",
+   "how": "在 UV 參數空間 (0–1) 執行原本的規則，最後用 surface.PointAt(u,v) 把每個正方形的四角映射到曲面上。",
+   "result": "畢氏樹或分割圖樣貼附在自由曲面表皮上。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "吸引子控制的終止條件",
+   "level": 2,
+   "what_changes": "輸入／規則",
+   "how": "新增 attractor 點輸入，把 minSize 改成隨形狀中心到吸引子的距離變化，越近越小（越細密）。",
+   "result": "靠近吸引子處分枝細密，遠處早早成葉，形成密度漸層。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "邊界約束（不可出界／不可重疊）",
+   "level": 3,
+   "what_changes": "約束",
+   "how": "新增 boundary 曲線輸入，規則 1 產生新 A 前先用 Curve.Contains 或與既有形狀做相交測試，失敗則改標為 C。",
+   "result": "樹被限制在基地或立面範圍內，形成貼合邊界的填充。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "標籤驅動的構件語言",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "依標籤輸出不同幾何：B 擠出成實牆、C 變成開口或植栽、A 留空；用 Extrusion.Create 給不同高度。",
+   "result": "一張平面文法圖直接變成有虛實的 2.5D 模型。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "逐代動畫",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "把 generations 接 Slider 或 Timer，每次只多跑一代並保留舊形狀；或輸出每一代的 DataTree 分支給 GH 顯示。",
+   "result": "看見規則一步步改寫形狀的過程，適合簡報與教學。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "混合 L-System 的語彙",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "用 A01 的字串產生規則序列（例如 L/R/S 代表左長、右長、停止），逐字元決定每個 A 要套用哪條形狀規則。",
+   "result": "字串控制結構、形狀文法控制幾何，兩層可分開設計。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "輸出成可雷切的片材",
+   "level": 3,
+   "what_changes": "輸出轉成可製造幾何",
+   "how": "把每個正方形向內 Offset 板厚並在接觸邊加卡榫缺口，依標籤分層排版到板材上並編號。",
+   "result": "可雷射切割組裝的畢氏樹或分割立面模型。"
+  }
+ ],
+ "project_seeds": [
+  "我的立面文法",
+  "冰裂紋遮陽板",
+  "Malagueira 式客製化住宅產生器",
+  "3D 方塊樹構架",
+  "文法＋性能最佳化的桁架",
+  "街廓尺度 CGA 城市"
+ ],
+ "cases": [
+  {
+   "id": "A05-01",
+   "cc": false,
+   "title": "形狀文法的起點：繪畫與雕塑的生成規格",
+   "creator": "George Stiny、James Gips",
+   "year": "1972",
+   "url": "https://www.semanticscholar.org/paper/Shape-Grammars-and-the-Generative-Specification-of-Stiny-Gips/c8f7baf704f7d7713eee196de6cb90cbfb7fc4cd",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "手繪",
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-02",
+   "cc": false,
+   "title": "Palladian Grammar：帕拉底歐別墅平面文法",
+   "creator": "George Stiny、William J. Mitchell",
+   "year": "1978",
+   "url": "https://journals.sagepub.com/doi/10.1068/b050005",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "手繪",
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-03",
+   "cc": false,
+   "title": "The Language of the Prairie：萊特草原住宅文法",
+   "creator": "Hank Koning、Julie Eizenberg",
+   "year": "1981",
+   "url": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-04",
+   "cc": false,
+   "title": "Siza Malagueira 住宅文法與大量客製化",
+   "creator": "José P. Duarte",
+   "year": "2005",
+   "url": "https://journals.sagepub.com/doi/10.1068/b31124",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "理論",
+    "電腦程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-05",
+   "cc": false,
+   "title": "CGA Shape：程序化建築生成與龐貝古城重建",
+   "creator": "Pascal Müller、Peter Wonka、Simon Haegler、Andreas Ulmer、Luc Van Gool",
+   "year": "2006",
+   "url": "https://dl.acm.org/doi/10.1145/1141911.1141931",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "CityEngine",
+    "CGA"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-06",
+   "cc": false,
+   "title": "CityEngine 立面建模教學（CGA split 規則）",
+   "creator": "Esri",
+   "year": "",
+   "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "CityEngine",
+    "CGA"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-07",
+   "cc": false,
+   "title": "Ice-ray：中式冰裂紋窗格文法",
+   "creator": "George Stiny",
+   "year": "1977",
+   "url": "https://journals.sagepub.com/doi/10.1068/b040089",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tools": [
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-08",
+   "cc": false,
+   "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
+   "creator": "designcoding",
+   "year": "",
+   "url": "https://www.designcoding.net/revisiting-chinese-ice-ray-lattices/",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-09",
+   "cc": false,
+   "title": "The Grammar of Paradise：蒙兀兒花園文法",
+   "creator": "George Stiny、William J. Mitchell",
+   "year": "1980",
+   "url": "https://www.andrew.cmu.edu/user/ramesh/teaching/course/48-747/subFrames/readings/Stiny&MItchell-1980-EPB7_209-226.TheGrammarOfParadise..pdf",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-10",
+   "cc": false,
+   "title": "More than the Sum of Parts：Queen Anne 住宅文法",
+   "creator": "Ulrich Flemming",
+   "year": "1987",
+   "url": "https://journals.sagepub.com/doi/10.1068/b140323",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "理論"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-11",
+   "cc": false,
+   "title": "Palladian Construction Grammar：文法加快速原型",
+   "creator": "Larry Sass",
+   "year": "2007",
+   "url": "https://www.researchgate.net/publication/23541586_A_Palladian_construction_grammar_-_Design_reasoning_with_shape_grammars_and_rapid_prototyping",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [
+    "CAD",
+    "快速原型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-12",
+   "cc": false,
+   "title": "eifForm：形狀退火結構生成系統",
+   "creator": "Kristina Shea（與 Jonathan Cagan 合作）",
+   "year": "2000",
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "eifForm",
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-13",
+   "cc": false,
+   "title": "Diebenkorn《Ocean Park》系列的繪畫文法",
+   "creator": "Russell A. Kirsch、Joan L. Kirsch",
+   "year": "",
+   "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "電腦程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-14",
+   "cc": false,
+   "title": "《營造法式》形狀文法",
+   "creator": "Andrew I-kang Li",
+   "year": "",
+   "url": "https://dspace.mit.edu/handle/1721.1/8631",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "理論",
+    "電腦程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-15",
+   "cc": false,
+   "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
+   "creator": "Athanassios Economou（Georgia Tech Shape Computation Lab）",
+   "year": "",
+   "url": "https://shape.gatech.edu/Research/index.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Shape Machine",
+    "Rhino"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-51",
+   "cc": true,
+   "title": "Context Free Art（CFDG 設計文法）",
+   "creator": "Chris Coyne（CFDG 語言）；Mark Lentczner、John Horigan（Context Free 程式）",
+   "year": "",
+   "url": "https://www.contextfreeart.org/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Context Free"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-52",
+   "cc": true,
+   "title": "Structure Synth（EisenScript 3D 設計文法）",
+   "creator": "Mikael Hvidtfeldt Christensen（Syntopia）",
+   "year": "",
+   "url": "https://structuresynth.sourceforge.net/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Structure Synth"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A05-53",
+   "cc": true,
+   "title": "MarkovJunior：以改寫規則與約束傳播生成的機率式程式語言",
+   "creator": "Maxim Gumin（mxgmn）",
+   "year": "2022",
+   "url": "https://github.com/mxgmn/MarkovJunior",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "C#"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A05-54",
+   "cc": true,
+   "title": "ShapeML：規則式程序化 3D 建模語言",
+   "creator": "Stefan Lienhard",
+   "year": "",
+   "url": "https://github.com/stefalie/shapeml",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "ShapeML"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A05-55",
+   "cc": true,
+   "title": "CGAjs：瀏覽器中的 CGA 形狀文法編輯器",
+   "creator": "Gunnar Aastrand Grimnes（gromgull）",
+   "year": "",
+   "url": "https://gromgull.github.io/cgajs/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "three.js"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "3d-architecture": 7,
+   "modeling": 4,
+   "urban-landscape": 3,
+   "2d-pattern": 2,
+   "art-installation": 1,
+   "fabrication": 1,
+   "performance": 1,
+   "drawing": 1
+  },
+  "scale": {
+   "建築": 8,
+   "物件": 5,
+   "群體／都市": 2,
+   "立面／表皮": 2,
+   "構件": 2,
+   "地景": 1
+  },
+  "tools": {
+   "理論": 8,
+   "電腦程式": 3,
+   "手繪": 2,
+   "CityEngine": 2,
+   "CGA": 2,
+   "Grasshopper": 1,
+   "CAD": 1,
+   "快速原型": 1,
+   "eifForm": 1,
+   "Java": 1,
+   "Shape Machine": 1,
+   "Rhino": 1,
+   "Context Free": 1,
+   "Structure Synth": 1,
+   "C#": 1,
+   "ShapeML": 1,
+   "three.js": 1
+  }
+ },
+ "rejected": []
+}

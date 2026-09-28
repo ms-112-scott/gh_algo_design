@@ -1,0 +1,419 @@
+{
+ "id": "A02",
+ "name_zh": "Koch 曲線／雪花",
+ "name_en": "Koch Curve / Koch Snowflake",
+ "family": "A",
+ "one_liner": "把每條線段的中間三分之一往外推成尖角，一層一層重複，讓一個三角形長成周長無限增加的雪花輪廓。",
+ "how_it_works": [
+  "依 sides 建立起始正多邊形（或一條直線）的角點清單",
+  "每條邊交給遞迴 SplitEdge：切成三等分，中段用旋轉 -60° 的向量推出尖點，得到四段",
+  "四段各自再呼叫 SplitEdge、深度減 1；深度為 0 時只記起點",
+  "所有點依序串成 Polyline 輸出，點數 = 邊數 × 4^depth + 1"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "尖角朝內（反雪花）",
+   "level": 1,
+   "what_changes": "規則",
+   "how": "把 TurnVector(oneThird, -60) 改成 +60，尖角由外凸變內凹。",
+   "result": "得到反雪花（anti-snowflake），輪廓向內捲出空洞，像冰晶的負形。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "Cesàro／可調角度 Koch",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "新增輸入 angle（60°–89°），尖點長度改為 oneThird 依角度換算的腰長，firstCut、secondCut 位置也跟著調。",
+   "result": "角度越大尖角越細長，輪廓從雪花過渡到針狀、接近填滿平面的曲線。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "方形 Koch（Minkowski sausage）",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "把一段切成四等分或三等分，中段改成往外推出方形凸塊（90° 轉角），遞迴呼叫改為 5 或 8 段。",
+   "result": "直角鋸齒的方形分形邊界，適合做正交立面或平面格柵。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "隨機方向與不等分切點",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "加入 seed 與 Random，每次遞迴隨機決定尖角朝內或朝外、切點落在 0.3–0.4 之間。",
+   "result": "像真實海岸線的不規則分形邊界，可重現種子控制形狀。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "吸引子控制細分深度",
+   "level": 3,
+   "what_changes": "輸入／停止條件",
+   "how": "新增吸引點 Point3d attractor，遞迴時依線段中點到吸引點距離決定 depthLeft 是否提早歸零。",
+   "result": "靠近吸引點處細碎、遠處平直的漸變分形邊緣，可做立面開口或海岸步道的疏密變化。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "任意曲線邊界上的 Koch",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "把 MakeStartShape 換成讀入一條使用者畫的 Polyline（Curve.TryGetPolyline），逐段交給 SplitEdge。",
+   "result": "任何平面輪廓（基地線、房間平面）都能長出分形邊緣。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "3D 化：Koch 曲面／Kochcube",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "把遞迴對象從線段改成三角面：每個三角形切成四個，中間那片沿法向推出四面體，輸出 Mesh。",
+   "result": "3D 分形刺狀曲面，接近 Koch 四面體或 Kochcube，可做雕塑或聲學擴散板。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "逐層高度堆疊",
+   "level": 2,
+   "what_changes": "輸出／維度",
+   "how": "用迴圈把 depth 0 到 n 的雪花各自 Move 到 z = level × h，再以 Loft 或逐層輸出。",
+   "result": "由三角形逐層長成雪花的塔狀量體，高度即是遞迴層級的視覺化。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "輸出可製造的封閉輪廓",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "將結果 Polyline 做 Offset 形成厚度、Extrude 成板，或用 Region 布林切出孔洞，輸出給雷射切割。",
+   "result": "可雷切的雪花屏風、壓克力燈罩或天花吸音板輪廓。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "天線式周長最大化",
+   "level": 3,
+   "what_changes": "約束",
+   "how": "加入外接框約束，計算每層 pointCount 與周長 Length，找出在固定尺寸下周長最大但線段不小於最小加工寬度的 depth。",
+   "result": "理解分形天線、散熱鰭片「同面積增加周長」的邏輯並能輸出比較表。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "深度漸進動畫",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "用 Timer 或 Slider 動畫把 depth 由 0 增加到 6，並用插值讓尖點高度從 0 慢慢長出。",
+   "result": "雪花逐步生長的動畫，適合簡報說明遞迴。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "混合 L-System 寫法",
+   "level": 2,
+   "what_changes": "規則（混合 A01）",
+   "how": "改用字串改寫 F → F+F--F+F，再以 A01 的烏龜繪圖解譯，對照直接遞迴的差異。",
+   "result": "同一個雪花的兩種實作，能延伸到任意 L-System 分形邊界。"
+  }
+ ],
+ "project_seeds": [
+  "分形吸音天花板",
+  "分形海岸步道與景觀邊界",
+  "雪花立面遮陽屏",
+  "周長 vs 面積：分形散熱／通風構件研究",
+  "3D Koch 雕塑與數位製造"
+ ],
+ "cases": [
+  {
+   "id": "A02-01",
+   "cc": false,
+   "title": "Koch 雪花分形天線（寬頻透明天線）",
+   "creator": "IEEE 研討會論文作者群",
+   "year": "",
+   "url": "https://ieeexplore.ieee.org/document/9157327/",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "電磁模擬軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-02",
+   "cc": false,
+   "title": "MATLAB Antenna Toolbox：fractalSnowflake 元件",
+   "creator": "MathWorks",
+   "year": "",
+   "url": "https://www.mathworks.com/help/antenna/ref/fractalsnowflake.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "MATLAB"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-03",
+   "cc": false,
+   "title": "S 頻段 Koch 雪花天線（CubeSat 立方衛星）",
+   "creator": "IEEE 研討會論文作者群",
+   "year": "",
+   "url": "https://ieeexplore.ieee.org/document/7836227/",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "電磁模擬軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-04",
+   "cc": false,
+   "title": "Koch 雪花啟發的聲學超穎表面（車用喇叭擴散）",
+   "creator": "Journal of Applied Physics 論文作者群",
+   "year": "2025",
+   "url": "https://pubs.aip.org/aip/jap/article/138/18/183102/3371768/Koch-snowflake-inspired-acoustic-metasurface-for",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "聲學模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-05",
+   "cc": false,
+   "title": "Koch 曲線結構中的快慢聲波",
+   "creator": "Scientific Reports 論文作者群",
+   "year": "2018",
+   "url": "https://www.nature.com/articles/s41598-018-19797-x",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-06",
+   "cc": false,
+   "title": "分形擴散器作為隔音牆頂端構件",
+   "creator": "研究論文作者群",
+   "year": "",
+   "url": "https://www.academia.edu/97336487/Investigation_of_broadband_attenuation_with_fractal_diffusers_as_noise_barrier_top_edge_devices_using_indirect_boundary_element_method",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "BEM 聲學分析"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-07",
+   "cc": false,
+   "title": "Koch 雪花截面的套管式熱交換器",
+   "creator": "Georgia Southern University 學位論文",
+   "year": "",
+   "url": "https://digitalcommons.georgiasouthern.edu/etd/1697/",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "CFD 熱流模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-08",
+   "cc": false,
+   "title": "方形 Koch 島熱交換器",
+   "creator": "研究論文作者群",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/233225229_Heat_Transfer_Characteristics_of_a_Quadratic_Koch_Island_Fractal_Heat_Exchanger",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-09",
+   "cc": false,
+   "title": "雪花分形仿生微流道散熱器",
+   "creator": "Journal of Thermal Analysis and Calorimetry 論文作者群",
+   "year": "",
+   "url": "https://link.springer.com/article/10.1007/s10973-025-14920-3",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "CFD 熱流模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-10",
+   "cc": false,
+   "title": "Federation Square（對照：pinwheel 分形立面）",
+   "creator": "LAB Architecture Studio（Don Bates、Peter Davidson）",
+   "year": "2002",
+   "url": "https://en.wikipedia.org/wiki/Federation_Square",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-11",
+   "cc": false,
+   "title": "街景中的分形設計：建築立面組成的視覺美學",
+   "creator": "Alexandria Engineering Journal 論文作者群",
+   "year": "",
+   "url": "https://www.sciencedirect.com/science/article/pii/S1110016819300845",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-12",
+   "cc": false,
+   "title": "英國海岸線有多長？（分形維度的起點）",
+   "creator": "Benoit B. Mandelbrot",
+   "year": "1967",
+   "url": "https://www.science.org/doi/10.1126/science.156.3775.636",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-13",
+   "cc": false,
+   "title": "Koch snowflake Fractal Pattern（Grasshopper 教學）",
+   "creator": "Parametric House",
+   "year": "",
+   "url": "https://parametrichouse.com/koch-snowflake-fractal-pattern",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-14",
+   "cc": false,
+   "title": "Koch 雪花圖樣的數位參數化設計（Blender）",
+   "creator": "Dovramadjiev",
+   "year": "",
+   "url": "https://atna-mam.utcluj.ro/index.php/Acta/article/view/1514",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Blender"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A02-15",
+   "cc": false,
+   "title": "Koch 雪花的墊片（gasket）構造與變體",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "url": "https://arxiv.org/pdf/2502.00815",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A02-51",
+   "cc": true,
+   "title": "Coding Challenge #129：Koch Fractal Snowflake（Koch 雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "url": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A02-52",
+   "cc": true,
+   "title": "The Nature of Code 第 8 章：The Koch Curve",
+   "creator": "Daniel Shiffman",
+   "year": "",
+   "url": "https://natureofcode.com/fractals/#the-koch-curve",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A02-53",
+   "cc": true,
+   "title": "3Blue1Brown：Fractals are typically not self-similar（碎形維度）",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "url": "https://www.3blue1brown.com/lessons/fractal-dimension",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Manim"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A02-54",
+   "cc": true,
+   "title": "Koch Snowflake using VEX（Houdini VEX 版 Koch 雪花）",
+   "creator": "secarri（GitHub）",
+   "year": "",
+   "url": "https://github.com/secarri/KochSnowflake",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "performance": 5,
+   "drawing": 4,
+   "modeling": 3,
+   "urban-landscape": 3,
+   "fabrication": 2,
+   "3d-architecture": 1,
+   "2d-pattern": 1
+  },
+  "scale": {
+   "物件": 9,
+   "構件": 5,
+   "群體／都市": 2,
+   "建築": 1,
+   "地景": 1,
+   "立面／表皮": 1
+  },
+  "tools": {
+   "電磁模擬軟體": 2,
+   "CFD 熱流模擬": 2,
+   "MATLAB": 1,
+   "聲學模擬": 1,
+   "BEM 聲學分析": 1,
+   "Grasshopper": 1,
+   "Blender": 1,
+   "Processing": 1,
+   "p5.js": 1,
+   "Manim": 1,
+   "Houdini": 1
+  }
+ },
+ "rejected": []
+}

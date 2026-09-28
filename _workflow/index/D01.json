@@ -1,0 +1,423 @@
+{
+ "id": "D01",
+ "name_zh": "Boids 群聚",
+ "name_en": "Boids (Flocking)",
+ "family": "D",
+ "one_liner": "每隻鳥只看附近的鄰居，照「別太擠、跟著飛、往中間靠」三條規則轉向，整群就自己長出流動的集體軌跡。",
+ "how_it_works": [
+  "在正方體範圍內用固定種子隨機放 birdCount 隻鳥，每隻給一個隨機方向、速度為 maxSpeed。",
+  "每一步先讓每隻鳥掃過所有其他鳥：在分離半徑內累加「遠離」向量（距離平方反比）、在對齊半徑內累加鄰居速度、在聚集半徑內累加鄰居位置。",
+  "把三個方向各自單位化，乘上各自權重相加得到轉向量，只允許轉一小步（TurnStrength = 0.1），再把速度限制在 maxSpeed 以內。",
+  "所有鳥的新速度都算完後才一起移動（同步更新），碰到邊界就把該軸速度反向並夾回範圍內。",
+  "每一步把位置加進該鳥的 Polyline，最後輸出軌跡與最終位置。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "吸引子／目標點群聚",
+   "level": 2,
+   "what_changes": "規則：加第四條力",
+   "how": "新增 List<Point3d> attractors 輸入，在 Steer 裡找最近的吸引點，加上 (target - me.Position) 單位向量乘 attractWeight。",
+   "result": "鳥群會繞著吸引點盤旋、在點與點之間拉出束狀軌跡，可用來控制群聚的空間分布"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "障礙物迴避（Reynolds steering）",
+   "level": 3,
+   "what_changes": "規則：加迴避力",
+   "how": "輸入 Brep 或 Mesh 障礙物，每步用 ClosestPoint 找最近點，若距離小於 avoidRadius 就加一個背離最近點、與距離成反比的力。",
+   "result": "軌跡會繞過量體流動，形成像水流繞柱的分流與渦旋，可做為量體周邊的動線或結構纖維"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "曲面上的 Boids",
+   "level": 3,
+   "what_changes": "維度：3D 空間 → 曲面（UV）",
+   "how": "移動後用 surface.ClosestPoint 把位置拉回曲面，並把速度投影到該點切平面（扣掉沿法向量的分量），邊界反彈改成 UV 範圍判斷。",
+   "result": "在屋頂或立面曲面上長出流線紋理，可直接作為表皮開孔、肋條或鋪面圖樣"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "2D 平面群聚繪圖",
+   "level": 1,
+   "what_changes": "維度：3D → 2D",
+   "how": "初始化時 Z 設 0、速度 Z 分量設 0，並刪掉 Z 軸反彈；步數拉高、把 trails 用漸層線寬或 Offset 表現。",
+   "result": "得到像筆觸或鐵砂紋的平面軌跡繪畫，適合做海報或平面圖樣"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "向量場引導（混 C03）",
+   "level": 3,
+   "what_changes": "輸入：外部向量場",
+   "how": "在 Steer 裡取鳥所在位置的場向量（例如 C03 VectorField 或 C04 Noise 的方向），乘 fieldWeight 加入轉向。",
+   "result": "群聚同時受局部鄰居與全域場影響，軌跡有整體流向又保留局部的聚散"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "影像控制密度與速度",
+   "level": 3,
+   "what_changes": "輸入：影像",
+   "how": "讀入 Bitmap，依鳥在 XY 的位置取灰階值，用來縮放 maxSpeed 或 separationRadius（亮處快而疏、暗處慢而密）。",
+   "result": "軌跡密度對應影像明暗，可做出「用鳥群畫出來」的肖像或地形"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "空間索引加速（RTree／網格分桶）",
+   "level": 4,
+   "what_changes": "迴圈：鄰居搜尋",
+   "how": "每步把所有鳥的位置放進 RTree 或以 cohesionRadius 為邊長的網格 Dictionary，Steer 只查附近格子，取代掃過整個 List。",
+   "result": "可跑上千隻鳥仍流暢，群體尺度能放大到都市或地景"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "Stigmergy：留痕跡、追痕跡",
+   "level": 4,
+   "what_changes": "狀態：加上環境記憶",
+   "how": "建一個 3D 網格記錄鳥走過的次數（費洛蒙），每步衰減；Steer 多一條力朝附近費洛蒙濃度高的格子轉。",
+   "result": "軌跡會自我強化成少數粗壯的主幹與分支，像蟻道或 Physarum，適合做結構纖維路徑"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "軌跡轉成可製造的纖維／管件",
+   "level": 3,
+   "what_changes": "輸出：Polyline → 可製造幾何",
+   "how": "把 trails 用 Curve.Rebuild 平滑、依局部密度決定 Pipe 半徑，並剔除過短或重疊太多的線；或輸出成 G-code 路徑供 3D 列印。",
+   "result": "得到可 3D 列印或纏繞纖維的線性構件群，粗細反映群聚密度"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "Timer 動畫化即時模擬",
+   "level": 3,
+   "what_changes": "迴圈：一次跑完 → 每次 SolveInstance 走一步",
+   "how": "把 birds 提升為 Script_Instance 欄位，加 reset 輸入；每次執行只做一步並用 Timer 觸發，軌跡只保留最近 N 點。",
+   "result": "在 Rhino 視窗即時看到鳥群流動，可邊調權重邊觀察，也能錄成動畫"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "視野角與個體差異",
+   "level": 2,
+   "what_changes": "規則：鄰居判定",
+   "how": "只把前方 fov 角度內（Vector3d.VectorAngle(me.Velocity, toOther) < fov）的鄰居算進去；每隻鳥的權重再加一點隨機偏差。",
+   "result": "群體出現領頭與追隨、分裂與重組，軌跡更像真實椋鳥群"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "群聚軌跡連成網（混 E／圖結構）",
+   "level": 4,
+   "what_changes": "輸出：軌跡 → 圖（點＋連線）",
+   "how": "每隔 k 步把距離小於 linkRadius 的兩隻鳥位置連一條 Line，累積成空間網格，再用 Kangaroo 或自寫彈簧鬆弛。",
+   "result": "形成如蜘蛛網或纖維塔的立體網架，可作裝置或結構概念模型"
+  }
+ ],
+ "project_seeds": [
+  "群聚紋理屋頂",
+  "鳥群畫出的肖像海報",
+  "Stigmergy 纖維塔",
+  "廣場人流與動線模擬",
+  "千隻代理人的地景流線",
+  "即時互動群聚裝置原型"
+ ],
+ "cases": [
+  {
+   "id": "D01-01",
+   "cc": false,
+   "title": "Stanley and Stella in: Breaking the Ice",
+   "creator": "Craig Reynolds／Symbolics Graphics Division 與 Whitney / Demos Productions",
+   "year": "1987",
+   "url": "https://en.wikipedia.org/wiki/Stanley_and_Stella_in:_Breaking_the_Ice",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Symbolics Lisp Machine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-02",
+   "cc": false,
+   "title": "《蝙蝠俠大顯神威》（Batman Returns）蝙蝠群與企鵝群",
+   "creator": "Tim Burton 電影；VIFX（蝙蝠群）、Boss Film（企鵝）",
+   "year": "1992",
+   "url": "https://en.wikipedia.org/wiki/Boids",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Boids（Symbolics 版修改）"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-03",
+   "cc": false,
+   "title": "Swarm Urbanism",
+   "creator": "Kokkugia（Roland Snooks、Robert Stuart-Smith）",
+   "year": "",
+   "url": "https://www.kokkugia.com/swarm-urbanism",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-04",
+   "cc": false,
+   "title": "Composite Swarm",
+   "creator": "Kokkugia／Roland Snooks（與 James Pazzi、Marc Gibson）",
+   "year": "",
+   "url": "https://www.kokkugia.com/Composite-Swarm",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-05",
+   "cc": false,
+   "title": "AADRL Aerial Robot Thread Construction",
+   "creator": "Robert Stuart-Smith（Kokkugia／AA DRL）",
+   "year": "",
+   "url": "https://www.kokkugia.com/AADRL-aerial-robot-thread-construction",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-06",
+   "cc": false,
+   "title": "Aerial Additive Manufacturing（多台自主無人機空中 3D 列印）",
+   "creator": "Zhang et al.；Mirko Kovac 領導，Robert Stuart-Smith 等共同研究（Imperial College London、Empa、UPenn 等）",
+   "year": "2022",
+   "url": "https://www.nature.com/articles/s41586-022-04988-4",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-07",
+   "cc": false,
+   "title": "Behavioural Production: Autonomous Swarm-Constructed Architecture",
+   "creator": "Robert Stuart-Smith",
+   "year": "2016",
+   "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/ad.2024",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-08",
+   "cc": false,
+   "title": "Ghost Tectonics",
+   "creator": "Roland Snooks／RMIT Architecture Tectonic Formation Lab",
+   "year": "2025",
+   "url": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-09",
+   "cc": false,
+   "title": "Franchise Freedom",
+   "creator": "Studio Drift（Lonneke Gordijn、Ralph Nauta）",
+   "year": "2017",
+   "url": "https://studiodrift.com/work/franchise-freedom/",
+   "category": "art-installation",
+   "scale": "地景",
+   "tools": [
+    "Intel Shooting Star 無人機"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-10",
+   "cc": false,
+   "title": "Gossamer Skins",
+   "creator": "Alisa Andrasek",
+   "year": "",
+   "url": "https://www.alisaandrasek.com/projects/gossamer-skins",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [
+    "機器人 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-11",
+   "cc": false,
+   "title": "Culebra（Grasshopper 代理人外掛）",
+   "creator": "Luis Quinones（complicitMatter）",
+   "year": "",
+   "url": "https://github.com/elQuixote/Culebra",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "C#",
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-12",
+   "cc": false,
+   "title": "Quelea：Grasshopper 代理人設計外掛",
+   "creator": "Quelea 開發者（Grasshopper 社群外掛）",
+   "year": "",
+   "url": "https://www.food4rhino.com/en/app/quelea-agent-based-design-grasshopper",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D01-13",
+   "cc": false,
+   "title": "Brass Swarm",
+   "creator": "Kokkugia／Roland Snooks",
+   "year": "",
+   "url": "https://www.kokkugia.com/brass-swarm",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-14",
+   "cc": false,
+   "title": "RMIT Mace",
+   "creator": "Kokkugia／Roland Snooks",
+   "year": "",
+   "url": "https://www.kokkugia.com/RMIT-Mace",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "D01-51",
+   "cc": true,
+   "title": "Coding Challenge #124：Flocking Simulation（群聚模擬）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "url": "https://thecodingtrain.com/challenges/124-flocking-simulation",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D01-52",
+   "cc": true,
+   "title": "Flocking（Processing 官方範例）",
+   "creator": "Daniel Shiffman",
+   "year": "2007",
+   "url": "https://processing.org/examples/flocking.html",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D01-53",
+   "cc": true,
+   "title": "three.js webgl gpgpu birds（GPU 鳥群）",
+   "creator": "Joshua Koo（zz85）／three.js",
+   "year": "2013",
+   "url": "https://threejs.org/examples/webgl_gpgpu_birds.html",
+   "category": "art-installation",
+   "scale": "群體／都市",
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D01-54",
+   "cc": true,
+   "title": "TouchDesigner Boids Flocking Tutorial",
+   "creator": "David Braun",
+   "year": "2021",
+   "url": "https://www.youtube.com/watch?v=f2yOYmOgZEA",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D01-55",
+   "cc": true,
+   "title": "3D Flocking with POPs",
+   "creator": "Dean Cheesman（dcheesman）",
+   "year": "2025",
+   "url": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [
+    "TouchDesigner"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 4,
+   "fabrication": 4,
+   "art-installation": 3,
+   "performance": 3,
+   "3d-architecture": 2,
+   "modeling": 2,
+   "urban-landscape": 1
+  },
+  "scale": {
+   "群體／都市": 7,
+   "物件": 5,
+   "建築": 3,
+   "構件": 2,
+   "地景": 1,
+   "立面／表皮": 1
+  },
+  "tools": {
+   "Grasshopper": 2,
+   "Processing": 2,
+   "GLSL": 2,
+   "TouchDesigner": 2,
+   "Symbolics Lisp Machine": 1,
+   "Boids（Symbolics 版修改）": 1,
+   "Intel Shooting Star 無人機": 1,
+   "機器人 3D 列印": 1,
+   "C#": 1,
+   "Java": 1,
+   "p5.js": 1,
+   "three.js": 1
+  }
+ },
+ "rejected": []
+}

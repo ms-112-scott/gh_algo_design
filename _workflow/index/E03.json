@@ -1,0 +1,436 @@
+{
+ "id": "E03",
+ "name_zh": "Voronoi 圖＋Lloyd 鬆弛",
+ "name_en": "Voronoi + Lloyd Relaxation",
+ "family": "E",
+ "one_liner": "把平面切成「離哪個點最近就歸誰」的細胞，再反覆把每個點搬到自己細胞的重心，讓大小不一的亂格子慢慢變成均勻的蜂巢。",
+ "how_it_works": [
+  "用種子在矩形內撒 pointCount 個隨機點（site）。",
+  "Voronoi：每個點都從整個矩形開始，對每一個其他點畫垂直平分線，用內積判斷角點在哪一側，只留下靠近自己的那一半（半平面切割），切完就是它的細胞。",
+  "Lloyd：用鞋帶公式算每個細胞的面積重心，把點移到重心。",
+  "用新的點重新切一次 Voronoi，重複 iterations 次；點間距越來越平均，細胞越來越接近六角形（CVT，重心 Voronoi 鑲嵌）。",
+  "輸出封閉 polyline 細胞與最終點位，並印出面積總和，用來檢查細胞有沒有剛好鋪滿矩形。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "密度圖加權 Lloyd（影像點描）",
+   "level": 3,
+   "what_changes": "Lloyd 的重心計算（規則）＋新增影像輸入",
+   "how": "把 AreaCenter 改成在細胞內取樣網格點，以影像亮度當權重求加權重心（Σw·p / Σw）；新增 Bitmap 或 Mesh 顏色輸入。",
+   "result": "暗處點密、亮處點疏的點描畫（Weighted Voronoi Stippling），細胞大小隨影像漸變。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "吸引子控制細胞大小",
+   "level": 2,
+   "what_changes": "重心權重或初始撒點分布（輸入）",
+   "how": "新增 attractor 點輸入，權重 w = 1 / (1 + 距離)；或撒點時用拒絕取樣讓靠近吸引子的點較多，再做 Lloyd。",
+   "result": "靠近吸引子的細胞小而密、遠處大而疏的漸變立面開孔或鋪面。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "任意曲線邊界",
+   "level": 3,
+   "what_changes": "BuildCells 的起始多邊形（輸入）",
+   "how": "把起始矩形換成輸入的封閉凸多邊形 Polyline；若是凹形，先照常切割再用 Curve.CreateBooleanIntersection 與邊界相交，撒點改成在邊界內拒絕取樣。",
+   "result": "細胞填滿基地輪廓、樓板形狀或家具面板形狀。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "Power diagram（加權 Voronoi）",
+   "level": 3,
+   "what_changes": "平分線位置（規則）",
+   "how": "每個點帶半徑 r，KeepCloserSide 的判斷改成 |x−a|²−ra² ≤ |x−b|²−rb²，分界線仍是直線但往小權重的一側偏移。",
+   "result": "大小可指定的細胞，適合房間面積配置、泡泡圖轉平面。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "3D Voronoi（半空間切割）",
+   "level": 4,
+   "what_changes": "維度（2D 多邊形 → 3D 多面體）",
+   "how": "起始改成 Box/Brep，每個其他點用中垂面 Plane 切割（Brep.Trim 或 Mesh.Split 保留近側），Lloyd 改用 VolumeMassProperties 取體積重心。",
+   "result": "泡泡狀多面體堆疊，類似水立方 Weaire-Phelan 泡沫的隨機版本。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲面上的 Voronoi",
+   "level": 4,
+   "what_changes": "維度（平面 → 曲面 UV）",
+   "how": "在曲面 UV 參數域上做 Voronoi 與 Lloyd，再用 Surface.PointAt 把細胞角點映射回 3D；進階版以 3D 距離近似修正 UV 拉伸造成的變形。",
+   "result": "包覆在自由曲面殼體上的細胞網格，可做立面嵌板或殼體肋梁。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "收斂判斷與停止條件",
+   "level": 2,
+   "what_changes": "迴圈（固定次數 → 收斂）",
+   "how": "每輪記錄所有點移動距離的最大值，小於 tolerance 就 break，並 Print 實際跑了幾輪。",
+   "result": "自動停在穩定的 CVT，並能畫出能量（移動量）下降曲線做教學說明。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "Timer 動畫化鬆弛過程",
+   "level": 2,
+   "what_changes": "狀態保存與輸出（動畫）",
+   "how": "把 sites 移到類別成員變數，加 reset 輸入；每次 RunScript 只做一輪 Lloyd，接 GH Timer 觸發。",
+   "result": "看到亂格子逐幀變成蜂巢的動畫，適合簡報錄影。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "細胞縮孔與圓角 → 可切割板材",
+   "level": 2,
+   "what_changes": "輸出（線 → 可製造幾何）",
+   "how": "對每個細胞 Polyline 做向內 Offset（Curve.Offset）與 Fillet，外框保留，輸出雷切或 CNC 用封閉曲線。",
+   "result": "穿孔板、隔屏、層架、首飾等可直接雷切／CNC 的圖樣。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "Delaunay 對偶網路",
+   "level": 3,
+   "what_changes": "輸出（細胞 → 鄰接圖）",
+   "how": "切割時記錄是哪個 other 點切出最後的邊，把 site 與該 other 連線，得到 Delaunay 三角網；可當結構桿件或路徑網。",
+   "result": "與細胞互為對偶的三角桁架或動線網路，可與細胞同時輸出做雙層結構。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "細胞長高成 3D 量體",
+   "level": 2,
+   "what_changes": "輸出維度（平面細胞 → 擠出量體）",
+   "how": "每個縮孔後的細胞依面積、到吸引子距離或影像亮度決定高度，用 Extrusion.Create 擠出。",
+   "result": "蜂巢狀城市量體模型、柱列或景觀座椅群。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "與 Circle Packing / Boids 混合",
+   "level": 3,
+   "what_changes": "點的更新規則（混合其他家族）",
+   "how": "把 Lloyd 的重心移動與 E01 Circle Packing 的排斥力或 D01 Boids 的鄰居規則加權相加，點會同時被重心拉、被其他點推。",
+   "result": "可控制疏密又帶流動感的細胞圖樣，細胞會沿流向拉長。"
+  }
+ ],
+ "project_seeds": [
+  "漸變 Voronoi 穿孔隔屏",
+  "影像點描立面",
+  "面積指定的泡泡平面生成器",
+  "曲面殼體 Voronoi 肋梁",
+  "3D Voronoi 仿骨骼支架"
+ ],
+ "cases": [
+  {
+   "id": "E03-01",
+   "cc": false,
+   "title": "北京國家游泳中心（水立方）",
+   "creator": "PTW Architects、Arup、CSCEC",
+   "year": "2008",
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "MicroStation",
+    "Bentley Structural"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-02",
+   "cc": false,
+   "title": "On the Disappearance of Clouds（威尼斯雙年展）",
+   "creator": "Tomás Saraceno",
+   "year": "2019",
+   "url": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/",
+   "category": "art-installation",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-03",
+   "cc": false,
+   "title": "Let's Join：Weaire-Phelan 空間鑲嵌展亭",
+   "creator": "Nexus Network Journal 論文作者群",
+   "year": "2021",
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00544-7",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-04",
+   "cc": false,
+   "title": "Voronoi Shelf（大理石層架）",
+   "creator": "Marc Newson",
+   "year": "2006",
+   "url": "https://marc-newson.com/voronoi-shelf/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "CNC"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-05",
+   "cc": false,
+   "title": "Radiolaria 首飾系列",
+   "creator": "Nervous System",
+   "year": "2007",
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-06",
+   "cc": false,
+   "title": "Voronoi Wall：3D 列印混凝土綠牆",
+   "creator": "Saxion Industrial Design Research Group、De Witte van der Heijden Architecten、Vertico",
+   "year": "",
+   "url": "https://www.vertico.com/projects/voronoi-wall",
+   "category": "fabrication",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "3D 混凝土列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-07",
+   "cc": false,
+   "title": "Adaptive Voronoi Facade（光感應動態立面）",
+   "creator": "諾維薩德大學 Digital Techniques, Design and Production 課程",
+   "year": "",
+   "url": "https://www.arhns.uns.ac.rs/digital/adaptive-voronoi-facade/",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-08",
+   "cc": false,
+   "title": "Upsilon Pavilion：木構 Voronoi 殼體",
+   "creator": "",
+   "year": "",
+   "url": "https://www.researchgate.net/figure/The-Upsilon-pavilion-as-a-timber-Voronoi-shell_fig7_338584125",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "CNC"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-09",
+   "cc": false,
+   "title": "Weighted Voronoi Stippling（加權 Voronoi 點描）",
+   "creator": "Adrian Secord",
+   "year": "2002",
+   "url": "https://www.cs.ubc.ca/labs/imager/tr/2002/secord2002b/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-10",
+   "cc": false,
+   "title": "多層級 Voronoi 晶格骨支架",
+   "creator": "ACS Biomaterials Science & Engineering 論文作者群",
+   "year": "",
+   "url": "https://pubs.acs.org/doi/10.1021/acsbiomaterials.1c01482",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-11",
+   "cc": false,
+   "title": "Voronoi 多孔晶格結構的參數化設計",
+   "creator": "Materials & Design 論文作者群",
+   "year": "2020",
+   "url": "https://www.sciencedirect.com/science/article/pii/S0264127520301416",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-12",
+   "cc": false,
+   "title": "Cellular Topology Optimization on Differentiable Voronoi Diagrams",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "url": "https://arxiv.org/pdf/2204.10313",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-13",
+   "cc": false,
+   "title": "PowerDiagrams：Grasshopper 加權 Voronoi 外掛",
+   "creator": "Daniel Abalde",
+   "year": "",
+   "url": "https://github.com/DanielAbalde/PowerDiagrams",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-14",
+   "cc": false,
+   "title": "埃及 Qena 市公共服務的演算法空間規劃",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "url": "https://arxiv.org/pdf/2512.06431",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E03-15",
+   "cc": false,
+   "title": "景觀建築的生成式設計（Voronoi 鋪面與分區）",
+   "creator": "Digital Landscape Architecture 2022 論文作者",
+   "year": "2022",
+   "url": "https://gispoint.de/fileadmin/user_upload/paper_gis_open/DLA_2022/537724058.pdf",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E03-51",
+   "cc": true,
+   "title": "Coding Challenge 181：Weighted Voronoi Stippling",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "url": "https://thecodingtrain.com/challenges/181-image-stippling",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "d3.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-52",
+   "cc": true,
+   "title": "Voronoi edges（精確 Voronoi 邊界著色器）",
+   "creator": "Inigo Quilez",
+   "year": "2012",
+   "url": "https://iquilezles.org/articles/voronoilines/",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-53",
+   "cc": true,
+   "title": "The Book of Shaders 第 12 章：Cellular Noise",
+   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+   "year": "2015",
+   "url": "https://thebookofshaders.com/12/",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-54",
+   "cc": true,
+   "title": "ofxVoronoi（openFrameworks Voronoi 與 Lloyd 鬆弛外掛）",
+   "creator": "Matthias Esterl、Todd Vanderlin 等",
+   "year": "2015",
+   "url": "https://github.com/madc/ofxVoronoi",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-55",
+   "cc": true,
+   "title": "Lloyd’s Relaxation（d3.js 互動示範）",
+   "creator": "Jason Davies",
+   "year": "",
+   "url": "https://www.jasondavies.com/lloyd/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "d3.js"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 4,
+   "3d-architecture": 3,
+   "fabrication": 3,
+   "performance": 3,
+   "drawing": 2,
+   "modeling": 2,
+   "urban-landscape": 2,
+   "art-installation": 1
+  },
+  "scale": {
+   "物件": 7,
+   "構件": 4,
+   "立面／表皮": 4,
+   "建築": 3,
+   "群體／都市": 1,
+   "地景": 1
+  },
+  "tools": {
+   "Grasshopper": 4,
+   "CNC": 2,
+   "d3.js": 2,
+   "GLSL": 2,
+   "MicroStation": 1,
+   "Bentley Structural": 1,
+   "3D 混凝土列印": 1,
+   "C#": 1,
+   "p5.js": 1,
+   "Shadertoy": 1,
+   "openFrameworks": 1
+  }
+ },
+ "rejected": []
+}

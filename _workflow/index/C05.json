@@ -1,0 +1,436 @@
+{
+ "id": "C05",
+ "name_zh": "Marching Squares 等值線",
+ "name_en": "Marching Squares",
+ "family": "C",
+ "one_liner": "先在方格網每個格點算一個「場值」（像地形高度），再逐格找出剛好等於某個數值的位置，連成一圈圈等高線。",
+ "how_it_works": [
+  "依中心點與半徑決定取樣範圍，切成 cellSize 大小的方格網。",
+  "每個格點用 metaball 公式 Σ(半徑² ÷ 距離²) 算場值，存進 double[,]。",
+  "逐格檢查 4 個角是否 ≥ threshold，用 1、2、4、8 相加得到 0–15 的情況編號。",
+  "情況 5、10 是對角（鞍點），用 4 角平均值決定要不要把兩個內側角連起來。",
+  "查 EdgePairs 表得知要連哪兩條邊，在邊上依數值比例線性內插出端點，輸出 Line。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換場函數：從 metaball 改成 SDF／雜訊",
+   "level": 2,
+   "what_changes": "規則（FieldValue）",
+   "how": "把 FieldValue 換成 Perlin／Simplex noise、到曲線的距離（curve.ClosestPoint 後取距離）或正弦波疊加，其餘掃描程式碼完全不動。",
+   "result": "從泡泡狀融合形變成有機斑紋、等距偏移輪廓或波紋圖樣。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "多條等值線：一次輸出整張等高線圖",
+   "level": 1,
+   "what_changes": "迴圈／輸出",
+   "how": "把 threshold 改成 List<double> 或用 start、step、count 產生多個數值，外層多包一個迴圈，輸出 DataTree<Line> 每一層一條分支。",
+   "result": "類似地形圖的多層同心等高線，可直接拿去做分層雷切模型。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像輸入：照片亮度當場值",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "新增 string imagePath 輸入，用 System.Drawing.Bitmap 讀圖，GetPixel(column,row).GetBrightness() 當作 cornerValues。",
+   "result": "照片或手繪灰階圖轉成向量輪廓線，可用於立面穿孔或地景圖案。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "曲面上的等值線",
+   "level": 3,
+   "what_changes": "維度（2D→曲面上）",
+   "how": "格點改成在 Surface 的 (u,v) 參數空間取樣，場值用 surface.PointAt(u,v) 的 3D 位置計算，內插完的 uv 點再用 PointAt 映射回 3D。",
+   "result": "貼在屋頂或曲面立面上的等值線，可做分割線或肋條走向。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "Isoband 填色：輸出封閉面域",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "線段先用 Curve.JoinCurves 接成封閉 Polyline，再用 Brep.CreatePlanarBreps 或 Mesh 填面；進階可實作 Marching Squares 的 isoband 版本（每格 3 態，81 種情況）。",
+   "result": "可擠出成高低分層的地景量體或雷切板材。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "升維成 Marching Cubes／四面體",
+   "level": 4,
+   "what_changes": "維度（2D→3D）",
+   "how": "格點改成 double[,,]，每格 8 角；可直接套用 F03 的「立方體切 6 個四面體」寫法避開 256 格大表，輸出 Mesh。",
+   "result": "3D metaball 融合體、有機雕塑或體素化建築量體。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "吸引子加權與負電荷",
+   "level": 2,
+   "what_changes": "規則／輸入",
+   "how": "新增 weights 輸入，允許負數：total += weight * r² / d²；負權重的點會把輪廓挖出凹洞。",
+   "result": "能做出孔洞、夾縫與不對稱輪廓的平面配置或景觀水池形狀。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲線邊界裁切",
+   "level": 2,
+   "what_changes": "加約束",
+   "how": "新增 Curve boundary 輸入，對每個格點用 boundary.Contains(point) 判斷，在邊界外的格點強制設為 0（永遠在外側）。",
+   "result": "等值線只出現在基地範圍內，並自然沿著邊界收邊。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "混合反應擴散或生命遊戲",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "把 C01 Reaction-Diffusion 或 C02 生命遊戲算出的網格濃度直接當 cornerValues 輸入，Marching Squares 只負責「描邊」。",
+   "result": "平滑、可加工的斑紋向量輪廓，而不是鋸齒狀像素。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "動畫化：移動中心、流動輪廓",
+   "level": 2,
+   "what_changes": "動畫",
+   "how": "接 Timer 或滑桿時間 t，讓 centers 沿圓或雜訊路徑移動（center + new Vector3d(Math.Cos(t), Math.Sin(t), 0) * amplitude），每次重算。",
+   "result": "熔岩燈般融合又分離的輪廓動畫，可輸出成連續幀做影片或拿每幀疊成 3D 量體。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "堆疊成 3D：時間或高度當 Z",
+   "level": 3,
+   "what_changes": "維度／輸出",
+   "how": "對一系列 threshold（或一系列時間步）各算一次，把結果線段 Z 設為對應高度，再用 Loft 或輸出成疊層切片。",
+   "result": "類似地形模型的疊層量體或可逐層列印的切片路徑。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "轉成可製造的肋條與刀具路徑",
+   "level": 3,
+   "what_changes": "輸出轉可製造幾何",
+   "how": "Join 後的等值線用 Curve.Offset 做成有寬度的板條，或按高度排序輸出成 CNC／雷切路徑；可加上編號文字方便組裝。",
+   "result": "可以直接雷切的等高線地形模型或疊層立面。"
+  }
+ ],
+ "project_seeds": [
+  "基地等高線疊層模型產生器",
+  "人流熱區等值線立面",
+  "反應擴散斑紋的可加工輪廓",
+  "曲面屋頂上的日照等值線分割",
+  "自寫 Marching Cubes 有機量體"
+ ],
+ "cases": [
+  {
+   "id": "C05-01",
+   "cc": false,
+   "title": "Marching Cubes：CT／MRI 醫學影像重建",
+   "creator": "William E. Lorensen、Harvey E. Cline（General Electric）",
+   "year": "1987",
+   "url": "https://dl.acm.org/doi/10.1145/37402.37422",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "C"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-02",
+   "cc": false,
+   "title": "Metaballs：Carl Sagan《Cosmos》的原子模型",
+   "creator": "Jim Blinn",
+   "year": "1982",
+   "url": "https://en.wikipedia.org/wiki/Metaballs",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C05-03",
+   "cc": false,
+   "title": "Blob Architecture（泡泡建築）",
+   "creator": "Greg Lynn",
+   "year": "1995",
+   "url": "https://en.wikipedia.org/wiki/Blob_architecture",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C05-04",
+   "cc": false,
+   "title": "AR Sandbox 擴增實境沙盤",
+   "creator": "Oliver Kreylos（UC Davis）",
+   "year": "",
+   "url": "https://datalab.ucdavis.edu/arsandbox/",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Kinect",
+    "開源軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-05",
+   "cc": false,
+   "title": "等高線地形圖與氣象等壓線",
+   "creator": "地圖與氣象製圖通用做法",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Marching_squares",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "GIS"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-06",
+   "cc": false,
+   "title": "d3-contour：網頁資料視覺化的等值線",
+   "creator": "D3（Mike Bostock 與貢獻者）",
+   "year": "",
+   "url": "https://github.com/d3/d3-contour",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "D3"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-07",
+   "cc": false,
+   "title": "Coding Train C5 — Marching Squares",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://thecodingtrain.com/challenges/c5-marching-squares",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-08",
+   "cc": false,
+   "title": "Dendro：OpenVDB 體素建模外掛",
+   "creator": "ryein（Dendro 開發者）",
+   "year": "",
+   "url": "https://github.com/ryein/dendro",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "OpenVDB",
+    "C#",
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-09",
+   "cc": false,
+   "title": "Millipede：結構分析與等值面擷取",
+   "creator": "Panagiotis Michalatos",
+   "year": "",
+   "url": "https://www.grasshopper3d.com/group/millipede",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-10",
+   "cc": false,
+   "title": "Axolotl：SDF 體積建模元件",
+   "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+   "year": "2019",
+   "url": "https://dbt.arch.ethz.ch/project/axolotl/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-11",
+   "cc": false,
+   "title": "Modeling with Distance Functions（SDF 建模）",
+   "creator": "Inigo Quilez",
+   "year": "",
+   "url": "https://iquilezles.org/articles/distfunctions/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-12",
+   "cc": false,
+   "title": "Marching Cubes 程式化地形（Coding Adventure）",
+   "creator": "Sebastian Lague",
+   "year": "",
+   "url": "https://github.com/SebLague/Marching-Cubes",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Unity",
+    "C#",
+    "Compute Shader"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-13",
+   "cc": false,
+   "title": "Monolith：多材料體素設計工具",
+   "creator": "Panagiotis Michalatos、Andrew O. Payne（Autodesk）",
+   "year": "2018",
+   "url": "https://www.monolith.zone/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "Monolith"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-51",
+   "cc": true,
+   "title": "Coding Challenge #28：Metaballs",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/28-metaballs",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C05-52",
+   "cc": true,
+   "title": "Metaballs and Marching Squares",
+   "creator": "Jamie Wong",
+   "year": "2014",
+   "url": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "HTML Canvas"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C05-53",
+   "cc": true,
+   "title": "Polygonising a scalar field（Marching Cubes 參考實作）",
+   "creator": "Paul Bourke（表格來自 Cory Gene Bloyd）",
+   "year": "1994",
+   "url": "https://paulbourke.net/geometry/polygonise/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C05-54",
+   "cc": true,
+   "title": "ofxMetaballs：openFrameworks 變形球外掛",
+   "creator": "Kyle McDonald",
+   "year": "2012",
+   "url": "https://github.com/kylemcdonald/ofxMetaballs",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C05-55",
+   "cc": true,
+   "title": "Smooth Voxel Terrain（Part 2）：Marching Cubes 與 Surface Nets",
+   "creator": "Mikola Lysenko（0 FPS）",
+   "year": "2012",
+   "url": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 5,
+   "urban-landscape": 4,
+   "drawing": 3,
+   "2d-pattern": 3,
+   "3d-architecture": 1,
+   "performance": 1,
+   "fabrication": 1
+  },
+  "scale": {
+   "物件": 10,
+   "地景": 4,
+   "構件": 3,
+   "建築": 1
+  },
+  "tools": {
+   "JavaScript": 3,
+   "Grasshopper": 3,
+   "C": 2,
+   "Processing": 2,
+   "C#": 2,
+   "Kinect": 1,
+   "開源軟體": 1,
+   "GIS": 1,
+   "D3": 1,
+   "p5.js": 1,
+   "OpenVDB": 1,
+   "C++": 1,
+   "Python": 1,
+   "GLSL": 1,
+   "Shadertoy": 1,
+   "Unity": 1,
+   "Compute Shader": 1,
+   "Monolith": 1,
+   "HTML Canvas": 1,
+   "OpenGL": 1,
+   "openFrameworks": 1,
+   "WebGL": 1
+  }
+ },
+ "rejected": []
+}

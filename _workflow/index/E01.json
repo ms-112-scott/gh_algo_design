@@ -1,0 +1,419 @@
+{
+ "id": "E01",
+ "name_zh": "圓填充",
+ "name_en": "Circle Packing",
+ "family": "E",
+ "one_liner": "先把一堆大小不一的圓隨便丟在一起，再讓重疊的圓互相推開、超出邊界的拉回來，推到幾乎不重疊為止。",
+ "how_it_works": [
+  "隨機產生 circleCount 個圓：圓心散在邊界中心附近，半徑介於 minRadius 與 maxRadius 之間（一開始一定大量重疊）。",
+  "每一輪檢查所有圓的配對：兩圓重疊量 = r1 + r2 − 距離，若大於 0，兩個圓沿連線各往反方向退一半重疊量。",
+  "檢查每個圓是否超出外圍邊界圓，超出多少就往圓心拉回多少。",
+  "把這一輪累積的位移一次套用（先算完再移動，避免順序影響結果）。",
+  "重複直到總重疊量小於 0.001（收斂）或迭代次數用完，輸出圓與剩餘重疊量。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "任意曲線邊界",
+   "level": 2,
+   "what_changes": "規則 2（邊界拉回）",
+   "how": "新增 Curve boundary 輸入，用 boundary.Contains() 判斷圓心是否在內、用 ClosestPoint 找最近邊界點，把圓心拉回到離邊界至少一個半徑的位置。",
+   "result": "圓填滿建築平面、基地或立面開口等任意形狀，而非只能填圓形。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "吸引子控制半徑",
+   "level": 2,
+   "what_changes": "初始狀態（半徑分配）",
+   "how": "新增 List<Point3d> attractors，每個圓的半徑改為依圓心到最近吸引子的距離線性映射到 minRadius–maxRadius，並在每輪推完後重算。",
+   "result": "吸引子附近圓小而密、遠處圓大而疏，形成漸變的開孔或透光密度。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像驅動半徑",
+   "level": 3,
+   "what_changes": "輸入（影像）",
+   "how": "讀入 Bitmap，用圓心對應的像素亮度決定目標半徑；暗處小圓、亮處大圓，每輪依新位置重新取樣。",
+   "result": "用圓的大小重現照片或灰階圖，可做立面圖像化開孔或海報。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "曲面上 circle packing",
+   "level": 3,
+   "what_changes": "維度（平面 → 曲面）",
+   "how": "每輪互推後用 Surface.ClosestPoint 把圓心拉回曲面，並用該點的法向量建立 Plane 產生 Circle；距離改用 3D 距離近似。",
+   "result": "圓貼附在自由曲面上，可當成曲面立面的開孔或面板配置。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "3D 球體堆疊",
+   "level": 3,
+   "what_changes": "維度（2D → 3D）",
+   "how": "初始圓心加上隨機 Z，邊界改成球或 Brep（用 IsPointInside），輸出 Sphere；互推公式完全不用改。",
+   "result": "得到球體最密堆疊、泡泡團或量體內部的空腔配置。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "網格空間索引加速",
+   "level": 4,
+   "what_changes": "迴圈（鄰居搜尋）",
+   "how": "仿照 E02 以 2×maxRadius 為格子大小建立 Dictionary<(int,int), List<int>>，每輪只比對同格與相鄰 8 格的圓。",
+   "result": "可在互動速度下處理數千到上萬個圓，適合大面積立面。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "貪婪插入式填充（先大後小）",
+   "level": 2,
+   "what_changes": "規則（改成放置與拒絕，不互推）",
+   "how": "照 Tyler Hobbs 的做法：由大到小依序隨機試放，與既有圓重疊就放棄，連續失敗 N 次換下一個尺寸；完全不需要迭代鬆弛。",
+   "result": "圓彼此完全不重疊、間隙隨機，視覺上更像手作拼貼。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "成長式填充",
+   "level": 2,
+   "what_changes": "狀態（半徑隨時間變大）",
+   "how": "每輪在空位新增小圓，所有圓的半徑每輪 +Δ，碰到其他圓或邊界就停止成長（加一個 bool[] isGrowing）。",
+   "result": "圓一邊出現一邊長大，最後彼此相切，適合做成動畫。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "Timer 動畫化",
+   "level": 3,
+   "what_changes": "迴圈（由一次算完改成逐步）",
+   "how": "把 centers、radii 移到 class 欄位，每次 RunScript 只呼叫一次 PushApart，reset 輸入為 true 時才重新初始化，搭配 Timer 元件。",
+   "result": "即時看到圓被推開、慢慢收斂的過程，便於展示與調參。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "輸出可製造開孔板",
+   "level": 3,
+   "what_changes": "輸出（轉成可製造幾何）",
+   "how": "每個圓半徑縮小 gap/2 作為最小肋寬，輸出成 Curve 給雷射切割，或與板材 Brep 做布林差集，並在 Print 中回報開孔率。",
+   "result": "可直接送雷切或 CNC 的穿孔板，肋寬受控不會斷裂。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "Circle packing → 加權 Voronoi",
+   "level": 4,
+   "what_changes": "混合其他家族（Voronoi／Power diagram）",
+   "how": "以收斂後的圓心為種子、半徑為權重做 power diagram（或簡化成一般 Voronoi 後向內偏移），得到大小不一的多邊形單元。",
+   "result": "得到大小與圓對應的蜂巢／泡泡狀分割，可做鋪面或結構網格。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "Apollonian 遞迴填充",
+   "level": 3,
+   "what_changes": "規則（迭代 → 遞迴）",
+   "how": "改用 Descartes 圓定理：從三個互切圓出發，遞迴計算每個空隙中與三圓相切的新圓，半徑小於門檻就停止。",
+   "result": "所有圓精確相切、無限細分的分形圖樣（Apollonian gasket）。"
+  }
+ ],
+ "project_seeds": [
+  "漸變透光的 circle packing 立面",
+  "影像轉圓點的巨型壁面",
+  "公園樹冠與林下空間配置",
+  "自由曲面上的圓形採光頂棚",
+  "3D 泡泡空間：球體堆疊到多面體單元"
+ ],
+ "cases": [
+  {
+   "id": "E01-01",
+   "cc": false,
+   "title": "Packing Circles and Spheres on Surfaces（CP mesh）",
+   "creator": "Alexander Schiftner, Mathias Höbinger, Johannes Wallner, Helmut Pottmann",
+   "year": "2009",
+   "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tools": [
+    "研究原型",
+    "數值最佳化"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-02",
+   "cc": false,
+   "title": "北京國家游泳中心「水立方」泡泡立面",
+   "creator": "PTW Architects、Arup、CSCEC、CCDI",
+   "year": "2008",
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E01-03",
+   "cc": false,
+   "title": "Circle-Pack Facade（Kangaroo 自由邊界立面開孔）",
+   "creator": "Parametric House",
+   "year": "",
+   "url": "https://parametrichouse.com/parametric/circle-pack-facade/",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-04",
+   "cc": false,
+   "title": "Kangaroo 2 不同大小圓的曲面 circle packing",
+   "creator": "Daniel Piker（McNeel 論壇討論）",
+   "year": "",
+   "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo",
+    "Plankton"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-05",
+   "cc": false,
+   "title": "Circle Packing T-Shirt（服裝曲面上的圓）",
+   "creator": "Parametric House",
+   "year": "",
+   "url": "https://parametrichouse.com/circle-packing-t-shirt/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-06",
+   "cc": false,
+   "title": "A Randomized Approach to Circle Packing",
+   "creator": "Tyler Hobbs",
+   "year": "2016",
+   "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "Quil／Clojure"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-07",
+   "cc": false,
+   "title": "Coding Challenge #50：Animated Circle Packing",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-08",
+   "cc": false,
+   "title": "Apollonian Gasket 互動草稿",
+   "creator": "Malin Christersson（OpenProcessing）",
+   "year": "",
+   "url": "https://openprocessing.org/sketch/147596/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-09",
+   "cc": false,
+   "title": "Single Line Apollonian Gaskets for Fashion",
+   "creator": "Loe Feijs, Marina Toeters",
+   "year": "2022",
+   "url": "http://www.m.archive.bridgesmathart.org/2022/bridges2022-119.pdf",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E01-10",
+   "cc": false,
+   "title": "以 Freeform Auxetics 做可穿戴、可調的 MRI 超材料",
+   "creator": "Ke Wu, Xia Zhu, Thomas G. Bifano, Stephan W. Anderson, Xin Zhang",
+   "year": "2023",
+   "url": "https://arxiv.org/pdf/2311.13611",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E01-11",
+   "cc": false,
+   "title": "Finetuning Discrete Architectural Surfaces by use of Circle Packing",
+   "creator": "Journal of Asian Architecture and Building Engineering 期刊論文（作者待查）",
+   "year": "2023",
+   "url": "https://doi.org/10.1080/13467581.2023.2229407",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E01-12",
+   "cc": false,
+   "title": "Controlled Circle Packing with Processing",
+   "creator": "CodePlastic",
+   "year": "2017",
+   "url": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-13",
+   "cc": false,
+   "title": "植物生態系的建模與渲染（以圓的競爭決定植株分布）",
+   "creator": "Oliver Deussen, Pat Hanrahan, Bernd Lintermann, Radomír Měch, Matt Pharr, Przemyslaw Prusinkiewicz",
+   "year": "1998",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E01-14",
+   "cc": false,
+   "title": "d3.pack 階層式圓形圖（circle packing 資料視覺化）",
+   "creator": "Mike Bostock（D3.js）",
+   "year": "",
+   "url": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E01-51",
+   "cc": true,
+   "title": "Packing The Torus（Houdini 曲面圓填充）",
+   "creator": "Manuel Casasola Merkle（Entagma）",
+   "year": "2017",
+   "url": "https://entagma.com/packing-the-torus/",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E01-52",
+   "cc": true,
+   "title": "Circle packing with compute shaders（TouchDesigner）",
+   "creator": "noones_img（Derivative 社群轉載）",
+   "year": "2021",
+   "url": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E01-53",
+   "cc": true,
+   "title": "A Recursive Circle Packing Algorithm for Organic Growth Patterns",
+   "creator": "Ahmad Moussa（Gorilla Sun）",
+   "year": "2023",
+   "url": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E01-54",
+   "cc": true,
+   "title": "circlepack-cpp：openFrameworks 圓填充編輯器",
+   "creator": "Joseff（jn3008）",
+   "year": "2023",
+   "url": "https://github.com/jn3008/circlepack-cpp",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "3d-architecture": 3,
+   "modeling": 3,
+   "2d-pattern": 3,
+   "drawing": 3,
+   "fabrication": 2,
+   "performance": 2,
+   "art-installation": 1,
+   "urban-landscape": 1
+  },
+  "scale": {
+   "物件": 11,
+   "立面／表皮": 5,
+   "建築": 1,
+   "地景": 1
+  },
+  "tools": {
+   "Processing": 4,
+   "Grasshopper": 3,
+   "Kangaroo": 3,
+   "p5.js": 2,
+   "研究原型": 1,
+   "數值最佳化": 1,
+   "Plankton": 1,
+   "Quil／Clojure": 1,
+   "D3.js": 1,
+   "JavaScript": 1,
+   "Houdini": 1,
+   "TouchDesigner": 1,
+   "GLSL": 1,
+   "openFrameworks": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,399 @@
+{
+ "id": "E02",
+ "name_zh": "Poisson 圓盤取樣",
+ "name_en": "Poisson Disk Sampling",
+ "family": "E",
+ "one_liner": "撒出「均勻但不規則」的點：任兩點至少相隔 minDistance，卻不像格子那麼死板，也不像純隨機那樣擠成一團。",
+ "how_it_works": [
+  "建立邊長 minDistance/√2 的網格，保證每格最多只會有一個點，並用 int[,] 記錄每格裡是第幾個點（-1 = 空）。",
+  "隨機放第一個點，加入「還能往外長」的名單。",
+  "從名單隨機挑一個點，在它外圍 minDistance 到 2×minDistance 的圓環內隨機試放候選點。",
+  "只檢查候選點周圍 5×5 格裡的點：全部都夠遠就收下，登記到網格並加入名單。",
+  "若試了 triesPerPoint 次都失敗，就把這個點移出名單；名單空了代表整個範圍已填滿，同時輸出同點數的純隨機點做對照。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "變密度取樣（影像／吸引子）",
+   "level": 3,
+   "what_changes": "規則（minDistance 變成位置的函式）",
+   "how": "新增 Func<Point3d,double> 或依影像亮度／吸引子距離計算每個點的 r(p)；網格 cellSize 改用最小半徑，檢查範圍擴大到 ceil(rMax/cellSize) 格，判斷距離時用兩點半徑的最大值。",
+   "result": "點在指定區域變密、其他區域變疏，可做漸變開孔、點描圖或植栽密度。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "任意曲線邊界",
+   "level": 2,
+   "what_changes": "規則（範圍檢查）",
+   "how": "把 IsFarEnough 開頭的矩形檢查換成 boundary.Contains(candidate) == PointContainment.Inside，網格仍以邊界的 BoundingBox 建立；可再加內部洞口曲線排除。",
+   "result": "點只落在基地、立面或平面輪廓內，並能避開中庭或既有結構。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "3D Poisson 取樣",
+   "level": 3,
+   "what_changes": "維度（2D → 3D）",
+   "how": "cellSize 改成 minDistance/√3、網格改為 int[,,]、候選點在球殼內用兩個角度取樣，檢查範圍改為 5×5×5 格。",
+   "result": "空間中均勻而不規則的點雲，可當 3D Voronoi 種子或空間桁架節點。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "曲面上取樣",
+   "level": 4,
+   "what_changes": "維度（平面 → 曲面）",
+   "how": "在曲面的 UV 空間生成候選點，但距離判斷改用 surface.PointAt(u,v) 之後的 3D 距離；或先在曲面上撒大量隨機點，再做 Yuksel 的 sample elimination 刪到目標點數。",
+   "result": "在彎曲立面或屋頂上得到間距一致的點，不會因 UV 拉伸而疏密不均。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "多類別 Poisson（多種物件）",
+   "level": 3,
+   "what_changes": "狀態（每個點帶類別與半徑）",
+   "how": "每個點多存一個 type 與 radius，檢查距離時改用 r_i + r_j（或類別間的間距表），先放大半徑類別再放小的。",
+   "result": "大樹、小樹、灌木或大小開孔各自有合理的最小間距，彼此不衝突。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "Poisson 點 → Voronoi／Delaunay",
+   "level": 2,
+   "what_changes": "混合其他家族（輸出轉幾何）",
+   "how": "把 poissonPoints 接到 Grasshopper 的 Voronoi 或 Delaunay 元件，或在 C# 中用 Rhino 的 Delaunay 功能產生網格。",
+   "result": "得到單元大小接近一致但形狀自然的分割，適合鋪面、石板與結構網格。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "點描開孔（stippling）",
+   "level": 2,
+   "what_changes": "輸出（點 → 圓孔）",
+   "how": "每個點依影像亮度產生不同半徑的圓，半徑上限設為 minDistance/2 減去肋寬，保證孔與孔不相交。",
+   "result": "用開孔大小與密度重現影像的穿孔板或點描海報。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "Lloyd 鬆弛修整",
+   "level": 4,
+   "what_changes": "混合迭代（後處理）",
+   "how": "以取樣結果為種子做 Voronoi，將每個點移到所屬單元的（加權）重心，重複數次；加權版即 Secord 的 weighted Voronoi stippling。",
+   "result": "點分布更均勻，單元更接近正六邊形，影像點描的色調更平滑。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "TSP 單筆路徑",
+   "level": 4,
+   "what_changes": "輸出（點 → 連續路徑）",
+   "how": "用最近鄰居法加 2-opt 把所有點串成一條不交叉的折線，輸出 Polyline。",
+   "result": "可給繪圖機、雷射或 3D 列印連續走完的單筆線稿。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "逐步生長動畫",
+   "level": 3,
+   "what_changes": "迴圈（改成每次 Timer 只做 K 步）",
+   "how": "把 acceptedPoints、growingPoints、cellOwner 移到欄位，每次 RunScript 只處理 K 次挑點，並另外輸出目前名單中的點以不同顏色顯示。",
+   "result": "看見點從一個種子往外擴散的「波前」，適合展示演算法本質。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "沿曲線的 1D Poisson",
+   "level": 2,
+   "what_changes": "維度（2D → 1D）",
+   "how": "在曲線參數上取樣：以弧長代替座標，新點位置 = 上一點弧長 + minDistance × (1 + random)，用 Curve.PointAtLength 取點。",
+   "result": "沿步道或立面分割線放置柱子、路燈或欄杆，間距自然但不小於規範值。"
+  }
+ ],
+ "project_seeds": [
+  "變密度點描穿孔立面",
+  "多物種植栽點位產生器",
+  "Poisson + Voronoi 自然石鋪面",
+  "自由曲面屋頂的均勻節點網格",
+  "3D Poisson 泡沫結構體"
+ ],
+ "cases": [
+  {
+   "id": "E02-01",
+   "cc": false,
+   "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
+   "creator": "Robert Bridson",
+   "year": "2007",
+   "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "研究原型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-02",
+   "cc": false,
+   "title": "Weighted Voronoi Stippling（加權 Voronoi 點描）",
+   "creator": "Adrian Secord",
+   "year": "2002",
+   "url": "https://dl.acm.org/doi/abs/10.1145/508530.508537",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "研究原型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-03",
+   "cc": false,
+   "title": "StippleGen：加權 Voronoi 點描與 TSP 路徑",
+   "creator": "Evil Mad Scientist Laboratories（Windell Oskay 等）",
+   "year": "2012",
+   "url": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "Inkscape"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-04",
+   "cc": false,
+   "title": "Sample Elimination for Generating Poisson Disk Sample Sets",
+   "creator": "Cem Yuksel",
+   "year": "2015",
+   "url": "http://www.cemyuksel.com/research/sampleelimination/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-05",
+   "cc": false,
+   "title": "Visualizing Algorithms：Poisson-disc 取樣動畫",
+   "creator": "Mike Bostock",
+   "year": "2014",
+   "url": "https://bost.ocks.org/mike/algorithms/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-06",
+   "cc": false,
+   "title": "Poisson-Disc Sampling 互動視覺化",
+   "creator": "Jason Davies",
+   "year": "",
+   "url": "https://www.jasondavies.com/poisson-disc/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-07",
+   "cc": false,
+   "title": "Coding Challenge #33：Poisson-disc Sampling",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-08",
+   "cc": false,
+   "title": "mapgen4：Poisson 點＋Voronoi 的程序化地形地圖",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "2018",
+   "url": "https://www.redblobgames.com/maps/mapgen4/",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-09",
+   "cc": false,
+   "title": "Poisson disc vs. jittered grid 比較",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "",
+   "url": "https://www.redblobgames.com/x/1830-jittered-grid/",
+   "category": "2d-pattern",
+   "scale": "群體／都市",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-10",
+   "cc": false,
+   "title": "Blender Geometry Nodes：Distribute Points on Faces（Poisson Disk 模式）",
+   "creator": "Blender Foundation",
+   "year": "",
+   "url": "https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/point/distribute_points_on_faces.html",
+   "category": "modeling",
+   "scale": "地景",
+   "tools": [
+    "Blender"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-11",
+   "cc": false,
+   "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
+   "creator": "Peter Krattenmacher（McNeel 論壇）",
+   "year": "2020",
+   "url": "https://discourse.mcneel.com/t/poisson-disk-sampling-component/109884",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-12",
+   "cc": false,
+   "title": "玻璃纖維立體字的有機纖維分布",
+   "creator": "McNeel 論壇討論（Laurent Delrieu 回覆）",
+   "year": "2025",
+   "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E02-51",
+   "cc": true,
+   "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "url": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E02-52",
+   "cc": true,
+   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
+   "creator": "Marcel Ruegenberg",
+   "year": "2015",
+   "url": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E02-53",
+   "cc": true,
+   "title": "poisson-disk-sampling（JavaScript 任意維度與變密度）",
+   "creator": "Kevin Chapelier",
+   "year": "2015",
+   "url": "https://github.com/kchapelier/poisson-disk-sampling",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E02-54",
+   "cc": true,
+   "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
+   "creator": "Nikolai Janakiev",
+   "year": "2017",
+   "url": "https://github.com/njanakiev/poisson-disk-sampling",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E02-55",
+   "cc": true,
+   "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
+   "creator": "Sebastian Lague",
+   "year": "2018",
+   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Unity"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 5,
+   "modeling": 4,
+   "drawing": 4,
+   "urban-landscape": 2,
+   "fabrication": 1,
+   "art-installation": 1
+  },
+  "scale": {
+   "物件": 12,
+   "地景": 3,
+   "群體／都市": 1,
+   "構件": 1
+  },
+  "tools": {
+   "JavaScript": 5,
+   "Processing": 3,
+   "研究原型": 2,
+   "D3.js": 2,
+   "Grasshopper": 2,
+   "Inkscape": 1,
+   "C++": 1,
+   "p5.js": 1,
+   "WebGL": 1,
+   "Blender": 1,
+   "C#": 1,
+   "openFrameworks": 1,
+   "Unity": 1
+  }
+ },
+ "rejected": []
+}

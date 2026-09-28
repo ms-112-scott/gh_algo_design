@@ -1,0 +1,421 @@
+{
+ "id": "C03",
+ "name_zh": "向量場流線",
+ "name_en": "Vector Field Streamlines",
+ "family": "C",
+ "one_liner": "在基地上每一點用公式算出一個方向（被吸引點拉＋繞著轉），再從格子起點順著方向一步步走，畫出像風、水、磁力線的流線。",
+ "how_it_works": [
+  "在正方形範圍內排出 seedsPerSide × seedsPerSide 個格子起點。",
+  "FieldDirection：對每個吸引點算「指向它的方向 × pullStrength」加「轉 90° 的方向 × swirlStrength」，乘上 1/(1+距離) 的衰減後全部相加，得到該點的場方向。",
+  "TraceStreamline：從起點取場方向、單位化、前進 stepSize，重複 streamlineSteps 次，走出範圍、場為零或碰到吸引點就停，記成 Polyline。",
+  "另外在每個起點輸出一段短線（arrows）顯示場的方向，方便對照場與流線。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換場公式：Perlin Noise 角度場",
+   "level": 2,
+   "what_changes": "規則（場公式）",
+   "how": "把 FieldDirection 改成 angle = noise.ValueAt(x/scale, y/scale) * 2π，回傳 (cos angle, sin angle, 0)；可直接借用 C04 的 PerlinNoise class。",
+   "result": "有機、如頭髮或木紋般流動的曲線，就是 Tyler Hobbs 式 flow field。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "電荷場／磁力線",
+   "level": 2,
+   "what_changes": "規則（場公式）",
+   "how": "每個點給正負電荷值，場 = Σ q·(p−a)/|p−a|³，移除 swirl 項；流線從正電荷附近的小圓上出發。",
+   "result": "物理課本上的電力線：從正電荷發散、收到負電荷，同號電荷之間出現分界。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "Curl noise 無源場",
+   "level": 3,
+   "what_changes": "規則（場公式）",
+   "how": "先有一個純量場 ψ（例如 noise），用有限差分算 (∂ψ/∂y, −∂ψ/∂x) 當方向；這個場沒有源與匯，流線不會聚成一點。",
+   "result": "像煙、水流的迴旋，流線均勻不擠在一起，適合做鋪面紋理。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "改成 RK4 積分",
+   "level": 3,
+   "what_changes": "迴圈（積分方法）",
+   "how": "把 current += dir*step 換成四階 Runge-Kutta：取 k1..k4 四次場方向加權平均後再前進。",
+   "result": "同樣 stepSize 下流線更準、漩渦中心不會螺旋外洩，可以用較大步長。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "等間距流線（Jobard–Lefer）",
+   "level": 4,
+   "what_changes": "狀態＋輸出（起點策略）",
+   "how": "不用格子起點，改成從已完成流線的兩側 dsep 距離取新起點；追蹤時用格子型空間索引檢查與既有流線距離 < dtest 就停。",
+   "result": "密度均勻、不重疊的流線，像手繪等高線或雕版畫，可直接拿去雷切或繪圖機。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "雙向追蹤",
+   "level": 1,
+   "what_changes": "迴圈",
+   "how": "每個起點同時往 +direction 與 −direction 各走一次，把後半段反轉接在前面。",
+   "result": "流線從上游一路貫穿到下游，不會只從格點開始，構圖完整很多。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "曲面上的流線",
+   "level": 3,
+   "what_changes": "維度（2D→曲面）",
+   "how": "新增 Surface 輸入，在 (u,v) 參數空間算場並追蹤，每步用 surface.PointAt(u,v) 映射回 3D；或把 3D 場向量投影到切平面。",
+   "result": "貼在屋頂、殼體或地形上的流線，可當分割線、肋條或排水溝走向。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "3D 場與空間流線",
+   "level": 3,
+   "what_changes": "維度（2D→3D）",
+   "how": "拿掉 toAttractor.Z = 0，起點改成 3D 格子，旋轉軸改成可輸入的向量；停止條件改成立方體邊界。",
+   "result": "空間中的螺旋與渦流線，可做懸吊裝置或管線雕塑。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "影像／曲線當場的輸入",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "把灰階影像的梯度（相鄰像素亮度差）當方向，或取最近邊界曲線的切線方向（Curve.ClosestPoint + TangentAt）與吸引力混合。",
+   "result": "流線沿著影像輪廓或基地邊界流動，像順著建築外框繞行的人流或風。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "流線轉成可製造幾何",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把 Polyline 平滑成 Curve 後 Offset 成帶狀、或沿線 Sweep 圓管；依場強度（向量長度）決定帶寬或管徑。",
+   "result": "可雷切的鋪面分割、CNC 的地景溝槽、或 3D 列印的流線雕塑。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "粒子動畫化",
+   "level": 2,
+   "what_changes": "狀態＋迴圈（Timer）",
+   "how": "把粒子位置存在 class 欄位，每次 Timer 觸發只前進一步並保留最近 N 步當尾巴；場的吸引點可隨時間移動。",
+   "result": "像風場地圖一樣的流動動畫，可錄成影片做分析圖。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "與 D01 Boids 混合",
+   "level": 4,
+   "what_changes": "混合其他家族",
+   "how": "把場方向當成 Boids 的一個額外轉向力（steer toward field direction），權重可調。",
+   "result": "群體既有自主避讓又順著環境流動，接近人流或魚群在水流中的行為。"
+  }
+ ],
+ "project_seeds": [
+  "風流線鋪面",
+  "電荷場屋頂肋條",
+  "Flow field 繪圖機作品集",
+  "CFD 結果重繪的都市風環境圖",
+  "流場導引的地景溝槽"
+ ],
+ "cases": [
+  {
+   "id": "C03-01",
+   "cc": false,
+   "title": "Flow Fields（生成藝術教學文章）",
+   "creator": "Tyler Hobbs",
+   "year": "2020",
+   "url": "https://www.tylerxhobbs.com/words/flow-fields",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "Processing",
+    "Clojure/Quil"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-02",
+   "cc": false,
+   "title": "Fidenza",
+   "creator": "Tyler Hobbs",
+   "year": "2021",
+   "url": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs",
+   "category": "art-installation",
+   "scale": null,
+   "tools": [
+    "JavaScript",
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-03",
+   "cc": false,
+   "title": "Wind Map",
+   "creator": "Fernanda Viégas, Martin Wattenberg（HINT.FM）",
+   "year": "2012",
+   "url": "http://hint.fm/projects/wind/",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-04",
+   "cc": false,
+   "title": "Wind of Boston: Data Paintings",
+   "creator": "Refik Anadol Studio",
+   "year": "",
+   "url": "https://refikanadol.com/works/wind-of-boston-data-paintings/",
+   "category": "art-installation",
+   "scale": null,
+   "tools": [
+    "客製軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-05",
+   "cc": false,
+   "title": "Butterfly：Grasshopper 中的 OpenFOAM 風場模擬",
+   "creator": "Ladybug Tools",
+   "year": "",
+   "url": "https://www.ladybug.tools/butterfly.html",
+   "category": "performance",
+   "scale": null,
+   "tools": [
+    "Grasshopper",
+    "Butterfly",
+    "OpenFOAM"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-06",
+   "cc": false,
+   "title": "Rheotomic Surfaces 流線曲面",
+   "creator": "Daniel Piker",
+   "year": "",
+   "url": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-07",
+   "cc": false,
+   "title": "等間距流線演算法",
+   "creator": "Bruno Jobard, Wilfrid Lefer",
+   "year": "1997",
+   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6876-9_5",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "C",
+    "MATLAB"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-08",
+   "cc": false,
+   "title": "evenly_spaced_streamlines（MATLAB 實作）",
+   "creator": "keithfma",
+   "year": "",
+   "url": "https://github.com/keithfma/evenly_spaced_streamlines",
+   "category": "2d-pattern",
+   "scale": null,
+   "tools": [
+    "MATLAB"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-09",
+   "cc": false,
+   "title": "Curl-Noise for Procedural Fluid Flow",
+   "creator": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+   "year": "2007",
+   "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "Houdini 等 VFX 軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-10",
+   "cc": false,
+   "title": "Kartal-Pendik Masterplan（場域式都市設計）",
+   "creator": "Zaha Hadid Architects",
+   "year": "2006",
+   "url": "https://www.zaha-hadid.com/masterplans/kartal-pendik-masterplan",
+   "category": "urban-landscape",
+   "scale": null,
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C03-11",
+   "cc": false,
+   "title": "StreamLines3D 元件（FlowLines 外掛）",
+   "creator": "FlowLines",
+   "year": "",
+   "url": "https://grasshopperdocs.com/components/flowlines/streamLines3D.html",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "Grasshopper",
+    "FlowLines"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-12",
+   "cc": false,
+   "title": "Grasshopper 參數化鋪面教學",
+   "creator": "Landscape Architecture Store",
+   "year": "",
+   "url": "https://landscapearchitecture.store/blogs/news/how-to-design-a-parametric-paving-pattern-using-rhino-grasshopper",
+   "category": "urban-landscape",
+   "scale": null,
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-13",
+   "cc": false,
+   "title": "Grasshopper 論壇：用向量場畫流線",
+   "creator": "McNeel Forum 使用者",
+   "year": "",
+   "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056",
+   "category": "2d-pattern",
+   "scale": null,
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C03-51",
+   "cc": true,
+   "title": "Coding Challenge #24：Perlin Noise Flow Field",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C03-52",
+   "cc": true,
+   "title": "The Nature of Code 第 5 章：Autonomous Agents（Flow Fields 小節）",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C03-53",
+   "cc": true,
+   "title": "Getting Creative with Perlin Noise Fields",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C03-54",
+   "cc": true,
+   "title": "Particle system with 2D vector field in TouchDesigner",
+   "creator": "exsstas",
+   "year": "2020",
+   "url": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C03-55",
+   "cc": true,
+   "title": "GLSL Particle Simulations in TouchDesigner Tutorial",
+   "creator": "Dean Cheesman",
+   "year": "2024",
+   "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 6,
+   "performance": 3,
+   "modeling": 3,
+   "art-installation": 2,
+   "2d-pattern": 2,
+   "urban-landscape": 2
+  },
+  "scale": {
+   "null": 13,
+   "物件": 5
+  },
+  "tools": {
+   "Grasshopper": 5,
+   "p5.js": 3,
+   "Processing": 2,
+   "JavaScript": 2,
+   "MATLAB": 2,
+   "TouchDesigner": 2,
+   "GLSL": 2,
+   "Clojure/Quil": 1,
+   "客製軟體": 1,
+   "Butterfly": 1,
+   "OpenFOAM": 1,
+   "C": 1,
+   "Houdini 等 VFX 軟體": 1,
+   "FlowLines": 1
+  }
+ },
+ "rejected": []
+}

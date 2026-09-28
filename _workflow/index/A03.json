@@ -1,0 +1,419 @@
+{
+ "id": "A03",
+ "name_zh": "Hilbert 曲線",
+ "name_en": "Hilbert Curve",
+ "family": "A",
+ "one_liner": "把正方形一直切成 2×2 小格，用一條不交叉的連續線依 ㄇ 字順序走遍每一格，所以一筆就能填滿整個平面。",
+ "how_it_works": [
+  "整個正方形用角點 corner 加兩條邊向量 edgeA、edgeB 表示",
+  "遞迴 VisitSquare 把正方形切成四個小格，依 ㄇ 字順序走過",
+  "第 1 格把兩邊向量對調（翻轉）、第 4 格反向對調，四段頭尾才接得上",
+  "切到最小格（levelsLeft = 0）就記下格子中心，最後串成 Polyline，點數 = 4^order"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "Moore 曲線（封閉環）",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "最上層改成四個 Hilbert 子格以旋轉對稱方式排列（頭尾位於同一邊中央），其餘遞迴不變。",
+   "result": "頭尾相接的封閉空間填充迴路，可做連續走道或無接縫列印路徑。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "Peano 曲線（3×3 切分）",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "把 halfA、halfB 改成三分之一，每層依蛇形順序呼叫九次 VisitSquare，並交替翻轉方向。",
+   "result": "3×3 遞迴的 Peano 曲線，格線更規律，適合正交格網建築。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "Gosper（flowsnake）六角變體",
+   "level": 4,
+   "what_changes": "規則／網格",
+   "how": "改用 L-System 規則 A → A-B--B+A++AA+B-、B → +A-BB--B-A++A+B（60° 轉角）以烏龜繪圖展開。",
+   "result": "六角格上的空間填充曲線，輪廓像雪花海岸，可接六角平面或蜂巢單元。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "3D Hilbert 立方體",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "把正方形改成立方體（三條邊向量），每層切成 2×2×2 共八格，依 3D Hilbert 順序排列八次遞迴並給定各子格的向量置換。",
+   "result": "一筆走遍立方體所有格子的 3D 管線，像 Séquin 的 Hilbert Cube 雕塑。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "非均勻細分（四分樹自適應）",
+   "level": 3,
+   "what_changes": "停止條件／輸入",
+   "how": "新增吸引點或影像亮度輸入，只有在格子內需求高（距離近或暗）時才繼續往下切，否則提早記中心。",
+   "result": "疏密漸變的空間填充線，可做半色調線畫或局部加密的列印填充。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲面上的 Hilbert",
+   "level": 3,
+   "what_changes": "維度／輸出",
+   "how": "把 size 設為 1，在 UV 參數空間 (0–1) 產生點，再用 Surface.PointAt(u,v) 映射到自由曲面上。",
+   "result": "貼附雙曲面的連續線，可做機械手臂熱線、擠出或鋪磚路徑。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "任意邊界裁切與重連",
+   "level": 3,
+   "what_changes": "約束",
+   "how": "輸入一條封閉邊界曲線，只保留落在邊界內的格心（Curve.Contains），斷開處再用最近點重新接上。",
+   "result": "非方形平面（基地、樓板）內的近似空間填充路徑。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "依序號上色的資料地圖",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把每個點的索引 i 換算成 0–1 的顏色漸層，或把一維資料（時間序列、IP、樓層使用率）依序對應到每一格輸出色塊 Mesh。",
+   "result": "像 xkcd IPv4 地圖的資料視覺化，一維相近的資料在平面上也聚在一起。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "Hilbert 排序做點雲／構件編號",
+   "level": 3,
+   "what_changes": "輸入／用途",
+   "how": "反過來寫：輸入一堆點，算出每點所在格的 Hilbert 索引（xy→d），依索引排序後連線。",
+   "result": "空間局部性良好的構件編號、施工順序或近似旅行推銷員路徑。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "輸出可製造的 3D 列印／刀具路徑",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "對 Polyline 做 Fillet 圓角與 Offset 寬度，並逐層 Move 或旋轉 90° 堆疊成 G-code 路徑。",
+   "result": "連續不斷料的填充路徑，減少空跑與拉絲，可直接做 3D 列印磚或 CNC 雕刻圖樣。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "迷宮與通道",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把曲線 Offset 成兩條邊界，封閉兩端形成單一通道，或在相鄰格之間隨機打通。",
+   "result": "一筆走完的迷宮、景觀步道或花園小徑圖樣。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "逐點生長動畫",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "用 Slider 或 Timer 控制只輸出前 n 個點（allPoints.GetRange(0, n)）。",
+   "result": "曲線如蛇般一格一格填滿平面的動畫，直觀呈現空間填充性。"
+  }
+ ],
+ "project_seeds": [
+  "Hilbert 路徑 3D 列印磚",
+  "校園使用資料的 Hilbert 地圖",
+  "3D Hilbert 管線雕塑",
+  "自由曲面上的空間填充鋪面",
+  "空間填充曲線族比較平台"
+ ],
+ "cases": [
+  {
+   "id": "A03-01",
+   "cc": false,
+   "title": "Map of the Internet（xkcd 195）",
+   "creator": "Randall Munroe",
+   "year": "2006",
+   "url": "https://www.explainxkcd.com/wiki/index.php/195:_Map_of_the_Internet",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-02",
+   "cc": false,
+   "title": "IPv4 Census Map",
+   "creator": "CAIDA",
+   "year": "",
+   "url": "https://www.caida.org/archive/id-consumption/census-map/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-03",
+   "cc": false,
+   "title": "Hilbert Map of IPv4 address space（互動筆記本）",
+   "creator": "Vasco Asturiano",
+   "year": "",
+   "url": "https://observablehq.com/@vasturiano/hilbert-map-of-ipv4-address-space",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Observable",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-04",
+   "cc": false,
+   "title": "ggip：以 Hilbert 曲線視覺化 IP 資料的 R 套件",
+   "creator": "David Hall",
+   "year": "",
+   "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "R"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-05",
+   "cc": false,
+   "title": "用 Hilbert 曲線繪製整個 IPv4 網際網路",
+   "creator": "benjojo（blog.benjojo.co.uk）",
+   "year": "2018",
+   "url": "https://soylentnews.org/article.pl?sid=18%2F04%2F23%2F074207",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-06",
+   "cc": false,
+   "title": "Hilbert Cube 512 雕塑",
+   "creator": "Carlo H. Séquin",
+   "year": "",
+   "url": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-07",
+   "cc": false,
+   "title": "Hilbert Cube（SIGGRAPH 藝術展）",
+   "creator": "Carlo H. Séquin",
+   "year": "",
+   "url": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-08",
+   "cc": false,
+   "title": "Hilbert 曲線數學繪畫",
+   "creator": "Mathematical paintings and sculptures 部落格",
+   "year": "2008",
+   "url": "http://mathpaint.blogspot.com/2008/02/hilbert-curve.html",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-09",
+   "cc": false,
+   "title": "以 Hilbert 曲線為基礎的 FDM 刀具路徑",
+   "creator": "研究論文作者群",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/318174069_Hilbert_Curve_Based_Toolpath_for_FDM_Process",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "3D 列印",
+    "G-code"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-10",
+   "cc": false,
+   "title": "以 Hilbert 曲線規劃 3D 列印件填充路徑",
+   "creator": "Procedia Manufacturing 論文作者群",
+   "year": "2018",
+   "url": "https://www.sciencedirect.com/science/article/pii/S235197891830221X",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-11",
+   "cc": false,
+   "title": "離散化區域的 Hilbert 填充：可調性質的 3D 列印構件",
+   "creator": "研究論文作者群",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/347781041_3D_Printing_of_Components_with_Tailored_Properties_Through_Hilbert_Curve_Filling_of_a_Discretized_Domain",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-12",
+   "cc": false,
+   "title": "SFCDecomp：以空間填充曲線分解區域的多準則刀具路徑最佳化",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "url": "https://arxiv.org/pdf/2109.01769",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-13",
+   "cc": false,
+   "title": "Hilbert R-tree 空間索引",
+   "creator": "Ibrahim Kamel、Christos Faloutsos",
+   "year": "1994",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-14",
+   "cc": false,
+   "title": "以 Google S2 儲存遙測影像",
+   "creator": "Wang 等人（IEEE Access）",
+   "year": "2020",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A03-15",
+   "cc": false,
+   "title": "Gosper-Peano 曲線的 Grasshopper 實作",
+   "creator": "designcoding",
+   "year": "",
+   "url": "https://www.designcoding.net/gosper-peano-curve-in-grasshopper/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Anemone"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-51",
+   "cc": true,
+   "title": "Coding in the Cabana 3：Hilbert Curve（Hilbert 曲線）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2020",
+   "url": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A03-52",
+   "cc": true,
+   "title": "3Blue1Brown：Hilbert's Curve: Is infinite math useful?",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "url": "https://www.3blue1brown.com/lessons/hilbert-curve",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Manim"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A03-53",
+   "cc": true,
+   "title": "Hilbert Curve（D3.js 互動展示）",
+   "creator": "Jason Davies",
+   "year": "2012",
+   "url": "https://www.jasondavies.com/hilbert-curve/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "D3.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A03-54",
+   "cc": true,
+   "title": "Portrait of the Hilbert curve（Hilbert 曲線肖像）",
+   "creator": "Aldo Cortesi",
+   "year": "2010",
+   "url": "https://corte.si/posts/code/hilbert/portrait/",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [
+    "POV-Ray"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 7,
+   "art-installation": 3,
+   "fabrication": 3,
+   "2d-pattern": 2,
+   "urban-landscape": 2,
+   "performance": 1,
+   "modeling": 1
+  },
+  "scale": {
+   "物件": 12,
+   "構件": 4,
+   "群體／都市": 1,
+   "地景": 1,
+   "立面／表皮": 1
+  },
+  "tools": {
+   "3D 列印": 5,
+   "Observable": 1,
+   "JavaScript": 1,
+   "R": 1,
+   "G-code": 1,
+   "Grasshopper": 1,
+   "Anemone": 1,
+   "Processing": 1,
+   "Manim": 1,
+   "D3.js": 1,
+   "POV-Ray": 1
+  }
+ },
+ "rejected": []
+}

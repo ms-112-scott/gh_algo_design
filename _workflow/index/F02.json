@@ -1,0 +1,318 @@
+{
+ "id": "F02",
+ "name_zh": "伊斯蘭幾何圖樣（Hankin 法）",
+ "name_en": "Islamic Star Pattern (Hankin's Polygons-in-Contact)",
+ "family": "F",
+ "one_liner": "先鋪一層八角形＋小正方形的底圖，再從每條邊的中點以固定角度往內射兩條線，交會處連起來，就長出八角星與四角星交織的伊斯蘭圖樣。",
+ "how_it_works": [
+  "BuildTiling：每格中心放一個平邊朝上下左右的正八角形，格線交點補一個轉 45° 的小正方形，組成 4.8.8 半正鋪面。",
+  "對每個多邊形的每一對相鄰邊 A→B、B→C，取兩邊中點。",
+  "以外積 Z × 邊方向求得內側法向量，把邊方向與法向量按 cos/sin(contactAngle) 混合，得到朝角點 B 往內偏的兩條射線。",
+  "RaysMeet 用 2D 行列式解兩射線交點；只保留兩者都往前（distance > 0）的交點。",
+  "從兩個中點各連一條線到交點；因相鄰多邊形共用邊中點，所有星形自動連成一張連續網。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換底圖：六角形／三角形鋪面",
+   "level": 1,
+   "what_changes": "規則（底圖鋪面）",
+   "how": "改寫 BuildTiling，產生正六角形蜂巢或 3.6.3.6 等半正鋪面；HankinLines 完全不用改。",
+   "result": "六角星、十二角星等不同家族的圖樣，驗證「底圖決定星形、角度決定風格」。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "吸引子漸變接觸角",
+   "level": 2,
+   "what_changes": "輸入（每個多邊形各自的角度）",
+   "how": "新增 Point3d attractor，對每個多邊形用其中心到吸引子距離映射出 contactAngle，再傳給 HankinLines。",
+   "result": "星芒從粗鈍漸變到尖細的連續立面，類似 Kaplan 論文中的 parquet deformation 效果。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "兩點接觸（contact offset）",
+   "level": 2,
+   "what_changes": "規則（射線起點）",
+   "how": "射線不從中點出發，而是從中點沿邊往兩側各偏 delta 的兩點出發，各自射出一條線（Kaplan 的 delta 參數）。",
+   "result": "線條分叉成雙線帶，星形中心出現小多邊形，圖樣更接近傳統交織（interlace）。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "交織帶（over-under strapwork）",
+   "level": 3,
+   "what_changes": "輸出（線 → 有厚度的帶）",
+   "how": "把每條線 Offset 成兩條平行線形成帶狀，在交叉處依序交替判斷上下並切斷下方帶；需要建立交點清單與線段順序。",
+   "result": "經典伊斯蘭編織帶效果，可直接做雷射切割的兩層板或石材拼花。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "girih 十角鋪面（五重對稱）",
+   "level": 3,
+   "what_changes": "規則（底圖改為 girih 五種磁磚）",
+   "how": "底圖改用十邊形、五邊形、細長六邊形、蝴蝶結六邊形、菱形五種等邊磁磚，接觸角固定 54°（或 72°）。",
+   "result": "十角星與五角星交織的波斯風圖樣，可延伸到準週期（Penrose 型）鋪面。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "Penrose / 準週期底圖",
+   "level": 4,
+   "what_changes": "規則（底圖由遞迴細分產生）",
+   "how": "先用遞迴 deflation 產生 Penrose 菱形鋪面（或 girih 的自相似細分），再對每片菱形套 Hankin 法。",
+   "result": "永不重複但處處有局部對稱的圖樣，對應 Lu & Steinhardt 對 Darb-e Imam 的研究。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "Voronoi 自由底圖",
+   "level": 3,
+   "what_changes": "輸入（不規則多邊形）",
+   "how": "以點雲建 Voronoi 或 Delaunay 對偶多邊形當底圖，確保每個多邊形為凸且逆時針，再套 HankinLines；角度可依多邊形邊數調整。",
+   "result": "失去嚴格對稱、但保留「星形＋共用中點」語彙的自由形圖樣，適合不規則基地或雙曲立面。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲面上的星形圖樣",
+   "level": 2,
+   "what_changes": "維度（平面 → 曲面）",
+   "how": "在 UV 參數空間生成圖樣，再用 surface.PointAt 映射每條線的端點（或細分後映射）；圓頂可用極座標網格代替方格。",
+   "result": "覆蓋穹頂或雙曲屋頂的連續星形格柵，類似 Louvre Abu Dhabi 穹頂的概念。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "星形開口與面板輸出",
+   "level": 2,
+   "what_changes": "輸出（線 → 封閉面）",
+   "how": "用 Curve.CreateBooleanRegions 或 Region 元件把線網切出封閉區域，依區域是星、多邊形或縫隙分類，分別 Extrude 或做開孔。",
+   "result": "可直接送 CNC 的穿孔鋁板或 mashrabiya 屏風。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "日照驅動可動遮陽",
+   "level": 3,
+   "what_changes": "狀態（加入時間與環境輸入）",
+   "how": "以太陽向量與面板法向量的夾角決定每個星形的開合程度（contactAngle 或縮放中心點），接 Timer 模擬一天中的變化。",
+   "result": "隨日照開閉的星形遮陽立面，呼應 Institut du Monde Arabe 與 Al Bahr Towers。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "多層疊合（穹頂光影）",
+   "level": 2,
+   "what_changes": "維度（單層 → 多層）",
+   "how": "同一底圖用不同 tileSize、旋轉角與 contactAngle 產生 3–8 層，沿 Z 方向堆疊，再用太陽光線投影計算地面光斑。",
+   "result": "多層交錯形成的「光之雨」效果，可做天花或雨遮研究。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "星形內再長星形（遞迴）",
+   "level": 3,
+   "what_changes": "迴圈（加入遞迴）",
+   "how": "把 Hankin 線切出的中心星形或多邊形當成新底圖，縮小角度再套一次 HankinLines，遞迴 2–3 層。",
+   "result": "自相似的多層星形，接近波斯後期兩層級 girih 圖樣。"
+  }
+ ],
+ "project_seeds": [
+  "參數化 mashrabiya 遮陽立面",
+  "雙曲穹頂星形屋頂",
+  "底圖圖鑑：一個角度，十種鋪面",
+  "自由形伊斯蘭圖樣（Voronoi／圓堆積底圖）",
+  "準週期 girih 地坪"
+ ],
+ "cases": [
+  {
+   "id": "F02-01",
+   "cc": false,
+   "title": "Hankin 的 polygons in contact 法",
+   "creator": "Ernest Hanbury Hankin",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [
+    "手繪／紙本"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F02-02",
+   "cc": false,
+   "title": "Islamic star patterns from polygons in contact",
+   "creator": "Craig S. Kaplan",
+   "year": "2005",
+   "url": "https://graphicsinterface.org/proceedings/gi2005/gi2005-22/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F02-03",
+   "cc": false,
+   "title": "Alhambra 宮殿的 zellij 幾何磁磚",
+   "creator": "Nasrid 王朝",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Alhambra",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-04",
+   "cc": false,
+   "title": "Darb-e Imam 聖祠的準週期 girih 圖樣",
+   "creator": "Qara Qoyunlu 時期工匠",
+   "year": "1453",
+   "url": "https://en.wikipedia.org/wiki/Darb-e_Imam",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-05",
+   "cc": false,
+   "title": "中世紀伊斯蘭建築中的十重與準晶鋪面",
+   "creator": "Peter J. Lu、Paul J. Steinhardt",
+   "year": "2007",
+   "url": "https://www.science.org/doi/10.1126/science.1135491",
+   "category": "drawing",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-06",
+   "cc": false,
+   "title": "Topkapı 卷軸（Topkapı Scroll）",
+   "creator": "帖木兒／薩法維時期伊朗工匠",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Topkapı_Scroll",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [
+    "手繪／紙本"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F02-07",
+   "cc": false,
+   "title": "Akbar 陵墓的八角形網格圖樣",
+   "creator": "蒙兀兒帝國",
+   "year": "1605–1613",
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-08",
+   "cc": false,
+   "title": "Louvre Abu Dhabi 多層星形穹頂",
+   "creator": "Jean Nouvel（結構：BuroHappold Engineering）",
+   "year": "2017",
+   "url": "https://en.wikipedia.org/wiki/Louvre_Abu_Dhabi",
+   "category": "art-installation",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-09",
+   "cc": false,
+   "title": "Institut du Monde Arabe 南向機械光圈立面",
+   "creator": "Jean Nouvel、Architecture-Studio",
+   "year": "1987",
+   "url": "https://en.wikipedia.org/wiki/Arab_World_Institute",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-10",
+   "cc": false,
+   "title": "Al Bahr Towers 動態 mashrabiya 遮陽",
+   "creator": "Aedas（現 AHR）",
+   "year": "2012",
+   "url": "https://en.wikipedia.org/wiki/Al_Bahr_Towers",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-11",
+   "cc": false,
+   "title": "杜哈伊斯蘭藝術博物館",
+   "creator": "I. M. Pei（貝聿銘）",
+   "year": "2008",
+   "url": "https://en.wikipedia.org/wiki/Museum_of_Islamic_Art,_Doha",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-12",
+   "cc": false,
+   "title": "Freeform Islamic Geometric Patterns（自由形伊斯蘭圖樣）",
+   "creator": "Rebecca Lin、Craig S. Kaplan",
+   "year": "2023",
+   "url": "https://arxiv.org/abs/2301.01471",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F02-13",
+   "cc": false,
+   "title": "Next Generation of Star Patterns（同心圓參數化星形）",
+   "creator": "Hadi Mansourifar、Weidong Shi",
+   "year": "2018",
+   "url": "https://arxiv.org/abs/1809.09270",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tools": [
+    "Android App"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 3,
+   "3d-architecture": 3,
+   "modeling": 2,
+   "2d-pattern": 2,
+   "performance": 2,
+   "art-installation": 1
+  },
+  "scale": {
+   "構件": 5,
+   "建築": 4,
+   "立面／表皮": 4
+  },
+  "tools": {
+   "手繪／紙本": 2,
+   "C++": 1,
+   "Android App": 1
+  }
+ },
+ "rejected": []
+}

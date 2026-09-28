@@ -1,0 +1,311 @@
+{
+ "id": "F06",
+ "name_zh": "奇異吸子",
+ "name_en": "Strange Attractor",
+ "family": "F",
+ "one_liner": "一條固定、沒有亂數的公式反覆代入上一步的位置，卻畫出永不重複、細節無窮的蝴蝶曲線或點雲。",
+ "how_it_works": [
+  "從 startPoint 出發，把目前位置放進清單。",
+  "Lorenz（type 0）：用 a(y−x)、x(b−z)−y、xy−cz 算出速度向量，往前走 stepTime（歐拉法積分）。",
+  "Clifford（type 1）：直接用 sin／cos 公式把 (x, y) 映射到下一個點，沒有時間概念。",
+  "每一步檢查是否發散（無效或離原點超過 10⁶），發散就停止並提示係數不對。",
+  "輸出 Polyline（看 Lorenz 軌跡）與點清單（看 Clifford 點雲）。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換公式：de Jong、Rössler、Aizawa",
+   "level": 1,
+   "what_changes": "規則",
+   "how": "新增 DeJongNext（x' = sin(a·y) − cos(b·x)、y' = sin(c·x) − cos(d·y)）或 Rössler 的速度公式，attractorType 多加幾個分支。",
+   "result": "一支元件就能產生多種經典吸子，做成吸子圖鑑。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "密度直方圖著色",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "建立二維 int 陣列當格子，每個點落在哪格就加一，最後把次數用對數映射成顏色或 Mesh 頂點色。",
+   "result": "得到 Paul Bourke 風格、有柔和明暗的吸子影像，可輸出高解析圖。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "軌跡轉管狀雕塑",
+   "level": 2,
+   "what_changes": "輸出（可製造幾何）",
+   "how": "Lorenz Polyline 先 Rebuild 平滑，再 Brep.CreatePipe，半徑依速度大小或步數變化。",
+   "result": "可 3D 列印的吸子雕塑或吊燈骨架。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "Clifford 點雲升到 3D",
+   "level": 2,
+   "what_changes": "維度",
+   "how": "把 z 設成步數 × 高度係數，或加入第三條公式 z' = sin(e·x) + f·cos(e·z)。",
+   "result": "平面圖樣變成螺旋堆疊的點雲塔或 3D 雲霧量體。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "係數沿參數漸變",
+   "level": 2,
+   "what_changes": "狀態／迴圈",
+   "how": "外層再跑一個 k 迴圈，每層的 a 從 a0 線性變到 a1，並把每層吸子往 Z 方向平移。",
+   "result": "看見形狀如何隨係數演變，堆疊成一個有機量體或做成切片模型。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "自動搜尋好看的係數",
+   "level": 3,
+   "what_changes": "混合搜尋",
+   "how": "隨機產生係數，先跑幾千步排除發散或塌縮成點的組合，再用點雲覆蓋格數或 Lyapunov 指數篩選；可接 F04 當適應度。",
+   "result": "仿 Sprott 的做法，自動產出大量不重複的吸子圖樣。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "吸子映射到曲面上",
+   "level": 3,
+   "what_changes": "維度（曲面上）",
+   "how": "把 Clifford 的 (x, y) 正規化到 0–1 後當 UV，用 Surface.PointAt 取得 3D 點，並沿法線做微小凸起。",
+   "result": "在曲面屋頂或立面上形成混沌紋理的開孔或浮雕。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "多起點粒子動畫",
+   "level": 2,
+   "what_changes": "迴圈／動畫",
+   "how": "改成 N 個粒子各自從起點附近出發，存成類別欄位，接 Timer 每次推進一步並輸出最近 200 步的尾巴。",
+   "result": "看到原本擠在一起的粒子逐漸分開、卻都繞著同一個蝴蝶形運動。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "筆繪機輸出",
+   "level": 2,
+   "what_changes": "輸出（製造）",
+   "how": "Lorenz 取 XY 投影或正交視圖，Polyline 簡化（Reduce Segments）後依長度切段，匯出成單線條曲線給 pen plotter 或雷射雕刻。",
+   "result": "一筆畫到底的混沌線條畫作。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "改用 RK4 積分",
+   "level": 3,
+   "what_changes": "規則（數值方法）",
+   "how": "把 LorenzNext 的歐拉一步改成四階 Runge–Kutta（算 k1–k4 四次速度再加權平均）。",
+   "result": "同樣 stepTime 下軌跡更準確、更不易發散，可比較兩種積分的差異。"
+  }
+ ],
+ "project_seeds": [
+  "吸子圖鑑海報",
+  "Lorenz 管狀吊燈",
+  "混沌立面開孔",
+  "演化出來的吸子",
+  "吸子流場中的粒子雕塑"
+ ],
+ "cases": [
+  {
+   "id": "F06-01",
+   "cc": false,
+   "title": "Clifford Attractors 圖像",
+   "creator": "Paul Bourke（公式出自 Clifford Pickover）",
+   "year": "2004",
+   "url": "https://paulbourke.net/fractals/clifford/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-02",
+   "cc": false,
+   "title": "Peter de Jong Attractors 圖像",
+   "creator": "Paul Bourke",
+   "year": "",
+   "url": "https://paulbourke.net/fractals/peterdejong/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-03",
+   "cc": false,
+   "title": "Lorenz 水車（混沌的實體模型）",
+   "creator": "Willem Malkus、Lou Howard（原型）",
+   "year": "",
+   "url": "https://paulbourke.net/fractals/lorenz/",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "實體模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-04",
+   "cc": false,
+   "title": "鉤織 Lorenz 流形",
+   "creator": "Hinke M. Osinga、Bernd Krauskopf",
+   "year": "2004",
+   "url": "https://www.math.auckland.ac.nz/~hinke/crochet/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "自製程式",
+    "手工鉤織"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-05",
+   "cc": false,
+   "title": "Strange Attractors: Creating Patterns in Chaos",
+   "creator": "Julien C. Sprott",
+   "year": "1993",
+   "url": "https://sprott.physics.wisc.edu/sa.htm",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "BASIC",
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-06",
+   "cc": false,
+   "title": "Chimpanzee 碎形與混沌外掛",
+   "creator": "Matous Stieber",
+   "year": "2019",
+   "url": "https://grasshopperdocs.com/addons/chimpanzee.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Chimpanzee"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-07",
+   "cc": false,
+   "title": "Coding Challenge #12：Lorenz Attractor",
+   "creator": "The Coding Train（Daniel Shiffman）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/12-lorenz-attractor",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-08",
+   "cc": false,
+   "title": "Strange Attractor（堪薩斯市國際機場公共藝術）",
+   "creator": "Alice Aycock",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Alice_Aycock",
+   "category": "art-installation",
+   "scale": "建築",
+   "tools": [
+    "3D 建模",
+    "金屬加工"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-09",
+   "cc": false,
+   "title": "vpype-fractal 筆繪機碎形與吸子外掛",
+   "creator": "mreierson（GitHub）",
+   "year": "",
+   "url": "https://github.com/mreierson/vpype-fractal",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "vpype",
+    "Pen plotter"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-10",
+   "cc": false,
+   "title": "Strange Attractors WebGL 互動繪圖",
+   "creator": "piellardj（GitHub）",
+   "year": "",
+   "url": "https://github.com/piellardj/strange-attractors-webgl",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "WebGL",
+    "TypeScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F06-11",
+   "cc": false,
+   "title": "Visions of Chaos 混沌探索軟體",
+   "creator": "Softology",
+   "year": "",
+   "url": "https://softology.pro/voc.htm",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Visions of Chaos"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 4,
+   "drawing": 3,
+   "performance": 1,
+   "fabrication": 1,
+   "modeling": 1,
+   "art-installation": 1
+  },
+  "scale": {
+   "物件": 10,
+   "建築": 1
+  },
+  "tools": {
+   "C": 2,
+   "自製程式": 2,
+   "實體模型": 1,
+   "手工鉤織": 1,
+   "BASIC": 1,
+   "Grasshopper": 1,
+   "Chimpanzee": 1,
+   "Processing": 1,
+   "p5.js": 1,
+   "3D 建模": 1,
+   "金屬加工": 1,
+   "Python": 1,
+   "vpype": 1,
+   "Pen plotter": 1,
+   "WebGL": 1,
+   "TypeScript": 1,
+   "Visions of Chaos": 1
+  }
+ },
+ "rejected": []
+}

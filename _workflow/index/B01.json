@@ -1,0 +1,421 @@
+{
+ "id": "B01",
+ "name_zh": "差異生長",
+ "name_en": "Differential Growth",
+ "family": "B",
+ "one_liner": "一條封閉曲線上的點互相推擠、又被鄰居拉住，邊一拉長就插新點，於是曲線越長越皺，像珊瑚、腦紋或花瓣邊緣。",
+ "how_it_works": [
+  "在半徑 startRadius 的圓上依 maxEdgeLength 排一圈點，並加一點隨機擾動打破完美對稱。",
+  "每一步先建立一個 moves 陣列，所有點兩兩比距離：小於 repelRadius 就依距離互相推開（規則 1）。",
+  "每個點再往前後兩鄰居的中點靠（規則 2），讓曲線保持平滑連續。",
+  "把累積的位移一次加回所有點（同步更新），避免先動的點影響後動的點。",
+  "檢查每條邊，比 maxEdgeLength 長就在中點插入新點（規則 3），曲線總長因此持續增加，被迫在有限空間中摺皺。",
+  "重複 steps 次或點數達 maxPoints 上限後，把點串成封閉 Polyline 輸出。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "空間索引加速",
+   "level": 4,
+   "what_changes": "迴圈（鄰居搜尋方式）",
+   "how": "把 AddRepelMoves 的兩兩比較改成 RTree.Point3dClosestPoints 或自寫格子雜湊（Dictionary<(int,int),List<int>>，格子邊長 = repelRadius），只比同格與相鄰格的點。",
+   "result": "同一台電腦可以跑到上萬點，長出細密如腦紋的大尺度圖樣。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "吸引子控制生長速率",
+   "level": 3,
+   "what_changes": "規則（插點門檻隨空間改變）",
+   "how": "新增 List<Point3d> attractors 輸入，InsertPoints 時用邊中點到最近吸引子的距離重新映射出該邊的 maxEdgeLength；靠近吸引子門檻小、長得快。",
+   "result": "皺褶在指定區域特別密、遠處平緩，可做有焦點的立面或地坪圖樣。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像控制密度",
+   "level": 3,
+   "what_changes": "輸入（影像取代常數參數）",
+   "how": "讀入 Bitmap，依點的 XY 取像素亮度，映射成該點的 repelRadius 或生長機率；暗處走道窄、亮處走道寬。",
+   "result": "曲線以迷宮般的單線重現照片明暗，類似 Pedersen & Singh 的有機迷宮。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "邊界曲線約束",
+   "level": 3,
+   "what_changes": "約束（加入容器）",
+   "how": "新增 Curve boundary 輸入，每步位移後用 boundary.Contains 檢查，跑出去的點以 ClosestPoint 拉回邊界內；也可把邊界本身當成一排固定的斥力點。",
+   "result": "曲線填滿任意平面輪廓（基地、房間、雷切板），邊緣處自然貼齊。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "開放曲線與多條曲線",
+   "level": 2,
+   "what_changes": "狀態（拓撲）",
+   "how": "起點改成一條開放 Polyline：鄰居吸引時跳過頭尾兩點並把端點固定；或同時放多條曲線，推開時全部點一起比、吸引時各自算。",
+   "result": "從一條直線長出蜿蜒河道，或多條曲線互相擠壓成分區圖樣。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲面上生長",
+   "level": 4,
+   "what_changes": "維度（2D 平面 → 曲面上）",
+   "how": "新增 Surface 或 Mesh 輸入，每步位移後以 surface.ClosestPoint / mesh.ClosestPoint 把點投影回曲面，並把推開距離改用 3D 距離計算。",
+   "result": "在雙曲面、殼體或構件表面長出貼合的皺褶紋路，可轉成浮雕或溝槽。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "3D 空間曲線",
+   "level": 3,
+   "what_changes": "維度（讓 z 也參與）",
+   "how": "初始點的 z 也加隨機擾動，並加一點向上或向外的偏好力；推開與吸引程式碼不用改，因為本來就是 Vector3d。",
+   "result": "曲線在空間中盤繞成類似腸子或線團的 3D 纏繞形，可做管件或燈具骨架。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "3D 網格差異生長",
+   "level": 5,
+   "what_changes": "資料結構（曲線 → 三角網格）",
+   "how": "把點列換成 Mesh（建議 Plankton 半邊結構），鄰居改為頂點拓撲鄰居，規則 3 改成「邊太長就 split edge」並處理翻邊與面法向。",
+   "result": "平面圓盤長出荷葉邊、珊瑚、Floraform 花瓣般的波浪曲面。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "動畫化逐步生長",
+   "level": 3,
+   "what_changes": "迴圈（改成跨幀保存狀態）",
+   "how": "把 curvePoints 移到類別欄位，加 bool reset 輸入；每次 RunScript 只跑一步並由 Timer 或 Anemone 觸發，同時輸出每一代曲線形成 DataTree。",
+   "result": "看得到曲線即時長大的過程，也能把各代疊起來做成等高線般的 3D 堆疊形。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "生長時間轉高度（可製造）",
+   "level": 2,
+   "what_changes": "輸出（曲線 → 可切割、可列印幾何）",
+   "how": "每隔 N 步記錄一次曲線並依步數給 z 高度做 Loft；或把最終曲線 Offset 成雙線後輸出給雷切或 CNC。",
+   "result": "得到可直接雷切的迷宮板、或像地層般往上長的 3D 列印花器與燈罩。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "混合噪聲場（C04）",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "用 C04 Noise 的 Perlin 值決定每條邊是否插點或每個點額外受到的切向力，讓生長速率有空間連續的變化。",
+   "result": "形態出現大尺度的疏密起伏，比均勻隨機更自然、更像生物組織。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "隨機插點與最長邊優先",
+   "level": 2,
+   "what_changes": "規則（插點策略）",
+   "how": "InsertPoints 改成每步只隨機挑 k 條超長邊插點，或先排序後只切最長邊；也可只讓某段索引範圍的邊能生長。",
+   "result": "前者更不對稱、有機；後者更規律；局部生長則出現單一方向的舌狀突出。"
+  }
+ ],
+ "project_seeds": [
+  "差異生長迷宮鋪面",
+  "雷切層疊珊瑚燈",
+  "影像驅動的單線肖像牆",
+  "殼體表面的生長浮雕立面",
+  "3D 網格生長珊瑚雕塑"
+ ],
+ "cases": [
+  {
+   "id": "B01-01",
+   "cc": false,
+   "title": "Differential Line",
+   "creator": "Anders Hoff (inconvergent)",
+   "year": "",
+   "url": "https://github.com/inconvergent/differential-line",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-02",
+   "cc": false,
+   "title": "Differential Mesh 3D",
+   "creator": "Anders Hoff (inconvergent)",
+   "year": "",
+   "url": "https://inconvergent.net/generative/differential-mesh-3d/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "Cython"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-03",
+   "cc": false,
+   "title": "Floraform 3D 列印珠寶系列",
+   "creator": "Nervous System",
+   "year": "2015",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=6721",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "自製模擬軟體",
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-04",
+   "cc": false,
+   "title": "Floraform 吊燈",
+   "creator": "Nervous System",
+   "year": "",
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform",
+   "category": "art-installation",
+   "scale": "構件",
+   "tools": [
+    "自製模擬軟體",
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-05",
+   "cc": false,
+   "title": "2D Differential Growth Experiments",
+   "creator": "Jason Webb",
+   "year": "",
+   "url": "https://github.com/jasonwebb/2d-differential-growth-experiments",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-06",
+   "cc": false,
+   "title": "Organic Labyrinths and Mazes",
+   "creator": "Hans Køhling Pedersen, Karan Singh",
+   "year": "2006",
+   "url": "https://www.dgp.toronto.edu/~karan/pdf/mazes.pdf",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B01-07",
+   "cc": false,
+   "title": "Deep Facade：3D 列印砂模鑄造的客製鋁立面",
+   "creator": "Aghaei Meibodi 等（ETH Zurich MAS DFAB 17-18）",
+   "year": "2019",
+   "url": "https://papers.cumincad.org/data/works/att/acadia19_100.pdf",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "3D 列印砂模",
+    "鋁鑄造"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-08",
+   "cc": false,
+   "title": "大尺度珊瑚仿生模組的積層製造工作流程",
+   "creator": "Construction Robotics 期刊論文作者群",
+   "year": "2025",
+   "url": "https://link.springer.com/article/10.1007/s41693-025-00150-4",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Rhino",
+    "大尺度積層製造"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-09",
+   "cc": false,
+   "title": "Cellular Forms",
+   "creator": "Andy Lomas",
+   "year": "2014",
+   "url": "https://andylomas.com/cellularForms.html",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自製模擬軟體",
+    "GPU"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-10",
+   "cc": false,
+   "title": "Kangaroo 在網格曲面上做差異生長",
+   "creator": "",
+   "year": "",
+   "url": "https://www.youtube.com/watch?v=CVM-hk-p0C0",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-11",
+   "cc": false,
+   "title": "Differential Line Growth／Differential Mesh Growth（Houdini 教學）",
+   "creator": "Entagma",
+   "year": "2016",
+   "url": "https://entagma.com/differential-line-growth",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B01-12",
+   "cc": false,
+   "title": "Interactive Differential Growth Simulation for Design",
+   "creator": "Emilie Yu 等",
+   "year": "",
+   "url": "https://em-yu.github.io/media/papers/interactive-diff-growth.pdf",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B01-13",
+   "cc": false,
+   "title": "Cabbage：開放曲面的差異生長框架",
+   "creator": "",
+   "year": "2025",
+   "url": "https://arxiv.org/pdf/2504.18040",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B01-51",
+   "cc": true,
+   "title": "Differential Line（差異線）",
+   "creator": "Anders Hoff（Inconvergent）",
+   "year": "2015",
+   "url": "https://inconvergent.net/generative/differential-line/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-52",
+   "cc": true,
+   "title": "2D Differential Growth Experiments（2D 差異生長實驗）",
+   "creator": "Jason Webb",
+   "year": "2018",
+   "url": "https://github.com/jasonwebb/2d-differential-growth-experiments",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-53",
+   "cc": true,
+   "title": "Floraform",
+   "creator": "Nervous System",
+   "year": "2015",
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "自製模擬軟體"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-54",
+   "cc": true,
+   "title": "Differential line growth with Processing（Processing 差異線生長教學）",
+   "creator": "Alberto Giachino（CodePlastic）",
+   "year": "2017",
+   "url": "http://www.codeplastic.com/2017/07/22/differential-line-growth-with-processing/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-55",
+   "cc": true,
+   "title": "Differential Line Growth（Houdini 差異線生長）",
+   "creator": "Moritz Schwind（Entagma）",
+   "year": "2016",
+   "url": "http://www.entagma.com/differential-line-growth/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 6,
+   "drawing": 4,
+   "fabrication": 3,
+   "art-installation": 2,
+   "2d-pattern": 2,
+   "3d-architecture": 1
+  },
+  "scale": {
+   "物件": 14,
+   "構件": 2,
+   "立面／表皮": 2
+  },
+  "tools": {
+   "自製模擬軟體": 4,
+   "Python": 3,
+   "Grasshopper": 3,
+   "3D 列印": 2,
+   "JavaScript": 2,
+   "Houdini": 2,
+   "Cython": 1,
+   "3D 列印砂模": 1,
+   "鋁鑄造": 1,
+   "Rhino": 1,
+   "大尺度積層製造": 1,
+   "GPU": 1,
+   "Kangaroo": 1,
+   "Processing": 1
+  }
+ },
+ "rejected": []
+}

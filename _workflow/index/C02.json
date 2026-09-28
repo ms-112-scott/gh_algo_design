@@ -1,0 +1,432 @@
+{
+ "id": "C02",
+ "name_zh": "生命遊戲疊層",
+ "name_en": "Game of Life 3D (Stacked Generations)",
+ "family": "C",
+ "one_liner": "在一張棋盤上跑 Conway 生命遊戲，每一代活著的格子疊成一層方塊，時間往上長成一棟由規則「長」出來的量體。",
+ "how_it_works": [
+  "建立 width × depth 的 bool[,] 網格，用固定 seed 的 Random 依 density 撒下初始活細胞。",
+  "每一代先把活著的格子轉成 Box 放在第 layer 層（z = layer × cellSize），並記錄活格數。",
+  "對每一格數周圍 8 格（Moore 鄰域，邊界用 % 左右上下相接）有幾個活鄰居。",
+  "套 B3/S23 規則：活的有 2 或 3 個鄰居才存活；死的剛好 3 個鄰居就復活；結果寫進新陣列（雙緩衝），避免同一代互相干擾。",
+  "新陣列取代舊陣列，重複 generations 次，最後輸出所有方塊與每層活格數。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "改規則字串（B/S 記法）",
+   "level": 1,
+   "what_changes": "規則",
+   "how": "新增輸入 birth、survive（例如 \"3\" 與 \"23\"），在 NextGeneration 裡用 birth.Contains(neighbors.ToString()) 判斷；可試 B36/S23（HighLife）、B3678/S34678（Day & Night）、B3/S12345（迷宮）。",
+   "result": "同一套程式長出完全不同性格的量體：碎裂、迷宮牆、塊狀聚落。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "一維 Wolfram 規則立面",
+   "level": 1,
+   "what_changes": "維度（2D→1D）",
+   "how": "網格改成 bool[] 一列，鄰居只看左、自己、右三格，組成 0–7 的索引後查 rule 數字的第 n 個位元：(rule >> index) & 1。每一代往下畫一排方格或開孔。",
+   "result": "Rule 30、90、110 等三角形與條紋圖樣，可直接當立面穿孔板。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "真 3D 生命遊戲（26 鄰居）",
+   "level": 3,
+   "what_changes": "維度（2D＋時間→3D 空間）",
+   "how": "改用 bool[,,]，CountNeighbors 加第三層 offsetZ 迴圈（26 鄰居），規則改成如 B5/S45 等 3D Life 規則；每一代輸出整個立體格子，而非疊層。",
+   "result": "在立方體空間中生長、崩解的團塊，可作雕塑或量體研究。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "年齡／歷史累積",
+   "level": 2,
+   "what_changes": "狀態",
+   "how": "另開 int[,] age，活著就 +1、死掉歸零；輸出時依 age 決定方塊高度、縮放或顏色，或像 Krawczyk 的 Metallic Lace 累積「被造訪次數」當尺寸。",
+   "result": "穩定存活的區域變粗、變高，形成有主次層級的結構與浮雕。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "影像當初始狀態",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "把 INIT 的 random.NextDouble() < density 改成讀取 Bitmap.GetPixel 的亮度 < 門檻，或讀入一組點（基地既有建物）轉成活格。",
+   "result": "量體從基地紋理或圖像「長」出來，初始層就是設計意圖。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲線邊界遮罩",
+   "level": 2,
+   "what_changes": "約束",
+   "how": "新增 Curve boundary 輸入，預先算 bool[,] inside（格心用 Curve.Contains 判斷），在 NextGeneration 中 inside 為 false 的格子永遠是死的。",
+   "result": "量體被限制在基地紅線或不規則平面內，邊緣自然退縮。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "結構支撐約束（懸挑限制）",
+   "level": 3,
+   "what_changes": "約束／規則",
+   "how": "在疊層時加一條規則：第 layer 層的活格若下一層同位置與周圍 4 格都沒有支撐就強制死亡；或限制每層活格數不超過上一層的某比例。",
+   "result": "可建造的層層退縮量體，不會出現懸空方塊。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "吸引子調整規則",
+   "level": 3,
+   "what_changes": "規則（空間變化）",
+   "how": "加入吸引點，依格子到吸引點距離在兩組規則間切換，或把 density、存活門檻變成距離函數。",
+   "result": "靠近吸引點處密實、遠處稀疏，形成有梯度的量體或立面開孔率。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "體素合併與可製造輸出",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "不輸出個別 Box，而是對每個活格只輸出朝向死格的面，組成 Mesh 後 Mesh.Weld／合併；或每層輸出成 2D 輪廓曲線供雷切疊層模型。",
+   "result": "乾淨的外殼 mesh 可 3D 列印；逐層輪廓可雷射切割堆疊成實體模型。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "曲面上的生命遊戲",
+   "level": 3,
+   "what_changes": "維度（平面→曲面）",
+   "how": "把 x、y 格子對應到 Surface 的 UV 參數，Box 改成 surface.PointAt 取四角做四邊形面板，層數改成沿法向量偏移；環面邊界剛好對應封閉曲面。",
+   "result": "包覆在圓柱或自由曲面上的立面圖樣或多層表皮。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "Timer 動畫化",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 alive 改成類別欄位保留狀態，每次 RunScript 只推進一代，搭配 GH Timer 與 reset 布林輸入；只顯示當前層或最近 N 層。",
+   "result": "即時看到滑翔機、振盪器移動，方便挑出想要的時間片段。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "連續狀態（Lenia 式）",
+   "level": 5,
+   "what_changes": "狀態／規則",
+   "how": "把 bool 改成 double（0–1），鄰居改用環形核加權平均，成長函數用高斯曲線，每步小幅更新；輸出用等值面或高度場取代方塊。",
+   "result": "平滑、有機、會移動的「生物」形態，與 C01 反應擴散類似但規則來自 Lenia。"
+  }
+ ],
+ "project_seeds": [
+  "CA 穿孔立面系統",
+  "生命遊戲集合住宅量體",
+  "時間切片雕塑",
+  "都市擴張 CA 模擬",
+  "3D 體素 CA 與結構篩選",
+  "Lenia 連續場表皮"
+ ],
+ "cases": [
+  {
+   "id": "C02-01",
+   "cc": false,
+   "title": "Cambridge North 車站 Rule 30 穿孔鋁板立面",
+   "creator": "Cambridge North 車站（設計方未查證；Stephen Wolfram 撰文辨識出規則）",
+   "year": "2017",
+   "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [
+    "Wolfram Language"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-02",
+   "cc": false,
+   "title": "Metallic Lace：以細胞自動機為基礎的裝飾系統",
+   "creator": "Robert J. Krawczyk（Illinois Institute of Technology）",
+   "year": "2006",
+   "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-03",
+   "cc": false,
+   "title": "Architectural Interpretation of Cellular Automata：CA 量體生成",
+   "creator": "Robert J. Krawczyk",
+   "year": "2002",
+   "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-04",
+   "cc": false,
+   "title": "以 CA 生成荷蘭高密度集合住宅量體",
+   "creator": "Sanaz Khalili Araghi、Rudi Stouffs（TU Delft）",
+   "year": "2015",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580514002180",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-05",
+   "cc": false,
+   "title": "Automated Diagrams：以 CA 作為設計工作室的概念圖解",
+   "creator": "Christiane M. Herr、Joanna Karakiewicz",
+   "year": "2007",
+   "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf",
+   "category": "drawing",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-06",
+   "cc": false,
+   "title": "Adapting Cellular Automata as Architectural Design Tools：實務專案中的 CA 改造",
+   "creator": "Christiane M. Herr、Ryan C. Ford",
+   "year": "2015",
+   "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-07",
+   "cc": false,
+   "title": "Les Folies Cellulaires：以 CA 生成的點景建築（Folies）",
+   "creator": "Mirjana Devetaković、Ljiljana Petruševski、Milana Dabić、Bojan Mitrović（貝爾格勒大學建築學院）",
+   "year": "2009",
+   "url": "https://generativeart.com/on/cic/GA2009Papers/p18.pdf",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Fun3D"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-08",
+   "cc": false,
+   "title": "KnitYak：細胞自動機針織圍巾",
+   "creator": "Fabienne \"fbz\" Serrière",
+   "year": "2015",
+   "url": "https://www.kickstarter.com/projects/fbz/knityak-custom-mathematical-knit-scarves/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-09",
+   "cc": false,
+   "title": "Cellular Automata and Fractal Urban Form：都市土地使用 CA 模型",
+   "creator": "Roger White、Guy Engelen",
+   "year": "1993",
+   "url": "https://journals.sagepub.com/doi/10.1068/a251175",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-10",
+   "cc": false,
+   "title": "Rabbit：Grasshopper 的細胞自動機與 L-System 外掛",
+   "creator": "Morphocode",
+   "year": "",
+   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Rabbit"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-11",
+   "cc": false,
+   "title": "Stacked Game of Life：世代疊層的 3D 視覺化",
+   "creator": "vnglst（GitHub）",
+   "year": "",
+   "url": "https://github.com/vnglst/stacked-game-of-life",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "three.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-12",
+   "cc": false,
+   "title": "Lenia：連續狀態的生命遊戲",
+   "creator": "Bert Wang-Chak Chan",
+   "year": "2018",
+   "url": "https://arxiv.org/abs/1812.05433",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C02-13",
+   "cc": false,
+   "title": "以細胞自動機控制動態遮陽立面",
+   "creator": "",
+   "year": "",
+   "url": "https://www.academia.edu/48830065/Implementing_Cellular_Automata_for_Dynamically_Shading_a_Building_Facade",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-14",
+   "cc": false,
+   "title": "An Evolutionary Architecture：演化建築與細胞自動機",
+   "creator": "John Frazer（AA 建築聯盟學院）",
+   "year": "1995",
+   "url": "",
+   "category": "3d-architecture",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-15",
+   "cc": false,
+   "title": "Cellular Automata for Infill Designs in Historic Urban Quarters",
+   "creator": "Nexus Network Journal 論文（作者未查證）",
+   "year": "",
+   "url": "https://link.springer.com/article/10.1007/s00004-022-00602-2",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C02-51",
+   "cc": true,
+   "title": "Coding Challenge 85：The Game of Life",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "url": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C02-52",
+   "cc": true,
+   "title": "A Processing implementation of Game of Life（Processing 官方範例）",
+   "creator": "Joan Soler-Adillon",
+   "year": "",
+   "url": "https://processing.org/examples/gameoflife.html",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C02-53",
+   "cc": true,
+   "title": "The Nature of Code 第 7 章：Cellular Automata",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "url": "https://natureofcode.com/cellular-automata/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C02-54",
+   "cc": true,
+   "title": "Creating Generative Visuals with Complex Systems（TouchDesigner Summit 2019 工作坊）",
+   "creator": "Simon Alexander-Adams",
+   "year": "2019",
+   "url": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C02-55",
+   "cc": true,
+   "title": "Coding Challenge 179：Elementary Cellular Automata（Wolfram CA）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "url": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 6,
+   "3d-architecture": 4,
+   "drawing": 2,
+   "modeling": 2,
+   "urban-landscape": 2,
+   "performance": 2,
+   "fabrication": 1,
+   "art-installation": 1
+  },
+  "scale": {
+   "物件": 9,
+   "建築": 5,
+   "群體／都市": 3,
+   "立面／表皮": 2,
+   "構件": 1
+  },
+  "tools": {
+   "p5.js": 3,
+   "Processing": 2,
+   "Wolfram Language": 1,
+   "Fun3D": 1,
+   "Grasshopper": 1,
+   "Rabbit": 1,
+   "JavaScript": 1,
+   "three.js": 1,
+   "Python": 1,
+   "TouchDesigner": 1,
+   "GLSL": 1
+  }
+ },
+ "rejected": []
+}

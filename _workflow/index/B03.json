@@ -1,0 +1,471 @@
+{
+ "id": "B03",
+ "name_zh": "空間殖民",
+ "name_en": "Space Colonization",
+ "family": "B",
+ "one_liner": "在空間裡撒一堆「養分點」，讓樹枝從根部一步步往最近的養分長過去、吃掉它們，最後長成填滿空間的分枝網路。",
+ "how_it_works": [
+  "準備吸引點（使用者輸入或在根部上方方塊內隨機撒點），樹一開始只有一個根節點。",
+  "每一步：每個吸引點找離它最近的枝端；距離小於 killDistance 就把吸引點刪掉（被吃掉），小於 influenceRadius 就對那個枝端施加一個單位向量拉力。",
+  "每個被拉的枝端把所有拉力加總後取單位方向，往該方向長出一段 segmentLength 的新節點，記住父節點索引。",
+  "若這一步沒有任何枝端被拉（樹幹還沒進入影響範圍），就讓最新的枝端直接朝最近的吸引點長一段，當作「樹幹階段」。",
+  "重複直到吸引點用完、長不動或達到 maxSteps，最後把每個節點與其父節點連成線段輸出。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "吸引點改用曲面／Brep 內部取樣",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "上游用 Populate Geometry 在任意 Brep、球體或建築量體內撒點接到 attractors，程式碼不用改；也可用 Surface 取樣做成貼在立面上的吸引點。",
+   "result": "樹冠／網路會精準填滿指定的形體，例如長成雲朵狀樹冠或貼著立面的藤蔓。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "多根部同時生長（葉脈／根系網路）",
+   "level": 2,
+   "what_changes": "狀態",
+   "how": "把 rootPoint 改成 List<Point3d>，INIT 時每個根都 Add 一個 ParentIndex = -1 的 TreeNode；輸出迴圈要略過 ParentIndex < 0 的節點。",
+   "result": "多棵樹互相搶吸引點，形成邊界分明的競爭式分枝，像葉脈從葉柄與葉緣同時長或多個樹根搶地盤。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "向性（Tropism）：加重力或光照偏向",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "在規則 2 算出 direction 後加一個常數向量，例如 direction += tropismVector * tropismWeight 再單位化；新增 tropismVector 與 tropismWeight 兩個輸入。",
+   "result": "枝條整體往上（向光）、往下（垂柳）或往某一方向（受風）偏，形體更有方向性。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "依管道流量算枝粗（Pipe Model / Murray 定律）",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "生長結束後從葉端往根部倒推：每個節點的半徑 r^n = 子節點半徑 r^n 總和（n 約 2–3），末梢給最小半徑；再用 Pipe 或 MultiPipe 依每段半徑成管。",
+   "result": "由細末梢逐漸合流成粗主幹的可 3D 列印分枝實體，接近真實樹木或血管的粗細分布。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "RTree／網格空間索引加速",
+   "level": 4,
+   "what_changes": "迴圈",
+   "how": "把 NearestNode 的暴力搜尋換成 Rhino.Geometry.RTree 或自製均勻網格（Dictionary<(int,int,int), List<int>>），每步只查鄰近格子；新節點加入時同步插入索引。",
+   "result": "吸引點可從數百提升到數萬，長出細密的葉脈或整片樹林而不卡頓。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "開放式 → 封閉式葉脈（產生迴圈）",
+   "level": 4,
+   "what_changes": "規則",
+   "how": "依 Runions 2005 的封閉模型：吸引點不在第一個枝端碰到時就刪除，而是要等所有「朝它生長」的枝端都抵達才刪；允許多個枝端同時被同一個吸引點拉，並把相遇的枝端連起來。",
+   "result": "網路從樹狀變成有環路的網狀，類似雙子葉植物的網狀葉脈或冗餘的管線網路。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "生長在曲面上",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "吸引點用曲面 UV 取樣產生；每次長出新點後以 surface.ClosestPoint 拉回曲面，或直接在 UV 平面上生長再用 PointAt 映射回 3D。",
+   "result": "在圓頂、雙曲面或立面上長出貼附的葉脈紋理，可作為表皮開孔或肋骨圖樣。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "影像控制吸引點密度",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "讀入灰階圖（System.Drawing.Bitmap），在範圍內隨機撒點時以像素亮度當接受機率（亮度越高越容易留下），再把點轉成 attractors。",
+   "result": "枝網在亮處密、暗處疏，可做出以照片為底的分枝線畫或依日照分析決定開孔疏密的立面。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "障礙物與邊界約束",
+   "level": 3,
+   "what_changes": "約束",
+   "how": "新增 obstacles（Brep 或封閉曲線）輸入，長出新節點前用 IsPointInside 或 Contains 檢查，若在障礙內就不加入；邊界外的吸引點一開始就過濾掉。",
+   "result": "樹枝會繞開量體、開口或既有結構生長，適合做避開窗洞的立面藤蔓或繞開柱子的管線。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "反向生長：由上往下的樹狀柱／支撐",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "把屋頂或懸挑下緣的支撐點當吸引點、把地面柱腳當根，killDistance 設小讓每個支撐點都被精準碰到；再以 Pipe 模型算粗細並簡化成直線段。",
+   "result": "得到從柱腳分叉、撐住多個屋頂點的樹狀柱，也可類比 3D 列印的樹狀支撐。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "Timer 動畫化與逐步輸出",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 treeNodes 與 targetPoints 存成 class 層級欄位，加 reset 輸入；每次元件被 Timer 觸發只呼叫一次 GrowOneStep 並輸出目前線段。",
+   "result": "可以在 Rhino 視窗即時看樹從根部慢慢長出、吸引點一顆顆消失，適合做展示或錄影。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "與其他家族混合：吸引點來自 Noise／Phyllotaxis／DLA",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "用 C04 Noise 的閾值點、B04 Phyllotaxis 的螺旋點或 E01 Circle Packing 的圓心當 attractors；或反過來把本元件輸出的枝網當 B01 Differential Growth 的起始曲線。",
+   "result": "分枝同時帶有另一個演算法的秩序（螺旋、群聚、均勻分布），產生混種形態。"
+  }
+ ],
+ "project_seeds": [
+  "葉脈立面：依日照強度長出遮陽肋",
+  "樹狀柱：大跨屋頂的分枝支撐",
+  "3D 列印分枝燈具",
+  "校園步道網路生成",
+  "即時生長樹林：多樹競爭與光照",
+  "大規模血管式管線網（空間索引＋封閉模型）"
+ ],
+ "cases": [
+  {
+   "id": "B03-01",
+   "cc": false,
+   "title": "葉脈圖樣的建模與視覺化（Leaf Venation Patterns）",
+   "creator": "Adam Runions 等（University of Calgary, Algorithmic Botany）",
+   "year": "2005",
+   "url": "https://algorithmicbotany.org/papers/venation.sig2005.html",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "論文",
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-02",
+   "cc": false,
+   "title": "以空間殖民演算法建模樹木（Modeling Trees with a Space Colonization Algorithm）",
+   "creator": "Adam Runions, Brendan Lane, Przemyslaw Prusinkiewicz",
+   "year": "2007",
+   "url": "https://algorithmicbotany.org/papers/colonization.egwnp2007.pdf",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "論文",
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-03",
+   "cc": false,
+   "title": "Hyphae Lamps 分枝燈具系列",
+   "creator": "Nervous System（Jessica Rosenkrantz, Jesse Louis-Rosenberg）",
+   "year": "",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1701",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "C++",
+    "CGAL",
+    "Cinder",
+    "3D 列印（SLS 尼龍）"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-04",
+   "cc": false,
+   "title": "Xylem + Hyphae 演算法草圖",
+   "creator": "Nervous System",
+   "year": "",
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C++",
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-05",
+   "cc": false,
+   "title": "2D Space Colonization Experiments",
+   "creator": "Jason Webb",
+   "year": "",
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "Canvas API"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-06",
+   "cc": false,
+   "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-07",
+   "cc": false,
+   "title": "以空間殖民生成道路網（Space Colonisation for Procedural Road Generation）",
+   "creator": "",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/330256216_Space_Colonisation_for_Procedural_Road_Generation",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "論文"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-08",
+   "cc": false,
+   "title": "Procedural World：Space Colonization（城市街道的自然生長）",
+   "creator": "Miguel Cepero（Procedural World 部落格）",
+   "year": "2011",
+   "url": "http://procworld.blogspot.com/2011/02/space-colonization.html",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "C++",
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-09",
+   "cc": false,
+   "title": "Space-Colonization 建築剖面生成工具",
+   "creator": "tiago0320（GitHub）",
+   "year": "",
+   "url": "https://github.com/tiago0320/Space-Colonization",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-10",
+   "cc": false,
+   "title": "以空間殖民在 Blender 中設計軟材料內的血管通道（專利文件）",
+   "creator": "USPTO 專利（Fabrication materials and processes useful to form structures in soft materials）",
+   "year": "",
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12208441",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-11",
+   "cc": false,
+   "title": "血管化生物混合組織的多尺度運算框架",
+   "creator": "bioRxiv 預印本作者群",
+   "year": "2026",
+   "url": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "論文"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-12",
+   "cc": false,
+   "title": "spacetree：Blender 空間殖民樹木外掛",
+   "creator": "Michel Anders（varkenvarken）",
+   "year": "2013",
+   "url": "https://github.com/varkenvarken/spacetree",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-13",
+   "cc": false,
+   "title": "Sverchok Tree Generator（節點式空間殖民）",
+   "creator": "elfnor",
+   "year": "",
+   "url": "https://elfnor.com/sverchok-tree-generator.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Blender",
+    "Sverchok",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-14",
+   "cc": false,
+   "title": "VEX in Houdini：Space Colonization",
+   "creator": "Entagma（Manuel）",
+   "year": "",
+   "url": "https://entagma.com/1028-2/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-15",
+   "cc": false,
+   "title": "Grasshopper 空間殖民範例（Parametric House）",
+   "creator": "Parametric House",
+   "year": "",
+   "url": "https://parametrichouse.com/space-colonization/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B03-51",
+   "cc": true,
+   "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B03-52",
+   "cc": true,
+   "title": "2D Space Colonization Experiments（2D 空間殖民實驗）",
+   "creator": "Jason Webb",
+   "year": "2019",
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B03-53",
+   "cc": true,
+   "title": "Hyphae Lamps（Hyphae 燈具）",
+   "creator": "Nervous System",
+   "year": "2011",
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "C++",
+    "CGAL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B03-54",
+   "cc": true,
+   "title": "ofxSpaceColonization",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "url": "https://github.com/edap/ofxSpaceColonization",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B03-55",
+   "cc": true,
+   "title": "Dendrite",
+   "creator": "mattatz",
+   "year": "2018",
+   "url": "https://github.com/mattatz/Dendrite",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Unity"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 5,
+   "drawing": 4,
+   "fabrication": 3,
+   "2d-pattern": 2,
+   "urban-landscape": 2,
+   "art-installation": 2,
+   "3d-architecture": 1,
+   "performance": 1
+  },
+  "scale": {
+   "物件": 14,
+   "構件": 3,
+   "群體／都市": 2,
+   "建築": 1
+  },
+  "tools": {
+   "論文": 4,
+   "自製程式": 4,
+   "C++": 4,
+   "JavaScript": 3,
+   "Blender": 3,
+   "Python": 3,
+   "CGAL": 2,
+   "p5.js": 2,
+   "Processing": 2,
+   "Cinder": 1,
+   "3D 列印（SLS 尼龍）": 1,
+   "Canvas API": 1,
+   "HTML5 Canvas": 1,
+   "Sverchok": 1,
+   "Houdini": 1,
+   "VEX": 1,
+   "Grasshopper": 1,
+   "openFrameworks": 1,
+   "Unity": 1
+  }
+ },
+ "rejected": []
+}

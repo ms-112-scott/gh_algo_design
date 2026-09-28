@@ -1,0 +1,477 @@
+{
+ "id": "D02",
+ "name_zh": "Physarum 黏菌",
+ "name_en": "Physarum Transport Network",
+ "family": "D",
+ "one_liner": "上千隻只會「聞、轉、走、留」的小蟲在網格上互相跟隨彼此留下的氣味，最後自己織出一張像葉脈或交通網的網絡。",
+ "how_it_works": [
+  "建立 gridSize × gridSize 的痕跡場 trail[x,y]，並把代理人隨機撒在中央的圓裡、面向隨機。",
+  "聞：每個代理人讀取左、前、右三個感測器位置（離身體 sensorDistance 格、張開 sensorAngle）的痕跡濃度。",
+  "轉：前面最濃就直走；左或右比較濃就轉過去 turnAngle；前面最淡就隨機左轉或右轉。",
+  "走與留：往前走一格（超出邊界從對面出來），並在腳下的格子加上 DepositAmount 的痕跡。",
+  "散：整張痕跡場做 3×3 平均（擴散），再乘上 (1 − decay) 讓舊痕跡變淡；重複 steps 次。",
+  "輸出：把痕跡值正規化成 0–1，接 Gradient 為 gridPoints 上色。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "食物點吸引（Tero 式網絡）",
+   "level": 2,
+   "what_changes": "輸入／狀態",
+   "how": "新增 List<Point3d> foodPoints 輸入，每一步在食物點所在格子持續加上高濃度痕跡（例如 trail[x,y] += 50），讓代理人被吸引到食物之間。",
+   "result": "網絡會收斂成連接各食物點的交通網，類似 Tero 2010 東京鐵路網實驗，可當作站點／節點連線的設計工具。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "障礙與邊界遮罩",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "輸入一條封閉邊界曲線與障礙曲線，事先算出 bool[,] blocked；代理人要走進 blocked 格就隨機轉向不前進，且擴散時 blocked 格強制設為 0。",
+   "result": "網絡只在基地內生長並繞過既有建物，得到依地形與基地輪廓的路徑網。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像引導的濃度場",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "讀入一張灰階圖（System.Drawing.Bitmap），把亮度乘上權重加進感測值：sense = trail + imageWeight × brightness，讓代理人偏好亮處。",
+   "result": "網絡會沿著影像的亮區聚集，可用衛星圖、綠地圖或人口密度圖驅動紋理。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "多物種互斥",
+   "level": 3,
+   "what_changes": "狀態／規則",
+   "how": "準備兩張痕跡場 trailA、trailB，Agent 加上 species 欄位；每個物種感測時用 自己的痕跡 − 對方的痕跡，並各自沉積到自己的場。",
+   "result": "兩種顏色的網絡互相避開、交錯成領域分明的斑紋，類似 Sage Jenson 的多物種作品。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "3D 體素黏菌",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "把 trail 改成 double[,,]，Agent 加上 Z 與俯仰角；感測器改為前方一個＋圍繞前方的四到六個，擴散改 3×3×3 平均，最後用 Marching Cubes（C05）或 Dendro 轉成網格。",
+   "result": "得到立體的海綿／骨架網絡，可作結構格柵、燈具或雕塑。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲面上的黏菌",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "把網格對應到曲面的 UV 參數空間，痕跡場仍用 2D 陣列，但輸出時用 surface.PointAt(u,v) 取得 3D 點；如要等距，可用曲面曲率修正每步步長。",
+   "result": "網紋貼附在屋頂或殼體表面，可轉成立面開孔或肋梁。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "痕跡場轉等高線／可製造曲線",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "把 trailValues 丟給 Marching Squares（C05）取某個門檻的等值線，再 Offset、Boolean 成板件，送雷切或 CNC。",
+   "result": "得到可切割的有機網狀鏤空板，可作隔屏或立面板。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "代理人軌跡轉粗細不一的管線",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "在 Agent 裡記錄 List<Point3d> path，模擬結束後抽稀並依所在格子的痕跡值決定管徑，用 Pipe 或 Mesh Pipe 建模。",
+   "result": "主要路徑粗、次要路徑細的樹枝狀管網，可 3D 列印成燈罩或珠寶。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "動畫化（Timer 逐步顯示）",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 trail 與 agents 移到 class 欄位並加上 reset 輸入，每次 RunScript 只跑 1–5 步，搭配 GH Timer 更新。",
+   "result": "可以看到網絡從一團霧長出主幹再重組的過程，方便調參與簡報錄影。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "吸引子調變參數",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "新增吸引點，依代理人到吸引點的距離內插 sensorAngle 與 decay（近處細密、遠處粗疏）。",
+   "result": "同一張網絡中出現由密到疏的漸層，適合做立面透光率漸變。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "混合 Voronoi／Delaunay 比較",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "用相同食物點另外算 Delaunay／最小生成樹，將兩者疊圖並計算總長度與平均最短路徑，比較效率與冗餘。",
+   "result": "得到可量化的網絡評估圖表，把黏菌當作路網最佳化的候選方案產生器。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "痕跡高度場地形",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把 trailValues 乘上高度係數當作 Z，用 Mesh 或 Surface from Points 建出地形，濃度高處隆起或凹下。",
+   "result": "得到有溝渠網絡的景觀地形，可做雨水路徑或步道系統的概念模型。"
+  }
+ ],
+ "project_seeds": [
+  "校園步道網絡生成器",
+  "黏菌鏤空隔屏",
+  "多物種都市綠帶",
+  "3D 黏菌結構格柵",
+  "黏菌網絡 × 人流驗證"
+ ],
+ "cases": [
+  {
+   "id": "D02-01",
+   "cc": false,
+   "title": "黏菌重現東京鐵路網",
+   "creator": "Atsushi Tero, Toshiyuki Nakagaki 等",
+   "year": "2010",
+   "url": "https://www.science.org/doi/10.1126/science.1177894",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [
+    "生物實驗",
+    "數學模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-02",
+   "cc": false,
+   "title": "Physarum 多代理人模型的圖樣地圖",
+   "creator": "Jeff Jones",
+   "year": "2010",
+   "url": "https://cognet.mit.edu/journal/10.1162/artl.2010.16.2.16202",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-03",
+   "cc": false,
+   "title": "physarum／36 Points 生成藝術",
+   "creator": "Sage Jenson (mxsage)",
+   "year": "",
+   "url": "https://cargocollective.com/sagejenson/physarum",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "GPU shader"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-04",
+   "cc": false,
+   "title": "3D Physarum 青銅燭台",
+   "creator": "Sage Jenson × Nervous System",
+   "year": "",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "GPU 模擬",
+    "Formlabs",
+    "脫蠟鑄造"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-05",
+   "cc": false,
+   "title": "GAN-Physarum: La Dérive Numérique",
+   "creator": "ecoLogicStudio（Claudia Pasquero, Marco Poletto）",
+   "year": "2022",
+   "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "GAN",
+    "生物實驗"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-06",
+   "cc": false,
+   "title": "bioTallinn 與 Paljassaare 半島黏菌規劃",
+   "creator": "ecoLogicStudio／Claudia Pasquero（策展）",
+   "year": "2017",
+   "url": "https://www.ecologicstudio.com/projects/biotallinn-2",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "生物實驗",
+    "衛星資料"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-07",
+   "cc": false,
+   "title": "如果黏菌蓋高速公路：英國路網",
+   "creator": "Andrew Adamatzky, Jeff Jones",
+   "year": "2010",
+   "url": "https://arxiv.org/abs/0912.3967",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "生物實驗",
+    "多代理人模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-08",
+   "cc": false,
+   "title": "Monte Carlo Physarum Machine 描繪宇宙網",
+   "creator": "Joseph N. Burchett, Oskar Elek 等（UC Santa Cruz）",
+   "year": "2020",
+   "url": "https://news.ucsc.edu/2020/03/cosmic-web/",
+   "category": "drawing",
+   "scale": "地景",
+   "tools": [
+    "GPU",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-09",
+   "cc": false,
+   "title": "3D Physarum 產生 3D 列印內部支撐",
+   "creator": "ACM 論文研究團隊（arXiv 2212.11527）",
+   "year": "2022",
+   "url": "https://arxiv.org/pdf/2212.11527",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-10",
+   "cc": false,
+   "title": "PolyPhy：開源 3D 列印仿生物件生成器",
+   "creator": "PolyPhy 專案團隊",
+   "year": "2023",
+   "url": "https://dl.acm.org/doi/10.1145/3623263.3629159",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-11",
+   "cc": false,
+   "title": "Physarealm：Grasshopper 黏菌外掛",
+   "creator": "maajor",
+   "year": "",
+   "url": "https://www.food4rhino.com/en/app/physarealm",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "C#",
+    "Anemone",
+    "Kangaroo"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-12",
+   "cc": false,
+   "title": "Skeleton Physarum：以骨架化誤差驅動的黏菌",
+   "creator": "YufanX",
+   "year": "",
+   "url": "https://github.com/YufanX/SkeletonPhysarum",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-13",
+   "cc": false,
+   "title": "黏菌分步生長作為都市設計樣板",
+   "creator": "Scientific Reports 論文研究團隊",
+   "year": "2022",
+   "url": "https://www.nature.com/articles/s41598-022-05439-w",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "生物實驗"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-14",
+   "cc": false,
+   "title": "受黏菌生長啟發的非均質建築材料",
+   "creator": "PubMed 收錄論文研究團隊",
+   "year": "",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31412323/",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "數值模擬",
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-15",
+   "cc": false,
+   "title": "互動式黏菌裝置（遊戲手把操控）",
+   "creator": "Bleuje",
+   "year": "",
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "D02-51",
+   "cc": true,
+   "title": "physarum",
+   "creator": "Sage Jenson",
+   "year": "2019",
+   "url": "https://sagejenson.com/physarum",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-52",
+   "cc": true,
+   "title": "Coding Adventure: Ant and Slime Simulations",
+   "creator": "Sebastian Lague",
+   "year": "2021",
+   "url": "https://github.com/SebLague/Slime-Simulation",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tools": [
+    "Unity",
+    "HLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-53",
+   "cc": true,
+   "title": "p5.js Coding Tutorial | Slime Molds (Physarum)",
+   "creator": "Patt Vira",
+   "year": "2024",
+   "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-54",
+   "cc": true,
+   "title": "interactive-physarum／Algorithms for making interesting organic simulations",
+   "creator": "Etienne Jacob（bleuje）",
+   "year": "2024",
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "category": "art-installation",
+   "scale": "地景",
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-55",
+   "cc": true,
+   "title": "Artist in Residency: Sage Jenson — 3D Physarum 形體",
+   "creator": "Sage Jenson（Nervous System 駐村）",
+   "year": "2022",
+   "url": "https://n-e-r-v-o-u-s.com/blog?p=9137",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 4,
+   "urban-landscape": 4,
+   "art-installation": 3,
+   "fabrication": 3,
+   "modeling": 3,
+   "performance": 2,
+   "drawing": 1
+  },
+  "scale": {
+   "物件": 7,
+   "地景": 5,
+   "群體／都市": 4,
+   "構件": 3,
+   "建築": 1
+  },
+  "tools": {
+   "生物實驗": 5,
+   "3D 列印": 3,
+   "openFrameworks": 3,
+   "Python": 2,
+   "Grasshopper": 2,
+   "C#": 2,
+   "GLSL": 2,
+   "數學模型": 1,
+   "Processing": 1,
+   "Java": 1,
+   "GPU shader": 1,
+   "GPU 模擬": 1,
+   "Formlabs": 1,
+   "脫蠟鑄造": 1,
+   "GAN": 1,
+   "衛星資料": 1,
+   "多代理人模型": 1,
+   "GPU": 1,
+   "Anemone": 1,
+   "Kangaroo": 1,
+   "數值模擬": 1,
+   "Unity": 1,
+   "HLSL": 1,
+   "p5.js": 1,
+   "Houdini": 1
+  }
+ },
+ "rejected": []
+}

@@ -32,6 +32,8 @@
 | `assets/gen.js` | 其他 28 個演算法的網頁版簡化實作，用來畫卡片與示意圖 |
 | `assets/gia-logo*.svg` | 陽明交通大學建築研究所標誌 |
 | `data/*.json` | 原始資料：`ag*.json` 為演算法與建築／研究案例，`cc_*.json` 為 creative coding 案例 |
+| `assets/art/*.js` | 每個演算法的變形與無照片案例的獨立卡片畫法 |
+| `.claude/workflows/` | 內容擴充工作流程（見下方） |
 | `data.js` | 網頁讀取的合併檔，由 `build.py` 產生 |
 | `img/cases/` | 案例圖片，檔名＝案例編號 |
 | `img/credits*.json` | 每張圖片的來源、作者與授權 |
@@ -52,7 +54,20 @@ python build.py
 | `python tools/commons.py search "關鍵字"` | 在 Wikimedia Commons 搜尋可自由使用的實景照片 |
 | `python tools/commons.py get <案例編號> "File:..."` | 下載 Commons 圖片並自動登記作者與授權 |
 | `python tools/addimg.py <案例編號> <圖檔> <來源> <授權> <網址>` | 登記論文圖或官網圖片 |
-| `python tools/clipcheck.py` | 用 Playwright 逐頁打開詳細頁，檢查元素是否被裁切（需安裝 Chrome） |
+| `python tools/clipcheck.py` | 用 Playwright 逐頁打開詳細頁，檢查元素是否被裁切 |
+| `python tools/artsheet.py <編號…>` | 把某演算法的所有變形卡、無照片案例卡畫成總覽圖，列出缺圖、過慢與錯誤 |
+| `python tools/wf_plan.py` | 內容擴充的現況表：每個演算法的變形、案例、缺圖與總缺口 |
+| `python tools/zhcheck.py --all` | 檢查資料裡是否有簡體字 |
+| `python tools/fetch_images.py` | 下載內容擴充工作流程排隊的案例圖片（在自己電腦上執行） |
+
+## 內容擴充工作流程
+
+`.claude/workflows/` 有兩個 Claude Code 工作流程，說明、規格與紀錄在 [`_workflow/`](_workflow/README.md)：
+
+| 指令 | 用途 |
+|---|---|
+| `/gh-new-algos` | 探索並新增新家族與新演算法（先產出報告，確認後再建立） |
+| `/gh-enrich` | 為既有演算法補充變形、建築／研究案例、creative coding 案例與卡片圖，每次最多 30 個 agent，可排程重複執行 |
 
 ## 來源與授權說明
 

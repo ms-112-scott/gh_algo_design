@@ -37,10 +37,15 @@ import json
 _cat = json.loads((d / 'data.js').read_text(encoding='utf-8')[len('window.CATALOG = '):-2])
 _first = {}
 for _c in _cat['cases']: _first.setdefault(_c['algo'], _c['id'])
-keys = ['info'] + [k for a in _cat['algorithms'] for k in (f"algo:{a['id']}", f"var:{a['id']}:0", f"seed:{a['id']}:0", _first[a['id']])]
+# 新加入、還沒有變形／案例／種子的演算法也要能檢查，缺的就略過
+keys = ['info'] + [k for a in _cat['algorithms'] for k in (f"algo:{a['id']}", a.get('variations') and f"var:{a['id']}:0",
+                                                        a.get('project_seeds') and f"seed:{a['id']}:0", _first.get(a['id'])) if k]
 total = 0
 with sync_playwright() as p:
-    b = p.chromium.launch(channel='chrome')
+    try:
+        b = p.chromium.launch(channel='chrome')
+    except Exception:
+        b = p.chromium.launch()   # 沒有安裝 Chrome 時改用 Playwright 內建的 chromium
     for w, h in [(1440, 900), (390, 844)]:
         pg = b.new_page(viewport={'width': w, 'height': h})
         pg.emulate_media(reduced_motion='reduce')  # 讓進場動畫立刻到定位

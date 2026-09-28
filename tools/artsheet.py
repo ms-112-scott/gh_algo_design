@@ -1,10 +1,11 @@
 """把某個演算法的所有變形卡、無照片案例卡畫成一張總覽圖，檢查每張是否都有獨立畫法。
 
-python tools/artsheet.py C01            → _shots/art_C01.png ＋ 列出缺漏、過慢、錯誤
+python tools/artsheet.py C01 [C02 …]    → _shots/art_C01.png ＋ 列出缺漏、過慢、錯誤
 python tools/artsheet.py all            → 29 個演算法都跑，只印摘要
 """
 import json
 import pathlib
+import re
 import sys
 
 from playwright.sync_api import sync_playwright
@@ -32,16 +33,23 @@ JS = r"""
 """
 
 
+# 雲端環境連不到 Google Fonts 等外部資源造成的載入失敗，不算繪圖錯誤
+NET_NOISE = re.compile(r'ERR_(TUNNEL_CONNECTION_FAILED|NAME_NOT_RESOLVED|INTERNET_DISCONNECTED|CONNECTION_REFUSED|PROXY)|fonts\.(googleapis|gstatic)\.com', re.I)
+
+
 def run(algos, shots=True):
     (ROOT / '_shots').mkdir(exist_ok=True)
     res = {}
     with sync_playwright() as p:
-        b = p.chromium.launch(channel='chrome')
+        try:
+            b = p.chromium.launch(channel='chrome')
+        except Exception:
+            b = p.chromium.launch()   # 沒有安裝 Chrome 時改用 Playwright 內建的 chromium
         for algo in algos:
             pg = b.new_page(viewport={'width': 1410, 'height': 900})
             errs = []
             pg.on('pageerror', lambda e: errs.append(str(e)))
-            pg.on('console', lambda m: errs.append(m.text) if m.type in ('error', 'warning') else None)
+            pg.on('console', lambda m: errs.append(m.text) if m.type in ('error', 'warning') and not NET_NOISE.search(m.text) else None)
             pg.goto((ROOT / 'index.html').as_uri())
             pg.wait_for_timeout(400)
             out = pg.evaluate(JS, algo)
@@ -62,6 +70,8 @@ if __name__ == '__main__':
         for k, v in res.items():
             print(k, 'items', v['items'], 'missingVar', len(v['missingVar']), 'missingCase', len(v['missingCase']), 'slow', len(v['slow']), 'errors', len(v['errors']))
     else:
-        r = run([arg])[arg]
-        print(json.dumps(r, ensure_ascii=False, indent=1))
-        print('sheet:', ROOT / '_shots' / f'art_{arg}.png')
+        ids = sys.argv[1:]   # 可一次給多個編號：python tools/artsheet.py E03 E04
+        res = run(ids)
+        for k in ids:
+            print(k, json.dumps(res[k], ensure_ascii=False, indent=1))
+            print('sheet:', ROOT / '_shots' / f'art_{k}.png')

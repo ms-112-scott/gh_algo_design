@@ -1,0 +1,412 @@
+{
+ "id": "A04",
+ "name_zh": "遞迴分割",
+ "name_en": "Recursive Subdivision",
+ "family": "A",
+ "one_liner": "把一塊基地沿長邊切成兩塊，每一塊再丟回同一個函式繼續切，直到太小或隨機停下，得到 Mondrian 式的矩形分區。",
+ "how_it_works": [
+  "用 width、height 建立一個代表整塊基地的 Block（左下角＋寬＋深＋深度 0）。",
+  "SplitBlock 先檢查停止條件：最長邊已切不出兩塊 minSize，或（深度 > 0 時）擲骰小於 stopChance，就把這塊收進 finishedBlocks。",
+  "否則比較寬與深，沿長邊切；切割位置 = 長邊 × 介於 minRatio～maxRatio 的隨機比例，並夾在 minSize 與（長邊 − minSize）之間。",
+  "產生兩個深度 +1 的新 Block，分別再呼叫 SplitBlock（遞迴）。",
+  "全部遞迴結束後，把每塊轉成封閉 Polyline 輸出，並輸出每塊的 Depth 供上色。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "四分樹（Quadtree）分割",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "把「切成兩塊」改成一次切成四塊（寬、深各切一半或隨機比例），在 SplitBlock 裡產生四個 Block 並各自遞迴。",
+   "result": "規整的四分樹網格，大小以 2 的次方遞減，適合做像素化或多解析度網格。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "吸引子控制細緻度",
+   "level": 2,
+   "what_changes": "停止條件",
+   "how": "新增輸入 attractor（Point3d），把 minSize 改成隨區塊中心到吸引子的距離線性放大：越靠近吸引子允許切得越小。",
+   "result": "靠近某點（入口、廣場、視線焦點）切得很碎，遠處保持大塊，形成密度漸變。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像驅動的自適應分割",
+   "level": 3,
+   "what_changes": "輸入／停止條件",
+   "how": "讀入 Bitmap，對每個區塊取樣像素灰階的變異數；變異數大於門檻才繼續切，否則停止並填入平均色。",
+   "result": "類似 Quadtree Art 的影像馬賽克：細節多的地方切得細、平坦處保留大塊。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "任意多邊形基地（OBB 分割）",
+   "level": 3,
+   "what_changes": "資料結構／幾何",
+   "how": "把 Block 從「角點＋寬深」改成封閉 Curve，每次算最小外接矩形（OBB）的長軸，用垂直於長軸的線切開（Curve.Split 或 Brep 切割），再遞迴。",
+   "result": "可以切不規則的都市街廓或基地，得到類 CityEngine 的地籍分割。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "3D 量體切分（BSP 盒子）",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "Block 增加 Depth 方向的 Z 尺寸，停止條件與切割方向改成比較 X、Y、Z 三個邊中最長者，輸出改成 Box。",
+   "result": "立體的量體分割，可當成住宅單元堆疊、書架或積木量體研究。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "面積比例驅動（Treemap 平面配置）",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "輸入一串房間面積 List<double>，每次把房間清單分成兩組，使兩組面積和的比例就是切割比例，再各自遞迴（切片式 treemap，進一步可改為 squarified 排列讓長寬比接近 1）。",
+   "result": "自動產生符合面積需求的房間配置泡泡圖，可當住宅或辦公平面的起點。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "立面開窗分割",
+   "level": 2,
+   "what_changes": "輸出／維度",
+   "how": "把基地改成立面平面（XZ 平面），分割完的區塊依深度或隨機決定是玻璃、實牆或內縮窗框，對每塊做 Offset 後 Extrude。",
+   "result": "類 split grammar 的立面：樓層、開間、窗框層層細分，具有層級秩序。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "Mondrian 上色與線寬",
+   "level": 1,
+   "what_changes": "輸出",
+   "how": "依 depths 或隨機給每塊紅／黃／藍／白色，並用深度決定黑色分隔線粗細，在 GH 用 Custom Preview 顯示。",
+   "result": "可直接輸出的 Mondrian 風格圖樣，適合 2D 圖面與海報。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "曲面上分割",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "改成在曲面的 UV 參數空間（0–1）裡做分割，再用 Surface.PointAt 把每塊四角映射回 3D，組成曲面上的面板。",
+   "result": "曲面立面或屋頂上大小不一的嵌板分割。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "可製造的面板與框料",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "每個區塊往內 Offset 一個框料寬度，外框做 Extrude 當框料、內框做薄板，並依尺寸分群統計數量輸出清單。",
+   "result": "可雷射切割或 CNC 的框架＋嵌板組件，與料單。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "逐層動畫化",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "新增 maxDepth 輸入，當 Depth 達 maxDepth 時強制停止；接 GH Slider 或 Timer 從 0 往上加，就能一層一層看遞迴展開。",
+   "result": "展示遞迴樹逐代生長的動畫，學習效果好。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "網格細分（Catmull-Clark 精神）",
+   "level": 4,
+   "what_changes": "資料結構／維度",
+   "how": "把 Block 換成 Mesh 的面，每一代把四邊形面切成四個子面，並依鄰接頂點平均移動新點（或直接用 Weaverbird），加上權重擾動。",
+   "result": "從簡單量體長出平滑或 Hansmeyer 式繁複的有機表面。"
+  }
+ ],
+ "project_seeds": [
+  "Mondrian 式立面產生器",
+  "影像驅動的像素化地景鋪面",
+  "面積需求自動平面配置",
+  "不規則街廓地籍切分",
+  "3D 遞迴細分柱／牆"
+ ],
+ "cases": [
+  {
+   "id": "A04-01",
+   "cc": false,
+   "title": "Subdivided Columns – A New Order",
+   "creator": "Michael Hansmeyer",
+   "year": "",
+   "url": "https://michael-hansmeyer.com/subdivided-columns",
+   "category": "art-installation",
+   "scale": "構件",
+   "tools": [
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-02",
+   "cc": false,
+   "title": "Platonic Solids – Subdivision Studies",
+   "creator": "Michael Hansmeyer",
+   "year": "2008",
+   "url": "https://michael-hansmeyer.com/platonic-solids",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A04-03",
+   "cc": false,
+   "title": "Digital Grotesque I",
+   "creator": "Michael Hansmeyer, Benjamin Dillenburger",
+   "year": "",
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-04",
+   "cc": false,
+   "title": "Digital Grotesque II",
+   "creator": "Michael Hansmeyer, Benjamin Dillenburger",
+   "year": "2017",
+   "url": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/",
+   "category": "art-installation",
+   "scale": "建築",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-05",
+   "cc": false,
+   "title": "Mondrian-Generative-Art（Processing／p5.js）",
+   "creator": "PzanettiD",
+   "year": "",
+   "url": "https://github.com/PzanettiD/Mondrian-Generative-Art",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-06",
+   "cc": false,
+   "title": "Squarified Treemaps",
+   "creator": "Mark Bruls, Kees Huizing, Jarke J. van Wijk",
+   "year": "2000",
+   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6783-0_4",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A04-07",
+   "cc": false,
+   "title": "以 Squarified Treemaps 即時產生住宅平面",
+   "creator": "Fernando Marson, Soraia Raupp Musse",
+   "year": "2010",
+   "url": "https://www.researchgate.net/publication/47696530_Automatic_Real-Time_Generation_of_Floor_Plans_Based_on_Squarified_Treemaps_Algorithm",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A04-08",
+   "cc": false,
+   "title": "Procedural Modeling of Buildings（CGA shape）",
+   "creator": "Pascal Müller, Peter Wonka, Simon Haegler, Andreas Ulmer, Luc Van Gool",
+   "year": "2006",
+   "url": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "CityEngine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-09",
+   "cc": false,
+   "title": "Image-based Procedural Modeling of Facades",
+   "creator": "Pascal Müller, Gang Zeng, Peter Wonka, Luc Van Gool",
+   "year": "2007",
+   "url": "https://dl.acm.org/doi/10.1145/1276377.1276484",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A04-10",
+   "cc": false,
+   "title": "Procedural Generation of Parcels in Urban Modeling",
+   "creator": "Carlos A. Vanegas, Tom Kelly, Basil Weber, Jan Halatsch, Daniel G. Aliaga, Pascal Müller",
+   "year": "2012",
+   "url": "https://twak.org/project/parcels/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "CityEngine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-11",
+   "cc": false,
+   "title": "ArcGIS CityEngine 街廓遞迴分割（Recursive Subdivision）",
+   "creator": "Esri",
+   "year": "",
+   "url": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "CityEngine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-12",
+   "cc": false,
+   "title": "Quads – Quadtree Art",
+   "creator": "Michael Fogleman",
+   "year": "",
+   "url": "https://github.com/fogleman/Quads",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Go"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-13",
+   "cc": false,
+   "title": "Weaverbird – Topological Mesh Editor",
+   "creator": "Giulio Piacentino",
+   "year": "",
+   "url": "https://www.giuliopiacentino.com/weaverbird/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Weaverbird"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-14",
+   "cc": false,
+   "title": "Recursive image subdivision（Grasshopper 論壇範例）",
+   "creator": "Grasshopper3d 社群",
+   "year": "",
+   "url": "https://www.grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples",
+   "category": "drawing",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "Anemone"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A04-51",
+   "cc": true,
+   "title": "Coding Challenge #77：Recursion（遞迴）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "url": "https://thecodingtrain.com/challenges/77-recursion",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A04-52",
+   "cc": true,
+   "title": "Coding Challenge #98：Quadtree（四分樹）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "url": "https://thecodingtrain.com/challenges/98-quadtree",
+   "category": "2d-pattern",
+   "scale": "群體／都市",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A04-53",
+   "cc": true,
+   "title": "Aesthetically Pleasing Triangle Subdivision（好看的三角形遞迴分割）",
+   "creator": "Tyler Hobbs",
+   "year": "2017",
+   "url": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tools": [
+    "Clojure"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A04-54",
+   "cc": true,
+   "title": "SideFX Labs Lot Subdivision（Houdini 地塊／面板細分節點）",
+   "creator": "SideFX",
+   "year": "",
+   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/labs--lot_subdivision-2.0.html",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 5,
+   "3d-architecture": 3,
+   "urban-landscape": 3,
+   "art-installation": 2,
+   "modeling": 2,
+   "drawing": 2,
+   "fabrication": 1
+  },
+  "scale": {
+   "物件": 6,
+   "建築": 4,
+   "群體／都市": 4,
+   "立面／表皮": 3,
+   "構件": 1
+  },
+  "tools": {
+   "p5.js": 3,
+   "CityEngine": 3,
+   "3D 列印": 2,
+   "Grasshopper": 2,
+   "Java": 1,
+   "Processing": 1,
+   "Go": 1,
+   "Weaverbird": 1,
+   "Anemone": 1,
+   "Clojure": 1,
+   "Houdini": 1
+  }
+ },
+ "rejected": []
+}

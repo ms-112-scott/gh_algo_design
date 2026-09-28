@@ -1,0 +1,476 @@
+{
+ "id": "C01",
+ "name_zh": "反應擴散",
+ "name_en": "Reaction-Diffusion (Gray-Scott)",
+ "family": "C",
+ "one_liner": "在一張方格紙上放兩種虛擬化學物質 A 與 B，讓它們互相吃、各自以不同速度擴散，幾千步後自己長出斑點、迷宮、指紋般的花紋。",
+ "how_it_works": [
+  "建立兩張 gridSize×gridSize 的濃度表：A 全部設為 1（原料），B 只在中央放一小塊 1（種子）。",
+  "每一步對每一格計算反應量 A·B²（兩個 B 吃掉一個 A 變成 B）。",
+  "用 3×3 卷積（上下左右 0.2、斜角 0.05、自己 −1）算出擴散量，A 擴散速度 1.0、B 只有 0.5。",
+  "A 加上 feed·(1−A) 補充原料；B 扣掉 (kill+feed)·B 被移除；結果寫進 next 陣列並夾在 0–1 之間。",
+  "整張算完後交換新舊陣列（雙緩衝），重複 steps 次；邊界左右、上下相接（像甜甜圈）。",
+  "最後把 B 濃度輸出為點與數值，並用灰階頂點色建成 Mesh，B 越濃越黑。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "空間變化的 feed／kill（吸引子或影像控制）",
+   "level": 2,
+   "what_changes": "規則／輸入",
+   "how": "把 feed、kill 從單一 double 改成每格一個值：新增 attractor 點或影像輸入，依距離或灰階在兩組參數間內插，迴圈中改讀 feedMap[row,column]。",
+   "result": "同一張圖上斑點漸變成迷宮，可做由密到疏的立面開孔梯度。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "各向異性擴散（有方向的花紋）",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "把 DiffusionAmount 的權重拆成水平與垂直兩組（例：左右 0.3、上下 0.1），或依一個向量場旋轉權重，讓擴散沿某方向較快。",
+   "result": "條紋會順著指定方向排列，可對齊應力線、流線或視線方向。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "隨機種子與多點起始",
+   "level": 1,
+   "what_changes": "狀態（初始條件）",
+   "how": "INIT 階段改用 Random(seed) 撒 N 個小方塊，或讓使用者輸入一組 Point3d 作為種子位置。",
+   "result": "花紋從多處同時長出、交會處形成接縫，構圖更自然且可重現。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "遮罩邊界（任意平面輪廓）",
+   "level": 2,
+   "what_changes": "加約束",
+   "how": "輸入一條封閉曲線，每格中心用 Curve.Contains 判斷；外部格子每步強制 B=0（或 A=1），並取消週期邊界。",
+   "result": "花紋只長在樓板、立面或景觀邊界內，邊緣自然收邊。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "Mesh 上的反應擴散（曲面上）",
+   "level": 4,
+   "what_changes": "維度（2D→曲面）",
+   "how": "把 double[,] 換成每個頂點一個值的 double[]，用 mesh.TopologyVertices.ConnectedTopologyVertices 取鄰居，以鄰居平均減自己取代 3×3 卷積。",
+   "result": "花紋直接長在花瓶、殼體或任意自由曲面上，沒有 UV 拉伸變形。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "3D 體素反應擴散＋等值面",
+   "level": 4,
+   "what_changes": "維度（2D→3D）",
+   "how": "陣列改成 double[,,]，鄰居改為 6 或 26 個；結果交給 Marching Cubes（可結合 C05 或 Chromodoris 類等值面工具）抽出 B=0.3 的等值面。",
+   "result": "得到類似珊瑚、海綿的立體多孔實體，可 3D 列印。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "等值線輸出（花紋→可切割曲線）",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "把 valuesB 接到 C05 Marching Squares 或用 Mesh 等高線（Mesh.CreateContourCurves 需先把 B 當 Z 高度）取 B=0.25 的輪廓線。",
+   "result": "得到封閉曲線，可直接雷射切割成開孔遮陽板或 CNC 雕刻路徑。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "高度場浮雕／厚度調變",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "建 Mesh 時把頂點 Z 設為 B × depth，或沿曲面法向量位移；再 Offset 成實體。",
+   "result": "產生 Nervous System 式凹凸觸感表面，可做磁磚、燈罩的透光厚度變化。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "動畫化（Timer 逐步顯示）",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 chemicalA／B 移到 class 欄位保存，每次 RunScript 只跑 stepsPerFrame 步，配合 Timer 或 reset 布林輸入重新初始化。",
+   "result": "可以看到花紋從種子長出、分裂、填滿畫面的過程，適合教學與簡報錄影。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "多尺度疊層（級聯）",
+   "level": 3,
+   "what_changes": "規則／混合",
+   "how": "先用大尺度參數跑一次，把結果當作第二次模擬的 feed 地圖或初始值，再以小尺度參數跑一次。",
+   "result": "產生花豹玫瑰斑、長頸鹿網紋那種「大花紋裡還有小花紋」的階層圖樣。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "與 Voronoi／Circle Packing 混合",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "用 E01 Circle Packing 或 Voronoi 的圓心當作種子，或把 RD 結果當密度場來決定圓的大小。",
+   "result": "有機斑點與幾何單元並存，可做分區清楚的鋪面或屋頂天窗配置。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "改成其他反應模型（FitzHugh-Nagumo 等）",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "替換 reaction 那兩行公式為其他活化－抑制模型，允許負值並移除 Clamp，或加入第三種化學物質。",
+   "result": "得到螺旋波、行進波等 Gray-Scott 沒有的動態圖樣。"
+  }
+ ],
+ "project_seeds": [
+  "反應擴散開孔遮陽立面",
+  "RD 浮雕陶瓷磚",
+  "沿主應力線的肋板樓板",
+  "曲面殼體上的 RD 花紋亭",
+  "3D 體素 RD 珊瑚家具",
+  "互動式 RD 地景鋪面"
+ ],
+ "cases": [
+  {
+   "id": "C01-01",
+   "cc": false,
+   "title": "Reaction Jewelry 反應擴散珠寶系列",
+   "creator": "Nervous System",
+   "year": "2023",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9442",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "客製模擬軟體",
+    "金屬 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-02",
+   "cc": false,
+   "title": "Reaction Lamps 反應擴散燈具",
+   "creator": "Nervous System",
+   "year": "2010",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1009",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "SLS 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-03",
+   "cc": false,
+   "title": "Coral Cup 珊瑚杯（瓷器）",
+   "creator": "Nervous System（陶藝：Kevin Cieplensky）",
+   "year": "2018",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8222",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "客製模擬軟體",
+    "3D 列印",
+    "注漿成型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-04",
+   "cc": false,
+   "title": "New Balance Kawhi Leonard 球鞋 RD 花紋合作",
+   "creator": "Nervous System × New Balance",
+   "year": "",
+   "url": "https://www.newbalance.com/pd/kawhi/BBKLSQUA-D-10.html",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C01-05",
+   "cc": false,
+   "title": "Reaction-Diffusion Tutorial 與 RD Tool",
+   "creator": "Karl Sims",
+   "year": "",
+   "url": "https://karlsims.com/rd.html",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "網頁互動工具"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-06",
+   "cc": false,
+   "title": "Complex Patterns in a Simple System（Gray-Scott 參數圖）",
+   "creator": "John E. Pearson",
+   "year": "1993",
+   "url": "https://arxiv.org/abs/patt-sol/9304003",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "數值模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-07",
+   "cc": false,
+   "title": "Generating Textures on Arbitrary Surfaces Using Reaction-Diffusion",
+   "creator": "Greg Turk",
+   "year": "1991",
+   "url": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "C",
+    "電腦圖學"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-08",
+   "cc": false,
+   "title": "三角網格上的反應擴散（花瓶與兔子）",
+   "creator": "Laurent Delrieu",
+   "year": "2015",
+   "url": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-09",
+   "cc": false,
+   "title": "把反應擴散變成曲線（Nautilus iso-split）",
+   "creator": "McNeel 論壇討論（Laurent Delrieu、Peter Davis 等）",
+   "year": "2023",
+   "url": "https://discourse.mcneel.com/t/reaction-diffusion-curves/160082",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Nautilus",
+    "Kangaroo",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-10",
+   "cc": false,
+   "title": "以各向異性反應擴散生成等應力肋板樓板",
+   "creator": "",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/372165602_Generative_design_of_isostatic_ribbed_slabs_using_anisotropic_Reaction-Diffusion",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C01-11",
+   "cc": false,
+   "title": "Turing 圖樣設計的充氣變形結構",
+   "creator": "Masato Tanaka、S. Macrae Montgomery、Liang Yue、Yaochi Wei、Yuyang Song、Tsuyoshi Nomura、H. Jerry Qi",
+   "year": "2023",
+   "url": "https://www.science.org/doi/10.1126/sciadv.ade4381",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "有限元素分析",
+    "DLP 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-12",
+   "cc": false,
+   "title": "具 Turing 圖樣紋理的織物氣動致動器",
+   "creator": "Masato Tanaka、Yuyang Song、Tsuyoshi Nomura",
+   "year": "2024",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11333703/",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "有限元素分析",
+    "雷射切割",
+    "刺繡"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-13",
+   "cc": false,
+   "title": "Morphogenetic Metasurfaces：以 Turing 圖樣設計天線超表面",
+   "creator": "Thomas Fromenteze、Okan Yurduseven、Chidinma Uche、Eric Arnaud、David R. Smith、Cyril Decroze",
+   "year": "2023",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [
+    "數值模擬",
+    "電磁模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-14",
+   "cc": false,
+   "title": "以各向異性反應擴散做影像風格化",
+   "creator": "Ming-Te Chi、Wei-Ching Liu、Shu-Hsuan Hsu",
+   "year": "2016",
+   "url": "https://github.com/cglabnccu/stylizationRD",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "C++",
+    "GitHub 開源"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-15",
+   "cc": false,
+   "title": "Red Blob Games 互動反應擴散（WebGL）",
+   "creator": "Amit Patel（Red Blob Games）",
+   "year": "2019",
+   "url": "https://www.redblobgames.com/x/1905-reaction-diffusion",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "WebGL",
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-51",
+   "cc": true,
+   "title": "Coding Challenge #13：Reaction Diffusion Algorithm in p5.js",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C01-52",
+   "cc": true,
+   "title": "Reaction-Diffusion Playground 反應擴散遊樂場",
+   "creator": "Jason Webb",
+   "year": "2020",
+   "url": "https://github.com/jasonwebb/reaction-diffusion-playground",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C01-53",
+   "cc": true,
+   "title": "Gray-Scott Reaction Diffusion in TouchDesigner（Part 1）",
+   "creator": "Lake Heckaman",
+   "year": "2024",
+   "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C01-54",
+   "cc": true,
+   "title": "Reaction diffusion simulation（WebGL Gray-Scott 實驗）",
+   "creator": "Pablo Márquez Neila（pmneila）",
+   "year": "2012",
+   "url": "https://pmneila.github.io/jsexp/grayscott/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C01-55",
+   "cc": true,
+   "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+   "creator": "Robert Munafo",
+   "year": "2009",
+   "url": "https://www.mrob.com/pub/comp/xmorphia/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 7,
+   "fabrication": 4,
+   "performance": 4,
+   "drawing": 3,
+   "modeling": 2
+  },
+  "scale": {
+   "物件": 15,
+   "構件": 4,
+   "立面／表皮": 1
+  },
+  "tools": {
+   "GLSL": 3,
+   "客製模擬軟體": 2,
+   "數值模擬": 2,
+   "C": 2,
+   "Grasshopper": 2,
+   "Kangaroo": 2,
+   "C#": 2,
+   "有限元素分析": 2,
+   "three.js": 2,
+   "金屬 3D 列印": 1,
+   "Processing": 1,
+   "SLS 3D 列印": 1,
+   "3D 列印": 1,
+   "注漿成型": 1,
+   "網頁互動工具": 1,
+   "電腦圖學": 1,
+   "Nautilus": 1,
+   "DLP 3D 列印": 1,
+   "雷射切割": 1,
+   "刺繡": 1,
+   "電磁模擬": 1,
+   "C++": 1,
+   "GitHub 開源": 1,
+   "WebGL": 1,
+   "JavaScript": 1,
+   "p5.js": 1,
+   "TouchDesigner": 1,
+   "OpenGL": 1
+  }
+ },
+ "rejected": []
+}

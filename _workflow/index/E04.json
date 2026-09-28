@@ -1,0 +1,453 @@
+{
+ "id": "E04",
+ "name_zh": "動態鬆弛找形",
+ "name_en": "Dynamic Relaxation Form-Finding",
+ "family": "E",
+ "one_liner": "把一張網格想成用彈簧連起來的質點，固定幾個角點、施加重力，讓它反覆晃動直到靜止，得到的懸垂形倒過來就是只受壓的殼。",
+ "how_it_works": [
+  "建立 (n+1)×(n+1) 個質點，四個角點設為固定；相鄰質點之間各連一條彈簧，原長等於格距。",
+  "每一步先算彈簧力：每條彈簧依伸長量（目前長度－原長）× stiffness，把兩端點互相拉近或推開，累加到力陣列。",
+  "再把彈簧力加上重力，更新速度（v = (v + F·dt)·damping）與位置（p += v·dt），固定點跳過。",
+  "記錄每一步最快質點的速度；速度趨近 0 表示系統已達平衡（收斂）。",
+  "重複 iterations 次後，用彈簧兩端點畫出線段；gravity 設正值就是把懸垂網倒過來，得到純受壓殼的形狀。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "自訂錨點與邊界",
+   "level": 2,
+   "what_changes": "狀態（固定點條件）",
+   "how": "把 isCorner 改成：整排邊界固定、或輸入一組 List<Point3d> 錨點，距離最近的質點設為 IsFixed；也可讓錨點高度不同。",
+   "result": "從四角支撐的枕頭殼變成拱廊、單邊懸挑、多柱支撐的傘形殼。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "對角彈簧與三角網",
+   "level": 2,
+   "what_changes": "規則（連線拓撲）",
+   "how": "在彈簧迴圈中多加 here→here+pointsPerRow+1 的對角線，原長為 spacing×√2；或改用 Rhino Mesh 的 TopologyEdges 建彈簧。",
+   "result": "網格抗剪、不再像魚網般歪斜，形狀更接近連續薄殼。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "從任意 Mesh 找形",
+   "level": 3,
+   "what_changes": "輸入（初始幾何）",
+   "how": "新增 Mesh 輸入，用 mesh.Vertices 建 Particle、mesh.TopologyEdges 建 Spring，裸邊（naked edge）頂點設為固定。",
+   "result": "任何平面圖形（L 形、圓形、有洞的平面）都能長成對應的受壓殼或帳篷。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "張拉膜：原長縮短（預力）",
+   "level": 2,
+   "what_changes": "規則（彈簧原長）",
+   "how": "RestLength 乘上 0.0~0.5 的係數（或直接設 0），並把 gravity 設為 0，讓彈簧只想縮短；配合高低錨點。",
+   "result": "得到接近最小曲面的馬鞍形張拉膜，類似 Frei Otto 的帳篷屋頂。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "吸引子控制的載重或硬度",
+   "level": 3,
+   "what_changes": "輸入（空間變化參數）",
+   "how": "每個質點依到吸引子點的距離給不同重量（重力乘上權重），或每條彈簧依距離給不同 stiffness。",
+   "result": "殼在特定區域隆起或下垂，形成天窗、入口拱等局部變化。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "改用 Kinetic Damping 加速收斂",
+   "level": 4,
+   "what_changes": "迴圈（積分與阻尼策略）",
+   "how": "每步計算總動能，若動能比上一步下降，就把所有速度歸零（Barnes 的 kinetic damping），並用 maxSpeed < 門檻值提前 break。",
+   "result": "相同形狀用更少步數收斂，也可學到真正工程軟體的 DR 做法。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "Timer 動畫化找形過程",
+   "level": 3,
+   "what_changes": "迴圈（跨執行保存狀態）",
+   "how": "把 particles、springs 移到 class 欄位並加 reset 輸入，每次 RunScript 只跑 10 步，接 GH Timer 反覆觸發。",
+   "result": "看到網從平面慢慢垂下再倒過來成殼的過程，可直接錄影做簡報。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "受壓殼 → 可製造構件",
+   "level": 3,
+   "what_changes": "輸出（幾何轉換）",
+   "how": "把平衡後的點重建成 Mesh，沿頂點法向量加厚（Offset）；或把每格四邊形輸出成平板並展開編號。",
+   "result": "得到可 3D 列印的殼模型、可雷切的石塊或木板面板，類似 Armadillo Vault 的切分思路。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "應力視覺化",
+   "level": 2,
+   "what_changes": "輸出（顏色資料）",
+   "how": "輸出每條彈簧的 stretch 或 stiffness×stretch 數值，接 Gradient 上色；正值（受拉）與負值（受壓）分兩色。",
+   "result": "一眼看出哪些桿件受力大，可作為構件斷面大小或編織密度的依據。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "混合 E 家族：Circle Packing＋鬆弛",
+   "level": 4,
+   "what_changes": "混合其他家族",
+   "how": "先在平面上用 E01 Circle Packing 產生點，再做 Delaunay 連線成彈簧網，最後用本範例找形。",
+   "result": "得到不規則三角網的自由形殼，桿件長度較一致，適合做 gridshell。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "充氣結構：法向壓力",
+   "level": 4,
+   "what_changes": "規則（外力種類）",
+   "how": "改用三角 Mesh，每步對每個面計算法向量 × 面積 × 壓力，平分給三個頂點，取代固定方向的重力。",
+   "result": "網像氣球一樣鼓起，形成充氣枕或氣膜結構的形狀。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "曲面上的網：約束在基底曲面",
+   "level": 4,
+   "what_changes": "加約束（位置投影）",
+   "how": "每步更新位置後，用 Surface.ClosestPoint 把質點拉回輸入曲面上，重力改為 0、只保留彈簧。",
+   "result": "在任意曲面上得到均勻分布的網格，可作為立面分割或 gridshell 桿件排布。"
+  }
+ ],
+ "project_seeds": [
+  "校園涼亭受壓殼",
+  "張拉膜遮陽棚設計工具",
+  "石塊拼砌拱頂（Armadillo 式）",
+  "動畫式充氣裝置",
+  "自寫迷你 Kangaroo：多目標約束求解器"
+ ],
+ "cases": [
+  {
+   "id": "E04-01",
+   "cc": false,
+   "title": "慕尼黑奧林匹克體育場索網屋頂",
+   "creator": "Frei Otto、Günter Behnisch、Fritz Leonhardt",
+   "year": "1972",
+   "url": "https://www.sbp.de/en/project/roof-for-munich-olympic-stadium-1972/",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tools": [
+    "實體模型",
+    "早期電腦找形"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-02",
+   "cc": false,
+   "title": "曼海姆多功能廳 Multihalle 木格殼",
+   "creator": "Frei Otto、Carlfried Mutschler",
+   "year": "1975",
+   "url": "https://mannheim-multihalle.de/en/architecture/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "懸垂鏈模型",
+    "攝影測量"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-03",
+   "cc": false,
+   "title": "古埃爾紡織村教堂（Colònia Güell）懸垂模型",
+   "creator": "Antoni Gaudí",
+   "year": "1898–1908",
+   "url": "https://dataphys.org/list/gaudis-hanging-chain-models/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "懸垂模型",
+    "攝影"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-04",
+   "cc": false,
+   "title": "Deitingen 南服務區薄殼",
+   "creator": "Heinz Isler",
+   "year": "1968",
+   "url": "https://en.wikipedia.org/wiki/Heinz_Isler",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "懸吊布模型",
+    "石膏模型"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-05",
+   "cc": false,
+   "title": "Armadillo Vault 無砂漿石拱",
+   "creator": "Block Research Group（ETH Zurich）、ODB Engineering、The Escobedo Group",
+   "year": "2016",
+   "url": "https://www.dezeen.com/2016/05/31/armadillo-vault-block-research-group-eth-zurich-beyond-the-bending-limestone-structure-without-glue-venice-architecture-biennale-2016/",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [
+    "RhinoVAULT",
+    "Rhino",
+    "CNC"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-06",
+   "cc": false,
+   "title": "NEST HiLo 索網模板混凝土屋頂",
+   "creator": "Block Research Group、Architecture and Building Systems（ETH Zurich）",
+   "year": "2021",
+   "url": "https://www.empa.ch/web/nest/hilo",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [
+    "COMPAS",
+    "Rhino"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-07",
+   "cc": false,
+   "title": "Striatus 3D 列印混凝土拱橋",
+   "creator": "Block Research Group、Zaha Hadid Architects Computation and Design Group（ZHACODE）",
+   "year": "2021",
+   "url": "https://www.zaha-hadid.com/design/striatus/",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "COMPAS",
+    "3D 混凝土列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-08",
+   "cc": false,
+   "title": "Thrust Network Analysis 與 RhinoVAULT",
+   "creator": "Philippe Block、John Ochsendorf",
+   "year": "2007",
+   "url": "https://web.mit.edu/masonry/thrustNetwork/",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "RhinoVAULT",
+    "Rhino"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-09",
+   "cc": false,
+   "title": "Kangaroo Physics（Grasshopper 物理引擎）",
+   "creator": "Daniel Piker",
+   "year": "",
+   "url": "https://www.food4rhino.com/en/app/kangaroo-physics",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo2"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-10",
+   "cc": false,
+   "title": "張拉結構的動態鬆弛找形與分析（Barnes 方法）",
+   "creator": "Michael R. Barnes",
+   "year": "1999",
+   "url": "https://journals.sagepub.com/doi/10.1260/0266351991494722",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "自寫程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-11",
+   "cc": false,
+   "title": "KnitCandela 針織模板混凝土殼",
+   "creator": "Block Research Group、Zaha Hadid Architects Computation and Design Group",
+   "year": "2018",
+   "url": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "COMPAS",
+    "電腦針織"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "E04-12",
+   "cc": false,
+   "title": "大型懸浮漁網雕塑",
+   "creator": "Janet Echelman",
+   "year": "",
+   "url": "",
+   "category": "art-installation",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E04-13",
+   "cc": false,
+   "title": "Ark Nova 充氣音樂廳",
+   "creator": "Anish Kapoor、磯崎新（Arata Isozaki）",
+   "year": "2013",
+   "url": "",
+   "category": "art-installation",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E04-14",
+   "cc": false,
+   "title": "Savill Building 木格殼屋頂",
+   "creator": "Glenn Howells Architects、Buro Happold",
+   "year": "2006",
+   "url": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "E04-51",
+   "cc": true,
+   "title": "Coding Challenge 177：Soft Body Physics",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2023",
+   "url": "https://thecodingtrain.com/challenges/177-soft-body-character",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "toxiclibs.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E04-52",
+   "cc": true,
+   "title": "The Nature of Code 第 6 章：Physics Libraries",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "url": "https://natureofcode.com/physics-libraries/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "toxiclibs.js",
+    "Matter.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E04-53",
+   "cc": true,
+   "title": "three.js webgpu - compute cloth",
+   "creator": "holtsetio（three.js 官方範例）",
+   "year": "2025",
+   "url": "https://threejs.org/examples/webgpu_compute_cloth.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "three.js",
+    "WebGPU"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E04-54",
+   "cc": true,
+   "title": "MSAPhysics（openFrameworks／Cinder 粒子彈簧物理庫）",
+   "creator": "Memo Akten",
+   "year": "2008",
+   "url": "https://www.memo.tv/msaphysics",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks",
+    "Cinder"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E04-55",
+   "cc": true,
+   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
+   "creator": "Moritz Schwind（Entagma）",
+   "year": "2018",
+   "url": "https://entagma.com/houdini-17-is-here-a-quickstart-to-vellum/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "fabrication": 4,
+   "modeling": 4,
+   "performance": 3,
+   "3d-architecture": 3,
+   "art-installation": 3,
+   "drawing": 2
+  },
+  "scale": {
+   "建築": 9,
+   "物件": 5,
+   "構件": 3,
+   "群體／都市": 2
+  },
+  "tools": {
+   "Rhino": 3,
+   "COMPAS": 3,
+   "RhinoVAULT": 2,
+   "p5.js": 2,
+   "toxiclibs.js": 2,
+   "實體模型": 1,
+   "早期電腦找形": 1,
+   "懸垂鏈模型": 1,
+   "攝影測量": 1,
+   "懸垂模型": 1,
+   "攝影": 1,
+   "懸吊布模型": 1,
+   "石膏模型": 1,
+   "CNC": 1,
+   "3D 混凝土列印": 1,
+   "Grasshopper": 1,
+   "Kangaroo2": 1,
+   "自寫程式": 1,
+   "電腦針織": 1,
+   "Matter.js": 1,
+   "three.js": 1,
+   "WebGPU": 1,
+   "openFrameworks": 1,
+   "Cinder": 1,
+   "Houdini": 1
+  }
+ },
+ "rejected": []
+}

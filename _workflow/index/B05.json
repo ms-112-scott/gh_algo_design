@@ -1,0 +1,379 @@
+{
+ "id": "B05",
+ "name_zh": "Substrate 裂紋",
+ "name_en": "Substrate (Tarbell Crack Growth)",
+ "family": "B",
+ "one_liner": "裂紋直直往前走，撞到別的裂紋或邊界就停，再從既有裂紋上垂直分岔出新裂紋，長出像都市街道或乾裂泥地的分割圖樣。",
+ "how_it_works": [
+  "把正方形範圍切成 400×400 的佔用格，每格記錄被哪條裂紋佔用（-1 表示空）。",
+  "隨機放 3 條起始裂紋，各有起點與方向。",
+  "每一輪讓所有還在走的裂紋前進半格，走過的空格記上自己的編號。",
+  "撞到邊界或別的裂紋（剛分岔時的母裂紋除外）就停下，從清單移除。",
+  "每停一條，就隨機挑一條已存在的裂紋，在其上隨機一點以垂直方向（±5 度抖動）分岔出最多 2 條新裂紋，直到總數達 crackCount。",
+  "最後把每條裂紋從起點到終點輸出成 Line。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "角度規則：正交／任意角",
+   "level": 1,
+   "what_changes": "規則",
+   "how": "把 wobble 範圍改成輸入參數；0 度得到正交格，加入 random 選 60°/120° 可得三角格，±30° 則趨向有機。",
+   "result": "從曼哈頓網格到舊城巷弄、到自然泥裂的連續光譜。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "彎曲裂紋",
+   "level": 2,
+   "what_changes": "狀態",
+   "how": "Crack 新增 curvature 欄位，每一步用 RotateFlat 把 Direction 轉一點點；輸出改存每步位置成 Polyline。",
+   "result": "裂紋變成弧線，類似陶瓷釉裂或有機街道。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "曲線邊界",
+   "level": 2,
+   "what_changes": "輸入／加約束",
+   "how": "新增輸入 boundary 曲線，MoveOneStep 的邊界判斷改成 boundary.Contains(nextPoint) != Inside 就停。",
+   "result": "在任意基地輪廓內產生街廓或分割圖樣。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "既有路網當初始裂紋",
+   "level": 3,
+   "what_changes": "輸入（初始）",
+   "how": "INIT 時把輸入的線段逐點寫入 occupiedBy 並建立為已停止的 Crack，新裂紋只從它們分岔。",
+   "result": "在既有道路之間自動長出次級巷道，接近都市填充式發展。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "吸引子控制密度",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "BranchFrom 選分岔位置時用拒絕抽樣：離吸引子越近接受機率越高。",
+   "result": "靠近中心或景點的區域切得更碎，形成密度梯度（市中心小街廓、郊區大街廓）。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "影像控制分岔",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "讀灰階圖，分岔起點所在像素越暗越容易被接受，或亮度決定裂紋最大長度。",
+   "result": "裂紋密度重現影像明暗，可做立面分割或圖像化鋪面。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "輸出街廓多邊形",
+   "level": 4,
+   "what_changes": "輸出",
+   "how": "把所有線段與邊界一起用 Curve.CreateBooleanRegions 或 Planar Graph 找封閉面，得到每個街廓／碎片的區域。",
+   "result": "可進一步做街廓退縮、建物量體擠出或分色鋪面。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲面上的裂紋",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "在曲面 UV 參數空間跑同樣演算法，輸出時用 Surface.PointAt 映射回 3D，佔用格改在 UV 上。",
+   "result": "裂紋貼附於曲面殼體，可做 3D 表皮切割或雕刻紋路。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "裂紋寬度與沙畫渲染",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "依裂紋世代（ParentId 深度）決定線寬或偏移成雙線，並沿裂紋一側撒點（模仿 Tarbell 的 sand painter）。",
+   "result": "得到有層級、有陰影質感的繪圖，更接近原作的視覺表現。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "逐輪動畫",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 occupiedBy、allCracks、movingCracks 改成欄位，每次 RunScript 只跑 k 輪，用 Timer 驅動。",
+   "result": "看到裂紋一條條延伸、分岔的過程，適合影片或互動展示。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "混合 C05 Voronoi／Marching Squares 比較",
+   "level": 3,
+   "what_changes": "混合其他家族",
+   "how": "同一基地同時生成 Voronoi 分割與 Substrate 分割，統計接頭形式（T 字 vs Y 字）與碎片面積分佈。",
+   "result": "理解「依序生長」與「同時分割」兩種裂紋機制的形態差異。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "輸出為雷射切割拼板",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "取得封閉碎片後各自向內 Offset 留縫、加編號，排版到板材上輸出切割路徑。",
+   "result": "製作碎裂感的拼貼牆面、桌面或鋪面。"
+  }
+ ],
+ "project_seeds": [
+  "裂紋式立面分割",
+  "既有路網下的巷弄生成",
+  "陶瓷釉裂紋路產生器",
+  "泥裂 vs Voronoi：裂紋形態比較研究",
+  "曲面殼體裂紋開孔"
+ ],
+ "cases": [
+  {
+   "id": "B05-01",
+   "cc": false,
+   "title": "Substrate",
+   "creator": "Jared Tarbell",
+   "year": "2003",
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-02",
+   "cc": false,
+   "title": "substrate CLI（CityLAB Berlin）",
+   "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+   "year": "",
+   "url": "https://github.com/technologiestiftung/substrate",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Node.js",
+    "SVG"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-03",
+   "cc": false,
+   "title": "ARCH 430 Networked Technologies 課程中的 Substrate 研究",
+   "creator": "ARCH 430 修課學習者",
+   "year": "2012",
+   "url": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-04",
+   "cc": false,
+   "title": "Substrate JavaScript 移植（CodePen）",
+   "creator": "josazar（CodePen）",
+   "year": "",
+   "url": "https://codepen.io/josazar/details/wvvRKyL",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-05",
+   "cc": false,
+   "title": "Procedural Modeling of Cities（CityEngine 前身）",
+   "creator": "Yoav I. H. Parish, Pascal Müller",
+   "year": "2001",
+   "url": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "CityEngine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-06",
+   "cc": false,
+   "title": "Generating Surface Crack Patterns",
+   "creator": "Hayley N. Iben, James F. O'Brien",
+   "year": "2006",
+   "url": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B05-07",
+   "cc": false,
+   "title": "乾裂泥土圖樣",
+   "creator": "自然現象",
+   "year": "",
+   "url": "",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B05-08",
+   "cc": false,
+   "title": "哥窯開片（冰裂紋釉）",
+   "creator": "宋代哥窯（傳統陶瓷工藝）",
+   "year": "",
+   "url": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B05-09",
+   "cc": false,
+   "title": "Voronoi 碎裂（Cell Fracture／RBD Material Fracture）",
+   "creator": "Blender Cell Fracture 外掛、Houdini RBD Material Fracture",
+   "year": "",
+   "url": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Blender",
+    "Houdini"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-10",
+   "cc": false,
+   "title": "金繼（Kintsugi）",
+   "creator": "日本傳統修補工藝",
+   "year": "",
+   "url": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B05-11",
+   "cc": false,
+   "title": "油畫龜裂（Craquelure）",
+   "creator": "藝術品保存研究（自然老化現象）",
+   "year": "",
+   "url": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B05-12",
+   "cc": false,
+   "title": "Substrate 生長過程影片",
+   "creator": "Vimeo 影片（上傳者未確認；原作 Jared Tarbell）",
+   "year": "",
+   "url": "https://vimeo.com/208903786",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B05-51",
+   "cc": true,
+   "title": "Substrate",
+   "creator": "Jared Tarbell",
+   "year": "2003",
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B05-52",
+   "cc": true,
+   "title": "Substrate（p5.js 移植版）",
+   "creator": "Tom White（dribnet）",
+   "year": "2021",
+   "url": "https://github.com/dribnet/substrate",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B05-53",
+   "cc": true,
+   "title": "substrate CLI（繪圖機用 SVG 產生器）",
+   "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+   "year": "2019",
+   "url": "https://github.com/technologiestiftung/substrate",
+   "category": "fabrication",
+   "scale": "群體／都市",
+   "tools": [
+    "Node.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B05-54",
+   "cc": true,
+   "title": "Substrate iPad 移植版",
+   "creator": "Jon Cooper",
+   "year": "2011",
+   "url": "https://github.com/joncooper/Substrate",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Objective-C",
+    "OpenGL"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 6,
+   "fabrication": 3,
+   "2d-pattern": 2,
+   "urban-landscape": 2,
+   "modeling": 2,
+   "art-installation": 1
+  },
+  "scale": {
+   "物件": 9,
+   "群體／都市": 6,
+   "地景": 1
+  },
+  "tools": {
+   "Processing": 4,
+   "Node.js": 2,
+   "SVG": 1,
+   "JavaScript": 1,
+   "CityEngine": 1,
+   "Blender": 1,
+   "Houdini": 1,
+   "p5.js": 1,
+   "Objective-C": 1,
+   "OpenGL": 1
+  }
+ },
+ "rejected": []
+}

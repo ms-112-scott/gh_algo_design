@@ -1,0 +1,429 @@
+{
+ "id": "B02",
+ "name_zh": "DLA 擴散限制聚集",
+ "name_en": "Diffusion-Limited Aggregation",
+ "family": "B",
+ "one_liner": "讓粒子一顆一顆隨機亂走，碰到群集就黏住，慢慢長出像珊瑚、閃電、礦物結晶一樣的樹枝狀結構。",
+ "how_it_works": [
+  "在原點放一顆種子點，當作群集的起點。",
+  "每顆新粒子從比群集稍大的圓上出發，每一步往隨機方向走 stepSize；離群集越遠就走越大步以加速。",
+  "走到群集附近時用格子空間索引找 stickDistance 內最近的已黏點，找到就黏住，並把位置對齊到剛好 stickDistance，讓枝段等長。",
+  "走出逃逸圓就回到出發圓重來；超過 MaxWalkSteps 就停止整個模擬。",
+  "每顆黏住的粒子記錄它黏在哪一顆上（stuckToIndex），最後輸出點與父子連線形成樹。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "黏著機率（stickiness）",
+   "level": 2,
+   "what_changes": "規則",
+   "how": "在 FindNearest 找到後加 if (random.NextDouble() > stickiness) 就不黏、繼續走；新增輸入 stickiness（0.05–1）。",
+   "result": "機率低時枝變粗、變密實像苔蘚；機率 1 時最細碎。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "方向偏移（重力／風）",
+   "level": 2,
+   "what_changes": "狀態／迴圈",
+   "how": "每一步的位移加上一個固定偏移向量 bias（例如 -Y 方向 0.2×stepSize），出發點改成從上方直線落下。",
+   "result": "長出單向偏長的結構，像冰柱、鐘乳石或往光源生長的珊瑚。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "線種子／邊界種子",
+   "level": 2,
+   "what_changes": "狀態（初始）",
+   "how": "INIT 時不是只放原點，而是沿著一條輸入曲線 Curve.DivideByCount 放一排種子，粒子從曲線另一側出發。",
+   "result": "從牆面或地面長出一排像森林或霜花的樹枝，適合立面或地坪圖樣。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "2D → 3D 球殼出發",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "PointOnCircle 改成球面上隨機點，隨機方向改成單位球隨機向量；NearbyPointFinder 加 CellZ 並查 27 格。",
+   "result": "得到立體珊瑚狀群集，可接管徑變厚做成燈具或雕塑。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "曲面上的 DLA",
+   "level": 4,
+   "what_changes": "維度／輸入",
+   "how": "粒子在 UV 參數空間走（Surface.PointAt(u,v) 求 3D 位置），距離用 3D 或測地近似判斷，邊界改成 UV 範圍。",
+   "result": "樹枝紋貼附在任意曲面（屋頂、殼體）上，可做表皮開孔或雕刻紋路。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "邊界約束（在形體內生長）",
+   "level": 3,
+   "what_changes": "加約束",
+   "how": "每走一步檢查 Brep.IsPointInside 或 Curve.Contains，出界就退回上一步或重生；出發點改成邊界上的點往內走。",
+   "result": "群集被限制在輸入的平面輪廓或量體內，長出填滿形體的枝狀結構。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "吸引子控制黏著",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "新增吸引子點清單，黏著機率 = f(到最近吸引子距離)；或讓隨機走帶有朝吸引子的漂移。",
+   "result": "枝條往指定方向（入口、光源、支撐點）集中生長，形態可被設計者引導。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "影像控制密度",
+   "level": 3,
+   "what_changes": "輸入",
+   "how": "讀入灰階影像（System.Drawing.Bitmap.GetPixel），依粒子所在位置的亮度決定黏著機率或步長。",
+   "result": "樹枝紋在暗部密、亮部疏，可生成類似照片的枝狀圖像。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "多種子競爭",
+   "level": 2,
+   "what_changes": "狀態",
+   "how": "INIT 放多顆種子並各自記錄所屬群組（List<int> groupOf），黏住時繼承被黏點的群組，輸出時依群組分 DataTree 分支上色。",
+   "result": "多棵樹彼此搶空間，界線處形成空隙，類似細胞或行政區劃分。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "輸出成可製造管材",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "依每個點的子孫數（從葉往根累加）決定半徑，Line → Brep.CreatePipe 或輸出給 Dendro／Mesh Pipe；根部粗、枝梢細。",
+   "result": "得到可 3D 列印的樹枝狀燈罩、支架或珠寶的實體網格。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "動畫化逐步生長",
+   "level": 2,
+   "what_changes": "迴圈",
+   "how": "把 stuckPoints 存為欄位，用 Timer 或 Iteration 每次只加 N 顆粒子並輸出目前結果。",
+   "result": "可以看到群集像結晶一樣逐步長大的過程，適合簡報與影片。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "混合 C 家族：場驅動 DLA（DBM）",
+   "level": 4,
+   "what_changes": "規則／混合其他家族",
+   "how": "改用網格計算電位場（Laplace 疊代，類似 C01 擴散），黏著位置依電場強度的 η 次方機率選擇，即 Dielectric Breakdown Model。",
+   "result": "用參數 η 在緻密團塊與閃電狀細枝之間連續切換，更可控。"
+  }
+ ],
+ "project_seeds": [
+  "樹枝狀地坪／立面圖樣產生器",
+  "3D DLA 燈具",
+  "吸引子引導的枝狀結構亭",
+  "DLA 都市擴張模擬",
+  "曲面上的閃電紋表皮"
+ ],
+ "cases": [
+  {
+   "id": "B02-01",
+   "cc": false,
+   "title": "Aggregation 系列",
+   "creator": "Andy Lomas",
+   "year": "2005",
+   "url": "https://andylomas.com/aggregation.html",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自製軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-02",
+   "cc": false,
+   "title": "2D Diffusion-Limited Aggregation Experiments",
+   "creator": "Jason Webb",
+   "year": "2019",
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-03",
+   "cc": false,
+   "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-04",
+   "cc": false,
+   "title": "Urban Growth and Form：以 DLA 模擬都市擴張",
+   "creator": "Michael Batty, Paul Longley, Stewart Fotheringham",
+   "year": "1989",
+   "url": "https://discovery.ucl.ac.uk/10053169/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B02-05",
+   "cc": false,
+   "title": "Modeling Urban Morphology by Unifying DLA and Stochastic Gravitation",
+   "creator": "",
+   "year": "",
+   "url": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B02-06",
+   "cc": false,
+   "title": "IaaC MRAC Diffusion-Limited Aggregation 亭",
+   "creator": "Abdullah Sheikh, Andreea Bunica, Anna Batalle Garcia（IaaC MRAC，指導 Alessio Erioli, Eugenio Bettucchi）",
+   "year": "",
+   "url": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Kangaroo2",
+    "Anemone",
+    "Galapagos"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-07",
+   "cc": false,
+   "title": "Paul Bourke 的 3D DLA 與約束生長",
+   "creator": "Paul Bourke",
+   "year": "",
+   "url": "https://paulbourke.net/fractals/dla/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "自製軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-08",
+   "cc": false,
+   "title": "VEX in Houdini：Diffusion Limited Aggregation",
+   "creator": "Entagma",
+   "year": "",
+   "url": "https://entagma.com/vex-in-houdini-diffusion-limited-aggregation-plus-rendering-in-mantra-redshift/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-09",
+   "cc": false,
+   "title": "Exploring Diffusion Limited Aggregation in Geometry Nodes",
+   "creator": "Blender Artists 社群作者",
+   "year": "",
+   "url": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Blender"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-10",
+   "cc": false,
+   "title": "Lichtenberg 圖形與介電崩潰模型",
+   "creator": "自然現象（DBM：Niemeyer, Pietronero, Wiesmann）",
+   "year": "1984",
+   "url": "https://en.wikipedia.org/wiki/Lichtenberg_figure",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B02-11",
+   "cc": false,
+   "title": "以 DLA 模擬鋰電池枝晶生長（MRI 驗證）",
+   "creator": "",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/384758624_Simulation_of_Dendrite_Growth_with_a_Diffusion-Limited_Aggregation_Model_Validated_by_MRI_of_a_Lithium_Symmetric_Cell_during_Charging",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B02-12",
+   "cc": false,
+   "title": "Grasshopper Swarm Intelligence IV：Diffuse Limited Aggregation",
+   "creator": "Grasshopper3d 社群",
+   "year": "",
+   "url": "https://www.grasshopper3d.com/video/swarm-intelligence-iv-diffuse-limited-aggregation",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-13",
+   "cc": false,
+   "title": "OPENFUSE DLA 草稿（openFrameworks）",
+   "creator": "Fuse*",
+   "year": "",
+   "url": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks",
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B02-14",
+   "cc": false,
+   "title": "珊瑚、礦物樹枝石與電沉積結晶",
+   "creator": "自然現象",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B02-51",
+   "cc": true,
+   "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B02-52",
+   "cc": true,
+   "title": "Coding Challenge #127：Brownian Tree Snowflake（布朗樹雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "url": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B02-53",
+   "cc": true,
+   "title": "2D Diffusion-Limited Aggregation Experiments（2D DLA 實驗）",
+   "creator": "Jason Webb",
+   "year": "2018",
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B02-54",
+   "cc": true,
+   "title": "dlaf：Diffusion-limited aggregation, fast",
+   "creator": "Michael Fogleman",
+   "year": "2019",
+   "url": "https://github.com/fogleman/dlaf",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "C++"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B02-55",
+   "cc": true,
+   "title": "VEX in Houdini：Diffusion Limited Aggregation",
+   "creator": "Entagma",
+   "year": "2017",
+   "url": "https://vimeo.com/218372128",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 5,
+   "drawing": 4,
+   "art-installation": 2,
+   "urban-landscape": 2,
+   "performance": 2,
+   "2d-pattern": 2,
+   "3d-architecture": 1,
+   "fabrication": 1
+  },
+  "scale": {
+   "物件": 15,
+   "群體／都市": 2,
+   "構件": 2
+  },
+  "tools": {
+   "p5.js": 3,
+   "自製軟體": 2,
+   "JavaScript": 2,
+   "Processing": 2,
+   "Grasshopper": 2,
+   "Houdini": 2,
+   "C++": 2,
+   "Kangaroo2": 1,
+   "Anemone": 1,
+   "Galapagos": 1,
+   "VEX": 1,
+   "Blender": 1,
+   "openFrameworks": 1
+  }
+ },
+ "rejected": []
+}

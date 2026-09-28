@@ -1,0 +1,416 @@
+{
+ "id": "C04",
+ "name_zh": "Perlin Noise 雜訊地形",
+ "name_en": "Perlin Noise Terrain",
+ "family": "C",
+ "one_liner": "用「平滑、連續的隨機」替每個格點算高度，再疊幾層越來越細的起伏，做出像真的山丘地形 Mesh。",
+ "how_it_works": [
+  "建構 PerlinNoise：0–255 依 seed 洗牌後重複兩次成 512 長的查表，同 seed 永遠得到同一片地形。",
+  "ValueAt(x,y)：找出點所在的整數格，四個角各查表得到一個隨機斜坡方向（8 選 1），算「角到點」與斜坡的內積，再用 6t⁵−15t⁴+10t³ 平滑混合四角。",
+  "LayeredNoise（fBm 疊層）：每一層細節 ×2、強度 ×0.5，共疊 octaves 層後除以總強度，結果約在 −1 到 1。",
+  "對 (width+1)×(depth+1) 個格點算 elevation = LayeredNoise × height，取樣座標加 0.37 偏移避開整數點恆為 0 的問題。",
+  "BuildGridMesh：每相鄰 4 點組成一個四邊形面，計算法線後輸出地形 Mesh。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "脊狀雜訊（Ridged）",
+   "level": 1,
+   "what_changes": "規則（每層的值）",
+   "how": "LayeredNoise 內把 noise 值改成 1 − |n|，再平方後疊加。",
+   "result": "尖銳的山脊線與峽谷，像山脈或沙丘脊。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "Domain warping 扭曲座標",
+   "level": 2,
+   "what_changes": "規則（取樣座標）",
+   "how": "先算 qx = noise(x,y)、qy = noise(x+5.2, y+1.3)，再用 noise(x + k·qx, y + k·qy) 取值；k 控制扭曲量。",
+   "result": "像大理石、流體或岩層褶皺的紋理，比單純 fBm 更有流動感。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "階梯化／等高梯田",
+   "level": 1,
+   "what_changes": "輸出",
+   "how": "elevation = Math.Floor(elevation / step) * step，或只在輸出前量化。",
+   "result": "梯田、層層平台的地景，可直接當等高線模型切片。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "吸引點遮罩（島嶼、盆地）",
+   "level": 2,
+   "what_changes": "輸入（吸引子控制）",
+   "how": "新增吸引點或基地邊界曲線，高度乘上 falloff = 1 − 距離/半徑（截在 0–1），或用曲線距離做衰減。",
+   "result": "中心隆起、邊緣下沉的島嶼，或以建築量體為中心的挖填地形。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "影像混合高度",
+   "level": 2,
+   "what_changes": "輸入",
+   "how": "讀入灰階圖 Bitmap.GetPixel 當大尺度高度，再加小尺度 noise 做細節。",
+   "result": "人為設計的大地形保留輪廓，同時帶有自然細節。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "noise 驅動立面面板",
+   "level": 2,
+   "what_changes": "輸出（從高度改成參數）",
+   "how": "不做地形，而把 noise 值映射到每片立面板的旋轉角、開孔半徑或出挑深度；格點改在立面 UV 上取樣。",
+   "result": "漸變而不規則的立面遮陽或開孔韻律，避免純隨機的雜亂感。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "曲面上取樣（3D noise）",
+   "level": 3,
+   "what_changes": "維度（2D→3D）",
+   "how": "把 ValueAt 擴充成 3D（8 個角、12 個梯度方向，參考 Perlin 2002），對任意曲面或 Mesh 的頂點位置取樣，沿法線位移。",
+   "result": "包在球體、殼體或建築表皮上的連續凹凸，不會出現 UV 接縫。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "時間當第三維做動畫",
+   "level": 2,
+   "what_changes": "狀態（Timer）",
+   "how": "用 3D noise 的 z = time，Timer 每次加一小段；或 2D 情況下讓取樣偏移量隨時間移動。",
+   "result": "像水面或雲層般緩慢變形的地形動畫。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "等高線輸出",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把 terrainMesh 用 Mesh.CreateContourCurves 或 Brep 切片，或直接交給 C05 Marching Squares 從格點值抽出等值線。",
+   "result": "可雷切疊層的等高線模型（地形模型的標準做法）。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "水力侵蝕後處理",
+   "level": 4,
+   "what_changes": "混合迭代模擬",
+   "how": "在 noise 高度場上丟大量水滴粒子，沿坡度往下流、依速度帶走與堆積泥沙，反覆數千次。",
+   "result": "出現沖溝、扇狀堆積與平緩谷底，地形可信度大幅提升。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "noise 當向量場角度",
+   "level": 2,
+   "what_changes": "混合其他家族（C03）",
+   "how": "angle = noise(x,y)·2π 當 C03 的 FieldDirection，或取高度梯度當雨水流向。",
+   "result": "flow field 生成藝術或地形上的雨水流線。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "閾值分區（生物群系／用地）",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "用兩張不同 seed 的 noise（例：高度與濕度）查表決定每格類型，對不同類型上色或放不同構件。",
+   "result": "水域、草地、林地、建地的自然分區圖，可當景觀植栽配置草圖。"
+  }
+ ],
+ "project_seeds": [
+  "可重現的地形模型切片機",
+  "noise 立面遮陽系統",
+  "侵蝕地景公園",
+  "3D noise 曲面表皮",
+  "Domain warping 生成鋪面與地毯圖樣",
+  "GPU 即時無限地形"
+ ],
+ "cases": [
+  {
+   "id": "C04-01",
+   "cc": false,
+   "title": "An Image Synthesizer（Perlin noise 原始論文）",
+   "creator": "Ken Perlin",
+   "year": "1985",
+   "url": "https://dl.acm.org/doi/10.1145/325165.325247",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "論文"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-02",
+   "cc": false,
+   "title": "Improving Noise 與參考實作",
+   "creator": "Ken Perlin",
+   "year": "2002",
+   "url": "https://mrl.cs.nyu.edu/~perlin/noise",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-03",
+   "cc": false,
+   "title": "Minecraft 的地形生成",
+   "creator": "Markus Persson（Notch）／Mojang",
+   "year": "",
+   "url": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you",
+   "category": "3d-architecture",
+   "scale": null,
+   "tools": [
+    "Java"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-04",
+   "cc": false,
+   "title": "Perlin noise 的 Minecraft 風格渲染實驗",
+   "creator": "Endre Simo",
+   "year": "2014",
+   "url": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-05",
+   "cc": false,
+   "title": "World Machine 地形生成軟體",
+   "creator": "World Machine Software",
+   "year": "",
+   "url": "https://www.world-machine.com/features.php",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "World Machine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-06",
+   "cc": false,
+   "title": "World Machine：Advanced Perlin Noise 裝置",
+   "creator": "World Machine Software",
+   "year": "",
+   "url": "https://help.world-machine.com/topic/device-advancedperlinnoise/",
+   "category": "modeling",
+   "scale": null,
+   "tools": [
+    "World Machine"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-07",
+   "cc": false,
+   "title": "Three Ways of Generating Terrain with Erosion Features",
+   "creator": "dandrino",
+   "year": "",
+   "url": "https://github.com/dandrino/terrain-erosion-3-ways",
+   "category": "performance",
+   "scale": null,
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-08",
+   "cc": false,
+   "title": "One-North Masterplan（人造地景形態的都市）",
+   "creator": "Zaha Hadid Architects",
+   "year": "2001",
+   "url": "https://www.zha.com/projects/masterplans/one-north-masterplan",
+   "category": "urban-landscape",
+   "scale": null,
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "C04-09",
+   "cc": false,
+   "title": "Flow Fields 中以 noise 決定角度",
+   "creator": "Tyler Hobbs",
+   "year": "2020",
+   "url": "https://www.tylerxhobbs.com/words/flow-fields",
+   "category": "2d-pattern",
+   "scale": null,
+   "tools": [
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-10",
+   "cc": false,
+   "title": "Curl noise：從 noise 得到流體速度場",
+   "creator": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+   "year": "2007",
+   "url": "https://dl.acm.org/doi/10.1145/1275808.1276435",
+   "category": "art-installation",
+   "scale": null,
+   "tools": [
+    "VFX 軟體"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-11",
+   "cc": false,
+   "title": "Making maps with noise functions",
+   "creator": "Amit Patel（Red Blob Games）",
+   "year": "",
+   "url": "",
+   "category": "2d-pattern",
+   "scale": null,
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-12",
+   "cc": false,
+   "title": "Perlin noise 及其改良：文獻回顧",
+   "creator": "",
+   "year": "",
+   "url": "https://ace.ewapub.com/article/view/14225.pdf",
+   "category": "drawing",
+   "scale": null,
+   "tools": [
+    "論文"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-51",
+   "cc": true,
+   "title": "Coding Challenge 11：3D Terrain Generation with Perlin Noise in Processing",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C04-52",
+   "cc": true,
+   "title": "Coding Challenge #136：Polar Perlin Noise Loops",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "url": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C04-53",
+   "cc": true,
+   "title": "Noise loop／noise propagation（Processing 循環動畫教學）",
+   "creator": "Étienne Jacob（bleuje）",
+   "year": "2020",
+   "url": "https://bleuje.com/tutorial3/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C04-54",
+   "cc": true,
+   "title": "Looping Noise Part 1: Ending at the Beginning（TouchDesigner）",
+   "creator": "Simon Alexander-Adams",
+   "year": "2019",
+   "url": "https://www.simonaa.media/tutorials/looping-noise-part-1",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "TouchDesigner"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C04-55",
+   "cc": true,
+   "title": "The Book of Shaders 第 11 章：Noise",
+   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+   "year": "2015",
+   "url": "https://thebookofshaders.com/11/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "GLSL"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "C04-56",
+   "cc": true,
+   "title": "Domain Warping 領域扭曲",
+   "creator": "Inigo Quilez",
+   "year": "2002",
+   "url": "https://iquilezles.org/articles/warp/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "drawing": 5,
+   "2d-pattern": 4,
+   "modeling": 3,
+   "performance": 2,
+   "urban-landscape": 2,
+   "3d-architecture": 1,
+   "art-installation": 1
+  },
+  "scale": {
+   "null": 12,
+   "物件": 5,
+   "地景": 1
+  },
+  "tools": {
+   "Processing": 4,
+   "論文": 2,
+   "Java": 2,
+   "JavaScript": 2,
+   "World Machine": 2,
+   "GLSL": 2,
+   "Python": 1,
+   "VFX 軟體": 1,
+   "p5.js": 1,
+   "TouchDesigner": 1,
+   "Shadertoy": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,347 @@
+{
+ "id": "F01",
+ "name_zh": "Truchet 磁磚",
+ "name_en": "Truchet Tiles",
+ "family": "F",
+ "one_liner": "把同一片「兩段四分之一圓弧」的方磚隨機轉 0° 或 90° 鋪滿網格，弧線在邊中點自動接成連續的蜿蜒曲線。",
+ "how_it_works": [
+  "以 columns × rows 建立正方形網格，每格左下角 = (column × tileSize, row × tileSize)。",
+  "每格用 Random(seed) 擲硬幣：決定用「左下＋右上」或「右下＋左上」這組對角當圓心。",
+  "以兩個對角為圓心、半格為半徑各畫一段 90° 圓弧；弧線端點都落在邊的中點。",
+  "因為所有弧都停在邊中點，相鄰格的弧必然首尾相接，整體浮現連續曲線與封閉圈。",
+  "輸出所有圓弧（arcs）與每格外框（tiles）。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "吸引子控制方向",
+   "level": 1,
+   "what_changes": "規則（取代擲硬幣）",
+   "how": "新增 Point3d attractor 輸入，改成 rotated = (distance(corner, attractor) / range) > random.NextDouble()；近吸引子處偏向一種方向、遠處偏另一種。",
+   "result": "隨機紋理中出現有方向性的漸層區塊，可作為立面開口疏密的母題。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "影像驅動 Truchet（半色調）",
+   "level": 2,
+   "what_changes": "輸入（影像取代隨機）",
+   "how": "讀入 Bitmap，取每格中心像素亮度 brightness；亮度 > 0.5 用一種方向，或依亮度選不同磁磚（空白／單弧／雙弧／粗弧）。",
+   "result": "遠看是照片或字樣、近看是連續曲線的圖像，適合入口牆面或穿孔板。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "原始三角形 Truchet（四方向）",
+   "level": 1,
+   "what_changes": "規則（磁磚圖案與旋轉數）",
+   "how": "把 TileArcs 換成回傳對角線切出的三角形 Brep，random.Next(4) 決定 0/90/180/270°；也可用 row、column 公式（例如 (row+column)%4）做規則排列。",
+   "result": "重現 Truchet 1704 的黑白三角拼花，規則排列時得到鑽石、鋸齒、風車等對稱紋。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "對角線迷宮（10 PRINT）",
+   "level": 1,
+   "what_changes": "規則（弧改直線）",
+   "how": "每格改畫一條對角線 Line，方向由擲硬幣決定：左下→右上 或 左上→右下。",
+   "result": "經典 10 PRINT 迷宮；可再用 flood fill 找出封閉區域上色。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "兩色分區填色（Smith 著色）",
+   "level": 2,
+   "what_changes": "輸出（線 → 面）",
+   "how": "每格額外輸出由弧與邊界圍成的區域；依 (row + column + (rotated?1:0)) % 2 決定黑白，可證明相鄰區塊永遠異色。",
+   "result": "黑白交錯的有機色塊，可直接當雷射切割或雙色磁磚的製圖。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "多尺度 Truchet（Carlson）",
+   "level": 3,
+   "what_changes": "迴圈（加入遞迴細分）",
+   "how": "寫遞迴函式 Subdivide(corner, size, depth)：若 random < p 且 depth < max，就切成四格各自遞迴，否則放一片「帶翼」磁磚；每層顏色反轉、尺寸減半。",
+   "result": "大圈套小圈、粗細交錯的多尺度圖樣，視覺層次遠比單一尺度豐富。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "六角形 Truchet",
+   "level": 2,
+   "what_changes": "維度／網格（方格 → 六角格）",
+   "how": "改用六角格座標；每格 6 個邊中點兩兩配對（3 條弧），隨機轉 0/60/120°；圓心放在六角形頂點、半徑 = 邊長一半。",
+   "result": "三向交織的流線，比方格版更像編織或纖維。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲面上的 Truchet 立面",
+   "level": 2,
+   "what_changes": "維度（平面 → 曲面 UV）",
+   "how": "新增 Surface 輸入，把每格的弧取樣成點後用 surface.PointAt(u, v) 映射，或直接在 UV 空間畫弧再 Pushup；tileSize 換成 U、V 的分段數。",
+   "result": "包覆在曲面立面上的連續紋路，可直接接 Pipe 或 Offset 變成立面肋條。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "弧線轉成可製造的 3D 模組",
+   "level": 2,
+   "what_changes": "輸出（線 → 實體）",
+   "how": "把同方向的兩段弧 Join 後 Sweep 一個斷面，或把兩色區域 Extrude 成不同高度；只需建兩種模組（0°/90°）即可量產。",
+   "result": "可 CNC、3D 列印或灌模的立體磁磚／面板，一種模具組出無限多種牆面。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "3D Truchet 方塊（空間管路）",
+   "level": 3,
+   "what_changes": "維度（2D → 3D 體素）",
+   "how": "改成三層迴圈的立方格；每個立方體 6 個面中心兩兩以 1/4 圓管相連，隨機旋轉 24 種方向中的幾種。",
+   "result": "在空間中蜿蜒的連續管道網，可做成裝置、格柵或結構概念模型。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "動畫：逐格翻轉",
+   "level": 2,
+   "what_changes": "狀態（加入時間）",
+   "how": "用 static bool[,] 記住每格方向，接 Timer 或 Iteration，每 tick 隨機翻轉幾格（或讓翻轉機率沿波前傳播）。",
+   "result": "曲線不斷重新連接、分裂與合併的動態圖樣，適合互動立面或投影。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "偵測封閉迴圈並分級",
+   "level": 3,
+   "what_changes": "輸出（加入圖論分析）",
+   "how": "把所有弧 Join 成曲線，判斷 IsClosed 並計算長度或面積；依大小分層、上色或只保留最長的一條當路徑。",
+   "result": "可以控制「島」與「長河」的比例，用於景觀步道、動線或燈光設計。"
+  }
+ ],
+ "project_seeds": [
+  "一種模具的無限立面",
+  "照片變成可切割的穿孔板",
+  "多尺度 Truchet 天花吸音系統",
+  "Truchet 景觀步道迷宮",
+  "3D Truchet 空間格柵裝置"
+ ],
+ "cases": [
+  {
+   "id": "F01-01",
+   "cc": false,
+   "title": "Mémoire sur les combinaisons（Truchet 原始論文）",
+   "creator": "Sébastien Truchet",
+   "year": "1704",
+   "url": "https://en.wikipedia.org/wiki/Truchet_tile",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tools": [
+    "手繪／紙本"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-02",
+   "cc": false,
+   "title": "Smith 圓弧 Truchet 與結構層級拓樸",
+   "creator": "Cyril Stanley Smith、Pauline Boucher",
+   "year": "1987",
+   "url": "https://www.jstor.org/stable/1578535",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-03",
+   "cc": false,
+   "title": "Multi-Scale Truchet Patterns（多尺度 Truchet）",
+   "creator": "Christopher Carlson",
+   "year": "2018",
+   "url": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tools": [
+    "Wolfram Language"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-04",
+   "cc": false,
+   "title": "10 PRINT CHR$(205.5+RND(1)); : GOTO 10",
+   "creator": "Nick Montfort 等 10 位作者（MIT Press）",
+   "year": "2012",
+   "url": "https://10print.org/",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [
+    "BASIC"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-05",
+   "cc": false,
+   "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
+   "creator": "George Hart",
+   "year": "2012",
+   "url": "https://makezine.com/article/home/fun-games/math-monday-truchet-tiles/",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "雷射切割"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-06",
+   "cc": false,
+   "title": "Truchet 吸音磚",
+   "creator": "Steelcase",
+   "year": "",
+   "url": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-07",
+   "cc": false,
+   "title": "Truchet 作為立面的計算式視覺編碼",
+   "creator": "Deena El-Mahdy",
+   "year": "2025",
+   "url": "https://journals.sagepub.com/doi/abs/10.1177/14780771241270265",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-08",
+   "cc": false,
+   "title": "以 Truchet 鋪排的織物模板預鑄面板",
+   "creator": "Nexus Network Journal 論文",
+   "year": "2023",
+   "url": "https://link.springer.com/article/10.1007/s00004-023-00657-9",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-09",
+   "cc": false,
+   "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
+   "creator": "dchant design",
+   "year": "",
+   "url": "https://sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tools": [
+    "Rhino",
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-10",
+   "cc": false,
+   "title": "Truchet Tiles Grasshopper 教學",
+   "creator": "Parametric House",
+   "year": "2019",
+   "url": "https://www.grasshopper3d.com/video/truchet-tiles-grasshopper-tutorial",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-11",
+   "cc": false,
+   "title": "C# 多尺度 Truchet 圖樣產生器",
+   "creator": "mostlynobody（GitHub）",
+   "year": "",
+   "url": "https://github.com/mostlynobody/truchet",
+   "category": "drawing",
+   "scale": "構件",
+   "tools": [
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F01-12",
+   "cc": false,
+   "title": "Truchet blocks 數學互動教具",
+   "creator": "MathsCity（Leeds）",
+   "year": "",
+   "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-13",
+   "cc": false,
+   "title": "Truchet 密碼卡片（以磁磚編碼訊息）",
+   "creator": "Ayliean MacDonald",
+   "year": "",
+   "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F01-14",
+   "cc": false,
+   "title": "可 3D 列印的磁吸 Truchet 磁磚",
+   "creator": "moebio（Printables）",
+   "year": "",
+   "url": "https://www.printables.com/model/220630-truchet-tiles",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "OpenSCAD",
+    "3D 列印"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 3,
+   "drawing": 3,
+   "fabrication": 3,
+   "modeling": 2,
+   "performance": 1,
+   "3d-architecture": 1,
+   "art-installation": 1
+  },
+  "scale": {
+   "構件": 8,
+   "物件": 4,
+   "立面／表皮": 2
+  },
+  "tools": {
+   "Grasshopper": 2,
+   "手繪／紙本": 1,
+   "Wolfram Language": 1,
+   "BASIC": 1,
+   "雷射切割": 1,
+   "Rhino": 1,
+   "C#": 1,
+   "OpenSCAD": 1,
+   "3D 列印": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,347 @@
+{
+ "id": "F03",
+ "name_zh": "TPMS 三週期極小曲面",
+ "name_en": "Triply Periodic Minimal Surface (TPMS)",
+ "family": "F",
+ "one_liner": "用一行三角函數公式定義一個會在 x、y、z 三方向無限重複的曲面（如 Gyroid），再把「公式等於 0 的地方」轉成可 3D 列印的 Mesh。",
+ "how_it_works": [
+  "把 size 邊長的立方體切成 cellCount³ 個小格，每個格點用公式算一個值（Gyroid：sin x cos y + sin y cos z + sin z cos x）。",
+  "periods 控制公式的頻率，也就是每邊重複幾個單元。",
+  "逐一掃過每個小立方體，取出 8 個角的座標與數值。",
+  "每個立方體切成 6 個四面體；依四面體中「內側角（f < isoValue）」的數量產生 0、1 或 2 個三角形。",
+  "三角形頂點用線性內插放在數值剛好等於 isoValue 的位置，並依內外側方向統一法線，最後合併重複頂點成 Mesh。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換公式：Schwarz D、Neovius、I-WP、Lidinoid",
+   "level": 1,
+   "what_changes": "規則（SurfaceFormula）",
+   "how": "在 SurfaceFormula 加更多 surfaceType 分支，例如 Schwarz D：sin x sin y sin z + sin x cos y cos z + cos x sin y cos z + cos x cos y sin z；Neovius：3(cos x + cos y + cos z) + 4 cos x cos y cos z。",
+   "result": "同一套管線立即得到不同拓樸的晶格，可比較孔洞形態與連通性。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "Sheet（薄殼）與 Solid（實心骨架）版本",
+   "level": 2,
+   "what_changes": "規則／輸出",
+   "how": "Sheet：改用 |f| - thickness 當場值，isoValue 設 0，就得到有厚度的雙面殼；Solid：只取 f < isoValue 並在外框補蓋面。",
+   "result": "從無厚度曲面變成可直接列印、有壁厚的晶格構件。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "漸變密度（Functionally Graded）",
+   "level": 2,
+   "what_changes": "輸入／規則",
+   "how": "讓 isoValue 或 thickness 隨位置變化，例如 isoValue = map(point.Z) 或依到吸引子曲線的距離調整；即 f(x,y,z) - t(x,y,z)。",
+   "result": "底部密實、頂部通透的漸層晶格，可對應受力或透光需求。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "漸變週期與單元尺度",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "讓 periods 隨位置平滑變化（toAngle 依 point 變），或對座標先做非線性變形（如 x' = x + a·sin(y)），再代入公式。",
+   "result": "孔洞大小由小到大漸變、或整體扭曲流動的晶格。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "填入任意外形（SDF 交集）",
+   "level": 3,
+   "what_changes": "加約束／輸入",
+   "how": "新增 Mesh 或 Brep 邊界輸入，對每個格點算到邊界的有號距離 d（內負外正），場值改為 max(f, d)，即布林交集。",
+   "result": "Gyroid 晶格被裁成柱子、椅子或構件外形，而不是只能是立方體。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "兩種 TPMS 混合過渡",
+   "level": 3,
+   "what_changes": "混合規則",
+   "how": "f = (1 - w)·fGyroid + w·fSchwarzP，其中 w 依位置從 0 漸變到 1（例如依 X 座標或到吸引子的距離）。",
+   "result": "晶格由螺旋迷宮逐漸轉成十字管網，可做空間序列或功能分區的過渡。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "圓柱／曲面座標映射",
+   "level": 4,
+   "what_changes": "維度（直角座標→圓柱或曲面座標）",
+   "how": "公式代入前先把 (x,y,z) 轉成 (角度 θ·R, 半徑 r, 高度 z)，讓週期沿圓周閉合；或用曲面 uv＋法向距離當三個座標。",
+   "result": "環繞柱子的 Gyroid 外殼、或順著曲面立面彎曲的 TPMS 表皮。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "只取 2D 切片當立面圖樣",
+   "level": 1,
+   "what_changes": "維度（3D→2D）",
+   "how": "固定 z = 常數，把 SurfaceFormula 當作 C05 的 FieldValue 用 Marching Squares 描線；改變 z 就得到一系列不同切片。",
+   "result": "迷宮狀的 2D 花紋，可做穿孔板、地坪或逐層雷切疊合。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "輸出可製造幾何：封閉、減面、分件",
+   "level": 3,
+   "what_changes": "輸出轉可製造幾何",
+   "how": "sheet 版本用 Mesh.Offset(thickness, true) 或自寫雙層加側邊封閉；再用 Mesh.Reduce 降面數、依單元切成可列印尺寸的模組並檢查 IsClosed。",
+   "result": "可送 3D 列印（FDM、SLA、砂印）的水密 Mesh 構件。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "效能版：只算一次邊點＋平行化",
+   "level": 4,
+   "what_changes": "迴圈／資料結構",
+   "how": "用 Dictionary<(int,int,int,int),int> 快取每條邊的內插頂點避免重複，外層迴圈改 Parallel.For，每執行緒各自收集三角形再合併。",
+   "result": "解析度可拉到 100 以上而仍可互動，Mesh 也不需要事後 CombineIdentical。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "動畫化：isoValue 或相位掃描",
+   "level": 2,
+   "what_changes": "動畫",
+   "how": "接 Timer，讓 isoValue 在 -1 到 1 間往復，或在公式座標加相位 x + t；每幀重算。",
+   "result": "晶格通道一邊膨脹一邊收縮、或持續流動的動畫，可展示兩個互鎖空間的關係。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "混合其他家族：依應力或生長結果調密度",
+   "level": 4,
+   "what_changes": "混合其他家族",
+   "how": "把 E 家族排列或結構分析（例如 Karamba／Millipede 的應力值）取樣到格點，當成 thickness(x,y,z) 輸入；或用 B 家族 DLA／空間殖民結果的距離場當遮罩。",
+   "result": "受力大處密實、受力小處通透的仿生骨骼式構件。"
+  }
+ ],
+ "project_seeds": [
+  "TPMS 公式圖鑑與切片花磚",
+  "漸變密度 Gyroid 柱或椅",
+  "TPMS 通風／遮陽表皮模組",
+  "兩種 TPMS 混合的空間序列裝置",
+  "應力驅動的 TPMS 構件"
+ ],
+ "cases": [
+  {
+   "id": "F03-01",
+   "cc": false,
+   "title": "Gyroid 的發現：NASA 技術報告與實體模型",
+   "creator": "Alan H. Schoen（NASA 電子研究中心）",
+   "year": "1970",
+   "url": "https://schoengeometry.com/e-tpms.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F03-02",
+   "cc": false,
+   "title": "Gyroid 金屬雕塑",
+   "creator": "Bathsheba Grossman",
+   "year": "",
+   "url": "https://www.bathsheba.com/math/gyroid/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "Mathematica",
+    "Surface Evolver",
+    "金屬 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-03",
+   "cc": false,
+   "title": "3D 列印的 Gyroid 填充（Infill）",
+   "creator": "Prusa Research（PrusaSlicer）等切片軟體",
+   "year": "",
+   "url": "https://help.prusa3d.com/article/infill-patterns_177130",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "PrusaSlicer",
+    "FDM 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-04",
+   "cc": false,
+   "title": "徑向漸變 TPMS 骨骼支架",
+   "creator": "骨組織工程研究（綜述論文）",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-05",
+   "cc": false,
+   "title": "Gyroid 積層製造熱交換器",
+   "creator": "熱流研究（International Journal of Thermal Sciences 論文）",
+   "year": "",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S1290072925001589",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "CFD",
+    "金屬 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-06",
+   "cc": false,
+   "title": "3D 石墨烯 Gyroid：超輕高強材料",
+   "creator": "Markus Buehler 團隊（MIT）",
+   "year": "2017",
+   "url": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "3D 列印",
+    "分子模擬"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-07",
+   "cc": false,
+   "title": "蝴蝶鱗片的 Gyroid 光子晶體（結構色）",
+   "creator": "自然界（蝴蝶鱗片、鳥類羽毛）",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Gyroid",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F03-08",
+   "cc": false,
+   "title": "Axolotl 的 TPMS 晶格元件",
+   "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+   "year": "2019",
+   "url": "https://github.com/GuoyingDong/Axolotl",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-09",
+   "cc": false,
+   "title": "Digital Grotesque：全尺度 3D 砂印洞窟（製造路徑參考）",
+   "creator": "Michael Hansmeyer、Benjamin Dillenburger",
+   "year": "2013",
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "category": "fabrication",
+   "scale": "建築",
+   "tools": [
+    "砂印（binder jetting）"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-10",
+   "cc": false,
+   "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
+   "creator": "Benjamin Dillenburger、Robert Flatt、Joseph Schwartz 等（ETH Zurich，DFAB HOUSE）",
+   "year": "2018",
+   "url": "https://dbt.arch.ethz.ch/project/smart-slab/",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "砂印（binder jetting）",
+    "混凝土"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-11",
+   "cc": false,
+   "title": "Minimal Complexity 極小曲面裝置",
+   "creator": "Vlad Tenu",
+   "year": "2010",
+   "url": "",
+   "category": "art-installation",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "F03-12",
+   "cc": false,
+   "title": "Gyroid 水凝膠支架：軟組織工程",
+   "creator": "Nature Communications 論文作者群",
+   "year": "2026",
+   "url": "https://www.nature.com/articles/s41467-026-73452-y",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "DLP 3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F03-13",
+   "cc": false,
+   "title": "依最佳化壁厚設計的 TPMS 支架",
+   "creator": "積層製造研究（PMC 論文）",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "積層製造"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "fabrication": 4,
+   "performance": 4,
+   "modeling": 2,
+   "art-installation": 2,
+   "2d-pattern": 1
+  },
+  "scale": {
+   "物件": 7,
+   "構件": 5,
+   "建築": 1
+  },
+  "tools": {
+   "金屬 3D 列印": 2,
+   "3D 列印": 2,
+   "砂印（binder jetting）": 2,
+   "Mathematica": 1,
+   "Surface Evolver": 1,
+   "PrusaSlicer": 1,
+   "FDM 3D 列印": 1,
+   "CFD": 1,
+   "分子模擬": 1,
+   "Grasshopper": 1,
+   "Python": 1,
+   "混凝土": 1,
+   "DLP 3D 列印": 1,
+   "積層製造": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,436 @@
+{
+ "id": "A06",
+ "name_zh": "波函數塌縮",
+ "name_en": "Wave Function Collapse (WFC)",
+ "family": "A",
+ "one_liner": "先定好「哪些模組可以相鄰」的規則，再讓電腦從最沒得選的格子開始一格一格決定，並把限制傳給鄰居，直到整張網格都拼得起來。",
+ "how_it_works": [
+  "建立 tile 清單：每個水管 tile 用北東南西四個 0/1 表示哪邊有開口（共 12 種，不含只開一邊的死路）",
+  "每格一開始把所有 tile 都當成候選；邊界格先刪掉開口朝外的 tile，並傳播一次",
+  "找候選數最少（但還大於 1）的格子，同分隨機挑一格，從它的候選中隨機決定一個 tile（塌縮）",
+  "傳播：用 Stack 記錄有變動的格子，逐一通知四個鄰居，鄰居刪掉「跟這格任何候選都接不起來」的 tile；鄰居有刪東西就再推進 Stack",
+  "若某格候選變 0 就是矛盾，整張重來（最多 20 次）；全部格子只剩一個候選就完成，輸出每格中心到開口邊中點的線段"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換 tile 組：自訂圖樣規則",
+   "level": 1,
+   "what_changes": "規則",
+   "how": "改 MakeTileSet 內的字串陣列，例如只留直管與彎管、或加入只開一邊的端點 tile；也可替每個 tile 加 weight 欄位，挑選時用加權隨機取代 random.Next。",
+   "result": "同一套程式產生迷宮、電路板、長直線條、稀疏管線等不同風格的圖樣"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "邊的標籤從 0/1 改成多種接頭",
+   "level": 2,
+   "what_changes": "規則／狀態",
+   "how": "把 bool[] Open 改成 int[] 或 string[] Socket（例如 0=無、1=細管、2=粗管、3=牆），相容判斷改成 Socket[side] == Socket[opposite]，或查一張相容表 Dictionary<(int,int),bool>。",
+   "result": "可以表達「道路只能接道路、牆只能接牆」的多材質／多類型拼貼"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "tile 換成 Rhino 幾何模組",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "新增 List<GeometryBase> modules 輸入（每個 tile 一個 Brep 或 Mesh），DrawPipes 改成把對應模組用 Transform.Translation 搬到格子中心；配合旋轉可從少量原型自動產生 4 個方向的 tile。",
+   "result": "從線稿變成可渲染的平面鋪面、景觀鋪面或平面配置模組"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "2D → 3D 體素 WFC",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "方向陣列從 4 個擴成 6 個（加上 / 下），格子索引改成 x + y*W + z*W*H，tile 用 6 位元字串描述；Propagate 的迴圈 side < 6、opposite 改成查表。",
+   "result": "產生可堆疊的 3D 模組化建築量體、樓梯、橋、屋頂組合"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "指定格子預先塌縮（設計者控制）",
+   "level": 2,
+   "what_changes": "約束",
+   "how": "新增 List<Point3d> fixedPoints 與 List<int> fixedTiles 輸入，在 TrySolve 開頭把這些格子的候選直接設成單一 tile 並推入 changedCells 傳播。",
+   "result": "設計者先放入口、中庭或主要動線，其餘由 WFC 自動補齊且保證接得起來"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "曲線邊界／不規則基地",
+   "level": 3,
+   "what_changes": "輸入／約束",
+   "how": "新增 Curve boundary 輸入，用 Curve.Contains 判斷格子中心在不在基地內；在外面的格子強制只能放空 tile（0000），OpensToOutside 改成判斷鄰居是否在基地外。",
+   "result": "管線、步道或房間配置自動貼合任意形狀的基地邊界"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "吸引子／影像控制 tile 機率",
+   "level": 3,
+   "what_changes": "輸入／規則",
+   "how": "新增 Point3d attractor 或灰階影像輸入，依格子到吸引子的距離（或像素亮度）調整每種 tile 的權重，例如越近十字 tile 權重越高；挑 tile 時改用加權隨機。",
+   "result": "密度有梯度的網路：中心密集交織、外圍稀疏，可對應都市密度或立面開口率"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "加入回溯取代整張重來",
+   "level": 4,
+   "what_changes": "迴圈",
+   "how": "每次塌縮前把 possibleTiles 深拷貝推進 Stack<List<int>[]> history；遇到矛盾時 pop 回上一步，並把剛才選的 tile 從該格候選中刪掉再試。",
+   "result": "大網格或嚴格規則下也能穩定求解，不再依賴換 seed"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "連通性約束：保證水管／動線是一整個網路",
+   "level": 4,
+   "what_changes": "約束",
+   "how": "完成後用 BFS 從任一有開口格子出發計算連通元件數，若大於 1 就重來；進階版在塌縮過程中就檢查（參考 Bad North 的可通行啟發式、DeBroglie 的 path constraint）。",
+   "result": "產出單一連通的管線、步道或走廊系統，可直接當動線圖使用"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "Timer 動畫：看見塌縮過程",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "把 possibleTiles 與 random 存成欄位，用 Timer 元件每次 tick 只做一次「挑格＋塌縮＋傳播」；未決定的格子依候選數畫成不同灰階或大小的圓。",
+   "result": "看到網格從一片不確定逐步「塌縮」成確定圖樣，適合做簡報動畫"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "從範例學規則（範例驅動）",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "新增一個學習者手排的範例網格輸入（例如 List<int> exampleTiles），掃描範例中實際出現過的相鄰組合建成 allowed[tileA, tileB, side] 表，取代原本的 Open 比對。",
+   "result": "設計者用「畫一小塊範例」代替寫規則，WFC 生成大面積但風格一致的配置"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "輸出轉成可製造管件／擠出實體",
+   "level": 3,
+   "what_changes": "輸出",
+   "how": "把每條 Line 用 Pipe.CreatePipe 或 Brep.CreatePipe 轉成管狀實體，並在每格中心依 tile 類型放置彎頭、三通、十字接頭；最後統計每種接頭數量輸出料件表。",
+   "result": "可 3D 列印或以標準管件組裝的管線裝置，附帶零件數量清單"
+  }
+ ],
+ "project_seeds": [
+  "WFC 地坪與鋪面產生器",
+  "模組化集合住宅量體",
+  "範例驅動的平面配置",
+  "不規則網格上的小鎮",
+  "可組裝的管線裝置"
+ ],
+ "cases": [
+  {
+   "id": "A06-01",
+   "cc": false,
+   "title": "WaveFunctionCollapse 原始實作",
+   "creator": "Maxim Gumin",
+   "year": "2016",
+   "url": "https://github.com/mxgmn/WaveFunctionCollapse",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-02",
+   "cc": false,
+   "title": "Model Synthesis：從範例模型產生大型 3D 模型",
+   "creator": "Paul C. Merrell",
+   "year": "2007",
+   "url": "https://paulmerrell.org/model-synthesis/",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "C++"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-03",
+   "cc": false,
+   "title": "Bad North 島嶼關卡生成",
+   "creator": "Oskar Stålberg（Plausible Concept）",
+   "year": "2018",
+   "url": "https://www.youtube.com/watch?v=0bcZb-SsnrA",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Unity",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-04",
+   "cc": false,
+   "title": "Townscaper：不規則網格上的小鎮玩具",
+   "creator": "Oskar Stålberg",
+   "year": "2020",
+   "url": "https://www.gamedeveloper.com/game-platforms/how-townscaper-works-a-story-four-games-in-the-making",
+   "category": "art-installation",
+   "scale": "群體／都市",
+   "tools": [
+    "Unity"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-05",
+   "cc": false,
+   "title": "無限程序城市（Infinite City）",
+   "creator": "Marian Kleineberg（marian42）",
+   "year": "2018",
+   "url": "https://marian42.de/article/wfc/",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Unity",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-06",
+   "cc": false,
+   "title": "Caves of Qud 遺跡地圖生成",
+   "creator": "Brian Bucklew（Freehold Games）",
+   "year": "2019",
+   "url": "https://gdcvault.com/play/1026263/Math-for-Game-Developers-Tile",
+   "category": "2d-pattern",
+   "scale": "建築",
+   "tools": [
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-07",
+   "cc": false,
+   "title": "Monoceros：Grasshopper 模組化組合外掛",
+   "creator": "Ján Tóth、Ján Pernecký（Subdigital）",
+   "year": "2021",
+   "url": "https://monoceros.sub.digital/",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-08",
+   "cc": false,
+   "title": "Subdigital 離散實體化實習",
+   "creator": "Subdigital（Ján Pernecký 等）",
+   "year": "2020",
+   "url": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Monoceros"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-09",
+   "cc": false,
+   "title": "以編碼建築 tile 組做量體設計（Gameplay with encoded architectural tilesets）",
+   "creator": "E. Chasioti",
+   "year": "2020",
+   "url": "https://www.academia.edu/44870033/Gameplay_with_encoded_architectural_tilesets_A_computational_framework_for_building_massing_design_using_the_Wave_Function_Collapse_algorithm",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-10",
+   "cc": false,
+   "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
+   "creator": "",
+   "year": "",
+   "url": "https://link.springer.com/chapter/10.1007/978-3-031-71008-7_28",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-11",
+   "cc": false,
+   "title": "階層式 WFC 平面生成（HWFC floor plan generation）",
+   "creator": "qin2500（GitHub）",
+   "year": "",
+   "url": "https://github.com/qin2500/HWFC_floor_plan_generation",
+   "category": "drawing",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-12",
+   "cc": false,
+   "title": "以 WFC 與 CNN 模擬都市空間",
+   "creator": "Cardiff University 研究團隊（SimAUD 2020）",
+   "year": "2020",
+   "url": "https://dl.acm.org/doi/abs/10.5555/3465085.3465103",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-13",
+   "cc": false,
+   "title": "以 WFC 生成與評估鄉村住宅配置",
+   "creator": "Yin Zhang、Zhen Xu、Hanlin Li 等",
+   "year": "2026",
+   "url": "https://doi.org/10.1177/14780771251326773",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-14",
+   "cc": false,
+   "title": "WFC 結合 AR／MR 的不規則原木升級再利用",
+   "creator": "Scientific Reports 論文作者群",
+   "year": "2025",
+   "url": "https://www.nature.com/articles/s41598-025-20398-8",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-15",
+   "cc": false,
+   "title": "以 WFC 生成材料晶粒方向",
+   "creator": "arXiv 論文作者群",
+   "year": "2023",
+   "url": "https://arxiv.org/pdf/2311.12272",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "A06-51",
+   "cc": true,
+   "title": "Coding Challenge 171：Wave Function Collapse",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2022",
+   "url": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A06-52",
+   "cc": true,
+   "title": "wavefunctioncollapse：WFC 的 JavaScript 移植",
+   "creator": "Kevin Chapelier（kchapelier）",
+   "year": "2016",
+   "url": "https://github.com/kchapelier/wavefunctioncollapse",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-53",
+   "cc": true,
+   "title": "Wave：瀏覽器中的互動 WFC tiled model",
+   "creator": "Oskar Stålberg",
+   "year": "",
+   "url": "https://oskarstalberg.com/game/wave/wave.html",
+   "category": "2d-pattern",
+   "scale": "建築",
+   "tools": [
+    "Unity"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "A06-54",
+   "cc": true,
+   "title": "wfc_houdini：在 Houdini 中實作 WFC（2D Wang tiles、3D 管線、拱橋）",
+   "creator": "Chloe Sun",
+   "year": "2020",
+   "url": "https://github.com/chloesun/wfc_houdini",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A06-55",
+   "cc": true,
+   "title": "The Wavefunction Collapse Algorithm explained very clearly",
+   "creator": "Robert Heaton",
+   "year": "2018",
+   "url": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "2d-pattern": 6,
+   "urban-landscape": 4,
+   "3d-architecture": 3,
+   "modeling": 2,
+   "fabrication": 2,
+   "art-installation": 1,
+   "drawing": 1,
+   "performance": 1
+  },
+  "scale": {
+   "建築": 6,
+   "物件": 5,
+   "群體／都市": 5,
+   "構件": 3,
+   "地景": 1
+  },
+  "tools": {
+   "C#": 5,
+   "Unity": 4,
+   "Grasshopper": 3,
+   "C++": 1,
+   "Monoceros": 1,
+   "p5.js": 1,
+   "JavaScript": 1,
+   "Houdini": 1,
+   "Python": 1
+  }
+ },
+ "rejected": []
+}

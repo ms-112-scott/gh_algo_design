@@ -1,0 +1,329 @@
+{
+ "id": "F04",
+ "name_zh": "基因演算法",
+ "name_en": "Genetic Algorithm",
+ "family": "F",
+ "one_liner": "先亂丟一大堆方案，打分數、讓好方案互相「生小孩」再隨機小改，一代一代留下更好的設計。",
+ "how_it_works": [
+  "把一個設計方案編碼成「基因」：這裡是一整組點的座標（Point3d 陣列）。",
+  "隨機產生第一代 populationSize 組方案，每組用 ScoreOf 算分數（點與點最近距離，越大越分散）。",
+  "排序後保留最好的 EliteCount 組直接進下一代（精英）。",
+  "其餘名額：用小組比賽（Tournament）挑兩個父母，逐點隨機繼承（均勻交配），再以 mutationRate 讓少數點小幅移動（突變）。",
+  "重複 generations 代，記錄每代最佳分數，最後輸出最佳解與收斂曲線。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "換適應度：最大化日照或視野",
+   "level": 3,
+   "what_changes": "規則（ScoreOf）",
+   "how": "把 ScoreOf 改成計算每個點到太陽向量的遮蔽次數或到景觀點的可見性（用 Ray 與 Mesh 求交），分數越高越好。",
+   "result": "點會自動移到不被遮擋、日照最佳的位置，可當量體或開窗配置。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "多目標加權：分散又靠近邊界",
+   "level": 3,
+   "what_changes": "規則（ScoreOf）",
+   "how": "新增輸入 weight，分數 = 最近距離 × weight + 平均到邊界距離的倒數 × (1 − weight)；調權重觀察取捨。",
+   "result": "同一組程式可在「均勻分散」與「貼邊排列」之間連續切換，理解 Pareto 取捨的概念。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "曲線邊界內配置",
+   "level": 3,
+   "what_changes": "輸入／狀態",
+   "how": "把矩形換成任意封閉 Curve 輸入，CreateRandom 與 Mutate 用 Curve.Contains 檢查，超出就重抽或拉回最近點。",
+   "result": "可在不規則基地、樓板輪廓內自動分散柱位、樹木或座位。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "升到 3D 或曲面上",
+   "level": 3,
+   "what_changes": "維度",
+   "how": "基因改存曲面 UV 參數（Point2d），評分時用 Surface.PointAt 轉 3D 再算距離；或直接加 Z 座標與 depth 輸入。",
+   "result": "在曲面屋頂上均勻分布天窗、在體積內分布懸吊物件。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "基因改成滑桿參數",
+   "level": 3,
+   "what_changes": "資料結構（基因編碼）",
+   "how": "Candidate 改存 double[] genes，每個 gene 對應一個設計參數（樓高、旋轉、退縮），評分函數先用 genes 生成幾何再算面積或體積誤差。",
+   "result": "等於自己寫一個迷你 Galapagos，可對任何參數化量體做最佳化。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "吸子加權的評分",
+   "level": 2,
+   "what_changes": "輸入（吸子）",
+   "how": "新增 attractorPoints 輸入，最近距離的門檻依離吸子的距離放大或縮小，讓評分鼓勵「靠近吸子密、遠離吸子疏」。",
+   "result": "自動產生有疏密變化的點陣，可接 Voronoi 做立面開孔。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "動畫化演化過程",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "把族群存成類別欄位，接 Timer 每次 RunScript 只跑一代並輸出當代最佳解；加 reset 布林輸入重新初始化。",
+   "result": "可以即時看點雲一代代散開，適合簡報與理解收斂。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "混合 Voronoi 產生可製造圖樣",
+   "level": 3,
+   "what_changes": "輸出／混合其他家族",
+   "how": "把 bestPoints 接 Voronoi，並把 ScoreOf 改成「每個 Voronoi cell 面積與目標面積的差」越小越好。",
+   "result": "得到大小均勻、可雷切的蜂巢或石板鋪面切割圖。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "結構或性能外掛評分",
+   "level": 4,
+   "what_changes": "規則（外部模擬）",
+   "how": "評分不在 C# 裡算，而是讀取 Karamba 位移或 Ladybug 日照結果；需要多元件、一代一代把 genes 輸出再讀回分數（或改用 Galapagos 接相同基因）。",
+   "result": "真正的性能導向設計：桁架高度、遮陽板角度依模擬結果演化。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "互動式演化（人當評審）",
+   "level": 3,
+   "what_changes": "規則（選擇方式）",
+   "how": "每代輸出 9 組候選幾何排成九宮格，用 Value List 讓使用者點選喜歡的兩組當父母，取代 ScoreOf。",
+   "result": "類似 Karl Sims Genetic Images 的美學演化，適合形式探索而非數值最佳化。"
+  }
+ ],
+ "project_seeds": [
+  "樓板柱位自動配置器",
+  "日照導向的住宅量體排列",
+  "GA × Voronoi 均質鋪面",
+  "迷你 Octopus：兩目標 Pareto 前緣",
+  "演化出來的遮陽立面"
+ ],
+ "cases": [
+  {
+   "id": "F04-01",
+   "cc": false,
+   "title": "Autodesk MaRS 多倫多辦公室生成式設計",
+   "creator": "The Living（Autodesk Research）",
+   "year": "2017",
+   "url": "https://www.research.autodesk.com/projects/autodesk-mars",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Dynamo",
+    "Project Refinery",
+    "MOGA"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-02",
+   "cc": false,
+   "title": "Autodesk University 拉斯維加斯展場配置",
+   "creator": "The Living（Autodesk）",
+   "year": "",
+   "url": "https://www.autodesk.com/autodesk-university/article/Generative-Design-Architectural-Space-Planning",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Dynamo",
+    "Project Refinery"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-03",
+   "cc": false,
+   "title": "An Evolutionary Architecture（演化建築）",
+   "creator": "John Frazer",
+   "year": "1995",
+   "url": "https://www.aaschool.ac.uk/public/whats-on/an-evolutionary-architecture",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-04",
+   "cc": false,
+   "title": "Galapagos 演化求解器",
+   "creator": "David Rutten",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/264299633_Galapagos_On_the_Logic_and_Limitations_of_Generic_Solvers",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Galapagos"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-05",
+   "cc": false,
+   "title": "Octopus 多目標演化最佳化",
+   "creator": "Robert Vierlinger",
+   "year": "",
+   "url": "https://grasshopperdocs.com/addons/octopus.html",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Grasshopper",
+    "Octopus"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-06",
+   "cc": false,
+   "title": "Wallacei 多目標演化與都市形態研究",
+   "creator": "Mohammed Makki、Milad Showkatbakhsh 等",
+   "year": "",
+   "url": "https://www.wallacei.com/research",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "Wallacei"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-07",
+   "cc": false,
+   "title": "醫院建築日光與能耗多目標最佳化（阿爾及利亞）",
+   "creator": "",
+   "year": "",
+   "url": "https://www.academia.edu/105936985/Parametric_Based_Multi_Objective_Optimization_Workflow_Daylight_and_Energy_Performance_Study_of_Hospital_Building_in_Algeria",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tools": [
+    "Grasshopper",
+    "Ladybug",
+    "Honeybee",
+    "Octopus"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-08",
+   "cc": false,
+   "title": "殼體多目標最佳化基準測試（Karamba＋Octopus）",
+   "creator": "Alberto Pugnale",
+   "year": "2013",
+   "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper",
+    "Karamba3D",
+    "Octopus"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-09",
+   "cc": false,
+   "title": "IAAC 結構形態基因最佳化（Karamba＋Galapagos）",
+   "creator": "IAAC 學習者專案",
+   "year": "",
+   "url": "https://www.iaacblog.com/programs/genetic-optimization-karamba-galapagos/",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "Karamba3D",
+    "Galapagos"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-10",
+   "cc": false,
+   "title": "NASA ST5 演化天線",
+   "creator": "NASA",
+   "year": "2006",
+   "url": "https://www.jpl.nasa.gov/nmp/st5/TECHNOLOGY/antenna.html",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "演化演算法"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-11",
+   "cc": false,
+   "title": "Evolved Virtual Creatures（演化虛擬生物）",
+   "creator": "Karl Sims",
+   "year": "1994",
+   "url": "https://www.karlsims.com/evolved-virtual-creatures.html",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自製程式"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F04-12",
+   "cc": false,
+   "title": "Genetic Images（互動式影像演化）",
+   "creator": "Karl Sims",
+   "year": "1993",
+   "url": "https://karlsims.com/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "自製程式"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "3d-architecture": 3,
+   "performance": 3,
+   "modeling": 2,
+   "urban-landscape": 1,
+   "fabrication": 1,
+   "art-installation": 1,
+   "2d-pattern": 1
+  },
+  "scale": {
+   "物件": 5,
+   "建築": 4,
+   "群體／都市": 1,
+   "立面／表皮": 1,
+   "構件": 1
+  },
+  "tools": {
+   "Grasshopper": 6,
+   "自製程式": 3,
+   "Octopus": 3,
+   "Dynamo": 2,
+   "Project Refinery": 2,
+   "Galapagos": 2,
+   "Karamba3D": 2,
+   "MOGA": 1,
+   "Wallacei": 1,
+   "Ladybug": 1,
+   "Honeybee": 1,
+   "演化演算法": 1
+  }
+ },
+ "rejected": []
+}

@@ -1,0 +1,306 @@
+{
+ "id": "F05",
+ "name_zh": "最短路徑（Dijkstra）",
+ "name_en": "Shortest Path (Dijkstra)",
+ "family": "F",
+ "one_liner": "把基地切成格子，從起點像水波一樣一圈圈擴散，第一個碰到終點的那條就是繞過障礙物的最短路線。",
+ "how_it_works": [
+  "把範圍切成 cellSize 大小的格點，距離障礙物中心小於 obstacleRadius 的格點標為不能走。",
+  "所有格點的「離起點距離」先設為無限大，起點設為 0。",
+  "每一輪掃描全部格點，挑出「還沒確定、距離最小」的格點，把它標為已確定。",
+  "更新它 8 個鄰居：直走加 1 格、斜走加 √2 格，如果比原本記錄的距離更短就改寫，並記下「從哪一格走過來」。",
+  "確定到終點時停止，沿著「從哪一格走過來」從終點倒推回起點，反轉後輸出 Polyline。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "A* 啟發式搜尋",
+   "level": 3,
+   "what_changes": "規則",
+   "how": "挑下一格時改比較「已走距離＋到終點直線距離」，其餘不變；可再印出展開格數跟 Dijkstra 比較。",
+   "result": "路徑一樣最短，但搜尋範圍明顯縮小、速度更快。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "地形坡度成本",
+   "level": 3,
+   "what_changes": "規則（邊的權重）",
+   "how": "新增 terrain Surface 輸入，stepDistance 改成 3D 距離再乘上坡度懲罰（高差／水平距離超過門檻就加倍或禁止）。",
+   "result": "得到沿等高線蜿蜒、符合無障礙坡度的步道。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "影像當成本地圖",
+   "level": 3,
+   "what_changes": "輸入（影像）",
+   "how": "讀入一張灰階圖，每格成本 = 1 + 亮度 × k，黑色直接視為障礙；stepDistance 乘上格子成本。",
+   "result": "用畫筆就能描繪「好走／難走」區域，快速做景觀動線研究。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "多起點距離場（可及性地圖）",
+   "level": 3,
+   "what_changes": "狀態／輸出",
+   "how": "把多個入口都設為距離 0，不設終點跑到全部確定，輸出每個格點的距離值並依距離上色。",
+   "result": "得到「離最近出口幾公尺」的熱圖，可做逃生距離或服務範圍檢討。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "在曲線網路上走（真正的圖）",
+   "level": 3,
+   "what_changes": "資料結構",
+   "how": "改用 Dictionary<int, List<(int, double)>> 表示節點與邊，節點由既有街道或走廊曲線的端點與交點產生，再跑相同 Dijkstra。",
+   "result": "在真實街道網路上找最短路，接近 ShortestWalk 或 SpiderWeb 的做法。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "3D 體素路徑",
+   "level": 4,
+   "what_changes": "維度",
+   "how": "陣列改成三維 [x, y, z]，鄰居擴成 26 個方向，障礙改成 Brep.IsPointInside；注意格數立方成長需要優先佇列。",
+   "result": "在樓板、梁之間自動繞行的管線或風管路由。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "多組起終點＋流量疊加",
+   "level": 3,
+   "what_changes": "迴圈／輸出",
+   "how": "對一組起終點配對逐一求最短路，每走過一個格點就把計數加一，輸出計數熱圖或依計數加粗路徑。",
+   "result": "看出哪些通道最常被使用（類似 betweenness），可決定主動線寬度。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "路徑轉成可製造幾何",
+   "level": 2,
+   "what_changes": "輸出",
+   "how": "把 Polyline 做 Curve.Fillet 或重新擬合成 NURBS，再 Offset 兩側或 Pipe 成管，輸出步道板或管線實體。",
+   "result": "從鋸齒折線變成可施工的平順步道或 3D 列印管路模型。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "動畫化擴散波前",
+   "level": 2,
+   "what_changes": "迴圈／輸出",
+   "how": "把陣列存成類別欄位並接 Timer，每次只擴展 k 個格點，輸出已確定格點依距離上色。",
+   "result": "可以看見 Dijkstra 由起點一圈圈擴散的過程，學習效果極佳。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "混合 GA：最佳化出入口位置",
+   "level": 4,
+   "what_changes": "混合其他家族",
+   "how": "把出入口座標當 F04 的基因，評分為所有房間到最近出口的最長 Dijkstra 距離（越小越好）。",
+   "result": "自動找到讓最遠點逃生距離最短的出口配置。"
+  }
+ ],
+ "project_seeds": [
+  "校園步行地圖：從教室到最近的咖啡",
+  "無障礙坡道自動選線",
+  "逃生距離檢討工具",
+  "3D 管線自動路由",
+  "人流熱度決定鋪面紋理"
+ ],
+ "cases": [
+  {
+   "id": "F05-01",
+   "cc": false,
+   "title": "SpiderWeb 圖論與 Space Syntax 外掛",
+   "creator": "Richard Schaffranek",
+   "year": "",
+   "url": "https://grasshopperdocs.com/addons/spiderweb.html",
+   "category": "modeling",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "SpiderWeb"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-02",
+   "cc": false,
+   "title": "ShortestWalk 曲線網路最短路元件",
+   "creator": "Giulio Piacentino（McNeel）",
+   "year": "",
+   "url": "https://www.food4rhino.com/en/app/shortest-walk-gh",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "ShortestWalk"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-03",
+   "cc": false,
+   "title": "LunchBox Shortest Walk 地形步道選線",
+   "creator": "Proving Ground",
+   "year": "2025",
+   "url": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [
+    "Grasshopper",
+    "LunchBox"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-04",
+   "cc": false,
+   "title": "Urban Network Analysis 工具箱",
+   "creator": "Andres Sevtsuk（MIT City Form Lab）",
+   "year": "2012",
+   "url": "https://cityform.mit.edu/projects/urban-network-analysis",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Rhino",
+    "ArcGIS"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-05",
+   "cc": false,
+   "title": "Urbano 都市步行與設施可及性工具",
+   "creator": "Timur Dogan 等",
+   "year": "2018",
+   "url": "https://www.researchgate.net/publication/325538685_Urbano-_A_New_Tool_to_Promote_Mobility-Aware_Urban_Design_Active_Transportation_Modeling_and_Access_Analysis_for_Amenities_and_Public_Transport",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Urbano"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-06",
+   "cc": false,
+   "title": "depthmapX 空間網路分析軟體",
+   "creator": "Space Group, UCL",
+   "year": "",
+   "url": "https://github.com/SpaceGroupUCL/depthmapX",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "depthmapX"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-07",
+   "cc": false,
+   "title": "cityseer 行人尺度網路分析套件",
+   "creator": "Gareth Simons",
+   "year": "2021",
+   "url": "https://arxiv.org/pdf/2106.15314",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-08",
+   "cc": false,
+   "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
+   "creator": "",
+   "year": "",
+   "url": "https://www.researchgate.net/publication/335827215_Applied_Spatial_Accessibility_Analysis_for_Urban_Design_An_integrated_graph-gravity_model_implemented_in_Grasshopper",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-09",
+   "cc": false,
+   "title": "Pathfinder 人流與避難模擬",
+   "creator": "Thunderhead Engineering",
+   "year": "",
+   "url": "https://www.thunderheadeng.com/pathfinder",
+   "category": "performance",
+   "scale": "建築",
+   "tools": [
+    "Pathfinder"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-10",
+   "cc": false,
+   "title": "MEP 管線 A* 自動路由",
+   "creator": "josephrewald（GitHub）",
+   "year": "",
+   "url": "https://github.com/josephrewald/pipe-route-solver",
+   "category": "performance",
+   "scale": "構件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "F05-11",
+   "cc": false,
+   "title": "Frei Otto 羊毛線最小路徑系統的數位重現",
+   "creator": "Frei Otto（原型實驗）；Grasshopper 社群討論",
+   "year": "",
+   "url": "https://www.grasshopper3d.com/forum/topics/minimal-path-system?commentId=2985220%3AComment%3A146627",
+   "category": "fabrication",
+   "scale": "群體／都市",
+   "tools": [
+    "Grasshopper",
+    "ShortestWalk",
+    "Kangaroo"
+   ],
+   "has_image": false
+  }
+ ],
+ "distribution": {
+  "category": {
+   "urban-landscape": 5,
+   "modeling": 2,
+   "performance": 2,
+   "3d-architecture": 1,
+   "fabrication": 1
+  },
+  "scale": {
+   "群體／都市": 6,
+   "建築": 3,
+   "地景": 1,
+   "構件": 1
+  },
+  "tools": {
+   "Grasshopper": 6,
+   "ShortestWalk": 2,
+   "Rhino": 2,
+   "Python": 2,
+   "SpiderWeb": 1,
+   "LunchBox": 1,
+   "ArcGIS": 1,
+   "Urbano": 1,
+   "depthmapX": 1,
+   "Pathfinder": 1,
+   "Kangaroo": 1
+  }
+ },
+ "rejected": []
+}

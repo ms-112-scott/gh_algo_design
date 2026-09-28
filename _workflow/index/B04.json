@@ -1,0 +1,408 @@
+{
+ "id": "B04",
+ "name_zh": "葉序",
+ "name_en": "Phyllotaxis",
+ "family": "B",
+ "one_liner": "把第 n 個點轉 n × 137.5°、推到 √n 的距離，就長出向日葵般均勻又不重複的螺旋點陣。",
+ "how_it_works": [
+  "給每個點一個編號 number = 1…count。",
+  "角度 = number × angle（預設黃金角 137.508°），轉成弧度。",
+  "半徑 = spacing × √number；開根號讓每一圈的面積相同，點的密度因此均勻（Vogel 1979 的 Fermat 螺旋）。",
+  "用極座標 (cos, sin) × 半徑得到 Point3d，並依編號由內到外放大圓的半徑作為視覺輸出。"
+ ],
+ "variations": [
+  {
+   "index": 0,
+   "code": "V01",
+   "title": "發散角掃描與有理角對照",
+   "level": 1,
+   "what_changes": "規則（發散角）",
+   "how": "把 angle 接到 0–360 的滑桿或 Gene Pool，並另外輸入 360 × p/q（如 360×3/8）的有理角做比較。",
+   "result": "黃金角得到最均勻的點陣；有理角得到 q 條直線輻條；略偏黃金角則出現旋轉的螺旋臂。"
+  },
+  {
+   "index": 1,
+   "code": "V02",
+   "title": "改變半徑函數（Fermat → 阿基米德／指數）",
+   "level": 1,
+   "what_changes": "規則（半徑公式）",
+   "how": "PointAt 中的 spacing × Math.Sqrt(number) 改為 spacing × number 或 spacing × Math.Pow(number, k)，把 k 做成輸入。",
+   "result": "k = 0.5 為均勻圓盤；k = 1 外圈稀疏、中心密集；k < 0.5 則外圈擠壓，可做密度漸層圖樣。"
+  },
+  {
+   "index": 2,
+   "code": "V03",
+   "title": "圓柱葉序（鳳梨／棕櫚幹）",
+   "level": 2,
+   "what_changes": "維度（2D → 3D 圓柱）",
+   "how": "半徑固定為 R，改用 z = number × pitch 往上長：new Point3d(R·cos(turn), R·sin(turn), number·pitch)。",
+   "result": "沿柱身盤旋的點陣，可直接作為塔樓立面開口、柱體鑲板或 3D 列印燈罩的孔位。"
+  },
+  {
+   "index": 3,
+   "code": "V04",
+   "title": "Fibonacci Sphere 球面均佈",
+   "level": 2,
+   "what_changes": "維度（平面 → 球面）",
+   "how": "緯度改用 z = 1 − 2(number − 0.5)/count、r = √(1 − z²)，經度仍用 number × 黃金角；乘上球半徑。",
+   "result": "在球面上近乎等距的點，可用來做圓頂分割、球形燈具孔位或日照取樣點。"
+  },
+  {
+   "index": 4,
+   "code": "V05",
+   "title": "貼到任意曲面（UV 映射）",
+   "level": 3,
+   "what_changes": "輸出（映射到 Surface／Brep）",
+   "how": "把點的 (x, y) 正規化到 0–1 當作 UV，呼叫 surface.PointAt(u, v) 與 surface.NormalAt 取得曲面上的位置與法向。",
+   "result": "葉序點陣包覆在自由曲面屋頂或立面上，法向可用來長出鱗片或遮陽鰭片。"
+  },
+  {
+   "index": 5,
+   "code": "V06",
+   "title": "吸引子控制元件大小",
+   "level": 2,
+   "what_changes": "輸入（吸引子點／曲線）",
+   "how": "新增 attractor 輸入，每個點的圓半徑改為依 point.DistanceTo(attractor) 重新映射（Remap）到 min–max。",
+   "result": "開孔或鱗片在吸引子附近變大或變小，形成有焦點的穿孔立面。"
+  },
+  {
+   "index": 6,
+   "code": "V07",
+   "title": "影像灰階控制密度／大小",
+   "level": 3,
+   "what_changes": "輸入（影像）",
+   "how": "讀入 Bitmap，把每個點的 (x, y) 對應到像素，用 GetPixel 的亮度決定圓的半徑或是否保留該點。",
+   "result": "由葉序點陣構成的半色調（halftone）圖像，可做穿孔金屬板上的圖案。"
+  },
+  {
+   "index": 7,
+   "code": "V08",
+   "title": "曲線邊界裁切與填滿",
+   "level": 2,
+   "what_changes": "加約束（邊界）",
+   "how": "新增 Curve boundary 輸入，用 boundary.Contains(point) 只保留在封閉曲線內的點，count 加大到覆蓋整個邊界。",
+   "result": "在任意平面形狀（基地、樓板、面板外框）內均勻散佈的點，不會出現規則網格的方向感。"
+  },
+  {
+   "index": 8,
+   "code": "V09",
+   "title": "Voronoi／Delaunay 化為鑲板",
+   "level": 2,
+   "what_changes": "混合其他家族（幾何分割）",
+   "how": "把 points 輸出接到 Grasshopper 的 Voronoi 或 Delaunay 元件，或在 C# 中呼叫 Rhino.Geometry 的網格工具。",
+   "result": "向日葵式的蜂巢鑲板，每片面積接近，可直接拆成雷射切割片或屋頂格柵。"
+  },
+  {
+   "index": 9,
+   "code": "V10",
+   "title": "螺旋連線（parastichy）結構",
+   "level": 3,
+   "what_changes": "輸出（點 → 線／圖）",
+   "how": "每個點 i 連到 i + F（F 為 Fibonacci 數，如 21、34），分別畫出順時針與逆時針兩組 Polyline。",
+   "result": "兩組交錯螺旋線形成的放射 diagrid，可作為屋頂梁系統（類似 Eden Project The Core 的做法）。"
+  },
+  {
+   "index": 10,
+   "code": "V11",
+   "title": "Blooms 式的 3D 花苞與動畫",
+   "level": 3,
+   "what_changes": "維度＋動畫",
+   "how": "在球面葉序上，每個點依編號伸出長度遞增的錐體或花瓣；加入 time 輸入，讓整體每幀旋轉 137.5° 並逐步放大。",
+   "result": "類似 John Edmark 的 Blooms 雕塑，可輸出 3D 列印模型或 Grasshopper 動畫。"
+  },
+  {
+   "index": 11,
+   "code": "V12",
+   "title": "輸出成可製造的開孔板／鱗片",
+   "level": 2,
+   "what_changes": "輸出（可製造幾何）",
+   "how": "把 circles 轉成 Curve 後以 Boundary Surfaces 與板材做布林差集，或在每點放置沿法向傾斜的矩形板片。",
+   "result": "可送雷射切割或 CNC 的穿孔面板、可組裝的鱗片外皮。"
+  }
+ ],
+ "project_seeds": [
+  "葉序穿孔金屬立面",
+  "向日葵式太陽能板／集熱場配置",
+  "Fibonacci 圓頂分割與構件化",
+  "葉序塔樓：旋轉樓板與陽台",
+  "頻閃動畫雕塑（Blooms 再詮釋）",
+  "曲面葉序＋鱗片自由曲面屋頂"
+ ],
+ "cases": [
+  {
+   "id": "B04-01",
+   "cc": false,
+   "title": "Blooms 頻閃動畫雕塑",
+   "creator": "John Edmark",
+   "year": "",
+   "url": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "3D 列印"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-02",
+   "cc": false,
+   "title": "Eden Project：The Core 教育中心屋頂",
+   "creator": "Grimshaw（Jolyon Brewis）、Peter Randall-Page、SKM Anthony Hunts（Mike Purvis）",
+   "year": "2005",
+   "url": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-03",
+   "cc": false,
+   "title": "向日葵式聚光太陽能鏡場配置（PS10 改良）",
+   "creator": "MIT（Mitsos 研究室）與 RWTH Aachen",
+   "year": "2012",
+   "url": "https://news.mit.edu/2012/sunflower-concentrated-solar-0111",
+   "category": "performance",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-04",
+   "cc": false,
+   "title": "Phyllotaxis Tower 葉序塔樓",
+   "creator": "Ernesto Bueno Wills",
+   "year": "2009",
+   "url": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tools": [
+    "Grasshopper",
+    "RhinoScript",
+    "Rhino"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-05",
+   "cc": false,
+   "title": "Phyllo Pavilion",
+   "creator": "Maryam Deshmukh、Sidhant Choudhary（IAAC）",
+   "year": "2022",
+   "url": "https://www.iaacblog.com/programs/phyllo-pavilion/",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-06",
+   "cc": false,
+   "title": "Phyllotaxis：Estufa Fria 溫室花園裝置",
+   "creator": "Melanie Waidler",
+   "year": "2019",
+   "url": "https://archive.dpa-etsam.com/projects/phyllotaxis",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-07",
+   "cc": false,
+   "title": "Fibonacci Lattice：球面點均佈",
+   "creator": "Extreme Learning",
+   "year": "",
+   "url": "https://extremelearning.com.au/evenly-distributing-points-on-a-sphere/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-08",
+   "cc": false,
+   "title": "Coding Challenge：Phyllotaxis",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://editor.p5js.org/codingtrain/sketches/CehY0jsLV",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-09",
+   "cc": false,
+   "title": "Coding Challenge 181：Voronoi Phyllotaxis",
+   "creator": "The Coding Train",
+   "year": "",
+   "url": "https://editor.p5js.org/codingtrain/sketches/ydiZeUK8R",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-10",
+   "cc": false,
+   "title": "以葉序排列立面面板（Dynamo 論壇討論）",
+   "creator": "Dynamo BIM 社群",
+   "year": "",
+   "url": "https://forum.dynamobim.com/t/phyllotaxis-for-facade-panel-pattern/32489",
+   "category": "fabrication",
+   "scale": "立面／表皮",
+   "tools": [
+    "Dynamo",
+    "Revit"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-11",
+   "cc": false,
+   "title": "以葉序排列的高爾夫球凹洞（Phyllotaxis-based dimple patterns 專利）",
+   "creator": "美國專利 US 6,682,441",
+   "year": "",
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6682441",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-12",
+   "cc": false,
+   "title": "開孔非均勻分佈的研磨片（Abrasive article 專利）",
+   "creator": "美國專利 US 9,656,366",
+   "year": "",
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9656366",
+   "category": "fabrication",
+   "scale": "構件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-13",
+   "cc": false,
+   "title": "Flourish (Bloom) 互動展品",
+   "creator": "Exploratorium（John Edmark 作品）",
+   "year": "",
+   "url": "https://www.exploratorium.edu/exhibits/flourish-bloom",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [],
+   "has_image": false
+  },
+  {
+   "id": "B04-14",
+   "cc": false,
+   "title": "Fibonacci Sphere 與 Sunflower Spiral 參數化教學",
+   "creator": "designcoding",
+   "year": "",
+   "url": "https://www.designcoding.net/fibonacci-sphere/",
+   "category": "modeling",
+   "scale": "構件",
+   "tools": [
+    "Grasshopper"
+   ],
+   "has_image": false
+  },
+  {
+   "id": "B04-51",
+   "cc": true,
+   "title": "Coding Challenge #30：Phyllotaxis（葉序）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B04-52",
+   "cc": true,
+   "title": "ofxPhyllotaxis",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "url": "https://github.com/edap/ofxPhyllotaxis",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B04-53",
+   "cc": true,
+   "title": "TD Essentials：Create a Swept Phyllotaxis Operator in Houdini",
+   "creator": "Manuel（Entagma）",
+   "year": "2021",
+   "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Houdini"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B04-54",
+   "cc": true,
+   "title": "ECS-Phyllotaxis（Unity ECS 葉序方塊）",
+   "creator": "avvie",
+   "year": "2018",
+   "url": "https://github.com/avvie/ECS-Phyllotaxis",
+   "category": "performance",
+   "scale": "物件",
+   "tools": [
+    "Unity"
+   ],
+   "has_image": true
+  }
+ ],
+ "distribution": {
+  "category": {
+   "modeling": 4,
+   "3d-architecture": 3,
+   "fabrication": 3,
+   "art-installation": 2,
+   "performance": 2,
+   "2d-pattern": 2,
+   "urban-landscape": 1,
+   "drawing": 1
+  },
+  "scale": {
+   "物件": 10,
+   "構件": 3,
+   "建築": 2,
+   "地景": 2,
+   "立面／表皮": 1
+  },
+  "tools": {
+   "Grasshopper": 3,
+   "p5.js": 3,
+   "3D 列印": 1,
+   "RhinoScript": 1,
+   "Rhino": 1,
+   "Processing": 1,
+   "Dynamo": 1,
+   "Revit": 1,
+   "openFrameworks": 1,
+   "Houdini": 1,
+   "Unity": 1
+  }
+ },
+ "rejected": []
+}
