@@ -32,6 +32,20 @@
         "遇到 [ 把目前畫筆壓進 Stack 並把步長乘上 branchScale；遇到 ] 從 Stack 取回，回到分岔點繼續畫。",
         "輸出所有線段與（截斷後的）最終字串。"
       ],
+      "pseudo_code": [
+        "輸入 startString, rules, generations, stepLength, turnAngle, branchScale",
+        "table ← 把 rules 拆成「字元 → 字串」對照表",
+        "s ← startString",
+        "重複 generations 次：",
+        "  s ← s 的每個字元 c 同時換成 table[c]  // 沒有規則的字元原樣保留",
+        "pen ← 原點、朝上；len ← stepLength；stack ← 空",
+        "對 s 的每個字元 c：",
+        "  F → 前進 len 並畫線；f → 前進但不畫",
+        "  + / - → 轉 ±turnAngle  // & ^ \\ / 繞另外兩個軸",
+        "  [ → stack.push(pen, len)；len ← len × branchScale",
+        "  ] → (pen, len) ← stack.pop()  // 回到分岔點",
+        "輸出 所有線段"
+      ],
       "key_params": [
         {
           "name": "startString",

@@ -33,7 +33,7 @@ const tCat = c => `<span class="tg tg-cat" title="應用類型">${ico("c-"+c)}<s
 const tAttr = (icon, text, title = "屬性") => `<span class="tg tg-attr" title="${title}">${ico(icon)}<span class="nm">${esc(text)}</span></span>`;
 const tKw = t => `<span class="tg tg-kw">${esc(t)}</span>`;
 const chain = (...parts) => `<span class="chain">${parts.join('<span class="chev" aria-hidden="true">›</span>')}</span>`;
-const TYPE = {algo:["t-algo","i-algo","演算法"], var:["t-var","i-var","變形"], case:["t-case","i-case","案例"], seed:["t-seed","i-seed","專案種子"]};
+const TYPE = {algo:["t-algo","i-algo","演算法"], var:["t-var","i-var","變形"], case:["t-case","i-case","案例"], seed:["t-seed","i-seed","專案發想"]};
 const badge = (type, inline) => { const [c,i,t] = TYPE[type]; return `<span class="badge ${c}${inline ? " inline" : ""}">${ico(i)}${t}</span>`; };
 const ccBadge = `<span class="cc-tag">${ico("i-code")}creative coding</span>`;
 
@@ -151,35 +151,70 @@ function allPins(){
 /* ================================================================
    4. 篩選
    ================================================================ */
-const state = {type:"all", fam:new Set(), algo:new Set(), diff:new Set(), cat:null, src:"all", q:""};
-// 三層：① 卡片／來源／應用類型　② 家族　③ 演算法（只列選取家族底下的）
+const state = {type:"all", fam:new Set(), algo:new Set(), diff:new Set(), cat:null, src:"all", q:"", open:new Set()};
+// 三層：① 卡片／來源／難度　② 應用類型　③ 家族＋演算法（家族可左右展開／合併，展開後演算法接在家族後面）
 function renderChips(){
   const g = (label, inner) => `<div class="fgroup" role="group" aria-label="${label}"><span class="glabel">${label}</span>${inner}</div>`;
-  const line = (label, ...groups) => `<div class="chipline" role="group" aria-label="${label}">${groups.join('<span class="sep"></span>')}</div>`;
-  const algos = ALGOS.filter(a => !state.fam.size || state.fam.has(a.family));
+  const line = (key, label, ...groups) => `<div class="clwrap" data-k="${key}">
+    <button class="clarr l" data-scroll="-1" tabindex="-1" aria-hidden="true">${ico("i-chev-l")}</button>
+    <div class="chipline" role="group" aria-label="${label}">${groups.join('<span class="sep"></span>')}</div>
+    <button class="clarr r" data-scroll="1" tabindex="-1" aria-hidden="true">${ico("i-chev-r")}</button></div>`;
+  const all = (attr, on) => `<button class="fchip" data-${attr}="" aria-pressed="${on}"><span class="tg tg-attr">全部</span></button>`;
+  const famGroup = f => {
+    const list = ALGOS.filter(a => a.family === f), open = state.open.has(f);
+    const nSel = list.filter(a => state.algo.has(a.id)).length;
+    return `<div class="famgroup${open ? " open" : ""}${state.just === f ? " just" : ""}" data-f="${f}">
+      <button class="fchip" data-fam="${f}" aria-pressed="${state.fam.has(f)}">${tFam(f)}</button>
+      <button class="fexp" data-open="${f}" aria-expanded="${open}" title="${open ? "合併" : "展開"} ${f} 家族的 ${list.length} 個演算法"><span>${open ? "" : list.length}</span>${ico(open ? "i-chev-l" : "i-chev-r")}</button>
+      ${open ? `<span class="falgos">${list.map(a => `<button class="fchip" data-algo="${a.id}" aria-pressed="${state.algo.has(a.id)}">${tAlgo(a.id)}</button>`).join("")}</span>`
+             : (nSel ? `<span class="fcount" title="已選 ${nSel} 個演算法">${nSel}</span>` : "")}</div>`;
+  };
+  // 重新產生前記住每一列的捲動位置，避免點選後跳回最左邊
+  const keep = {};
+  document.querySelectorAll("#chips .clwrap").forEach(w => keep[w.dataset.k] = w.querySelector(".chipline").scrollLeft);
   document.getElementById("chips").innerHTML =
-    line("卡片、來源與應用類型",
-      g("卡片", `<button class="fchip" data-type="all" aria-pressed="${state.type==="all"}"><span class="tg tg-attr">全部</span></button>` +
+    line("r1", "卡片、來源與難度",
+      g("卡片", all("type", state.type === "all") +
         ["algo","var","case","seed"].map(k => `<button class="fchip" data-type="${k}" aria-pressed="${state.type===k}">${badge(k, true)}</button>`).join("")),
       g("來源", [["all","全部"],["arch","建築與研究"],["cc","Creative Coding"]].map(([k,t]) => `<button class="fchip" data-src="${k}" aria-pressed="${state.src===k}"><span class="tg tg-attr">${k === "cc" ? ico("i-code") : ""}${t}</span></button>`).join("")),
-      g("應用類型", Object.keys(CAT.categories).map(c => `<button class="fchip" data-cat="${c}" aria-pressed="${state.cat===c}">${tCat(c)}</button>`).join(""))) +
-    line("家族與難度", g("家族", `<button class="fchip" data-fam="" aria-pressed="${!state.fam.size}"><span class="tg tg-attr">全部</span></button>` + Object.keys(CAT.families).map(k => `<button class="fchip" data-fam="${k}" aria-pressed="${state.fam.has(k)}">${tFam(k)}</button>`).join("")),
-      g("難度", `<button class="fchip" data-diff="" aria-pressed="${!state.diff.size}"><span class="tg tg-attr">全部</span></button>` + [1,2,3,4,5].map(d => `<button class="fchip" data-diff="${d}" aria-pressed="${state.diff.has(d)}"><span class="tg tg-attr tg-diff">${dots(d)}${CAT.difficulty[d]}</span></button>`).join(""))) +
-    line("演算法", g("演算法", `<button class="fchip" data-algo="" aria-pressed="${!state.algo.size}"><span class="tg tg-attr">全部</span></button>` + algos.map(a => `<button class="fchip" data-algo="${a.id}" aria-pressed="${state.algo.has(a.id)}">${tAlgo(a.id)}</button>`).join("")));
-  const on = (sel, fn) => document.querySelectorAll(`#chips ${sel}`).forEach(b => b.onclick = () => { fn(b); renderChips(); renderFeed(); });
+      g("難度", all("diff", !state.diff.size) + [1,2,3,4,5].map(d => `<button class="fchip" data-diff="${d}" aria-pressed="${state.diff.has(d)}"><span class="tg tg-attr tg-diff">${dots(d)}${CAT.difficulty[d]}</span></button>`).join(""))) +
+    line("r2", "應用類型", g("應用類型", Object.keys(CAT.categories).map(c => `<button class="fchip" data-cat="${c}" aria-pressed="${state.cat===c}">${tCat(c)}</button>`).join(""))) +
+    line("r3", "家族與演算法", g("家族・演算法", all("fam", !state.fam.size && !state.algo.size) + Object.keys(CAT.families).map(famGroup).join("")));
+  document.querySelectorAll("#chips .clwrap").forEach(w => { const cl = w.querySelector(".chipline"); if(keep[w.dataset.k]) cl.scrollLeft = keep[w.dataset.k]; cl.onscroll = () => chipHints(w); chipHints(w); });
+  const on = (sel, fn, feed = true) => document.querySelectorAll(`#chips ${sel}`).forEach(b => b.onclick = () => { fn(b); renderChips(); if(feed) renderFeed(); });
   on("[data-type]", b => { state.type = b.dataset.type; bump("type", state.type); if(state.type !== "case"){ state.cat = null; state.src = "all"; } });
   on("[data-src]", b => { state.src = b.dataset.src; bump("src", state.src === "all" ? "" : state.src); if(state.src !== "all") state.type = "case"; });
-  on("[data-fam]", b => { const f = b.dataset.fam; if(!f){ state.fam.clear(); state.algo.clear(); return; } state.fam.has(f) ? state.fam.delete(f) : (state.fam.add(f), bump("fam", f)); [...state.algo].forEach(id => { if(state.fam.size && !state.fam.has(id[0])) state.algo.delete(id); }); });
+  on("[data-fam]", b => { const f = b.dataset.fam; if(!f){ state.fam.clear(); state.algo.clear(); return; }
+    if(state.fam.has(f)){ state.fam.delete(f); state.open.delete(f); [...state.algo].forEach(id => { if(ALG[id]?.family === f) state.algo.delete(id); }); }
+    else { state.fam.add(f); state.open.add(f); state.just = f; bump("fam", f); } });
+  on("[data-open]", b => { const f = b.dataset.open; state.open.has(f) ? state.open.delete(f) : (state.open.add(f), state.just = f); }, false);
   on("[data-diff]", b => { const d = +b.dataset.diff; if(!d){ state.diff.clear(); return; } state.diff.has(d) ? state.diff.delete(d) : (state.diff.add(d), bump("diff", String(d))); });
-  on("[data-algo]", b => { const id = b.dataset.algo; if(!id){ state.algo.clear(); return; } state.algo.has(id) ? state.algo.delete(id) : (state.algo.add(id), bump("algo", id)); });
+  on("[data-algo]", b => { const id = b.dataset.algo; state.algo.has(id) ? state.algo.delete(id) : (state.algo.add(id), bump("algo", id)); });
   on("[data-cat]", b => { state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat; if(state.cat) bump("cat", state.cat); state.type = state.cat ? "case" : "all"; });
+  document.querySelectorAll("#chips [data-scroll]").forEach(b => b.onclick = () => { const cl = b.parentElement.querySelector(".chipline"); cl.scrollBy({left: +b.dataset.scroll * cl.clientWidth * .7, behavior: "smooth"}); });
+  // 剛展開的家族：讓它的演算法捲進可見範圍
+  const opened = document.querySelector("#chips .famgroup.open.just");
+  if(opened) opened.scrollIntoView({block: "nearest", inline: "nearest", behavior: "smooth"});
+  state.just = null;
+}
+// 捲動提示：左右還有內容時顯示漸層與箭頭
+function chipHints(w){
+  const cl = w.querySelector(".chipline");
+  w.classList.toggle("can-l", cl.scrollLeft > 2);
+  w.classList.toggle("can-r", cl.scrollLeft + cl.clientWidth < cl.scrollWidth - 2);
+}
+addEventListener("resize", () => document.querySelectorAll("#chips .clwrap").forEach(chipHints));
+// 家族與演算法合併篩選：某家族有勾選個別演算法 → 只看那些演算法；只勾家族 → 整個家族；不同家族之間是「或」
+function allowedAlgos(){
+  if(!state.fam.size && !state.algo.size) return null;
+  const picked = new Set([...state.algo].map(id => ALG[id]?.family));
+  return new Set(ALGOS.filter(a => picked.has(a.family) ? state.algo.has(a.id) : state.fam.has(a.family)).map(a => a.id));
 }
 function filtered(){
-  const q = state.q;
+  const q = state.q, allow = allowedAlgos();
   return allPins().filter(p =>
     (state.type === "all" || p.type === state.type) &&
-    (!state.fam.size || state.fam.has(p.fam)) &&
-    (!state.algo.size || state.algo.has(p.algo)) &&
+    (!allow || allow.has(p.algo)) &&
     (!state.diff.size || state.diff.has(p.diff)) &&
     (!state.cat || (p.cat || []).includes(state.cat)) &&
     (state.src === "all" || (p.type === "case" && (state.src === "cc" ? p.cc : !p.cc))) &&
@@ -280,6 +315,7 @@ function algoDetail(a){
       </div>
     </div>
   </div>
+  ${pseudoBlock(a)}
   ${rich ? `
   <section class="sec reveal"><h3>${ico("i-ds-symbol")}符號表 <small>字串裡每個字元，畫筆怎麼動</small></h3><div class="glyphs">${glyphs()}</div></section>
   <section class="sec reveal"><h3>${ico("w-state")}參數怎麼影響形 <small>同一條規則，只改一個數字</small></h3><div class="params" id="params"></div></section>` : `
@@ -288,8 +324,24 @@ function algoDetail(a){
     ${a.teaching_note ? `<div class="tipbox">${ico("i-bulb")}<div><b>學習建議</b><p>${esc(a.teaching_note)}</p></div></div>` : ""}</section>
   <section class="sec"><h3>${ico("i-var")}變形 <small>${a.variations.length} 種</small></h3><div class="subfeed" id="subVar"></div></section>
   <section class="sec"><h3>${ico("i-case")}應用案例 <small>${cs.length} 個</small></h3><div class="subfeed" id="subCase"></div></section>
-  <section class="sec"><h3>${ico("i-seed")}延伸專案種子</h3><div class="subfeed" id="subSeed"></div></section>
+  <section class="sec"><h3>${ico("i-seed")}延伸專案發想</h3><div class="subfeed" id="subSeed"></div></section>
   ${(a.references||[]).length ? `<section class="sec"><h3>${ico("i-book")}延伸閱讀</h3><ul class="refs">${a.references.map(r => `<li>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}${r.author ? `<span>${esc(r.author)}</span>` : ""}${r.year ? `<span>${esc(r.year)}</span>` : ""}</li>`).join("")}</ul></section>` : ""}`;
+}
+// 虛擬碼：資料的 pseudo_code（每行一個字串，行首空白＝縮排）；關鍵字加粗、← 用家族色、參數名稱與關鍵參數同色、// 之後是註解
+const PSEUDO_KW = /^(\s*)(輸入|輸出|重複|對|如果|否則|直到|當|回傳|結束)/;
+function pseudoBlock(a){
+  const lines = a.pseudo_code;
+  if(!Array.isArray(lines) || !lines.length) return "";
+  const names = (a.key_params||[]).map(p => p.name).filter(n => /^\w+$/.test(n || "")).sort((x, y) => y.length - x.length);
+  const pv = names.length ? new RegExp(`\\b(${names.join("|")})\\b`, "g") : null;
+  const fmt = line => {
+    const i = line.indexOf("//"), code = i < 0 ? line : line.slice(0, i), cm = i < 0 ? "" : line.slice(i);
+    let h = esc(code);
+    if(pv) h = h.replace(pv, '<span class="pv">$1</span>');
+    h = h.replace(PSEUDO_KW, '$1<span class="kw">$2</span>').replace(/←/g, '<span class="op">←</span>');
+    return h + (cm ? `<span class="cm">${esc(cm)}</span>` : "");
+  };
+  return `<section class="sec reveal"><h3>${ico("i-code")}虛擬碼 <small>程式邏輯骨架；藍字是上方的關鍵參數</small></h3><pre class="pseudo">${lines.map(fmt).join("\n")}</pre></section>`;
 }
 // 一般演算法的圖示流程：依步驟內容挑圖示，只留短標題；完整句子收在下方
 const STEP_ICON = [
@@ -399,7 +451,7 @@ document.getElementById("legend").innerHTML = `
   <div class="lg"><span>${tAlgo("A01")}</span><p><b>② 演算法</b>分段膠囊。前段是編號，對應一支 Grasshopper C# 基礎範例（.cs）。</p></div>
   <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div>
   <div class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</div>
-  <div class="lg"><span>${badge("case", true)}</span><p><b>④ 卡片類型</b>圓章，只出現在圖片左上：演算法（黑）／變形（虛線）／案例（白）／專案種子（黑）。</p></div>
+  <div class="lg"><span>${badge("case", true)}</span><p><b>④ 卡片類型</b>圓章，只出現在圖片左上：演算法（黑）／變形（虛線）／案例（白）／專案發想（黑）。</p></div>
   <div class="lg"><span>${ccBadge}</span><p><b>來源</b>creative coding 案例（p5.js、Processing 等）在圖片右上多一個標記。</p></div>
   <div class="lg"><span>${tCat("3d-architecture")}</span><p><b>⑤ 應用類型</b>灰底膠囊＋圖示。案例用在哪個領域（8 類）。</p></div>
   <div class="lg"><span>${tAttr("i-logic-rewrite","改寫／遞迴")}</span><p><b>⑥ 屬性</b>方角細框。邏輯、資料結構、尺度、工具、改哪裡。</p></div>
@@ -411,7 +463,7 @@ document.addEventListener("click", e => { if(!lg.contains(e.target)){ lg.classLi
 
 function wireInfo(){
   const nV = ALGOS.reduce((s,a) => s + a.variations.length, 0), nS = ALGOS.reduce((s,a) => s + (a.project_seeds||[]).length, 0), nCC = CASES.filter(isCC).length;
-  sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length,"應用案例"],[nCC,"creative coding 案例"],[nV,"變形食譜"],[nS,"專案種子"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
+  sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length,"應用案例"],[nCC,"creative coding 案例"],[nV,"變形食譜"],[nS,"專案發想"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
   sheet.querySelector("#iFams").innerHTML = Object.keys(CAT.families).map(f => `<div class="ifam">${tFam(f)}<div class="list">${ALGOS.filter(a => a.family === f).map(a => `<button class="linkchip" data-open="algo:${a.id}">${tAlgo(a.id)}</button>`).join("")}</div></div>`).join("");
   sheet.querySelectorAll("[data-open]").forEach(b => b.onclick = () => open(b.dataset.open));
   const top = (k, name) => Object.entries(prefs[k]).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([key]) => name(key)).join("");
