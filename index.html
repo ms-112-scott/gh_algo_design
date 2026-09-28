@@ -426,6 +426,21 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
   .feed,.subfeed{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;padding-left:10px;padding-right:10px}
   .pin .cap b{font-size:13px}.sample-flag{display:none}
 }
+/* 卡片切換：桌機左右箭頭鈕、手機提示 */
+.modal{overscroll-behavior:contain}
+.sheet{touch-action:pan-y pinch-zoom}
+.navbtn{position:fixed;top:50%;z-index:41;width:48px;height:48px;margin-top:-24px;border:0;border-radius:50%;background:#fff;display:grid;place-items:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.2);opacity:.9;transition:transform var(--t-fast) var(--ease-spring),opacity var(--t-fast)}
+.navbtn:hover{opacity:1;transform:scale(1.08)}
+.navbtn.prev{left:20px}.navbtn.next{right:20px}
+.navbtn[hidden],.modal:not(.on) .navbtn{display:none}
+.swipe-hint{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));z-index:42;transform:translate(-50%,12px);display:flex;align-items:center;gap:4px;white-space:nowrap;
+  background:rgba(23,23,28,.9);color:#fff;font-size:13px;font-weight:700;border-radius:999px;padding:9px 14px;opacity:0;pointer-events:none;transition:opacity var(--t-med),transform var(--t-med) var(--ease-out)}
+.swipe-hint svg.i{width:16px;height:16px}
+.swipe-hint span{opacity:.5}
+.swipe-hint.on{opacity:1;transform:translate(-50%,0)}
+.modal:not(.on) .swipe-hint{display:none}
+
 /* ============================================================
    手機版精簡（≤600px）
    桌機：以下新增元件隱藏；可收合區塊保持展開、不能收合
@@ -468,6 +483,9 @@ details.ifam{display:block}
   .modal{padding:60px 10px 40px}
   .modal.on::before{content:attr(data-title);height:52px;line-height:52px;padding:0 60px 0 18px;color:#fff;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .close{top:6px;right:8px;width:40px;height:40px}
+  .navbtn{display:none}
+  .modal.on::after{content:attr(data-pos);position:fixed;top:0;right:56px;z-index:2;height:52px;color:rgba(255,255,255,.6);font:500 12px/52px "JetBrains Mono",monospace}
+  .modal.on::before{padding-right:130px}
   /* H1 篩選：底部面板 */
   .feedbar{position:sticky;top:var(--toph,64px);z-index:15;background:rgba(245,242,236,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 12px;gap:8px;min-height:52px}
   #count{flex:none}
@@ -675,6 +693,9 @@ details.ifam{display:block}
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="詳細資訊">
   <button class="close" id="close" aria-label="關閉"><svg class="i"><use href="#i-x"/></svg></button>
+  <button class="navbtn prev" id="navPrev" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+  <button class="navbtn next" id="navNext" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+  <div class="swipe-hint" id="swipeHint" aria-hidden="true"><svg class="i"><use href="#i-chev-l"/></svg>左右滑換一張<span>・</span>在頂端往下拉關閉<svg class="i"><use href="#i-chev-r"/></svg></div>
   <div class="sheet" id="sheet"></div>
 </div>
 
