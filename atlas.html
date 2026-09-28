@@ -178,9 +178,10 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 .fact{min-width:0}
 .fact .tg{white-space:normal;height:auto;min-height:26px;padding-top:4px;padding-bottom:4px;line-height:1.3}
 .sheet{overflow:hidden}
-.closeup .left{background:var(--tile);position:relative;min-height:520px}
+.closeup .left{background:var(--tile);position:relative;min-height:520px;display:flex;flex-direction:column;justify-content:center}
 .closeup .left canvas,.closeup .left img{width:100%;height:auto;display:block}
-.closeup .left .credit{position:absolute;left:14px;bottom:12px;font-size:11px;color:rgba(255,255,255,.7)}
+.closeup .left .credit{padding:12px 16px 14px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.72);background:var(--tile-2)}
+.closeup .left .credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .ctrl{display:flex;flex-direction:column;gap:12px;padding:16px 20px 22px;background:var(--tile-2);color:#fff}
 .ctrl .row{display:flex;align-items:center;gap:12px}
 .ctrl label{display:flex;align-items:center;gap:8px;font-size:13px;width:118px;color:rgba(255,255,255,.8)}
@@ -369,9 +370,9 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 const CAT = window.CATALOG;
 const A = CAT.algorithms.find(a => a.id === "A01");
 const CASES = CAT.cases.filter(c => c.algo === "A01");
-const CASE_DIM = {"A01-01": [720, 450], "A01-04": [500, 375], "A01-06": [720, 311], "A01-12": [480, 720], "A01-11": [720, 493], "A01-10": [446, 650]};  // 圖片原始尺寸，先保留版面空間
-const CASE_IMG = new Set(Object.keys(CASE_DIM));
-const imgWH = id => `width="${CASE_DIM[id][0]}" height="${CASE_DIM[id][1]}"`;
+// 案例圖片由 build.py 寫進 case.image（檔案、原始尺寸、出處、授權）；寬高先寫進標籤，圖片載入前就保留版面空間
+const imgTag = (c, lazy) => `<img src="${esc(c.image.file)}" alt="${esc(c.title)}" width="${c.image.w}" height="${c.image.h}"${lazy ? ' loading="lazy"' : ""}>`;
+const credit = im => [im.note, [im.source, im.author].filter(Boolean).join("／"), im.license].filter(Boolean).map(esc).join("｜");
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ico = (id, cls = "i") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
 const dots = n => `<span class="dots" aria-label="難度 ${n}／5">${[1,2,3,4,5].map(k => `<i class="${k <= n ? "on" : ""}"></i>`).join("")}</span>`;
@@ -573,11 +574,11 @@ function pinVar(v, i){
     <div class="cap"><b>${esc(v.title)}</b><div class="row2">${chain(tFam("A",true), tAlgo("A01",true), tVar(i,"A01"))}${dots(v.level)}</div></div>`};
 }
 function pinCase(c){
-  const img = CASE_IMG.has(c.id);
+  const img = !!c.image;
   return {type:"case", key:c.id, cat:c.category, search:c.title+c.creator+c.summary+(c.tags||[]).join(), html:`
     <div class="media" ${img ? "" : `data-preset="${CASE_PRESET[c.id] || "bush"}"`}>
       ${badge("case")}
-      ${img ? `<img src="img/cases/${c.id}.jpg" alt="${esc(c.title)}" ${imgWH(c.id)} loading="lazy">` : `<canvas></canvas><span class="demo-tag">示意</span>`}
+      ${img ? imgTag(c, true) : `<canvas></canvas><span class="demo-tag">示意</span>`}
       <div class="scrim"></div><span class="open">${ico("i-open")}開啟</span></div>
     <div class="cap"><b>${esc(c.title)}</b><div class="sub">${esc(c.creator.split(/[，,（(]/)[0])}${c.year ? "・"+esc(c.year) : ""}</div>
       <div class="row2">${chain(tFam("A",true), tAlgo("A01",true))}${tCat(c.category)}</div></div>`};
@@ -829,9 +830,9 @@ function varDetail(i){
 }
 /* ---- 案例詳細頁 ---- */
 function caseDetail(c){
-  const img = CASE_IMG.has(c.id);
+  const img = !!c.image;
   return `<div class="closeup">
-    <div class="left">${img ? `<img src="img/cases/${c.id}.jpg" alt="${esc(c.title)}" ${imgWH(c.id)}><span class="credit">圖片來源：${esc(c.creator.split(/[，,（(]/)[0])}（教學引用）</span>`
+    <div class="left">${img ? `${imgTag(c)}<div class="credit">${c.image.page ? `<a href="${esc(c.image.page)}" target="_blank" rel="noopener">${credit(c.image)}</a>` : credit(c.image)}</div>`
       : `<canvas id="big" data-preset="${CASE_PRESET[c.id] || "bush"}"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重播</button><span style="font-size:13px;opacity:.75">示意圖：以 A01 程式重現概念，非原作</span></div></div>`}</div>
     <div class="right">
       <div class="kicker">${badge("case", true)} ${chain(tFam("A",true), tAlgo("A01"))} ${tCat(c.category)}</div>

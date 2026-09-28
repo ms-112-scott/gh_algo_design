@@ -6,6 +6,8 @@ import json
 import pathlib
 import sys
 
+from PIL import Image
+
 ROOT = pathlib.Path(__file__).parent
 DATA = ROOT / "data"
 
@@ -62,6 +64,17 @@ def main():
             c["categories_extra"] = [x for x in c.get("categories_extra", []) if x in CATEGORIES]
             cases.append(c)
 
+    # 案例圖片：img/cases/<案例編號>.jpg ＋ img/credits.json 的出處與授權
+    credits_path = ROOT / "img" / "credits.json"
+    credits = json.loads(credits_path.read_text(encoding="utf-8")) if credits_path.exists() else {}
+    for c in cases:
+        f = ROOT / "img" / "cases" / f"{c.get('id')}.jpg"
+        if f.exists():
+            w, h = Image.open(f).size
+            c["image"] = {"file": f"img/cases/{f.name}", "w": w, "h": h, **credits.get(c["id"], {})}
+            if c["id"] not in credits:
+                warnings.append(f"{c['id']}: 有圖片但 credits.json 沒有出處")
+
     cases.sort(key=lambda c: c.get("id", ""))
     known = set(algos)
     for c in cases:
@@ -100,7 +113,8 @@ def main():
     (ROOT / "演算法總表.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"algorithms={len(algos)} cases={len(cases)} "
-          f"empty_url={sum(1 for c in cases if not c.get('url'))}")
+          f"empty_url={sum(1 for c in cases if not c.get('url'))} "
+          f"images={sum(1 for c in cases if c.get('image'))}")
     for w in warnings:
         print("WARN", w)
     return 0

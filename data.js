@@ -6931,7 +6931,18 @@ window.CATALOG = {
     "遞迴"
    ],
    "tools": [],
-   "url": "https://michael-hansmeyer.com/l-systems"
+   "url": "https://michael-hansmeyer.com/l-systems",
+   "image": {
+    "file": "img/cases/A01-01.jpg",
+    "w": 720,
+    "h": 450,
+    "source": "Michael Hansmeyer 官網",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/l-systems",
+    "note": ""
+   }
   },
   {
    "id": "A01-02",
@@ -6971,7 +6982,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.sciencedirect.com/science/article/pii/S2352710225030542"
+   "url": "https://www.sciencedirect.com/science/article/pii/S2352710225030542",
+   "image": {
+    "file": "img/cases/A01-02.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Wikimedia Commons",
+    "author": "Rp22",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sagrada-familia-arches2.jpg",
+    "note": "相關實例：聖家堂的分枝柱（非論文原圖）"
+   }
   },
   {
    "id": "A01-03",
@@ -7011,7 +7033,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://journals.sagepub.com/doi/10.1177/21582440221119479"
+   "url": "https://journals.sagepub.com/doi/10.1177/21582440221119479",
+   "image": {
+    "file": "img/cases/A01-03.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Wikimedia Commons",
+    "author": "JamesBowes",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:Stuttgart_Airport_Interior_2005-06-02.jpg",
+    "note": "斯圖加特機場航廈的樹狀柱"
+   }
   },
   {
    "id": "A01-04",
@@ -7048,7 +7081,18 @@ window.CATALOG = {
     "Rabbit",
     "C#"
    ],
-   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/"
+   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+   "image": {
+    "file": "img/cases/A01-04.jpg",
+    "w": 500,
+    "h": 375,
+    "source": "Morphocode",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+    "note": ""
+   }
   },
   {
    "id": "A01-05",
@@ -7122,7 +7166,18 @@ window.CATALOG = {
    "tools": [
     "CityEngine"
    ],
-   "url": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/"
+   "url": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/",
+   "image": {
+    "file": "img/cases/A01-06.jpg",
+    "w": 720,
+    "h": 311,
+    "source": "ACM SIGGRAPH History Archive",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/",
+    "note": ""
+   }
   },
   {
    "id": "A01-07",
@@ -7155,7 +7210,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf"
+   "url": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf",
+   "image": {
+    "file": "img/cases/A01-07.jpg",
+    "w": 900,
+    "h": 633,
+    "source": "Deussen et al., SIGGRAPH 1998",
+    "author": "",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf",
+    "note": "論文算圖：程序化生成的植物生態系"
+   }
   },
   {
    "id": "A01-08",
@@ -7188,7 +7254,18 @@ window.CATALOG = {
     "物理模擬"
    ],
    "tools": [],
-   "url": "https://doi.org/10.3390/app12115530"
+   "url": "https://doi.org/10.3390/app12115530",
+   "image": {
+    "file": "img/cases/A01-08.jpg",
+    "w": 900,
+    "h": 726,
+    "source": "Applied Sciences (MDPI)",
+    "author": "",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://doi.org/10.3390/app12115530",
+    "note": "論文圖：不同 L-system 規則生成的輕量結構"
+   }
   },
   {
    "id": "A01-09",
@@ -7220,7 +7297,18 @@ window.CATALOG = {
     "約束滿足"
    ],
    "tools": [],
-   "url": "https://doi.org/10.3390/buildings12122247"
+   "url": "https://doi.org/10.3390/buildings12122247",
+   "image": {
+    "file": "img/cases/A01-09.jpg",
+    "w": 900,
+    "h": 752,
+    "source": "Buildings (MDPI)",
+    "author": "",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://doi.org/10.3390/buildings12122247",
+    "note": "論文圖：分枝節點的列印路徑成果"
+   }
   },
   {
    "id": "A01-10",
@@ -7252,7 +7340,18 @@ window.CATALOG = {
     "分形"
    ],
    "tools": [],
-   "url": "https://paulbourke.net/fractals/lsys/"
+   "url": "https://paulbourke.net/fractals/lsys/",
+   "image": {
+    "file": "img/cases/A01-10.jpg",
+    "w": 446,
+    "h": 650,
+    "source": "Paul Bourke",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/fractals/lsys/",
+    "note": ""
+   }
   },
   {
    "id": "A01-11",
@@ -7286,7 +7385,18 @@ window.CATALOG = {
    "tools": [
     "繪圖機"
    ],
-   "url": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/"
+   "url": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/",
+   "image": {
+    "file": "img/cases/A01-11.jpg",
+    "w": 720,
+    "h": 493,
+    "source": "Pen Plotter Kit",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/",
+    "note": ""
+   }
   },
   {
    "id": "A01-12",
@@ -7323,7 +7433,18 @@ window.CATALOG = {
     "約束滿足"
    ],
    "tools": [],
-   "url": "https://lotta-stoever.net/works/mutiertes-l-system"
+   "url": "https://lotta-stoever.net/works/mutiertes-l-system",
+   "image": {
+    "file": "img/cases/A01-12.jpg",
+    "w": 480,
+    "h": 720,
+    "source": "Lotta Stöver 官網",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://lotta-stoever.net/works/mutiertes-l-system",
+    "note": ""
+   }
   },
   {
    "id": "A01-13",
@@ -7361,7 +7482,18 @@ window.CATALOG = {
     "字串改寫"
    ],
    "tools": [],
-   "url": "https://arxiv.org/pdf/1510.01140"
+   "url": "https://arxiv.org/pdf/1510.01140",
+   "image": {
+    "file": "img/cases/A01-13.jpg",
+    "w": 599,
+    "h": 400,
+    "source": "Wikimedia Commons",
+    "author": "parpining",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Gorga_boraspati_dan_adop-adop.jpg",
+    "note": "巴塔克族傳統住屋的 Gorga 雕刻紋樣"
+   }
   },
   {
    "id": "A01-14",
@@ -7393,7 +7525,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://arxiv.org/pdf/2404.03270"
+   "url": "https://arxiv.org/pdf/2404.03270",
+   "image": {
+    "file": "img/cases/A01-14.jpg",
+    "w": 900,
+    "h": 515,
+    "source": "arXiv:2404.03270",
+    "author": "",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2404.03270",
+    "note": "論文圖：在球面上生長的分枝"
+   }
   },
   {
    "id": "A01-15",
@@ -7428,7 +7571,18 @@ window.CATALOG = {
    "tools": [
     "SpeedTree"
    ],
-   "url": "https://en.wikipedia.org/wiki/SpeedTree"
+   "url": "https://en.wikipedia.org/wiki/SpeedTree",
+   "image": {
+    "file": "img/cases/A01-15.jpg",
+    "w": 900,
+    "h": 450,
+    "source": "SpeedTree 官網",
+    "author": "",
+    "license": "官網圖片，教學引用",
+    "license_url": "",
+    "page": "https://www.speedtree.com/",
+    "note": "SpeedTree 程序化生成的樹"
+   }
   },
   {
    "id": "A02-01",

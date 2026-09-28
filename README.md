@@ -28,7 +28,7 @@
 - `data/*.json`：原始資料，一個檔案對應一組演算法
 - `data.js`：網頁讀取的合併檔，由 `build.py` 產生
 - `演算法總表.md`：全部演算法的標籤與難度一覽，由 `build.py` 產生
-- `img/cases/`：案例圖片，檔名＝案例編號
+- `img/cases/`：案例圖片，檔名＝案例編號；出處與授權記在 `img/credits.json`，`build.py` 會把兩者寫進每個案例的 `image` 欄位
 
 修改 `data/*.json` 之後執行：
 
@@ -42,11 +42,14 @@ python build.py
 |---|---|
 | `python build.py` | 合併資料、產生 `data.js` 與總表 |
 | `python tools/sanitize.py --check` | 檢查資料裡是否殘留特定課程週次或課堂流程的字句 |
+| `python tools/commons.py search "關鍵字"` | 在 Wikimedia Commons 搜尋可自由使用的實景照片 |
+| `python tools/commons.py get <案例編號> "File:..."` | 下載 Commons 圖片並自動登記作者與授權 |
+| `python tools/addimg.py <案例編號> <圖檔> <來源> <授權> <網址>` | 登記論文圖或官網圖片 |
 | `python tools/clipcheck.py` | 用 Playwright 逐頁打開圖鑑的所有詳細頁，檢查元素是否被裁切（需安裝 Chrome） |
 
 ## 來源與授權說明
 
 - 案例資料盡量附原始出處；少數出處尚待查證，頁面會標示「出處待查證」。
-- 案例圖片著作權屬原作者，本站僅作非商業教學引用並標示來源；如有疑慮請開 issue，會立即移除。
+- 案例圖片優先使用 Wikimedia Commons 的自由授權照片與 CC BY 開放論文圖，每張圖下方標示作者與授權；其餘官網或論文圖片著作權屬原作者，僅作非商業教學引用，如有疑慮請開 issue，會立即移除。
 - 標示「示意」的圖是本站程式依演算法概念重畫，不是原作品。
 - 國立陽明交通大學標誌取自 [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:NYCU_(%E5%9C%8B%E7%AB%8B%E9%99%BD%E6%98%8E%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%B8)_Blue_Logo.png)，僅用於標示課程所屬單位。

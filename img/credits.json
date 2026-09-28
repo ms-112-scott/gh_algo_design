@@ -1,0 +1,114 @@
+{
+  "A01-01": {
+    "source": "Michael Hansmeyer 官網",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/l-systems",
+    "note": ""
+  },
+  "A01-02": {
+    "source": "Wikimedia Commons",
+    "author": "Rp22",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sagrada-familia-arches2.jpg",
+    "note": "相關實例：聖家堂的分枝柱（非論文原圖）"
+  },
+  "A01-03": {
+    "source": "Wikimedia Commons",
+    "author": "JamesBowes",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:Stuttgart_Airport_Interior_2005-06-02.jpg",
+    "note": "斯圖加特機場航廈的樹狀柱"
+  },
+  "A01-04": {
+    "source": "Morphocode",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+    "note": ""
+  },
+  "A01-06": {
+    "source": "ACM SIGGRAPH History Archive",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/",
+    "note": ""
+  },
+  "A01-07": {
+    "source": "Deussen et al., SIGGRAPH 1998",
+    "author": "",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf",
+    "note": "論文算圖：程序化生成的植物生態系"
+  },
+  "A01-08": {
+    "source": "Applied Sciences (MDPI)",
+    "author": "",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://doi.org/10.3390/app12115530",
+    "note": "論文圖：不同 L-system 規則生成的輕量結構"
+  },
+  "A01-09": {
+    "source": "Buildings (MDPI)",
+    "author": "",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://doi.org/10.3390/buildings12122247",
+    "note": "論文圖：分枝節點的列印路徑成果"
+  },
+  "A01-10": {
+    "source": "Paul Bourke",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/fractals/lsys/",
+    "note": ""
+  },
+  "A01-11": {
+    "source": "Pen Plotter Kit",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/",
+    "note": ""
+  },
+  "A01-12": {
+    "source": "Lotta Stöver 官網",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://lotta-stoever.net/works/mutiertes-l-system",
+    "note": ""
+  },
+  "A01-13": {
+    "source": "Wikimedia Commons",
+    "author": "parpining",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Gorga_boraspati_dan_adop-adop.jpg",
+    "note": "巴塔克族傳統住屋的 Gorga 雕刻紋樣"
+  },
+  "A01-14": {
+    "source": "arXiv:2404.03270",
+    "author": "",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2404.03270",
+    "note": "論文圖：在球面上生長的分枝"
+  },
+  "A01-15": {
+    "source": "SpeedTree 官網",
+    "author": "",
+    "license": "官網圖片，教學引用",
+    "license_url": "",
+    "page": "https://www.speedtree.com/",
+    "note": "SpeedTree 程序化生成的樹"
+  }
+}
