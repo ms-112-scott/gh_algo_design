@@ -1,6 +1,6 @@
 """用遠端分支 wf-lock 當作排程工作流程的鎖，避免兩次執行重疊。
 
-python tools/wf_lock.py acquire RUN   取得鎖（成功 exit 0；被占用 exit 1 並印出持有者）
+python tools/wf_lock.py acquire RUN [--wait 分鐘]   取得鎖（成功 exit 0；被占用 exit 1 並印出持有者）
 python tools/wf_lock.py release       釋放鎖（刪除遠端分支）
 python tools/wf_lock.py status        顯示目前狀態
 鎖超過 config 的 lock_stale_minutes（預設 170 分鐘）視為前次執行當掉，可以接手。
@@ -10,6 +10,7 @@ import datetime as dt
 import json
 import subprocess
 import sys
+import time
 
 from wf_common import ROOT, config, now_tpe
 
@@ -19,7 +20,11 @@ REF = f"refs/heads/{BR}"
 
 
 def git(*args, inp=None, check=True):
-    r = subprocess.run(["git", *args], cwd=ROOT, input=inp, capture_output=True, text=True, encoding="utf-8")
+    # 一律用 bytes 傳給 git：Windows 的文字模式會把 \n 換成 \r\n，mktree 的檔名就會多出 \r
+    data = inp.encode("utf-8") if isinstance(inp, str) else inp
+    r = subprocess.run(["git", *args], cwd=ROOT, input=data, capture_output=True)
+    r.stdout = r.stdout.decode("utf-8", "replace")
+    r.stderr = r.stderr.decode("utf-8", "replace")
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} 失敗：{r.stderr.strip()}")
     return r
@@ -30,8 +35,17 @@ def remote_lock():
     if not r.stdout.strip():
         return None
     git("fetch", "--depth=1", "origin", f"+{REF}:refs/remotes/origin/{BR}")
-    body = git("show", f"refs/remotes/origin/{BR}:lock.json").stdout
-    return json.loads(body)
+    # 找名稱以 lock.json 開頭的檔案（相容舊版在 Windows 產生的「lock.json\r」）
+    for entry in git("ls-tree", "-z", f"refs/remotes/origin/{BR}").stdout.split("\0"):
+        if not entry:
+            continue
+        meta, name = entry.split("\t", 1)
+        if name.strip().startswith("lock.json"):
+            return json.loads(git("cat-file", "blob", meta.split()[2]).stdout)
+    # 讀不到內容：用 commit 時間與訊息推回持有者
+    t = git("log", "-1", "--format=%cI%n%s", f"refs/remotes/origin/{BR}").stdout.split("\n")
+    utc = dt.datetime.fromisoformat(t[0]).astimezone(dt.timezone.utc).isoformat(timespec="seconds")
+    return {"run": t[1].replace("wf lock ", ""), "taipei": t[0], "utc": utc}
 
 
 def age_minutes(info):
@@ -56,7 +70,14 @@ def main():
         print("未上鎖" if not info else f"上鎖中：{info['run']}（{info['taipei']}，{age_minutes(info):.0f} 分鐘前）")
     elif cmd == "acquire":
         run = sys.argv[2]
-        info = remote_lock()
+        # --wait N：鎖被占用時每 60 秒重試，最多等 N 分鐘（單次指令請 ≤ 9，避免超過工具逾時；需要更久就重複呼叫）
+        wait = float(sys.argv[sys.argv.index("--wait") + 1]) if "--wait" in sys.argv else 0
+        deadline = time.time() + wait * 60
+        while True:
+            info = remote_lock()
+            if not info or age_minutes(info) >= CFG.get("lock_stale_minutes", 170) or time.time() >= deadline:
+                break
+            time.sleep(60)
         if info:
             age = age_minutes(info)
             if age < CFG.get("lock_stale_minutes", 170):

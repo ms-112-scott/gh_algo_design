@@ -13,7 +13,8 @@ Claude app 的雲端排程工作階段可能**沒有** Workflow 工具；這時�
 3. `pip install --break-system-packages opencc-python-reimplemented playwright pillow`（已安裝就略過）。
 
 ## gh-enrich（既有演算法補充）
-1. **準備**：照 `gh-enrich.js` 準備 agent 的 1–6 步自己執行（git 同步、`python tools/wf_lock.py acquire RUN`、clipcheck 基準、`python tools/wf_plan.py --select RUN --stage1 15 --stage3 8`）。鎖被占用或 ALL_DONE 就依 JS 的處理結束。
+1. **準備**：照 `gh-enrich.js` 準備 agent 的 1–6 步自己執行（git 同步、`python tools/wf_lock.py acquire RUN --wait 9`（仍 LOCKED 就重複，最多 5 次，約 45 分鐘）、clipcheck 基準、`python tools/wf_plan.py --select RUN --stage1 15 --stage3 8`）。仍被占用或 ALL_DONE 就依 JS 的處理結束。
+   `wf_plan.py` 會自動納入 gh-new-algos 新增的演算法與新家族（資料檔 `data/ag_<編號>.json` 或 A–F 以外的家族），並在 P0 之後優先處理（`config.json` 的 `priority_new_algos`）。
 2. **內容產出**：plan 的 stage1 每個單元一個 Agent（`contentPrompt` 範本），一次並行送出（最多 15 個）。
 3. **去重審查**：自己跑 `python tools/wf_dedup.py RUN`；把 `need_review` 檔案分成最多 3 批，每批一個審查 Agent（JS 的審查範本）。
 4. **合併**：自己照 JS 合併 agent 的 1–6 步執行（`wf_merge.py`、`build.py`、`sanitize.py --check`、`zhcheck.py --all`、commit、推送、`wf_plan.py --art RUN --stage3 8`）。

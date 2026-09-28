@@ -16,6 +16,7 @@ from wf_common import (ROOT, WF, config, load_data, load_json, save_json, case_n
                        families, now_tpe)
 
 TYPE_ORDER = {"VAR": 0, "RES": 1, "CC": 2, "FIX": 3}
+ORIGINAL_FAMILIES = set("ABCDEF")   # 圖鑑最初的六大家族；其他字母視為 gh-new-algos 新增的家族
 
 ART_JS = r"""
 () => {
@@ -69,8 +70,10 @@ def analyse(with_art=True):
         res = [c for c in cs if not is_cc(c)]
         cc = [c for c in cs if is_cc(c)]
         ac = art.get(aid, {})
+        # 由 gh-new-algos 新增的演算法（資料檔 ag_<編號>.json，或不屬於原本 A–F 的新家族）
+        is_new = where.get("algo:" + aid, "").startswith("ag_") or a["family"] not in ORIGINAL_FAMILIES
         row = {
-            "family": a["family"], "name": a.get("name_zh", ""),
+            "family": a["family"], "name": a.get("name_zh", ""), "new": is_new,
             "var": len(a.get("variations", [])), "res": len(res), "cc": len(cc),
             "no_url": sum(1 for c in cs if not c.get("url")),
             "img": sum(1 for c in cs if has_image(c["id"])),
@@ -89,7 +92,7 @@ def analyse(with_art=True):
             if U.get(uid, {}).get("exhausted") or have >= target:
                 return
             need = min(cfg["unit_max"][kind], target - have)
-            units.append({"id": uid, "type": kind, "algo": aid, "family": a["family"], "need": need,
+            units.append({"id": uid, "type": kind, "algo": aid, "family": a["family"], "need": need, "new": is_new,
                           "priority": "P0" if p0 else "P1", "have": have, "target": target,
                           "last_status": U.get(uid, {}).get("last_status")})
 
@@ -98,7 +101,7 @@ def analyse(with_art=True):
         add("CC", row["cc"], row["t_cc"], row["cc"] == 0)
         redo_here = [r for r in redo if r.get("algo") == aid]
         if ac and (ac.get("missingVar") or ac.get("missingCase") or not ac.get("hasGen") or redo_here):
-            units.append({"id": f"ART:{aid}", "type": "ART", "algo": aid, "family": a["family"],
+            units.append({"id": f"ART:{aid}", "type": "ART", "algo": aid, "family": a["family"], "new": is_new,
                           "priority": "P0", "no_gen": not ac.get("hasGen"),
                           "missing_var": ac.get("missingVar", []), "missing_case": ac.get("missingCase", []),
                           "redo": redo_here})
@@ -172,13 +175,17 @@ def select(run, cfg, ledger, rows, units, n1, n3):
     failed_first = lambda u: 0 if u.get("last_status") == "failed" else 1
     p0 = sorted([u for u in content if u["priority"] == "P0"],
                 key=lambda u: (failed_first(u), u.get("family", ""), u.get("algo", ""), TYPE_ORDER[u["type"]], u["id"]))
+    # P1：新演算法優先（config 的 priority_new_algos），其次完成度最低的家族
+    boost = cfg.get("priority_new_algos", True)
+    new_first = lambda u: 0 if (boost and u.get("new")) else 1
     p1 = sorted([u for u in content if u["priority"] == "P1"],
-                key=lambda u: (failed_first(u), comp.get(u["family"], 1), u["family"], u["algo"], TYPE_ORDER[u["type"]]))
+                key=lambda u: (failed_first(u), new_first(u), comp.get(u["family"], 1), u["family"], u["algo"],
+                               TYPE_ORDER[u["type"]]))
     stage1 = (p0 + p1)[:n1]
     chosen_algos = {u.get("algo") for u in stage1 if u["type"] in ("VAR", "RES", "CC")}
     arts = [u for u in units if u["type"] == "ART"]
     arts.sort(key=lambda u: (0 if u["redo"] else 1, 0 if u["no_gen"] else 1,
-                             0 if u["algo"] in chosen_algos else 1,
+                             0 if u["algo"] in chosen_algos else 1, 0 if u.get("new") else 1,
                              -(len(u["missing_var"]) + len(u["missing_case"])), u["algo"]))
     stage3 = [{"id": u["id"], "algo": u["algo"], "no_gen": u["no_gen"], "missing_var": u["missing_var"],
                "missing_case": u["missing_case"], "redo": u["redo"]} for u in arts[:n3]]
@@ -197,9 +204,11 @@ def print_table(rows, units):
         mv = "-" if r["missing_var"] is None else r["missing_var"]
         mc = "-" if r["missing_case"] is None else r["missing_case"]
         gen = "-" if r["has_gen"] is None else ("有" if r["has_gen"] else "無")
-        print(f"{aid:4} {r['family']:2} {r['var']:>2}/{r['t_var']:<2} {r['res']:>2}/{r['t_res']:<2} {r['cc']:>2}/{r['t_cc']:<1}"
+        print(f"{aid:4}{'*' if r.get('new') else ' '}{r['family']:2} {r['var']:>2}/{r['t_var']:<2} {r['res']:>2}/{r['t_res']:<2} {r['cc']:>2}/{r['t_cc']:<1}"
               f" {r['no_url']:>5} {r['img']:>5} {mv:>8} {mc:>8} {gen}")
     c = collections.Counter((u["type"], u["priority"]) for u in units)
+    if any(r.get("new") for r in rows.values()):
+        print("＊＝gh-new-algos 新增的演算法（P1 優先處理）")
     print("待辦單元：", "、".join(f"{t}{p}×{n}" for (t, p), n in sorted(c.items())) or "無")
     comp = family_completion(rows)
     print("家族完成度：", "  ".join(f"{f} {v:.0%}" for f, v in sorted(comp.items())))
@@ -243,6 +252,7 @@ def main():
         touched = {u.get("algo") for u in plan.get("stage1", []) if u.get("type") in ("VAR", "RES", "CC")}
         arts = [u for u in units if u["type"] == "ART"]
         arts.sort(key=lambda u: (0 if u["redo"] else 1, 0 if u["no_gen"] else 1, 0 if u["algo"] in touched else 1,
+                                 0 if u.get("new") else 1,
                                  -(len(u["missing_var"]) + len(u["missing_case"])), u["algo"]))
         plan["stage3"] = [{"id": u["id"], "algo": u["algo"], "no_gen": u["no_gen"], "missing_var": u["missing_var"],
                            "missing_case": u["missing_case"], "redo": u["redo"]} for u in arts[:n3]]

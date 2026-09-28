@@ -87,7 +87,7 @@ const prep = await spawn([
   `你是 gh-enrich 工作流程的「準備」步驟。`, CTX,
   `依序執行：`,
   `1. git fetch origin main；確認在 main 分支且工作目錄沒有未提交的修改（有的話回報 ok=false、reason 寫明並停止）；git merge --ff-only origin/main。`,
-  `2. python tools/wf_lock.py acquire ${RUN}；印出 LOCKED 就回報 ok=false、reason=「鎖被占用」並停止（不要釋放別人的鎖）。`,
+  `2. python tools/wf_lock.py acquire ${RUN} --wait 9；仍印出 LOCKED 就再執行同一指令，最多共 5 次（約 45 分鐘，等 gh-new-algos 或前一次執行結束）；5 次後仍 LOCKED 就回報 ok=false、reason=「鎖被占用」並停止（不要釋放別人的鎖）。`,
   `3. 確認 python 套件：opencc-python-reimplemented、playwright、Pillow（缺就 pip install；playwright 的瀏覽器無法啟動時執行 python -m playwright install chromium）。`,
   `4. python tools/clipcheck.py，最後一行 TOTAL 的數字就是 clip_baseline。`,
   `5. python tools/wf_plan.py --select ${RUN} --stage1 ${N1} --stage3 ${N3}：stdout 第一行是本次計畫 JSON（也寫在 _workflow/runs/${RUN}.plan.json）；exit code 3 並印出 ALL_DONE 代表全部完成。`,

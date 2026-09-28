@@ -92,7 +92,7 @@ const prep = await spawn([
   `你是 gh-new-algos 工作流程的「準備」步驟（mode=${MODE}）。`, CTX,
   `依序執行：`,
   `1. git fetch origin main；確認在 main 分支且工作目錄沒有未提交的修改（有就回報 ok=false 並停止）；git merge --ff-only origin/main。`,
-  `2. python tools/wf_lock.py acquire ${RUN}；印出 LOCKED 就回報 ok=false、reason=「鎖被占用」並停止（不要釋放別人的鎖）。`,
+  `2. python tools/wf_lock.py acquire ${RUN} --wait 9；仍印出 LOCKED 就再執行同一指令，最多共 3 次；仍 LOCKED 就回報 ok=false、reason=「鎖被占用」並停止（不要釋放別人的鎖）。`,
   `3. 確認 python 套件：opencc-python-reimplemented、playwright、Pillow（缺就 pip install）。`,
   `4. python tools/wf_plan.py --index（重建 _workflow/index/ 與 _catalog.md）；建立資料夾 ${DIR}/。`,
   `5. 讀 data/*.json，列出每個家族目前最大的演算法編號，next_ids 回傳每個家族下一個可用編號（例如 {"A":"A07","D":"D04",…}）。`,
