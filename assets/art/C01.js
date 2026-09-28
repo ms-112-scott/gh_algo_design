@@ -673,3 +673,180 @@ C["C01-54"] = function(g, W, H, r, c){
 };
 C["C01-54"].ratio = .95;
 })();
+
+/* ================================================================
+   新增變形（append，不動上面既有畫法）：
+   V13 純擴散穩態：多材料熱傳導與冷橋 —— 拿掉反應項，只解穩態熱傳導，
+   畫成牆身剖面的連續溫度色階＋等溫線＋熱流箭頭技術圖，和其餘 Gray-Scott
+   斑點／條紋卡片在構圖上完全不同。
+   V14 守恆型相分離（Cahn–Hilliard）—— 單一守恆濃度場的四階方程演化，
+   畫成「粗化後大圖＋淬火初期插圖＋c0 偏移小圖」的左右比例圖，並用比例尺
+   量出兩相面積比，呼應「總量固定、只重新分配」。
+   ================================================================ */
+(function(){
+const ART = window.ART, U = window.GENUTIL, TAU = Math.PI*2;
+const cl = x => x < 0 ? 0 : x > 1 ? 1 : x;
+const sm = (a, b, x) => { const t = cl((x-a)/(b-a)); return t*t*(3-2*t); };
+const mix = (a, b, t) => a + (b-a)*t;
+const lerpC = (p, q, t) => [mix(p[0],q[0],t), mix(p[1],q[1],t), mix(p[2],q[2],t)];
+function tex(n, m, val, pal){
+  const cv = document.createElement("canvas"); cv.width = n; cv.height = m; const x = cv.getContext("2d"), img = x.createImageData(n, m), d = img.data;
+  for(let j = 0; j < m; j++) for(let i = 0; i < n; i++){ const p = pal(val(i, j)), k = (j*n+i)*4; d[k] = p[0]; d[k+1] = p[1]; d[k+2] = p[2]; d[k+3] = p[3] ?? 255; }
+  x.putImageData(img, 0, 0); return cv;
+}
+function drawTex(g, cv, x, y, w, h, smooth = true){ g.imageSmoothingEnabled = smooth; g.drawImage(cv, x, y, w, h); }
+function segs(g, S, ox, oy, sx, sy){ g.beginPath(); S.forEach(([a,b]) => { g.moveTo(ox + a[0]*sx, oy + a[1]*sy); g.lineTo(ox + b[0]*sx, oy + b[1]*sy); }); g.stroke(); }
+
+ART.var["C01"] = ART.var["C01"] || [];
+
+// V13（索引 12）純擴散穩態：多材料熱傳導與冷橋
+// 中段保溫層裡有一段貫穿的懸挑樓板（高導熱），左邊固定室內溫度、右邊固定室外溫度，
+// 用 Gauss–Seidel 鬆弛解到穩態；畫出溫度色階、結構材料斜線、等溫線、熱流箭頭，
+// 右側量尺比較「有冷橋」與「均勻保溫」兩種做法在同一斷面的熱損失。
+ART.var["C01"][12] = function(g, W, H, r, c){
+  const px = W*.06, py = H*.08, pw = W*.72, ph = H*.8;
+  const n = 74, m = Math.max(28, Math.round(n*ph/pw));
+  const K_INS = .045, K_CON = 1.1, K_BR = 1.55;
+  const wallL = Math.round(n*.26), wallR = Math.round(n*.68);
+  const slabY0 = Math.round(m*(.4 + (r()-.5)*.1)), slabTh = Math.max(2, Math.round(m*.11));
+  function conduct(bridge){
+    const k = new Float32Array(n*m);
+    for(let j = 0; j < m; j++) for(let i = 0; i < n; i++){
+      let kv = (i < wallL || i >= wallR) ? K_CON : K_INS;
+      if(bridge && j >= slabY0 && j < slabY0+slabTh) kv = K_BR;
+      k[j*n+i] = kv;
+    }
+    return k;
+  }
+  function solve(k){
+    const T = new Float32Array(n*m), fixed = new Uint8Array(n*m);
+    for(let j = 0; j < m; j++){ T[j*n] = 1; fixed[j*n] = 1; T[j*n+n-1] = 0; fixed[j*n+n-1] = 1; }
+    for(let j = 0; j < m; j++) for(let i = 1; i < n-1; i++) T[j*n+i] = 1 - i/(n-1);
+    for(let it = 0; it < 300; it++){
+      for(let j = 0; j < m; j++){ const jn = j ? j-1 : 0, js = j < m-1 ? j+1 : m-1;
+        for(let i = 1; i < n-1; i++){ const idx = j*n+i;
+          const kW = (k[idx]+k[idx-1])*.5, kE = (k[idx]+k[idx+1])*.5, kN = (k[idx]+k[jn*n+i])*.5, kS = (k[idx]+k[js*n+i])*.5;
+          T[idx] = (kW*T[idx-1] + kE*T[idx+1] + kN*T[jn*n+i] + kS*T[js*n+i]) / (kW+kE+kN+kS);
+        } }
+    }
+    return T;
+  }
+  const kB = conduct(true), TB = solve(kB), kN0 = conduct(false), TN0 = solve(kN0);
+  const flux = (T, k) => { let s = 0; for(let j = 0; j < m; j++){ const i = n-2; s += Math.abs(k[j*n+i]*(T[j*n+i-1]-T[j*n+i+1])*.5); } return s; };
+  const fB = flux(TB, kB), fN = flux(TN0, kN0);
+  // 溫度色階：冷藍 → 家族色 → 暖白
+  const [R0,G0,B0] = U.rgb(c), COLD = [46,74,150], WARM = [255,232,190];
+  const pal = t => t < .5 ? lerpC(COLD, [R0,G0,B0], t*2) : lerpC([R0,G0,B0], WARM, (t-.5)*2);
+  drawTex(g, tex(n, m, (i,j) => TB[j*n+i], pal), px, py, pw, ph);
+  // 結構材料（混凝土／冷橋）以斜線陰影標示，保溫層維持素色
+  g.save(); g.beginPath(); g.rect(px, py, pw, ph); g.clip();
+  const cw = pw/n, ch = ph/m;
+  g.strokeStyle = "rgba(10,10,14,.45)"; g.lineWidth = 1; g.beginPath();
+  for(let j = 0; j < m; j++) for(let i = 0; i < n; i++){ if(kB[j*n+i] < K_CON*.9 || (i+j)%3) continue;
+    const x = px+i*cw, y = py+j*ch; g.moveTo(x, y+ch); g.lineTo(x+cw, y); }
+  g.stroke();
+  // 等溫線
+  g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1;
+  [.2,.4,.6,.8].forEach(iso => segs(g, U.contour(n, m, (i,j) => TB[j*n+i], iso), px+cw*.5, py+ch*.5, cw, ch));
+  g.restore();
+  // 保溫層與冷橋輪廓
+  g.strokeStyle = U.rgba(c,.9); g.lineWidth = 2; g.strokeRect(px+wallL*cw, py, (wallR-wallL)*cw, ph);
+  g.fillStyle = U.rgba(c,.16); g.fillRect(px+wallL*cw, py+slabY0*ch, (wallR-wallL)*cw, slabTh*ch);
+  g.strokeStyle = "#fff"; g.lineWidth = 1.4; g.strokeRect(px+wallL*cw, py+slabY0*ch, (wallR-wallL)*cw, slabTh*ch);
+  // 熱流箭頭：沿 -grad T 方向，長度與亮度依大小，在冷橋附近自然變密集
+  const gx = 12, gy = Math.max(5, Math.round(gx*ph/pw));
+  for(let b = 0; b < gy; b++) for(let a = 0; a < gx; a++){
+    const fi = Math.min(n-2, Math.max(1, Math.round((a+.5)/gx*n))), fj = Math.min(m-2, Math.max(1, Math.round((b+.5)/gy*m)));
+    const dTx = TB[fj*n+fi+1]-TB[fj*n+fi-1], dTy = TB[(fj+1)*n+fi]-TB[(fj-1)*n+fi], mag = Math.hypot(dTx, dTy);
+    if(mag < .003) continue;
+    const kx = kB[fj*n+fi], L = Math.min(cw*gx*.4/gx*4, 6 + mag*kx*900), ang = Math.atan2(-dTy, -dTx);
+    const x0 = px+(fi+.5)*cw, y0 = py+(fj+.5)*ch, x1 = x0+Math.cos(ang)*L, y1 = y0+Math.sin(ang)*L;
+    g.globalAlpha = Math.min(1, .3 + mag*kx*30); g.strokeStyle = "#fff"; g.lineWidth = 1.1;
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+    g.fillStyle = "#fff"; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1-Math.cos(ang-.45)*3.4, y1-Math.sin(ang-.45)*3.4); g.lineTo(x1-Math.cos(ang+.45)*3.4, y1-Math.sin(ang+.45)*3.4); g.closePath(); g.fill();
+  }
+  g.globalAlpha = 1;
+  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1.4; g.strokeRect(px, py, pw, ph);
+  // 右側量尺：有冷橋 vs 均勻保溫的熱損失比較（圖形量尺，不寫文字）
+  const bx = px+pw+W*.04, bw = W*.055, gap = W*.02, maxF = Math.max(fB, fN)*1.15, bh = ph*.7, by0 = py+ph-bh;
+  [[fN, "rgba(255,255,255,.55)"], [fB, U.rgba(c,.95)]].forEach(([f, col], q) => {
+    const hh = bh*Math.min(1, f/maxF), xx = bx + q*(bw+gap);
+    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.strokeRect(xx, by0, bw, bh);
+    g.fillStyle = col; g.fillRect(xx, by0+bh-hh, bw, hh);
+  });
+};
+
+// V14（索引 13）守恆型相分離（Cahn–Hilliard）
+// 單一濃度場 c 依四階方程演化（mu = c³−c−κ∇²c，∂c/∂t = ∇²mu），週期邊界下總量
+// 精確守恆：左邊大圖是 c0=0 粗化後的雙連續迷宮（附淬火初期小插圖與指向箭頭），
+// 右邊小圖是 c0 偏移後的圓斑形態；兩張圖下方各有一條比例尺，直接量出兩相面積比
+// 都等於各自的 c0，呼應「總量固定、只重新分配」。
+ART.var["C01"][13] = function(g, W, H, r, c){
+  function chField(n, m, c0, steps, rr){
+    const N = n*m, XP = new Int32Array(n), XM = new Int32Array(n), YP = new Int32Array(m), YM = new Int32Array(m);
+    for(let x = 0; x < n; x++){ XP[x] = (x+1)%n; XM[x] = (x+n-1)%n; }
+    for(let y = 0; y < m; y++){ YP[y] = (y+1)%m; YM[y] = (y+m-1)%m; }
+    let cA = new Float32Array(N), cB = new Float32Array(N); const mu = new Float32Array(N);
+    for(let i = 0; i < N; i++) cA[i] = c0 + .08*(rr()-.5);
+    const kappa = 1.3, dt = .013;
+    for(let it = 0; it < steps; it++){
+      for(let y = 0; y < m; y++){ const yc = y*n, yu = YM[y]*n, yd = YP[y]*n;
+        for(let x = 0; x < n; x++){ const i = yc+x, xl = XM[x], xr = XP[x], cc = cA[i];
+          const lap = cA[yc+xl]+cA[yc+xr]+cA[yu+x]+cA[yd+x]-4*cc;
+          mu[i] = cc*cc*cc - cc - kappa*lap; } }
+      for(let y = 0; y < m; y++){ const yc = y*n, yu = YM[y]*n, yd = YP[y]*n;
+        for(let x = 0; x < n; x++){ const i = yc+x, xl = XM[x], xr = XP[x];
+          const lapMu = mu[yc+xl]+mu[yc+xr]+mu[yu+x]+mu[yd+x]-4*mu[i];
+          const nv = cA[i] + dt*lapMu; cB[i] = nv < -1.4 ? -1.4 : nv > 1.4 ? 1.4 : nv; } }
+      const t = cA; cA = cB; cB = t;
+    }
+    return cA;
+  }
+  const n1 = 48, m1 = 48, late = chField(n1, m1, 0, 1700, r);
+  const n0 = 30, m0 = 30, early = chField(n0, m0, 0, 200, r);
+  const c0d = .26 + r()*.16, n2 = 40, m2 = 40, drop = chField(n2, m2, c0d, 4000, r);
+  const [R0,G0,B0] = U.rgb(c), phaseA = [26,26,32], phaseB = lerpC([R0,G0,B0], [255,248,236], .35);
+  // 相邊界固定在 0（守恆物理上兩相就是以 c=0 為界分裂成 +1／−1），
+  // 但平滑帶寬依各自場的標準差調整，讓不同粗化程度的圖都清楚可讀
+  function paintOf(arr){
+    let s = 0; for(let i = 0; i < arr.length; i++) s += arr[i];
+    const mean = s/arr.length; let v2 = 0; for(let i = 0; i < arr.length; i++){ const d = arr[i]-mean; v2 += d*d; }
+    const w = Math.max(.02, Math.sqrt(v2/arr.length)*.6);
+    return t => lerpC(phaseA, phaseB, sm(-w, w, t));
+  }
+  const paintLate = paintOf(late), paintEarly = paintOf(early), paintDrop = paintOf(drop);
+  // 主圖：c0=0 粗化後的雙連續迷宮
+  const pad = W*.06, mw = W*.56, mh0 = Math.min(mw, H*.72), mw2 = mh0, mh = mh0;
+  const mx = pad, my = (H*.86 - mh)/2 + H*.02;
+  g.fillStyle = "#0b0b0e"; g.fillRect(mx-4, my-4, mw2+8, mh+8);
+  drawTex(g, tex(n1, m1, (i,j) => late[j*n1+i], paintLate), mx, my, mw2, mh);
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.strokeRect(mx, my, mw2, mh);
+  // 左上角小插圖：淬火初期的細碎雜訊態，虛線箭頭指向主圖，暗示隨步數粗化
+  const iw = mw2*.3, ih = iw, ix = mx+8, iy = my+8;
+  g.fillStyle = "#0b0b0e"; g.fillRect(ix-3, iy-3, iw+6, ih+6);
+  drawTex(g, tex(n0, m0, (i,j) => early[j*n0+i], paintEarly), ix, iy, iw, ih);
+  g.strokeStyle = "#fff"; g.lineWidth = 1; g.strokeRect(ix, iy, iw, ih);
+  const ax = mx+mw2*.42, ay = my+mh*.3;
+  g.setLineDash([3,3]); g.strokeStyle = "rgba(255,255,255,.55)"; g.beginPath(); g.moveTo(ix+iw+4, iy+ih/2); g.lineTo(ax, ay); g.stroke(); g.setLineDash([]);
+  const aa = Math.atan2(ay-(iy+ih/2), ax-(ix+iw+4));
+  g.fillStyle = "rgba(255,255,255,.7)"; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax-Math.cos(aa-.4)*7, ay-Math.sin(aa-.4)*7); g.lineTo(ax-Math.cos(aa+.4)*7, ay-Math.sin(aa+.4)*7); g.closePath(); g.fill();
+  // 主圖下方比例尺：實測兩相面積比
+  let cntB = 0; for(let i = 0; i < late.length; i++) if(late[i] > 0) cntB++;
+  const fracB1 = cntB/late.length, gy0 = my+mh+H*.035, gh0 = H*.045;
+  g.fillStyle = `rgb(${phaseA.map(v=>v|0)})`; g.fillRect(mx, gy0, mw2, gh0);
+  g.fillStyle = `rgb(${phaseB.map(v=>v|0)})`; g.fillRect(mx, gy0, mw2*fracB1, gh0);
+  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.strokeRect(mx, gy0, mw2, gh0);
+  g.strokeStyle = "#fff"; g.beginPath(); g.moveTo(mx+mw2*.5, gy0-3); g.lineTo(mx+mw2*.5, gy0+gh0+3); g.stroke();
+  // 右側小圖：c0 偏移後的圓斑形態，兩相面積比不再是一半
+  const sx0 = mx+mw2+W*.06, swAvail = Math.max(W*.2, W*.94-sx0), smh = Math.min(swAvail, mh), smw = smh;
+  const sy0 = my + (mh-smh)/2;
+  g.fillStyle = "#0b0b0e"; g.fillRect(sx0-4, sy0-4, smw+8, smh+8);
+  drawTex(g, tex(n2, m2, (i,j) => drop[j*n2+i], paintDrop), sx0, sy0, smw, smh);
+  g.strokeStyle = U.rgba(c,.85); g.lineWidth = 1.4; g.strokeRect(sx0, sy0, smw, smh);
+  let cntB2 = 0; for(let i = 0; i < drop.length; i++) if(drop[i] > 0) cntB2++;
+  const fracB2 = cntB2/drop.length, gy1 = sy0+smh+H*.035;
+  g.fillStyle = `rgb(${phaseA.map(v=>v|0)})`; g.fillRect(sx0, gy1, smw, gh0);
+  g.fillStyle = `rgb(${phaseB.map(v=>v|0)})`; g.fillRect(sx0, gy1, smw*fracB2, gh0);
+  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.strokeRect(sx0, gy1, smw, gh0);
+};
+})();

@@ -58,3 +58,608 @@ U.GEN["E06"] = function(g, W, H, r, v, c){
 };
 ART.var["E06"] = ART.var["E06"] || [];
 })();
+
+/* ================================================================
+   E06 力密度法（FDM）：12 個變形＋11 個無照片案例的獨立畫法
+   共用一套通用力密度求解器（任意拓樸），依變形／案例內容各自決定
+   拓樸、固定點、力密度分布、載重與取景方式，讓每張卡都是「真的解一次」。
+   ================================================================ */
+(function(){
+const ART = window.ART, U = window.GENUTIL, TAU = U.TAU;
+const V = ART.var["E06"], C = ART.case;
+
+// ---------- 共用：力密度法求解 ----------
+// 共軛梯度（q 全為正、矩陣正定時用）
+function solveCG(P, E, fix, loadZ){
+  const N = P.length, row = new Int32Array(N); let nf = 0;
+  for(let k = 0; k < N; k++) row[k] = fix[k] ? -1 : nf++;
+  if(nf === 0) return;
+  const diag = new Float64Array(nf);
+  for(const [a,b,q] of E){ if(row[a] >= 0) diag[row[a]] += q; if(row[b] >= 0) diag[row[b]] += q; }
+  const mv = (x, y) => { for(let i = 0; i < nf; i++) y[i] = diag[i]*x[i];
+    for(const [a,b,q] of E){ const A = row[a], B = row[b]; if(A >= 0 && B >= 0){ y[A] -= q*x[B]; y[B] -= q*x[A]; } } };
+  for(let axis = 0; axis < 3; axis++){
+    const rhs = new Float64Array(nf), x = new Float64Array(nf);
+    for(let k = 0; k < N; k++) if(row[k] >= 0){ x[row[k]] = P[k][axis]; if(axis === 2) rhs[row[k]] = typeof loadZ === "function" ? loadZ(k) : (loadZ || 0); }
+    for(const [a,b,q] of E){ if(row[a] >= 0 && row[b] < 0) rhs[row[a]] += q*P[b][axis]; if(row[b] >= 0 && row[a] < 0) rhs[row[b]] += q*P[a][axis]; }
+    const R = new Float64Array(nf), p = new Float64Array(nf), Ap = new Float64Array(nf); mv(x, Ap);
+    for(let i = 0; i < nf; i++){ R[i] = rhs[i] - Ap[i]; p[i] = R[i]; }
+    let rr = 0; for(let i = 0; i < nf; i++) rr += R[i]*R[i];
+    for(let it = 0; it < 250 && rr > 1e-13; it++){ mv(p, Ap); let pAp = 0; for(let i = 0; i < nf; i++) pAp += p[i]*Ap[i]; if(Math.abs(pAp) < 1e-12) break;
+      const al = rr/pAp; let rn = 0; for(let i = 0; i < nf; i++){ x[i] += al*p[i]; R[i] -= al*Ap[i]; rn += R[i]*R[i]; }
+      const be = rn/rr; for(let i = 0; i < nf; i++) p[i] = R[i] + be*p[i]; rr = rn; }
+    for(let k = 0; k < N; k++) if(row[k] >= 0) P[k][axis] = x[row[k]];
+  }
+}
+// 帶樞軸高斯消去（q 可為負，矩陣不再正定時用，例如張拉整體）
+function solveGE(P, E, fix, loadZ){
+  const N = P.length, row = new Int32Array(N); let nf = 0;
+  for(let k = 0; k < N; k++) row[k] = fix[k] ? -1 : nf++;
+  if(nf === 0) return;
+  const D0 = []; for(let i = 0; i < nf; i++) D0.push(new Float64Array(nf));
+  for(const [a,b,q] of E){ const A = row[a], B = row[b]; if(A >= 0) D0[A][A] += q; if(B >= 0) D0[B][B] += q; if(A >= 0 && B >= 0){ D0[A][B] -= q; D0[B][A] -= q; } }
+  for(let axis = 0; axis < 3; axis++){
+    const rhs = new Float64Array(nf);
+    for(let k = 0; k < N; k++) if(row[k] >= 0 && axis === 2) rhs[row[k]] = typeof loadZ === "function" ? loadZ(k) : (loadZ || 0);
+    for(const [a,b,q] of E){ if(row[a] >= 0 && row[b] < 0) rhs[row[a]] += q*P[b][axis]; if(row[b] >= 0 && row[a] < 0) rhs[row[b]] += q*P[a][axis]; }
+    const M = D0.map(rr => Float64Array.from(rr)), rv = Float64Array.from(rhs);
+    for(let col = 0; col < nf; col++){
+      let piv = col, best = Math.abs(M[col][col]);
+      for(let ri = col+1; ri < nf; ri++){ const v2 = Math.abs(M[ri][col]); if(v2 > best){ best = v2; piv = ri; } }
+      if(piv !== col){ const tm = M[col]; M[col] = M[piv]; M[piv] = tm; const tv = rv[col]; rv[col] = rv[piv]; rv[piv] = tv; }
+      const pv = M[col][col] || 1e-9;
+      for(let ri = col+1; ri < nf; ri++){ const f = M[ri][col]/pv; if(!f) continue; for(let cj = col; cj < nf; cj++) M[ri][cj] -= f*M[col][cj]; rv[ri] -= f*rv[col]; }
+    }
+    const xr = new Float64Array(nf);
+    for(let ri = nf-1; ri >= 0; ri--){ let s = rv[ri]; for(let cj = ri+1; cj < nf; cj++) s -= M[ri][cj]*xr[cj]; xr[ri] = s/(M[ri][ri] || 1e-9); }
+    for(let k = 0; k < N; k++) if(row[k] >= 0) P[k][axis] = xr[row[k]];
+  }
+}
+function forcesOf(P, E){ return E.map(([a,b,q]) => q*Math.hypot(P[b][0]-P[a][0], P[b][1]-P[a][1], P[b][2]-P[a][2])); }
+function mixRGB(A, B, t){ return `rgb(${A.map((x,i) => Math.round(x + (B[i]-x)*t)).join(",")})`; }
+function forceCol(fmin, fmax, c, neg){ return t => t < .5 ? mixRGB([90,150,255], U.rgb(c), t*2) : mixRGB(U.rgb(c), neg || [255,80,70], (t-.5)*2); }
+// 投影：iso 等角、front 立面、plan 平面圖（可帶微量高度做斜俯視）
+function projector(P, W, H, mode, opt){
+  opt = opt || {};
+  const zs = P.map(p => p[2]), zmin = Math.min(...zs), zmax = Math.max(...zs);
+  const hs = H*(opt.hs || .34)/((zmax - zmin) || 1), sx = Math.min(W*(opt.sxr || .4), H*(opt.syr || .6)), cx = W*(opt.cx || .47), cy = H*(opt.cy || .58);
+  if(mode === "front") return { prj: p => [cx + p[0]*sx*(opt.k || 1.7), cy - (p[2]-zmin)*hs*(opt.kz || 1.6) - p[1]*sx*(opt.ky || .22)], zmin, zmax };
+  if(mode === "plan") return { prj: p => [cx + p[0]*sx*(opt.k || 1.6), cy + p[1]*sx*(opt.k || 1.6)*(opt.sq || .82) - (p[2]-zmin)*hs*(opt.kz || .55)], zmin, zmax };
+  return { prj: p => [cx + (p[0]-p[1])*sx, cy + (p[0]+p[1])*sx*.48 - (zmax-p[2])*hs], zmin, zmax };
+}
+function drawNet(g, P, E, F, prj, c, opt){
+  opt = opt || {};
+  const fmin = Math.min(...F), fmax = Math.max(...F), col = forceCol(fmin, fmax, c, opt.neg);
+  const order = E.map((e,k) => k).sort((a,b) => (P[E[a][0]][0]+P[E[a][0]][1]) - (P[E[b][0]][0]+P[E[b][0]][1]));
+  g.lineCap = "round";
+  for(const k of order){ const [a,b] = E[k], t = (F[k]-fmin)/((fmax-fmin)||1), A = prj(P[a]), B = prj(P[b]);
+    g.strokeStyle = col(t); g.globalAlpha = (opt.aMin ?? .55) + (opt.aRange ?? .45)*t; g.lineWidth = (opt.wMin ?? .7) + t*(opt.wRange ?? 2);
+    g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); }
+  g.globalAlpha = 1;
+}
+function markFix(g, P, fix, prj, rad){ g.fillStyle = "#fff"; for(let k = 0; k < P.length; k++) if(fix[k]){ const p = prj(P[k]); g.beginPath(); g.arc(p[0], p[1], rad || 2.6, 0, TAU); g.fill(); } }
+function quadGrid(n){ const N = n*n, P = [], id = (i,j) => j*n+i; for(let j = 0; j < n; j++) for(let i = 0; i < n; i++) P.push([i/(n-1)-.5, j/(n-1)-.5, 0]); return { n, N, P, id }; }
+function quadEdges(n, id, qOf, edgeK){ const E = [];
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++){
+    if(i < n-1){ const a = id(i,j), b = id(i+1,j), bd = (edgeK && (j===0||j===n-1)) ? edgeK : 1; E.push([a,b,qOf(a,b)*bd]); }
+    if(j < n-1){ const a = id(i,j), b = id(i,j+1), bd = (edgeK && (i===0||i===n-1)) ? edgeK : 1; E.push([a,b,qOf(a,b)*bd]); } }
+  return E; }
+function tenseGuard(P, idxs, targetZ){ let avg = 0; for(const k of idxs) avg += P[k][2]; avg /= idxs.length;
+  if(avg < targetZ*.4){ const off = targetZ - avg; for(const k of idxs) P[k][2] += off; } }
+// 平面點集的凸包（單調鏈），用來把散點線網的外圍節點當固定點，避免只有一兩個端點時整片收縮成一點
+function hull2(pts){
+  const idx = pts.map((_,i) => i).sort((a,b) => pts[a][0]-pts[b][0] || pts[a][1]-pts[b][1]);
+  const cross = (o,a,b) => (pts[a][0]-pts[o][0])*(pts[b][1]-pts[o][1]) - (pts[a][1]-pts[o][1])*(pts[b][0]-pts[o][0]);
+  const lower = []; for(const i of idx){ while(lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], i) <= 0) lower.pop(); lower.push(i); }
+  const upper = []; for(let k = idx.length-1; k >= 0; k--){ const i = idx[k]; while(upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], i) <= 0) upper.pop(); upper.push(i); }
+  lower.pop(); upper.pop();
+  return lower.concat(upper);
+}
+
+// ================= 變形 V01–V12 =================
+
+// V01 吸引子漸變力密度：邊的 q 依中點到最近吸引子的距離做指數漸變，附近的網被拉平、遠處垂得較深
+V[0] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(11), fix = new Uint8Array(N);
+  fix[id(0,0)] = fix[id(n-1,0)] = fix[id(0,n-1)] = fix[id(n-1,n-1)] = 1;
+  const att = [0,1,2].map(() => [r()*.8-.4, r()*.8-.4]), sig = .16;
+  const qOf = (a,b) => { const mx = (P[a][0]+P[b][0])/2, my = (P[a][1]+P[b][1])/2;
+    let dmin = 1; for(const [ax,ay] of att) dmin = Math.min(dmin, Math.hypot(mx-ax, my-ay));
+    return .8 + 3.2*Math.exp(-dmin*dmin/(sig*sig)); };
+  const E = quadEdges(n, id, qOf, 2);
+  solveCG(P, E, fix, -.05);
+  const { prj } = projector(P, W, H, "iso", { cy: .6 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  markFix(g, P, fix, prj);
+  for(const [ax, ay] of att){
+    let bestk = 0, bd = 1e9; for(let k = 0; k < N; k++){ const d = Math.hypot(P[k][0]-ax, P[k][1]-ay); if(d < bd){ bd = d; bestk = k; } }
+    const p = prj([ax, ay, P[bestk][2]]), gr = g.createRadialGradient(p[0], p[1], 0, p[0], p[1], 26);
+    gr.addColorStop(0, U.rgba(c, .75)); gr.addColorStop(1, U.rgba(c, 0));
+    g.fillStyle = gr; g.beginPath(); g.arc(p[0], p[1], 26, 0, TAU); g.fill();
+    g.fillStyle = "#fff"; g.beginPath(); g.arc(p[0], p[1], 2.2, 0, TAU); g.fill();
+  }
+};
+
+// V02 零載重預力網：四角高低錯落，load 設 0，一次解出馬鞍面（立面視角看扭轉）
+V[1] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  const corners = [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)], hs = [.2, -.2, -.2, .2];
+  corners.forEach((k, i) => { fix[k] = 1; P[k][2] = hs[i]; });
+  const E = quadEdges(n, id, () => .9 + r()*.3);
+  solveCG(P, E, fix, 0);
+  const { prj } = projector(P, W, H, "front", { k: 1.9, kz: 1.5, ky: .3 });
+  g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 1;
+  for(let i = 0; i <= 4; i++){ const t = i/4-.5, a = prj([-.5, t, 0]), b = prj([.5, t, 0]); g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); }
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  g.fillStyle = "#fff"; corners.forEach(k => { const p = prj(P[k]); g.beginPath(); g.rect(p[0]-3, p[1]-3, 6, 6); g.fill(); });
+};
+
+// V03 從線段網路建圖：任意散點各接最近的幾點形成線段網路，不受四邊形格網限制
+V[2] = function(g, W, H, r, c){
+  const M = 26, P = []; for(let i = 0; i < M; i++) P.push([r()*.86-.43, r()*.86-.43, 0]);
+  const E = [], deg = new Uint8Array(M);
+  for(let i = 0; i < M; i++){
+    const ds = []; for(let j = 0; j < M; j++) if(j !== i) ds.push([Math.hypot(P[i][0]-P[j][0], P[i][1]-P[j][1]), j]);
+    ds.sort((a,b) => a[0]-b[0]);
+    for(let k = 0; k < 3 && k < ds.length; k++){ const j = ds[k][1];
+      if(deg[i] < 4 && deg[j] < 4 && !E.some(([a,b]) => (a===i&&b===j)||(a===j&&b===i))){ E.push([i, j, .7+r()*.6]); deg[i]++; deg[j]++; } }
+  }
+  const fix = new Uint8Array(M); hull2(P).forEach(i => fix[i] = 1);
+  for(let i = 0; i < M; i++) if(deg[i] <= 1) fix[i] = 1;
+  const P2 = P.map(p => p.slice());
+  solveCG(P2, E, fix, -.05);
+  const ins = (x,y) => [W*.06 + (x+.5)*W*.24, H*.06 + (y+.5)*H*.24];
+  g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1;
+  for(const [a,b] of E){ const A = ins(P[a][0],P[a][1]), B = ins(P[b][0],P[b][1]); g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  g.fillStyle = "rgba(255,255,255,.5)"; for(let i=0;i<M;i++){ const p = ins(P[i][0],P[i][1]); g.beginPath(); g.arc(p[0],p[1],1.6,0,TAU); g.fill(); }
+  g.strokeStyle = "rgba(255,255,255,.15)"; g.strokeRect(W*.06, H*.06, W*.24, H*.24);
+  const { prj } = projector(P2, W, H, "iso", { cx: .55, cy: .62, sxr: .46 });
+  drawNet(g, P2, E, forcesOf(P2, E), prj, c, {});
+  markFix(g, P2, fix, prj, 2.2);
+};
+
+// V04 內力決定索徑：管件粗細隨內力變化（√力），右側排出依長度排序的索料清單
+V[3] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(8), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const E = quadEdges(n, id, (a,b) => { const mx = (P[a][0]+P[b][0])/2; return 1 + 1.6*Math.abs(mx); });
+  solveCG(P, E, fix, -.05);
+  const F = forcesOf(P, E), fmax = Math.max(...F);
+  const { prj } = projector(P, W, H, "iso", { cy: .52, sxr: .34 });
+  const col = forceCol(Math.min(...F), fmax, c);
+  const order = E.map((e,k) => k).sort((a,b) => (P[E[a][0]][0]+P[E[a][0]][1]) - (P[E[b][0]][0]+P[E[b][0]][1]));
+  for(const k of order){ const [a,b] = E[k], t = F[k]/fmax, A = prj(P[a]), B = prj(P[b]);
+    g.strokeStyle = col(t*.9+.05); g.lineWidth = 1.4 + Math.sqrt(t)*7; g.lineCap = "round"; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  markFix(g, P, fix, prj, 3);
+  const L = E.map(([a,b]) => Math.hypot(P[b][0]-P[a][0], P[b][1]-P[a][1], P[b][2]-P[a][2]));
+  const idxs = E.map((e,k) => k).sort((a,b) => L[a]-L[b]);
+  const bx = W*.72, bw = W*.24, by = H*.08, bh = H*.84, rows = Math.min(18, idxs.length), rh = bh/rows, lmax = Math.max(...L);
+  g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(bx-6, by-4, bw+12, bh+8);
+  for(let i = 0; i < rows; i++){ const k = idxs[Math.round(i*(idxs.length-1)/(rows-1))], t = F[k]/fmax;
+    g.fillStyle = col(t*.9+.05); g.fillRect(bx, by + i*rh + rh*.2, bw*(L[k]/lmax), rh*.6); }
+};
+
+// V05 自重依負擔面積迭代更新：每輪依相鄰邊長估計面積，重算 z 方向載重再重解
+V[4] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++) if(i===0||j===0||i===n-1||j===n-1) fix[id(i,j)] = 1;
+  const E = quadEdges(n, id, () => .9 + r()*.4);
+  const nb = Array.from({length:N}, () => []); for(const [a,b] of E){ nb[a].push(b); nb[b].push(a); }
+  const P0 = P.map(p => p.slice());
+  solveCG(P0, E, fix, -.03);
+  let Pi = P0.map(p => p.slice());
+  for(let iter = 0; iter < 4; iter++){
+    const area = new Float64Array(N); let asum = 0;
+    for(let k = 0; k < N; k++){ let s = 0; for(const j of nb[k]) s += Math.hypot(Pi[j][0]-Pi[k][0], Pi[j][1]-Pi[k][1]); const a = Math.pow(s/(nb[k].length||1), 2); area[k] = a; asum += a; }
+    const aavg = asum/N || 1;
+    Pi = P.map(p => p.slice());
+    solveCG(Pi, E, fix, k => -.02 - .09*(area[k]/aavg));
+  }
+  const { prj } = projector(P, W, H, "iso", { cy: .66, sxr: .42, hs: .3 });
+  g.globalAlpha = .3;
+  for(const [a,b] of E){ const A = prj(P0[a]), B = prj(P0[b]); g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = .6; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  g.globalAlpha = 1;
+  drawNet(g, Pi, E, forcesOf(Pi, E), prj, c, {});
+  markFix(g, Pi, fix, prj);
+};
+
+// V06 輪輻索網：外圈固定為壓環，最內圈以高 q 環索相連成拉環，徑向索另給力密度
+V[5] = function(g, W, H, r, c){
+  const rings = 6, spokes = 18, N = rings*spokes + 1, P = [], id = (ri, si) => ri*spokes + si, center = N-1;
+  for(let ri = 0; ri < rings; ri++){ const rad = .44*(ri+1)/rings; for(let si = 0; si < spokes; si++){ const a = si/spokes*TAU; P.push([rad*Math.cos(a), rad*Math.sin(a), 0]); } }
+  P.push([0,0,0]);
+  const fix = new Uint8Array(N); for(let si = 0; si < spokes; si++) fix[id(rings-1, si)] = 1;
+  const E = [];
+  for(let ri = 0; ri < rings; ri++) for(let si = 0; si < spokes; si++){
+    const a = id(ri, si), b = id(ri, (si+1)%spokes);
+    E.push([a, b, ri === 0 ? 3.2 : .5 + .1*ri]);
+    if(ri === 0) E.push([a, center, 2.6]);
+    if(ri < rings-1) E.push([a, id(ri+1, si), 1 + .15*(rings-1-ri)]);
+  }
+  solveCG(P, E, fix, -.045);
+  const { prj } = projector(P, W, H, "plan", { k: 1.55, sq: .86, kz: .5, cy: .55 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, { wMin: .5, wRange: 1.6 });
+  markFix(g, P, fix, prj, 2);
+  g.strokeStyle = U.rgba(c, .6); g.lineWidth = 1.4; g.beginPath();
+  for(let si = 0; si <= spokes; si++){ const p = prj(P[id(0, si%spokes)]); si ? g.lineTo(p[0],p[1]) : g.moveTo(p[0],p[1]); } g.stroke();
+};
+
+// V07 支承反力：對每個固定點算 R = -Σ q(x_j-x_i)，畫成依大小縮放的箭頭
+V[6] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const nb = Array.from({length:N}, () => []);
+  const E = quadEdges(n, id, () => .8 + r()*.5);
+  for(const e of E){ nb[e[0]].push(e); nb[e[1]].push(e); }
+  solveCG(P, E, fix, -.05);
+  const { prj } = projector(P, W, H, "front", { k: 1.6, kz: 1.7, ky: .25, cy: .68 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  const reax = [];
+  for(let k = 0; k < N; k++) if(fix[k]){
+    let Rx=0, Ry=0, Rz=0;
+    for(const [a,b,q] of nb[k]){ const j = a===k?b:a, dx=P[j][0]-P[k][0], dy=P[j][1]-P[k][1], dz=P[j][2]-P[k][2]; Rx-=q*dx; Ry-=q*dy; Rz-=q*dz; }
+    reax.push([k, Rx, Ry, Rz, Math.hypot(Rx,Ry,Rz)]);
+  }
+  const magMax = Math.max(...reax.map(e => e[4])) || 1;
+  for(const [k, Rx, Ry, Rz, mag] of reax){
+    const t = mag/magMax, ux0 = Rx/mag, uy0 = Ry/mag, uz0 = Rz/mag, L = .1 + .22*t;
+    const p0 = prj(P[k]), p1 = prj([P[k][0]-ux0*L, P[k][1]-uy0*L, P[k][2]-uz0*L]);
+    const dx = p1[0]-p0[0], dy = p1[1]-p0[1], len = Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len;
+    g.strokeStyle = U.rgba(c, .5 + .4*t); g.lineWidth = 1 + 2.4*t; g.beginPath(); g.moveTo(p0[0],p0[1]); g.lineTo(p1[0],p1[1]); g.stroke();
+    g.fillStyle = g.strokeStyle; g.beginPath(); g.moveTo(p1[0],p1[1]); g.lineTo(p1[0]-ux*6-uy*3, p1[1]-uy*6+ux*3); g.lineTo(p1[0]-ux*6+uy*3, p1[1]-uy*6-ux*3); g.closePath(); g.fill();
+  }
+};
+
+// V08 拖曳錨點即時重解：錨點從 A 拖到 B，殘影軌跡表示每一步重新求解
+V[7] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(8), fix = new Uint8Array(N);
+  const corners = [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)];
+  corners.forEach(k => fix[k] = 1);
+  const dragK = corners[3], from = [P[dragK][0], P[dragK][1], .04], to = [P[dragK][0]-.12, P[dragK][1]-.1, .3];
+  const E = quadEdges(n, id, () => 1);
+  const { prj } = projector(P, W, H, "iso", { cy: .58, sxr: .42 });
+  const steps = 4;
+  for(let s = 0; s <= steps; s++){
+    const t = s/steps, Pt = P.map(p => p.slice());
+    Pt[dragK][0] = from[0] + (to[0]-from[0])*t; Pt[dragK][1] = from[1] + (to[1]-from[1])*t; Pt[dragK][2] = from[2] + (to[2]-from[2])*t;
+    solveCG(Pt, E, fix, -.04);
+    if(s < steps){
+      g.globalAlpha = .1 + .1*t;
+      for(const [a,b] of E){ const A = prj(Pt[a]), B = prj(Pt[b]); g.strokeStyle = "rgba(255,255,255,.5)"; g.lineWidth = .6; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+    } else {
+      g.globalAlpha = 1; drawNet(g, Pt, E, forcesOf(Pt, E), prj, c, {}); markFix(g, Pt, fix, prj);
+      const p0 = prj(from), p1 = prj(Pt[dragK]);
+      g.strokeStyle = "#fff"; g.setLineDash([3,3]); g.lineWidth = 1.2; g.beginPath(); g.moveTo(p0[0],p0[1]); g.lineTo(p1[0],p1[1]); g.stroke(); g.setLineDash([]);
+      g.beginPath(); g.arc(p1[0],p1[1],4,0,TAU); g.fillStyle = "#fff"; g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+};
+
+// V09 等力網：迭代把每條邊的 q 設為「目標力 ÷ 長度」，收斂到內力全部相等的最小網
+V[8] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++) if(i===0||j===0||i===n-1||j===n-1) fix[id(i,j)] = 1;
+  fix[id((n-1)>>1,(n-1)>>1)] = 1;
+  P[id((n-1)>>1,(n-1)>>1)][2] = -.28;
+  let E = quadEdges(n, id, () => 1);
+  const target = .05;
+  for(let iter = 0; iter < 5; iter++){
+    solveCG(P, E, fix, 0);
+    E = E.map(([a,b]) => { const len = Math.hypot(P[b][0]-P[a][0], P[b][1]-P[a][1], P[b][2]-P[a][2]) || .01; return [a, b, target/len]; });
+  }
+  const { prj } = projector(P, W, H, "iso", { cy: .62, sxr: .4 });
+  g.lineCap = "round";
+  for(const [a,b] of E){ const A = prj(P[a]), B = prj(P[b]); g.strokeStyle = U.rgba(c, .8); g.lineWidth = 1.3; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  markFix(g, P, fix, prj);
+};
+
+// V10 張拉整體：受壓桿給負力密度，矩陣不再正定，改用帶樞軸高斯消去求解
+V[9] = function(g, W, H, r, c){
+  const rings = 6, N = rings*2, P = [], id = (top, i) => (top?rings:0) + i;
+  for(let i = 0; i < rings; i++){ const a = i/rings*TAU; P.push([.38*Math.cos(a), .38*Math.sin(a), 0]); }
+  for(let i = 0; i < rings; i++){ const a = (i+.5)/rings*TAU; P.push([.22*Math.cos(a), .22*Math.sin(a), .1]); }
+  const fix = new Uint8Array(N); for(let i = 0; i < rings; i++) fix[id(0,i)] = 1;
+  const E = [];
+  for(let i = 0; i < rings; i++){ E.push([id(0,i), id(0,(i+1)%rings), 3]); E.push([id(1,i), id(1,(i+1)%rings), 2.2]); }
+  for(let i = 0; i < rings; i++){ E.push([id(0,i), id(1,i), -1.4]); E.push([id(0,i), id(1,(i+rings-1)%rings), 1.1]); }
+  solveGE(P, E, fix, -.01);
+  tenseGuard(P, Array.from({length:rings}, (_,i) => id(1,i)), .32);
+  const { prj } = projector(P, W, H, "iso", { cy: .6, sxr: .4, hs: .4 });
+  const F = forcesOf(P, E);
+  for(let k = 0; k < E.length; k++){ const [a,b,q] = E[k], A = prj(P[a]), B = prj(P[b]);
+    if(q < 0){ g.strokeStyle = "rgba(255,140,60,.9)"; g.lineWidth = 4; } else { g.strokeStyle = U.rgba(c, .55 + .35*Math.min(1, Math.abs(F[k])*8)); g.lineWidth = 1; }
+    g.lineCap = "round"; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  markFix(g, P, fix, prj);
+};
+
+// V11 逆向找形：指定幾個節點的目標高度，迭代調整局部載重逼近目標（以有限差分反覆修正）
+V[10] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const targets = [[id(4,4), .3], [id(2,6), .12], [id(6,2), .12]];
+  const E = quadEdges(n, id, () => 1), extra = new Float64Array(N);
+  for(let iter = 0; iter < 6; iter++){
+    solveCG(P, E, fix, k => -.02 + extra[k]);
+    for(const [k, tz] of targets) extra[k] += (tz - P[k][2])*2.2;
+  }
+  const { prj } = projector(P, W, H, "iso", { cy: .64, sxr: .4 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  markFix(g, P, fix, prj);
+  for(const [k, tz] of targets){ const pt = prj([P[k][0], P[k][1], tz]), pa = prj(P[k]);
+    g.strokeStyle = "#fff"; g.lineWidth = 1.2; g.beginPath(); g.arc(pt[0], pt[1], 7, 0, TAU); g.stroke();
+    g.fillStyle = U.rgba(c, .95); g.beginPath(); g.arc(pa[0], pa[1], 3, 0, TAU); g.fill(); }
+};
+
+// V12 混合 E03 Voronoi：以蜂巢狀三價網格模擬不規則多邊形索網（每節點三叉），並淡淡填色像面板
+V[11] = function(g, W, H, r, c){
+  const nx = 9, ny = 11, P = [], id = (i,j) => j*nx+i, N = nx*ny;
+  const dx = .8/(nx-1), dy = .8/(ny-1);
+  for(let j = 0; j < ny; j++) for(let i = 0; i < nx; i++){
+    const jitter = (r()-.5)*dx*.5, jitterY = (r()-.5)*dy*.35;
+    P.push([-.4 + i*dx + (j%2)*dx*.5 + jitter, -.4 + j*dy*.87 + jitterY, 0]);
+  }
+  const E = [], fix = new Uint8Array(N);
+  for(let j = 0; j < ny; j++) for(let i = 0; i < nx; i++){
+    const k = id(i,j);
+    if(j < ny-1) E.push([k, id(i,j+1), .9 + r()*.4]);
+    if((i+j)%2 === 0 && i < nx-1) E.push([k, id(i+1,j), .9 + r()*.4]);
+    if(i===0||i===nx-1||j===0||j===ny-1) fix[k] = 1;
+  }
+  solveCG(P, E, fix, -.055);
+  const { prj } = projector(P, W, H, "iso", { cy: .6, sxr: .44 });
+  g.fillStyle = U.rgba(c, .07);
+  for(let j = 0; j < ny-1; j++) for(let i = 0; i < nx-1; i += 2){
+    if((i+j)%2 !== 0) continue;
+    const ks = [id(i,j), id(i+1,j), id(i+1,j+1), id(i,j+1)];
+    g.beginPath(); ks.forEach((k,q) => { const p = prj(P[k]); q ? g.lineTo(p[0],p[1]) : g.moveTo(p[0],p[1]); }); g.closePath(); g.fill();
+  }
+  drawNet(g, P, E, forcesOf(P, E), prj, c, { wMin: .9, wRange: 1.6 });
+  markFix(g, P, fix, prj, 2);
+};
+
+// ================= 無照片案例 =================
+
+// E06-01 慕尼黑奧林匹克屋頂：桅杆吊點＋零載重，邊索加強收出扇貝邊，一次解出多片相連的馬鞍面
+C["E06-01"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(13), fix = new Uint8Array(N);
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++) if(i===0||j===0||i===n-1||j===n-1) fix[id(i,j)] = 1;
+  const masts = [[id(4,4), .34], [id(9,8), .3]];
+  masts.forEach(([k,h]) => { fix[k] = 1; P[k][2] = h; });
+  const E = quadEdges(n, id, () => .8 + r()*.3, 3.4);
+  solveCG(P, E, fix, 0);
+  const { prj } = projector(P, W, H, "iso", { cy: .68, sxr: .44, hs: .32 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  masts.forEach(([k]) => { const top = prj(P[k]), base = prj([P[k][0], P[k][1], -.02]);
+    g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(base[0],base[1]); g.lineTo(top[0],top[1]); g.stroke();
+    g.fillStyle = "#fff"; g.beginPath(); g.arc(top[0], top[1], 3.4, 0, TAU); g.fill(); });
+  markFix(g, P, fix, prj, 1.8);
+};
+C["E06-01"].ratio = 1.15;
+
+// E06-02 NEST HiLo：索網加織物模板，比較灌漿前（輕載重）與灌漿後（混凝土自重）的預力差異
+C["E06-02"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++) if(i===0||j===0||i===n-1||j===n-1) fix[id(i,j)] = 1;
+  const E = quadEdges(n, id, () => 1);
+  solveCG(P, E, fix, -.02);
+  const wet = P.map(p => p.slice());
+  const nb = Array.from({length:N}, () => []); for(const [a,b] of E){ nb[a].push(b); nb[b].push(a); }
+  solveCG(wet, E, fix, k => -.02 - .05*(nb[k].length/4));
+  const { prj } = projector(P.concat(wet), W, H, "front", { k: 1.75, kz: 1.7, ky: .25, cy: .62 });
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 2;
+  const f0 = prj([-.5,-.5,.05]), f1 = prj([.5,-.5,.05]); g.beginPath(); g.moveTo(f0[0],f0[1]); g.lineTo(f1[0],f1[1]); g.stroke();
+  g.fillStyle = U.rgba(c, .1);
+  const mid = (n-1)>>1;
+  for(let i = 0; i < n-1; i++){ const A = prj(wet[id(i,mid)]), B = prj(wet[id(i+1,mid)]), A0 = prj(P[id(i,mid)]), B0 = prj(P[id(i+1,mid)]);
+    g.beginPath(); g.moveTo(A0[0],A0[1]); g.lineTo(B0[0],B0[1]); g.lineTo(B[0],B[1]); g.lineTo(A[0],A[1]); g.closePath(); g.fill(); }
+  g.globalAlpha = .35; drawNet(g, P, E, forcesOf(P, E), prj, c, {}); g.globalAlpha = 1;
+  drawNet(g, wet, E, forcesOf(wet, E), prj, c, {});
+  markFix(g, wet, fix, prj);
+};
+C["E06-02"].ratio = .85;
+
+// E06-03 COMPAS FD：求解與「拉回曲線」交替，邊界節點沿指定曲線滑動；右下角畫 CSR 三陣列示意
+C["E06-03"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const curve = t => [ -.5 + t, -.12*Math.sin(t*Math.PI) ];
+  const onCurve = []; for(let i = 0; i < n; i++){ const k = id(i, 0); onCurve.push(k); fix[k] = 1; }
+  const E = quadEdges(n, id, () => 1);
+  for(let iter = 0; iter < 4; iter++){
+    solveCG(P, E, fix, -.03);
+    for(const k of onCurve){ const t = Math.max(0, Math.min(1, P[k][0]+.5)), [cx0, cy0] = curve(t); P[k][0] = cx0; P[k][1] = cy0; }
+  }
+  const { prj } = projector(P, W, H, "iso", { cy: .58, sxr: .42 });
+  g.strokeStyle = U.rgba(c, .8); g.setLineDash([4,3]); g.lineWidth = 1.4; g.beginPath();
+  for(let i = 0; i <= 40; i++){ const [cx0,cy0] = curve(i/40), p = prj([cx0,cy0,P[onCurve[0]][2]]); i ? g.lineTo(p[0],p[1]) : g.moveTo(p[0],p[1]); } g.stroke(); g.setLineDash([]);
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  markFix(g, P, fix, prj);
+  const by = H - 30, bx = W*.08, bw = W*.84, rowsN = Math.min(30, E.length);
+  ["rgba(255,255,255,.35)", U.rgba(c,.7), "rgba(255,255,255,.6)"].forEach((col, ri) => {
+    g.fillStyle = col; for(let i = 0; i < rowsN; i++) g.fillRect(bx + i*bw/rowsN, by + ri*8, bw/rowsN - 1, 5);
+  });
+};
+C["E06-03"].ratio = 1.05;
+
+// E06-04 張拉整體力密度：受壓桿給負 q；右側畫出邊力密度排序譜，接近 0 者以亮色標出（象徵秩缺陷檢查）
+C["E06-04"] = function(g, W, H, r, c){
+  const rings = 5, N = rings*2, P = [], id = (top,i) => (top?rings:0)+i;
+  for(let i = 0; i < rings; i++){ const a = i/rings*TAU; P.push([.34*Math.cos(a), .34*Math.sin(a), 0]); }
+  for(let i = 0; i < rings; i++){ const a = (i+.5)/rings*TAU; P.push([.18*Math.cos(a), .18*Math.sin(a), .1]); }
+  const fix = new Uint8Array(N); fix[id(0,0)] = 1; fix[id(0, rings>>1)] = 1;
+  const E = [];
+  for(let i = 0; i < rings; i++){ E.push([id(0,i), id(0,(i+1)%rings), 2.6]); E.push([id(1,i), id(1,(i+1)%rings), 1.8]); }
+  for(let i = 0; i < rings; i++){ E.push([id(0,i), id(1,i), -1.1]); E.push([id(0,i), id(1,(i+rings-1)%rings), .9]); }
+  solveGE(P, E, fix, -.01);
+  tenseGuard(P, Array.from({length:rings}, (_,i) => id(1,i)), .28);
+  const { prj } = projector(P, W, H, "iso", { cx: .38, cy: .58, sxr: .32 });
+  for(const [a,b,q] of E){ const A = prj(P[a]), B = prj(P[b]);
+    g.strokeStyle = q < 0 ? "rgba(255,140,60,.9)" : U.rgba(c, .6); g.lineWidth = q < 0 ? 4 : 1; g.lineCap = "round";
+    g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  markFix(g, P, fix, prj);
+  const vals = E.map(([,,q]) => q).sort((a,b) => a-b), bx = W*.72, bw = W*.24, by = H*.15, bh = H*.7, vmax = Math.max(...vals.map(Math.abs));
+  vals.forEach((v, i) => { const hh = Math.abs(v)/vmax*bh*.9, x = bx + i*bw/vals.length;
+    g.fillStyle = Math.abs(v) < vmax*.12 ? "#ff4d4d" : (v < 0 ? "rgba(255,140,60,.8)" : U.rgba(c,.75));
+    g.fillRect(x, by + bh - hh, bw/vals.length - 1, hh); });
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.beginPath(); g.moveTo(bx, by+bh); g.lineTo(bx+bw, by+bh); g.stroke();
+};
+C["E06-04"].ratio = 1.1;
+
+// E06-05 Ariadne：以最佳化迴圈包住 FDM 求解，逼近目標索長；面板外框＋右上角收斂曲線暗示即時串流預覽
+C["E06-05"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(8), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  let E = quadEdges(n, id, () => 1);
+  const targetLen = .11, losses = [];
+  for(let iter = 0; iter < 8; iter++){
+    solveCG(P, E, fix, -.04);
+    let loss = 0;
+    E = E.map(([a,b,q]) => { const len = Math.hypot(P[b][0]-P[a][0], P[b][1]-P[a][1], P[b][2]-P[a][2]);
+      loss += (len-targetLen)*(len-targetLen); const nq = Math.max(.1, q + (len-targetLen)*4); return [a,b,nq]; });
+    losses.push(loss);
+  }
+  g.strokeStyle = "rgba(255,255,255,.18)"; g.lineWidth = 1.5;
+  if(g.roundRect){ g.beginPath(); g.roundRect(W*.04, H*.04, W*.92, H*.92, 10); g.stroke(); }
+  const { prj } = projector(P, W, H, "iso", { cy: .56, sxr: .38 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+  markFix(g, P, fix, prj);
+  const gx = W*.62, gy = H*.08, gw = W*.32, gh = H*.16, lmax = Math.max(...losses);
+  g.strokeStyle = U.rgba(c, .9); g.lineWidth = 1.6; g.beginPath();
+  losses.forEach((l, i) => { const x = gx + i/(losses.length-1)*gw, y = gy + gh - l/lmax*gh; i ? g.lineTo(x,y) : g.moveTo(x,y); }); g.stroke();
+  g.fillStyle = "rgba(255,255,255,.15)"; g.fillRect(gx, gy+gh, gw, 1);
+};
+C["E06-05"].ratio = 1.1;
+
+// E06-06 Grasshopper 元件：畫成元件外框＋輸入輸出端子，內部是求解後的索網小預覽
+C["E06-06"] = function(g, W, H, r, c){
+  const bx = W*.14, by = H*.22, bw = W*.72, bh = H*.56;
+  g.fillStyle = "rgba(255,255,255,.06)"; g.strokeStyle = U.rgba(c, .8); g.lineWidth = 2;
+  g.beginPath(); if(g.roundRect) g.roundRect(bx, by, bw, bh, 14); else g.rect(bx,by,bw,bh); g.fill(); g.stroke();
+  const inputs = 4, outputs = 2;
+  for(let i = 0; i < inputs; i++){ const y = by + (i+1)*bh/(inputs+1); g.fillStyle = "#fff"; g.beginPath(); g.arc(bx, y, 4, 0, TAU); g.fill();
+    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.beginPath(); g.moveTo(bx-18,y); g.lineTo(bx,y); g.stroke(); }
+  for(let i = 0; i < outputs; i++){ const y = by + (i+1)*bh/(outputs+1); g.fillStyle = c; g.beginPath(); g.arc(bx+bw, y, 4, 0, TAU); g.fill();
+    g.strokeStyle = U.rgba(c,.5); g.lineWidth = 1; g.beginPath(); g.moveTo(bx+bw,y); g.lineTo(bx+bw+18,y); g.stroke(); }
+  const { n, N, P, id } = quadGrid(7), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const ratios = Array.from({length:N}, () => .6 + r()*1.2);
+  const E = quadEdges(n, id, (a,b) => ratios[a]*ratios[b]);
+  solveCG(P, E, fix, -.05);
+  const { prj } = projector(P, W, H, "iso", { cx: .5, cy: .5, sxr: .26, hs: .22 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, { wMin: .5, wRange: 1.3 });
+};
+C["E06-06"].ratio = .9;
+
+// E06-07 FDMremote：左為 Grasshopper 節點圖，中間虛線與伺服器圖示代表傳給本機 Julia，右為求解結果
+C["E06-07"] = function(g, W, H, r, c){
+  const midx = W*.46;
+  const nodes = [[.1,.2],[.1,.55],[.1,.85],[.3,.35],[.3,.7]];
+  const links = [[0,3],[1,3],[1,4],[2,4],[3,4]];
+  const np = nodes.map(([x,y]) => [midx*x/.4, H*y]);
+  g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1.2;
+  links.forEach(([a,b]) => { g.beginPath(); g.moveTo(np[a][0],np[a][1]); g.lineTo(np[b][0],np[b][1]); g.stroke(); });
+  nodes.forEach((n2,i) => { g.fillStyle = i>=3 ? U.rgba(c,.8) : "rgba(255,255,255,.7)"; g.fillRect(np[i][0]-8, np[i][1]-6, 16, 12); });
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.setLineDash([3,4]); g.lineWidth = 1.4; g.beginPath(); g.moveTo(midx, H*.15); g.lineTo(midx, H*.85); g.stroke(); g.setLineDash([]);
+  g.fillStyle = "rgba(255,255,255,.15)"; g.fillRect(midx-10, H*.46, 20, 22); g.strokeStyle = "rgba(255,255,255,.4)"; g.strokeRect(midx-10, H*.46, 20, 22);
+  for(let i=0;i<3;i++){ g.fillStyle="rgba(255,255,255,.5)"; g.beginPath(); g.arc(midx, H*.5+i*6, 1.4, 0, TAU); g.fill(); }
+  const { n, N, P, id } = quadGrid(8), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const E = quadEdges(n, id, () => .8 + r()*.6);
+  solveCG(P, E, fix, -.05);
+  const { prj } = projector(P, W, H, "iso", { cx: .74, cy: .55, sxr: .24, hs: .3 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, {});
+};
+C["E06-07"].ratio = 1.05;
+
+// E06-08 Programming the Force Density Method：畫出從第一次求解到收斂解的多輪迭代，並疊上模糊的實體模型範圍
+C["E06-08"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(9), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  let E = quadEdges(n, id, () => 1);
+  const { prj } = projector(P, W, H, "iso", { cy: .6, sxr: .4 });
+  const blob = g.createRadialGradient(W*.47,H*.55,10, W*.47,H*.55, Math.min(W,H)*.34);
+  blob.addColorStop(0, "rgba(255,255,255,.05)"); blob.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = blob; g.beginPath(); g.arc(W*.47,H*.55, Math.min(W,H)*.34, 0, TAU); g.fill();
+  const rounds = 4;
+  for(let it = 0; it < rounds; it++){
+    solveCG(P, E, fix, 0);
+    const t = it/(rounds-1), alpha = it === 0 ? .9 : .25 + .2*t;
+    g.globalAlpha = alpha; g.lineCap = "round";
+    for(const [a,b] of E){ const A = prj(P[a]), B = prj(P[b]); g.strokeStyle = it === 0 ? "#fff" : U.rgba(c, .8); g.lineWidth = it === 0 ? 1.3 : .8;
+      if(it === 0) g.setLineDash([3,2]); g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); g.setLineDash([]); }
+    E = E.map(([a,b]) => { const len = Math.hypot(P[b][0]-P[a][0], P[b][1]-P[a][1], P[b][2]-P[a][2]) || .01; return [a, b, 1/len]; });
+  }
+  g.globalAlpha = 1; markFix(g, P, fix, prj);
+};
+C["E06-08"].ratio = .95;
+
+// E06-51 Shell Form Finding：左半 FDM 靜態解，右半動態鬆弛的質點軌跡尾巴，底部為 STL 分層示意
+C["E06-51"] = function(g, W, H, r, c){
+  const midx = W*.5;
+  const { n, N, P, id } = quadGrid(8), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const E = quadEdges(n, id, () => 1);
+  solveCG(P, E, fix, -.05);
+  const { prj: prjL } = projector(P, W, H, "iso", { cx: .27, cy: .5, sxr: .22, hs: .26 });
+  drawNet(g, P, E, forcesOf(P, E), prjL, c, {});
+  const { prj: prjR } = projector(P, W, H, "iso", { cx: .73, cy: .5, sxr: .22, hs: .26 });
+  for(const [a,b] of E){ const A = prjR(P[a]), B = prjR(P[b]); g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = .7; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); }
+  for(let k = 0; k < N; k++) if(!fix[k]){ const p = prjR(P[k]), tail = prjR([P[k][0]+(r()-.5)*.05, P[k][1]+(r()-.5)*.05, P[k][2]-.03]);
+    g.strokeStyle = U.rgba(c, .5); g.lineWidth = 1; g.beginPath(); g.moveTo(tail[0],tail[1]); g.lineTo(p[0],p[1]); g.stroke();
+    g.fillStyle = c; g.beginPath(); g.arc(p[0],p[1],1.6,0,TAU); g.fill(); }
+  g.strokeStyle = "rgba(255,255,255,.15)"; g.beginPath(); g.moveTo(midx, H*.08); g.lineTo(midx, H*.78); g.stroke();
+  const sy = H*.86, sh = H*.1, layers = 10;
+  for(let i = 0; i < layers; i++){ g.strokeStyle = U.rgba(c, .25 + .5*(i/layers)); g.lineWidth = 1;
+    g.beginPath(); g.moveTo(W*.12, sy + sh - i*sh/layers); g.lineTo(W*.88, sy + sh - i*sh/layers*.6); g.stroke(); }
+};
+C["E06-51"].ratio = 1.2;
+
+// E06-52 ForceDensityAPI：5×5 小網格對照右上角矩陣，底部排出 25 種力密度比例組合的縮圖（設計空間取樣）
+C["E06-52"] = function(g, W, H, r, c){
+  const { n, N, P, id } = quadGrid(5), fix = new Uint8Array(N);
+  [id(0,0), id(n-1,0), id(0,n-1), id(n-1,n-1)].forEach(k => fix[k] = 1);
+  const E = quadEdges(n, id, () => 1 + r()*.6);
+  solveCG(P, E, fix, -.06);
+  const { prj } = projector(P, W, H, "iso", { cx: .3, cy: .35, sxr: .22, hs: .3 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, { wMin: 1, wRange: 2 });
+  markFix(g, P, fix, prj, 3);
+  const row = new Int32Array(N); let nf = 0; for(let k=0;k<N;k++) row[k] = fix[k]?-1:nf++;
+  const box = Math.min(W,H)*.3, bx = W*.6, by = H*.06;
+  g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(bx,by,box,box); g.strokeStyle = U.rgba(c,.5); g.strokeRect(bx,by,box,box);
+  const cell = box/nf; g.fillStyle = U.rgba(c,.9); for(let i=0;i<nf;i++) g.fillRect(bx+i*cell, by+i*cell, Math.max(1,cell), Math.max(1,cell));
+  g.fillStyle = "rgba(255,255,255,.7)";
+  for(const [a,b] of E){ const A=row[a], B=row[b]; if(A>=0&&B>=0){ g.fillRect(bx+A*cell, by+B*cell, Math.max(1,cell), Math.max(1,cell)); g.fillRect(bx+B*cell, by+A*cell, Math.max(1,cell), Math.max(1,cell)); } }
+  const gs = 5, gx0 = W*.06, gy0 = H*.62, cw = W*.86/gs, ch2 = H*.32/gs;
+  for(let a = 0; a < gs; a++) for(let bq = 0; bq < gs; bq++){
+    const { P: P2, N: N2, id: id2, n: n2 } = quadGrid(4), fix2 = new Uint8Array(N2);
+    [id2(0,0), id2(n2-1,0), id2(0,n2-1), id2(n2-1,n2-1)].forEach(k => fix2[k] = 1);
+    const E2 = quadEdges(n2, id2, () => 1 + a*.3);
+    solveCG(P2, E2, fix2, -.02 - bq*.008);
+    const { prj: pj2 } = projector(P2, cw, ch2, "iso", { cx: .5, cy: .55, sxr: .32, hs: .3 });
+    for(const [p,q2] of E2){ const A = pj2(P2[p]), B = pj2(P2[q2]); g.strokeStyle = U.rgba(c, .5); g.lineWidth = .6;
+      g.beginPath(); g.moveTo(gx0+a*cw+A[0], gy0+bq*ch2+A[1]); g.lineTo(gx0+a*cw+B[0], gy0+bq*ch2+B[1]); g.stroke(); }
+  }
+};
+C["E06-52"].ratio = 1.3;
+
+// E06-53 Force_Density_Method：圓形固定邊界＋放射狀網格，依「中心性」把靠近中心的徑向主肋加粗
+C["E06-53"] = function(g, W, H, r, c){
+  const rings = 7, spokes = 20, N = rings*spokes + 1, P = [], id = (ri,si) => ri*spokes+si, center = N-1;
+  for(let ri = 0; ri < rings; ri++){ const rad = .42*(ri+1)/rings; for(let si = 0; si < spokes; si++){ const a = si/spokes*TAU; P.push([rad*Math.cos(a), rad*Math.sin(a), 0]); } }
+  P.push([0,0,0]);
+  const fix = new Uint8Array(N); for(let si = 0; si < spokes; si++) fix[id(rings-1, si)] = 1;
+  const E = [];
+  for(let ri = 0; ri < rings; ri++) for(let si = 0; si < spokes; si++){
+    const cent = 1 - ri/rings, a = id(ri, si), b = id(ri, (si+1)%spokes);
+    E.push([a, b, .5 + .3*cent]);
+    if(ri === 0) E.push([a, center, 2 + 2*cent]);
+    if(ri < rings-1) E.push([a, id(ri+1, si), .8 + 2.2*cent]);
+  }
+  solveCG(P, E, fix, -.05);
+  const { prj } = projector(P, W, H, "iso", { cy: .68, sxr: .42, hs: .3 });
+  drawNet(g, P, E, forcesOf(P, E), prj, c, { wMin: .5, wRange: 2.4 });
+  markFix(g, P, fix, prj, 2);
+};
+C["E06-53"].ratio = 1.05;
+})();
