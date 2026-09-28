@@ -42,6 +42,7 @@ gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"mod
 | `PROMPT.md` | 排程任務的提示詞 |
 | `specs/_common.md` | 所有 agent 的共用規則（不可捏造、繁體中文、查證方式、列舉值） |
 | `specs/var.md` `res.md` `cc.md` `fix.md` `review.md` `art.md` | gh-enrich 各類 agent 規格 |
+| `specs/imgfix.md` | 讓每張卡片都有自己的圖（先找真實圖片，找不到畫示意圖；可重畫重複的圖） |
 | `specs/explore.md` `select.md` `candreview.md` `newalgo.md` `integrate.md` | gh-new-algos 各類 agent 規格 |
 | `index/` | 每個演算法的既有內容摘要（去重用），`_catalog.md` 為全目錄；由 `tools/wf_plan.py` 產生 |
 | `backlog.json` | 目前所有待做單元 |
@@ -64,6 +65,8 @@ gh-enrich 可用 `"models": {"art": "opus"}` 覆寫某個角色的模型，`"mod
 | `python tools/wf_merge.py RUN` | 合併通過的內容 |
 | `python tools/wf_lock.py status` | 查看鎖；`acquire RUN`／`release` |
 | `python tools/zhcheck.py --all` | 簡體字檢查 |
+| `python tools/imgdup.py [編號…]` | 卡片圖重複檢查：沒有自己的圖、和演算法卡太像、同演算法內兩張太像、照片重複（明細寫進 `imgdup.json`） |
+| `python tools/wf_remove.py --reason "…" 案例編號…` | 使用者要求時移除案例（資料、圖片、出處、卡片畫法一起刪，並記進 `removed.json`、`rejected.json`） |
 | `python tools/fetch_images.py` | **在自己電腦上**下載排隊的圖片（雲端連不到大多數網站），之後跑 `python build.py` 並 commit |
 
 ## 需要人工處理的事

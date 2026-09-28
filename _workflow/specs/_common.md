@@ -9,6 +9,9 @@
 4. 只在 repo 內工作；不 commit、不 push（協調流程會統一處理）。
 5. 網站內容不可出現特定課程週次或課堂流程字句（例如「W3」「課堂」「學生」），改用通用說法（「基礎範例」「學習者」）。
 
+## 不收的內容
+神經網路相關（神經網路、深度學習、GAN、CNN、感知器、自組織映射 SOM）與格子波茲曼（LBM）超出教學難度，不要加入任何變形、案例、專案發想或參考（使用者 2026-09-28 決定）。
+
 ## 查證方式
 - 用 **WebSearch** 找、用 **WebFetch** 打開頁面確認標題、作者、年份相符。
 - WebSearch 額度用完時，用 ToolSearch 載入 `mcp__Parallel_Search__web_search`、`mcp__Parallel_Search__web_fetch` 改用。
