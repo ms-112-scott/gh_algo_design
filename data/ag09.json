@@ -1,0 +1,777 @@
+{
+  "agent": "ag09",
+  "algorithms": [
+    {
+      "id": "B04",
+      "name_zh": "葉序",
+      "name_en": "Phyllotaxis",
+      "family": "B",
+      "family_name": "生長",
+      "file": "B04_Phyllotaxis.cs",
+      "loc": 87,
+      "logic": [
+        "直接公式"
+      ],
+      "data_structure": [
+        "粒子",
+        "幾何"
+      ],
+      "difficulty": 1,
+      "difficulty_reason": "全檔 87 行、只有一個 for 迴圈加一個 PointAt 公式函式，沒有自訂 class、沒有狀態與迭代，每個點只看自己的編號就能算出位置。",
+      "tags": [
+        "對稱",
+        "動畫",
+        "吸引子控制",
+        "曲面上",
+        "3D"
+      ],
+      "one_liner": "把第 n 個點轉 n × 137.5°、推到 √n 的距離，就長出向日葵般均勻又不重複的螺旋點陣。",
+      "how_it_works": [
+        "給每個點一個編號 number = 1…count。",
+        "角度 = number × angle（預設黃金角 137.508°），轉成弧度。",
+        "半徑 = spacing × √number；開根號讓每一圈的面積相同，點的密度因此均勻（Vogel 1979 的 Fermat 螺旋）。",
+        "用極座標 (cos, sin) × 半徑得到 Point3d，並依編號由內到外放大圓的半徑作為視覺輸出。"
+      ],
+      "key_params": [
+        {
+          "name": "count",
+          "effect": "點的數量；越多圓盤越大，外圈會自然浮現 Fibonacci 數（21、34、55…）條的左右螺旋。"
+        },
+        {
+          "name": "spacing",
+          "effect": "整體縮放比例；決定相鄰點的距離與圓盤總半徑（≈ spacing × √count）。"
+        },
+        {
+          "name": "angle",
+          "effect": "發散角；137.508° 最均勻，偏離 0.1° 就會出現明顯的放射狀『輻條』，整數分之一的角度（如 90°、120°）會排成直線。"
+        }
+      ],
+      "csharp_concepts": [
+        "for 迴圈",
+        "List<Point3d>",
+        "List<Circle>",
+        "自訂方法回傳 Point3d",
+        "const 常數",
+        "Math.Sqrt / Math.Cos / Math.Sin",
+        "RhinoMath.ToRadians"
+      ],
+      "prerequisites": [
+        "迴圈與方法",
+        "極座標（角度＋半徑 → x, y）",
+        "度與弧度換算"
+      ],
+      "teaching_note": "非常適合從零實作，10 分鐘內可完成並立刻看到結果。建議讓學習者拖動 angle 滑桿從 137.0 到 138.0，親眼看到黃金角為何特別；再把 √number 改成 number，對比密度不均的阿基米德螺旋。注意 angle 輸入為 0 時程式會自動改用黃金角，示範時要說明這個防呆。",
+      "variations": [
+        {
+          "title": "發散角掃描與有理角對照",
+          "level": 1,
+          "what_changes": "規則（發散角）",
+          "how": "把 angle 接到 0–360 的滑桿或 Gene Pool，並另外輸入 360 × p/q（如 360×3/8）的有理角做比較。",
+          "result": "黃金角得到最均勻的點陣；有理角得到 q 條直線輻條；略偏黃金角則出現旋轉的螺旋臂。"
+        },
+        {
+          "title": "改變半徑函數（Fermat → 阿基米德／指數）",
+          "level": 1,
+          "what_changes": "規則（半徑公式）",
+          "how": "PointAt 中的 spacing × Math.Sqrt(number) 改為 spacing × number 或 spacing × Math.Pow(number, k)，把 k 做成輸入。",
+          "result": "k = 0.5 為均勻圓盤；k = 1 外圈稀疏、中心密集；k < 0.5 則外圈擠壓，可做密度漸層圖樣。"
+        },
+        {
+          "title": "圓柱葉序（鳳梨／棕櫚幹）",
+          "level": 2,
+          "what_changes": "維度（2D → 3D 圓柱）",
+          "how": "半徑固定為 R，改用 z = number × pitch 往上長：new Point3d(R·cos(turn), R·sin(turn), number·pitch)。",
+          "result": "沿柱身盤旋的點陣，可直接作為塔樓立面開口、柱體鑲板或 3D 列印燈罩的孔位。"
+        },
+        {
+          "title": "Fibonacci Sphere 球面均佈",
+          "level": 2,
+          "what_changes": "維度（平面 → 球面）",
+          "how": "緯度改用 z = 1 − 2(number − 0.5)/count、r = √(1 − z²)，經度仍用 number × 黃金角；乘上球半徑。",
+          "result": "在球面上近乎等距的點，可用來做圓頂分割、球形燈具孔位或日照取樣點。"
+        },
+        {
+          "title": "貼到任意曲面（UV 映射）",
+          "level": 3,
+          "what_changes": "輸出（映射到 Surface／Brep）",
+          "how": "把點的 (x, y) 正規化到 0–1 當作 UV，呼叫 surface.PointAt(u, v) 與 surface.NormalAt 取得曲面上的位置與法向。",
+          "result": "葉序點陣包覆在自由曲面屋頂或立面上，法向可用來長出鱗片或遮陽鰭片。"
+        },
+        {
+          "title": "吸引子控制元件大小",
+          "level": 2,
+          "what_changes": "輸入（吸引子點／曲線）",
+          "how": "新增 attractor 輸入，每個點的圓半徑改為依 point.DistanceTo(attractor) 重新映射（Remap）到 min–max。",
+          "result": "開孔或鱗片在吸引子附近變大或變小，形成有焦點的穿孔立面。"
+        },
+        {
+          "title": "影像灰階控制密度／大小",
+          "level": 3,
+          "what_changes": "輸入（影像）",
+          "how": "讀入 Bitmap，把每個點的 (x, y) 對應到像素，用 GetPixel 的亮度決定圓的半徑或是否保留該點。",
+          "result": "由葉序點陣構成的半色調（halftone）圖像，可做穿孔金屬板上的圖案。"
+        },
+        {
+          "title": "曲線邊界裁切與填滿",
+          "level": 2,
+          "what_changes": "加約束（邊界）",
+          "how": "新增 Curve boundary 輸入，用 boundary.Contains(point) 只保留在封閉曲線內的點，count 加大到覆蓋整個邊界。",
+          "result": "在任意平面形狀（基地、樓板、面板外框）內均勻散佈的點，不會出現規則網格的方向感。"
+        },
+        {
+          "title": "Voronoi／Delaunay 化為鑲板",
+          "level": 2,
+          "what_changes": "混合其他家族（幾何分割）",
+          "how": "把 points 輸出接到 Grasshopper 的 Voronoi 或 Delaunay 元件，或在 C# 中呼叫 Rhino.Geometry 的網格工具。",
+          "result": "向日葵式的蜂巢鑲板，每片面積接近，可直接拆成雷射切割片或屋頂格柵。"
+        },
+        {
+          "title": "螺旋連線（parastichy）結構",
+          "level": 3,
+          "what_changes": "輸出（點 → 線／圖）",
+          "how": "每個點 i 連到 i + F（F 為 Fibonacci 數，如 21、34），分別畫出順時針與逆時針兩組 Polyline。",
+          "result": "兩組交錯螺旋線形成的放射 diagrid，可作為屋頂梁系統（類似 Eden Project The Core 的做法）。"
+        },
+        {
+          "title": "Blooms 式的 3D 花苞與動畫",
+          "level": 3,
+          "what_changes": "維度＋動畫",
+          "how": "在球面葉序上，每個點依編號伸出長度遞增的錐體或花瓣；加入 time 輸入，讓整體每幀旋轉 137.5° 並逐步放大。",
+          "result": "類似 John Edmark 的 Blooms 雕塑，可輸出 3D 列印模型或 Grasshopper 動畫。"
+        },
+        {
+          "title": "輸出成可製造的開孔板／鱗片",
+          "level": 2,
+          "what_changes": "輸出（可製造幾何）",
+          "how": "把 circles 轉成 Curve 後以 Boundary Surfaces 與板材做布林差集，或在每點放置沿法向傾斜的矩形板片。",
+          "result": "可送雷射切割或 CNC 的穿孔面板、可組裝的鱗片外皮。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "葉序穿孔金屬立面",
+          "brief": "以葉序點陣配合吸引子與影像灰階控制開孔大小，設計一面遮陽穿孔立面，並輸出雷射切割圖檔與日照透光率比較。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "向日葵式太陽能板／集熱場配置",
+          "brief": "仿 MIT 的 heliostat 研究，在不規則基地邊界內用葉序配置太陽能板，評估互相遮蔭比例並與矩形網格配置比較。",
+          "difficulty": 3,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "Fibonacci 圓頂分割與構件化",
+          "brief": "用 Fibonacci Sphere 在半球上產生節點，再以 Delaunay 連成三角網格，統計桿件長度種類，做一座可組裝的小型亭子。",
+          "difficulty": 4,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "葉序塔樓：旋轉樓板與陽台",
+          "brief": "以圓柱葉序決定每層陽台或遮陽板的位置，比較不同發散角對日照與視野的影響，產出塔樓量體與立面。",
+          "difficulty": 3,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "頻閃動畫雕塑（Blooms 再詮釋）",
+          "brief": "在球面或曲面上以葉序長出尺寸漸變的花瓣，做出 3D 列印模型並以轉台＋頻閃（或手機慢動作）呈現動畫效果。",
+          "difficulty": 4,
+          "combine_with": [
+            "B01"
+          ]
+        },
+        {
+          "title": "曲面葉序＋鱗片自由曲面屋頂",
+          "brief": "把葉序映射到自由曲面後，依曲率與日照角度調整每片鱗片的開合，並處理 UV 失真造成的密度不均（需要重新取樣或鬆弛）。",
+          "difficulty": 5,
+          "combine_with": [
+            "E01",
+            "D01"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "A better way to construct the sunflower head",
+          "author": "Helmut Vogel",
+          "year": "1979",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/0025556479900804"
+        },
+        {
+          "title": "The Algorithmic Beauty of Plants（第 4 章 Phyllotaxis）",
+          "author": "Przemyslaw Prusinkiewicz, Aristid Lindenmayer",
+          "year": "1990",
+          "url": ""
+        },
+        {
+          "title": "Phyllotaxis（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Phyllotaxis"
+        },
+        {
+          "title": "Golden angle（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Golden_angle"
+        },
+        {
+          "title": "Evenly distributing points on a sphere",
+          "author": "Extreme Learning",
+          "year": "",
+          "url": "https://extremelearning.com.au/evenly-distributing-points-on-a-sphere/"
+        },
+        {
+          "title": "Golden Angle",
+          "author": "John Edmark",
+          "year": "",
+          "url": "http://www.johnedmark.com/phi"
+        },
+        {
+          "title": "Sunflower Seed Arrangements（Wolfram Demonstrations Project）",
+          "author": "",
+          "year": "",
+          "url": "https://demonstrations.wolfram.com/SunflowerSeedArrangements/"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "B04-01",
+      "algo": "B04",
+      "title": "Blooms 頻閃動畫雕塑",
+      "creator": "John Edmark",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "3D 列印的葉序雕塑，放在轉台上以頻閃燈照射，每轉 137.5° 閃一次，雕塑看起來就像自己在綻放。葉序公式同時決定了幾何形態與動畫的節奏。",
+      "variations": [
+        {
+          "name": "球面葉序",
+          "how": "把基礎範例的平面 Vogel 公式改成 Fibonacci Sphere 的緯度公式，讓點落在球面或花苞形曲面上。",
+          "effect": "點陣包覆整顆花苞，而非平面圓盤。"
+        },
+        {
+          "name": "依編號長出尺寸漸變的花瓣",
+          "how": "在每個點沿法向放一個錐體或花瓣，長度與寬度隨 number 線性增加。",
+          "effect": "相鄰花瓣只差一點點，旋轉 137.5° 後恰好接到下一個，產生連續動畫。"
+        },
+        {
+          "name": "時間輸入模擬頻閃",
+          "how": "新增 frame 輸入，每一幀把整體旋轉 frame × 黃金角後輸出。",
+          "effect": "在 Grasshopper 內就能預覽雕塑『綻放』的效果。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "曲面上",
+        "動畫",
+        "對稱"
+      ],
+      "tools": [
+        "3D 列印"
+      ],
+      "url": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/"
+    },
+    {
+      "id": "B04-02",
+      "algo": "B04",
+      "title": "Eden Project：The Core 教育中心屋頂",
+      "creator": "Grimshaw（Jolyon Brewis）、Peter Randall-Page、SKM Anthony Hunts（Mike Purvis）",
+      "year": "2005",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance",
+        "fabrication"
+      ],
+      "scale": "建築",
+      "summary": "屋頂的木構梁以兩組相反方向的 Fibonacci 螺旋（21 與 34 條）排列，形式取自向日葵花盤。結構工程師開發了『Phyllotactic converter』，採用 21／34 的螺旋數讓梁深能控制在約 0.8 公尺。",
+      "variations": [
+        {
+          "name": "Parastichy 連線成梁",
+          "how": "每個點 i 分別連到 i+21 與 i+34，得到順時針與逆時針兩組螺旋 Polyline。",
+          "effect": "兩組交錯螺旋構成放射狀格柵梁系統。"
+        },
+        {
+          "name": "投影到穹頂曲面",
+          "how": "把平面點陣的半徑 r 映射成高度 z = f(r)（如拋物面或球冠），再重新連線。",
+          "effect": "由平面花盤變成有起伏的屋頂殼體。"
+        },
+        {
+          "name": "統計構件長度",
+          "how": "連線後計算每段梁長並分群，找出重複構件數量。",
+          "effect": "作為木構預製與成本評估的依據。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/"
+    },
+    {
+      "id": "B04-03",
+      "algo": "B04",
+      "title": "向日葵式聚光太陽能鏡場配置（PS10 改良）",
+      "creator": "MIT（Mitsos 研究室）與 RWTH Aachen",
+      "year": "2012",
+      "category": "performance",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "地景",
+      "summary": "研究者把聚光太陽能電廠的定日鏡改成以約 137° 黃金角螺旋排列（Fermat 螺旋），與 PS10 電廠原配置相比，鏡場佔地減少約 20%，同時減少鏡子間的遮蔽與阻擋、提升效率。",
+      "variations": [
+        {
+          "name": "半徑函數參數化",
+          "how": "把 √number 改成 a × number^b，讓外圈間距可調。",
+          "effect": "外圈鏡子間距加大，減少遠處互相遮擋。"
+        },
+        {
+          "name": "只保留北側扇形",
+          "how": "加入角度範圍約束，只保留塔北側（北半球）的點。",
+          "effect": "符合真實電廠只在接收塔一側佈鏡的配置。"
+        },
+        {
+          "name": "遮蔭評估迴圈",
+          "how": "對每個點以太陽向量做射線測試，計算被前排遮擋的比例並輸出成顏色。",
+          "effect": "把葉序配置接上性能評估，可與網格配置比較。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://news.mit.edu/2012/sunflower-concentrated-solar-0111"
+    },
+    {
+      "id": "B04-04",
+      "algo": "B04",
+      "title": "Phyllotaxis Tower 葉序塔樓",
+      "creator": "Ernesto Bueno Wills",
+      "year": "2009",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "以向日葵葉序為概念的摩天樓提案：每層五片『葉』繞著核心旋轉生長並折出做為遮陽，內部結構以依黃金比例擴大的環狀點陣連成放射 diagrid。以 Grasshopper 與 RhinoScript 產生。",
+      "variations": [
+        {
+          "name": "圓柱葉序決定每層元件位置",
+          "how": "半徑固定、z 隨樓層增加，角度用 number × 發散角。",
+          "effect": "陽台或遮陽葉片沿塔身螺旋排列。"
+        },
+        {
+          "name": "改用 45° 固定轉角",
+          "how": "把 angle 改成 45°，每 8 層回到原位（原作做法），與 137.5° 比較。",
+          "effect": "看到有理角與黃金角在立面上的節奏差異。"
+        },
+        {
+          "name": "點陣連成 diagrid",
+          "how": "把每環的點與下一環的相鄰點連線形成交叉斜撐。",
+          "effect": "得到類似幹細胞組織的內部結構網。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "對稱"
+      ],
+      "tools": [
+        "Grasshopper",
+        "RhinoScript",
+        "Rhino"
+      ],
+      "url": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html"
+    },
+    {
+      "id": "B04-05",
+      "algo": "B04",
+      "title": "Phyllo Pavilion",
+      "creator": "Maryam Deshmukh、Sidhant Choudhary（IAAC）",
+      "year": "2022",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "IAAC 學習者的半透空亭子設計，以 21:34 的 Fibonacci 比例產生網格拓樸，把葉子換成參數化演化的面片，靈感也來自棕櫚葉柄束作為結構的 Arish 建築。以 Grasshopper 外掛完成運算設計。",
+      "variations": [
+        {
+          "name": "21:34 網格拓樸",
+          "how": "用 i→i+21、i→i+34 的連線把葉序點轉成四邊形網格。",
+          "effect": "得到每格面積接近的螺旋網格。"
+        },
+        {
+          "name": "每格面片依位置變形",
+          "how": "依點的編號或與入口距離決定面片開口率。",
+          "effect": "由內到外產生由封閉到通透的漸變。"
+        },
+        {
+          "name": "映射到亭子曲面",
+          "how": "把點的 (x, y) 正規化為 UV，用 Surface.PointAt 放到殼體上。",
+          "effect": "平面葉序變成包覆亭子的外皮。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "曲面上",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.iaacblog.com/programs/phyllo-pavilion/"
+    },
+    {
+      "id": "B04-06",
+      "algo": "B04",
+      "title": "Phyllotaxis：Estufa Fria 溫室花園裝置",
+      "creator": "Melanie Waidler",
+      "year": "2019",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "地景",
+      "summary": "位於里斯本 Estufa Fria 植物溫室的 follie 設計，以 Fibonacci 螺旋撐起一片紅色的可穿透摺面，讓它『殖民』整個溫室結構，讓人有置身花朵之中的空間體驗。",
+      "variations": [
+        {
+          "name": "以曲線邊界裁切",
+          "how": "用既有溫室平面作為 boundary，只保留落在邊界內的葉序點。",
+          "effect": "螺旋圖樣自然填滿不規則基地。"
+        },
+        {
+          "name": "點高度隨半徑變化",
+          "how": "z = f(r) 讓外圈升高，形成下凹的花形空間。",
+          "effect": "平面點陣變成可走入的起伏地景。"
+        },
+        {
+          "name": "點轉成穿孔面",
+          "how": "把 circles 對一張曲面做投影開孔。",
+          "effect": "得到可透光的紅色穿孔摺面。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://archive.dpa-etsam.com/projects/phyllotaxis"
+    },
+    {
+      "id": "B04-07",
+      "algo": "B04",
+      "title": "Fibonacci Lattice：球面點均佈",
+      "creator": "Extreme Learning",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "說明如何把 Fibonacci 格點以等面積圓柱投影映射到球面，快速得到近乎均勻的球面點分佈，並提出比標準 Fibonacci lattice 更佳的偏移修正。是把基礎範例平面葉序推到球面的標準做法。",
+      "variations": [
+        {
+          "name": "緯度用 arccos 分佈",
+          "how": "z = 1 − 2(i + 0.5)/N、r = √(1 − z²)，經度仍用 i × 黃金角。",
+          "effect": "點在球面上幾乎等距。"
+        },
+        {
+          "name": "只取上半球做圓頂",
+          "how": "過濾 z < 0 的點，再做 Delaunay 或凸包得到三角網格。",
+          "effect": "可直接作為圓頂分割的節點。"
+        },
+        {
+          "name": "端點偏移修正",
+          "how": "依文章把 i + 0.5 改成帶有 epsilon 的偏移。",
+          "effect": "改善極點附近的點分佈品質。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "曲面上"
+      ],
+      "tools": [],
+      "url": "https://extremelearning.com.au/evenly-distributing-points-on-a-sphere/"
+    },
+    {
+      "id": "B04-08",
+      "algo": "B04",
+      "title": "Coding Challenge：Phyllotaxis",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "以 p5.js 逐幀畫出 Vogel 葉序點，並用編號或角度改變顏色，是最普及的葉序入門教學，與基礎 C# 範例的公式完全相同。",
+      "variations": [
+        {
+          "name": "逐幀生長",
+          "how": "用 Grasshopper Timer 或 frame 輸入，只輸出 number ≤ frame 的點。",
+          "effect": "看到花盤由中心往外一顆顆長出來。"
+        },
+        {
+          "name": "依編號上色",
+          "how": "把 number % 256 或角度對應到色相，輸出顏色清單給 Custom Preview。",
+          "effect": "顏色會凸顯出 Fibonacci 螺旋臂。"
+        },
+        {
+          "name": "點大小隨時間脈動",
+          "how": "半徑乘上 sin(time + number × k)。",
+          "effect": "產生波紋式的動態圖像。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "動畫",
+        "Timer"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://editor.p5js.org/codingtrain/sketches/CehY0jsLV"
+    },
+    {
+      "id": "B04-09",
+      "algo": "B04",
+      "title": "Coding Challenge 181：Voronoi Phyllotaxis",
+      "creator": "The Coding Train",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "把葉序點陣當作 Voronoi 的種子點，得到向日葵花盤般的細胞圖樣。示範了葉序與幾何分割家族的混合。",
+      "variations": [
+        {
+          "name": "點接 Voronoi",
+          "how": "把 points 輸出接到 GH Voronoi 元件，邊界用 count 對應的外圓。",
+          "effect": "得到面積接近的螺旋細胞圖樣。"
+        },
+        {
+          "name": "細胞內縮做開孔",
+          "how": "每個 Voronoi 格用 Offset 往內縮，縮量隨半徑變化。",
+          "effect": "由中心到外圈孔洞漸變的格柵。"
+        },
+        {
+          "name": "用 Lloyd 鬆弛比較",
+          "how": "對隨機點做數次 Lloyd relaxation，與葉序的 Voronoi 並排比較。",
+          "effect": "理解葉序本身已是一種『免迭代』的均勻分佈。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://editor.p5js.org/codingtrain/sketches/ydiZeUK8R"
+    },
+    {
+      "id": "B04-10",
+      "algo": "B04",
+      "title": "以葉序排列立面面板（Dynamo 論壇討論）",
+      "creator": "Dynamo BIM 社群",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "BIM 使用者討論如何讓立面面板改以葉序排列，取代傳統上下左右對齊的菱形排列。代表葉序從圖樣走向實際立面面板的需求。",
+      "variations": [
+        {
+          "name": "矩形邊界內填滿",
+          "how": "count 開大，再以立面外框 Curve.Contains 過濾點。",
+          "effect": "在長方形立面中得到無明顯方向性的面板分佈。"
+        },
+        {
+          "name": "點位放置族群／面板",
+          "how": "每個點建立朝立面法向的 Plane，放置固定尺寸的面板或開孔。",
+          "effect": "可直接轉成 BIM 構件或 CNC 開孔清單。"
+        },
+        {
+          "name": "吸引子控制開孔率",
+          "how": "依點到窗戶或入口的距離調整開孔半徑。",
+          "effect": "視線與採光需要的位置更通透。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "吸引子控制"
+      ],
+      "tools": [
+        "Dynamo",
+        "Revit"
+      ],
+      "url": "https://forum.dynamobim.com/t/phyllotaxis-for-facade-panel-pattern/32489"
+    },
+    {
+      "id": "B04-11",
+      "algo": "B04",
+      "title": "以葉序排列的高爾夫球凹洞（Phyllotaxis-based dimple patterns 專利）",
+      "creator": "美國專利 US 6,682,441",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "以葉序規則在球面上配置高爾夫球的凹洞，讓凹洞分佈均勻且不重複，影響球的空氣動力表現。說明葉序也是工業產品表面均佈的方法。",
+      "variations": [
+        {
+          "name": "Fibonacci Sphere 取點",
+          "how": "把平面公式改成球面公式，count 設為凹洞數量。",
+          "effect": "在球面上得到均勻的凹洞中心。"
+        },
+        {
+          "name": "凹洞大小分級",
+          "how": "依與最近鄰點的距離決定凹洞半徑（需簡單鄰居搜尋）。",
+          "effect": "填補空隙，提高表面覆蓋率。"
+        },
+        {
+          "name": "布林差集成實體",
+          "how": "每個點沿法向放小球，與主球做 BooleanDifference。",
+          "effect": "得到可 3D 列印的凹洞球體模型。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "曲面上",
+        "鄰居搜尋"
+      ],
+      "tools": [],
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6682441"
+    },
+    {
+      "id": "B04-12",
+      "algo": "B04",
+      "title": "開孔非均勻分佈的研磨片（Abrasive article 專利）",
+      "creator": "美國專利 US 9,656,366",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "研磨圓片上的集塵開孔以非均勻（葉序類）方式分佈，而非規則網格，使開孔不會沿同一軌跡排列。可視為『圓盤上的葉序開孔』的工業應用。",
+      "variations": [
+        {
+          "name": "圓盤邊界與中心留白",
+          "how": "只保留 rMin < 半徑 < rMax 的點。",
+          "effect": "中心留出固定孔、外緣保留邊距。"
+        },
+        {
+          "name": "調整發散角避免同心軌跡",
+          "how": "比較黃金角與有理角時，點在旋轉方向上的重疊情況。",
+          "effect": "理解葉序為何能避免開孔落在同一圓周軌跡上。"
+        },
+        {
+          "name": "輸出切割路徑",
+          "how": "circles 轉成 Curve 輸出為 DXF。",
+          "effect": "直接供雷射或沖壓加工使用。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9656366"
+    },
+    {
+      "id": "B04-13",
+      "algo": "B04",
+      "title": "Flourish (Bloom) 互動展品",
+      "creator": "Exploratorium（John Edmark 作品）",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "舊金山 Exploratorium 科學博物館的展品，觀眾可觀看以黃金角旋轉搭配頻閃產生動畫的葉序雕塑，把葉序數學轉成可體驗的公共教育裝置。",
+      "variations": [
+        {
+          "name": "發散角可調的互動版",
+          "how": "把 angle 綁到滑桿，並即時以 frame 旋轉預覽。",
+          "effect": "觀眾能看到換角度後動畫如何失效或改變方向。"
+        },
+        {
+          "name": "平面版浮雕",
+          "how": "點的高度 z 隨編號遞增，做成階梯狀浮雕。",
+          "effect": "可 CNC 切削的平面版 Bloom。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://www.exploratorium.edu/exhibits/flourish-bloom"
+    },
+    {
+      "id": "B04-14",
+      "algo": "B04",
+      "title": "Fibonacci Sphere 與 Sunflower Spiral 參數化教學",
+      "creator": "designcoding",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "參數化設計教學網站示範在 Grasshopper 中建立向日葵螺旋與 Fibonacci 球面點陣，並延伸成球形結構（Fibonacci Dome）。適合作為學習者把 C# 範例對照 GH 原生元件寫法的參考。",
+      "variations": [
+        {
+          "name": "C# 與原生元件對照",
+          "how": "把基礎範例 PointAt 公式用 Series、Multiplication、Construct Point 等原生元件重建。",
+          "effect": "理解公式寫法與視覺化程式之間的對應。"
+        },
+        {
+          "name": "球面點連成圓頂",
+          "how": "上半球點做 Delaunay Mesh，再取邊線作為桿件。",
+          "effect": "得到節點均勻的 Fibonacci 圓頂結構。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "曲面上"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.designcoding.net/fibonacci-sphere/"
+    }
+  ]
+}

@@ -1,0 +1,841 @@
+{
+  "agent": "ag11",
+  "algorithms": [
+    {
+      "id": "C02",
+      "name_zh": "生命遊戲疊層",
+      "name_en": "Game of Life 3D (Stacked Generations)",
+      "family": "C",
+      "family_name": "場與擴散",
+      "file": "C02_GameOfLife3D.cs",
+      "loc": 146,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "網格"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "只用 bool[,] 二維陣列與兩個輔助方法（NextGeneration、CountNeighbors），沒有自訂 class；重點是雙緩衝同步更新與 % 環面邊界，C# 基礎程度讀得懂，但需要理解「時間＝樓層」的轉換。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "鄰居搜尋",
+        "3D",
+        "雙緩衝",
+        "環面邊界",
+        "時間轉空間"
+      ],
+      "one_liner": "在一張棋盤上跑 Conway 生命遊戲，每一代活著的格子疊成一層方塊，時間往上長成一棟由規則「長」出來的量體。",
+      "how_it_works": [
+        "建立 width × depth 的 bool[,] 網格，用固定 seed 的 Random 依 density 撒下初始活細胞。",
+        "每一代先把活著的格子轉成 Box 放在第 layer 層（z = layer × cellSize），並記錄活格數。",
+        "對每一格數周圍 8 格（Moore 鄰域，邊界用 % 左右上下相接）有幾個活鄰居。",
+        "套 B3/S23 規則：活的有 2 或 3 個鄰居才存活；死的剛好 3 個鄰居就復活；結果寫進新陣列（雙緩衝），避免同一代互相干擾。",
+        "新陣列取代舊陣列，重複 generations 次，最後輸出所有方塊與每層活格數。"
+      ],
+      "key_params": [
+        {
+          "name": "width / depth",
+          "effect": "平面格數；越大圖樣越豐富，但方塊數與運算量是平方成長"
+        },
+        {
+          "name": "generations",
+          "effect": "世代數＝樓層數；太多代時常趨於穩定或閃爍，上層會變成重複的柱狀"
+        },
+        {
+          "name": "density",
+          "effect": "初始活細胞比例；約 0.2–0.4 最有生命力，太低很快死光，太高第一代就因擁擠大量死亡"
+        },
+        {
+          "name": "seed",
+          "effect": "同一 seed 結果完全可重現；換 seed 就換一棟量體"
+        },
+        {
+          "name": "cellSize",
+          "effect": "每格邊長兼層高；可改成分開的 cellSize 與 floorHeight 以符合建築尺度"
+        }
+      ],
+      "csharp_concepts": [
+        "bool[,] 二維陣列",
+        "GetLength(0/1)",
+        "巢狀 for 迴圈",
+        "模數 % 處理環面邊界",
+        "雙緩衝（寫進新陣列再交換）",
+        "Random(seed)",
+        "Box 與 Interval",
+        "List<Box> / List<int>",
+        "方法回傳值與 ref 輸出"
+      ],
+      "prerequisites": [
+        "巢狀迴圈與陣列",
+        "方法（函式）拆分",
+        "網格家族觀念",
+        "Box／Interval 建構"
+      ],
+      "teaching_note": "非常適合從零實作：規則只有兩行，最關鍵的學習重點是「為什麼要寫進新陣列」與「% 讓邊界相接」。可以先故意寫成原地更新讓學習者看到錯誤結果，再改成雙緩衝。提醒學習者 generations 與網格大小相乘後方塊數會爆量，預覽時先用 20×20×20。",
+      "variations": [
+        {
+          "title": "改規則字串（B/S 記法）",
+          "level": 1,
+          "what_changes": "規則",
+          "how": "新增輸入 birth、survive（例如 \"3\" 與 \"23\"），在 NextGeneration 裡用 birth.Contains(neighbors.ToString()) 判斷；可試 B36/S23（HighLife）、B3678/S34678（Day & Night）、B3/S12345（迷宮）。",
+          "result": "同一套程式長出完全不同性格的量體：碎裂、迷宮牆、塊狀聚落。"
+        },
+        {
+          "title": "一維 Wolfram 規則立面",
+          "level": 1,
+          "what_changes": "維度（2D→1D）",
+          "how": "網格改成 bool[] 一列，鄰居只看左、自己、右三格，組成 0–7 的索引後查 rule 數字的第 n 個位元：(rule >> index) & 1。每一代往下畫一排方格或開孔。",
+          "result": "Rule 30、90、110 等三角形與條紋圖樣，可直接當立面穿孔板。"
+        },
+        {
+          "title": "真 3D 生命遊戲（26 鄰居）",
+          "level": 3,
+          "what_changes": "維度（2D＋時間→3D 空間）",
+          "how": "改用 bool[,,]，CountNeighbors 加第三層 offsetZ 迴圈（26 鄰居），規則改成如 B5/S45 等 3D Life 規則；每一代輸出整個立體格子，而非疊層。",
+          "result": "在立方體空間中生長、崩解的團塊，可作雕塑或量體研究。"
+        },
+        {
+          "title": "年齡／歷史累積",
+          "level": 2,
+          "what_changes": "狀態",
+          "how": "另開 int[,] age，活著就 +1、死掉歸零；輸出時依 age 決定方塊高度、縮放或顏色，或像 Krawczyk 的 Metallic Lace 累積「被造訪次數」當尺寸。",
+          "result": "穩定存活的區域變粗、變高，形成有主次層級的結構與浮雕。"
+        },
+        {
+          "title": "影像當初始狀態",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "把 INIT 的 random.NextDouble() < density 改成讀取 Bitmap.GetPixel 的亮度 < 門檻，或讀入一組點（基地既有建物）轉成活格。",
+          "result": "量體從基地紋理或圖像「長」出來，初始層就是設計意圖。"
+        },
+        {
+          "title": "曲線邊界遮罩",
+          "level": 2,
+          "what_changes": "約束",
+          "how": "新增 Curve boundary 輸入，預先算 bool[,] inside（格心用 Curve.Contains 判斷），在 NextGeneration 中 inside 為 false 的格子永遠是死的。",
+          "result": "量體被限制在基地紅線或不規則平面內，邊緣自然退縮。"
+        },
+        {
+          "title": "結構支撐約束（懸挑限制）",
+          "level": 3,
+          "what_changes": "約束／規則",
+          "how": "在疊層時加一條規則：第 layer 層的活格若下一層同位置與周圍 4 格都沒有支撐就強制死亡；或限制每層活格數不超過上一層的某比例。",
+          "result": "可建造的層層退縮量體，不會出現懸空方塊。"
+        },
+        {
+          "title": "吸引子調整規則",
+          "level": 3,
+          "what_changes": "規則（空間變化）",
+          "how": "加入吸引點，依格子到吸引點距離在兩組規則間切換，或把 density、存活門檻變成距離函數。",
+          "result": "靠近吸引點處密實、遠處稀疏，形成有梯度的量體或立面開孔率。"
+        },
+        {
+          "title": "體素合併與可製造輸出",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "不輸出個別 Box，而是對每個活格只輸出朝向死格的面，組成 Mesh 後 Mesh.Weld／合併；或每層輸出成 2D 輪廓曲線供雷切疊層模型。",
+          "result": "乾淨的外殼 mesh 可 3D 列印；逐層輪廓可雷射切割堆疊成實體模型。"
+        },
+        {
+          "title": "曲面上的生命遊戲",
+          "level": 3,
+          "what_changes": "維度（平面→曲面）",
+          "how": "把 x、y 格子對應到 Surface 的 UV 參數，Box 改成 surface.PointAt 取四角做四邊形面板，層數改成沿法向量偏移；環面邊界剛好對應封閉曲面。",
+          "result": "包覆在圓柱或自由曲面上的立面圖樣或多層表皮。"
+        },
+        {
+          "title": "Timer 動畫化",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 alive 改成類別欄位保留狀態，每次 RunScript 只推進一代，搭配 GH Timer 與 reset 布林輸入；只顯示當前層或最近 N 層。",
+          "result": "即時看到滑翔機、振盪器移動，方便挑出想要的時間片段。"
+        },
+        {
+          "title": "連續狀態（Lenia 式）",
+          "level": 5,
+          "what_changes": "狀態／規則",
+          "how": "把 bool 改成 double（0–1），鄰居改用環形核加權平均，成長函數用高斯曲線，每步小幅更新；輸出用等值面或高度場取代方塊。",
+          "result": "平滑、有機、會移動的「生物」形態，與 C01 反應擴散類似但規則來自 Lenia。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "CA 穿孔立面系統",
+          "brief": "用一維 Wolfram 規則或 2D 生命遊戲產生穿孔金屬板圖樣，依方位日照調整開孔率，輸出可雷切的板片分割與編號。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "生命遊戲集合住宅量體",
+          "brief": "把 2D 疊層改成以住宅單元為格的量體生成，加入採光、懸挑、樓層數上限約束，比較不同規則產生的空間組合與日照表現。",
+          "difficulty": 3,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "時間切片雕塑",
+          "brief": "挑選有趣的 seed 與規則，把世代疊層轉成合併外殼並 3D 列印，或逐層雷切壓克力疊成實體，展示「時間變成形」。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "都市擴張 CA 模擬",
+          "brief": "參考 White & Engelen 的土地使用 CA，格子帶多種狀態（住、商、綠地），依鄰居組成與適宜性機率轉換，在真實基地上模擬 20 年擴張情境。",
+          "difficulty": 4,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "3D 體素 CA 與結構篩選",
+          "brief": "用 26 鄰居 3D CA 生成空間體素，再以連通性與支撐規則淘汰不可建造的格子，輸出可組裝的模組化構件。",
+          "difficulty": 4,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "Lenia 連續場表皮",
+          "brief": "實作連續 CA（環形核卷積＋高斯成長函數），把演化中的場轉成曲面高度或開孔率，研究數值穩定性與參數空間。",
+          "difficulty": 5,
+          "combine_with": [
+            "C01",
+            "C05"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Mathematical Games: The fantastic combinations of John Conway's new solitaire game \"life\"",
+          "author": "Martin Gardner",
+          "year": "1970",
+          "url": ""
+        },
+        {
+          "title": "Game of Life -- Wolfram MathWorld",
+          "author": "Eric W. Weisstein",
+          "year": "",
+          "url": "https://mathworld.wolfram.com/GameofLife.html"
+        },
+        {
+          "title": "An Evolutionary Architecture",
+          "author": "John Frazer",
+          "year": "1995",
+          "url": ""
+        },
+        {
+          "title": "Adapting cellular automata to support the architectural design process",
+          "author": "Christiane M. Herr, Thomas Kvan",
+          "year": "2007",
+          "url": "https://www.researchgate.net/publication/222923429_Adapting_cellular_automata_to_support_the_architectural_design_process"
+        },
+        {
+          "title": "Architectural Interpretation of Cellular Automata (Generative Art 2002)",
+          "author": "Robert J. Krawczyk",
+          "year": "2002",
+          "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf"
+        },
+        {
+          "title": "Adapting Cellular Automata as Architectural Design Tools (CAADRIA 2015)",
+          "author": "Christiane M. Herr, Ryan C. Ford",
+          "year": "2015",
+          "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf"
+        },
+        {
+          "title": "Lenia - Biology of Artificial Life",
+          "author": "Bert Wang-Chak Chan",
+          "year": "2018",
+          "url": "https://arxiv.org/abs/1812.05433"
+        },
+        {
+          "title": "Oh My Gosh, It's Covered in Rule 30s!",
+          "author": "Stephen Wolfram",
+          "year": "2017",
+          "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "C02-01",
+      "algo": "C02",
+      "title": "Cambridge North 車站 Rule 30 穿孔鋁板立面",
+      "creator": "Cambridge North 車站（設計方未查證；Stephen Wolfram 撰文辨識出規則）",
+      "year": "2017",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "英國劍橋北站外牆以穿孔鋁板包覆，圖樣經 Wolfram 比對，正是一維細胞自動機 Rule 30 圖樣右側邊緣旋轉 45° 後的結果（從外看是 rule 135，從內看為 rule 149）。演算法在此直接產生整座車站的立面紋理與透光孔。",
+      "variations": [
+        {
+          "name": "2D 改 1D 規則",
+          "how": "把基礎範例的 bool[,] 改成 bool[] 一列，鄰居只看左中右三格，用 (rule >> index) & 1 查表；每代往下排一列而非往上疊一層。",
+          "effect": "得到三角形與條紋交錯的 Rule 30 圖樣，可直接當立面圖樣。"
+        },
+        {
+          "name": "旋轉與裁切",
+          "how": "輸出方格時對格心套 Transform.Rotation(45°)，再用立面輪廓裁切，只取圖樣邊緣區域。",
+          "effect": "重現車站斜向的菱形格紋與不規則邊緣。"
+        },
+        {
+          "name": "方格轉開孔",
+          "how": "活格輸出成圓或方形開孔曲線（而非 Box），並依板材尺寸分割成多片。",
+          "effect": "可交給 CNC 沖孔或雷切的面板檔。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "對稱",
+        "拼貼",
+        "字串改寫"
+      ],
+      "tools": [
+        "Wolfram Language"
+      ],
+      "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s"
+    },
+    {
+      "id": "C02-02",
+      "algo": "C02",
+      "title": "Metallic Lace：以細胞自動機為基礎的裝飾系統",
+      "creator": "Robert J. Krawczyk（Illinois Institute of Technology）",
+      "year": "2006",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Krawczyk 從 450 個初始世代中挑出 27 種圖樣，記錄每一格在生長過程中被造訪的次數，以此決定格子尺寸，再轉成圓、方、菱形、八角、十字、八角星等單元。成果被構想為浮雕、鍛鐵裝飾或噴砂、雷刻玻璃圖樣。",
+      "variations": [
+        {
+          "name": "累積歷史取代疊層",
+          "how": "新增 int[,] visits，每代活著就 +1，不輸出每層 Box，只在最後依 visits 輸出一層。",
+          "effect": "把整段時間壓縮成一張有深淺層級的平面圖。"
+        },
+        {
+          "name": "換單元形狀",
+          "how": "新增 cellType 輸入，依 visits 大小縮放圓、多邊形或星形曲線，取代 Box。",
+          "effect": "同一資料產生多種裝飾語彙。"
+        },
+        {
+          "name": "浮雕化",
+          "how": "把 visits 對應成 Extrusion 高度或曲面高度場。",
+          "effect": "可 CNC 銑削的淺浮雕板。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "影像輸入",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf"
+    },
+    {
+      "id": "C02-03",
+      "algo": "C02",
+      "title": "Architectural Interpretation of Cellular Automata：CA 量體生成",
+      "creator": "Robert J. Krawczyk",
+      "year": "2002",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "Krawczyk 把 2D 細胞自動機的世代往上堆疊當成建築量體，並研究如何以人工詮釋與修改把原始 CA 結果轉成可讀的建築形體；後續論文〈Exploring the Massing of Growth in Cellular Automata〉進一步以細胞存活世代數塑造量體。與基礎範例的「時間＝樓層」概念完全相同。",
+      "variations": [
+        {
+          "name": "存活時間決定高度",
+          "how": "記錄每格連續存活代數，輸出時該格柱子高度＝存活代數×層高，取代逐層方塊。",
+          "effect": "形成高低錯落的塔群與基座。"
+        },
+        {
+          "name": "詮釋層",
+          "how": "加入後處理：只保留與下一層有接觸的格子、把相鄰活格合併成較大樓板。",
+          "effect": "去除懸空碎塊，讓 CA 結果更像建築。"
+        },
+        {
+          "name": "格子比例分離",
+          "how": "把 cellSize 拆成 cellSizeXY 與 floorHeight 兩個輸入。",
+          "effect": "量體符合真實柱距與層高比例。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "開放生長"
+      ],
+      "tools": [],
+      "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf"
+    },
+    {
+      "id": "C02-04",
+      "algo": "C02",
+      "title": "以 CA 生成荷蘭高密度集合住宅量體",
+      "creator": "Sanaz Khalili Araghi、Rudi Stouffs（TU Delft）",
+      "year": "2015",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "研究在設計初期用複合 CA 為荷蘭高密度住宅專案生成三維量體，格子狀態包含自然採光等條件，並以知名建築地標為基準比較生成的空間單元組合。示範 CA 規則如何加入建築需求而非只追求圖樣。",
+      "variations": [
+        {
+          "name": "多狀態格子",
+          "how": "把 bool 改成 int 狀態（0 空、1 住宅、2 陽台、3 核心），規則依鄰居中各狀態的數量決定轉換。",
+          "effect": "量體內自然分出不同機能空間。"
+        },
+        {
+          "name": "採光約束",
+          "how": "每格計算上方與南向被遮擋的格數，超過門檻就不能成為住宅格。",
+          "effect": "生成結果保證每戶有基本日照。"
+        },
+        {
+          "name": "以地標為目標比較",
+          "how": "輸出 aliveCounts 以外再計算體積、外表面積比等指標，與目標值比較挑選 seed。",
+          "effect": "從大量隨機結果中篩出符合密度指標的方案。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "最佳化"
+      ],
+      "tools": [],
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580514002180"
+    },
+    {
+      "id": "C02-05",
+      "algo": "C02",
+      "title": "Automated Diagrams：以 CA 作為設計工作室的概念圖解",
+      "creator": "Christiane M. Herr、Joanna Karakiewicz",
+      "year": "2007",
+      "category": "drawing",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "Herr 主張 CA 不必是全自動的形體產生器，而可以作為和設計者對話的「自動化圖解」：在設計工作室中讓學習者用 CA 產生抽象空間關係，再由設計者詮釋成混合機能的建築。延續她在香港大學的博士研究〈From Form Generators to Automated Diagrams〉。",
+      "variations": [
+        {
+          "name": "手動編輯初始層",
+          "how": "INIT 改為讀入使用者在 Rhino 畫的點或方格，而非隨機撒點。",
+          "effect": "設計者可控制起點，CA 只負責發展。"
+        },
+        {
+          "name": "圖解輸出",
+          "how": "不輸出 Box，改輸出每層活格的外輪廓線與機能色塊（依鄰居數上色）。",
+          "effect": "得到可疊圖閱讀的分層圖解。"
+        },
+        {
+          "name": "中途介入",
+          "how": "搭配 Timer，允許在某一代暫停、手動改格子後繼續。",
+          "effect": "CA 成為可互動的設計草圖工具。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "Timer",
+        "動畫"
+      ],
+      "tools": [],
+      "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf"
+    },
+    {
+      "id": "C02-06",
+      "algo": "C02",
+      "title": "Adapting Cellular Automata as Architectural Design Tools：實務專案中的 CA 改造",
+      "creator": "Christiane M. Herr、Ryan C. Ford",
+      "year": "2015",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "論文整理 CA 被用於建築設計時常見的改造方式，並以一個從 Game of Life 規則出發的案例研究說明：通用 CA 產生的形雖然精緻卻常是任意的，必須加入與建築需求相關的規則並經過建築詮釋才有用。",
+      "variations": [
+        {
+          "name": "從 Life 規則出發再調參",
+          "how": "把 2 與 3 兩個門檻改成輸入參數 surviveMin、surviveMax、birthCount，逐步調整。",
+          "effect": "觀察規則微調如何改變量體密度與孔隙。"
+        },
+        {
+          "name": "固定初始、改規則",
+          "how": "固定 seed，只換規則組合批次輸出並排比較。",
+          "effect": "建立同一起點的規則型錄，方便設計決策。"
+        },
+        {
+          "name": "加入建築性規則",
+          "how": "在 NextGeneration 後再套一層規則：例如最高樓層、最小樓板面積、交通核必須連續。",
+          "effect": "CA 結果更接近可發展的建築方案。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "約束滿足",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf"
+    },
+    {
+      "id": "C02-07",
+      "algo": "C02",
+      "title": "Les Folies Cellulaires：以 CA 生成的點景建築（Folies）",
+      "creator": "Mirjana Devetaković、Ljiljana Petruševski、Milana Dabić、Bojan Mitrović（貝爾格勒大學建築學院）",
+      "year": "2009",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "art-installation",
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "受 Tschumi 拉維列特公園的 Folies 啟發，貝爾格勒大學與高年級學習者以 Fun3D 軟體的 CA 模組生成一系列小型點景建築，探討 CA 在建築與都市設計中的應用，發表於 2009 年米蘭 Generative Art 研討會。",
+      "variations": [
+        {
+          "name": "小網格多 seed",
+          "how": "把 width/depth 縮到 8–12，批次跑多個 seed，每個結果排列在公園網格上。",
+          "effect": "一組同家族但各不相同的 Folies。"
+        },
+        {
+          "name": "統一外框",
+          "how": "限制在固定的立方體範圍內生長（類似 Tschumi 的立方格架），超出範圍的格子不生成。",
+          "effect": "外框一致、內部各異的系列作品。"
+        },
+        {
+          "name": "輸出構件",
+          "how": "把活格方塊轉成框架線（Box 的 12 條邊）與樓板面。",
+          "effect": "像紅色鋼構 Folies 般的骨架形態。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "可重現種子"
+      ],
+      "tools": [
+        "Fun3D"
+      ],
+      "url": "https://generativeart.com/on/cic/GA2009Papers/p18.pdf"
+    },
+    {
+      "id": "C02-08",
+      "algo": "C02",
+      "title": "KnitYak：細胞自動機針織圍巾",
+      "creator": "Fabienne \"fbz\" Serrière",
+      "year": "2015",
+      "category": "fabrication",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Serrière 改裝工業針織機，用 Processing 產生以 Rule 110、Rule 73 等一維 CA 為主的圖樣直接織成圍巾；每條圍巾記錄規則與起始種子，保證獨一無二。演算法一代一列，正好對應針織一排一排往下織的製程。",
+      "variations": [
+        {
+          "name": "一代一排",
+          "how": "改用一維 CA，每一代輸出一列像素而非一層方塊，輸出成黑白點陣圖。",
+          "effect": "可直接送到針織機、雷刻或刺繡機的圖檔。"
+        },
+        {
+          "name": "種子即簽名",
+          "how": "把 seed 當成客製化編號（例如由名字雜湊產生），同時輸出規則與 seed 文字。",
+          "effect": "大量客製化、每件可追溯。"
+        },
+        {
+          "name": "製程限制",
+          "how": "限制連續同色格數（針織浮線長度），超過就強制翻轉。",
+          "effect": "圖樣符合材料與製程限制。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "可重現種子",
+        "隨機"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://www.kickstarter.com/projects/fbz/knityak-custom-mathematical-knit-scarves/"
+    },
+    {
+      "id": "C02-09",
+      "algo": "C02",
+      "title": "Cellular Automata and Fractal Urban Form：都市土地使用 CA 模型",
+      "creator": "Roger White、Guy Engelen",
+      "year": "1993",
+      "category": "urban-landscape",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "White 與 Engelen 的經典模型以格子狀態代表土地使用，轉換規則同時考慮鄰域內既有土地使用與該格本身的適宜性，模擬都市土地使用的演變並呈現碎形都市形態，成為後續大量都市、區域與交通 CA 研究的基礎。",
+      "variations": [
+        {
+          "name": "多狀態＋機率轉換",
+          "how": "bool 改為 enum 土地使用，NextGeneration 依鄰居組成計算各用途的潛力值，再用 Random 依機率轉換。",
+          "effect": "模擬住宅、商業、綠地的擴張與聚集。"
+        },
+        {
+          "name": "適宜性圖層",
+          "how": "新增 double[,] suitability，由影像或坡度、道路距離計算，乘入轉換潛力。",
+          "effect": "擴張沿道路、避開陡坡，更接近真實城市。"
+        },
+        {
+          "name": "擴大鄰域",
+          "how": "CountNeighbors 的 offset 範圍由 ±1 改成半徑 r，並依距離加權。",
+          "effect": "呈現較大尺度的群聚與碎形邊界。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "隨機",
+        "影像輸入",
+        "鄰居搜尋"
+      ],
+      "tools": [],
+      "url": "https://journals.sagepub.com/doi/10.1068/a251175"
+    },
+    {
+      "id": "C02-10",
+      "algo": "C02",
+      "title": "Rabbit：Grasshopper 的細胞自動機與 L-System 外掛",
+      "creator": "Morphocode",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "Rabbit 是 Morphocode 開發的開源 Grasshopper 外掛，提供 Conway's Life、Amoeba、Coral、Day&Night、Diamoeba 等多種 CA 規則與 3D CA 元件，可直接在 Rhino 中探索圖樣形成、自組織與湧現。適合拿來和自己寫的 C# 版本對照。",
+      "variations": [
+        {
+          "name": "規則庫",
+          "how": "把 Rabbit 內建規則名稱（如 Coral、Day&Night）寫成 Dictionary<string,(string birth,string survive)>，用下拉輸入切換。",
+          "effect": "自己的元件也能一鍵換規則比較。"
+        },
+        {
+          "name": "3D CA 對照",
+          "how": "用 Rabbit 的 3D CA 結果與自己改寫的 bool[,,] 版本比對，驗證 26 鄰居計數是否正確。",
+          "effect": "學習除錯與驗證演算法。"
+        },
+        {
+          "name": "改寫成 Timer 元件",
+          "how": "仿照外掛的逐步推進，把狀態存成類別欄位，每次觸發推進一代。",
+          "effect": "可動畫播放並中途停下挑形。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "Timer"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Rabbit"
+      ],
+      "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/"
+    },
+    {
+      "id": "C02-11",
+      "algo": "C02",
+      "title": "Stacked Game of Life：世代疊層的 3D 視覺化",
+      "creator": "vnglst（GitHub）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "網頁版 3D 視覺化：目前世代在最上方，舊世代逐步往下沉成歷史堆疊，八層歷史依序淡出透明度與顏色，以等角視角呈現時間切片。和基礎範例的「時間＝高度」相同，但只保留最近幾層做成動畫。",
+      "variations": [
+        {
+          "name": "只保留最近 N 層",
+          "how": "用 Queue<bool[,]> 儲存最近 N 代，超過就 Dequeue，每次只輸出這 N 層。",
+          "effect": "像捲動的時間窗口，適合動畫。"
+        },
+        {
+          "name": "依層齡上色",
+          "how": "輸出 Box 同時輸出 Color 清單，越舊越透明或越淡，用 Custom Preview 顯示。",
+          "effect": "清楚看出圖樣的移動軌跡。"
+        },
+        {
+          "name": "發光材質渲染",
+          "how": "把活格輸出成 mesh 並依層數設定自發光強度，在 Rhino 渲染或匯出 three.js。",
+          "effect": "作品集用的時間切片視覺圖。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "Timer",
+        "3D"
+      ],
+      "tools": [
+        "JavaScript",
+        "three.js"
+      ],
+      "url": "https://github.com/vnglst/stacked-game-of-life"
+    },
+    {
+      "id": "C02-12",
+      "algo": "C02",
+      "title": "Lenia：連續狀態的生命遊戲",
+      "creator": "Bert Wang-Chak Chan",
+      "year": "2018",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Lenia 把 Conway 生命遊戲推廣成空間、時間、狀態都連續的細胞自動機，用環形核計算鄰域勢能、高斯成長函數更新，產生會移動、脈動、分裂的類生物圖樣；後續研究再擴展到高維度、多核與多通道。",
+      "variations": [
+        {
+          "name": "bool 換 double",
+          "how": "狀態改為 double[,]（0–1），CountNeighbors 改為環形核加權平均，更新用 state += dt * growth(u) 再夾在 0–1。",
+          "effect": "平滑有機的斑塊取代方格。"
+        },
+        {
+          "name": "疊層轉等值面",
+          "how": "把每代的 double 場當成 3D 體積資料，交給 C05 Marching Squares／Cubes 抽等值面。",
+          "effect": "連續、流動的時間雕塑曲面。"
+        },
+        {
+          "name": "3D Lenia",
+          "how": "核改為球殼、狀態改為 double[,,]，運算量大，需縮小網格或用 FFT。",
+          "effect": "立體的類生物形體，屬研究級挑戰。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "等值面",
+        "動畫",
+        "網格擴散"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://arxiv.org/abs/1812.05433"
+    },
+    {
+      "id": "C02-13",
+      "algo": "C02",
+      "title": "以細胞自動機控制動態遮陽立面",
+      "creator": "",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "研究以 CA 規則驅動建築立面的動態遮陽單元，讓每個立面格子依自身與鄰居的狀態（例如日照）決定開關，形成兼具性能與變化圖樣的表皮。演算法把 CA 的局部規則轉成分散式的立面控制邏輯。",
+      "variations": [
+        {
+          "name": "日照當外部輸入",
+          "how": "每格額外讀入 double[,] sun（由日照分析或太陽向量與面板法向量內積得到），規則改為日照高且鄰居開啟數少時才開啟遮陽。",
+          "effect": "遮陽分布跟著太陽移動並保留局部連續性。"
+        },
+        {
+          "name": "世代對應時刻",
+          "how": "不再把世代疊成樓層，而是一代對應一個小時，輸出每小時的面板開合狀態。",
+          "effect": "一天的立面動態動畫。"
+        },
+        {
+          "name": "面板旋轉角度",
+          "how": "活格輸出為旋轉的百葉板（角度依鄰居數映射），而非有無。",
+          "effect": "連續變化的動態百葉立面。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "Timer",
+        "動畫",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://www.academia.edu/48830065/Implementing_Cellular_Automata_for_Dynamically_Shading_a_Building_Facade"
+    },
+    {
+      "id": "C02-14",
+      "algo": "C02",
+      "title": "An Evolutionary Architecture：演化建築與細胞自動機",
+      "creator": "John Frazer（AA 建築聯盟學院）",
+      "year": "1995",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "Frazer 的著作把建築視為會生長、演化的人工生命，早期實驗以人工演化與細胞自動機生成隨時間發展的建築形體，是 CA 建築生成的奠基文獻之一，與 Paul Coates 等人的研究同為此領域的起點。",
+      "variations": [
+        {
+          "name": "規則當基因",
+          "how": "把 B/S 規則編碼成 18 位元的整數（birth 9 位＋survive 9 位），當成基因交給演化演算法挑選。",
+          "effect": "自動搜尋能長出特定量體特徵的規則。"
+        },
+        {
+          "name": "適應度指標",
+          "how": "由 aliveCounts 與方塊統計計算適應度（例如穩定性、體積、外表面比）。",
+          "effect": "把主觀挑選轉為可量化的演化目標。"
+        },
+        {
+          "name": "世代成長而非固定高度",
+          "how": "讓 generations 不固定，直到活格數穩定或死光才停止。",
+          "effect": "量體高度由系統自行決定。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "3D",
+        "開放生長"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "C02-15",
+      "algo": "C02",
+      "title": "Cellular Automata for Infill Designs in Historic Urban Quarters",
+      "creator": "Nexus Network Journal 論文（作者未查證）",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "研究把 CA 用於歷史街區的填充建築設計，讓新量體依周邊既有紋理的局部規則生成，以延續歷史街區的尺度與虛實關係。示範 CA 以既有環境為初始狀態、只在空地上生長的用法。",
+      "variations": [
+        {
+          "name": "既有建物為固定格",
+          "how": "新增 bool[,] fixedCells，由基地既有建物投影得到；計數鄰居時算入但永不改變狀態。",
+          "effect": "新量體會回應鄰房的位置與密度。"
+        },
+        {
+          "name": "只在空地生長",
+          "how": "以基地空地曲線做遮罩，遮罩外的格子保持死亡。",
+          "effect": "填充設計不超出可建範圍。"
+        },
+        {
+          "name": "高度跟隨鄰房",
+          "how": "層數上限依周邊既有建物高度平均值動態決定。",
+          "effect": "天際線與歷史街區協調。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "約束滿足",
+        "影像輸入"
+      ],
+      "tools": [],
+      "url": "https://link.springer.com/article/10.1007/s00004-022-00602-2"
+    }
+  ]
+}

@@ -1,0 +1,1387 @@
+{
+  "agent": "ag19",
+  "algorithms": [
+    {
+      "id": "F01",
+      "name_zh": "Truchet 磁磚",
+      "name_en": "Truchet Tiles",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F01_Truchet.cs",
+      "loc": 127,
+      "logic": [
+        "直接公式"
+      ],
+      "data_structure": [
+        "網格"
+      ],
+      "difficulty": 1,
+      "difficulty_reason": "127 行、只有一個雙層 for 迴圈，每格擲一次硬幣決定方向，不看鄰居、沒有自訂 class，只要懂 Plane 與 Arc 建構就能讀懂。",
+      "tags": [
+        "拼貼",
+        "隨機",
+        "可重現種子",
+        "對稱"
+      ],
+      "one_liner": "把同一片「兩段四分之一圓弧」的方磚隨機轉 0° 或 90° 鋪滿網格，弧線在邊中點自動接成連續的蜿蜒曲線。",
+      "how_it_works": [
+        "以 columns × rows 建立正方形網格，每格左下角 = (column × tileSize, row × tileSize)。",
+        "每格用 Random(seed) 擲硬幣：決定用「左下＋右上」或「右下＋左上」這組對角當圓心。",
+        "以兩個對角為圓心、半格為半徑各畫一段 90° 圓弧；弧線端點都落在邊的中點。",
+        "因為所有弧都停在邊中點，相鄰格的弧必然首尾相接，整體浮現連續曲線與封閉圈。",
+        "輸出所有圓弧（arcs）與每格外框（tiles）。"
+      ],
+      "key_params": [
+        {
+          "name": "columns / rows",
+          "effect": "格數；越多圖樣越細碎，連續曲線越長越難追蹤。"
+        },
+        {
+          "name": "tileSize",
+          "effect": "每格邊長；只改變整體尺度，不改變圖樣拓樸。"
+        },
+        {
+          "name": "seed",
+          "effect": "隨機種子；同一 seed 永遠得到同一張圖，換 seed 就換一組旋轉排列。"
+        }
+      ],
+      "csharp_concepts": [
+        "Random(seed)",
+        "雙層 for 迴圈",
+        "Plane(origin, xAxis, yAxis)",
+        "Arc(Plane, radius, angle)",
+        "List<Arc>",
+        "Polyline",
+        "helper method 回傳 List"
+      ],
+      "prerequisites": [
+        "迴圈與條件判斷",
+        "Vector3d 加減與純量乘法",
+        "Plane 的 X 軸方向決定弧起點"
+      ],
+      "teaching_note": "非常適合作為第一個從零實作的範例：10 分鐘就能看到圖，改一行就能換規則。要特別提醒 QuarterArc 的 Plane 以 startDirection 為 X 軸、endDirection 為 Y 軸，方向寫反弧就會畫到格子外。可順勢帶出「局部規則 → 全域圖樣」的湧現概念。",
+      "variations": [
+        {
+          "title": "吸引子控制方向",
+          "level": 1,
+          "what_changes": "規則（取代擲硬幣）",
+          "how": "新增 Point3d attractor 輸入，改成 rotated = (distance(corner, attractor) / range) > random.NextDouble()；近吸引子處偏向一種方向、遠處偏另一種。",
+          "result": "隨機紋理中出現有方向性的漸層區塊，可作為立面開口疏密的母題。"
+        },
+        {
+          "title": "影像驅動 Truchet（半色調）",
+          "level": 2,
+          "what_changes": "輸入（影像取代隨機）",
+          "how": "讀入 Bitmap，取每格中心像素亮度 brightness；亮度 > 0.5 用一種方向，或依亮度選不同磁磚（空白／單弧／雙弧／粗弧）。",
+          "result": "遠看是照片或字樣、近看是連續曲線的圖像，適合入口牆面或穿孔板。"
+        },
+        {
+          "title": "原始三角形 Truchet（四方向）",
+          "level": 1,
+          "what_changes": "規則（磁磚圖案與旋轉數）",
+          "how": "把 TileArcs 換成回傳對角線切出的三角形 Brep，random.Next(4) 決定 0/90/180/270°；也可用 row、column 公式（例如 (row+column)%4）做規則排列。",
+          "result": "重現 Truchet 1704 的黑白三角拼花，規則排列時得到鑽石、鋸齒、風車等對稱紋。"
+        },
+        {
+          "title": "對角線迷宮（10 PRINT）",
+          "level": 1,
+          "what_changes": "規則（弧改直線）",
+          "how": "每格改畫一條對角線 Line，方向由擲硬幣決定：左下→右上 或 左上→右下。",
+          "result": "經典 10 PRINT 迷宮；可再用 flood fill 找出封閉區域上色。"
+        },
+        {
+          "title": "兩色分區填色（Smith 著色）",
+          "level": 2,
+          "what_changes": "輸出（線 → 面）",
+          "how": "每格額外輸出由弧與邊界圍成的區域；依 (row + column + (rotated?1:0)) % 2 決定黑白，可證明相鄰區塊永遠異色。",
+          "result": "黑白交錯的有機色塊，可直接當雷射切割或雙色磁磚的製圖。"
+        },
+        {
+          "title": "多尺度 Truchet（Carlson）",
+          "level": 3,
+          "what_changes": "迴圈（加入遞迴細分）",
+          "how": "寫遞迴函式 Subdivide(corner, size, depth)：若 random < p 且 depth < max，就切成四格各自遞迴，否則放一片「帶翼」磁磚；每層顏色反轉、尺寸減半。",
+          "result": "大圈套小圈、粗細交錯的多尺度圖樣，視覺層次遠比單一尺度豐富。"
+        },
+        {
+          "title": "六角形 Truchet",
+          "level": 2,
+          "what_changes": "維度／網格（方格 → 六角格）",
+          "how": "改用六角格座標；每格 6 個邊中點兩兩配對（3 條弧），隨機轉 0/60/120°；圓心放在六角形頂點、半徑 = 邊長一半。",
+          "result": "三向交織的流線，比方格版更像編織或纖維。"
+        },
+        {
+          "title": "曲面上的 Truchet 立面",
+          "level": 2,
+          "what_changes": "維度（平面 → 曲面 UV）",
+          "how": "新增 Surface 輸入，把每格的弧取樣成點後用 surface.PointAt(u, v) 映射，或直接在 UV 空間畫弧再 Pushup；tileSize 換成 U、V 的分段數。",
+          "result": "包覆在曲面立面上的連續紋路，可直接接 Pipe 或 Offset 變成立面肋條。"
+        },
+        {
+          "title": "弧線轉成可製造的 3D 模組",
+          "level": 2,
+          "what_changes": "輸出（線 → 實體）",
+          "how": "把同方向的兩段弧 Join 後 Sweep 一個斷面，或把兩色區域 Extrude 成不同高度；只需建兩種模組（0°/90°）即可量產。",
+          "result": "可 CNC、3D 列印或灌模的立體磁磚／面板，一種模具組出無限多種牆面。"
+        },
+        {
+          "title": "3D Truchet 方塊（空間管路）",
+          "level": 3,
+          "what_changes": "維度（2D → 3D 體素）",
+          "how": "改成三層迴圈的立方格；每個立方體 6 個面中心兩兩以 1/4 圓管相連，隨機旋轉 24 種方向中的幾種。",
+          "result": "在空間中蜿蜒的連續管道網，可做成裝置、格柵或結構概念模型。"
+        },
+        {
+          "title": "動畫：逐格翻轉",
+          "level": 2,
+          "what_changes": "狀態（加入時間）",
+          "how": "用 static bool[,] 記住每格方向，接 Timer 或 Iteration，每 tick 隨機翻轉幾格（或讓翻轉機率沿波前傳播）。",
+          "result": "曲線不斷重新連接、分裂與合併的動態圖樣，適合互動立面或投影。"
+        },
+        {
+          "title": "偵測封閉迴圈並分級",
+          "level": 3,
+          "what_changes": "輸出（加入圖論分析）",
+          "how": "把所有弧 Join 成曲線，判斷 IsClosed 並計算長度或面積；依大小分層、上色或只保留最長的一條當路徑。",
+          "result": "可以控制「島」與「長河」的比例，用於景觀步道、動線或燈光設計。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "一種模具的無限立面",
+          "brief": "設計兩種方向的預鑄面板模組，以 Truchet 規則排列建築立面，並用吸引子或日照分析控制方向比例；產出面板數量表與組裝圖。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "照片變成可切割的穿孔板",
+          "brief": "以影像驅動多種 Truchet 磁磚（空白、細弧、粗弧），輸出雷射切割用的封閉輪廓，製作 1:1 局部樣板。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "多尺度 Truchet 天花吸音系統",
+          "brief": "實作 Carlson 多尺度遞迴細分，在人流或噪音熱區細分更密，輸出不同尺寸的吸音模組並估算開孔率。",
+          "difficulty": 3,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "Truchet 景觀步道迷宮",
+          "brief": "在基地曲面上鋪 Truchet 網格，偵測封閉迴圈與最長路徑，把最長路徑轉成步道、封閉島轉成植栽區。",
+          "difficulty": 4,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "3D Truchet 空間格柵裝置",
+          "brief": "把 Truchet 延伸到立方格，生成連續管道網，再用約束（每條管需落地、需連通）篩選旋轉組合，做成可 3D 列印的節點裝置。",
+          "difficulty": 5,
+          "combine_with": [
+            "A06"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Mémoire sur les combinaisons",
+          "author": "Sébastien Truchet",
+          "year": "1704",
+          "url": "https://en.wikipedia.org/wiki/Truchet_tile"
+        },
+        {
+          "title": "The Tiling Patterns of Sebastien Truchet and the Topology of Structural Hierarchy (Leonardo 20(4))",
+          "author": "Cyril Stanley Smith, Pauline Boucher",
+          "year": "1987",
+          "url": "https://www.jstor.org/stable/1578535"
+        },
+        {
+          "title": "Multi-Scale Truchet Patterns (Bridges 2018)",
+          "author": "Christopher Carlson",
+          "year": "2018",
+          "url": "https://archive.bridgesmathart.org/2018/bridges2018-39.html"
+        },
+        {
+          "title": "10 PRINT CHR$(205.5+RND(1)); : GOTO 10",
+          "author": "Nick Montfort 等",
+          "year": "2012",
+          "url": "https://10print.org/"
+        },
+        {
+          "title": "Truchet tilings and their generalisations",
+          "author": "",
+          "year": "",
+          "url": "https://www.researchgate.net/publication/227098904_Truchet_tilings_and_their_generalisations"
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "name_zh": "伊斯蘭幾何圖樣（Hankin 法）",
+      "name_en": "Islamic Star Pattern (Hankin's Polygons-in-Contact)",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F02_IslamicPattern.cs",
+      "loc": 176,
+      "logic": [
+        "直接公式",
+        "幾何轉換"
+      ],
+      "data_structure": [
+        "幾何"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "176 行、沒有自訂 class 也不看鄰居，但需要理解多邊形方向（逆時針）、以外積求內側法向量、兩射線求交點的 2D 行列式，數學門檻比 F01 高一階。",
+      "tags": [
+        "拼貼",
+        "對稱",
+        "幾何轉換"
+      ],
+      "one_liner": "先鋪一層八角形＋小正方形的底圖，再從每條邊的中點以固定角度往內射兩條線，交會處連起來，就長出八角星與四角星交織的伊斯蘭圖樣。",
+      "how_it_works": [
+        "BuildTiling：每格中心放一個平邊朝上下左右的正八角形，格線交點補一個轉 45° 的小正方形，組成 4.8.8 半正鋪面。",
+        "對每個多邊形的每一對相鄰邊 A→B、B→C，取兩邊中點。",
+        "以外積 Z × 邊方向求得內側法向量，把邊方向與法向量按 cos/sin(contactAngle) 混合，得到朝角點 B 往內偏的兩條射線。",
+        "RaysMeet 用 2D 行列式解兩射線交點；只保留兩者都往前（distance > 0）的交點。",
+        "從兩個中點各連一條線到交點；因相鄰多邊形共用邊中點，所有星形自動連成一張連續網。"
+      ],
+      "key_params": [
+        {
+          "name": "contactAngle",
+          "effect": "射線與邊的夾角（0–90°）；小角度星芒扁而寬、接近底圖，大角度星芒尖而細長，67.5° 是八角星的經典值。"
+        },
+        {
+          "name": "columns / rows",
+          "effect": "八角形的格數；小正方形會多一圈（columns+1 × rows+1）。"
+        },
+        {
+          "name": "tileSize",
+          "effect": "每格邊長；八角形邊長 = tileSize / (1 + √2)，只影響尺度。"
+        }
+      ],
+      "csharp_concepts": [
+        "List<List<Point3d>>",
+        "Vector3d.CrossProduct",
+        "Unitize",
+        "RhinoMath.ToRadians",
+        "out 參數",
+        "模運算 (i+1)%n 環狀索引",
+        "Polyline"
+      ],
+      "prerequisites": [
+        "迴圈與 helper method",
+        "向量加減、單位化與外積",
+        "三角函數 cos/sin",
+        "多邊形頂點順序（逆時針）"
+      ],
+      "teaching_note": "適合從零實作，但建議先用紙筆畫一個八角形示範 Hankin 法，再寫程式；最容易出錯的是多邊形頂點順序，順時針輸入會讓射線往外跑。把 contactAngle 接滑桿從 30° 拉到 85° 的效果非常好，能直觀看到「一個參數改變整個圖樣家族」。",
+      "variations": [
+        {
+          "title": "換底圖：六角形／三角形鋪面",
+          "level": 1,
+          "what_changes": "規則（底圖鋪面）",
+          "how": "改寫 BuildTiling，產生正六角形蜂巢或 3.6.3.6 等半正鋪面；HankinLines 完全不用改。",
+          "result": "六角星、十二角星等不同家族的圖樣，驗證「底圖決定星形、角度決定風格」。"
+        },
+        {
+          "title": "吸引子漸變接觸角",
+          "level": 2,
+          "what_changes": "輸入（每個多邊形各自的角度）",
+          "how": "新增 Point3d attractor，對每個多邊形用其中心到吸引子距離映射出 contactAngle，再傳給 HankinLines。",
+          "result": "星芒從粗鈍漸變到尖細的連續立面，類似 Kaplan 論文中的 parquet deformation 效果。"
+        },
+        {
+          "title": "兩點接觸（contact offset）",
+          "level": 2,
+          "what_changes": "規則（射線起點）",
+          "how": "射線不從中點出發，而是從中點沿邊往兩側各偏 delta 的兩點出發，各自射出一條線（Kaplan 的 delta 參數）。",
+          "result": "線條分叉成雙線帶，星形中心出現小多邊形，圖樣更接近傳統交織（interlace）。"
+        },
+        {
+          "title": "交織帶（over-under strapwork）",
+          "level": 3,
+          "what_changes": "輸出（線 → 有厚度的帶）",
+          "how": "把每條線 Offset 成兩條平行線形成帶狀，在交叉處依序交替判斷上下並切斷下方帶；需要建立交點清單與線段順序。",
+          "result": "經典伊斯蘭編織帶效果，可直接做雷射切割的兩層板或石材拼花。"
+        },
+        {
+          "title": "girih 十角鋪面（五重對稱）",
+          "level": 3,
+          "what_changes": "規則（底圖改為 girih 五種磁磚）",
+          "how": "底圖改用十邊形、五邊形、細長六邊形、蝴蝶結六邊形、菱形五種等邊磁磚，接觸角固定 54°（或 72°）。",
+          "result": "十角星與五角星交織的波斯風圖樣，可延伸到準週期（Penrose 型）鋪面。"
+        },
+        {
+          "title": "Penrose / 準週期底圖",
+          "level": 4,
+          "what_changes": "規則（底圖由遞迴細分產生）",
+          "how": "先用遞迴 deflation 產生 Penrose 菱形鋪面（或 girih 的自相似細分），再對每片菱形套 Hankin 法。",
+          "result": "永不重複但處處有局部對稱的圖樣，對應 Lu & Steinhardt 對 Darb-e Imam 的研究。"
+        },
+        {
+          "title": "Voronoi 自由底圖",
+          "level": 3,
+          "what_changes": "輸入（不規則多邊形）",
+          "how": "以點雲建 Voronoi 或 Delaunay 對偶多邊形當底圖，確保每個多邊形為凸且逆時針，再套 HankinLines；角度可依多邊形邊數調整。",
+          "result": "失去嚴格對稱、但保留「星形＋共用中點」語彙的自由形圖樣，適合不規則基地或雙曲立面。"
+        },
+        {
+          "title": "曲面上的星形圖樣",
+          "level": 2,
+          "what_changes": "維度（平面 → 曲面）",
+          "how": "在 UV 參數空間生成圖樣，再用 surface.PointAt 映射每條線的端點（或細分後映射）；圓頂可用極座標網格代替方格。",
+          "result": "覆蓋穹頂或雙曲屋頂的連續星形格柵，類似 Louvre Abu Dhabi 穹頂的概念。"
+        },
+        {
+          "title": "星形開口與面板輸出",
+          "level": 2,
+          "what_changes": "輸出（線 → 封閉面）",
+          "how": "用 Curve.CreateBooleanRegions 或 Region 元件把線網切出封閉區域，依區域是星、多邊形或縫隙分類，分別 Extrude 或做開孔。",
+          "result": "可直接送 CNC 的穿孔鋁板或 mashrabiya 屏風。"
+        },
+        {
+          "title": "日照驅動可動遮陽",
+          "level": 3,
+          "what_changes": "狀態（加入時間與環境輸入）",
+          "how": "以太陽向量與面板法向量的夾角決定每個星形的開合程度（contactAngle 或縮放中心點），接 Timer 模擬一天中的變化。",
+          "result": "隨日照開閉的星形遮陽立面，呼應 Institut du Monde Arabe 與 Al Bahr Towers。"
+        },
+        {
+          "title": "多層疊合（穹頂光影）",
+          "level": 2,
+          "what_changes": "維度（單層 → 多層）",
+          "how": "同一底圖用不同 tileSize、旋轉角與 contactAngle 產生 3–8 層，沿 Z 方向堆疊，再用太陽光線投影計算地面光斑。",
+          "result": "多層交錯形成的「光之雨」效果，可做天花或雨遮研究。"
+        },
+        {
+          "title": "星形內再長星形（遞迴）",
+          "level": 3,
+          "what_changes": "迴圈（加入遞迴）",
+          "how": "把 Hankin 線切出的中心星形或多邊形當成新底圖，縮小角度再套一次 HankinLines，遞迴 2–3 層。",
+          "result": "自相似的多層星形，接近波斯後期兩層級 girih 圖樣。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "參數化 mashrabiya 遮陽立面",
+          "brief": "以 Hankin 法產生立面格柵，接日照分析讓每片面板的接觸角隨太陽輻射變化，比較開孔率與室內日照時數。",
+          "difficulty": 3,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "雙曲穹頂星形屋頂",
+          "brief": "在穹頂曲面上以極座標網格生成星形圖樣，疊 3 層不同尺度，模擬地面光斑，並輸出可製造的平板展開件。",
+          "difficulty": 4,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "底圖圖鑑：一個角度，十種鋪面",
+          "brief": "實作 4 種以上半正鋪面與 girih 五磚，系統性比較不同 contactAngle 的結果，整理成可挑選的圖樣目錄並雷射切割樣板。",
+          "difficulty": 2,
+          "combine_with": [
+            "F01"
+          ]
+        },
+        {
+          "title": "自由形伊斯蘭圖樣（Voronoi／圓堆積底圖）",
+          "brief": "以 Circle Packing 或 Voronoi 生成不規則底圖，讓星形大小對應功能需求（採光、視線），參考 Lin & Kaplan 2023 的自由形方法。",
+          "difficulty": 4,
+          "combine_with": [
+            "E01",
+            "E02"
+          ]
+        },
+        {
+          "title": "準週期 girih 地坪",
+          "brief": "以遞迴細分產生 Penrose／girih 準週期鋪面，再套 Hankin 法輸出交織帶，做成廣場或室內地坪的石材拼花圖。",
+          "difficulty": 5,
+          "combine_with": [
+            "A04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Islamic star patterns from polygons in contact (Graphics Interface 2005, pp.177–185)",
+          "author": "Craig S. Kaplan",
+          "year": "2005",
+          "url": "https://graphicsinterface.org/proceedings/gi2005/gi2005-22/"
+        },
+        {
+          "title": "Decagonal and Quasi-Crystalline Tilings in Medieval Islamic Architecture (Science 315)",
+          "author": "Peter J. Lu, Paul J. Steinhardt",
+          "year": "2007",
+          "url": "https://www.science.org/doi/10.1126/science.1135491"
+        },
+        {
+          "title": "Freeform Islamic Geometric Patterns",
+          "author": "Rebecca Lin, Craig S. Kaplan",
+          "year": "2023",
+          "url": "https://arxiv.org/abs/2301.01471"
+        },
+        {
+          "title": "Next Generation of Star Patterns",
+          "author": "Hadi Mansourifar, Weidong Shi",
+          "year": "2018",
+          "url": "https://arxiv.org/abs/1809.09270"
+        },
+        {
+          "title": "Islamic geometric patterns（含 Hankin polygons in contact 說明）",
+          "author": "Wikipedia",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns"
+        },
+        {
+          "title": "Girih tiles",
+          "author": "Wikipedia",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Girih_tiles"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "F01-01",
+      "algo": "F01",
+      "title": "Mémoire sur les combinaisons（Truchet 原始論文）",
+      "creator": "Sébastien Truchet",
+      "year": "1704",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "構件",
+      "summary": "法國神父兼數學家 Truchet 研究一片沿對角線切成雙色三角形的方磚，以四種方向組合出大量圖樣，是組合學與色彩對稱的早期表述。基礎範例的「每格選方向」正是這個想法。",
+      "variations": [
+        {
+          "name": "三角形四方向",
+          "how": "把弧改成對角三角形，random.Next(4) 選 0/90/180/270°。",
+          "effect": "重現原始黑白三角拼花。"
+        },
+        {
+          "name": "規則排列取代隨機",
+          "how": "方向改由 (row % 2) * 2 + (column % 2) 等公式決定，而非 Random。",
+          "effect": "得到鑽石、鋸齒、風車等週期性對稱圖樣。"
+        },
+        {
+          "name": "2×2 母題重複",
+          "how": "先隨機產生 2×2 或 4×4 的方向表，再以鏡射或旋轉複製到整片網格。",
+          "effect": "兼具隨機趣味與可控的大尺度對稱。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "拼貼",
+        "對稱"
+      ],
+      "tools": [
+        "手繪／紙本"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Truchet_tile"
+    },
+    {
+      "id": "F01-02",
+      "algo": "F01",
+      "title": "Smith 圓弧 Truchet 與結構層級拓樸",
+      "creator": "Cyril Stanley Smith、Pauline Boucher",
+      "year": "1987",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "Smith 在 Leonardo 期刊翻譯 Truchet 論文並提出「兩段四分之一圓」的變體，弧線連成連續曲線且把平面分成可兩色著色的區域。基礎範例 F01 就是 Smith 版本。",
+      "variations": [
+        {
+          "name": "兩色分區",
+          "how": "每格依 (row + column + rotated) % 2 決定弧內外區域的顏色，輸出填色 Hatch 或 Brep。",
+          "effect": "黑白交錯的有機色塊。"
+        },
+        {
+          "name": "弧線加粗",
+          "how": "每段弧 Offset 成帶狀，並在格邊處與鄰格帶子對齊。",
+          "effect": "變成可切割的連續曲線帶。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "拼貼",
+        "隨機"
+      ],
+      "tools": [],
+      "url": "https://www.jstor.org/stable/1578535"
+    },
+    {
+      "id": "F01-03",
+      "algo": "F01",
+      "title": "Multi-Scale Truchet Patterns（多尺度 Truchet）",
+      "creator": "Christopher Carlson",
+      "year": "2018",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "構件",
+      "summary": "Carlson 把 Smith 磁磚推廣到以 1/2 縮放的無限組，並加入「翼」使小磚能疊在大磚上接續；邊界在邊長 1/3、2/3 處相接，顏色逐層反轉，產生豐富的湧現形。發表於 Bridges 2018，並附 Wolfram Language 套件。",
+      "variations": [
+        {
+          "name": "遞迴四分",
+          "how": "新增遞迴函式，每格以機率 p 切成四個半尺寸子格，depth 控制最大層數。",
+          "effect": "大小尺度混合的圖樣。"
+        },
+        {
+          "name": "帶翼磁磚",
+          "how": "弧的接點從邊中點改為 1/3 與 2/3 點，並在四角加小圓翼以便接上子磚。",
+          "effect": "不同尺度之間的線條可以連續。"
+        },
+        {
+          "name": "雜訊決定細分",
+          "how": "用 Perlin noise 的值取代 random 決定是否細分。",
+          "effect": "細碎區與粗大區呈有機分布。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "遞迴",
+        "分形",
+        "拼貼"
+      ],
+      "tools": [
+        "Wolfram Language"
+      ],
+      "url": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/"
+    },
+    {
+      "id": "F01-04",
+      "algo": "F01",
+      "title": "10 PRINT CHR$(205.5+RND(1)); : GOTO 10",
+      "creator": "Nick Montfort 等 10 位作者（MIT Press）",
+      "year": "2012",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "構件",
+      "summary": "一整本書探討一行 Commodore 64 BASIC 程式：每次隨機印出「╱」或「╲」就生成無盡迷宮。這是對角線版 Truchet，也是生成藝術與隨機性的經典教材。",
+      "variations": [
+        {
+          "name": "對角線版",
+          "how": "TileArcs 改為回傳一條對角線 Line，方向由 random.Next(2) 決定。",
+          "effect": "經典迷宮紋。"
+        },
+        {
+          "name": "偏置機率",
+          "how": "把 random.Next(2)==1 改成 random.NextDouble() < bias，bias 接滑桿。",
+          "effect": "迷宮變成有方向性的斜紋，bias 越極端越像條紋。"
+        },
+        {
+          "name": "迷宮區域上色",
+          "how": "以線段切割外框後找出所有封閉區域，依面積上色。",
+          "effect": "看見隱藏在迷宮裡的島與大陸。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "隨機",
+        "拼貼"
+      ],
+      "tools": [
+        "BASIC"
+      ],
+      "url": "https://10print.org/"
+    },
+    {
+      "id": "F01-05",
+      "algo": "F01",
+      "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
+      "creator": "George Hart",
+      "year": "2012",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "兩種帶四分之一圓弧的雷射切割小磚，上層弧形片黏在底層方塊上，規則是「高接高、低接低」，可以拼出圓島或圓湖等圖樣，表面凸起還能拓印。",
+      "variations": [
+        {
+          "name": "兩層板輸出",
+          "how": "把兩色區域分別輸出為上層（切穿）與下層（整片）封閉曲線，加上板厚後 Extrude。",
+          "effect": "可直接送雷射切割的雙層磁磚。"
+        },
+        {
+          "name": "高低差浮雕",
+          "how": "依區域顏色給不同 Extrude 高度，或以弧為路徑 Sweep 半圓斷面。",
+          "effect": "可觸摸、可拓印的浮雕磁磚。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼"
+      ],
+      "tools": [
+        "雷射切割"
+      ],
+      "url": "https://makezine.com/article/home/fun-games/math-monday-truchet-tiles/"
+    },
+    {
+      "id": "F01-06",
+      "algo": "F01",
+      "title": "Truchet 吸音磚",
+      "creator": "Steelcase",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "以 Truchet 命名的吸音牆面／天花模組，54 × 54 cm、五種形狀（平面方塊、曲面方塊、雙曲面方塊、平面四分之一圓、曲面四分之一圓），靠組合方式拼出無限多種牆面。示範 Truchet 在室內聲學產品上的模組化思維。",
+      "variations": [
+        {
+          "name": "多種磁磚庫",
+          "how": "把 bool rotated 改成 int tileType，從 5 種磁磚（含不同曲面高度）的清單中挑選。",
+          "effect": "更豐富的紋理與深度。"
+        },
+        {
+          "name": "依聲學需求分布",
+          "how": "輸入噪音熱點或座位位置，距離越近越偏向吸音量大的曲面磚。",
+          "effect": "外觀即性能分布圖的吸音牆。"
+        },
+        {
+          "name": "數量統計",
+          "how": "Print 每種磁磚與方向的數量，輸出 BOM 表。",
+          "effect": "可直接下單的材料清單。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/"
+    },
+    {
+      "id": "F01-07",
+      "algo": "F01",
+      "title": "Truchet 作為立面的計算式視覺編碼",
+      "creator": "Deena El-Mahdy",
+      "year": "2025",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "研究以 Truchet 磁磚作為模組化參數立面的視覺編碼方法，流程分為探索鋪排、測試連續性、製造與組裝四階段，並結合 shape grammar 回應氣候條件。",
+      "variations": [
+        {
+          "name": "日照決定方向",
+          "how": "以每格中心的日照輻射值（Ladybug 輸出）作為機率，決定面板方向或開孔大小。",
+          "effect": "外觀紋理同時是遮陽策略。"
+        },
+        {
+          "name": "連續性檢查",
+          "how": "Join 所有弧後統計封閉圈數與最長曲線長度，作為評估指標。",
+          "effect": "可量化比較不同 seed 的立面。"
+        },
+        {
+          "name": "Shape grammar 規則",
+          "how": "把方向選擇改成讀取上方與左方鄰格的狀態（例如禁止形成過小封閉圈）。",
+          "effect": "由純隨機進化為有設計意圖的立面語法。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拼貼",
+        "鄰居搜尋"
+      ],
+      "tools": [],
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/14780771241270265"
+    },
+    {
+      "id": "F01-08",
+      "algo": "F01",
+      "title": "以 Truchet 鋪排的織物模板預鑄面板",
+      "creator": "Nexus Network Journal 論文",
+      "year": "2023",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "結合軟質織物模板、計算式形態找尋與 Truchet 鋪排概念的預鑄面板設計方法，織物模板成本低、製作快且易運輸，少量模板就能組出多變牆面。",
+      "variations": [
+        {
+          "name": "弧線轉模板縫線",
+          "how": "把每格的弧當成織物模板的縫線或拉索位置，灌漿後形成凹凸。",
+          "effect": "每片面板有柔軟的起伏，拼接處曲線連續。"
+        },
+        {
+          "name": "只用兩種模具",
+          "how": "確認 0° 與 90° 面板旋轉後可互換，以 Transform.Rotation 產生實際擺放。",
+          "effect": "最少模具數、最大變化量。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拼貼",
+        "物理模擬"
+      ],
+      "tools": [],
+      "url": "https://link.springer.com/article/10.1007/s00004-023-00657-9"
+    },
+    {
+      "id": "F01-09",
+      "algo": "F01",
+      "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
+      "creator": "dchant design",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "公開於 Sketchfab 的 3D 模型，把 Truchet 圖樣以可變參數鋪在曲面立面上，並融入伊斯蘭圖樣語彙，示範從平面圖樣到曲面立面的轉換。",
+      "variations": [
+        {
+          "name": "UV 映射",
+          "how": "新增 Surface 輸入，將弧取樣點以 surface.PointAt(u, v) 映射到曲面。",
+          "effect": "圖樣順著曲面連續包覆。"
+        },
+        {
+          "name": "沿法向量長出深度",
+          "how": "在每個映射點取 surface.NormalAt 並偏移，Loft 成立體肋條。",
+          "effect": "有陰影深度的立面紋理。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "曲面上",
+        "拼貼",
+        "3D"
+      ],
+      "tools": [
+        "Rhino",
+        "Grasshopper"
+      ],
+      "url": "https://sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3"
+    },
+    {
+      "id": "F01-10",
+      "algo": "F01",
+      "title": "Truchet Tiles Grasshopper 教學",
+      "creator": "Parametric House",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "以原生 Grasshopper 元件用 Dispatch 把方格分成兩組，再從邊中點畫圓弧形成 Truchet 圖樣；另有 Advanced Truchet Tiles 版本可依順時針、逆時針或隨機序列旋轉底磚。可和 C# 版本對照比較。",
+      "variations": [
+        {
+          "name": "C# 對照原生元件",
+          "how": "讓學習者把 random.Next(2) 換成外部輸入的 bool 清單，接 GH 的 Random + Dispatch。",
+          "effect": "理解 C# 與元件式寫法的對應。"
+        },
+        {
+          "name": "旋轉序列",
+          "how": "方向改由 (row * columns + column) % 4 依序旋轉，或讀入使用者提供的整數序列。",
+          "effect": "規律的順時針／逆時針漩渦紋。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "拼貼"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.grasshopper3d.com/video/truchet-tiles-grasshopper-tutorial"
+    },
+    {
+      "id": "F01-11",
+      "algo": "F01",
+      "title": "C# 多尺度 Truchet 圖樣產生器",
+      "creator": "mostlynobody（GitHub）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "以 C# 實作 Carlson 多尺度 Truchet 的命令列工具，預設用 Perlin noise 決定細分與方向，支援色盤、細分層數與種子控制。語言與基礎範例相同，適合學習者直接參考演算法結構。",
+      "variations": [
+        {
+          "name": "Perlin noise 取代 Random",
+          "how": "以 noise(column * scale, row * scale) > 0 決定方向。",
+          "effect": "方向成片出現，紋理呈大區塊流動感。"
+        },
+        {
+          "name": "色盤輸出",
+          "how": "依層級與區域顏色輸出 Hatch 或帶顏色的 Mesh。",
+          "effect": "可直接做海報或印刷的彩色圖樣。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "遞迴",
+        "可重現種子",
+        "隨機"
+      ],
+      "tools": [
+        "C#"
+      ],
+      "url": "https://github.com/mostlynobody/truchet"
+    },
+    {
+      "id": "F01-12",
+      "algo": "F01",
+      "title": "Truchet blocks 數學互動教具",
+      "creator": "MathsCity（Leeds）",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "Leeds 的 MathsCity 探索中心以每一面都印有 Truchet 圖案的立方塊作為互動教具，讓觀眾以堆疊與旋轉方塊來拼出圖樣，是 3D Truchet 的實體化。",
+      "variations": [
+        {
+          "name": "立方塊六面圖案",
+          "how": "改三層迴圈，對每個立方體的 6 個面各自套 TileArcs，面方向由 Plane 決定。",
+          "effect": "可堆疊的 3D Truchet 方塊。"
+        },
+        {
+          "name": "面與面連續檢查",
+          "how": "檢查相鄰方塊接觸面上的弧端點是否對齊，不對齊就旋轉方塊。",
+          "effect": "跨方塊連續的空間線條。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/"
+    },
+    {
+      "id": "F01-13",
+      "algo": "F01",
+      "title": "Truchet 密碼卡片（以磁磚編碼訊息）",
+      "creator": "Ayliean MacDonald",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "數學藝術家以帶折線的 Truchet 磁磚設計賀卡，磁磚方向編碼秘密訊息；同篇文章也提到以 Truchet 編碼點字。說明方向不一定要隨機，也可以承載資料。",
+      "variations": [
+        {
+          "name": "文字轉位元",
+          "how": "把輸入字串轉成 ASCII 二進位，逐格讀取 bit 決定 rotated。",
+          "effect": "看似隨機、其實可解碼的圖樣。"
+        },
+        {
+          "name": "資料視覺化",
+          "how": "把一組數據（如每月雨量）正規化後，以門檻值決定方向或磁磚種類。",
+          "effect": "把環境數據刻印在立面紋理上。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/"
+    },
+    {
+      "id": "F01-14",
+      "algo": "F01",
+      "title": "可 3D 列印的磁吸 Truchet 磁磚",
+      "creator": "moebio（Printables）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "以 OpenSCAD 撰寫的可客製化 Truchet 磁磚，可預留圓形或矩形磁鐵孔，列印後可在桌面或磁板上自由重新排列。",
+      "variations": [
+        {
+          "name": "參數化單元",
+          "how": "只輸出單一格的實體（弧 Sweep + 底板 + 磁鐵孔），列印 N 片後由人排列。",
+          "effect": "由使用者當演算法的互動裝置。"
+        },
+        {
+          "name": "程式排列圖",
+          "how": "C# 輸出每格方向的編號表，作為現場組裝說明。",
+          "effect": "數位設計 → 手工組裝的完整流程。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼"
+      ],
+      "tools": [
+        "OpenSCAD",
+        "3D 列印"
+      ],
+      "url": "https://www.printables.com/model/220630-truchet-tiles"
+    },
+    {
+      "id": "F02-01",
+      "algo": "F02",
+      "title": "Hankin 的 polygons in contact 法",
+      "creator": "Ernest Hanbury Hankin",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "Hankin 在 20 世紀初研究印度等地伊斯蘭建築時提出：幾何圖樣是在「彼此接觸的多邊形」構造線上畫出來的，例如八角形網格留下正方形空隙。基礎範例的底圖就是這個八角形＋正方形組合。",
+      "variations": [
+        {
+          "name": "改變構造線",
+          "how": "BuildTiling 換成其他多邊形接觸組合（如 12 邊形＋三角形＋正方形）。",
+          "effect": "得到十二角星家族。"
+        },
+        {
+          "name": "顯示構造過程",
+          "how": "額外輸出射線與交點，並以 Iteration 或滑桿逐步顯示。",
+          "effect": "可教學用的構造動畫。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼",
+        "對稱"
+      ],
+      "tools": [
+        "手繪／紙本"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns"
+    },
+    {
+      "id": "F02-02",
+      "algo": "F02",
+      "title": "Islamic star patterns from polygons in contact",
+      "creator": "Craig S. Kaplan",
+      "year": "2005",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "把 Hankin 法形式化成電腦演算法：輸入任意平面鋪面與少數直覺參數（接觸角、接觸位置偏移）即可生成星形圖樣，並能做出類 parquet deformation 的漸變與新的鋪面轉換。基礎範例 F02 是此論文的最簡版本。",
+      "variations": [
+        {
+          "name": "接觸偏移 delta",
+          "how": "射線起點改為邊中點沿邊 ±delta 兩點。",
+          "effect": "星形出現雙線與中央小多邊形。"
+        },
+        {
+          "name": "Parquet deformation",
+          "how": "讓 contactAngle 隨多邊形中心的 x 座標線性變化。",
+          "effect": "從一端到另一端連續變形的圖樣帶。"
+        },
+        {
+          "name": "任意底圖",
+          "how": "BuildTiling 改為輸入外部 Polyline 清單（需為凸、逆時針）。",
+          "effect": "同一程式處理任意鋪面。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拼貼",
+        "對稱",
+        "幾何轉換"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": "https://graphicsinterface.org/proceedings/gi2005/gi2005-22/"
+    },
+    {
+      "id": "F02-03",
+      "algo": "F02",
+      "title": "Alhambra 宮殿的 zellij 幾何磁磚",
+      "creator": "Nasrid 王朝",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "2d-pattern",
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "西班牙格拉納達的 Alhambra 於 1238 年起由 Nasrid 王朝興建，14 世紀達到高峰；牆裙與地面以 zellij（alicatado）馬賽克磁磚拼出繁複幾何圖樣，並與灰泥雕刻、阿拉伯書法結合。",
+      "variations": [
+        {
+          "name": "牆裙帶狀圖樣",
+          "how": "rows 固定為 1–2，columns 放大，並用 Clip 外框切出牆裙帶。",
+          "effect": "連續的牆裙飾帶。"
+        },
+        {
+          "name": "色塊 zellij",
+          "how": "把 Hankin 線切出的封閉區域依形狀類型（星／多邊形／菱形）分配顏色。",
+          "effect": "多色馬賽克拼花。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼",
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Alhambra"
+    },
+    {
+      "id": "F02-04",
+      "algo": "F02",
+      "title": "Darb-e Imam 聖祠的準週期 girih 圖樣",
+      "creator": "Qara Qoyunlu 時期工匠",
+      "year": "1453",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "伊朗 Isfahan 的 Darb-e Imam 建於 1453 年，其磁磚被 Peter Lu 發現與 Penrose 鋪面相似，是 girih 磁磚加自相似細分的代表作。",
+      "variations": [
+        {
+          "name": "girih 五磚底圖",
+          "how": "BuildTiling 改成十邊形、五邊形、細長六邊形、蝴蝶結、菱形五種等邊磚，接觸角設 54°。",
+          "effect": "十角星圖樣。"
+        },
+        {
+          "name": "兩層級自相似",
+          "how": "大尺度 girih 圖樣切出的區域再以縮小的 girih 磚細分一次。",
+          "effect": "大圖樣內含小圖樣的兩層級構成。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "拼貼",
+        "對稱",
+        "遞迴"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Darb-e_Imam"
+    },
+    {
+      "id": "F02-05",
+      "algo": "F02",
+      "title": "中世紀伊斯蘭建築中的十重與準晶鋪面",
+      "creator": "Peter J. Lu、Paul J. Steinhardt",
+      "year": "2007",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "立面／表皮",
+      "summary": "發表於 Science 的研究指出約 1200 年後 girih 圖樣被重新理解為五種等邊 girih 磁磚的鋪面，15 世紀更結合自相似轉換，做出接近完美的準週期 Penrose 圖樣。說明「底圖＋線條規則」的構造法本身就是演算法。",
+      "variations": [
+        {
+          "name": "Penrose deflation 底圖",
+          "how": "寫遞迴函式把胖、瘦菱形依黃金比細分 n 次，再把結果交給 HankinLines。",
+          "effect": "不重複的準週期星形圖樣。"
+        },
+        {
+          "name": "girih 磚上的線條",
+          "how": "只在每片 girih 磚的邊中點以 54° 射線，並比對與底圖的一致性。",
+          "effect": "驗證 girih 磚本身就是 Hankin 構造線。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "遞迴",
+        "分形",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://www.science.org/doi/10.1126/science.1135491"
+    },
+    {
+      "id": "F02-06",
+      "algo": "F02",
+      "title": "Topkapı 卷軸（Topkapı Scroll）",
+      "creator": "帖木兒／薩法維時期伊朗工匠",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "寬 33 cm、長 29.5 m 的卷軸，收錄 114 個以墨與顏料繪製的幾何圖樣（含 girih 與 muqarnas），並以格線與配色標示對稱，是古代工匠的「圖樣函式庫」，現藏伊斯坦堡 Topkapı 宮。",
+      "variations": [
+        {
+          "name": "單元格＋鏡射",
+          "how": "只在一個基本單元（fundamental region）內產生線條，再用 Transform.Mirror 與 Rotation 複製。",
+          "effect": "與卷軸相同的「最小單元＋對稱複製」工作流程。"
+        },
+        {
+          "name": "同時輸出構造線",
+          "how": "以不同圖層或顏色輸出底圖多邊形（虛線）與圖樣線（實線）。",
+          "effect": "像卷軸一樣可讀的施工圖。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "對稱",
+        "拼貼"
+      ],
+      "tools": [
+        "手繪／紙本"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Topkapı_Scroll"
+    },
+    {
+      "id": "F02-07",
+      "algo": "F02",
+      "title": "Akbar 陵墓的八角形網格圖樣",
+      "creator": "蒙兀兒帝國",
+      "year": "1605–1613",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "建築",
+      "summary": "Hankin 用來說明 polygons in contact 的例子：八角形排成網格、留下正方形空隙，再在上面畫出星形。與基礎範例的底圖幾乎一致。",
+      "variations": [
+        {
+          "name": "接觸角變化",
+          "how": "contactAngle 從 45° 拉到 80°，比較星芒尖銳度。",
+          "effect": "同一底圖的不同風格。"
+        },
+        {
+          "name": "石材鑲嵌分件",
+          "how": "把線網切成封閉區域，依區域面積分群、統計數量。",
+          "effect": "可估算石材鑲嵌的零件種類與數量。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "拼貼",
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns"
+    },
+    {
+      "id": "F02-08",
+      "algo": "F02",
+      "title": "Louvre Abu Dhabi 多層星形穹頂",
+      "creator": "Jean Nouvel（結構：BuroHappold Engineering）",
+      "year": "2017",
+      "category": "art-installation",
+      "categories_extra": [
+        "performance",
+        "fabrication"
+      ],
+      "scale": "建築",
+      "summary": "穹頂由 7,850 顆不同尺寸的鋁製星形在 8 層中鋪排而成，形成穿孔屋頂，讓光線如穿過椰棗葉般灑落。是「多層星形圖樣＋光影」的大尺度實例。",
+      "variations": [
+        {
+          "name": "多層疊合",
+          "how": "同一底圖以不同 tileSize 與旋轉產生 8 層，各層沿 Z 偏移。",
+          "effect": "層層交錯的穿孔效果。"
+        },
+        {
+          "name": "光斑模擬",
+          "how": "以太陽向量把各層封閉區域投影到地面，做 Region Intersection 求穿透區。",
+          "effect": "預測地面的「光之雨」圖樣。"
+        },
+        {
+          "name": "穹頂映射",
+          "how": "在球面上以極座標網格生成底圖，或把平面圖樣投影到穹頂曲面。",
+          "effect": "連續覆蓋整個穹頂的星形格柵。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "曲面上",
+        "3D",
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Louvre_Abu_Dhabi"
+    },
+    {
+      "id": "F02-09",
+      "algo": "F02",
+      "title": "Institut du Monde Arabe 南向機械光圈立面",
+      "creator": "Jean Nouvel、Architecture-Studio",
+      "year": "1987",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "巴黎阿拉伯世界研究中心的玻璃帷幕後方有 240 組感光、馬達驅動的光圈，依日照自動開合，轉譯自伊斯蘭 mashrabiya 的遮陽傳統，形成會動的幾何圖樣。",
+      "variations": [
+        {
+          "name": "開合度參數",
+          "how": "每個星形以中心為基點 Scale，縮放係數 = f(太陽高度角)；或讓 contactAngle 隨日照變化。",
+          "effect": "星形光圈隨時間開合。"
+        },
+        {
+          "name": "Timer 動畫",
+          "how": "接 Timer，以時間參數驅動整片立面的開合，輸出每幀的開孔率。",
+          "effect": "一天之中的立面動畫與性能曲線。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "Timer",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Arab_World_Institute"
+    },
+    {
+      "id": "F02-10",
+      "algo": "F02",
+      "title": "Al Bahr Towers 動態 mashrabiya 遮陽",
+      "creator": "Aedas（現 AHR）",
+      "year": "2012",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture",
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "阿布達比雙塔外覆約 2,000 個傘狀遮陽單元，依日照強度自動開合，靈感來自傳統 mashrabiya，可減少約 50% 日射得熱。立面以三角形幾何模組重複排列。",
+      "variations": [
+        {
+          "name": "三角形底圖",
+          "how": "BuildTiling 改成三角形網格，每個三角形套 HankinLines，接觸角即為開合程度。",
+          "effect": "可開合的三角星形遮陽單元。"
+        },
+        {
+          "name": "依日照分區",
+          "how": "把立面每個單元的日照輻射值映射到 contactAngle 範圍（例如 30°–80°）。",
+          "effect": "受曬越強處遮得越密。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "吸引子控制",
+        "動畫"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Al_Bahr_Towers"
+    },
+    {
+      "id": "F02-11",
+      "algo": "F02",
+      "title": "杜哈伊斯蘭藝術博物館",
+      "creator": "I. M. Pei（貝聿銘）",
+      "year": "2008",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "建築",
+      "summary": "以抽象化的伊斯蘭幾何為語彙，外牆石灰岩的開孔與燈具呈現幾何圖樣，中庭天花採伊斯蘭圖樣，靈感來自開羅伊本圖倫清真寺的淨水亭。示範圖樣如何從平面轉為量體與天花的語言。",
+      "variations": [
+        {
+          "name": "天花放射圖樣",
+          "how": "底圖改為以中心為原點的同心多邊形環（極座標），每環邊數倍增。",
+          "effect": "由中心向外放射的穹頂天花。"
+        },
+        {
+          "name": "圖樣轉開口",
+          "how": "只保留星形中心區域作為開孔，其餘為實牆，輸出 Brep 差集。",
+          "effect": "石牆上的抽象星形開窗。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "對稱",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Museum_of_Islamic_Art,_Doha"
+    },
+    {
+      "id": "F02-12",
+      "algo": "F02",
+      "title": "Freeform Islamic Geometric Patterns（自由形伊斯蘭圖樣）",
+      "creator": "Rebecca Lin、Craig S. Kaplan",
+      "year": "2023",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "以圓堆積（circle packing）為骨架，生成大小不一的 rosette 並填入多邊形區塊，再以傳統構造法填滿，讓伊斯蘭圖樣能脫離週期網格、自由布局又保有傳統美感。",
+      "variations": [
+        {
+          "name": "Circle packing 底圖",
+          "how": "先用 E01 圓堆積得到圓心，以其 Delaunay／Voronoi 多邊形當底圖。",
+          "effect": "大小星形混雜的自由圖樣。"
+        },
+        {
+          "name": "依邊數自動定角度",
+          "how": "contactAngle = 90° - 180°/n 之類的公式，讓每個 n 邊形得到合適星芒。",
+          "effect": "不規則底圖上也有漂亮星形。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "拼貼",
+        "鄰居搜尋",
+        "最佳化"
+      ],
+      "tools": [],
+      "url": "https://arxiv.org/abs/2301.01471"
+    },
+    {
+      "id": "F02-13",
+      "algo": "F02",
+      "title": "Next Generation of Star Patterns（同心圓參數化星形）",
+      "creator": "Hadi Mansourifar、Weidong Shi",
+      "year": "2018",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "以同心圓為基礎的參數化方法，只改 9 個參數就能讓不同星形與 rosette 互相轉換；並以三個相切圓與其間隙作為磁磚單元，生成新的星形圖樣，另做成 Android App。",
+      "variations": [
+        {
+          "name": "參數滑桿化",
+          "how": "把 contactAngle、delta、tileSize 等都拉成輸入，並加入 rosette 花瓣層數。",
+          "effect": "一組滑桿探索整個星形家族。"
+        },
+        {
+          "name": "相切圓底圖",
+          "how": "以六角密堆積的圓與其間隙三角形作為多邊形底圖。",
+          "effect": "六角對稱的新星形圖樣。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "對稱",
+        "拼貼"
+      ],
+      "tools": [
+        "Android App"
+      ],
+      "url": "https://arxiv.org/abs/1809.09270"
+    }
+  ]
+}

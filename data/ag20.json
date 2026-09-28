@@ -1,0 +1,1840 @@
+{
+  "agent": "ag20",
+  "algorithms": [
+    {
+      "id": "F04",
+      "name_zh": "基因演算法",
+      "name_en": "Genetic Algorithm",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F04_GeneticAlgorithm.cs",
+      "loc": 199,
+      "logic": [
+        "搜尋／求解",
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "有自訂 class Candidate、精英保留＋小組比賽選擇＋交配＋突變四個步驟，還要注意陣列 Clone 的參考陷阱，且結果高度依賴族群數與突變率的調參。",
+      "tags": [
+        "最佳化",
+        "隨機",
+        "可重現種子",
+        "收斂",
+        "自訂 class"
+      ],
+      "one_liner": "先亂丟一大堆方案，打分數、讓好方案互相「生小孩」再隨機小改，一代一代留下更好的設計。",
+      "how_it_works": [
+        "把一個設計方案編碼成「基因」：這裡是一整組點的座標（Point3d 陣列）。",
+        "隨機產生第一代 populationSize 組方案，每組用 ScoreOf 算分數（點與點最近距離，越大越分散）。",
+        "排序後保留最好的 EliteCount 組直接進下一代（精英）。",
+        "其餘名額：用小組比賽（Tournament）挑兩個父母，逐點隨機繼承（均勻交配），再以 mutationRate 讓少數點小幅移動（突變）。",
+        "重複 generations 代，記錄每代最佳分數，最後輸出最佳解與收斂曲線。"
+      ],
+      "key_params": [
+        {
+          "name": "populationSize",
+          "effect": "族群越大越不容易卡在局部最佳，但每代運算量線性增加。"
+        },
+        {
+          "name": "generations",
+          "effect": "代數越多分數越高，但後期進步趨緩；可接 Quick Graph 看何時收斂。"
+        },
+        {
+          "name": "mutationRate",
+          "effect": "太低容易早熟收斂成一樣的解；太高則像亂數搜尋、好基因被破壞。"
+        },
+        {
+          "name": "seed",
+          "effect": "同一個 seed 可重現同一次演化；換 seed 可比較不同演化路線。"
+        },
+        {
+          "name": "EliteCount / TournamentSize（常數）",
+          "effect": "精英越多越保守；比賽人數越多選擇壓力越大、收斂越快但多樣性下降。"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（Candidate）",
+        "static 工廠方法 CreateRandom",
+        "陣列 Clone 與參考型別",
+        "List.Sort 搭配 lambda 比較器",
+        "LINQ OrderByDescending",
+        "Random 與種子"
+      ],
+      "prerequisites": [
+        "迴圈與巢狀迴圈",
+        "class 與欄位",
+        "參考型別 vs 值型別",
+        "Point3d.DistanceTo"
+      ],
+      "teaching_note": "很適合從零實作：五個步驟（評分、排序、精英、選擇、交配突變）各自是一個小方法，可以一次講一個。務必示範 Copy() 不 Clone 陣列時精英被突變污染的 bug；也要提醒「適應度函數就是設計意圖」，換題目主要是改 ScoreOf。",
+      "variations": [
+        {
+          "title": "換適應度：最大化日照或視野",
+          "level": 3,
+          "what_changes": "規則（ScoreOf）",
+          "how": "把 ScoreOf 改成計算每個點到太陽向量的遮蔽次數或到景觀點的可見性（用 Ray 與 Mesh 求交），分數越高越好。",
+          "result": "點會自動移到不被遮擋、日照最佳的位置，可當量體或開窗配置。"
+        },
+        {
+          "title": "多目標加權：分散又靠近邊界",
+          "level": 3,
+          "what_changes": "規則（ScoreOf）",
+          "how": "新增輸入 weight，分數 = 最近距離 × weight + 平均到邊界距離的倒數 × (1 − weight)；調權重觀察取捨。",
+          "result": "同一組程式可在「均勻分散」與「貼邊排列」之間連續切換，理解 Pareto 取捨的概念。"
+        },
+        {
+          "title": "曲線邊界內配置",
+          "level": 3,
+          "what_changes": "輸入／狀態",
+          "how": "把矩形換成任意封閉 Curve 輸入，CreateRandom 與 Mutate 用 Curve.Contains 檢查，超出就重抽或拉回最近點。",
+          "result": "可在不規則基地、樓板輪廓內自動分散柱位、樹木或座位。"
+        },
+        {
+          "title": "升到 3D 或曲面上",
+          "level": 3,
+          "what_changes": "維度",
+          "how": "基因改存曲面 UV 參數（Point2d），評分時用 Surface.PointAt 轉 3D 再算距離；或直接加 Z 座標與 depth 輸入。",
+          "result": "在曲面屋頂上均勻分布天窗、在體積內分布懸吊物件。"
+        },
+        {
+          "title": "基因改成滑桿參數",
+          "level": 3,
+          "what_changes": "資料結構（基因編碼）",
+          "how": "Candidate 改存 double[] genes，每個 gene 對應一個設計參數（樓高、旋轉、退縮），評分函數先用 genes 生成幾何再算面積或體積誤差。",
+          "result": "等於自己寫一個迷你 Galapagos，可對任何參數化量體做最佳化。"
+        },
+        {
+          "title": "吸子加權的評分",
+          "level": 2,
+          "what_changes": "輸入（吸子）",
+          "how": "新增 attractorPoints 輸入，最近距離的門檻依離吸子的距離放大或縮小，讓評分鼓勵「靠近吸子密、遠離吸子疏」。",
+          "result": "自動產生有疏密變化的點陣，可接 Voronoi 做立面開孔。"
+        },
+        {
+          "title": "動畫化演化過程",
+          "level": 2,
+          "what_changes": "迴圈／輸出",
+          "how": "把族群存成類別欄位，接 Timer 每次 RunScript 只跑一代並輸出當代最佳解；加 reset 布林輸入重新初始化。",
+          "result": "可以即時看點雲一代代散開，適合簡報與理解收斂。"
+        },
+        {
+          "title": "混合 Voronoi 產生可製造圖樣",
+          "level": 3,
+          "what_changes": "輸出／混合其他家族",
+          "how": "把 bestPoints 接 Voronoi，並把 ScoreOf 改成「每個 Voronoi cell 面積與目標面積的差」越小越好。",
+          "result": "得到大小均勻、可雷切的蜂巢或石板鋪面切割圖。"
+        },
+        {
+          "title": "結構或性能外掛評分",
+          "level": 4,
+          "what_changes": "規則（外部模擬）",
+          "how": "評分不在 C# 裡算，而是讀取 Karamba 位移或 Ladybug 日照結果；需要多元件、一代一代把 genes 輸出再讀回分數（或改用 Galapagos 接相同基因）。",
+          "result": "真正的性能導向設計：桁架高度、遮陽板角度依模擬結果演化。"
+        },
+        {
+          "title": "互動式演化（人當評審）",
+          "level": 3,
+          "what_changes": "規則（選擇方式）",
+          "how": "每代輸出 9 組候選幾何排成九宮格，用 Value List 讓使用者點選喜歡的兩組當父母，取代 ScoreOf。",
+          "result": "類似 Karl Sims Genetic Images 的美學演化，適合形式探索而非數值最佳化。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "樓板柱位自動配置器",
+          "brief": "給一個不規則樓板輪廓與最大跨距，用 GA 找出柱子數量最少、又滿足每點到最近柱距離上限的柱位配置。輸出柱位與分數收斂圖。",
+          "difficulty": 2,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "日照導向的住宅量體排列",
+          "brief": "在基地上放 N 棟方塊，基因為位置與高度，評分同時考慮容積與冬至日照時數（Ray 遮擋計算），比較不同權重的結果。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "GA × Voronoi 均質鋪面",
+          "brief": "在曲線邊界內演化 Voronoi 種子點，讓每塊鋪面面積接近目標值，輸出可雷切的切割圖與編號。",
+          "difficulty": 3,
+          "combine_with": [
+            "E02"
+          ]
+        },
+        {
+          "title": "迷你 Octopus：兩目標 Pareto 前緣",
+          "brief": "改寫評分為兩個目標並實作非支配排序，把整個族群畫成二維散佈圖，挑選前緣上的幾組方案做比較展板。",
+          "difficulty": 4,
+          "combine_with": []
+        },
+        {
+          "title": "演化出來的遮陽立面",
+          "brief": "立面上每片遮陽板的角度是一個基因，評分結合日照遮蔽比例與視野開口比例，最後輸出可製造的板件清單。",
+          "difficulty": 5,
+          "combine_with": [
+            "C04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Adaptation in Natural and Artificial Systems",
+          "author": "John H. Holland",
+          "year": "1975",
+          "url": ""
+        },
+        {
+          "title": "Genetic Algorithms in Search, Optimization, and Machine Learning",
+          "author": "David E. Goldberg",
+          "year": "1989",
+          "url": ""
+        },
+        {
+          "title": "An Evolutionary Architecture",
+          "author": "John Frazer",
+          "year": "1995",
+          "url": "https://www.aaschool.ac.uk/public/whats-on/an-evolutionary-architecture"
+        },
+        {
+          "title": "Galapagos: On the Logic and Limitations of Generic Solvers",
+          "author": "David Rutten",
+          "year": "2013",
+          "url": "https://www.researchgate.net/publication/264299633_Galapagos_On_the_Logic_and_Limitations_of_Generic_Solvers"
+        },
+        {
+          "title": "Project Discover: An Application of Generative Design for Architectural Space Planning",
+          "author": "Danil Nagy, Damon Lau, John Locke, Jim Stoddart, Lorenzo Villaggi, Ray Wang, Dale Zhao, David Benjamin",
+          "year": "",
+          "url": "https://www.research.autodesk.com/app/uploads/2023/03/project-discover-an-application.pdf_recXlggwMF7WwIj7i.pdf"
+        },
+        {
+          "title": "Galapagos Evolutionary Solver in Grasshopper（CMU 課程講義）",
+          "author": "Dave Touretzky",
+          "year": "",
+          "url": "https://www.cs.cmu.edu/afs/cs/academic/class/15394-s23/lectures/galapagos/galapagos.html"
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "name_zh": "最短路徑（Dijkstra）",
+      "name_en": "Shortest Path (Dijkstra)",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F05_ShortestPath.cs",
+      "loc": 196,
+      "logic": [
+        "搜尋／求解"
+      ],
+      "data_structure": [
+        "網格",
+        "圖（點＋連線）"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "沒有自訂 class，但要同時維護五個二維陣列（障礙、已確定、距離、來源欄列）、8 鄰居更新與終點倒推路徑，屬於鄰居搜尋＋收斂判斷的中階結構。",
+      "tags": [
+        "鄰居搜尋",
+        "最佳化",
+        "網格擴散"
+      ],
+      "one_liner": "把基地切成格子，從起點像水波一樣一圈圈擴散，第一個碰到終點的那條就是繞過障礙物的最短路線。",
+      "how_it_works": [
+        "把範圍切成 cellSize 大小的格點，距離障礙物中心小於 obstacleRadius 的格點標為不能走。",
+        "所有格點的「離起點距離」先設為無限大，起點設為 0。",
+        "每一輪掃描全部格點，挑出「還沒確定、距離最小」的格點，把它標為已確定。",
+        "更新它 8 個鄰居：直走加 1 格、斜走加 √2 格，如果比原本記錄的距離更短就改寫，並記下「從哪一格走過來」。",
+        "確定到終點時停止，沿著「從哪一格走過來」從終點倒推回起點，反轉後輸出 Polyline。"
+      ],
+      "key_params": [
+        {
+          "name": "cellSize",
+          "effect": "格子越小路徑越平滑精準，但格點數平方成長，超過 10000 格會被防呆擋下。"
+        },
+        {
+          "name": "obstacleRadius",
+          "effect": "障礙半徑越大，通道越窄甚至被封死（輸出「走不到終點」）。"
+        },
+        {
+          "name": "obstaclePoints",
+          "effect": "障礙物分布決定路徑繞行方式；可改成建築量體、樹木或設備位置。"
+        },
+        {
+          "name": "NeighborSteps（常數）",
+          "effect": "4 鄰居只能直角轉彎、8 鄰居可斜走；改成 16 鄰居路徑更接近任意角度。"
+        }
+      ],
+      "csharp_concepts": [
+        "二維陣列 bool[,] / double[,] / int[,]",
+        "double.MaxValue 當無限大",
+        "static readonly 常數表 int[,]",
+        "LINQ Any",
+        "Polyline 與 Reverse",
+        "while(true) 搭配 break"
+      ],
+      "prerequisites": [
+        "巢狀迴圈",
+        "陣列",
+        "格點座標與索引互換",
+        "圖（節點＋邊）的概念"
+      ],
+      "teaching_note": "適合從零實作，但建議先用紙上 5×5 格手算一次再寫程式。範例用 O(n²) 掃描找最小值，刻意不用優先佇列，方便理解；可以當作「為什麼需要 PriorityQueue」的延伸話題。倒推路徑那段（cameFrom）是學習者最常卡住的地方。",
+      "variations": [
+        {
+          "title": "A* 啟發式搜尋",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "挑下一格時改比較「已走距離＋到終點直線距離」，其餘不變；可再印出展開格數跟 Dijkstra 比較。",
+          "result": "路徑一樣最短，但搜尋範圍明顯縮小、速度更快。"
+        },
+        {
+          "title": "地形坡度成本",
+          "level": 3,
+          "what_changes": "規則（邊的權重）",
+          "how": "新增 terrain Surface 輸入，stepDistance 改成 3D 距離再乘上坡度懲罰（高差／水平距離超過門檻就加倍或禁止）。",
+          "result": "得到沿等高線蜿蜒、符合無障礙坡度的步道。"
+        },
+        {
+          "title": "影像當成本地圖",
+          "level": 3,
+          "what_changes": "輸入（影像）",
+          "how": "讀入一張灰階圖，每格成本 = 1 + 亮度 × k，黑色直接視為障礙；stepDistance 乘上格子成本。",
+          "result": "用畫筆就能描繪「好走／難走」區域，快速做景觀動線研究。"
+        },
+        {
+          "title": "多起點距離場（可及性地圖）",
+          "level": 3,
+          "what_changes": "狀態／輸出",
+          "how": "把多個入口都設為距離 0，不設終點跑到全部確定，輸出每個格點的距離值並依距離上色。",
+          "result": "得到「離最近出口幾公尺」的熱圖，可做逃生距離或服務範圍檢討。"
+        },
+        {
+          "title": "在曲線網路上走（真正的圖）",
+          "level": 3,
+          "what_changes": "資料結構",
+          "how": "改用 Dictionary<int, List<(int, double)>> 表示節點與邊，節點由既有街道或走廊曲線的端點與交點產生，再跑相同 Dijkstra。",
+          "result": "在真實街道網路上找最短路，接近 ShortestWalk 或 SpiderWeb 的做法。"
+        },
+        {
+          "title": "3D 體素路徑",
+          "level": 4,
+          "what_changes": "維度",
+          "how": "陣列改成三維 [x, y, z]，鄰居擴成 26 個方向，障礙改成 Brep.IsPointInside；注意格數立方成長需要優先佇列。",
+          "result": "在樓板、梁之間自動繞行的管線或風管路由。"
+        },
+        {
+          "title": "多組起終點＋流量疊加",
+          "level": 3,
+          "what_changes": "迴圈／輸出",
+          "how": "對一組起終點配對逐一求最短路，每走過一個格點就把計數加一，輸出計數熱圖或依計數加粗路徑。",
+          "result": "看出哪些通道最常被使用（類似 betweenness），可決定主動線寬度。"
+        },
+        {
+          "title": "路徑轉成可製造幾何",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "把 Polyline 做 Curve.Fillet 或重新擬合成 NURBS，再 Offset 兩側或 Pipe 成管，輸出步道板或管線實體。",
+          "result": "從鋸齒折線變成可施工的平順步道或 3D 列印管路模型。"
+        },
+        {
+          "title": "動畫化擴散波前",
+          "level": 2,
+          "what_changes": "迴圈／輸出",
+          "how": "把陣列存成類別欄位並接 Timer，每次只擴展 k 個格點，輸出已確定格點依距離上色。",
+          "result": "可以看見 Dijkstra 由起點一圈圈擴散的過程，學習效果極佳。"
+        },
+        {
+          "title": "混合 GA：最佳化出入口位置",
+          "level": 4,
+          "what_changes": "混合其他家族",
+          "how": "把出入口座標當 F04 的基因，評分為所有房間到最近出口的最長 Dijkstra 距離（越小越好）。",
+          "result": "自動找到讓最遠點逃生距離最短的出口配置。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "校園步行地圖：從教室到最近的咖啡",
+          "brief": "把校園平面轉成格點與障礙，用多起點距離場算出每處到最近咖啡店的步行距離，輸出熱圖與建議新增點位。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "無障礙坡道自動選線",
+          "brief": "在地形曲面上以坡度作為成本做 A*，找出不超過 1/12 坡度的最短路線，並輸出可施工的步道實體。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "逃生距離檢討工具",
+          "brief": "讀入樓層平面牆線，對所有出口做距離場，標示超過法規步行距離的區域，並用 GA 移動出口位置改善。",
+          "difficulty": 4,
+          "combine_with": [
+            "F04"
+          ]
+        },
+        {
+          "title": "3D 管線自動路由",
+          "brief": "在結構梁柱與樓板之間的體素空間中，為多條設備管線依序找最短路並避開已佔用格，輸出 Pipe 幾何。",
+          "difficulty": 5,
+          "combine_with": []
+        },
+        {
+          "title": "人流熱度決定鋪面紋理",
+          "brief": "隨機產生多組起終點求最短路並疊加流量，依流量改變鋪面磚的密度或顏色，做成景觀鋪面圖樣。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "A note on two problems in connexion with graphs",
+          "author": "Edsger W. Dijkstra",
+          "year": "1959",
+          "url": ""
+        },
+        {
+          "title": "A Formal Basis for the Heuristic Determination of Minimum Cost Paths（A* 演算法）",
+          "author": "Peter E. Hart, Nils J. Nilsson, Bertram Raphael",
+          "year": "1968",
+          "url": ""
+        },
+        {
+          "title": "The Social Logic of Space",
+          "author": "Bill Hillier, Julienne Hanson",
+          "year": "1984",
+          "url": ""
+        },
+        {
+          "title": "Urban Network Analysis Toolbox",
+          "author": "Andres Sevtsuk（MIT City Form Lab）",
+          "year": "2012",
+          "url": "https://cityform.mit.edu/projects/urban-network-analysis"
+        },
+        {
+          "title": "The cityseer Python package for pedestrian-scale network-based urban analysis",
+          "author": "Gareth Simons",
+          "year": "2021",
+          "url": "https://arxiv.org/pdf/2106.15314"
+        },
+        {
+          "title": "SpiderWeb - Addon for Grasshopper",
+          "author": "Richard Schaffranek",
+          "year": "",
+          "url": "https://grasshopperdocs.com/addons/spiderweb.html"
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "name_zh": "奇異吸子",
+      "name_en": "Strange Attractor",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F06_StrangeAttractor.cs",
+      "loc": 118,
+      "logic": [
+        "迭代模擬",
+        "直接公式"
+      ],
+      "data_structure": [
+        "粒子"
+      ],
+      "difficulty": 1,
+      "difficulty_reason": "扣掉樣板實際邏輯約 60 行、單一 for 迴圈、沒有自訂 class，每一步只是把公式代進去；難處在係數敏感而不在程式。",
+      "tags": [
+        "混沌",
+        "直接公式",
+        "3D",
+        "動畫"
+      ],
+      "one_liner": "一條固定、沒有亂數的公式反覆代入上一步的位置，卻畫出永不重複、細節無窮的蝴蝶曲線或點雲。",
+      "how_it_works": [
+        "從 startPoint 出發，把目前位置放進清單。",
+        "Lorenz（type 0）：用 a(y−x)、x(b−z)−y、xy−cz 算出速度向量，往前走 stepTime（歐拉法積分）。",
+        "Clifford（type 1）：直接用 sin／cos 公式把 (x, y) 映射到下一個點，沒有時間概念。",
+        "每一步檢查是否發散（無效或離原點超過 10⁶），發散就停止並提示係數不對。",
+        "輸出 Polyline（看 Lorenz 軌跡）與點清單（看 Clifford 點雲）。"
+      ],
+      "key_params": [
+        {
+          "name": "a, b, c, d",
+          "effect": "決定吸子的形狀；Lorenz 的 b 低於約 24 會收斂到固定點，Clifford 小改一點圖樣就完全不同。"
+        },
+        {
+          "name": "steps",
+          "effect": "步數越多點雲越濃密、曲線越完整；上限 200000。"
+        },
+        {
+          "name": "stepTime",
+          "effect": "Lorenz 的時間步長，太大軌跡會失真甚至發散，太小要更多步才畫得完整。"
+        },
+        {
+          "name": "startPoint",
+          "effect": "混沌的核心：起點差 0.001，長時間後軌跡完全不同，但整體形狀仍落在同一個吸子上。"
+        }
+      ],
+      "csharp_concepts": [
+        "Point3d 與 Vector3d 運算",
+        "Math.Sin / Math.Cos",
+        "Point3d.IsValid",
+        "Polyline 建構",
+        "const 常數"
+      ],
+      "prerequisites": [
+        "for 迴圈",
+        "向量加法與純量乘法",
+        "基本三角函數"
+      ],
+      "teaching_note": "非常適合當暖身練習：程式短、結果驚豔。可以把兩個只差 0.001 的起點同時畫出來，直觀說明混沌。提醒學習者 Clifford 必須看點（Polyline 會亂連成一團），而 Lorenz 是看曲線。",
+      "variations": [
+        {
+          "title": "換公式：de Jong、Rössler、Aizawa",
+          "level": 1,
+          "what_changes": "規則",
+          "how": "新增 DeJongNext（x' = sin(a·y) − cos(b·x)、y' = sin(c·x) − cos(d·y)）或 Rössler 的速度公式，attractorType 多加幾個分支。",
+          "result": "一支元件就能產生多種經典吸子，做成吸子圖鑑。"
+        },
+        {
+          "title": "密度直方圖著色",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "建立二維 int 陣列當格子，每個點落在哪格就加一，最後把次數用對數映射成顏色或 Mesh 頂點色。",
+          "result": "得到 Paul Bourke 風格、有柔和明暗的吸子影像，可輸出高解析圖。"
+        },
+        {
+          "title": "軌跡轉管狀雕塑",
+          "level": 2,
+          "what_changes": "輸出（可製造幾何）",
+          "how": "Lorenz Polyline 先 Rebuild 平滑，再 Brep.CreatePipe，半徑依速度大小或步數變化。",
+          "result": "可 3D 列印的吸子雕塑或吊燈骨架。"
+        },
+        {
+          "title": "Clifford 點雲升到 3D",
+          "level": 2,
+          "what_changes": "維度",
+          "how": "把 z 設成步數 × 高度係數，或加入第三條公式 z' = sin(e·x) + f·cos(e·z)。",
+          "result": "平面圖樣變成螺旋堆疊的點雲塔或 3D 雲霧量體。"
+        },
+        {
+          "title": "係數沿參數漸變",
+          "level": 2,
+          "what_changes": "狀態／迴圈",
+          "how": "外層再跑一個 k 迴圈，每層的 a 從 a0 線性變到 a1，並把每層吸子往 Z 方向平移。",
+          "result": "看見形狀如何隨係數演變，堆疊成一個有機量體或做成切片模型。"
+        },
+        {
+          "title": "自動搜尋好看的係數",
+          "level": 3,
+          "what_changes": "混合搜尋",
+          "how": "隨機產生係數，先跑幾千步排除發散或塌縮成點的組合，再用點雲覆蓋格數或 Lyapunov 指數篩選；可接 F04 當適應度。",
+          "result": "仿 Sprott 的做法，自動產出大量不重複的吸子圖樣。"
+        },
+        {
+          "title": "吸子映射到曲面上",
+          "level": 3,
+          "what_changes": "維度（曲面上）",
+          "how": "把 Clifford 的 (x, y) 正規化到 0–1 後當 UV，用 Surface.PointAt 取得 3D 點，並沿法線做微小凸起。",
+          "result": "在曲面屋頂或立面上形成混沌紋理的開孔或浮雕。"
+        },
+        {
+          "title": "多起點粒子動畫",
+          "level": 2,
+          "what_changes": "迴圈／動畫",
+          "how": "改成 N 個粒子各自從起點附近出發，存成類別欄位，接 Timer 每次推進一步並輸出最近 200 步的尾巴。",
+          "result": "看到原本擠在一起的粒子逐漸分開、卻都繞著同一個蝴蝶形運動。"
+        },
+        {
+          "title": "筆繪機輸出",
+          "level": 2,
+          "what_changes": "輸出（製造）",
+          "how": "Lorenz 取 XY 投影或正交視圖，Polyline 簡化（Reduce Segments）後依長度切段，匯出成單線條曲線給 pen plotter 或雷射雕刻。",
+          "result": "一筆畫到底的混沌線條畫作。"
+        },
+        {
+          "title": "改用 RK4 積分",
+          "level": 3,
+          "what_changes": "規則（數值方法）",
+          "how": "把 LorenzNext 的歐拉一步改成四階 Runge–Kutta（算 k1–k4 四次速度再加權平均）。",
+          "result": "同樣 stepTime 下軌跡更準確、更不易發散，可比較兩種積分的差異。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "吸子圖鑑海報",
+          "brief": "實作 Clifford、de Jong 與密度直方圖著色，挑選 12 組係數排成海報並標註參數，討論係數敏感度。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "Lorenz 管狀吊燈",
+          "brief": "把 Lorenz 軌跡轉成變半徑的 Pipe，檢查最小管徑與自我相交後 3D 列印，做成可掛的燈具原型。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "混沌立面開孔",
+          "brief": "把吸子點雲的密度映射到立面曲面上，密度高處開大孔、低處開小孔，輸出可雷切的板件。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "演化出來的吸子",
+          "brief": "以 GA 搜尋 Clifford 係數，適應度為點雲覆蓋率與對稱度，把一代代的最佳吸子排成演化樹展示。",
+          "difficulty": 4,
+          "combine_with": [
+            "F04"
+          ]
+        },
+        {
+          "title": "吸子流場中的粒子雕塑",
+          "brief": "把 Lorenz 速度場當成 3D 向量場，讓上千個粒子隨場移動並留下軌跡，再轉成可製造的線材雕塑。",
+          "difficulty": 4,
+          "combine_with": [
+            "C03"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Deterministic Nonperiodic Flow",
+          "author": "Edward N. Lorenz",
+          "year": "1963",
+          "url": "https://en.wikipedia.org/wiki/Lorenz_system"
+        },
+        {
+          "title": "Clifford Attractors",
+          "author": "Paul Bourke",
+          "year": "2004",
+          "url": "https://paulbourke.net/fractals/clifford/"
+        },
+        {
+          "title": "Peter de Jong Attractors",
+          "author": "Paul Bourke",
+          "year": "",
+          "url": "https://paulbourke.net/fractals/peterdejong/"
+        },
+        {
+          "title": "The Lorenz Attractor, a thing of beauty",
+          "author": "Paul Bourke",
+          "year": "1997",
+          "url": "https://paulbourke.net/fractals/lorenz/"
+        },
+        {
+          "title": "Strange Attractors: Creating Patterns in Chaos",
+          "author": "Julien C. Sprott",
+          "year": "1993",
+          "url": "https://sprott.physics.wisc.edu/sa.htm"
+        },
+        {
+          "title": "Chaos in Wonderland",
+          "author": "Clifford A. Pickover",
+          "year": "1994",
+          "url": ""
+        },
+        {
+          "title": "Chaos: Making a New Science",
+          "author": "James Gleick",
+          "year": "1987",
+          "url": ""
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "F04-01",
+      "algo": "F04",
+      "title": "Autodesk MaRS 多倫多辦公室生成式設計",
+      "creator": "The Living（Autodesk Research）",
+      "year": "2017",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "為 Autodesk 多倫多辦公室建立可產生上萬種平面配置的幾何系統，以工作型態偏好、鄰接偏好、低干擾、連通性、日光、視野六個目標評分，再用多目標基因演算法 (MOGA) 演化出高分配置，是第一個大規模生成式設計的辦公空間。",
+      "variations": [
+        {
+          "name": "基因改成空間配置參數",
+          "how": "把 Candidate 的點陣列換成「每個工作區的位置、方向、大小」參數，評分先生成量塊再算指標。",
+          "effect": "從點分散問題變成真正的平面配置最佳化。"
+        },
+        {
+          "name": "六目標改成加權總分",
+          "how": "ScoreOf 中各指標正規化到 0–1 後加權相加，權重做成滑桿輸入。",
+          "effect": "可以現場調權重，展示不同利害關係人偏好下的最佳方案。"
+        },
+        {
+          "name": "保留整代做散佈圖",
+          "how": "每代把所有 Candidate 的兩個指標輸出成點（x = 指標一、y = 指標二）。",
+          "effect": "看出方案之間的取捨前緣，對應 Project Discover 的視覺化工具。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "最佳化",
+        "多元件",
+        "3D"
+      ],
+      "tools": [
+        "Dynamo",
+        "Project Refinery",
+        "MOGA"
+      ],
+      "url": "https://www.research.autodesk.com/projects/autodesk-mars"
+    },
+    {
+      "id": "F04-02",
+      "algo": "F04",
+      "title": "Autodesk University 拉斯維加斯展場配置",
+      "creator": "The Living（Autodesk）",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "延續 MaRS 辦公室的流程，將展場攤位與動線配置拆成「建立設計空間、以目標評估、以演化計算迭代」三步驟，用遺傳演算法搜尋同時滿足人流、曝光與實際限制的展場平面。",
+      "variations": [
+        {
+          "name": "攤位中心點當基因",
+          "how": "把範例的點直接當攤位中心，評分加入「攤位間距 ≥ 走道寬」懲罰項。",
+          "effect": "自動排出不擋走道、又平均分散的攤位。"
+        },
+        {
+          "name": "串接最短路評分",
+          "how": "評分時以 F05 計算入口到每個攤位的步行距離，取平均或最大值。",
+          "effect": "兼顧可及性，避免偏遠死角攤位。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "約束滿足"
+      ],
+      "tools": [
+        "Dynamo",
+        "Project Refinery"
+      ],
+      "url": "https://www.autodesk.com/autodesk-university/article/Generative-Design-Architectural-Space-Planning"
+    },
+    {
+      "id": "F04-03",
+      "algo": "F04",
+      "title": "An Evolutionary Architecture（演化建築）",
+      "creator": "John Frazer",
+      "year": "1995",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "建築",
+      "summary": "Frazer 在 AA 的研究與同名展覽／出版品，將建築視為人工生命，以遺傳編碼描述形態規則並透過演化機制產生建築形式，是建築界使用基因演算法的奠基性論述。",
+      "variations": [
+        {
+          "name": "基因控制生成規則而非座標",
+          "how": "Candidate 改存規則參數（如 L-System 的角度與代數），評分讀取生成後幾何的特性。",
+          "effect": "演化的是「生長規則」，對應 Frazer 基因型／表現型的概念。"
+        },
+        {
+          "name": "環境回饋評分",
+          "how": "新增環境輸入（風向或日照向量），評分依形體面對環境的表現決定。",
+          "effect": "形體隨環境條件不同而演化出不同結果。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "開放生長"
+      ],
+      "tools": [
+        "自製程式"
+      ],
+      "url": "https://www.aaschool.ac.uk/public/whats-on/an-evolutionary-architecture"
+    },
+    {
+      "id": "F04-04",
+      "algo": "F04",
+      "title": "Galapagos 演化求解器",
+      "creator": "David Rutten",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "Grasshopper 內建的通用演化求解器：把滑桿或 Gene Pool 當基因、任一數值當適應度，自動搜尋參數空間。Rutten 並撰文討論通用求解器的邏輯與限制，是學習者最常接觸的 GA 工具。",
+      "variations": [
+        {
+          "name": "用 C# 重現 Gene Pool",
+          "how": "把 Candidate 改成 double[] genes，範圍與步進對應滑桿設定，評分由另一段程式計算。",
+          "effect": "理解 Galapagos 背後在做什麼，並能客製選擇、交配方式。"
+        },
+        {
+          "name": "目標值逼近型適應度",
+          "how": "ScoreOf 回傳 −|體積 − 目標體積|，其他步驟不變。",
+          "effect": "重現 CMU 講義中「旋轉曲面體積接近 40000」的經典練習。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "最佳化",
+        "隨機"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Galapagos"
+      ],
+      "url": "https://www.researchgate.net/publication/264299633_Galapagos_On_the_Logic_and_Limitations_of_Generic_Solvers"
+    },
+    {
+      "id": "F04-05",
+      "algo": "F04",
+      "title": "Octopus 多目標演化最佳化",
+      "creator": "Robert Vierlinger",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "Grasshopper 外掛，操作方式類似 Galapagos，但引入 Pareto 原則同時追求多個目標，輸出一整組互相取捨的最佳解，而非單一答案。",
+      "variations": [
+        {
+          "name": "非支配排序取代單一分數",
+          "how": "Candidate 改存 Score1、Score2，排序時先比「被幾個解支配」，再比擁擠距離。",
+          "effect": "得到一條 Pareto 前緣，而不是只有一個冠軍。"
+        },
+        {
+          "name": "前緣視覺化",
+          "how": "輸出每代非支配解的兩個分數作為點，並連成折線。",
+          "effect": "觀察前緣如何隨代數往外推進。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Octopus"
+      ],
+      "url": "https://grasshopperdocs.com/addons/octopus.html"
+    },
+    {
+      "id": "F04-06",
+      "algo": "F04",
+      "title": "Wallacei 多目標演化與都市形態研究",
+      "creator": "Mohammed Makki、Milad Showkatbakhsh 等",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "群體／都市",
+      "summary": "Wallacei 是 Grasshopper 的多目標演化引擎，附分析與分群工具協助挑選方案；其研究頁收錄以規則式多尺度程序建模結合 MOEA、探討相衝突條件下都市形態變化的研究。",
+      "variations": [
+        {
+          "name": "街廓量體基因",
+          "how": "每棟量體的高度與退縮當基因，評分同時算容積率與街道日照。",
+          "effect": "得到一系列在密度與日照間取捨的街廓形態。"
+        },
+        {
+          "name": "結果分群",
+          "how": "把最後一代的基因向量用 k-means 分成幾群，每群挑一個代表輸出。",
+          "effect": "避免挑到一堆長得很像的解，對應 Wallacei 的分群挑選。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Wallacei"
+      ],
+      "url": "https://www.wallacei.com/research"
+    },
+    {
+      "id": "F04-07",
+      "algo": "F04",
+      "title": "醫院建築日光與能耗多目標最佳化（阿爾及利亞）",
+      "creator": "",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "以 Grasshopper 參數模型、Ladybug／Honeybee 模擬日光與能耗、Octopus 基因演算法組成閉迴路，最佳化開窗率、玻璃與遮陽等參數，是性能導向立面設計的典型流程。",
+      "variations": [
+        {
+          "name": "遮陽板角度當基因",
+          "how": "每片遮陽板的旋轉角度存成 genes，評分讀取模擬的日光自主率與冷房負荷。",
+          "effect": "演化出上下不同角度的遮陽排列。"
+        },
+        {
+          "name": "C# 內簡化日照評分",
+          "how": "不接 Honeybee，改在 ScoreOf 內用 Ray 與太陽向量估算被遮蔽比例。",
+          "effect": "速度大增，適合基礎範例快速迭代。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Ladybug",
+        "Honeybee",
+        "Octopus"
+      ],
+      "url": "https://www.academia.edu/105936985/Parametric_Based_Multi_Objective_Optimization_Workflow_Daylight_and_Energy_Performance_Study_of_Hospital_Building_in_Algeria"
+    },
+    {
+      "id": "F04-08",
+      "algo": "F04",
+      "title": "殼體多目標最佳化基準測試（Karamba＋Octopus）",
+      "creator": "Alberto Pugnale",
+      "year": "2013",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "以 Grasshopper 建立殼體參數模型、Karamba 做有限元素分析、Octopus 進行多目標演化，作為結構形態最佳化的簡單基準範例。",
+      "variations": [
+        {
+          "name": "控制點高度當基因",
+          "how": "Candidate 存殼體控制點的 Z 值，評分為 Karamba 回傳的最大位移（取負號）。",
+          "effect": "殼體逐代長出拱形以減少變形。"
+        },
+        {
+          "name": "位移與表面積雙目標",
+          "how": "同時最小化位移與面積（材料量），用 Pareto 挑選。",
+          "effect": "在結構效率與用料間找取捨。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "物理模擬",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Karamba3D",
+        "Octopus"
+      ],
+      "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/"
+    },
+    {
+      "id": "F04-09",
+      "algo": "F04",
+      "title": "IAAC 結構形態基因最佳化（Karamba＋Galapagos）",
+      "creator": "IAAC 學習者專案",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "IAAC 課程將 Karamba 結構分析結果（位移）作為 Galapagos 的適應度，最佳化塔樓斜格構或屋頂的幾何參數，展示教學場景中 GA 與結構分析的整合。",
+      "variations": [
+        {
+          "name": "斜格構密度基因",
+          "how": "基因為各樓層斜撐的分割數，評分 = 位移 × 用料量。",
+          "effect": "下密上疏的斜格構分布自然浮現。"
+        },
+        {
+          "name": "即時收斂曲線",
+          "how": "把 bestScores 接 Quick Graph，比較不同 mutationRate 的收斂速度。",
+          "effect": "學習者能判斷何時該停止演化。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "物理模擬"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Karamba3D",
+        "Galapagos"
+      ],
+      "url": "https://www.iaacblog.com/programs/genetic-optimization-karamba-galapagos/"
+    },
+    {
+      "id": "F04-10",
+      "algo": "F04",
+      "title": "NASA ST5 演化天線",
+      "creator": "NASA",
+      "year": "2006",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "為 Space Technology 5 衛星設計的 X 波段天線，由演化演算法在超級電腦上跑數天找出，形狀怪異到人類設計師不會想到，卻滿足任務要求並實際製造上太空。",
+      "variations": [
+        {
+          "name": "基因改成一串折線段",
+          "how": "Candidate 存每段的長度與轉角，生成折線後以限制條件（總長、範圍）加上懲罰。",
+          "effect": "演化出扭曲、不直覺的線形構件。"
+        },
+        {
+          "name": "輸出成可彎折線材",
+          "how": "最佳折線輸出每段長度與角度表，給手工或 CNC 彎線。",
+          "effect": "把演化結果直接變成可製造物件。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "3D"
+      ],
+      "tools": [
+        "演化演算法"
+      ],
+      "url": "https://www.jpl.nasa.gov/nmp/st5/TECHNOLOGY/antenna.html"
+    },
+    {
+      "id": "F04-11",
+      "algo": "F04",
+      "title": "Evolved Virtual Creatures（演化虛擬生物）",
+      "creator": "Karl Sims",
+      "year": "1994",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以基因演算法同時演化積木生物的形態與神經控制，讓牠們在物理模擬中比賽游泳、行走、跳躍，最成功的個體被複製、交配、突變，是演化計算在圖學與藝術中的經典作品。",
+      "variations": [
+        {
+          "name": "基因是結構圖",
+          "how": "Candidate 改存「節點＋連線」的有向圖，交配時交換子圖。",
+          "effect": "演化出分支、重複的構件組合。"
+        },
+        {
+          "name": "用模擬結果當分數",
+          "how": "每個候選丟進 Kangaroo 模擬一段時間，以移動距離或穩定度評分。",
+          "effect": "演化出會站穩或會滾動的形體。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "最佳化",
+        "物理模擬",
+        "動畫"
+      ],
+      "tools": [
+        "自製程式"
+      ],
+      "url": "https://www.karlsims.com/evolved-virtual-creatures.html"
+    },
+    {
+      "id": "F04-12",
+      "algo": "F04",
+      "title": "Genetic Images（互動式影像演化）",
+      "creator": "Karl Sims",
+      "year": "1993",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "觀眾在展場中挑選喜歡的抽象影像，被選中的影像基因被複製、組合與突變產生下一代，由人的審美當適應度；曾在龐畢度中心與 Ars Electronica 展出。",
+      "variations": [
+        {
+          "name": "人工選擇取代 ScoreOf",
+          "how": "每代輸出 9 組圖樣排成九宮格，用 Value List 選兩個父母。",
+          "effect": "以美感而非數值驅動的演化。"
+        },
+        {
+          "name": "基因是公式參數",
+          "how": "基因存 F06 吸子的 a、b、c、d 係數，每組畫出一張吸子圖讓人挑。",
+          "effect": "互動式演化出喜歡的混沌圖樣。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "影像輸入"
+      ],
+      "tools": [
+        "自製程式"
+      ],
+      "url": "https://karlsims.com/"
+    },
+    {
+      "id": "F05-01",
+      "algo": "F05",
+      "title": "SpiderWeb 圖論與 Space Syntax 外掛",
+      "creator": "Richard Schaffranek",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "在 Grasshopper 中由幾何建立圖、計算單源最短路與點對點最短路，並能把 Space Syntax 指標當成設計約束放進參數流程。",
+      "variations": [
+        {
+          "name": "格點改成真正的圖",
+          "how": "把 isBlocked 網格換成節點清單＋鄰接表，節點由走廊中心線交點產生。",
+          "effect": "可處理不規則平面與多樓層連通。"
+        },
+        {
+          "name": "單源最短路全輸出",
+          "how": "拿掉「到終點就 break」，輸出每個節點的距離值。",
+          "effect": "得到平均深度（integration）等 Space Syntax 類指標。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Grasshopper",
+        "SpiderWeb"
+      ],
+      "url": "https://grasshopperdocs.com/addons/spiderweb.html"
+    },
+    {
+      "id": "F05-02",
+      "algo": "F05",
+      "title": "ShortestWalk 曲線網路最短路元件",
+      "creator": "Giulio Piacentino（McNeel）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "給一組曲線網路與起終點線段，以拓撲計算加上 A* 搜尋找出網路上的最短路線，是 Grasshopper 最早普及的最短路工具之一。",
+      "variations": [
+        {
+          "name": "改用 A*",
+          "how": "選下一格時比較 distance + 到終點直線距離。",
+          "effect": "結果相同但展開節點大幅減少。"
+        },
+        {
+          "name": "邊長換成成本",
+          "how": "每條曲線可帶一個權重（坡度、寬度），stepDistance 乘上權重。",
+          "effect": "找的是「最好走」而非「最短」的路。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Grasshopper",
+        "ShortestWalk"
+      ],
+      "url": "https://www.food4rhino.com/en/app/shortest-walk-gh"
+    },
+    {
+      "id": "F05-03",
+      "algo": "F05",
+      "title": "LunchBox Shortest Walk 地形步道選線",
+      "creator": "Proving Ground",
+      "year": "2025",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "地景",
+      "summary": "先把起伏地形細分成含斜撐的網格曲線網路，再以 Shortest Walk 找點與點之間最短步道，用於景觀設計中減少材料、整地與施工成本。",
+      "variations": [
+        {
+          "name": "網格投影到地形",
+          "how": "GridPoint 回傳前用 Surface.ClosestPoint 投影到地形，stepDistance 改用 3D 距離。",
+          "effect": "路徑會避開陡坡、繞過山丘。"
+        },
+        {
+          "name": "坡度門檻",
+          "how": "若相鄰格高差／水平距離大於 1/12 就視為不能走。",
+          "effect": "得到符合無障礙規範的步道。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋",
+        "曲面上"
+      ],
+      "tools": [
+        "Grasshopper",
+        "LunchBox"
+      ],
+      "url": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/"
+    },
+    {
+      "id": "F05-04",
+      "algo": "F05",
+      "title": "Urban Network Analysis 工具箱",
+      "creator": "Andres Sevtsuk（MIT City Form Lab）",
+      "year": "2012",
+      "category": "urban-landscape",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "以街道網路上的最短路為基礎，計算 Reach、Gravity、Betweenness、Closeness、Straightness 等可及性指標，並把建築物當成網路的第三種元素；有 ArcGIS 與 Rhino 版本。",
+      "variations": [
+        {
+          "name": "Reach：半徑內可達數",
+          "how": "從每棟建築入口跑 Dijkstra 直到距離超過 radius 就停，數可達的目的地數量。",
+          "effect": "得到每棟建築 10 分鐘步行可達的商店數。"
+        },
+        {
+          "name": "Betweenness：路徑疊加",
+          "how": "所有建築兩兩求最短路，每條路經過的街段計數加一。",
+          "effect": "找出最常被穿越、適合商業的街段。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "最佳化"
+      ],
+      "tools": [
+        "Rhino",
+        "ArcGIS"
+      ],
+      "url": "https://cityform.mit.edu/projects/urban-network-analysis"
+    },
+    {
+      "id": "F05-05",
+      "algo": "F05",
+      "title": "Urbano 都市步行與設施可及性工具",
+      "creator": "Timur Dogan 等",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "Rhino／Grasshopper 的都市移動模擬外掛，可從 GIS 與 OpenStreetMap 載入資料，計算步行至設施與大眾運輸的可及性，協助以移動性為導向的都市設計。",
+      "variations": [
+        {
+          "name": "多起點距離場",
+          "how": "把所有捷運站都設成距離 0，輸出每格到最近站的步行距離。",
+          "effect": "得到車站步行圈熱圖。"
+        },
+        {
+          "name": "設施吸引力加權",
+          "how": "目的地分數 = 設施權重 / 距離，對每個起點加總。",
+          "effect": "類似重力模型的可及性指標。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Rhino",
+        "Grasshopper",
+        "Urbano"
+      ],
+      "url": "https://www.researchgate.net/publication/325538685_Urbano-_A_New_Tool_to_Promote_Mobility-Aware_Urban_Design_Active_Transportation_Modeling_and_Access_Analysis_for_Amenities_and_Public_Transport"
+    },
+    {
+      "id": "F05-06",
+      "algo": "F05",
+      "title": "depthmapX 空間網路分析軟體",
+      "creator": "Space Group, UCL",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "Space Syntax 研究常用的開源軟體，源自 Alasdair Turner，做可視圖（visibility graph）、軸線與圖分析；其核心是在空間圖上計算步數或角度的最短路深度。",
+      "variations": [
+        {
+          "name": "步數深度取代距離",
+          "how": "stepDistance 全部改成 1，輸出每格到起點的步數。",
+          "effect": "得到拓撲深度圖，對應 Space Syntax 的 depth。"
+        },
+        {
+          "name": "轉角成本",
+          "how": "狀態多記錄「進入方向」，轉向時額外加成本。",
+          "effect": "偏好直線少轉彎的路徑，接近角度分析。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "網格擴散"
+      ],
+      "tools": [
+        "depthmapX"
+      ],
+      "url": "https://github.com/SpaceGroupUCL/depthmapX"
+    },
+    {
+      "id": "F05-07",
+      "algo": "F05",
+      "title": "cityseer 行人尺度網路分析套件",
+      "creator": "Gareth Simons",
+      "year": "2021",
+      "category": "urban-landscape",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "Python 套件，以網路上的最短路距離計算行人尺度的中心性、土地使用可及性與混合度，強調在細緻街道網路上的局部分析。",
+      "variations": [
+        {
+          "name": "距離衰減",
+          "how": "把可及性計算成 Σ exp(−β × 距離)，β 做成滑桿。",
+          "effect": "距離越遠影響越小的平滑可及性地圖。"
+        },
+        {
+          "name": "只算半徑內",
+          "how": "Dijkstra 在 shortest 超過 radius 時直接 break。",
+          "effect": "大幅加速，也符合行人步行範圍。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://arxiv.org/pdf/2106.15314"
+    },
+    {
+      "id": "F05-08",
+      "algo": "F05",
+      "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
+      "creator": "",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "在 Grasshopper 中實作的圖—重力整合可及性模型，針對資料稀缺地區，示範改善可及性如何影響多模式交通、就業可達性與行人頻率潛力。",
+      "variations": [
+        {
+          "name": "重力權重",
+          "how": "每個目的地有吸引力 w，起點可及性 = Σ w / 距離²。",
+          "effect": "可比較方案改造前後的可及性差異。"
+        },
+        {
+          "name": "設計前後比較",
+          "how": "同一組起終點在兩組障礙配置下跑兩次，輸出差值熱圖。",
+          "effect": "直觀看出新開道路帶來的改善範圍。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.researchgate.net/publication/335827215_Applied_Spatial_Accessibility_Analysis_for_Urban_Design_An_integrated_graph-gravity_model_implemented_in_Grasshopper"
+    },
+    {
+      "id": "F05-09",
+      "algo": "F05",
+      "title": "Pathfinder 人流與避難模擬",
+      "creator": "Thunderhead Engineering",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "商用人員移動模擬軟體，處理入場排隊、動線、緊急避難與法規逃生檢討；每個人依門是否可用、標示與警報等調整路線，路線選擇建立在空間中的路徑搜尋上。",
+      "variations": [
+        {
+          "name": "多出口距離場",
+          "how": "所有出口設為起點（距離 0），輸出每格到最近出口距離並標出超過法規值的格子。",
+          "effect": "快速檢討逃生步行距離是否合規。"
+        },
+        {
+          "name": "關閉一個出口",
+          "how": "新增 closedExits 輸入，把該出口的格點設為障礙後重算。",
+          "effect": "看出單一出口失效時的最不利位置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋",
+        "網格擴散"
+      ],
+      "tools": [
+        "Pathfinder"
+      ],
+      "url": "https://www.thunderheadeng.com/pathfinder"
+    },
+    {
+      "id": "F05-10",
+      "algo": "F05",
+      "title": "MEP 管線 A* 自動路由",
+      "creator": "josephrewald（GitHub）",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "以 A* 路徑搜尋求解機電管線（MEP）路由的開源專案，示範把建築設備空間離散化後，自動找出避開障礙的管線路線。",
+      "variations": [
+        {
+          "name": "3D 體素 A*",
+          "how": "陣列加一維 z、鄰居改 6 或 26 方向，並用 A* 啟發式加速。",
+          "effect": "在梁與樓板之間自動繞行的立體管路。"
+        },
+        {
+          "name": "彎頭懲罰",
+          "how": "方向改變時成本加 elbowCost。",
+          "effect": "減少彎頭數量，更接近實際施工邏輯。"
+        },
+        {
+          "name": "依序佈多條管",
+          "how": "每條管完成後把經過的格子設為障礙，再路由下一條。",
+          "effect": "多條管線互不衝突。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "3D"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://github.com/josephrewald/pipe-route-solver"
+    },
+    {
+      "id": "F05-11",
+      "algo": "F05",
+      "title": "Frei Otto 羊毛線最小路徑系統的數位重現",
+      "creator": "Frei Otto（原型實驗）；Grasshopper 社群討論",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "Frei Otto 以浸水羊毛線讓路徑自我聚合成「最小路徑系統」的類比實驗；Grasshopper 論壇上討論以 ShortestWalk 求網路最短路、以 Kangaroo 物理模擬重現羊毛線聚合的做法。",
+      "variations": [
+        {
+          "name": "最短路疊加再合併",
+          "how": "所有點兩兩求最短路並疊加流量，流量高的格子成本降低後再跑一輪，反覆數次。",
+          "effect": "路徑逐漸合併成少數主幹，接近羊毛線效果。"
+        },
+        {
+          "name": "直線路網對照",
+          "how": "同時輸出兩兩直線與最短路疊加結果，計算總長比較。",
+          "effect": "展示「總長最短」與「各自最短」的差別。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋",
+        "物理模擬"
+      ],
+      "tools": [
+        "Grasshopper",
+        "ShortestWalk",
+        "Kangaroo"
+      ],
+      "url": "https://www.grasshopper3d.com/forum/topics/minimal-path-system?commentId=2985220%3AComment%3A146627"
+    },
+    {
+      "id": "F06-01",
+      "algo": "F06",
+      "title": "Clifford Attractors 圖像",
+      "creator": "Paul Bourke（公式出自 Clifford Pickover）",
+      "year": "2004",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Bourke 以本範例相同的 Clifford 公式產生八組不同係數的吸子，並用 32 位元格子累計每格被點落入的次數（二維直方圖），再後製映射成漸層色，得到細膩的明暗圖像。",
+      "variations": [
+        {
+          "name": "直方圖著色",
+          "how": "建立 int[,] 格子累計落點次數，以 log(次數) 映射到 Mesh 頂點色。",
+          "effect": "從一堆點變成有光影層次的影像。"
+        },
+        {
+          "name": "係數網格圖鑑",
+          "how": "外層雙迴圈掃 a、b 兩個係數，每組吸子平移排成矩陣。",
+          "effect": "一次看出係數空間中哪裡最好看。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌"
+      ],
+      "tools": [
+        "C"
+      ],
+      "url": "https://paulbourke.net/fractals/clifford/"
+    },
+    {
+      "id": "F06-02",
+      "algo": "F06",
+      "title": "Peter de Jong Attractors 圖像",
+      "creator": "Paul Bourke",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 x' = sin(a·y) − cos(b·x)、y' = sin(c·x) − cos(d·y) 迭代的 de Jong 吸子（出自 1987 年《Scientific American》），同樣以佔有密度直方圖再上色，並可額外編碼曲率等性質。",
+      "variations": [
+        {
+          "name": "新增 de Jong 分支",
+          "how": "attractorType == 2 時呼叫 DeJongNext，公式如上。",
+          "effect": "只改一行公式就得到完全不同的圖樣族。"
+        },
+        {
+          "name": "匯出灰階圖",
+          "how": "直方圖正規化後寫成 Bitmap 存 PNG。",
+          "effect": "可拿到 Photoshop 或雷雕機使用。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌"
+      ],
+      "tools": [
+        "C"
+      ],
+      "url": "https://paulbourke.net/fractals/peterdejong/"
+    },
+    {
+      "id": "F06-03",
+      "algo": "F06",
+      "title": "Lorenz 水車（混沌的實體模型）",
+      "creator": "Willem Malkus、Lou Howard（原型）",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Bourke 的 Lorenz 頁面介紹一種會漏水的杯子水車，其轉動方向會混沌地反覆切換，行為與 Lorenz 方程等價；並記錄有人為物理教師研討會實際製作水車。",
+      "variations": [
+        {
+          "name": "以 x 值驅動旋轉",
+          "how": "把 Lorenz 的 x 當成轉速，每一步累加角度並旋轉一組物件，接 Timer 播放。",
+          "effect": "看到物件忽左忽右不規則地轉動。"
+        },
+        {
+          "name": "時間序列圖",
+          "how": "輸出 (step, x) 點畫成折線圖。",
+          "effect": "看出兩翼之間無規則跳躍的時間訊號。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌",
+        "動畫",
+        "物理模擬"
+      ],
+      "tools": [
+        "實體模型"
+      ],
+      "url": "https://paulbourke.net/fractals/lorenz/"
+    },
+    {
+      "id": "F06-04",
+      "algo": "F06",
+      "title": "鉤織 Lorenz 流形",
+      "creator": "Hinke M. Osinga、Bernd Krauskopf",
+      "year": "2004",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "兩位數學家以電腦計算出 Lorenz 系統的穩定流形曲面，轉成逐圈的鉤織指示，共 25,511 針、約 85 小時手工完成，讓混沌系統的幾何變成可觸摸的實體。",
+      "variations": [
+        {
+          "name": "多條軌跡成面",
+          "how": "從一條短線段上的 N 個起點同時積分，把同一步的點連成截面曲線，再 Loft。",
+          "effect": "得到扭轉、捲曲的混沌曲面。"
+        },
+        {
+          "name": "展開成製造指示",
+          "how": "每一圈截面曲線依固定弧長等分，輸出每圈的點數表。",
+          "effect": "可轉成鉤織、編織或板條組裝的施工表。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "混沌",
+        "3D",
+        "曲面上"
+      ],
+      "tools": [
+        "自製程式",
+        "手工鉤織"
+      ],
+      "url": "https://www.math.auckland.ac.nz/~hinke/crochet/"
+    },
+    {
+      "id": "F06-05",
+      "algo": "F06",
+      "title": "Strange Attractors: Creating Patterns in Chaos",
+      "creator": "Julien C. Sprott",
+      "year": "1993",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以電腦自動挑選二次映射與微分方程的係數，篩出會產生混沌吸子的組合，產生超過 350 個範例圖樣，並附原始碼與 3D 立體、聲音化等延伸。",
+      "variations": [
+        {
+          "name": "隨機係數＋篩選",
+          "how": "迴圈隨機產生 a–d，跑 2000 步後若發散或點雲範圍太小就丟掉，否則輸出。",
+          "effect": "自動產出一大批合格吸子。"
+        },
+        {
+          "name": "Lyapunov 指數判斷",
+          "how": "同時追蹤相距 1e-8 的兩點，累加 log(距離成長比) 平均，正值才算混沌。",
+          "effect": "用數值標準而非肉眼判斷好壞。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "混沌",
+        "隨機",
+        "可重現種子"
+      ],
+      "tools": [
+        "BASIC",
+        "自製程式"
+      ],
+      "url": "https://sprott.physics.wisc.edu/sa.htm"
+    },
+    {
+      "id": "F06-06",
+      "algo": "F06",
+      "title": "Chimpanzee 碎形與混沌外掛",
+      "creator": "Matous Stieber",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Grasshopper 外掛，提供約 70 個碎形與混沌元件，包含 Lorenz、Rössler、Chen、Halvorsen、Burke-Shaw 等吸子系統，可直接在參數流程中產生吸子軌跡。",
+      "variations": [
+        {
+          "name": "自己寫更多系統",
+          "how": "照 LorenzNext 的格式新增 Halvorsen 或 Chen 的速度公式。",
+          "effect": "理解外掛元件背後只是換一組速度方程。"
+        },
+        {
+          "name": "軌跡接 Pipe",
+          "how": "curve 輸出接 Rebuild 再接 Pipe，半徑依點序變化。",
+          "effect": "快速得到可渲染的吸子雕塑。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "混沌",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Chimpanzee"
+      ],
+      "url": "https://grasshopperdocs.com/addons/chimpanzee.html"
+    },
+    {
+      "id": "F06-07",
+      "algo": "F06",
+      "title": "Coding Challenge #12：Lorenz Attractor",
+      "creator": "The Coding Train（Daniel Shiffman）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "在 Processing 中逐步推進 Lorenz 方程並即時畫出軌跡，加上顏色漸變與 PeasyCam 3D 旋轉，是最常被引用的吸子入門教學，有 p5.js 版本。",
+      "variations": [
+        {
+          "name": "Timer 逐步生長",
+          "how": "把 current 與 path 改成類別欄位，接 Timer 每次加 10 步。",
+          "effect": "看見蝴蝶曲線一筆一筆畫出來。"
+        },
+        {
+          "name": "依速度上色",
+          "how": "每段線依速度大小映射 HSV 色相輸出成彩色線段。",
+          "effect": "快慢區段一目了然。"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "混沌",
+        "動畫",
+        "3D"
+      ],
+      "tools": [
+        "Processing",
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/12-lorenz-attractor"
+    },
+    {
+      "id": "F06-08",
+      "algo": "F06",
+      "title": "Strange Attractor（堪薩斯市國際機場公共藝術）",
+      "creator": "Alice Aycock",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "Aycock 以旋風、亂流為題的大型金屬公共雕塑之一，設置於堪薩斯市國際機場；她的同系列作品以 3D 建模後切割、滾彎金屬板製作，可作為「以混沌意象轉成大尺度雕塑」的參照。",
+      "variations": [
+        {
+          "name": "軌跡轉帶狀面",
+          "how": "沿 Lorenz 曲線每一點取切線與法向，兩側偏移後 Loft 成扭轉帶。",
+          "effect": "像緞帶般扭轉的空間雕塑。"
+        },
+        {
+          "name": "展開成可滾彎板件",
+          "how": "帶狀面分段後用 Unroll 展開輸出板件外框。",
+          "effect": "可用金屬板切割、滾彎組裝。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "混沌",
+        "3D"
+      ],
+      "tools": [
+        "3D 建模",
+        "金屬加工"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Alice_Aycock"
+    },
+    {
+      "id": "F06-09",
+      "algo": "F06",
+      "title": "vpype-fractal 筆繪機碎形與吸子外掛",
+      "creator": "mreierson（GitHub）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "vpype 的外掛，產生 L-System、IFS、奇異吸子等碎形並輸出成 pen plotter 可繪製的向量線條，是吸子轉成實體繪圖的典型流程。",
+      "variations": [
+        {
+          "name": "點雲轉短筆畫",
+          "how": "Clifford 每個點輸出成極短線段（或把相鄰落點連成小段），避免筆繪機只打點。",
+          "effect": "點描風格的筆繪作品。"
+        },
+        {
+          "name": "單線化輸出",
+          "how": "Lorenz 投影到 XY，Polyline.ReduceSegments 後匯出 SVG／DXF。",
+          "effect": "一筆畫到底、筆繪機效率高。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌"
+      ],
+      "tools": [
+        "Python",
+        "vpype",
+        "Pen plotter"
+      ],
+      "url": "https://github.com/mreierson/vpype-fractal"
+    },
+    {
+      "id": "F06-10",
+      "algo": "F06",
+      "title": "Strange Attractors WebGL 互動繪圖",
+      "creator": "piellardj（GitHub）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 WebGL 在瀏覽器中高速繪製二維奇異吸子，圖像由大量隨機起點的軌跡疊加而成，可即時調整公式與係數。",
+      "variations": [
+        {
+          "name": "多隨機起點疊加",
+          "how": "外層迴圈用 Random(seed) 產生 N 個起點，各跑固定步數後合併點雲。",
+          "effect": "更快得到均勻、飽滿的吸子影像。"
+        },
+        {
+          "name": "即時滑桿探索",
+          "how": "把 a–d 接滑桿並限制 steps，讓 GH 即時重算。",
+          "effect": "親身體驗係數敏感度。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌",
+        "隨機"
+      ],
+      "tools": [
+        "WebGL",
+        "TypeScript"
+      ],
+      "url": "https://github.com/piellardj/strange-attractors-webgl"
+    },
+    {
+      "id": "F06-11",
+      "algo": "F06",
+      "title": "Visions of Chaos 混沌探索軟體",
+      "creator": "Softology",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "涵蓋大量混沌與生成系統的免費軟體，內含 2D 與 3D 奇異吸子模式，讓使用者不必處理方程式就能調參探索，也是找靈感與係數的資料庫。",
+      "variations": [
+        {
+          "name": "3D 點雲體積渲染",
+          "how": "3D 吸子點落入 3D 體素格累計密度，再以密度門檻輸出 Mesh（接 Marching Cubes）。",
+          "effect": "得到雲霧狀、可 3D 列印的吸子體積。"
+        },
+        {
+          "name": "預設係數庫",
+          "how": "把好看的係數組存成 List，用 Value List 切換。",
+          "effect": "快速展示不同吸子。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "混沌",
+        "3D"
+      ],
+      "tools": [
+        "Visions of Chaos"
+      ],
+      "url": "https://softology.pro/voc.htm"
+    }
+  ]
+}

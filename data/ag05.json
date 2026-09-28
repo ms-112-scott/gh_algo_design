@@ -1,0 +1,804 @@
+{
+  "agent": "ag05",
+  "algorithms": [
+    {
+      "id": "A06",
+      "name_zh": "波函數塌縮",
+      "name_en": "Wave Function Collapse (WFC)",
+      "family": "A",
+      "family_name": "規則與語法",
+      "file": "A06_WFC.cs",
+      "loc": 256,
+      "logic": [
+        "搜尋／求解"
+      ],
+      "data_structure": [
+        "網格"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "256 行、一個自訂 class（PipeTile），核心是「最少可能性優先＋Stack 約束傳播＋失敗整張重來」三段流程，要理解 List<int>[] 候選集合與 RemoveAll 內的巢狀 lambda；沒有回溯與空間索引，所以停在中階。",
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "隨機",
+        "可重現種子",
+        "鄰居搜尋",
+        "網格擴散",
+        "自訂 class"
+      ],
+      "one_liner": "先定好「哪些模組可以相鄰」的規則，再讓電腦從最沒得選的格子開始一格一格決定，並把限制傳給鄰居，直到整張網格都拼得起來。",
+      "how_it_works": [
+        "建立 tile 清單：每個水管 tile 用北東南西四個 0/1 表示哪邊有開口（共 12 種，不含只開一邊的死路）",
+        "每格一開始把所有 tile 都當成候選；邊界格先刪掉開口朝外的 tile，並傳播一次",
+        "找候選數最少（但還大於 1）的格子，同分隨機挑一格，從它的候選中隨機決定一個 tile（塌縮）",
+        "傳播：用 Stack 記錄有變動的格子，逐一通知四個鄰居，鄰居刪掉「跟這格任何候選都接不起來」的 tile；鄰居有刪東西就再推進 Stack",
+        "若某格候選變 0 就是矛盾，整張重來（最多 20 次）；全部格子只剩一個候選就完成，輸出每格中心到開口邊中點的線段"
+      ],
+      "key_params": [
+        {
+          "name": "width / height",
+          "effect": "格子數；越大越容易遇到矛盾、重來次數變多，上限被夾在 40"
+        },
+        {
+          "name": "cellSize",
+          "effect": "只影響輸出尺寸，不影響解的結構"
+        },
+        {
+          "name": "seed",
+          "effect": "決定挑格與挑 tile 的隨機序列；同 seed 同結果，換 seed 可跳過矛盾"
+        },
+        {
+          "name": "tile 清單（MakeTileSet 內的字串）",
+          "effect": "加減 tile 種類直接改變風格：拿掉十字就沒有四岔、只留直管與空白會變成長直線"
+        },
+        {
+          "name": "MaxAttempts",
+          "effect": "失敗重來次數上限；規則越嚴格需要越大"
+        }
+      ],
+      "csharp_concepts": [
+        "List<int>[]（每格一個候選清單）",
+        "Stack<int>（待傳播佇列）",
+        "RemoveAll 與 lambda",
+        "LINQ Any / Select / Enumerable.Range",
+        "static readonly 方向陣列",
+        "自訂 class PipeTile",
+        "System.Random 種子",
+        "一維索引 ↔ row/column 換算"
+      ],
+      "prerequisites": [
+        "迴圈與 List",
+        "自訂 class",
+        "lambda 基本寫法",
+        "一維陣列表示二維網格（cell = row * width + column）"
+      ],
+      "teaching_note": "建議先讀懂再修改，不建議從零寫：先用紙上 3×3 格子手動玩一次「塌縮→傳播」，學習者會秒懂。實作時先只做塌縮不做傳播，讓學習者看到接不起來的結果，再補上 Propagate，對比很有學習效果；RemoveAll 內的巢狀 Any 是最大理解門檻，建議拆成具名方法 CanConnect() 講解。",
+      "variations": [
+        {
+          "title": "換 tile 組：自訂圖樣規則",
+          "level": 1,
+          "what_changes": "規則",
+          "how": "改 MakeTileSet 內的字串陣列，例如只留直管與彎管、或加入只開一邊的端點 tile；也可替每個 tile 加 weight 欄位，挑選時用加權隨機取代 random.Next。",
+          "result": "同一套程式產生迷宮、電路板、長直線條、稀疏管線等不同風格的圖樣"
+        },
+        {
+          "title": "邊的標籤從 0/1 改成多種接頭",
+          "level": 2,
+          "what_changes": "規則／狀態",
+          "how": "把 bool[] Open 改成 int[] 或 string[] Socket（例如 0=無、1=細管、2=粗管、3=牆），相容判斷改成 Socket[side] == Socket[opposite]，或查一張相容表 Dictionary<(int,int),bool>。",
+          "result": "可以表達「道路只能接道路、牆只能接牆」的多材質／多類型拼貼"
+        },
+        {
+          "title": "tile 換成 Rhino 幾何模組",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "新增 List<GeometryBase> modules 輸入（每個 tile 一個 Brep 或 Mesh），DrawPipes 改成把對應模組用 Transform.Translation 搬到格子中心；配合旋轉可從少量原型自動產生 4 個方向的 tile。",
+          "result": "從線稿變成可渲染的平面鋪面、景觀鋪面或平面配置模組"
+        },
+        {
+          "title": "2D → 3D 體素 WFC",
+          "level": 4,
+          "what_changes": "維度",
+          "how": "方向陣列從 4 個擴成 6 個（加上 / 下），格子索引改成 x + y*W + z*W*H，tile 用 6 位元字串描述；Propagate 的迴圈 side < 6、opposite 改成查表。",
+          "result": "產生可堆疊的 3D 模組化建築量體、樓梯、橋、屋頂組合"
+        },
+        {
+          "title": "指定格子預先塌縮（設計者控制）",
+          "level": 2,
+          "what_changes": "約束",
+          "how": "新增 List<Point3d> fixedPoints 與 List<int> fixedTiles 輸入，在 TrySolve 開頭把這些格子的候選直接設成單一 tile 並推入 changedCells 傳播。",
+          "result": "設計者先放入口、中庭或主要動線，其餘由 WFC 自動補齊且保證接得起來"
+        },
+        {
+          "title": "曲線邊界／不規則基地",
+          "level": 3,
+          "what_changes": "輸入／約束",
+          "how": "新增 Curve boundary 輸入，用 Curve.Contains 判斷格子中心在不在基地內；在外面的格子強制只能放空 tile（0000），OpensToOutside 改成判斷鄰居是否在基地外。",
+          "result": "管線、步道或房間配置自動貼合任意形狀的基地邊界"
+        },
+        {
+          "title": "吸引子／影像控制 tile 機率",
+          "level": 3,
+          "what_changes": "輸入／規則",
+          "how": "新增 Point3d attractor 或灰階影像輸入，依格子到吸引子的距離（或像素亮度）調整每種 tile 的權重，例如越近十字 tile 權重越高；挑 tile 時改用加權隨機。",
+          "result": "密度有梯度的網路：中心密集交織、外圍稀疏，可對應都市密度或立面開口率"
+        },
+        {
+          "title": "加入回溯取代整張重來",
+          "level": 4,
+          "what_changes": "迴圈",
+          "how": "每次塌縮前把 possibleTiles 深拷貝推進 Stack<List<int>[]> history；遇到矛盾時 pop 回上一步，並把剛才選的 tile 從該格候選中刪掉再試。",
+          "result": "大網格或嚴格規則下也能穩定求解，不再依賴換 seed"
+        },
+        {
+          "title": "連通性約束：保證水管／動線是一整個網路",
+          "level": 4,
+          "what_changes": "約束",
+          "how": "完成後用 BFS 從任一有開口格子出發計算連通元件數，若大於 1 就重來；進階版在塌縮過程中就檢查（參考 Bad North 的可通行啟發式、DeBroglie 的 path constraint）。",
+          "result": "產出單一連通的管線、步道或走廊系統，可直接當動線圖使用"
+        },
+        {
+          "title": "Timer 動畫：看見塌縮過程",
+          "level": 2,
+          "what_changes": "迴圈／輸出",
+          "how": "把 possibleTiles 與 random 存成欄位，用 Timer 元件每次 tick 只做一次「挑格＋塌縮＋傳播」；未決定的格子依候選數畫成不同灰階或大小的圓。",
+          "result": "看到網格從一片不確定逐步「塌縮」成確定圖樣，適合做簡報動畫"
+        },
+        {
+          "title": "從範例學規則（範例驅動）",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "新增一個學習者手排的範例網格輸入（例如 List<int> exampleTiles），掃描範例中實際出現過的相鄰組合建成 allowed[tileA, tileB, side] 表，取代原本的 Open 比對。",
+          "result": "設計者用「畫一小塊範例」代替寫規則，WFC 生成大面積但風格一致的配置"
+        },
+        {
+          "title": "輸出轉成可製造管件／擠出實體",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "把每條 Line 用 Pipe.CreatePipe 或 Brep.CreatePipe 轉成管狀實體，並在每格中心依 tile 類型放置彎頭、三通、十字接頭；最後統計每種接頭數量輸出料件表。",
+          "result": "可 3D 列印或以標準管件組裝的管線裝置，附帶零件數量清單"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "WFC 地坪與鋪面產生器",
+          "brief": "以 3–6 種鋪面模組（磚、草、步道、座椅）定義接頭規則，在曲線基地內生成鋪面配置，並用吸引子控制步道密度。輸出可直接排版成施工分割圖。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "模組化集合住宅量體",
+          "brief": "把 A06 擴成 3D 體素 WFC，自訂單元、走廊、樓梯核、陽台、屋頂等模組與上下左右接頭，在基地包絡中生成集合住宅量體，並統計各單元數量與日照面。",
+          "difficulty": 4,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "範例驅動的平面配置",
+          "brief": "學習者手繪一張小型平面範例（房間、走廊、門），程式自動學出相鄰規則，再生成大面積且風格一致的平面；加上連通性檢查保證每個房間都走得到。",
+          "difficulty": 4,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "不規則網格上的小鎮",
+          "brief": "仿 Townscaper：先把平面切成不規則四邊形網格，再把 WFC 套到每個四邊形上，用雙線性映射把方形模組變形貼合；使用者點選格子升降高度即時重算。",
+          "difficulty": 5,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "可組裝的管線裝置",
+          "brief": "直接延伸基礎範例水管範例，把結果轉成管材＋接頭的實體模型並輸出料件表，以 Timer 動畫記錄生成過程，最後做 1:1 或縮尺實體裝置。",
+          "difficulty": 3,
+          "combine_with": []
+        }
+      ],
+      "references": [
+        {
+          "title": "WaveFunctionCollapse（原始程式與說明）",
+          "author": "Maxim Gumin",
+          "year": "2016",
+          "url": "https://github.com/mxgmn/WaveFunctionCollapse"
+        },
+        {
+          "title": "Model Synthesis（博士論文）",
+          "author": "Paul C. Merrell",
+          "year": "2009",
+          "url": "http://gamma-web.iacs.umd.edu/papers/documents/dissertations/merrell09.pdf"
+        },
+        {
+          "title": "Texture Synthesis by Non-parametric Sampling",
+          "author": "Alexei A. Efros, Thomas K. Leung",
+          "year": "1999",
+          "url": ""
+        },
+        {
+          "title": "Consistency in Networks of Relations",
+          "author": "Alan K. Mackworth",
+          "year": "1977",
+          "url": ""
+        },
+        {
+          "title": "Wave Function Collapse Explained",
+          "author": "Boris the Brave（Adam Newgas）",
+          "year": "2020",
+          "url": "https://www.boristhebrave.com/2020/04/13/wave-function-collapse-explained/"
+        },
+        {
+          "title": "Tessera: A Practical System for Extended WaveFunctionCollapse",
+          "author": "Adam Newgas",
+          "year": "",
+          "url": "https://www.boristhebrave.com/permanent/21/08/Tessera_A_Practical_System_for_WFC.pdf"
+        },
+        {
+          "title": "Coding Challenge 171：Wave Function Collapse",
+          "author": "The Coding Train（Daniel Shiffman）",
+          "year": "",
+          "url": "https://thecodingtrain.com/challenges/171-wave-function-collapse/"
+        },
+        {
+          "title": "Monoceros 使用手冊",
+          "author": "Ján Pernecký, Ján Tóth（Subdigital）",
+          "year": "",
+          "url": "https://www.monoceros.tools/monoceros-user-manual/"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "A06-01",
+      "algo": "A06",
+      "title": "WaveFunctionCollapse 原始實作",
+      "creator": "Maxim Gumin",
+      "year": "2016",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "WFC 的起點：從一張小範例圖產生局部相似的大圖，分成 overlapping model（從像素範例學 N×N 圖樣）與 tiled model（像基礎範例一樣用 tile 相鄰規則）。README 整理了後續遊戲、3D 與研究的延伸。",
+      "variations": [
+        {
+          "name": "改成 overlapping model",
+          "how": "把 tile 改成從範例點陣圖切出的 N×N 小圖樣，相鄰規則改為「兩圖樣重疊區完全相同才可相鄰」。",
+          "effect": "只要畫一張範例圖就能生成紋理，不必手寫接頭規則"
+        },
+        {
+          "name": "加入 tile 權重與熵",
+          "how": "把 FindMostCertainCell 的「候選數最少」改成 Gumin 的 Shannon 熵（依權重計算），挑 tile 時用權重加權。",
+          "effect": "頻率與範例一致，常見 tile 多、稀有 tile 少，結果更自然"
+        },
+        {
+          "name": "對稱與旋轉自動展開",
+          "how": "只定義一個彎管原型，程式自動旋轉 90° 產生其餘方向並推算接頭，取代手寫四個字串。",
+          "effect": "大幅減少規則撰寫量，方便換整組圖樣"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "影像輸入",
+        "隨機"
+      ],
+      "tools": [
+        "C#"
+      ],
+      "url": "https://github.com/mxgmn/WaveFunctionCollapse"
+    },
+    {
+      "id": "A06-02",
+      "algo": "A06",
+      "title": "Model Synthesis：從範例模型產生大型 3D 模型",
+      "creator": "Paul C. Merrell",
+      "year": "2007",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture",
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "WFC 的前身。Merrell 從使用者給的小型 3D 範例模型中推導模組間的相鄰限制，再用約束傳播（AC-3）生成大很多的建築群、橋、管線等模型；並提出分區逐塊修改以降低失敗率。",
+      "variations": [
+        {
+          "name": "分區逐塊求解",
+          "how": "把大網格切成數個重疊區塊，一次只對一個區塊跑 TrySolve，失敗只重做該區塊而非整張。",
+          "effect": "大尺度網格也能穩定完成，失敗成本小"
+        },
+        {
+          "name": "從 3D 範例學相鄰表",
+          "how": "讓學習者在 Rhino 以方塊模組堆一個小範例，程式掃描 6 個方向的相鄰組合建成允許表。",
+          "effect": "以範例取代規則撰寫，生成風格一致的大量建築量體"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "約束滿足",
+        "3D",
+        "拼貼"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": "https://paulmerrell.org/model-synthesis/"
+    },
+    {
+      "id": "A06-03",
+      "algo": "A06",
+      "title": "Bad North 島嶼關卡生成",
+      "creator": "Oskar Stålberg（Plausible Concept）",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "地景",
+      "summary": "策略遊戲 Bad North 用 3D WFC 把手工製作的 tile 組拼成小島地景（崖壁、階梯、房屋、沙灘），並加入「每一步都保持可通行」的啟發式選 tile。Stålberg 在 Everything Procedural 2018 講解了整套流程。",
+      "variations": [
+        {
+          "name": "3D 地形 tile",
+          "how": "把 A06 擴成 6 方向，tile 包含高低差、坡道、階梯；上下方向接頭區分「地面」「空氣」。",
+          "effect": "生成有高低層次、可行走的小型地景"
+        },
+        {
+          "name": "可通行性約束",
+          "how": "每次塌縮後用 BFS 檢查已決定區域是否仍連通，若會切斷動線就換一個 tile。",
+          "effect": "保證地景中每個平台都能走到"
+        },
+        {
+          "name": "海岸邊界條件",
+          "how": "把 OpensToOutside 改成「最外圈只能放水或沙灘 tile」。",
+          "effect": "自然形成被海包圍的島嶼輪廓"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "拼貼",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Unity",
+        "C#"
+      ],
+      "url": "https://www.youtube.com/watch?v=0bcZb-SsnrA"
+    },
+    {
+      "id": "A06-04",
+      "algo": "A06",
+      "title": "Townscaper：不規則網格上的小鎮玩具",
+      "creator": "Oskar Stålberg",
+      "year": "2020",
+      "category": "art-installation",
+      "categories_extra": [
+        "modeling",
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "使用者點一下就長出房子的造鎮玩具。底層把六角網格切成四邊形並擾動成不規則網格，再結合 WFC 與 marching cubes 決定每個角落該放哪種屋頂、牆、拱、樓梯模組，讓任意點擊都能得到合理的建築形。",
+      "variations": [
+        {
+          "name": "不規則四邊形網格",
+          "how": "先用六角網格細分並鬆弛出不規則四邊形，WFC 的鄰居改成查四邊形的邊鄰接表，而非 RowStep/ColumnStep。",
+          "effect": "擺脫方格感，城鎮看起來有機自然"
+        },
+        {
+          "name": "模組變形貼合",
+          "how": "把方形 tile 幾何用雙線性（或 Box Morph）映射到每個不規則四邊形上。",
+          "effect": "同一組模組可貼合任何形狀的格子"
+        },
+        {
+          "name": "互動式局部重算",
+          "how": "使用者點選格子改變佔據狀態，只把該格與鄰近格重設為全部候選再傳播，而非整張重來。",
+          "effect": "即時回應、其餘城鎮保持不變"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "拼貼",
+        "等值面"
+      ],
+      "tools": [
+        "Unity"
+      ],
+      "url": "https://www.gamedeveloper.com/game-platforms/how-townscaper-works-a-story-four-games-in-the-making"
+    },
+    {
+      "id": "A06-05",
+      "algo": "A06",
+      "title": "無限程序城市（Infinite City）",
+      "creator": "Marian Kleineberg（marian42）",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "Procjam 2018 作品：玩家在城市中行走時，城市用 3D 方塊模組與帶回溯的 WFC 即時長出來。作者撰文說明如何設定模組接頭、回溯與「邊走邊生成」的線上版 WFC，後續又寫了更快、可決定、可平行化的無限世界版本。",
+      "variations": [
+        {
+          "name": "加入回溯",
+          "how": "每次塌縮前存檔，遇到矛盾就退回上一步並排除剛才的選擇，取代整張重來。",
+          "effect": "3D 大量模組也能可靠求解"
+        },
+        {
+          "name": "分塊（chunk）逐步生成",
+          "how": "只在相機附近的區塊跑 WFC，新區塊以已生成區塊邊緣作為預先塌縮的邊界條件。",
+          "effect": "可無限延伸且接縫連續的城市"
+        },
+        {
+          "name": "接頭命名系統",
+          "how": "每個模組面以「接頭名稱＋是否對稱／翻轉」描述，程式自動推導相容表。",
+          "effect": "幾十種模組的規則也能維護"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "開放生長",
+        "拼貼"
+      ],
+      "tools": [
+        "Unity",
+        "C#"
+      ],
+      "url": "https://marian42.de/article/wfc/"
+    },
+    {
+      "id": "A06-06",
+      "algo": "A06",
+      "title": "Caves of Qud 遺跡地圖生成",
+      "creator": "Brian Bucklew（Freehold Games）",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "第一個商業使用 WFC 的遊戲。在多階段生成流程的中段用 WFC 補上遺跡、建築平面的細節，並討論過度擬合、單調與連通性問題，以及如何與其他建構式生成方法混用。",
+      "variations": [
+        {
+          "name": "多階段管線",
+          "how": "先用 A04 遞迴分割或手寫規則決定大區塊（房間、街道），再只在區塊內部跑 A06 填細部。",
+          "effect": "大結構可控、細節豐富，不再整片一樣"
+        },
+        {
+          "name": "範例圖樣庫切換",
+          "how": "準備多組範例或 tile 組，依區域屬性（文化、樓層）選用不同組跑 WFC。",
+          "effect": "同一張地圖中不同區域有不同風格"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "多元件"
+      ],
+      "tools": [
+        "C#"
+      ],
+      "url": "https://gdcvault.com/play/1026263/Math-for-Game-Developers-Tile"
+    },
+    {
+      "id": "A06-07",
+      "algo": "A06",
+      "title": "Monoceros：Grasshopper 模組化組合外掛",
+      "creator": "Ján Tóth、Ján Pernecký（Subdigital）",
+      "year": "2021",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "把 WFC 包成 Grasshopper 元件：使用者定義包絡（Envelope）切成 Slot、自訂 Module 與面對面的 Rule，外掛負責把模組填滿空間並保證相鄰合法，用於離散聚合的建築與都市設計。",
+      "variations": [
+        {
+          "name": "用 GH 幾何定義模組與規則",
+          "how": "仿 Monoceros 把 A06 的字串 tile 改成從 Rhino 方塊內幾何讀取模組，接頭由使用者在面上標註編號。",
+          "effect": "設計者不寫程式也能換整組建築構件"
+        },
+        {
+          "name": "任意包絡的 Slot",
+          "how": "用 Brep.IsPointInside 判斷體素中心是否在包絡內，只有內部格子參與 WFC，外部固定為空。",
+          "effect": "模組組合貼合任意建築量體外形"
+        },
+        {
+          "name": "指定特定 Slot 的模組",
+          "how": "輸入點位清單把入口、樓梯核所在 Slot 預先塌縮成指定模組。",
+          "effect": "設計意圖與自動生成並存"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "拼貼",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "C#"
+      ],
+      "url": "https://monoceros.sub.digital/"
+    },
+    {
+      "id": "A06-08",
+      "algo": "A06",
+      "title": "Subdigital 離散實體化實習",
+      "creator": "Subdigital（Ján Pernecký 等）",
+      "year": "2020",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "Subdigital 2020 年舉辦的暑期實習，以既有數位製造技術探索「資料驅動設計的離散實體化」，並為此開發了後來成為 Monoceros 的工具，讓學習者以 WFC 組合可製造的模組。",
+      "variations": [
+        {
+          "name": "模組即料件",
+          "how": "每個 tile 對應一種可切割或列印的實體構件，輸出時統計每種 tile 數量作為料件表。",
+          "effect": "生成結果直接變成下料與組裝清單"
+        },
+        {
+          "name": "限制模組種類數",
+          "how": "tile 清單刻意精簡到 3–5 種並加權控制比例，檢查是否能在少量模具下完成組合。",
+          "effect": "降低製造成本、提高重複性"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "拼貼",
+        "約束滿足"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Monoceros"
+      ],
+      "url": ""
+    },
+    {
+      "id": "A06-09",
+      "algo": "A06",
+      "title": "以編碼建築 tile 組做量體設計（Gameplay with encoded architectural tilesets）",
+      "creator": "E. Chasioti",
+      "year": "2020",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "碩士論文提出以 WFC 做建築量體設計的四步驟框架：把建築 tile 幾何編碼成二進位字串，在 Grasshopper 中重新實作兩種不需回溯的 WFC 變體，再把結果解碼回量體。",
+      "variations": [
+        {
+          "name": "二進位面編碼",
+          "how": "把每個 3D tile 的六個面各編成一串 0/1（例如 3×3 取樣點是否實心），相容判斷改成比較兩面編碼是否互為鏡像。",
+          "effect": "只要建好模組幾何，規則就能自動算出"
+        },
+        {
+          "name": "不回溯的快速版本",
+          "how": "沿用 A06 的「失敗整張重來」但縮小網格並多開 seed 平行試算，挑出成功者。",
+          "effect": "在 GH 中快速產生大量量體選項供比較"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "拼貼"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.academia.edu/44870033/Gameplay_with_encoded_architectural_tilesets_A_computational_framework_for_building_massing_design_using_the_Wave_Function_Collapse_algorithm"
+    },
+    {
+      "id": "A06-10",
+      "algo": "A06",
+      "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
+      "creator": "",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "研究以 WFC 生成社會住宅的房間配置，把 WFC 輸出的整數矩陣解讀為 BIM 結構區塊（IFC 格式）之間的關係，產生符合巴西最大社會住宅計畫最低需求的平面。",
+      "variations": [
+        {
+          "name": "房間類型當 tile",
+          "how": "tile 改成客廳、臥室、衛浴、廚房、走廊，接頭表示牆、門、開放邊；再加入每種房間數量上下限的全域檢查。",
+          "effect": "自動產生合法的住宅單元平面"
+        },
+        {
+          "name": "輸出成 BIM 物件",
+          "how": "把 tileNumbers 整數矩陣對應到牆、門、樓板物件，而非只畫線。",
+          "effect": "結果可直接進入 BIM 流程做後續設計"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://link.springer.com/chapter/10.1007/978-3-031-71008-7_28"
+    },
+    {
+      "id": "A06-11",
+      "algo": "A06",
+      "title": "階層式 WFC 平面生成（HWFC floor plan generation）",
+      "creator": "qin2500（GitHub）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "用階層式 WFC 產生建築平面：從粗略的建築結構開始，經過多層細化一路做到房間內部配置，每一層的結果成為下一層的約束。",
+      "variations": [
+        {
+          "name": "兩層網格",
+          "how": "先在粗網格（每格 = 一個房間區）跑 A06 決定房間分區，再把每個粗格細分成 4×4 細網格，細網格邊界由粗格結果預先塌縮。",
+          "effect": "大尺度分區合理、細部家具或隔間豐富"
+        },
+        {
+          "name": "平面圖出圖",
+          "how": "把細網格結果轉成牆線（接頭為牆的邊畫粗線）、門洞（接頭為門的邊留空）。",
+          "effect": "直接得到可讀的平面圖線稿"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "多元件"
+      ],
+      "tools": [],
+      "url": "https://github.com/qin2500/HWFC_floor_plan_generation"
+    },
+    {
+      "id": "A06-12",
+      "algo": "A06",
+      "title": "以 WFC 與 CNN 模擬都市空間",
+      "creator": "Cardiff University 研究團隊（SimAUD 2020）",
+      "year": "2020",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "群體／都市",
+      "summary": "提出都市空間合成管線：由 WFC 生成道路網、街廓形態，再搭配卷積神經網路配置建築機能，最後由設計者評估結果。",
+      "variations": [
+        {
+          "name": "道路 tile",
+          "how": "把水管 tile 直接重新詮釋為道路（直路、彎路、T 字路口、十字路口），空白 tile 當街廓。",
+          "effect": "基礎範例幾乎不改就能生成街道網"
+        },
+        {
+          "name": "街廓再分割",
+          "how": "WFC 生成道路後，把相連的空白格合併成街廓，再交給 A04 遞迴分割切地塊。",
+          "effect": "從路網到地塊的兩階段都市生成"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "多元件"
+      ],
+      "tools": [],
+      "url": "https://dl.acm.org/doi/abs/10.5555/3465085.3465103"
+    },
+    {
+      "id": "A06-13",
+      "algo": "A06",
+      "title": "以 WFC 生成與評估鄉村住宅配置",
+      "creator": "Yin Zhang、Zhen Xu、Hanlin Li 等",
+      "year": "2026",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "以 WFC 生成鄉村住宅群的配置，能適應不同基地條件與居住需求，並對生成結果進行評估。",
+      "variations": [
+        {
+          "name": "基地條件當預先約束",
+          "how": "輸入河道、既有道路、保留樹曲線，落在其上的格子預先塌縮成對應 tile 再傳播。",
+          "effect": "配置自動避開並呼應基地既有元素"
+        },
+        {
+          "name": "生成後評估篩選",
+          "how": "每個 seed 跑出結果後計算日照、戶數、道路長度等指標，只保留分數前幾名。",
+          "effect": "從大量隨機解中挑出性能較佳的配置"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "最佳化",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://doi.org/10.1177/14780771251326773"
+    },
+    {
+      "id": "A06-14",
+      "algo": "A06",
+      "title": "WFC 結合 AR／MR 的不規則原木升級再利用",
+      "creator": "Scientific Reports 論文作者群",
+      "year": "2025",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "把原木、樹枝分岔等不規則木材 3D 掃描後，用 WFC 當作數位聚合方法自動排出空間組合，再以有限元素分析檢查結構可行性，並以 AR 輔助組裝，目標是循環設計。",
+      "variations": [
+        {
+          "name": "掃描構件當 tile",
+          "how": "每根掃描木料是一個 tile，接頭由端點方向與斷面尺寸分類；每種 tile 設數量上限（庫存）。",
+          "effect": "只用現有庫存材料拼出結構"
+        },
+        {
+          "name": "結構評估回饋",
+          "how": "WFC 完成後把組合送進 Karamba 等分析，位移超標就換 seed 重算。",
+          "effect": "生成結果兼顧可組裝與結構可行"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "約束滿足",
+        "最佳化"
+      ],
+      "tools": [],
+      "url": "https://www.nature.com/articles/s41598-025-20398-8"
+    },
+    {
+      "id": "A06-15",
+      "algo": "A06",
+      "title": "以 WFC 生成材料晶粒方向",
+      "creator": "arXiv 論文作者群",
+      "year": "2023",
+      "category": "performance",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "把 WFC 用在材料科學，生成多晶材料的晶粒方向分布，作為材料微結構與性能模擬的輸入，是 WFC 跨出遊戲與設計的例子。",
+      "variations": [
+        {
+          "name": "tile 帶數值屬性",
+          "how": "每個 tile 除了接頭外再帶一個方向角或材料參數，輸出時依數值著色或指定給有限元素網格。",
+          "effect": "生成可直接做性能模擬的材料分布圖"
+        },
+        {
+          "name": "相鄰相似度規則",
+          "how": "相容判斷從「接頭相等」改成「兩 tile 的角度差小於門檻」。",
+          "effect": "形成方向連續、邊界清楚的區塊紋理"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "拼貼",
+        "物理模擬"
+      ],
+      "tools": [],
+      "url": "https://arxiv.org/pdf/2311.12272"
+    }
+  ]
+}

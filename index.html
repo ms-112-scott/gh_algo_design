@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GH 演算法設計圖鑑｜建築參數化設計的 Grasshopper 生成式演算法收集</title>
+<meta name="description" content="為教學用途建立的 Grasshopper 生成式演算法收集網頁：六大家族、基礎範例、變形與真實應用案例，供學習建築參數化建模使用。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F2EC; --surface:#FFFFFF; --ink:#17171C; --ink-2:#45434C; --mute:#67635B; --line:#E6E1D7; --tile:#15151B;
+  --A:#E4572E; --B:#3FA34D; --C:#2F6FE4; --D:#9152E0; --E:#F2A007; --F:#14A38F;
+  --ease-out:cubic-bezier(.2,.8,.2,1); --t-med:280ms; --t-slow:560ms;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.7;font-size:16px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--C);outline-offset:2px;border-radius:8px}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+/* top */
+.top{position:sticky;top:0;z-index:10;background:rgba(245,242,236,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color var(--t-med)}
+.top.scrolled{border-color:var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:68px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;white-space:nowrap}
+.brand img{height:22px;width:auto;display:block}
+.brand .sepbar{width:1px;height:22px;background:var(--line)}
+.sitenav{margin-left:auto;display:flex;gap:4px}
+.sitenav a{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700;white-space:nowrap}
+.sitenav a:hover{background:#ECE8E0}
+.sitenav a[aria-current=page]{background:var(--ink);color:#fff}
+
+/* hero */
+.hero{padding:56px 0 40px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink-2);background:#fff;border-radius:999px;padding:6px 14px;box-shadow:0 0 0 1px var(--line)}
+.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.12;margin:18px 0 16px;font-weight:900;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,rgba(228,87,46,.28) 62%)}
+.hero p.lead{font-size:18px;color:var(--ink-2);margin:0 0 26px;max-width:36em}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;font-weight:700;text-decoration:none;transition:transform 160ms var(--ease-out),box-shadow 160ms}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -12px rgba(0,0,0,.4)}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;box-shadow:0 0 0 1px var(--line)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:30px}
+.stat{background:#fff;border-radius:16px;padding:14px 16px}
+.stat b{display:block;font:900 28px "JetBrains Mono",monospace;line-height:1.1}
+.stat small{color:var(--mute);font-size:13px}
+.mosaic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:120px;gap:10px}
+.mosaic figure{margin:0;border-radius:18px;overflow:hidden;background:var(--tile);position:relative}
+.mosaic figure:nth-child(1){grid-row:span 2}
+.mosaic figure:nth-child(5){grid-column:span 2}
+.mosaic canvas,.mosaic img{width:100%;height:100%;display:block;object-fit:cover}
+.mosaic figcaption{position:absolute;left:8px;bottom:8px;font:700 11px "JetBrains Mono",monospace;color:#fff;background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px}
+
+/* sections */
+section.s{padding:56px 0;border-top:1px solid var(--line)}
+section.s h2{font-size:28px;margin:0 0 8px;font-weight:900;display:flex;align-items:center;gap:10px}
+section.s h2 .num{font:700 13px "JetBrains Mono",monospace;color:var(--mute);border:1.5px solid var(--line);border-radius:6px;padding:2px 7px}
+section.s .intro{color:var(--ink-2);max-width:44em;margin:0 0 26px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:#fff;border-radius:20px;padding:22px}
+.card h3{margin:10px 0 6px;font-size:18px}
+.card p{margin:0;color:var(--ink-2);font-size:15px}
+.ico{width:48px;height:48px;border-radius:14px;background:var(--paper);display:grid;place-items:center}
+.ico svg.i{width:26px;height:26px}
+.steps .card{position:relative}
+.steps .n{position:absolute;right:18px;top:16px;font:900 32px "JetBrains Mono",monospace;color:#EAE5DB}
+
+.fams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fam{background:#fff;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.fam .band{height:92px;background:var(--tile);position:relative}
+.fam .band canvas{width:100%;height:100%;display:block}
+.fam .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px}
+.fam .what{font-size:13px;color:var(--mute)}
+.fam .list{display:flex;flex-wrap:wrap;gap:6px}
+
+/* 標籤（與圖鑑頁相同語法） */
+.tg{display:inline-flex;align-items:center;gap:5px;height:26px;font-size:12px;font-weight:700;white-space:nowrap;line-height:1;vertical-align:middle;min-width:0;max-width:100%}
+.tg svg.i{width:14px;height:14px}
+.tg .nm{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tg-fam{background:var(--fc);color:#fff;border-radius:5px;padding:0 9px 0 0;overflow:hidden}
+.tg-fam .L{background:rgba(0,0,0,.2);align-self:stretch;width:24px;display:grid;place-items:center;font:900 13px "JetBrains Mono",monospace}
+.tg-algo{border-radius:999px;border:1.5px solid var(--fc);background:#fff;color:var(--ink);padding:0 10px 0 0;overflow:hidden}
+.tg-algo .id{background:var(--fc);color:#fff;align-self:stretch;padding:0 7px 0 9px;display:grid;place-items:center;font:700 11px "JetBrains Mono",monospace}
+.tg-var{border-radius:999px;border:1.5px dashed var(--fc);background:var(--ft);color:var(--fd);padding:0 10px 0 7px}
+.tg-var .pid{font:700 10px "JetBrains Mono",monospace;opacity:.75}
+.tg-cat{border-radius:999px;background:#E6E1D7;color:var(--ink);padding:0 10px 0 8px}
+.tg-attr{border-radius:4px;border:1.5px solid #B9B3A7;color:var(--ink-2);padding:0 8px 0 6px;background:#fff;font-weight:500}
+.tg-kw{color:var(--mute);font-weight:500}
+.tg-kw::before{content:"#";opacity:.55;margin-right:1px}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;height:28px;padding:0 10px 0 8px;font-size:12px;font-weight:700}
+.badge svg.i{width:16px;height:16px}
+.badge.t-algo{background:var(--ink);color:#fff}
+.badge.t-var{background:#fff;border:1.5px dashed var(--ink)}
+.badge.t-case{background:#fff;box-shadow:inset 0 0 0 1.5px #D6D0C4}
+.dots{display:inline-flex;gap:3px}.dots i{width:8px;height:8px;border-radius:50%;background:#D8D2C6}.dots i.on{background:var(--ink)}
+
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.lg{background:#fff;border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;align-items:center}
+.lg p{margin:0;font-size:14px;color:var(--ink-2)}
+.lg p b{display:block;color:var(--ink)}
+.lg-h{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--mute);letter-spacing:.12em;margin:10px 0 0}
+
+table.t{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:18px;overflow:hidden;font-size:15px}
+table.t th,table.t td{padding:13px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+table.t tr:last-child td{border-bottom:0}
+table.t th{font-size:12px;color:var(--mute);font-weight:700;letter-spacing:.06em;background:#FBFAF7}
+table.t td:first-child{white-space:nowrap;font-weight:700}
+
+.course{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;align-items:start}
+.course .logo-card{background:#fff;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.course .logo-card img{width:100%;max-width:300px;height:auto}
+.kv{display:grid;grid-template-columns:88px minmax(0,1fr);gap:8px 14px;font-size:15px;margin:0}
+.kv dt{color:var(--mute)}
+.kv dd{margin:0;font-weight:500}
+.flowline{display:flex;flex-direction:column;gap:0}
+.fl{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;padding:0 0 18px;position:relative}
+.fl::before{content:"";position:absolute;left:21px;top:44px;bottom:0;width:2px;background:var(--line)}
+.fl:last-child::before{display:none}
+.fl .dot{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 1px var(--line)}
+.fl h4{margin:8px 0 2px;font-size:16px}
+.fl p{margin:0;color:var(--ink-2);font-size:14px}
+
+.note{background:#fff;border-radius:18px;padding:20px 22px;font-size:14px;color:var(--ink-2)}
+.note ul{margin:6px 0 0;padding-left:20px}
+footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
+footer .wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+footer img{height:20px;width:auto}
+
+/* 進場 */
+.rv{opacity:0;transform:translateY(16px)}
+.rv.in{opacity:1;transform:none;transition:opacity var(--t-slow) var(--ease-out),transform var(--t-slow) var(--ease-out);transition-delay:calc(var(--d,0) * 70ms)}
+
+@media (max-width:900px){
+  .hero,.course{grid-template-columns:minmax(0,1fr)}
+  .grid3,.fams{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .legend{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  .brand img,.brand .sepbar,.sitenav a.opt{display:none}
+  .grid3,.fams{grid-template-columns:minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lg{grid-template-columns:minmax(0,1fr)}
+  table.t td:first-child{white-space:normal}
+  table.t th,table.t td{padding:10px 12px}
+}
+@media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none} .rv.in{transition:none} .btn{transition:none} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-algo" viewBox="0 0 24 24"><path d="M12 21V11M12 11 7 6M12 11l5-5M7 6V3M17 6V3M12 16l-4-3M12 16l4-3"/></symbol>
+  <symbol id="i-var" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6M18 15V9"/><path d="m15 6 3-3 3 3"/></symbol>
+  <symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 22V12"/><path d="M12 12C12 7 8 4 3 4c0 5 4 8 9 8z"/><path d="M12 14c0-4 3-7 9-7 0 4-3 7-9 7z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="c-3d-architecture" viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></symbol>
+  <symbol id="i-logic-rewrite" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1.5"/><rect x="10.5" y="10.5" width="3" height="3"/></symbol>
+</defs></svg>
+
+<header class="top" id="top"><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/nycu-logo.png" alt="國立陽明交通大學" width="640" height="143"><span class="sepbar"></span><span>GH 演算法設計圖鑑</span></a>
+  <nav class="sitenav" aria-label="站內導覽"><a href="index.html" aria-current="page">關於</a><a href="atlas.html">圖鑑</a><a class="opt" href="catalog.html">文字索引</a></nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <span class="eyebrow rv"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg>為教學用途建立的演算法收集網頁</span>
+      <h1 class="rv" style="--d:1">用 Grasshopper 學<br><em>生成式演算法</em>的建築圖鑑</h1>
+      <p class="lead rv" style="--d:2">這裡把建築參數化設計常用的生成式演算法分成六大家族，每個演算法都附一支 Grasshopper C# 基礎範例，外加改法（變形）、真實應用案例與延伸專案題目，讓學習者從「看懂」一路走到「改成自己的東西」。</p>
+      <div class="cta rv" style="--d:3">
+        <a class="btn primary" href="atlas.html"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg>進入圖鑑</a>
+        <a class="btn ghost" href="catalog.html"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>文字索引</a>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="mosaic rv" style="--d:2" id="mosaic" aria-hidden="true"></div>
+  </div>
+</div>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">01</span>怎麼使用</h2>
+  <p class="intro rv">先用眼睛逛，再點進去看細節。圖鑑頁以圖片為主，文字都收在點開之後。</p>
+  <div class="grid3 steps">
+    <div class="card rv" style="--d:0"><span class="n">1</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></div><h3>逛圖</h3><p>瀑布流裡混著演算法、變形、案例與專案。看到喜歡的形，就是起點。</p></div>
+    <div class="card rv" style="--d:1"><span class="n">2</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-code"/></svg></div><h3>看懂怎麼運作</h3><p>每個演算法用圖示拆解步驟，並可拉滑桿即時看參數怎麼改變形。</p></div>
+    <div class="card rv" style="--d:2"><span class="n">3</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-var"/></svg></div><h3>改成自己的</h3><p>從變形食譜挑一個改法，或參考案例與專案種子，組合出自己的演算法應用。</p></div>
+  </div>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">02</span>六大家族</h2>
+  <p class="intro rv">家族看的是「長出來像什麼」；同一個家族裡會混用不同的演算法邏輯。演算法編號＝家族字母＋兩位數（例：A01）。</p>
+  <div class="fams" id="fams"></div>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">03</span>五種演算法邏輯</h2>
+  <p class="intro rv">看到一個演算法，先問兩件事：在變的東西是什麼（決定資料結構）、它靠哪種邏輯算出來（決定程式骨架）。</p>
+  <table class="t rv">
+    <thead><tr><th>邏輯</th><th>怎麼算</th><th>什麼時候停</th><th>例子</th></tr></thead>
+    <tbody>
+      <tr><td>直接公式</td><td>給座標或編號，直接算出結果，不需要上一步</td><td>沒有迭代</td><td>Phyllotaxis、Noise、TPMS、Truchet</td></tr>
+      <tr><td>改寫／遞迴</td><td>規則把東西展開成更細的東西</td><td>展開到第幾代，或太小就停</td><td>L-System、Koch、Hilbert、Shape Grammar</td></tr>
+      <tr><td>迭代模擬</td><td>每一步依上一步的狀態更新</td><td>收斂到平衡，或開放地一直長</td><td>Circle Packing、Differential Growth、Boids</td></tr>
+      <tr><td>搜尋／求解</td><td>在很多可能的解裡，找合法或最好的那個</td><td>找到解，或達到評分門檻</td><td>WFC、基因演算法、Dijkstra、Poisson Disk</td></tr>
+      <tr><td>幾何轉換</td><td>對輸入掃一遍，轉成另一種幾何</td><td>掃完就停</td><td>Voronoi、Marching Squares</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">04</span>標籤怎麼看</h2>
+  <p class="intro rv">形狀代表「哪一類」；只有身分鏈（家族 › 演算法 › 變形）使用家族色。</p>
+  <div class="legend rv" id="legend"></div>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">05</span>課程背景</h2>
+  <p class="intro rv">這個圖鑑最初為國立陽明交通大學的「演算法設計」課程整理，現在以通用形式公開，任何想用 Grasshopper 學習生成式設計的人都可以使用。</p>
+  <div class="course">
+    <div class="logo-card rv">
+      <img src="assets/nycu-logo.png" alt="國立陽明交通大學 NYCU" width="640" height="143">
+      <dl class="kv">
+        <dt>學校</dt><dd>國立陽明交通大學</dd>
+        <dt>課程</dt><dd>演算法設計</dd>
+        <dt>學期</dt><dd>115 學年度第 1 學期（115-1）</dd>
+        <dt>對象</dt><dd>具 Python 或 JavaScript 基礎的建築、設計背景研究生</dd>
+        <dt>工具</dt><dd>Rhino 8、Grasshopper、C# Script 元件、RhinoCommon</dd>
+      </dl>
+    </div>
+    <div class="flowline">
+      <div class="fl rv" style="--d:0"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-code"/></svg></span><div><h4>寫得出來</h4><p>在 Grasshopper 裡用 C# 寫元件：型別、值型別與參考型別、資料流與 DataTree。</p></div></div>
+      <div class="fl rv" style="--d:1"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg></span><div><h4>認得出來</h4><p>認識六大家族的生成式演算法，能從一張圖判斷它的家族、邏輯與資料結構。</p></div></div>
+      <div class="fl rv" style="--d:2"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-logic-rewrite"/></svg></span><div><h4>拆得開來</h4><p>先用 pseudocode 拆解狀態、規則與迴圈，再實作成 C#，理解演算法的思考方式。</p></div></div>
+      <div class="fl rv" style="--d:3"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-seed"/></svg></span><div><h4>長成自己的</h4><p>挑選一到兩個演算法深入研究、自己做變化，完成一件建築或設計的演算法應用專案。</p></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <h2 class="rv"><span class="num">06</span>資料來源與使用說明</h2>
+  <div class="note rv">
+    <ul>
+      <li>案例資料由研究整理而成，每個案例盡量附上原始出處連結；少數出處尚待查證，頁面上會標示「出處待查證」。</li>
+      <li>案例圖片的著作權屬於原作者，本站僅作非商業的教學引用並標示來源；如有疑慮請來信，我們會立即移除。</li>
+      <li>標示「示意」的圖，是用本站程式依演算法概念重畫的示意圖，不是原作品。</li>
+      <li>國立陽明交通大學標誌取自 Wikimedia Commons，僅用於標示課程所屬單位。</li>
+    </ul>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <img src="assets/nycu-logo.png" alt="" width="640" height="143">
+  <span>GH 演算法設計圖鑑・國立陽明交通大學「演算法設計」課程教學用途</span>
+  <span style="margin-left:auto"><a href="atlas.html">圖鑑</a>・<a href="catalog.html">文字索引</a></span>
+</div></footer>
+
+<script src="data.js"></script>
+<script>
+const CAT = window.CATALOG;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ico = id => `<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`;
+const FAMC = {A:["#E4572E","#FBE6DF","#B8391A"],B:["#3FA34D","#E2F2E4","#2A7A36"],C:["#2F6FE4","#E1EAFB","#1F50B0"],
+              D:["#9152E0","#EEE3FB","#6D35B3"],E:["#F2A007","#FDF0D5","#A86A00"],F:["#14A38F","#D9F2EE","#0B7768"]};
+const fv = f => `--fc:${FAMC[f][0]};--ft:${FAMC[f][1]};--fd:${FAMC[f][2]}`;
+const tFam = f => `<span class="tg tg-fam" style="${fv(f)}"><span class="L">${f}</span>${esc(CAT.families[f])}</span>`;
+const tAlgo = a => `<span class="tg tg-algo" style="${fv(a.family)}" title="${esc(a.name_en)}"><span class="id">${a.id}</span><span class="nm">${esc(a.name_zh)}</span></span>`;
+
+// 統計
+const nV = CAT.algorithms.reduce((s,a) => s + (a.variations||[]).length, 0), nS = CAT.algorithms.reduce((s,a) => s + (a.project_seeds||[]).length, 0);
+document.getElementById("stats").innerHTML = [[CAT.algorithms.length,"演算法"],[CAT.cases.length,"應用案例"],[nV,"變形食譜"],[nS,"專案種子"]]
+  .map(([n,t],i) => `<div class="stat rv" style="--d:${i+3}"><b>${n}</b><small>${t}</small></div>`).join("");
+
+// 家族卡
+const WHAT = {A:"字串、形狀",B:"曲線上的點、分枝",C:"網格上的數值",D:"會移動的個體",E:"互相推擠的物件",F:"拼貼、解答"};
+document.getElementById("fams").innerHTML = Object.keys(CAT.families).map((f,i) => `
+  <article class="fam rv" style="--d:${i}">
+    <div class="band"><canvas data-fam="${f}"></canvas></div>
+    <div class="body">${tFam(f)}<div class="what">在變的東西：${WHAT[f]}</div>
+      <div class="list">${CAT.algorithms.filter(a => a.family === f).map(tAlgo).join("")}</div></div>
+  </article>`).join("");
+
+// 標籤圖例
+const dots = n => `<span class="dots">${[1,2,3,4,5].map(k => `<i class="${k<=n?"on":""}"></i>`).join("")}</span>`;
+const A01 = CAT.algorithms.find(a => a.id === "A01");
+document.getElementById("legend").innerHTML = `
+  <div class="lg-h">身分鏈：屬於誰</div>
+  <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。六大家族 A–F。</p></div>
+  <div class="lg"><span>${tAlgo(A01)}</span><p><b>② 演算法</b>分段膠囊。編號對應一支基礎範例程式。</p></div>
+  <div class="lg"><span><span class="tg tg-var" style="${fv("A")}">${ico("i-var")}<span class="pid">A01·V01</span>隨機</span></span><p><b>③ 變形</b>虛線膠囊。從演算法改出來的版本。</p></div>
+  <div class="lg-h">描述：是什麼、用在哪</div>
+  <div class="lg"><span><span class="badge t-case">${ico("i-case")}案例</span></span><p><b>④ 卡片類型</b>圖片左上的圓章。</p></div>
+  <div class="lg"><span><span class="tg tg-cat">${ico("c-3d-architecture")}3D 建築／空間</span></span><p><b>⑤ 應用類型</b>案例用在哪個領域。</p></div>
+  <div class="lg"><span><span class="tg tg-attr">${ico("i-logic-rewrite")}改寫／遞迴</span></span><p><b>⑥ 屬性</b>邏輯、資料結構、尺度、工具。</p></div>
+  <div class="lg"><span><span class="tg tg-kw">遞迴</span></span><p><b>⑦ 關鍵字</b>用來搜尋。</p></div>
+  <div class="lg"><span>${dots(3)}</span><p><b>難度</b>1 入門 → 5 研究級。</p></div>`;
+
+// 家族底紋與拼貼：每個家族一種簡單生成圖
+function rng(seed){ let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+function draw(cv, f, seed = 1){
+  const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
+  cv.width = W*dpr; cv.height = H*dpr; const g = cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle = "#15151B"; g.fillRect(0,0,W,H); g.strokeStyle = FAMC[f][0]; g.fillStyle = FAMC[f][0]; g.lineWidth = 1.2; g.lineCap = "round";
+  const r = rng(seed * 97 + f.charCodeAt(0));
+  if(f === "A"){ // 分枝
+    const br = (x,y,a,l,d) => { if(d === 0) return; const x2 = x + Math.cos(a)*l, y2 = y + Math.sin(a)*l; g.globalAlpha = .5 + d*.08; g.beginPath(); g.moveTo(x,y); g.lineTo(x2,y2); g.stroke(); br(x2,y2,a-.42,l*.72,d-1); br(x2,y2,a+.42,l*.72,d-1); };
+    for(let k = 0; k < Math.ceil(W/120); k++) br(60 + k*120, H, -Math.PI/2 + (r()-.5)*.2, H*.3, 7);
+  } else if(f === "B"){ // 葉序
+    const cx = W*.5, cy = H*.5, s = Math.min(W,H)/34; for(let i = 0; i < 600; i++){ const a = i*2.39996, rr = s*Math.sqrt(i); const x = cx + rr*Math.cos(a), y = cy + rr*Math.sin(a); if(x<0||y<0||x>W||y>H) continue; g.globalAlpha = .9; g.beginPath(); g.arc(x,y,1.2 + i/600*2,0,7); g.fill(); }
+  } else if(f === "C"){ // 流線
+    for(let k = 0; k < 60; k++){ let x = r()*W, y = r()*H; g.globalAlpha = .7; g.beginPath(); g.moveTo(x,y); for(let i = 0; i < 60; i++){ const a = Math.sin(x*.012)*1.6 + Math.cos(y*.017)*1.4; x += Math.cos(a)*3; y += Math.sin(a)*3; g.lineTo(x,y); } g.stroke(); }
+  } else if(f === "D"){ // 群聚
+    for(let k = 0; k < 90; k++){ const x = r()*W, y = r()*H, a = Math.sin(x*.01 + y*.008)*1.2 - .4; g.globalAlpha = .9; g.beginPath(); g.moveTo(x,y); g.lineTo(x - Math.cos(a)*10, y - Math.sin(a)*10); g.stroke(); g.beginPath(); g.arc(x,y,1.8,0,7); g.fill(); }
+  } else if(f === "E"){ // 圓填充
+    const cs = []; for(let t = 0; t < 1500 && cs.length < 160; t++){ const x = r()*W, y = r()*H; let R = 26; for(const c of cs){ R = Math.min(R, Math.hypot(c[0]-x,c[1]-y) - c[2] - 2); } if(R > 3){ cs.push([x,y,R]); g.globalAlpha = .85; g.beginPath(); g.arc(x,y,R,0,7); g.stroke(); } }
+  } else { // Truchet
+    const s = 22; for(let i = 0; i*s < W + s; i++) for(let j = 0; j*s < H + s; j++){ const x = i*s, y = j*s; g.globalAlpha = .85; g.beginPath(); if(r() < .5){ g.arc(x,y,s/2,0,Math.PI/2); g.moveTo(x+s,y+s/2); g.arc(x+s,y+s,s/2,-Math.PI/2,-Math.PI,true); } else { g.arc(x+s,y,s/2,Math.PI/2,Math.PI); g.moveTo(x+s/2,y+s); g.arc(x,y+s,s/2,0,-Math.PI/2,true); } g.stroke(); }
+  }
+  g.globalAlpha = 1;
+}
+const mosaic = [["A","A01 L-System"],["C","C03 向量場"],["E","E01 圓填充"],["B","B04 葉序"],["F","F01 Truchet"],["D","D01 Boids"]];
+document.getElementById("mosaic").innerHTML = mosaic.map(([f,t]) => `<figure><canvas data-fam="${f}"></canvas><figcaption>${t}</figcaption></figure>`).join("");
+const paint = () => document.querySelectorAll("canvas[data-fam]").forEach((c,i) => draw(c, c.dataset.fam, i+1));
+requestAnimationFrame(paint); addEventListener("resize", () => { clearTimeout(paint.t); paint.t = setTimeout(paint, 150); });
+
+// 進場
+const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold:.12});
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+addEventListener("scroll", () => document.getElementById("top").classList.toggle("scrolled", scrollY > 4), {passive:true});
+</script>
+</body>
+</html>

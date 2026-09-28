@@ -1,0 +1,1492 @@
+{
+  "agent": "ag15",
+  "algorithms": [
+    {
+      "id": "D02",
+      "name_zh": "Physarum 黏菌",
+      "name_en": "Physarum Transport Network",
+      "family": "D",
+      "family_name": "代理人",
+      "file": "D02_Physarum.cs",
+      "loc": 210,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子",
+        "網格"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "約 210 行、一個 Agent class，但同時要管理「粒子」與「痕跡網格」兩套資料、雙緩衝擴散與邊界環繞，而且形態對 sensorAngle／sensorDistance／decay 非常敏感，需要大量調參。",
+      "tags": [
+        "自訂 class",
+        "網格擴散",
+        "隨機",
+        "可重現種子",
+        "開放生長",
+        "鄰居搜尋"
+      ],
+      "one_liner": "上千隻只會「聞、轉、走、留」的小蟲在網格上互相跟隨彼此留下的氣味，最後自己織出一張像葉脈或交通網的網絡。",
+      "how_it_works": [
+        "建立 gridSize × gridSize 的痕跡場 trail[x,y]，並把代理人隨機撒在中央的圓裡、面向隨機。",
+        "聞：每個代理人讀取左、前、右三個感測器位置（離身體 sensorDistance 格、張開 sensorAngle）的痕跡濃度。",
+        "轉：前面最濃就直走；左或右比較濃就轉過去 turnAngle；前面最淡就隨機左轉或右轉。",
+        "走與留：往前走一格（超出邊界從對面出來），並在腳下的格子加上 DepositAmount 的痕跡。",
+        "散：整張痕跡場做 3×3 平均（擴散），再乘上 (1 − decay) 讓舊痕跡變淡；重複 steps 次。",
+        "輸出：把痕跡值正規化成 0–1，接 Gradient 為 gridPoints 上色。"
+      ],
+      "key_params": [
+        {
+          "name": "sensorAngle",
+          "effect": "感測器張開越大，代理人越容易轉向，網絡越細碎、格網越密；越小則形成長而直的主幹。"
+        },
+        {
+          "name": "sensorDistance",
+          "effect": "感測距離越遠，代理人「看」得越遠，網絡的孔洞（lacunae）越大、線條越粗疏。"
+        },
+        {
+          "name": "turnAngle",
+          "effect": "轉彎角度與 sensorAngle 的比例決定圖樣類型：小轉角偏向連續網絡，大轉角偏向斑點或迷宮紋。"
+        },
+        {
+          "name": "decay",
+          "effect": "痕跡消失越快，只有常被走的路徑能留下，網絡越精簡；越慢則整片模糊成團。"
+        },
+        {
+          "name": "agentCount",
+          "effect": "代理人越多，網絡越粗、越連續；太少會斷裂成零散線段。"
+        },
+        {
+          "name": "steps",
+          "effect": "步數越多，網絡從一團霧逐漸收斂成清楚的線網，並持續緩慢重組。"
+        }
+      ],
+      "csharp_concepts": [
+        "double[,] 二維陣列",
+        "自訂 class Agent",
+        "List<Agent>",
+        "雙緩衝（寫到 newTrail 再換回）",
+        "取餘數環繞 WrapIndex",
+        "三角函數 Math.Cos／Math.Sin",
+        "RhinoMath.ToRadians",
+        "Random(seed)"
+      ],
+      "prerequisites": [
+        "巢狀迴圈",
+        "class 與欄位",
+        "角度／弧度與方向向量",
+        "Game of Life 的網格鄰居概念"
+      ],
+      "teaching_note": "很適合從零實作：規則只有五句，學習者能一邊改 sensorAngle 一邊看圖樣劇烈變化，是解釋「湧現」最直觀的範例。要提醒雙緩衝（不能邊讀邊寫同一張網格）與 decay 範圍；gridSize 超過 200、agentCount 上萬時 GH 會明顯變慢，建議 100×100、2000 隻。",
+      "variations": [
+        {
+          "title": "食物點吸引（Tero 式網絡）",
+          "level": 2,
+          "what_changes": "輸入／狀態",
+          "how": "新增 List<Point3d> foodPoints 輸入，每一步在食物點所在格子持續加上高濃度痕跡（例如 trail[x,y] += 50），讓代理人被吸引到食物之間。",
+          "result": "網絡會收斂成連接各食物點的交通網，類似 Tero 2010 東京鐵路網實驗，可當作站點／節點連線的設計工具。"
+        },
+        {
+          "title": "障礙與邊界遮罩",
+          "level": 2,
+          "what_changes": "規則",
+          "how": "輸入一條封閉邊界曲線與障礙曲線，事先算出 bool[,] blocked；代理人要走進 blocked 格就隨機轉向不前進，且擴散時 blocked 格強制設為 0。",
+          "result": "網絡只在基地內生長並繞過既有建物，得到依地形與基地輪廓的路徑網。"
+        },
+        {
+          "title": "影像引導的濃度場",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "讀入一張灰階圖（System.Drawing.Bitmap），把亮度乘上權重加進感測值：sense = trail + imageWeight × brightness，讓代理人偏好亮處。",
+          "result": "網絡會沿著影像的亮區聚集，可用衛星圖、綠地圖或人口密度圖驅動紋理。"
+        },
+        {
+          "title": "多物種互斥",
+          "level": 3,
+          "what_changes": "狀態／規則",
+          "how": "準備兩張痕跡場 trailA、trailB，Agent 加上 species 欄位；每個物種感測時用 自己的痕跡 − 對方的痕跡，並各自沉積到自己的場。",
+          "result": "兩種顏色的網絡互相避開、交錯成領域分明的斑紋，類似 Sage Jenson 的多物種作品。"
+        },
+        {
+          "title": "3D 體素黏菌",
+          "level": 4,
+          "what_changes": "維度",
+          "how": "把 trail 改成 double[,,]，Agent 加上 Z 與俯仰角；感測器改為前方一個＋圍繞前方的四到六個，擴散改 3×3×3 平均，最後用 Marching Cubes（C05）或 Dendro 轉成網格。",
+          "result": "得到立體的海綿／骨架網絡，可作結構格柵、燈具或雕塑。"
+        },
+        {
+          "title": "曲面上的黏菌",
+          "level": 3,
+          "what_changes": "維度",
+          "how": "把網格對應到曲面的 UV 參數空間，痕跡場仍用 2D 陣列，但輸出時用 surface.PointAt(u,v) 取得 3D 點；如要等距，可用曲面曲率修正每步步長。",
+          "result": "網紋貼附在屋頂或殼體表面，可轉成立面開孔或肋梁。"
+        },
+        {
+          "title": "痕跡場轉等高線／可製造曲線",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "把 trailValues 丟給 Marching Squares（C05）取某個門檻的等值線，再 Offset、Boolean 成板件，送雷切或 CNC。",
+          "result": "得到可切割的有機網狀鏤空板，可作隔屏或立面板。"
+        },
+        {
+          "title": "代理人軌跡轉粗細不一的管線",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "在 Agent 裡記錄 List<Point3d> path，模擬結束後抽稀並依所在格子的痕跡值決定管徑，用 Pipe 或 Mesh Pipe 建模。",
+          "result": "主要路徑粗、次要路徑細的樹枝狀管網，可 3D 列印成燈罩或珠寶。"
+        },
+        {
+          "title": "動畫化（Timer 逐步顯示）",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 trail 與 agents 移到 class 欄位並加上 reset 輸入，每次 RunScript 只跑 1–5 步，搭配 GH Timer 更新。",
+          "result": "可以看到網絡從一團霧長出主幹再重組的過程，方便調參與簡報錄影。"
+        },
+        {
+          "title": "吸引子調變參數",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "新增吸引點，依代理人到吸引點的距離內插 sensorAngle 與 decay（近處細密、遠處粗疏）。",
+          "result": "同一張網絡中出現由密到疏的漸層，適合做立面透光率漸變。"
+        },
+        {
+          "title": "混合 Voronoi／Delaunay 比較",
+          "level": 3,
+          "what_changes": "混合其他家族",
+          "how": "用相同食物點另外算 Delaunay／最小生成樹，將兩者疊圖並計算總長度與平均最短路徑，比較效率與冗餘。",
+          "result": "得到可量化的網絡評估圖表，把黏菌當作路網最佳化的候選方案產生器。"
+        },
+        {
+          "title": "痕跡高度場地形",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "把 trailValues 乘上高度係數當作 Z，用 Mesh 或 Surface from Points 建出地形，濃度高處隆起或凹下。",
+          "result": "得到有溝渠網絡的景觀地形，可做雨水路徑或步道系統的概念模型。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "校園步道網絡生成器",
+          "brief": "以校園建物出入口當食物點、既有建物當障礙，用黏菌模擬生成候選步道網，再和現況步道比較總長度與繞行距離。",
+          "difficulty": 2,
+          "combine_with": [
+            "D03"
+          ]
+        },
+        {
+          "title": "黏菌鏤空隔屏",
+          "brief": "在立面範圍內跑 2D 黏菌，以日照或視線吸引子調變密度，用 Marching Squares 取等值線轉成可雷切的鏤空板，做 1:1 局部樣品。",
+          "difficulty": 3,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "多物種都市綠帶",
+          "brief": "以綠地與水系當兩個物種的食物，模擬兩張互相避讓的網絡，作為藍綠帶系統的規劃草案，呼應 ecoLogicStudio 的做法。",
+          "difficulty": 3,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "3D 黏菌結構格柵",
+          "brief": "在體素空間中以支撐點與載重點為食物，長出立體網絡，再用等值面轉成網格並 3D 列印，比較與拓撲最佳化結果的差異。",
+          "difficulty": 4,
+          "combine_with": [
+            "C05",
+            "D01"
+          ]
+        },
+        {
+          "title": "黏菌網絡 × 人流驗證",
+          "brief": "先用黏菌生成地區路網，再把網絡交給社會力人流模擬跑尖峰人潮，檢驗壅塞點並回饋修改食物點權重，形成雙向迭代設計流程。",
+          "difficulty": 5,
+          "combine_with": [
+            "D03"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Characteristics of Pattern Formation and Evolution in Approximations of Physarum Transport Networks",
+          "author": "Jeff Jones",
+          "year": "2010",
+          "url": "https://cognet.mit.edu/journal/10.1162/artl.2010.16.2.16202"
+        },
+        {
+          "title": "Rules for Biologically Inspired Adaptive Network Design",
+          "author": "A. Tero, S. Takagi, T. Saigusa, K. Ito, D. P. Bebber, M. D. Fricker, K. Yumiki, R. Kobayashi, T. Nakagaki",
+          "year": "2010",
+          "url": "https://www.science.org/doi/10.1126/science.1177894"
+        },
+        {
+          "title": "From Pattern Formation to Material Computation: Multi-agent Modelling of Physarum Polycephalum",
+          "author": "Jeff Jones",
+          "year": "",
+          "url": "https://us.amazon.com/Pattern-Formation-Material-Computation-Polycephalum/dp/3319386514"
+        },
+        {
+          "title": "physarum（36 Points 等作品與說明）",
+          "author": "Sage Jenson",
+          "year": "",
+          "url": "https://cargocollective.com/sagejenson/physarum"
+        },
+        {
+          "title": "Understanding the Physarum Simulation",
+          "author": "Deniz Bicer",
+          "year": "2024",
+          "url": "https://denizbicer.com/202408-UnderstandingPhysarum.html"
+        },
+        {
+          "title": "Physarum-inspired Network Optimization: A Review",
+          "author": "Yahui Sun",
+          "year": "",
+          "url": "https://arxiv.org/pdf/1712.02910"
+        }
+      ]
+    },
+    {
+      "id": "D03",
+      "name_zh": "Pedestrian 人流模擬",
+      "name_en": "Pedestrian Simulation (Social Force Model)",
+      "family": "D",
+      "family_name": "代理人",
+      "file": "D03_Pedestrian.cs",
+      "loc": 207,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "約 207 行、一個 Person class，要把三種力相加再積分成速度與位置，人推人是 O(n²) 的鄰居搜尋，且多個力道常數需互相平衡才不會穿牆或卡死，屬於需調參的中階模擬。",
+      "tags": [
+        "物理模擬",
+        "鄰居搜尋",
+        "自訂 class",
+        "吸引子控制",
+        "隨機",
+        "可重現種子"
+      ],
+      "one_liner": "每個人都被「想去目的地」的力拉著走、被旁人和障礙物推開，幾十個人一起算，就能看到繞行、排隊與瓶頸壅塞。",
+      "how_it_works": [
+        "在每個出發點周圍隨機站 peoplePerStart 個人，全部投影到 XY 平面。",
+        "目標力：（想要的速度 − 現在的速度）÷ 反應時間，讓人逐漸加速到 walkSpeed 並朝向目的地。",
+        "人推人：對 6 倍半徑內的每個人，依身體間空隙 gap 以 exp(−gap / PushRange) 計算推開的力。",
+        "障礙力：靠近圓形障礙時被推開，並加上一個垂直分量，往目的地那一側繞過去。",
+        "先算完所有人的力，再一起更新：速度 += 力 × 時間步，限制最高速度，位置 += 速度 × 時間步，並記錄軌跡。",
+        "到達目的地附近就停下；全部抵達或跑完 steps 就結束，輸出每個人的軌跡 Polyline。"
+      ],
+      "key_params": [
+        {
+          "name": "peoplePerStart",
+          "effect": "人數越多，人推人的力越明顯，瓶頸處開始出現排隊與擠壓；計算量隨人數平方成長。"
+        },
+        {
+          "name": "walkSpeed",
+          "effect": "想走的速度越快，越容易在出口前擠成扇形；Helbing 稱之為「越急越慢」。"
+        },
+        {
+          "name": "personRadius",
+          "effect": "身體越大，通道相對越窄、越容易堵塞，也可以用來模擬推行李或輪椅。"
+        },
+        {
+          "name": "obstacleRadius",
+          "effect": "障礙越大，繞行軌跡越寬、兩側分流越明顯。"
+        },
+        {
+          "name": "obstacleCenters 位置",
+          "effect": "障礙放在出口前方適當位置時，可以把人流切成兩股，反而減少堵塞。"
+        },
+        {
+          "name": "steps",
+          "effect": "模擬時間（每步 0.1 秒）；太短時人還沒到目的地，軌跡看不出分流。"
+        }
+      ],
+      "csharp_concepts": [
+        "Vector3d 加減與內積",
+        "Vector3d.CrossProduct 求垂直方向",
+        "自訂 class Person",
+        "List<Vector3d> 先算後更新",
+        "Polyline 軌跡",
+        "LINQ All／Count／Select",
+        "const 常數欄位",
+        "Math.Exp 指數衰減"
+      ],
+      "prerequisites": [
+        "粒子系統（力 → 速度 → 位置）",
+        "class 與 List",
+        "向量長度、單位化與內積",
+        "D01 Boids 的鄰居力概念"
+      ],
+      "teaching_note": "適合從零實作，尤其能和懸垂鏈粒子系統的「力 → 速度 → 位置」接起來。要強調「先算所有人的力、再一起移動」的同步更新，否則先動的人會影響後算的人；也要提醒障礙力常數必須大於目標力，否則人會穿過障礙。人數超過 300 時 O(n²) 會變慢，可順勢引出空間格網索引。",
+      "variations": [
+        {
+          "title": "牆面與走廊（線段障礙）",
+          "level": 2,
+          "what_changes": "輸入／規則",
+          "how": "新增 List<Curve> walls 輸入，對每道牆用 curve.ClosestPoint 找最近點，以與圓形障礙相同的指數衰減推開人。",
+          "result": "可以用平面圖的牆線直接模擬走廊、門口與樓梯口的人流。"
+        },
+        {
+          "title": "多出口疏散",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "把 goal 改成 List<Point3d> exits，每個人選最近（或加上擁擠度懲罰後成本最低）的出口，並統計各出口抵達時間。",
+          "result": "得到疏散時間與各出口負荷，可比較不同出口配置的安全性。"
+        },
+        {
+          "title": "雙向對流與車道形成",
+          "level": 2,
+          "what_changes": "狀態",
+          "how": "讓兩組人從兩端出發、目的地互換，其餘規則不變；可以加一點隨機擾動力。",
+          "result": "會自然出現同向行人排成一條條「車道」的自組織現象，適合解說湧現。"
+        },
+        {
+          "title": "導航場取代直線目標",
+          "level": 4,
+          "what_changes": "規則",
+          "how": "先在網格上以 BFS／Dijkstra 從目的地往外算距離場，目標力改為沿距離場梯度下降的方向，而不是直指目的地。",
+          "result": "人會在複雜平面（U 型走廊、多房間）中正確繞路，不會卡在凹角。"
+        },
+        {
+          "title": "空間格網加速",
+          "level": 3,
+          "what_changes": "資料結構",
+          "how": "用 Dictionary<(int,int), List<Person>> 以 personRadius×6 為格子大小做空間雜湊，人推人只查鄰近 9 格。",
+          "result": "人數可從數十人擴增到上千人，仍維持可互動的速度。"
+        },
+        {
+          "title": "人流熱圖",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "建立 int[,] 計數網格，每一步把每個人所在格子 +1，最後輸出網格點與正規化計數，接 Gradient 上色。",
+          "result": "得到停留時間與通行密度的熱圖，可找出壅塞點與主要動線。"
+        },
+        {
+          "title": "熱圖轉鋪面或屋頂形",
+          "level": 3,
+          "what_changes": "輸出／混合其他家族",
+          "how": "把熱圖值當作高度或密度：高密度區提高屋頂、或以 Voronoi（E 家族）點密度對應鋪面分割大小。",
+          "result": "動線越集中處屋頂越高、鋪面越細碎，形成由人流驅動的地景或頂棚。"
+        },
+        {
+          "title": "曲面／多樓層",
+          "level": 4,
+          "what_changes": "維度",
+          "how": "把模擬移到曲面 UV 空間或 Mesh 上（每步後用 mesh.ClosestPoint 投影回表面），樓梯以連接點切換樓層。",
+          "result": "可模擬坡道、看台與多樓層車站的垂直動線。"
+        },
+        {
+          "title": "吸引點：展品與店面",
+          "level": 2,
+          "what_changes": "輸入／規則",
+          "how": "加入 List<Point3d> attractions 與停留時間，人在路途中若經過吸引點半徑內，有機率轉向並停留數秒再繼續前往目的地。",
+          "result": "得到展場或商店街的停留分布，評估展品配置是否造成堵塞。"
+        },
+        {
+          "title": "動畫化與即時調整",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 people 放到 class 欄位，搭配 GH Timer 每次只跑數步，並允許使用者拖動障礙點即時看人流改變。",
+          "result": "可以像 MassMotion 那樣即時觀察動線，方便設計討論。"
+        },
+        {
+          "title": "軌跡轉成可製造的地景",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "把所有軌跡平滑後依重疊次數加粗，用 Offset 與 Boolean Union 合併成步道輪廓，再擠出成地景模型或鋪面切割線。",
+          "result": "得到從使用行為推導出的「慾望路徑」步道系統，可 CNC 或雷切模型。"
+        },
+        {
+          "title": "Space syntax 可見度加權",
+          "level": 4,
+          "what_changes": "規則／混合其他家族",
+          "how": "先以視線分析計算每個網格點的可見範圍，人在選路時偏好可見度高的方向（對目標力加上可見度梯度）。",
+          "result": "人流更貼近真實行為，會集中在視野開闊的主軸上。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "教室大樓下課人流診斷",
+          "brief": "把系館平面的牆與樓梯口轉成障礙與出口，模擬下課同時離開的人流，輸出熱圖找出瓶頸並提出修改方案。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "出口前的柱子：越急越慢實驗",
+          "brief": "重現 Helbing 等人的出口瓶頸實驗，系統性改變出口寬度、柱子位置與人數，繪製疏散時間圖表並轉成設計準則。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "人流熱圖生成的車站頂棚",
+          "brief": "以轉乘車站為基地模擬尖峰人流，熱圖高處對應頂棚升起或開天窗，產出可建模的屋頂曲面。",
+          "difficulty": 4,
+          "combine_with": [
+            "C04",
+            "E01"
+          ]
+        },
+        {
+          "title": "展場動線與停留配置最佳化",
+          "brief": "以吸引點模擬觀展停留，再用搜尋或演化演算法調整展品位置，使平均停留時間最長且最大密度低於門檻。",
+          "difficulty": 4,
+          "combine_with": [
+            "D01"
+          ]
+        },
+        {
+          "title": "多樓層導航場疏散模擬",
+          "brief": "以 Dijkstra 導航場加空間格網加速，模擬上千人的多樓層疏散，比較不同樓梯配置，並與商業軟體結果對照驗證。",
+          "difficulty": 5,
+          "combine_with": [
+            "D02"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Social force model for pedestrian dynamics（Physical Review E）",
+          "author": "Dirk Helbing, Péter Molnár",
+          "year": "1995",
+          "url": ""
+        },
+        {
+          "title": "Simulating dynamical features of escape panic（Nature）",
+          "author": "Dirk Helbing, Illés Farkas, Tamás Vicsek",
+          "year": "2000",
+          "url": ""
+        },
+        {
+          "title": "Modelling the evolution of human trail systems（Nature）",
+          "author": "Dirk Helbing, Joachim Keltsch, Péter Molnár",
+          "year": "1997",
+          "url": ""
+        },
+        {
+          "title": "Natural movement: or, configuration and attraction in urban pedestrian movement（Environment and Planning B）",
+          "author": "Bill Hillier, Alan Penn, Julienne Hanson, T. Grajewski, J. Xu",
+          "year": "1993",
+          "url": ""
+        },
+        {
+          "title": "How simple rules determine pedestrian behavior and crowd disasters（PNAS）",
+          "author": "Mehdi Moussaïd, Dirk Helbing, Guy Theraulaz",
+          "year": "2011",
+          "url": ""
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "D02-01",
+      "algo": "D02",
+      "title": "黏菌重現東京鐵路網",
+      "creator": "Atsushi Tero, Toshiyuki Nakagaki 等",
+      "year": "2010",
+      "category": "performance",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "研究者把燕麥片放在培養皿上對應東京周邊城市的位置，黏菌長出的管網在效率、容錯與成本上可與真實鐵路網相比，並據此提出一套自適應網絡的數學規則。這是「黏菌會做網絡最佳化」最常被引用的案例。",
+      "variations": [
+        {
+          "name": "食物點＝車站",
+          "how": "在範例中加入 foodPoints 輸入，於食物點所在格子每步持續加上高濃度痕跡。",
+          "effect": "網絡收斂成連接各站的路網，而不是均勻的葉脈紋。"
+        },
+        {
+          "name": "地形障礙",
+          "how": "以海岸線與山地當作 blocked 遮罩，代理人不可進入、擴散時歸零。",
+          "effect": "路網會像實驗中的光照限制區一樣繞過不利地形。"
+        },
+        {
+          "name": "網絡評估",
+          "how": "把最終痕跡場用門檻值骨架化成圖（點＋連線），計算總長度與任兩站最短路徑。",
+          "effect": "可以量化比較黏菌網絡、最小生成樹與真實路網的效率與冗餘。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "最佳化",
+        "吸引子控制",
+        "網格擴散"
+      ],
+      "tools": [
+        "生物實驗",
+        "數學模型"
+      ],
+      "url": "https://www.science.org/doi/10.1126/science.1177894"
+    },
+    {
+      "id": "D02-02",
+      "algo": "D02",
+      "title": "Physarum 多代理人模型的圖樣地圖",
+      "creator": "Jeff Jones",
+      "year": "2010",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "基礎範例的原型論文：以只會感測、轉向、前進、沉積的粒子群近似黏菌管網，並系統性掃描感測角度與轉向角度，整理出網狀、斑點、迷宮紋等圖樣對照圖。",
+      "variations": [
+        {
+          "name": "參數掃描圖表",
+          "how": "在 GH 中用兩個 Series 分別改 sensorAngle 與 turnAngle，把每組結果排成矩陣並排顯示。",
+          "effect": "重現論文中的圖樣地圖，學習者可以直接挑選喜歡的紋理參數。"
+        },
+        {
+          "name": "改用機率轉向",
+          "how": "把 SmellAndTurn 的 if 判斷改成依三個感測值的比例抽籤決定方向。",
+          "effect": "線條變得柔和、較少銳角，網絡更像生物組織。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "網格擴散",
+        "隨機",
+        "開放生長"
+      ],
+      "tools": [
+        "Processing",
+        "Java"
+      ],
+      "url": "https://cognet.mit.edu/journal/10.1162/artl.2010.16.2.16202"
+    },
+    {
+      "id": "D02-03",
+      "algo": "D02",
+      "title": "physarum／36 Points 生成藝術",
+      "creator": "Sage Jenson (mxsage)",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Sage Jenson 以 Jeff Jones 的模型為基礎，在 GPU 上跑數百萬粒子並混合多物種與參數切換，產生極具辨識度的發光網紋作品，後來衍生出 36 Points 等廣為流傳的生成藝術系列。",
+      "variations": [
+        {
+          "name": "多物種顏色",
+          "how": "建立 trailA、trailB 兩張痕跡場，Agent 加 species 欄位，感測時以自己的痕跡減掉對方的痕跡。",
+          "effect": "兩種顏色的網絡互相推擠、各自成區。"
+        },
+        {
+          "name": "參數點切換",
+          "how": "預先存 3–5 組參數，依代理人所在位置或時間在不同參數組間內插。",
+          "effect": "同一畫面中出現多種紋理並平滑過渡，類似 36 Points 的效果。"
+        },
+        {
+          "name": "發光渲染",
+          "how": "把 trailValues 取對數或開根號後上色，並在 Rhino 以 Display 模式或輸出點雲至渲染器。",
+          "effect": "細微的弱痕跡也會顯現，畫面有發光纖維感。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "動畫",
+        "隨機",
+        "網格擴散"
+      ],
+      "tools": [
+        "GPU shader"
+      ],
+      "url": "https://cargocollective.com/sagejenson/physarum"
+    },
+    {
+      "id": "D02-04",
+      "algo": "D02",
+      "title": "3D Physarum 青銅燭台",
+      "creator": "Sage Jenson × Nervous System",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Jenson 在 Nervous System 駐村期間，用受引導的 3D 粒子—網格混合黏菌模擬長出網狀柱體，以 Formlabs 列印可燃蠟樹脂、做石膏模，再澆鑄成青銅燭台。展示了黏菌網絡從螢幕走向實體製造的完整流程。",
+      "variations": [
+        {
+          "name": "3D 痕跡場",
+          "how": "trail 改成 double[,,]，代理人加上 Z 與俯仰角，擴散改 3×3×3。",
+          "effect": "得到立體海綿狀網絡。"
+        },
+        {
+          "name": "形體引導",
+          "how": "在柱狀範圍外設 blocked，並在上下兩端放食物點。",
+          "effect": "網絡被約束成連接上下的柱體，適合作燭台、椅腳等構件。"
+        },
+        {
+          "name": "轉成可列印網格",
+          "how": "將痕跡場以 Marching Cubes（C05 延伸到 3D）取等值面，再平滑並檢查封閉性。",
+          "effect": "得到可直接 3D 列印或脫蠟鑄造的網格。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "等值面",
+        "網格擴散"
+      ],
+      "tools": [
+        "GPU 模擬",
+        "Formlabs",
+        "脫蠟鑄造"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137"
+    },
+    {
+      "id": "D02-05",
+      "algo": "D02",
+      "title": "GAN-Physarum: La Dérive Numérique",
+      "creator": "ecoLogicStudio（Claudia Pasquero, Marco Poletto）",
+      "year": "2022",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "群體／都市",
+      "summary": "於龐畢度中心 Réseaux-Mondes 展出。團隊以 GAN 學習黏菌的生長圖樣，再套用到巴黎街道，讀取城市的生物資源並生成分散式的藍綠步道網絡，把黏菌當作非人類的都市規劃協作者。",
+      "variations": [
+        {
+          "name": "綠地影像驅動",
+          "how": "以綠覆率影像作為額外感測場，感測值 = 痕跡 + 權重 × 綠覆亮度。",
+          "effect": "網絡沿綠地與公園串連，形成生態廊道草案。"
+        },
+        {
+          "name": "既有街道遮罩",
+          "how": "把街道中心線柵格化成允許通行格，其餘設為 blocked。",
+          "effect": "網絡只在街道上選路，得到可實施的步行路徑優先順序。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "影像輸入",
+        "網格擴散",
+        "最佳化"
+      ],
+      "tools": [
+        "GAN",
+        "生物實驗"
+      ],
+      "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique"
+    },
+    {
+      "id": "D02-06",
+      "algo": "D02",
+      "title": "bioTallinn 與 Paljassaare 半島黏菌規劃",
+      "creator": "ecoLogicStudio／Claudia Pasquero（策展）",
+      "year": "2017",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "地景",
+      "summary": "2017 塔林建築雙年展以 bioTallinn 為題，ecoLogicStudio 的 Paljassaare 半島提案讓黏菌在代表基地資訊的地景上生長，把城市汙水基礎設施與生物基質納入總體規劃的形態生成。",
+      "variations": [
+        {
+          "name": "資訊地景作為食物分布",
+          "how": "把基地的汙染、水系、植被等圖層各給權重，合成為一張食物濃度網格，每步注入痕跡場。",
+          "effect": "網絡反映多圖層條件的疊合，成為規劃的基礎骨架。"
+        },
+        {
+          "name": "分階段生長",
+          "how": "分成數個階段，每階段結束時把高濃度路徑固定為永久食物，再加入新食物點。",
+          "effect": "模擬分期開發，網絡隨時間逐步擴張。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "影像輸入",
+        "開放生長"
+      ],
+      "tools": [
+        "生物實驗",
+        "衛星資料"
+      ],
+      "url": "https://www.ecologicstudio.com/projects/biotallinn-2"
+    },
+    {
+      "id": "D02-07",
+      "algo": "D02",
+      "title": "如果黏菌蓋高速公路：英國路網",
+      "creator": "Andrew Adamatzky, Jeff Jones",
+      "year": "2010",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "把英國十大都會區當作食物點，比較黏菌網絡與真實高速公路網；結果大致吻合，但黏菌會改以 Newcastle 直通 Glasgow。之後同一方法擴及荷蘭、比利時、加拿大、德國與羅馬古道等研究。",
+      "variations": [
+        {
+          "name": "食物量依人口加權",
+          "how": "每個城市點每步注入的痕跡量乘上人口比例。",
+          "effect": "大城市之間的連線更粗，小城市可能被省略。"
+        },
+        {
+          "name": "多次隨機種子統計",
+          "how": "以不同 seed 跑 20 次，把各次骨架化後的連線出現頻率統計成權重。",
+          "effect": "得到「穩健路徑」與「偶發路徑」的機率地圖。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "可重現種子",
+        "吸引子控制",
+        "最佳化"
+      ],
+      "tools": [
+        "生物實驗",
+        "多代理人模型"
+      ],
+      "url": "https://arxiv.org/abs/0912.3967"
+    },
+    {
+      "id": "D02-08",
+      "algo": "D02",
+      "title": "Monte Carlo Physarum Machine 描繪宇宙網",
+      "creator": "Joseph N. Burchett, Oskar Elek 等（UC Santa Cruz）",
+      "year": "2020",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "地景",
+      "summary": "天文學家把 37,000 多個星系當作食物點，用 3D 黏菌演算法（MCPM）重建連接星系的暗物質纖維網，並以哈伯太空望遠鏡的觀測資料驗證。說明同一套規則能在完全不同尺度上重建網絡結構。",
+      "variations": [
+        {
+          "name": "點雲作為食物",
+          "how": "輸入大量 Point3d（例如樹木、建物、人口點），在 3D 體素網格中注入痕跡。",
+          "effect": "從離散點資料推測出潛在連結網絡。"
+        },
+        {
+          "name": "機率式感測",
+          "how": "感測方向改為在錐形範圍內隨機取樣多個方向，依濃度機率選擇。",
+          "effect": "網絡更平滑、對參數不那麼敏感，適合資料視覺化。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "隨機",
+        "空間索引"
+      ],
+      "tools": [
+        "GPU",
+        "Python"
+      ],
+      "url": "https://news.ucsc.edu/2020/03/cosmic-web/"
+    },
+    {
+      "id": "D02-09",
+      "algo": "D02",
+      "title": "3D Physarum 產生 3D 列印內部支撐",
+      "creator": "ACM 論文研究團隊（arXiv 2212.11527）",
+      "year": "2022",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "以 Monte Carlo 版的 3D 黏菌演算法，替 3D 列印物件產生近似拓撲最佳的內部支撐網絡，並以抗衝擊自行車安全帽為案例。把黏菌網絡從紋理提升為結構與材料設計。",
+      "variations": [
+        {
+          "name": "封閉體積內生長",
+          "how": "以 Mesh.IsPointInside 產生體素遮罩，只在物件內部允許生長與擴散。",
+          "effect": "網絡填滿物件內部，形成有機格柵。"
+        },
+        {
+          "name": "受力點當食物",
+          "how": "把支撐點與載重點設為高濃度食物點。",
+          "effect": "主要傳力路徑變粗，接近拓撲最佳化的材料分布。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "最佳化",
+        "等值面"
+      ],
+      "tools": [
+        "3D 列印"
+      ],
+      "url": "https://arxiv.org/pdf/2212.11527"
+    },
+    {
+      "id": "D02-10",
+      "algo": "D02",
+      "title": "PolyPhy：開源 3D 列印仿生物件生成器",
+      "creator": "PolyPhy 專案團隊",
+      "year": "2023",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "發表於 ACM 計算製造研討會的開源工具，把三角網格轉成以黏菌行為生成的網狀、可 3D 列印物件，讓設計者不用自己寫 GPU 模擬也能使用黏菌網絡建模。",
+      "variations": [
+        {
+          "name": "網格頂點當食物",
+          "how": "把輸入 Mesh 的頂點（或抽樣點）注入痕跡場作為食物。",
+          "effect": "網絡依附在物件輪廓上，形成鏤空外殼。"
+        },
+        {
+          "name": "厚度對應濃度",
+          "how": "輸出時依痕跡值決定管徑或等值面門檻。",
+          "effect": "網絡粗細有層次，可控制重量與強度。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "等值面"
+      ],
+      "tools": [
+        "Python",
+        "3D 列印"
+      ],
+      "url": "https://dl.acm.org/doi/10.1145/3623263.3629159"
+    },
+    {
+      "id": "D02-11",
+      "algo": "D02",
+      "title": "Physarealm：Grasshopper 黏菌外掛",
+      "creator": "maajor",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "以 Jeff Jones 的 Processing 程式為基礎，擴展到 3D 並寫成 Rhino／Grasshopper 外掛，可在自訂邊界與食物源中跑黏菌代理人，常與 Anemone、Kangaroo 搭配做建築形體研究。",
+      "variations": [
+        {
+          "name": "Brep 邊界",
+          "how": "以 Brep.IsPointInside 判斷代理人是否可前進，取代範例的環繞邊界。",
+          "effect": "網絡被限制在建築量體內，產生室內結構或裝置骨架。"
+        },
+        {
+          "name": "搭配 Kangaroo 鬆弛",
+          "how": "把網絡骨架化後的線段交給 Kangaroo 做長度與平滑目標。",
+          "effect": "得到更平順、可建造的桿件網格。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "C#",
+        "Anemone",
+        "Kangaroo"
+      ],
+      "url": "https://www.food4rhino.com/en/app/physarealm"
+    },
+    {
+      "id": "D02-12",
+      "algo": "D02",
+      "title": "Skeleton Physarum：以骨架化誤差驅動的黏菌",
+      "creator": "YufanX",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "構件",
+      "summary": "開源 Grasshopper 外掛「Slime」的 C# 原始碼，提出以 Voronoi 為基礎的骨架化方法產生黏菌圖樣，示範如何把網格痕跡轉換成乾淨的線性網絡。",
+      "variations": [
+        {
+          "name": "痕跡場骨架化",
+          "how": "把 trailValues 以門檻二值化，再用 Voronoi 中軸或細線化演算法取骨架線。",
+          "effect": "得到可直接用於建模的中心線網絡。"
+        },
+        {
+          "name": "骨架回饋",
+          "how": "把骨架線上的格子作為下一輪的食物點再跑一次模擬。",
+          "effect": "網絡逐輪精簡，保留最主要的幹道。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "自訂 class",
+        "幾何轉換"
+      ],
+      "tools": [
+        "Grasshopper",
+        "C#"
+      ],
+      "url": "https://github.com/YufanX/SkeletonPhysarum"
+    },
+    {
+      "id": "D02-13",
+      "algo": "D02",
+      "title": "黏菌分步生長作為都市設計樣板",
+      "creator": "Scientific Reports 論文研究團隊",
+      "year": "2022",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "研究以分步方式讓黏菌在城市節點間生長，觀察網絡在不同階段的形態，探討其作為都市設計與路網規劃樣板的可能性。",
+      "variations": [
+        {
+          "name": "分步加入節點",
+          "how": "把 foodPoints 依時間分批啟用（例如每 100 步加入一批）。",
+          "effect": "看到網絡如何隨新節點出現而重組或保留既有路徑。"
+        },
+        {
+          "name": "既有路網記憶",
+          "how": "每階段結束把痕跡場存下，下一階段以其 50% 作為初始值。",
+          "effect": "新網絡會傾向沿用舊路徑，模擬都市的路徑依賴。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "開放生長",
+        "吸引子控制"
+      ],
+      "tools": [
+        "生物實驗"
+      ],
+      "url": "https://www.nature.com/articles/s41598-022-05439-w"
+    },
+    {
+      "id": "D02-14",
+      "algo": "D02",
+      "title": "受黏菌生長啟發的非均質建築材料",
+      "creator": "PubMed 收錄論文研究團隊",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "研究以黏菌依養分分布生長的原理設計空間非均質的蜂巢／多孔材料，並量測其力學反應，示範黏菌網絡如何轉化為可調性能的結構材料。",
+      "variations": [
+        {
+          "name": "養分場＝應力場",
+          "how": "把 FEM 或 Karamba 算出的應力值柵格化成食物濃度網格。",
+          "effect": "高應力區網絡更密，形成依受力分級的格柵。"
+        },
+        {
+          "name": "密度量測回饋",
+          "how": "計算每區痕跡平均值作為孔隙率，並與目標孔隙率比較後調整 decay。",
+          "effect": "可針對指定密度分布反向調整參數。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "最佳化",
+        "網格擴散"
+      ],
+      "tools": [
+        "數值模擬",
+        "3D 列印"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31412323/"
+    },
+    {
+      "id": "D02-15",
+      "algo": "D02",
+      "title": "互動式黏菌裝置（遊戲手把操控）",
+      "creator": "Bleuje",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "以 openFrameworks 實作、受 36 Points 啟發的黏菌模擬，讓觀眾用遊戲手把即時改變參數，作為藝術裝置展出，展現參數空間的豐富度。",
+      "variations": [
+        {
+          "name": "即時參數滑桿",
+          "how": "把模擬狀態存在 class 欄位並用 Timer 連續執行，以 GH 滑桿即時改 sensorAngle、turnAngle。",
+          "effect": "可在現場即時探索圖樣，適合作評圖展示。"
+        },
+        {
+          "name": "觀眾位置當吸引子",
+          "how": "以滑鼠或感測器位置作為食物點，每步注入痕跡。",
+          "effect": "網絡會追著觀眾移動，形成互動裝置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "Timer",
+        "吸引子控制"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/Bleuje/interactive-physarum"
+    },
+    {
+      "id": "D03-01",
+      "algo": "D03",
+      "title": "社會力模型（Social Force Model）",
+      "creator": "Dirk Helbing, Péter Molnár",
+      "year": "1995",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "群體／都市",
+      "summary": "基礎範例的理論來源：把行人看成受「想去目的地的驅動力」與「他人、牆面排斥力」作用的粒子。模型能自然重現對向人流自動分成車道、門口雙向交替通行等現象。",
+      "variations": [
+        {
+          "name": "雙向對流",
+          "how": "設兩組出發點與互換的目的地，其餘規則不變。",
+          "effect": "觀察車道自組織的形成。"
+        },
+        {
+          "name": "視野角度",
+          "how": "在 PeopleForce 中對身後的人（與速度方向內積為負）降低推力權重。",
+          "effect": "行為更接近真人：只閃避前方的人。"
+        },
+        {
+          "name": "牆面排斥",
+          "how": "新增 walls 曲線輸入，用 ClosestPoint 計算與牆的距離並加上指數衰減的推力。",
+          "effect": "可以在平面圖上直接模擬走廊與門口。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "物理模擬",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "數學模型"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-02",
+      "algo": "D03",
+      "title": "逃生恐慌模擬與「越急越慢」",
+      "creator": "Dirk Helbing, Illés Farkas, Tamás Vicsek",
+      "year": "2000",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "在社會力模型中加入身體擠壓與摩擦，模擬緊急疏散時出口前的拱形堵塞；結果顯示人越急反而越慢，並提出在出口前方適當位置放柱子可以減少堵塞。",
+      "variations": [
+        {
+          "name": "出口前放柱子",
+          "how": "在 obstacleCenters 加一個位於出口前方的點，掃描柱子距離與人數，記錄全部抵達所需步數。",
+          "effect": "找到能縮短疏散時間的柱位。"
+        },
+        {
+          "name": "越急越慢實驗",
+          "how": "以 Series 改變 walkSpeed，並把 MaxSpeedRatio 提高；記錄疏散時間。",
+          "effect": "繪出速度與疏散時間的曲線，觀察超過某值後反而變慢。"
+        },
+        {
+          "name": "身體擠壓力",
+          "how": "當兩人 gap < 0 時額外加上與重疊量成正比的彈力及切向摩擦力。",
+          "effect": "出口前出現拱形堵塞與間歇性湧出。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "物理模擬",
+        "最佳化"
+      ],
+      "tools": [
+        "數學模型"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-03",
+      "algo": "D03",
+      "title": "草地上的捷徑：人類步道系統的演化",
+      "creator": "Dirk Helbing, Joachim Keltsch, Péter Molnár",
+      "year": "1997",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "地景",
+      "summary": "以「主動行走者」模型解釋公園草地上被踩出的捷徑：行人偏好走已被踩過的路，路徑又會因少人走而恢復。模型與黏菌的「留痕跡—跟隨痕跡」機制非常相似，可用來預測慾望路徑。",
+      "variations": [
+        {
+          "name": "踩踏痕跡場",
+          "how": "加入 double[,] 痕跡網格，每人每步在所在格加值並全場衰減；目標力方向加上痕跡梯度的偏好。",
+          "effect": "多次模擬後自然出現被大家共用的捷徑網絡。"
+        },
+        {
+          "name": "多組起訖點",
+          "how": "每個人隨機從入口清單中選起點與終點，而不是單一目的地。",
+          "effect": "得到像校園草地上三角形折衷路徑的步道系統。"
+        },
+        {
+          "name": "轉成鋪面設計",
+          "how": "痕跡場以門檻取等值線（C05）成為步道輪廓並 Offset 出鋪面邊界。",
+          "effect": "直接從使用行為推導出步道配置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "網格擴散",
+        "開放生長"
+      ],
+      "tools": [
+        "數學模型"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-04",
+      "algo": "D03",
+      "title": "自然移動理論與軸線圖（Space Syntax）",
+      "creator": "Bill Hillier, Alan Penn 等",
+      "year": "1993",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "Space syntax 認為街道網絡的空間構成（整合度）本身就能解釋大部分的步行人流，並以軸線圖和可見度圖呈現。它不模擬個人，而是用圖論分析空間，常與代理人模擬互補。",
+      "variations": [
+        {
+          "name": "整合度當作吸引場",
+          "how": "先在網格上算每點的可見範圍或整合度，作為額外的吸引力方向加入目標力。",
+          "effect": "人流集中在整合度高的主軸上，更接近 space syntax 的預測。"
+        },
+        {
+          "name": "模擬結果對照",
+          "how": "把人流熱圖與整合度圖並排或計算相關係數。",
+          "effect": "檢驗「空間構成決定人流」在自己的基地是否成立。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "DepthmapX"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-05",
+      "algo": "D03",
+      "title": "Trafalgar Square 步行化改造中的人流分析",
+      "creator": "Space Syntax Ltd × Foster + Partners",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "群體／都市",
+      "summary": "倫敦 World Squares for All 計畫中，Space Syntax 以人流觀測與空間分析支持把廣場北側道路步行化並新增大階梯，是以人流分析直接影響公共空間設計的代表案例。",
+      "variations": [
+        {
+          "name": "多入口多目的地",
+          "how": "出發點與目的地都改為清單，每人隨機配對起訖點。",
+          "effect": "得到廣場內的交叉穿越人流分布。"
+        },
+        {
+          "name": "新增或移除道路比較",
+          "how": "把車道以 walls 表示，分別跑有牆與無牆兩種情境並比較熱圖。",
+          "effect": "量化步行化後人流如何重新分布。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "吸引子控制"
+      ],
+      "tools": [
+        "Space syntax 分析",
+        "現場觀測"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-06",
+      "algo": "D03",
+      "title": "麥加朝覲 Jamarat 橋的人潮災害研究",
+      "creator": "Dirk Helbing, Anders Johansson, Habib Z. Al-Abideen",
+      "year": "2007",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "分析 2006 年朝覲人潮事故的影像資料，發現高密度下人流從停走波轉為「群眾湍流」，研究成果被用於改善動線管理與設施設計，是人流研究影響真實建築與營運的重要例子。",
+      "variations": [
+        {
+          "name": "密度監測",
+          "how": "每步以網格統計每平方公尺人數，超過門檻的格子標紅並輸出。",
+          "effect": "找出危險高密度區。"
+        },
+        {
+          "name": "單向動線",
+          "how": "把雙向改為分隔的單向走道（加 walls），比較最大密度與通過量。",
+          "effect": "驗證單向動線對安全的效果。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "物理模擬",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "影像追蹤",
+        "數學模型"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-07",
+      "algo": "D03",
+      "title": "MassMotion 行人模擬軟體",
+      "creator": "Oasys（Arup）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "由 Arup 發展、Oasys 發行的商業級 3D 行人模擬軟體，常用於車站、機場、體育場的動線與疏散評估，能處理樓梯、電扶梯與排隊等設施，並輸出密度熱圖與服務水準。",
+      "variations": [
+        {
+          "name": "服務水準（LOS）著色",
+          "how": "以網格統計密度，依每人可用面積分成 A–F 級並以顏色輸出。",
+          "effect": "得到與顧問報告相同格式的服務水準圖。"
+        },
+        {
+          "name": "排隊設施",
+          "how": "在閘門位置加入限速點：人進入半徑內後需停留固定秒數才能通過。",
+          "effect": "可模擬剪票口或安檢的排隊長度。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "物理模擬"
+      ],
+      "tools": [
+        "MassMotion"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-08",
+      "algo": "D03",
+      "title": "Pathfinder 疏散模擬",
+      "creator": "Thunderhead Engineering",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "常用於防火與建築法規檢討的代理人疏散模擬軟體，可匯入建築模型，計算每個出口與樓梯的疏散時間，並以動畫呈現。展示了人流模擬在建築性能設計中的實務角色。",
+      "variations": [
+        {
+          "name": "最近出口選擇",
+          "how": "goal 改成出口清單，每人以最短路徑距離選擇出口。",
+          "effect": "得到各出口負荷與總疏散時間。"
+        },
+        {
+          "name": "出口寬度掃描",
+          "how": "以兩根障礙柱之間的距離代表出口寬度，用 Series 掃描並記錄疏散時間。",
+          "effect": "找出符合目標疏散時間的最小出口寬度。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "物理模擬",
+        "最佳化"
+      ],
+      "tools": [
+        "Pathfinder"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-09",
+      "algo": "D03",
+      "title": "Arnhem Centraal 轉運站",
+      "creator": "UNStudio",
+      "year": "2015",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "建築",
+      "summary": "UNStudio 以轉乘旅客在火車、公車、停車與步行之間的動線分析作為設計主軸，最後形成連續扭轉、無明確樓層分界的大廳空間。是人流研究直接決定建築形體的代表案例。",
+      "variations": [
+        {
+          "name": "熱圖決定樓板開口",
+          "how": "把人流熱圖以門檻取等值線，高密度區作為挑空或坡道位置。",
+          "effect": "空間形體跟著主要動線走。"
+        },
+        {
+          "name": "多模式轉乘",
+          "how": "設多組起訖點（月台、公車站、停車場），並給不同組不同速度與人數。",
+          "effect": "看到不同交通模式轉乘動線的交會熱點。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "吸引子控制"
+      ],
+      "tools": [
+        "動線分析"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-10",
+      "algo": "D03",
+      "title": "Quelea：Grasshopper 代理人外掛",
+      "creator": "Alex Fischer",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "建築",
+      "summary": "Grasshopper 上的代理人模擬外掛，提供分離、對齊、聚集、尋找、環境邊界等行為元件，可以組合出人流、群集與路徑追蹤，適合與基礎 C# 範例互相對照。",
+      "variations": [
+        {
+          "name": "改寫成行為組合",
+          "how": "把 GoalForce、PeopleForce、ObstacleForce 各自寫成可開關、可加權的方法，並把權重做成輸入。",
+          "effect": "像外掛一樣能自由組合行為，方便比較。"
+        },
+        {
+          "name": "曲面環境",
+          "how": "每步移動後用 surface.ClosestPoint 把人投影回曲面。",
+          "effect": "人流可在坡地或看台上模擬。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "多元件",
+        "曲面上"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Quelea"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-11",
+      "algo": "D03",
+      "title": "DecodingSpaces Toolbox",
+      "creator": "Reinhard König 等（Bauhaus-Universität Weimar）",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing",
+        "modeling"
+      ],
+      "scale": "群體／都市",
+      "summary": "Grasshopper 的都市分析工具組，提供街道網絡中心性、可見度（isovist）等 space syntax 類型的分析，可與代理人模擬搭配，把空間分析與人流評估整合在同一個參數化流程。",
+      "variations": [
+        {
+          "name": "Isovist 加權選路",
+          "how": "對每個人前方數個候選方向計算可見距離，目標力加上偏向可見距離長的方向。",
+          "effect": "人流傾向開闊視野的路徑。"
+        },
+        {
+          "name": "中心性當人口來源",
+          "how": "以街道中心性高的節點當作出發點並給較多人數。",
+          "effect": "模擬的人流量與都市結構對應。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-12",
+      "algo": "D03",
+      "title": "視覺啟發式行人模型",
+      "creator": "Mehdi Moussaïd, Dirk Helbing, Guy Theraulaz",
+      "year": "2011",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "以兩條簡單的視覺規則（選擇最快不受阻擋的方向、與前方障礙保持反應時間距離）取代力的相加，更貼近實驗觀察，並能重現高密度下的人潮湍流。是社會力模型之後的重要改良方向。",
+      "variations": [
+        {
+          "name": "方向掃描取代目標力",
+          "how": "每人在 ±75° 內掃描若干方向，計算每個方向撞到他人前可走的距離，選擇最接近目的地且可走距離足夠的方向。",
+          "effect": "閃避更自然，較少原地抖動。"
+        },
+        {
+          "name": "距離決定速度",
+          "how": "速度設為 min(walkSpeed, 前方可走距離 ÷ 反應時間)。",
+          "effect": "高密度時自然減速，形成走走停停的波。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "搜尋"
+      ],
+      "tools": [
+        "數學模型"
+      ],
+      "url": ""
+    },
+    {
+      "id": "D03-13",
+      "algo": "D03",
+      "title": "PEDSIM 開源行人模擬函式庫",
+      "creator": "Christian Gloor",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "群體／都市",
+      "summary": "以社會力模型為核心的開源 C++ 行人模擬函式庫，提供代理人、障礙、路徑點等基本物件，程式結構與基礎範例相近，適合想把範例擴充成完整模擬器的學習者參考。",
+      "variations": [
+        {
+          "name": "路徑點（waypoint）序列",
+          "how": "Person 加上 List<Point3d> waypoints 與目前索引，抵達一點後切換下一點。",
+          "effect": "可模擬逛展、排隊繞行等多段路徑。"
+        },
+        {
+          "name": "類別拆分",
+          "how": "把力的計算移入 Person 方法、把障礙寫成 Obstacle class（圓或線段）。",
+          "effect": "程式結構更接近函式庫，易於擴充新障礙類型。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "自訂 class"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": ""
+    }
+  ]
+}

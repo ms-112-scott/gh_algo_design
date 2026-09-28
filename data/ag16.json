@@ -1,0 +1,1409 @@
+{
+  "agent": "ag16",
+  "algorithms": [
+    {
+      "id": "E01",
+      "name_zh": "圓填充",
+      "name_en": "Circle Packing",
+      "family": "E",
+      "family_name": "排列與鬆弛",
+      "file": "E01_CirclePacking.cs",
+      "loc": 168,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子",
+        "幾何"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "168 行、沒有自訂 class，只用兩個平行 List 與一個雙層迴圈兩兩互推，加上單一收斂門檻；不需空間索引，C# 基礎程度能讀懂，唯一陷阱是 Point3d 為 struct 必須整個寫回。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "收斂",
+        "鄰居搜尋",
+        "物理模擬",
+        "最佳化"
+      ],
+      "one_liner": "先把一堆大小不一的圓隨便丟在一起，再讓重疊的圓互相推開、超出邊界的拉回來，推到幾乎不重疊為止。",
+      "how_it_works": [
+        "隨機產生 circleCount 個圓：圓心散在邊界中心附近，半徑介於 minRadius 與 maxRadius 之間（一開始一定大量重疊）。",
+        "每一輪檢查所有圓的配對：兩圓重疊量 = r1 + r2 − 距離，若大於 0，兩個圓沿連線各往反方向退一半重疊量。",
+        "檢查每個圓是否超出外圍邊界圓，超出多少就往圓心拉回多少。",
+        "把這一輪累積的位移一次套用（先算完再移動，避免順序影響結果）。",
+        "重複直到總重疊量小於 0.001（收斂）或迭代次數用完，輸出圓與剩餘重疊量。"
+      ],
+      "key_params": [
+        {
+          "name": "circleCount",
+          "effect": "圓越多越擠；數量超過邊界容量時永遠無法收斂，totalOverlap 會停在大於 0。"
+        },
+        {
+          "name": "minRadius / maxRadius",
+          "effect": "兩者差距越大，大圓之間的縫越能被小圓填滿，畫面越有層次；相等時接近六角最密排列。"
+        },
+        {
+          "name": "boundaryRadius",
+          "effect": "邊界越小越擠；與圓總面積的比值決定「填充率」能否達成。"
+        },
+        {
+          "name": "iterations",
+          "effect": "推的次數上限；太少會殘留重疊，太多只是浪費時間（收斂後會自動提早停）。"
+        },
+        {
+          "name": "seed",
+          "effect": "換種子得到不同的排列，但同一種子結果可重現。"
+        }
+      ],
+      "csharp_concepts": [
+        "List<Point3d>",
+        "List<double>",
+        "Vector3d 陣列累積位移",
+        "雙層 for 迴圈（second = first + 1）",
+        "Vector3d.Unitize()",
+        "struct 值型別寫回",
+        "const 常數",
+        "提早 break 收斂"
+      ],
+      "prerequisites": [
+        "迴圈與 List",
+        "Point3d / Vector3d 運算",
+        "Point3d 是 struct",
+        "Random 與種子"
+      ],
+      "teaching_note": "非常適合從零實作：規則只有兩條、結果立即可見，而且能順便示範「收斂」與「先累積再套用」的觀念。要特別提醒 N² 的兩兩比對在 1000 顆以上會明顯變慢，這正好是引出 E02 網格空間索引的好時機。",
+      "variations": [
+        {
+          "title": "任意曲線邊界",
+          "level": 2,
+          "what_changes": "規則 2（邊界拉回）",
+          "how": "新增 Curve boundary 輸入，用 boundary.Contains() 判斷圓心是否在內、用 ClosestPoint 找最近邊界點，把圓心拉回到離邊界至少一個半徑的位置。",
+          "result": "圓填滿建築平面、基地或立面開口等任意形狀，而非只能填圓形。"
+        },
+        {
+          "title": "吸引子控制半徑",
+          "level": 2,
+          "what_changes": "初始狀態（半徑分配）",
+          "how": "新增 List<Point3d> attractors，每個圓的半徑改為依圓心到最近吸引子的距離線性映射到 minRadius–maxRadius，並在每輪推完後重算。",
+          "result": "吸引子附近圓小而密、遠處圓大而疏，形成漸變的開孔或透光密度。"
+        },
+        {
+          "title": "影像驅動半徑",
+          "level": 3,
+          "what_changes": "輸入（影像）",
+          "how": "讀入 Bitmap，用圓心對應的像素亮度決定目標半徑；暗處小圓、亮處大圓，每輪依新位置重新取樣。",
+          "result": "用圓的大小重現照片或灰階圖，可做立面圖像化開孔或海報。"
+        },
+        {
+          "title": "曲面上 circle packing",
+          "level": 3,
+          "what_changes": "維度（平面 → 曲面）",
+          "how": "每輪互推後用 Surface.ClosestPoint 把圓心拉回曲面，並用該點的法向量建立 Plane 產生 Circle；距離改用 3D 距離近似。",
+          "result": "圓貼附在自由曲面上，可當成曲面立面的開孔或面板配置。"
+        },
+        {
+          "title": "3D 球體堆疊",
+          "level": 3,
+          "what_changes": "維度（2D → 3D）",
+          "how": "初始圓心加上隨機 Z，邊界改成球或 Brep（用 IsPointInside），輸出 Sphere；互推公式完全不用改。",
+          "result": "得到球體最密堆疊、泡泡團或量體內部的空腔配置。"
+        },
+        {
+          "title": "網格空間索引加速",
+          "level": 4,
+          "what_changes": "迴圈（鄰居搜尋）",
+          "how": "仿照 E02 以 2×maxRadius 為格子大小建立 Dictionary<(int,int), List<int>>，每輪只比對同格與相鄰 8 格的圓。",
+          "result": "可在互動速度下處理數千到上萬個圓，適合大面積立面。"
+        },
+        {
+          "title": "貪婪插入式填充（先大後小）",
+          "level": 2,
+          "what_changes": "規則（改成放置與拒絕，不互推）",
+          "how": "照 Tyler Hobbs 的做法：由大到小依序隨機試放，與既有圓重疊就放棄，連續失敗 N 次換下一個尺寸；完全不需要迭代鬆弛。",
+          "result": "圓彼此完全不重疊、間隙隨機，視覺上更像手作拼貼。"
+        },
+        {
+          "title": "成長式填充",
+          "level": 2,
+          "what_changes": "狀態（半徑隨時間變大）",
+          "how": "每輪在空位新增小圓，所有圓的半徑每輪 +Δ，碰到其他圓或邊界就停止成長（加一個 bool[] isGrowing）。",
+          "result": "圓一邊出現一邊長大，最後彼此相切，適合做成動畫。"
+        },
+        {
+          "title": "Timer 動畫化",
+          "level": 3,
+          "what_changes": "迴圈（由一次算完改成逐步）",
+          "how": "把 centers、radii 移到 class 欄位，每次 RunScript 只呼叫一次 PushApart，reset 輸入為 true 時才重新初始化，搭配 Timer 元件。",
+          "result": "即時看到圓被推開、慢慢收斂的過程，便於展示與調參。"
+        },
+        {
+          "title": "輸出可製造開孔板",
+          "level": 3,
+          "what_changes": "輸出（轉成可製造幾何）",
+          "how": "每個圓半徑縮小 gap/2 作為最小肋寬，輸出成 Curve 給雷射切割，或與板材 Brep 做布林差集，並在 Print 中回報開孔率。",
+          "result": "可直接送雷切或 CNC 的穿孔板，肋寬受控不會斷裂。"
+        },
+        {
+          "title": "Circle packing → 加權 Voronoi",
+          "level": 4,
+          "what_changes": "混合其他家族（Voronoi／Power diagram）",
+          "how": "以收斂後的圓心為種子、半徑為權重做 power diagram（或簡化成一般 Voronoi 後向內偏移），得到大小不一的多邊形單元。",
+          "result": "得到大小與圓對應的蜂巢／泡泡狀分割，可做鋪面或結構網格。"
+        },
+        {
+          "title": "Apollonian 遞迴填充",
+          "level": 3,
+          "what_changes": "規則（迭代 → 遞迴）",
+          "how": "改用 Descartes 圓定理：從三個互切圓出發，遞迴計算每個空隙中與三圓相切的新圓，半徑小於門檻就停止。",
+          "result": "所有圓精確相切、無限細分的分形圖樣（Apollonian gasket）。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "漸變透光的 circle packing 立面",
+          "brief": "在建築立面輪廓內做 circle packing，依室內機能（辦公、樓梯、廁所）設定吸引子控制開孔大小，輸出可雷切的穿孔鋁板並計算每區開孔率。",
+          "difficulty": 2,
+          "combine_with": [
+            "E02"
+          ]
+        },
+        {
+          "title": "影像轉圓點的巨型壁面",
+          "brief": "讀入一張基地歷史照片，以亮度控制圓半徑做 circle packing，輸出成 CNC 鑽孔或不同尺寸圓形磁磚的施工圖與數量表。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "公園樹冠與林下空間配置",
+          "brief": "把不同樹種視為不同半徑的圓，在基地邊界內做 packing，並用步道曲線作為排斥邊界，比較不同密度下的遮蔭率。",
+          "difficulty": 3,
+          "combine_with": [
+            "E02",
+            "D01"
+          ]
+        },
+        {
+          "title": "自由曲面上的圓形採光頂棚",
+          "brief": "在 NURBS 雙曲面上做 circle packing，半徑受日照分析結果控制，最後把圓轉成平面化的圓形玻璃或 ETFE 氣枕並檢查間距。",
+          "difficulty": 4,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "3D 泡泡空間：球體堆疊到多面體單元",
+          "brief": "在建築量體內做不同大小的球體堆疊，再以球心做 3D Voronoi 得到類似 Water Cube 的泡沫多面體結構，並輸出桿件與節點。",
+          "difficulty": 5,
+          "combine_with": [
+            "E02"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Packing Circles and Spheres on Surfaces",
+          "author": "Alexander Schiftner, Mathias Höbinger, Johannes Wallner, Helmut Pottmann",
+          "year": "2009",
+          "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html"
+        },
+        {
+          "title": "A Randomized Approach to Circle Packing",
+          "author": "Tyler Hobbs",
+          "year": "2016",
+          "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing"
+        },
+        {
+          "title": "Coding Challenge #50.1: Animated Circle Packing",
+          "author": "Daniel Shiffman（The Coding Train）",
+          "year": "",
+          "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE"
+        },
+        {
+          "title": "Apollonian gasket（維基百科）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Apollonian_gasket"
+        },
+        {
+          "title": "Circle packing in a circle（維基百科）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Circle_packing_in_a_circle"
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "name_zh": "Poisson 圓盤取樣",
+      "name_en": "Poisson Disk Sampling",
+      "family": "E",
+      "family_name": "排列與鬆弛",
+      "file": "E02_PoissonDisk.cs",
+      "loc": 155,
+      "logic": [
+        "搜尋／求解"
+      ],
+      "data_structure": [
+        "粒子",
+        "網格"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "155 行、無自訂 class，但用了 int[,] 網格空間索引、活躍名單（active list）的 while 迴圈與 5×5 鄰格檢查；需要理解 cellSize = r/√2 的理由，比單純雙層迴圈難一級。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "空間索引",
+        "鄰居搜尋",
+        "開放生長"
+      ],
+      "one_liner": "撒出「均勻但不規則」的點：任兩點至少相隔 minDistance，卻不像格子那麼死板，也不像純隨機那樣擠成一團。",
+      "how_it_works": [
+        "建立邊長 minDistance/√2 的網格，保證每格最多只會有一個點，並用 int[,] 記錄每格裡是第幾個點（-1 = 空）。",
+        "隨機放第一個點，加入「還能往外長」的名單。",
+        "從名單隨機挑一個點，在它外圍 minDistance 到 2×minDistance 的圓環內隨機試放候選點。",
+        "只檢查候選點周圍 5×5 格裡的點：全部都夠遠就收下，登記到網格並加入名單。",
+        "若試了 triesPerPoint 次都失敗，就把這個點移出名單；名單空了代表整個範圍已填滿，同時輸出同點數的純隨機點做對照。"
+      ],
+      "key_params": [
+        {
+          "name": "minDistance",
+          "effect": "點與點的最小間距，直接決定密度；減半會讓點數約變 4 倍。"
+        },
+        {
+          "name": "triesPerPoint",
+          "effect": "每個點往外試幾次（Bridson 建議 30）；越小越快但留下的空洞越多，越大越緻密。"
+        },
+        {
+          "name": "width / height",
+          "effect": "取樣範圍；點數大約與面積成正比。"
+        },
+        {
+          "name": "seed",
+          "effect": "換種子得到不同排列，同一種子可重現。"
+        }
+      ],
+      "csharp_concepts": [
+        "int[,] 二維陣列",
+        "GetLength(0) / GetLength(1)",
+        "List<int> 活躍名單與 RemoveAt",
+        "while 迴圈直到名單為空",
+        "極座標取樣（Math.Cos / Math.Sin）",
+        "bool 函式早退（return false）",
+        "(int) 強制轉型求格子編號"
+      ],
+      "prerequisites": [
+        "迴圈、List 與陣列",
+        "距離與極座標",
+        "E01 的兩兩比對（對照為何需要空間索引）"
+      ],
+      "teaching_note": "適合從零實作，但建議先讓學習者寫「暴力版」（每個候選點跟所有點比），再改成網格版，親身感受空間索引的速度差。poissonPoints 與 randomPoints 並排顯示非常直觀，是講「藍噪點 vs 白噪點」的好教材。",
+      "variations": [
+        {
+          "title": "變密度取樣（影像／吸引子）",
+          "level": 3,
+          "what_changes": "規則（minDistance 變成位置的函式）",
+          "how": "新增 Func<Point3d,double> 或依影像亮度／吸引子距離計算每個點的 r(p)；網格 cellSize 改用最小半徑，檢查範圍擴大到 ceil(rMax/cellSize) 格，判斷距離時用兩點半徑的最大值。",
+          "result": "點在指定區域變密、其他區域變疏，可做漸變開孔、點描圖或植栽密度。"
+        },
+        {
+          "title": "任意曲線邊界",
+          "level": 2,
+          "what_changes": "規則（範圍檢查）",
+          "how": "把 IsFarEnough 開頭的矩形檢查換成 boundary.Contains(candidate) == PointContainment.Inside，網格仍以邊界的 BoundingBox 建立；可再加內部洞口曲線排除。",
+          "result": "點只落在基地、立面或平面輪廓內，並能避開中庭或既有結構。"
+        },
+        {
+          "title": "3D Poisson 取樣",
+          "level": 3,
+          "what_changes": "維度（2D → 3D）",
+          "how": "cellSize 改成 minDistance/√3、網格改為 int[,,]、候選點在球殼內用兩個角度取樣，檢查範圍改為 5×5×5 格。",
+          "result": "空間中均勻而不規則的點雲，可當 3D Voronoi 種子或空間桁架節點。"
+        },
+        {
+          "title": "曲面上取樣",
+          "level": 4,
+          "what_changes": "維度（平面 → 曲面）",
+          "how": "在曲面的 UV 空間生成候選點，但距離判斷改用 surface.PointAt(u,v) 之後的 3D 距離；或先在曲面上撒大量隨機點，再做 Yuksel 的 sample elimination 刪到目標點數。",
+          "result": "在彎曲立面或屋頂上得到間距一致的點，不會因 UV 拉伸而疏密不均。"
+        },
+        {
+          "title": "多類別 Poisson（多種物件）",
+          "level": 3,
+          "what_changes": "狀態（每個點帶類別與半徑）",
+          "how": "每個點多存一個 type 與 radius，檢查距離時改用 r_i + r_j（或類別間的間距表），先放大半徑類別再放小的。",
+          "result": "大樹、小樹、灌木或大小開孔各自有合理的最小間距，彼此不衝突。"
+        },
+        {
+          "title": "Poisson 點 → Voronoi／Delaunay",
+          "level": 2,
+          "what_changes": "混合其他家族（輸出轉幾何）",
+          "how": "把 poissonPoints 接到 Grasshopper 的 Voronoi 或 Delaunay 元件，或在 C# 中用 Rhino 的 Delaunay 功能產生網格。",
+          "result": "得到單元大小接近一致但形狀自然的分割，適合鋪面、石板與結構網格。"
+        },
+        {
+          "title": "點描開孔（stippling）",
+          "level": 2,
+          "what_changes": "輸出（點 → 圓孔）",
+          "how": "每個點依影像亮度產生不同半徑的圓，半徑上限設為 minDistance/2 減去肋寬，保證孔與孔不相交。",
+          "result": "用開孔大小與密度重現影像的穿孔板或點描海報。"
+        },
+        {
+          "title": "Lloyd 鬆弛修整",
+          "level": 4,
+          "what_changes": "混合迭代（後處理）",
+          "how": "以取樣結果為種子做 Voronoi，將每個點移到所屬單元的（加權）重心，重複數次；加權版即 Secord 的 weighted Voronoi stippling。",
+          "result": "點分布更均勻，單元更接近正六邊形，影像點描的色調更平滑。"
+        },
+        {
+          "title": "TSP 單筆路徑",
+          "level": 4,
+          "what_changes": "輸出（點 → 連續路徑）",
+          "how": "用最近鄰居法加 2-opt 把所有點串成一條不交叉的折線，輸出 Polyline。",
+          "result": "可給繪圖機、雷射或 3D 列印連續走完的單筆線稿。"
+        },
+        {
+          "title": "逐步生長動畫",
+          "level": 3,
+          "what_changes": "迴圈（改成每次 Timer 只做 K 步）",
+          "how": "把 acceptedPoints、growingPoints、cellOwner 移到欄位，每次 RunScript 只處理 K 次挑點，並另外輸出目前名單中的點以不同顏色顯示。",
+          "result": "看見點從一個種子往外擴散的「波前」，適合展示演算法本質。"
+        },
+        {
+          "title": "沿曲線的 1D Poisson",
+          "level": 2,
+          "what_changes": "維度（2D → 1D）",
+          "how": "在曲線參數上取樣：以弧長代替座標，新點位置 = 上一點弧長 + minDistance × (1 + random)，用 Curve.PointAtLength 取點。",
+          "result": "沿步道或立面分割線放置柱子、路燈或欄杆，間距自然但不小於規範值。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "變密度點描穿孔立面",
+          "brief": "以立面日照或視線分析圖作為密度圖，做變密度 Poisson 取樣再轉成大小不一的圓孔，輸出雷切檔並驗證最小肋寬。",
+          "difficulty": 2,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "多物種植栽點位產生器",
+          "brief": "在景觀基地中，依樹種冠幅設定不同最小間距做多類別 Poisson，並以步道、建築退縮曲線為排除區，輸出各樹種數量表。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "Poisson + Voronoi 自然石鋪面",
+          "brief": "在廣場邊界內做 Poisson 取樣，用 Voronoi 切出石塊並向內偏移留縫，依石塊面積分群以控制材料種類。",
+          "difficulty": 3,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "自由曲面屋頂的均勻節點網格",
+          "brief": "在雙曲面屋頂上做曲面 Poisson 取樣，以 Delaunay 連成三角網作為結構桿件，比較與 UV 均分網格的桿長變異。",
+          "difficulty": 4,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "3D Poisson 泡沫結構體",
+          "brief": "在量體內做 3D 變密度 Poisson 取樣，接 3D Voronoi 產生泡沫單元，外圍密、內部疏，輸出可 3D 列印的格架。",
+          "difficulty": 5,
+          "combine_with": [
+            "C04",
+            "E01"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
+          "author": "Robert Bridson",
+          "year": "2007",
+          "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf"
+        },
+        {
+          "title": "Weighted Voronoi Stippling",
+          "author": "Adrian Secord",
+          "year": "2002",
+          "url": "https://dl.acm.org/doi/abs/10.1145/508530.508537"
+        },
+        {
+          "title": "Sample Elimination for Generating Poisson Disk Sample Sets",
+          "author": "Cem Yuksel",
+          "year": "2015",
+          "url": "http://www.cemyuksel.com/research/sampleelimination/"
+        },
+        {
+          "title": "Visualizing Algorithms",
+          "author": "Mike Bostock",
+          "year": "2014",
+          "url": "https://bost.ocks.org/mike/algorithms/"
+        },
+        {
+          "title": "Poisson-Disc Sampling（互動視覺化）",
+          "author": "Jason Davies",
+          "year": "",
+          "url": "https://www.jasondavies.com/poisson-disc/"
+        },
+        {
+          "title": "Coding Challenge #33: Poisson-disc Sampling",
+          "author": "Daniel Shiffman（The Coding Train）",
+          "year": "",
+          "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "E01-01",
+      "algo": "E01",
+      "title": "Packing Circles and Spheres on Surfaces（CP mesh）",
+      "creator": "Alexander Schiftner, Mathias Höbinger, Johannes Wallner, Helmut Pottmann",
+      "year": "2009",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance",
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "SIGGRAPH Asia 2009 論文，提出一種三角網格，其每個三角面的內切圓彼此相切形成 packing，可延伸出曲面上的圓形圖樣、球體堆疊、帶無扭轉支撐結構的六角網格等，專為自由曲面建築設計。演算法角色是「以最佳化讓網格達到內切圓相切」，和基礎範例的互推同屬收斂型鬆弛。",
+      "variations": [
+        {
+          "name": "由圓心改為網格頂點",
+          "how": "基礎範例移動的是圓心；改成移動三角網格頂點，目標函式是讓相鄰三角形的內切圓在共用邊上相切（兩圓切點重合）。",
+          "effect": "得到能直接當結構網格的 CP mesh，圓可作為開孔或玻璃。"
+        },
+        {
+          "name": "圓 → 球 → 節點",
+          "how": "將每個內切圓沿法向量推成球，球心連線做成桿件。",
+          "effect": "得到球體相切的空間結構，節點幾何單純利於製造。"
+        },
+        {
+          "name": "曲面約束",
+          "how": "每輪最佳化後把頂點拉回參考曲面（Surface.ClosestPoint），邊界頂點鎖在邊緣曲線上。",
+          "effect": "圓的排列貼合任意自由曲面設計。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "曲面上",
+        "最佳化",
+        "收斂",
+        "3D"
+      ],
+      "tools": [
+        "研究原型",
+        "數值最佳化"
+      ],
+      "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html"
+    },
+    {
+      "id": "E01-02",
+      "algo": "E01",
+      "title": "北京國家游泳中心「水立方」泡泡立面",
+      "creator": "PTW Architects、Arup、CSCEC、CCDI",
+      "year": "2008",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "為 2008 北京奧運興建，立面與屋頂靈感來自肥皂泡的自然排列（Weaire-Phelan 泡沫結構），以鋼構空間桁架與 ETFE 氣枕構成，看似隨機卻高度重複、可施工。它是「3D 球體／泡泡堆疊再切成多面體」的經典建築案例。",
+      "variations": [
+        {
+          "name": "3D 球體堆疊當泡泡種子",
+          "how": "將 E01 升到 3D（圓心加 Z、輸出 Sphere），在長方體量體內做不同半徑的球體 packing。",
+          "effect": "得到大小不一但分布均勻的泡泡中心。"
+        },
+        {
+          "name": "球心轉多面體單元",
+          "how": "以收斂後的球心做 3D Voronoi（或 power diagram 以半徑加權），再用量體外框切出立面剖面。",
+          "effect": "立面上出現類似水立方的不規則多邊形泡泡格。"
+        },
+        {
+          "name": "限制泡泡尺寸種類",
+          "how": "半徑不再連續隨機，而是從少數幾種尺寸清單中挑選（List<double> 尺寸族）。",
+          "effect": "降低構件種類，接近實際專案「幾種尺寸重複使用」的可建造性。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "物理模擬",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/"
+    },
+    {
+      "id": "E01-03",
+      "algo": "E01",
+      "title": "Circle-Pack Facade（Kangaroo 自由邊界立面開孔）",
+      "creator": "Parametric House",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 在自由形狀邊界內排圓，做成參數化立面，並用點吸引子控制最小與最大半徑。與基礎範例幾乎同構，只是把互推交給 Kangaroo 求解。",
+      "variations": [
+        {
+          "name": "吸引子控制半徑",
+          "how": "每個圓的半徑依到吸引點的距離 remap 到 minRadius–maxRadius，每輪重算。",
+          "effect": "開孔由密到疏漸變，控制視線與採光。"
+        },
+        {
+          "name": "曲線邊界",
+          "how": "把圓形邊界拉回規則改成 Curve.Contains + ClosestPoint 拉回。",
+          "effect": "開孔只出現在立面的指定區塊。"
+        },
+        {
+          "name": "輸出穿孔板",
+          "how": "圓縮小一個肋寬後與面板做 Boolean 差集，或輸出曲線給雷切。",
+          "effect": "可直接加工的穿孔金屬立面。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "吸引子控制",
+        "物理模擬"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Kangaroo"
+      ],
+      "url": "https://parametrichouse.com/parametric/circle-pack-facade/"
+    },
+    {
+      "id": "E01-04",
+      "algo": "E01",
+      "title": "Kangaroo 2 不同大小圓的曲面 circle packing",
+      "creator": "Daniel Piker（McNeel 論壇討論）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "Kangaroo 作者 Daniel Piker 在論壇與示範中展示結合 Plankton（可動態改變網格連接）與 Kangaroo（鬆弛最佳化）的 circle packing，包含變動半徑、固定半徑與尺寸族等版本，並可在曲面上進行。",
+      "variations": [
+        {
+          "name": "把互推寫成 Kangaroo goal",
+          "how": "基礎範例的「重疊就各推一半」其實就是 Kangaroo 的 Collider／SphereCollide goal；改寫成自訂 goal 或直接接元件，另加 OnMesh 約束。",
+          "effect": "可與其他 goal（錨點、邊界、平面化）同時求解。"
+        },
+        {
+          "name": "固定尺寸族",
+          "how": "半徑只從 3–5 種尺寸中選，並在收斂後統計各尺寸數量。",
+          "effect": "減少模具或切割刀具種類，利於製造。"
+        },
+        {
+          "name": "曲面上鬆弛",
+          "how": "每輪互推後用 Mesh.ClosestPoint 拉回網格，圓用該點法向量建立。",
+          "effect": "圓均勻鋪在雙曲面上。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "物理模擬",
+        "收斂"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Kangaroo",
+        "Plankton"
+      ],
+      "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23"
+    },
+    {
+      "id": "E01-05",
+      "algo": "E01",
+      "title": "Circle Packing T-Shirt（服裝曲面上的圓）",
+      "creator": "Parametric House",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 元件在 T 恤模型上鋪滿圓，示範曲面上 packing 如何用在服裝與穿戴物件。",
+      "variations": [
+        {
+          "name": "曲面拉回",
+          "how": "每輪互推後把圓心投影回服裝網格，圓平面採用該點法向量。",
+          "effect": "圓均勻貼在不可展的身體曲面上。"
+        },
+        {
+          "name": "展開成布片",
+          "how": "把網格展開成 2D 版型後，再把圓映射回平面輸出。",
+          "effect": "可雷切布料或皮革的開孔版型。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "物理模擬"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Kangaroo"
+      ],
+      "url": "https://parametrichouse.com/circle-packing-t-shirt/"
+    },
+    {
+      "id": "E01-06",
+      "algo": "E01",
+      "title": "A Randomized Approach to Circle Packing",
+      "creator": "Tyler Hobbs",
+      "year": "2016",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "生成藝術家 Tyler Hobbs 的文章：不用數學最佳化，而是暴力地在隨機位置試放圓，放得下就收，連續失敗 2000 次就換下一個較小的尺寸（例如 10 個半徑 50、300 個半徑 10）。是基礎範例「互推」法之外最直觀的替代規則。",
+      "variations": [
+        {
+          "name": "互推 → 放置與拒絕",
+          "how": "移除 PushApart 迴圈，改成對每個尺寸：隨機產生圓心，若與所有已放圓不重疊就加入，否則失敗計數 +1。",
+          "effect": "結果完全沒有重疊，縫隙分布更隨機、更有手感。"
+        },
+        {
+          "name": "尺寸清單由大到小",
+          "how": "新增兩個輸入 List<double> sizes、List<int> counts，外層迴圈依序處理。",
+          "effect": "大圓先佔位、小圓填縫，形成清楚的層次。"
+        },
+        {
+          "name": "圓內再填圓",
+          "how": "對每個大圓遞迴呼叫同一函式，以它為邊界再填更小的圓。",
+          "effect": "巢狀、分形感的圖樣。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "遞迴"
+      ],
+      "tools": [
+        "Processing",
+        "Quil／Clojure"
+      ],
+      "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing"
+    },
+    {
+      "id": "E01-07",
+      "algo": "E01",
+      "title": "Coding Challenge #50：Animated Circle Packing",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "p5.js／Processing 教學影片，示範「成長式」circle packing：每幀在空位產生新圓，圓持續長大直到碰到其他圓；後續部分用影像決定圓出現的位置，拼出文字或圖像。",
+      "variations": [
+        {
+          "name": "成長式規則",
+          "how": "新增 bool[] isGrowing，每輪所有成長中的圓 r += 0.1，碰到別的圓或邊界就停；每輪在空白處加一個新圓。",
+          "effect": "動畫中圓一邊冒出一邊長大，最後彼此相切。"
+        },
+        {
+          "name": "影像遮罩",
+          "how": "讀入黑白影像，只允許在白色像素處生成新圓，並以像素顏色上色。",
+          "effect": "用圓拼出文字或 Logo。"
+        },
+        {
+          "name": "Timer 動畫",
+          "how": "把圓的清單放到欄位，每次 RunScript 只推進一步。",
+          "effect": "在 Grasshopper 中即時播放生成過程。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "影像輸入",
+        "開放生長"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE"
+    },
+    {
+      "id": "E01-08",
+      "algo": "E01",
+      "title": "Apollonian Gasket 互動草稿",
+      "creator": "Malin Christersson（OpenProcessing）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "OpenProcessing 上的 Apollonian gasket 互動作品，按數字鍵顯示 0–9 層遞迴，並可切換顯示與 Apollonian 圓正交的圓。Apollonian gasket 是三個互切圓出發、不斷在空隙填入相切圓的分形，是 circle packing 的「精確遞迴版」。",
+      "variations": [
+        {
+          "name": "迭代 → 遞迴",
+          "how": "改用 Descartes 圓定理（曲率 k4 = k1+k2+k3 ± 2√(k1k2+k2k3+k3k1)）計算相切圓，寫一個遞迴函式處理每個三圓空隙。",
+          "effect": "所有圓精確相切、層層細分的分形。"
+        },
+        {
+          "name": "深度控制",
+          "how": "新增 depth 輸入或最小半徑門檻作為遞迴終止條件，並用 DataTree 依層分支輸出。",
+          "effect": "可分層上色或分層加工（不同深度用不同刀具）。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "遞迴",
+        "分形",
+        "DataTree"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://openprocessing.org/sketch/147596/"
+    },
+    {
+      "id": "E01-09",
+      "algo": "E01",
+      "title": "Single Line Apollonian Gaskets for Fashion",
+      "creator": "Loe Feijs, Marina Toeters",
+      "year": "2022",
+      "category": "fabrication",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Bridges 2022 數學與藝術研討會論文，把 Apollonian gasket 轉成可用於時尚設計的單筆線圖樣，探討如何讓圓形分形能以連續路徑製作。",
+      "variations": [
+        {
+          "name": "圓 → 單筆路徑",
+          "how": "把收斂後的圓依鄰接關係（相切者視為相鄰）建圖，用深度優先走訪串成一條連續曲線。",
+          "effect": "適合刺繡、繪圖機或雷射連續加工，減少跳針或抬刀。"
+        },
+        {
+          "name": "遞迴深度當層次",
+          "how": "不同遞迴層輸出到不同圖層，給不同線材或顏色。",
+          "effect": "服裝上的圖樣有深淺與粗細層次。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "遞迴",
+        "分形"
+      ],
+      "tools": [],
+      "url": "http://www.m.archive.bridgesmathart.org/2022/bridges2022-119.pdf"
+    },
+    {
+      "id": "E01-10",
+      "algo": "E01",
+      "title": "以 Freeform Auxetics 做可穿戴、可調的 MRI 超材料",
+      "creator": "Ke Wu, Xia Zhu, Thomas G. Bifano, Stephan W. Anderson, Xin Zhang",
+      "year": "2023",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "研究論文，以計算設計工具互動且有效率地求解複雜的 circle packing 問題，用來排列可展開的自由形 auxetic（負泊松比）單元，使超材料能貼合人體曲面並調整性能。",
+      "variations": [
+        {
+          "name": "圓 = 可變形單元",
+          "how": "每個圓的位置決定一個 auxetic 單元（例如旋轉方塊）的中心與尺寸，收斂後在每個圓內放置單元幾何。",
+          "effect": "單元大小隨曲率變化、可貼合身體。"
+        },
+        {
+          "name": "目標曲面驅動半徑",
+          "how": "以曲面各處的高斯曲率決定目標半徑，曲率大處用小圓。",
+          "effect": "展開後能包覆雙曲面而不皺摺。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "曲面上",
+        "最佳化"
+      ],
+      "tools": [],
+      "url": "https://arxiv.org/pdf/2311.13611"
+    },
+    {
+      "id": "E01-11",
+      "algo": "E01",
+      "title": "Finetuning Discrete Architectural Surfaces by use of Circle Packing",
+      "creator": "Journal of Asian Architecture and Building Engineering 期刊論文（作者待查）",
+      "year": "2023",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "期刊論文，以 circle packing 作為工具微調離散化的建築曲面（網格面板），讓面板尺寸與排列更規則，承接 Schiftner 等人的 CP mesh 研究方向。",
+      "variations": [
+        {
+          "name": "圓當品質指標",
+          "how": "把網格每個面的內切圓算出來，量測相鄰內切圓的間隙或重疊量作為 totalOverlap，類似基礎範例的收斂指標。",
+          "effect": "可視化哪裡的面板最不規則、需要調整。"
+        },
+        {
+          "name": "以互推修正頂點",
+          "how": "把基礎範例的互推位移改施加在網格頂點上，並加上拉回原曲面的約束。",
+          "effect": "面板形狀更接近正三角形，尺寸種類減少。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "曲面上",
+        "收斂"
+      ],
+      "tools": [],
+      "url": "https://doi.org/10.1080/13467581.2023.2229407"
+    },
+    {
+      "id": "E01-12",
+      "algo": "E01",
+      "title": "Controlled Circle Packing with Processing",
+      "creator": "CodePlastic",
+      "year": "2017",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Processing 教學文章，示範可控制的 circle packing：以互推力讓圓分開並加入控制條件，用來做有設計意圖的圓形構圖。",
+      "variations": [
+        {
+          "name": "力的加權",
+          "how": "把「各推一半」改成依半徑比例分配（大圓推得少、小圓推得多），並加入阻尼係數。",
+          "effect": "大圓較穩定、小圓填縫，收斂更快更平順。"
+        },
+        {
+          "name": "滑鼠／點吸引",
+          "how": "加入 attractor 輸入，每輪給所有圓一個朝吸引點的小位移。",
+          "effect": "圓群聚往設計者指定的焦點。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "吸引子控制",
+        "物理模擬"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/"
+    },
+    {
+      "id": "E01-13",
+      "algo": "E01",
+      "title": "植物生態系的建模與渲染（以圓的競爭決定植株分布）",
+      "creator": "Oliver Deussen, Pat Hanrahan, Bernd Lintermann, Radomír Měch, Matt Pharr, Przemyslaw Prusinkiewicz",
+      "year": "1998",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "地景",
+      "summary": "SIGGRAPH 1998 論文 Realistic Modeling and Rendering of Plant Ecosystems，以圓代表每株植物的影響範圍，透過圓的重疊競爭（較弱者死亡）與成長模擬出自然的植被分布，再放置 L-System 植物模型。是 circle packing 應用在地景配置的經典做法。",
+      "variations": [
+        {
+          "name": "重疊 → 淘汰",
+          "how": "兩圓重疊時不互推，而是比較半徑，較小的圓被移除（或縮小），每輪所有圓半徑成長。",
+          "effect": "自然形成「大樹稀疏、小樹填縫」的自我疏化林相。"
+        },
+        {
+          "name": "多物種",
+          "how": "每個圓加上 species 欄位，不同物種有不同最大半徑與耐陰度。",
+          "effect": "群落邊界與混生區域自然出現。"
+        },
+        {
+          "name": "接 L-System",
+          "how": "收斂後在每個圓心放置 A01 的 L-System 樹，半徑決定代數與大小。",
+          "effect": "完整的 3D 地景植栽模型。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "物理模擬",
+        "隨機",
+        "多元件"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "E01-14",
+      "algo": "E01",
+      "title": "d3.pack 階層式圓形圖（circle packing 資料視覺化）",
+      "creator": "Mike Bostock（D3.js）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "D3.js 的 pack 版面以圓的面積代表數值、以圓套圓代表階層，是資訊圖表中最常見的 circle packing 用法。可轉用於建築計畫書的空間需求（各空間面積）視覺化。",
+      "variations": [
+        {
+          "name": "半徑 = √面積",
+          "how": "輸入 List<double> areas（空間需求表），半徑設為 √(area/π)，再做 packing。",
+          "effect": "一眼看出各空間需求大小的泡泡圖（bubble diagram）。"
+        },
+        {
+          "name": "巢狀邊界",
+          "how": "先 pack 各樓層或分區的大圓，再以每個大圓為邊界 pack 其中的房間。",
+          "effect": "空間計畫的階層式泡泡圖。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "遞迴",
+        "DataTree"
+      ],
+      "tools": [
+        "D3.js",
+        "JavaScript"
+      ],
+      "url": ""
+    },
+    {
+      "id": "E02-01",
+      "algo": "E02",
+      "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
+      "creator": "Robert Bridson",
+      "year": "2007",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "SIGGRAPH 2007 短文，提出只要對傳統 dart throwing 做小修改（在既有點的 r–2r 環內試放、用網格加速），就能以 O(N) 時間在任意維度產生 Poisson 圓盤取樣，正是基礎範例的原始演算法。",
+      "variations": [
+        {
+          "name": "升到 3D",
+          "how": "cellSize = r/√3、網格改 int[,,]、候選點改在球殼內取樣，鄰格檢查改為 3D。",
+          "effect": "空間中的藍噪點，可當 3D Voronoi 或粒子初始位置。"
+        },
+        {
+          "name": "調整 k 值",
+          "how": "把 triesPerPoint 從 30 改成 5–10 做比較並計時（Stopwatch）。",
+          "effect": "理解速度與填充緻密度的取捨。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "空間索引",
+        "隨機",
+        "3D"
+      ],
+      "tools": [
+        "研究原型"
+      ],
+      "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf"
+    },
+    {
+      "id": "E02-02",
+      "algo": "E02",
+      "title": "Weighted Voronoi Stippling（加權 Voronoi 點描）",
+      "creator": "Adrian Secord",
+      "year": "2002",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "NPAR 2002 論文，模仿傳統點描畫以點的疏密表現色調：以影像亮度為權重反覆做加權 Voronoi 重心鬆弛（Lloyd），把點移到暗處較密的位置。常以 Poisson 或隨機點作為初始點，是變密度藍噪點取樣的代表作。",
+      "variations": [
+        {
+          "name": "Poisson 當初始點",
+          "how": "先以 E02 產生點（或依亮度的變密度版），再進行加權 Lloyd 鬆弛。",
+          "effect": "收斂更快、初始不會有大片空洞。"
+        },
+        {
+          "name": "加權重心",
+          "how": "每個 Voronoi 單元內取樣像素，以（1 − 亮度）為權重計算重心，把點移過去。",
+          "effect": "暗處點密、亮處點疏，重現照片色調。"
+        },
+        {
+          "name": "點 → 開孔",
+          "how": "把最終點轉成相同或依亮度變化的圓孔。",
+          "effect": "點描影像穿孔立面或鋼板。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "影像輸入",
+        "收斂",
+        "最佳化"
+      ],
+      "tools": [
+        "研究原型"
+      ],
+      "url": "https://dl.acm.org/doi/abs/10.1145/508530.508537"
+    },
+    {
+      "id": "E02-03",
+      "algo": "E02",
+      "title": "StippleGen：加權 Voronoi 點描與 TSP 路徑",
+      "creator": "Evil Mad Scientist Laboratories（Windell Oskay 等）",
+      "year": "2012",
+      "category": "fabrication",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 Processing 寫成的免費開源軟體，實作 Secord 的點描演算法，並能把點串成旅行推銷員（TSP）單一路徑，輸出 SVG 給繪圖機、Egg-Bot 或 CNC 使用，最多約 10,000 點。",
+      "variations": [
+        {
+          "name": "點 → TSP 路徑",
+          "how": "對 poissonPoints 做最近鄰居串接，再以 2-opt 消除交叉，輸出 Polyline。",
+          "effect": "繪圖機一筆畫完，抬筆次數大幅減少。"
+        },
+        {
+          "name": "路徑 → 雕刻",
+          "how": "把 Polyline 交給 CNC 以固定深度雕刻或雷射燒刻。",
+          "effect": "木板或金屬板上的連續線點描圖。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "影像輸入",
+        "最佳化"
+      ],
+      "tools": [
+        "Processing",
+        "Inkscape"
+      ],
+      "url": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/"
+    },
+    {
+      "id": "E02-04",
+      "algo": "E02",
+      "title": "Sample Elimination for Generating Poisson Disk Sample Sets",
+      "creator": "Cem Yuksel",
+      "year": "2015",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Eurographics 2015 論文，先撒出大量隨機點，再以加權方式逐一刪除最擠的點，直到剩下目標數量的 Poisson 取樣；因只需要距離計算，可直接用在 3D 網格表面，論文示範了在兔子模型上放頭髮與在樹枝上放葉子。",
+      "variations": [
+        {
+          "name": "由「長出來」改成「刪下去」",
+          "how": "先用 Mesh 表面隨機取樣 5N 個點，建立每點的擁擠權重（鄰近點距離和），反覆刪掉權重最大者並更新鄰居，直到剩 N 個點。",
+          "effect": "可精確指定點數，且適用任何曲面或網格。"
+        },
+        {
+          "name": "在建築曲面上放構件",
+          "how": "把剩下的點當作面板支撐點或植栽牆盆位置，用點的法向量建立 Plane 放置構件。",
+          "effect": "自由曲面上間距均勻的構件配置。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "曲面上",
+        "空間索引",
+        "3D"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": "http://www.cemyuksel.com/research/sampleelimination/"
+    },
+    {
+      "id": "E02-05",
+      "algo": "E02",
+      "title": "Visualizing Algorithms：Poisson-disc 取樣動畫",
+      "creator": "Mike Bostock",
+      "year": "2014",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "D3.js 作者的長文，以動畫比較純隨機、Mitchell 最佳候選法與 Bridson 的 Poisson-disc 取樣，展示新點如何從既有點逐步向外長出；是把基礎範例視覺化最好的參考。",
+      "variations": [
+        {
+          "name": "顯示活躍名單",
+          "how": "多輸出一組 activePoints（growingPoints 對應的點）與每次試放的候選點，用不同顏色顯示。",
+          "effect": "看得見「波前」由種子往外擴散。"
+        },
+        {
+          "name": "改成最佳候選法",
+          "how": "每次產生 k 個隨機候選點，選離既有點最遠者，不需要活躍名單。",
+          "effect": "比較兩種演算法的速度與分布差異。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "隨機"
+      ],
+      "tools": [
+        "D3.js",
+        "JavaScript"
+      ],
+      "url": "https://bost.ocks.org/mike/algorithms/"
+    },
+    {
+      "id": "E02-06",
+      "algo": "E02",
+      "title": "Poisson-Disc Sampling 互動視覺化",
+      "creator": "Jason Davies",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以動畫展示 Bridson 的 O(n) 演算法如何產生「緊密但不小於最小距離」的點，作者並提到曾把 Poisson-disc 取樣用在球面上。",
+      "variations": [
+        {
+          "name": "球面取樣",
+          "how": "候選點改在球面上取樣（切平面內偏移後正規化回球面），距離改用大圓距離或弦長。",
+          "effect": "在圓頂或球形量體上均勻分布開孔或節點。"
+        },
+        {
+          "name": "點 → Voronoi 圖樣",
+          "how": "把點接 Voronoi 元件並向內偏移。",
+          "effect": "大小均勻、形狀自然的細胞圖樣。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "動畫"
+      ],
+      "tools": [
+        "D3.js",
+        "JavaScript"
+      ],
+      "url": "https://www.jasondavies.com/poisson-disc/"
+    },
+    {
+      "id": "E02-07",
+      "algo": "E02",
+      "title": "Coding Challenge #33：Poisson-disc Sampling",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "p5.js 現場寫程式教學，一步步建立網格、活躍名單與鄰格檢查，實作 Bridson 演算法；結構與基礎 C# 範例幾乎一一對應，適合自學對照。",
+      "variations": [
+        {
+          "name": "上色依生成順序",
+          "how": "輸出每個點的收下順序編號，映射到漸層色。",
+          "effect": "看得出由種子向外擴張的年輪狀圖樣。"
+        },
+        {
+          "name": "多個種子",
+          "how": "初始化時放入多個種子點（例如滑鼠點或輸入點清單）。",
+          "effect": "多個波前同時生長並在中間相遇。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "空間索引"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling"
+    },
+    {
+      "id": "E02-08",
+      "algo": "E02",
+      "title": "mapgen4：Poisson 點＋Voronoi 的程序化地形地圖",
+      "creator": "Amit J. Patel（Red Blob Games）",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "地景",
+      "summary": "互動式程序化地圖產生器，以 poisson-disk-sampling 函式庫產生點，再建立 Delaunay／Voronoi 結構，於其上計算高程、河流與降雨，最後渲染成手繪風地圖。",
+      "variations": [
+        {
+          "name": "Poisson 點 → Delaunay 地形網格",
+          "how": "以取樣點建立 Delaunay 三角網，每個頂點的 Z 值由噪聲（C04）決定。",
+          "effect": "不規則但均勻的地形網格，沒有格狀假象。"
+        },
+        {
+          "name": "Voronoi 區塊當地塊",
+          "how": "每個 Voronoi 單元依高程或坡度分類成水域、綠地或建地。",
+          "effect": "自然形狀的基地分區圖。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "多元件",
+        "隨機"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL"
+      ],
+      "url": "https://www.redblobgames.com/maps/mapgen4/"
+    },
+    {
+      "id": "E02-09",
+      "algo": "E02",
+      "title": "Poisson disc vs. jittered grid 比較",
+      "creator": "Amit J. Patel（Red Blob Games）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "比較抖動格點與 Poisson disc 兩種產生不規則點的方法，說明 Poisson disc 沒有群聚、空洞較少、角度分布較佳，並指出把 tries 從預設 30 降到 5–10 可加速 2–4 倍而品質仍可接受。",
+      "variations": [
+        {
+          "name": "改成抖動格點對照",
+          "how": "新增第三個輸出：每個網格中心加上小於 cellSize/2 的隨機偏移。",
+          "effect": "三組點（隨機、抖動、Poisson）並排比較，理解藍噪點。"
+        },
+        {
+          "name": "降低 tries 做效能測試",
+          "how": "用 System.Diagnostics.Stopwatch 量測不同 triesPerPoint 的時間與點數。",
+          "effect": "學會在大尺度（整個街區植栽）時取得速度與品質的平衡。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "空間索引"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://www.redblobgames.com/x/1830-jittered-grid/"
+    },
+    {
+      "id": "E02-10",
+      "algo": "E02",
+      "title": "Blender Geometry Nodes：Distribute Points on Faces（Poisson Disk 模式）",
+      "creator": "Blender Foundation",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "地景",
+      "summary": "Blender 幾何節點中的點分布節點提供 Random 與 Poisson Disk 兩種模式，後者在網格表面上以最小距離與密度（可用權重貼圖控制）撒點，常用於散佈植物、石頭等實例。",
+      "variations": [
+        {
+          "name": "網格表面取樣",
+          "how": "在 C# 中先用 MeshFace 面積加權隨機取樣大量點，再依 minDistance 做剔除（類似 Yuksel 或 dart throwing）。",
+          "effect": "在地形網格上均勻散佈樹木或景觀元素。"
+        },
+        {
+          "name": "頂點色控制密度",
+          "how": "讀取 Mesh.VertexColors 或自訂權重作為局部 minDistance。",
+          "effect": "坡度大處稀疏、谷地密集等設計意圖的植栽分布。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "3D"
+      ],
+      "tools": [
+        "Blender"
+      ],
+      "url": "https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/point/distribute_points_on_faces.html"
+    },
+    {
+      "id": "E02-11",
+      "algo": "E02",
+      "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
+      "creator": "Peter Krattenmacher（McNeel 論壇）",
+      "year": "2020",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "論壇使用者分享自製的 Grasshopper Poisson 取樣元件，一個做標準 2D 取樣，另一個在 3D 空間中以球代替圓盤，並計畫開發測地距離（geodesic）版本以用於曲面。",
+      "variations": [
+        {
+          "name": "測地距離版",
+          "how": "在網格上以測地距離（沿表面最短距離，可用 Dijkstra 在網格邊上近似）取代直線距離判斷。",
+          "effect": "在強烈彎曲的曲面上間距仍然一致。"
+        },
+        {
+          "name": "3D 點當空間桁架節點",
+          "how": "3D 取樣後以固定半徑連接鄰近點成桿件，輸出 Line 清單。",
+          "effect": "不規則但桿長接近的空間桁架。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "曲面上",
+        "空間索引"
+      ],
+      "tools": [
+        "Grasshopper",
+        "C#"
+      ],
+      "url": "https://discourse.mcneel.com/t/poisson-disk-sampling-component/109884"
+    },
+    {
+      "id": "E02-12",
+      "algo": "E02",
+      "title": "玻璃纖維立體字的有機纖維分布",
+      "creator": "McNeel 論壇討論（Laurent Delrieu 回覆）",
+      "year": "2025",
+      "category": "art-installation",
+      "categories_extra": [
+        "modeling",
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "論壇上一個以大量纖維構成、帶放射狀動態模糊感的 3D 字體案例，回覆者建議以 Poisson 圓盤取樣取代 Populate Geometry，讓纖維起點分布更有機、不群聚，再以 Pipe 與網格化轉成 3D 物件。",
+      "variations": [
+        {
+          "name": "邊界改成文字輪廓",
+          "how": "把矩形範圍換成文字曲線（TextEntity 轉 Curve），用 Contains 判斷候選點。",
+          "effect": "點均勻填滿字形。"
+        },
+        {
+          "name": "點 → 放射狀纖維",
+          "how": "每個點沿遠離某中心的方向長出長度隨機的線段，再 Pipe 成實體。",
+          "effect": "帶有速度感的纖維字體，可做裝置或招牌。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463"
+    }
+  ]
+}

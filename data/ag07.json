@@ -1,0 +1,1390 @@
+{
+  "agent": "ag07",
+  "algorithms": [
+    {
+      "id": "B02",
+      "name_zh": "DLA 擴散限制聚集",
+      "name_en": "Diffusion-Limited Aggregation",
+      "family": "B",
+      "family_name": "生長",
+      "file": "B02_DLA.cs",
+      "loc": 215,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子",
+        "圖（點＋連線）"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "主流程只是一個粒子迴圈加一個隨機走函式，但用了自訂 class NearbyPointFinder（格子雜湊空間索引）與 out 參數，且走丟重生、遠距加速步長需要理解才調得動參數。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "鄰居搜尋",
+        "空間索引",
+        "開放生長",
+        "分形",
+        "自訂 class"
+      ],
+      "one_liner": "讓粒子一顆一顆隨機亂走，碰到群集就黏住，慢慢長出像珊瑚、閃電、礦物結晶一樣的樹枝狀結構。",
+      "how_it_works": [
+        "在原點放一顆種子點，當作群集的起點。",
+        "每顆新粒子從比群集稍大的圓上出發，每一步往隨機方向走 stepSize；離群集越遠就走越大步以加速。",
+        "走到群集附近時用格子空間索引找 stickDistance 內最近的已黏點，找到就黏住，並把位置對齊到剛好 stickDistance，讓枝段等長。",
+        "走出逃逸圓就回到出發圓重來；超過 MaxWalkSteps 就停止整個模擬。",
+        "每顆黏住的粒子記錄它黏在哪一顆上（stuckToIndex），最後輸出點與父子連線形成樹。"
+      ],
+      "key_params": [
+        {
+          "name": "particleCount",
+          "effect": "黏住的粒子總數；越多枝越密、群集越大，時間約隨數量超線性成長。"
+        },
+        {
+          "name": "stickDistance",
+          "effect": "黏住距離兼枝段長度，也是空間索引格子大小；越大越粗略、越快。"
+        },
+        {
+          "name": "stepSize",
+          "effect": "隨機走的步長；越大越快但枝會變粗鈍、較不細碎，太大會穿過細枝。"
+        },
+        {
+          "name": "seed",
+          "effect": "隨機種子；同一個 seed 永遠長出同一棵樹，換 seed 得到不同分枝。"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（NearbyPointFinder）",
+        "Dictionary<long, List<int>> 格子雜湊",
+        "out 參數",
+        "Random 與種子",
+        "List<Line> 輸出",
+        "Math.Floor 取格子座標",
+        "const 常數"
+      ],
+      "prerequisites": [
+        "迴圈與函式",
+        "Point3d／Vector3d 運算",
+        "List 與 Dictionary",
+        "極座標（cos、sin）"
+      ],
+      "teaching_note": "很適合從零實作：規則三句話講得完，改一行（出發位置、黏住條件）就能看到形態大變。建議先寫不含空間索引的暴力版（每步比對所有點）讓學習者感受變慢，再引入 NearbyPointFinder 說明空間索引的價值；注意 particleCount 先用 300 以內避免 GH 卡住。",
+      "variations": [
+        {
+          "title": "黏著機率（stickiness）",
+          "level": 2,
+          "what_changes": "規則",
+          "how": "在 FindNearest 找到後加 if (random.NextDouble() > stickiness) 就不黏、繼續走；新增輸入 stickiness（0.05–1）。",
+          "result": "機率低時枝變粗、變密實像苔蘚；機率 1 時最細碎。"
+        },
+        {
+          "title": "方向偏移（重力／風）",
+          "level": 2,
+          "what_changes": "狀態／迴圈",
+          "how": "每一步的位移加上一個固定偏移向量 bias（例如 -Y 方向 0.2×stepSize），出發點改成從上方直線落下。",
+          "result": "長出單向偏長的結構，像冰柱、鐘乳石或往光源生長的珊瑚。"
+        },
+        {
+          "title": "線種子／邊界種子",
+          "level": 2,
+          "what_changes": "狀態（初始）",
+          "how": "INIT 時不是只放原點，而是沿著一條輸入曲線 Curve.DivideByCount 放一排種子，粒子從曲線另一側出發。",
+          "result": "從牆面或地面長出一排像森林或霜花的樹枝，適合立面或地坪圖樣。"
+        },
+        {
+          "title": "2D → 3D 球殼出發",
+          "level": 3,
+          "what_changes": "維度",
+          "how": "PointOnCircle 改成球面上隨機點，隨機方向改成單位球隨機向量；NearbyPointFinder 加 CellZ 並查 27 格。",
+          "result": "得到立體珊瑚狀群集，可接管徑變厚做成燈具或雕塑。"
+        },
+        {
+          "title": "曲面上的 DLA",
+          "level": 4,
+          "what_changes": "維度／輸入",
+          "how": "粒子在 UV 參數空間走（Surface.PointAt(u,v) 求 3D 位置），距離用 3D 或測地近似判斷，邊界改成 UV 範圍。",
+          "result": "樹枝紋貼附在任意曲面（屋頂、殼體）上，可做表皮開孔或雕刻紋路。"
+        },
+        {
+          "title": "邊界約束（在形體內生長）",
+          "level": 3,
+          "what_changes": "加約束",
+          "how": "每走一步檢查 Brep.IsPointInside 或 Curve.Contains，出界就退回上一步或重生；出發點改成邊界上的點往內走。",
+          "result": "群集被限制在輸入的平面輪廓或量體內，長出填滿形體的枝狀結構。"
+        },
+        {
+          "title": "吸引子控制黏著",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "新增吸引子點清單，黏著機率 = f(到最近吸引子距離)；或讓隨機走帶有朝吸引子的漂移。",
+          "result": "枝條往指定方向（入口、光源、支撐點）集中生長，形態可被設計者引導。"
+        },
+        {
+          "title": "影像控制密度",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "讀入灰階影像（System.Drawing.Bitmap.GetPixel），依粒子所在位置的亮度決定黏著機率或步長。",
+          "result": "樹枝紋在暗部密、亮部疏，可生成類似照片的枝狀圖像。"
+        },
+        {
+          "title": "多種子競爭",
+          "level": 2,
+          "what_changes": "狀態",
+          "how": "INIT 放多顆種子並各自記錄所屬群組（List<int> groupOf），黏住時繼承被黏點的群組，輸出時依群組分 DataTree 分支上色。",
+          "result": "多棵樹彼此搶空間，界線處形成空隙，類似細胞或行政區劃分。"
+        },
+        {
+          "title": "輸出成可製造管材",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "依每個點的子孫數（從葉往根累加）決定半徑，Line → Brep.CreatePipe 或輸出給 Dendro／Mesh Pipe；根部粗、枝梢細。",
+          "result": "得到可 3D 列印的樹枝狀燈罩、支架或珠寶的實體網格。"
+        },
+        {
+          "title": "動畫化逐步生長",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 stuckPoints 存為欄位，用 Timer 或 Iteration 每次只加 N 顆粒子並輸出目前結果。",
+          "result": "可以看到群集像結晶一樣逐步長大的過程，適合簡報與影片。"
+        },
+        {
+          "title": "混合 C 家族：場驅動 DLA（DBM）",
+          "level": 4,
+          "what_changes": "規則／混合其他家族",
+          "how": "改用網格計算電位場（Laplace 疊代，類似 C01 擴散），黏著位置依電場強度的 η 次方機率選擇，即 Dielectric Breakdown Model。",
+          "result": "用參數 η 在緻密團塊與閃電狀細枝之間連續切換，更可控。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "樹枝狀地坪／立面圖樣產生器",
+          "brief": "以基地邊界曲線為種子線，讓 DLA 從牆邊往內長，並用影像控制疏密，輸出可雷射切割的 2D 圖樣。重點在黏著機率與偏移的調參與圖面表現。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "3D DLA 燈具",
+          "brief": "把 DLA 擴展到 3D，在球形或自訂量體內生長，依子孫數給管徑，輸出可 3D 列印的燈罩並做光影測試。",
+          "difficulty": 3,
+          "combine_with": [
+            "B03"
+          ]
+        },
+        {
+          "title": "吸引子引導的枝狀結構亭",
+          "brief": "以支撐點與出入口為吸引子引導 DLA 在量體內生長，後處理把細枝合併成可施作的構件並用 Kangaroo 做形態檢核。參考 IaaC MRAC DLA 研究的經驗，重點在可建造化。",
+          "difficulty": 4,
+          "combine_with": [
+            "D01"
+          ]
+        },
+        {
+          "title": "DLA 都市擴張模擬",
+          "brief": "以既有市中心與道路為種子，模擬人口（粒子）聚集，比較不同黏著機率下的碎形維度與密度梯度，對照 Batty 的 Fractal Cities 研究。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "曲面上的閃電紋表皮",
+          "brief": "在自由曲面的 UV 空間實作 Dielectric Breakdown Model，產生可控的放電紋路並轉成表皮開孔或雕刻刀路。需處理參數空間扭曲與場的數值疊代。",
+          "difficulty": 5,
+          "combine_with": [
+            "C01"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Diffusion-Limited Aggregation, a Kinetic Critical Phenomenon",
+          "author": "T. A. Witten, L. M. Sander",
+          "year": "1981",
+          "url": "https://link.aps.org/doi/10.1103/PhysRevLett.47.1400"
+        },
+        {
+          "title": "DLA - Diffusion Limited Aggregation",
+          "author": "Paul Bourke",
+          "year": "",
+          "url": "https://paulbourke.net/fractals/dla/"
+        },
+        {
+          "title": "Urban Growth and Form: Scaling, Fractal Geometry, and Diffusion-Limited Aggregation",
+          "author": "M. Batty, P. Longley, S. Fotheringham",
+          "year": "1989",
+          "url": "https://discovery.ucl.ac.uk/10053169/"
+        },
+        {
+          "title": "Simulating 2D diffusion-limited aggregation (DLA) with JavaScript",
+          "author": "Jason Webb",
+          "year": "2019",
+          "url": "https://medium.com/@jason.webb/simulating-dla-in-js-f1914eb04b1d"
+        },
+        {
+          "title": "Coding Challenge #34: Diffusion-Limited Aggregation",
+          "author": "Daniel Shiffman（The Coding Train）",
+          "year": "2016",
+          "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/"
+        },
+        {
+          "title": "Diffusion-limited aggregation（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation"
+        }
+      ]
+    },
+    {
+      "id": "B05",
+      "name_zh": "Substrate 裂紋",
+      "name_en": "Substrate (Tarbell Crack Growth)",
+      "family": "B",
+      "family_name": "生長",
+      "file": "B05_Substrate.cs",
+      "loc": 209,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "網格",
+        "幾何"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "一個自訂 class（Crack）配二維 int 佔用格，邏輯清楚；但要處理倒序 RemoveAt、剛分岔時忽略母裂紋的例外（ParentId）、分岔前的前方檢查，除錯需要理解格子與裂紋編號的對應。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "開放生長",
+        "網格擴散",
+        "自訂 class",
+        "動畫"
+      ],
+      "one_liner": "裂紋直直往前走，撞到別的裂紋或邊界就停，再從既有裂紋上垂直分岔出新裂紋，長出像都市街道或乾裂泥地的分割圖樣。",
+      "how_it_works": [
+        "把正方形範圍切成 400×400 的佔用格，每格記錄被哪條裂紋佔用（-1 表示空）。",
+        "隨機放 3 條起始裂紋，各有起點與方向。",
+        "每一輪讓所有還在走的裂紋前進半格，走過的空格記上自己的編號。",
+        "撞到邊界或別的裂紋（剛分岔時的母裂紋除外）就停下，從清單移除。",
+        "每停一條，就隨機挑一條已存在的裂紋，在其上隨機一點以垂直方向（±5 度抖動）分岔出最多 2 條新裂紋，直到總數達 crackCount。",
+        "最後把每條裂紋從起點到終點輸出成 Line。"
+      ],
+      "key_params": [
+        {
+          "name": "size",
+          "effect": "正方形範圍邊長；格子數固定 400，所以 size 越大每格越粗。"
+        },
+        {
+          "name": "crackCount",
+          "effect": "裂紋總數上限；越多分割越細碎，接近街廓或泥裂的尺度。"
+        },
+        {
+          "name": "seed",
+          "effect": "隨機種子，控制起始裂紋與分岔位置，可重現。"
+        },
+        {
+          "name": "GridResolution（常數）",
+          "effect": "佔用格解析度；越高碰撞越精準、越不會穿越，但記憶體與時間增加。"
+        },
+        {
+          "name": "wobble ±5 度（程式內）",
+          "effect": "分岔方向的抖動量；設 0 得到正交格狀，放大則趨向有機裂紋。"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（Crack）與參考型別",
+        "int[,] 二維陣列",
+        "List 倒序 RemoveAt",
+        "while 迴圈與安全上限",
+        "Random 與種子",
+        "向量旋轉（2D 旋轉矩陣）",
+        "RhinoMath.ToRadians"
+      ],
+      "prerequisites": [
+        "迴圈與陣列",
+        "Vector3d 與垂直向量",
+        "class 與 List 參考行為"
+      ],
+      "teaching_note": "適合從零實作，規則直觀、畫面有力。建議先寫不分岔版本（只有起始裂紋互撞）再加入分岔，讓學習者看到分岔規則才是複雜度來源；要特別講解為何剛分岔時要忽略母裂紋，否則新裂紋一出生就撞到。可延伸討論與 Voronoi 分割在形態上的差異（T 字接頭 vs Y 字接頭）。",
+      "variations": [
+        {
+          "title": "角度規則：正交／任意角",
+          "level": 1,
+          "what_changes": "規則",
+          "how": "把 wobble 範圍改成輸入參數；0 度得到正交格，加入 random 選 60°/120° 可得三角格，±30° 則趨向有機。",
+          "result": "從曼哈頓網格到舊城巷弄、到自然泥裂的連續光譜。"
+        },
+        {
+          "title": "彎曲裂紋",
+          "level": 2,
+          "what_changes": "狀態",
+          "how": "Crack 新增 curvature 欄位，每一步用 RotateFlat 把 Direction 轉一點點；輸出改存每步位置成 Polyline。",
+          "result": "裂紋變成弧線，類似陶瓷釉裂或有機街道。"
+        },
+        {
+          "title": "曲線邊界",
+          "level": 2,
+          "what_changes": "輸入／加約束",
+          "how": "新增輸入 boundary 曲線，MoveOneStep 的邊界判斷改成 boundary.Contains(nextPoint) != Inside 就停。",
+          "result": "在任意基地輪廓內產生街廓或分割圖樣。"
+        },
+        {
+          "title": "既有路網當初始裂紋",
+          "level": 3,
+          "what_changes": "輸入（初始）",
+          "how": "INIT 時把輸入的線段逐點寫入 occupiedBy 並建立為已停止的 Crack，新裂紋只從它們分岔。",
+          "result": "在既有道路之間自動長出次級巷道，接近都市填充式發展。"
+        },
+        {
+          "title": "吸引子控制密度",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "BranchFrom 選分岔位置時用拒絕抽樣：離吸引子越近接受機率越高。",
+          "result": "靠近中心或景點的區域切得更碎，形成密度梯度（市中心小街廓、郊區大街廓）。"
+        },
+        {
+          "title": "影像控制分岔",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "讀灰階圖，分岔起點所在像素越暗越容易被接受，或亮度決定裂紋最大長度。",
+          "result": "裂紋密度重現影像明暗，可做立面分割或圖像化鋪面。"
+        },
+        {
+          "title": "輸出街廓多邊形",
+          "level": 4,
+          "what_changes": "輸出",
+          "how": "把所有線段與邊界一起用 Curve.CreateBooleanRegions 或 Planar Graph 找封閉面，得到每個街廓／碎片的區域。",
+          "result": "可進一步做街廓退縮、建物量體擠出或分色鋪面。"
+        },
+        {
+          "title": "曲面上的裂紋",
+          "level": 4,
+          "what_changes": "維度",
+          "how": "在曲面 UV 參數空間跑同樣演算法，輸出時用 Surface.PointAt 映射回 3D，佔用格改在 UV 上。",
+          "result": "裂紋貼附於曲面殼體，可做 3D 表皮切割或雕刻紋路。"
+        },
+        {
+          "title": "裂紋寬度與沙畫渲染",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "依裂紋世代（ParentId 深度）決定線寬或偏移成雙線，並沿裂紋一側撒點（模仿 Tarbell 的 sand painter）。",
+          "result": "得到有層級、有陰影質感的繪圖，更接近原作的視覺表現。"
+        },
+        {
+          "title": "逐輪動畫",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 occupiedBy、allCracks、movingCracks 改成欄位，每次 RunScript 只跑 k 輪，用 Timer 驅動。",
+          "result": "看到裂紋一條條延伸、分岔的過程，適合影片或互動展示。"
+        },
+        {
+          "title": "混合 C05 Voronoi／Marching Squares 比較",
+          "level": 3,
+          "what_changes": "混合其他家族",
+          "how": "同一基地同時生成 Voronoi 分割與 Substrate 分割，統計接頭形式（T 字 vs Y 字）與碎片面積分佈。",
+          "result": "理解「依序生長」與「同時分割」兩種裂紋機制的形態差異。"
+        },
+        {
+          "title": "輸出為雷射切割拼板",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "取得封閉碎片後各自向內 Offset 留縫、加編號，排版到板材上輸出切割路徑。",
+          "result": "製作碎裂感的拼貼牆面、桌面或鋪面。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "裂紋式立面分割",
+          "brief": "以立面輪廓為邊界、開窗需求為吸引子，用 Substrate 產生立面板材分割線，輸出板片清單與雷射切割圖。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "既有路網下的巷弄生成",
+          "brief": "匯入真實都市路網作為初始裂紋，在街廓內長出次級巷道，比較不同角度規則下的街廓面積分佈，並擠出建築量體。",
+          "difficulty": 3,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "陶瓷釉裂紋路產生器",
+          "brief": "結合彎曲裂紋與多世代線寬，在花瓶或碗的曲面上生成開片紋，輸出成可雕刻或釉下彩印的紋樣。",
+          "difficulty": 4,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "泥裂 vs Voronoi：裂紋形態比較研究",
+          "brief": "以 Substrate（依序、T 字接頭）與 Voronoi（同時、Y 字接頭）產生分割，搭配角度統計與碎片面積直方圖，對照真實乾裂泥土照片。",
+          "difficulty": 3,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "曲面殼體裂紋開孔",
+          "brief": "在自由曲面 UV 上跑 Substrate，把封閉碎片轉成開孔或分板，並以結構分析檢查開孔後殼體性能，屬研究級題目。",
+          "difficulty": 5,
+          "combine_with": []
+        }
+      ],
+      "references": [
+        {
+          "title": "Substrate（Complexification.net）",
+          "author": "Jared Tarbell",
+          "year": "2003",
+          "url": "http://www.complexification.net/gallery/machines/substrate/"
+        },
+        {
+          "title": "Substrate (2003)（Procedural Generation 部落格介紹）",
+          "author": "Isaac Karth",
+          "year": "2015",
+          "url": "https://procedural-generation.isaackarth.com/2015/07/21/substrate-2003-shortly-after-the-turn-of-the.html"
+        },
+        {
+          "title": "Substrate (Tarbell Crack Growth) · morphogenesis-resources Issue #61",
+          "author": "Jason Webb",
+          "year": "",
+          "url": "https://github.com/jasonwebb/morphogenesis-resources/issues/61"
+        },
+        {
+          "title": "Procedural Modeling of Cities",
+          "author": "Y. I. H. Parish, P. Müller",
+          "year": "2001",
+          "url": ""
+        },
+        {
+          "title": "Generating Surface Crack Patterns",
+          "author": "H. N. Iben, J. F. O'Brien",
+          "year": "2006",
+          "url": ""
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "B02-01",
+      "algo": "B02",
+      "title": "Aggregation 系列",
+      "creator": "Andy Lomas",
+      "year": "2005",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "數學家兼視覺特效藝術家 Andy Lomas 以 DLA 變體模擬數百萬顆粒子在力場中流動並沉積在初始種子曲面上，長出類似珊瑚與植物的雕塑形態，並於 SIGGRAPH 2005 發表「Aggregation: Complexity out of Simplicity」。DLA 是整個形態的生成核心。",
+      "variations": [
+        {
+          "name": "種子曲面取代種子點",
+          "how": "INIT 時把一個 Mesh 或曲面的頂點全部加入 stuckPoints，粒子從外圍球殼出發。",
+          "effect": "結構從整個表面向外長出，得到覆滿表面的珊瑚質感。"
+        },
+        {
+          "name": "力場中的流動",
+          "how": "隨機走每一步加上力場向量（例如向下沉降或繞軸旋轉），取代純布朗運動。",
+          "effect": "群集沿流動方向拉長、產生方向性層次。"
+        },
+        {
+          "name": "3D 高密度渲染",
+          "how": "升到 3D 並大幅提高粒子數，輸出點雲給 Rhino 渲染或用點大小表現深度。",
+          "effect": "得到極細緻的白色雕塑影像。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "物理模擬",
+        "開放生長",
+        "空間索引"
+      ],
+      "tools": [
+        "自製軟體"
+      ],
+      "url": "https://andylomas.com/aggregation.html"
+    },
+    {
+      "id": "B02-02",
+      "algo": "B02",
+      "title": "2D Diffusion-Limited Aggregation Experiments",
+      "creator": "Jason Webb",
+      "year": "2019",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "Jason Webb 以 JavaScript 做了一系列 DLA 視覺實驗：基本 DLA、方向偏移、不同粒子大小、不同形狀、以 SVG 形狀作為邊界或種子，並著重輸出可供數位製造的向量 SVG。示範了同一演算法換輸入與約束後的多樣性。",
+      "variations": [
+        {
+          "name": "方向偏移",
+          "how": "每一步位移加上固定 bias 向量，出發位置改到對側邊界。",
+          "effect": "群集朝單一方向長，像冰柱或往光生長的植物。"
+        },
+        {
+          "name": "SVG 形狀當邊界",
+          "how": "新增 Curve 輸入，出界的粒子重生；種子放在曲線上。",
+          "effect": "枝條被限制在字形或圖形內生長。"
+        },
+        {
+          "name": "粒子大小漸變",
+          "how": "stickDistance 依離中心距離遞減，NearbyPointFinder 格子取最大值。",
+          "effect": "根部粗、枝梢細，視覺層次更自然。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "開放生長",
+        "空間索引"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments"
+    },
+    {
+      "id": "B02-03",
+      "algo": "B02",
+      "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "The Coding Train 以 p5.js 現場寫出 DLA：隨機行走者圍繞中心種子聚集成樹枝狀圖樣，是最常被引用的入門教學之一，另有雪花（Brownian Tree Snowflake）延伸。適合對照本課 C# 版本理解相同邏輯。",
+      "variations": [
+        {
+          "name": "六重對稱雪花",
+          "how": "每顆黏住的點同時複製旋轉 60° 的 6 份並鏡射，只在一個 30° 扇形內模擬。",
+          "effect": "得到對稱的雪花結晶。"
+        },
+        {
+          "name": "依生長順序上色",
+          "how": "輸出黏住順序 index，在 GH 用 Gradient 依序上色。",
+          "effect": "看出由內而外的生長時間層。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "對稱",
+        "隨機",
+        "動畫"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/"
+    },
+    {
+      "id": "B02-04",
+      "algo": "B02",
+      "title": "Urban Growth and Form：以 DLA 模擬都市擴張",
+      "creator": "Michael Batty, Paul Longley, Stewart Fotheringham",
+      "year": "1989",
+      "category": "urban-landscape",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "Batty 等人把 DLA 用來解釋都市形態：人口像粒子從外圍移入，碰到已開發區就定居，模擬出具負密度梯度與碎形維度的都市，與真實城市形態相似，是後來《Fractal Cities》研究的基礎。",
+      "variations": [
+        {
+          "name": "黏著機率 = 可開發度",
+          "how": "黏著機率由土地可開發度（坡度、水域）網格查表決定。",
+          "effect": "都市避開山坡與河川，沿平原延伸。"
+        },
+        {
+          "name": "多中心",
+          "how": "INIT 放多個城鎮中心作為種子。",
+          "effect": "多個聚落擴張後相連，形成都會區。"
+        },
+        {
+          "name": "碎形維度量測",
+          "how": "輸出後用盒計數法統計不同格子大小下的佔用格數並取 log 斜率。",
+          "effect": "量化比較模擬與真實城市。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "開放生長",
+        "分形"
+      ],
+      "tools": [],
+      "url": "https://discovery.ucl.ac.uk/10053169/"
+    },
+    {
+      "id": "B02-05",
+      "algo": "B02",
+      "title": "Modeling Urban Morphology by Unifying DLA and Stochastic Gravitation",
+      "creator": "",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "發表於 Findings 期刊的研究，將 DLA 與隨機重力模型結合來模擬都市形態，讓遠方中心的吸引力影響粒子行走，補足純 DLA 只有單一中心的限制。",
+      "variations": [
+        {
+          "name": "重力漂移",
+          "how": "隨機走每一步加上朝各中心的吸引向量，大小與中心規模成正比、與距離平方成反比。",
+          "effect": "粒子往大城市集中，枝條形態較緊密。"
+        },
+        {
+          "name": "參數掃描比較",
+          "how": "以不同重力強度批次執行，輸出碎形維度與半徑。",
+          "effect": "看出從樹枝狀到緊密團塊的連續變化。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "吸引子控制",
+        "隨機"
+      ],
+      "tools": [],
+      "url": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation"
+    },
+    {
+      "id": "B02-06",
+      "algo": "B02",
+      "title": "IaaC MRAC Diffusion-Limited Aggregation 亭",
+      "creator": "Abdullah Sheikh, Andreea Bunica, Anna Batalle Garcia（IaaC MRAC，指導 Alessio Erioli, Eugenio Bettucchi）",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "IaaC 機器人與先進營造碩士的研究，在 Grasshopper 中以 DLA 生成亭子結構：先在 2D 測試種子數、黏著距離、吸引子與邊界，再到 3D 引入點電荷、旋轉力、曲線吸引子等場，最後寫後處理讓節點與接頭可建造。結論是需選擇易於合理化的生長方式。",
+      "variations": [
+        {
+          "name": "曲線吸引子場",
+          "how": "隨機走加上朝輸入曲線最近點的漂移（Curve.ClosestPoint）。",
+          "effect": "枝條沿設計曲線生長，形成拱或樑。"
+        },
+        {
+          "name": "後處理加連接",
+          "how": "生成後對距離小於 d 且不同枝的點補上連線，變成網狀圖。",
+          "effect": "從樹變成有迴路的網，結構更穩定。"
+        },
+        {
+          "name": "節點合理化",
+          "how": "統一枝段長度（本範例已做）並把分岔角度吸附到有限種類。",
+          "effect": "接頭種類減少，便於製造。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "吸引子控制",
+        "多元件"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Kangaroo2",
+        "Anemone",
+        "Galapagos"
+      ],
+      "url": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation"
+    },
+    {
+      "id": "B02-07",
+      "algo": "B02",
+      "title": "Paul Bourke 的 3D DLA 與約束生長",
+      "creator": "Paul Bourke",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "modeling",
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Paul Bourke 長期整理 DLA：3D 體素 DLA（26 方向）、黏著機率從 1 到 0.01 的形態差異、在盒子、圓柱、球、頭像等形體內生長，並有處理成 3D 列印模型的流程，以及與藝術家合作的容器、雕塑作品。",
+      "variations": [
+        {
+          "name": "黏著機率掃描",
+          "how": "加入 stickiness 輸入，以 1、0.2、0.05、0.01 各跑一次並排比較。",
+          "effect": "從細碎到毛茸茸、密實的結構。"
+        },
+        {
+          "name": "在量體內生長",
+          "how": "每步檢查 Brep.IsPointInside，出界就退回。",
+          "effect": "DLA 填滿任意形體，如杯子、頭像。"
+        },
+        {
+          "name": "點／線／面吸引子",
+          "how": "種子改成點、直線或矩形面上的一組點。",
+          "effect": "得到放射狀、梳狀或森林狀的不同整體形態。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "網格擴散",
+        "隨機"
+      ],
+      "tools": [
+        "自製軟體"
+      ],
+      "url": "https://paulbourke.net/fractals/dla/"
+    },
+    {
+      "id": "B02-08",
+      "algo": "B02",
+      "title": "VEX in Houdini：Diffusion Limited Aggregation",
+      "creator": "Entagma",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Entagma 的教學示範在 Houdini 以 VEX 寫 DLA，並用 Mantra 與 Redshift 渲染。呈現 DLA 在影視與動態設計建模流程中的用法，可與本課 C# 實作互相對照。",
+      "variations": [
+        {
+          "name": "轉成網格體積",
+          "how": "輸出線段後以 Mesh Pipe 或體素化（VDB 概念）加厚。",
+          "effect": "得到可渲染、可列印的實體。"
+        },
+        {
+          "name": "依生長時間上材質",
+          "how": "記錄黏住順序作為屬性，渲染時映射成發光強度。",
+          "effect": "生長路徑以光呈現，適合動態影像。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "動畫"
+      ],
+      "tools": [
+        "Houdini",
+        "VEX"
+      ],
+      "url": "https://entagma.com/vex-in-houdini-diffusion-limited-aggregation-plus-rendering-in-mantra-redshift/"
+    },
+    {
+      "id": "B02-09",
+      "algo": "B02",
+      "title": "Exploring Diffusion Limited Aggregation in Geometry Nodes",
+      "creator": "Blender Artists 社群作者",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Blender 使用者以 Geometry Nodes 的節點式模擬實作 DLA 並分享成果，顯示 DLA 不一定要寫程式，也能在節點環境中以模擬迴圈完成。",
+      "variations": [
+        {
+          "name": "節點與程式對照",
+          "how": "把本範例拆成 GH 原生元件＋Anemone 迴圈版本，與 C# 版比較速度。",
+          "effect": "理解空間索引在節點環境中的效能瓶頸。"
+        },
+        {
+          "name": "表面生長",
+          "how": "種子放在 Mesh 頂點，粒子從 Mesh 外殼出發。",
+          "effect": "物件表面長出苔蘚狀覆蓋物。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "曲面上"
+      ],
+      "tools": [
+        "Blender"
+      ],
+      "url": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322"
+    },
+    {
+      "id": "B02-10",
+      "algo": "B02",
+      "title": "Lichtenberg 圖形與介電崩潰模型",
+      "creator": "自然現象（DBM：Niemeyer, Pietronero, Wiesmann）",
+      "year": "1984",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "高壓放電在壓克力或木材中留下的 Lichtenberg 圖形、閃電分枝，其形態與 DLA 相關；1984 年提出的介電崩潰模型（DBM）把電場與 DLA 結合來描述這類放電。可作為閃電紋表皮或木作燒紋設計的依據。",
+      "variations": [
+        {
+          "name": "DBM 電場版",
+          "how": "在網格上以疊代求解電位（Laplace），黏著位置依電場強度的 η 次方機率挑選。",
+          "effect": "η 大時得到細長閃電、η 小時接近緊密團塊。"
+        },
+        {
+          "name": "雙極生長",
+          "how": "放兩個種子（正負極），限制只能長向對方。",
+          "effect": "形成連接兩點的放電路徑。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "網格擴散",
+        "物理模擬",
+        "分形"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Lichtenberg_figure"
+    },
+    {
+      "id": "B02-11",
+      "algo": "B02",
+      "title": "以 DLA 模擬鋰電池枝晶生長（MRI 驗證）",
+      "creator": "",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "電化學研究以 DLA 模型模擬鋰對稱電池充電時的枝晶（dendrite）生長，並以 MRI 觀測驗證，顯示 DLA 除了造形，也是材料性能與失效分析的工具。",
+      "variations": [
+        {
+          "name": "平面電極種子",
+          "how": "種子改為底部一整排點，粒子從上方均勻落下並帶向下偏移。",
+          "effect": "得到從電極表面長出的枝晶森林。"
+        },
+        {
+          "name": "量測枝晶高度",
+          "how": "每加一顆粒子記錄最大高度，輸出成曲線圖。",
+          "effect": "觀察枝晶突破隔板的時間點。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "物理模擬",
+        "隨機"
+      ],
+      "tools": [],
+      "url": "https://www.researchgate.net/publication/384758624_Simulation_of_Dendrite_Growth_with_a_Diffusion-Limited_Aggregation_Model_Validated_by_MRI_of_a_Lithium_Symmetric_Cell_during_Charging"
+    },
+    {
+      "id": "B02-12",
+      "algo": "B02",
+      "title": "Grasshopper Swarm Intelligence IV：Diffuse Limited Aggregation",
+      "creator": "Grasshopper3d 社群",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "Grasshopper3d 社群的影片教學與討論串示範在 GH 裡以腳本實作 DLA，是建築領域使用者接觸 DLA 的主要入口之一，可作為本課範例的延伸參考。",
+      "variations": [
+        {
+          "name": "Anemone 迴圈版",
+          "how": "用 Anemone 每圈加入一顆粒子並回饋點集。",
+          "effect": "可在畫布上即時看到生長。"
+        },
+        {
+          "name": "空間索引效能比較",
+          "how": "把 NearbyPointFinder 換成 RTree（Rhino.Geometry.RTree）比較速度。",
+          "effect": "學會使用 RhinoCommon 內建空間索引。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "空間索引",
+        "動畫"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.grasshopper3d.com/video/swarm-intelligence-iv-diffuse-limited-aggregation"
+    },
+    {
+      "id": "B02-13",
+      "algo": "B02",
+      "title": "OPENFUSE DLA 草稿（openFrameworks）",
+      "creator": "Fuse*",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "義大利數位藝術工作室 Fuse* 在其研發實驗室以 openFrameworks 實作 DLA 草稿，作為即時影像與裝置作品的生成素材，示範 DLA 在即時互動藝術中的應用。",
+      "variations": [
+        {
+          "name": "即時互動種子",
+          "how": "滑鼠或感測器位置即時新增種子點，粒子持續從外圍生成。",
+          "effect": "觀眾的動作決定枝條長向。"
+        },
+        {
+          "name": "粒子軌跡可視化",
+          "how": "輸出行走中粒子的路徑線（非只有黏住點）。",
+          "effect": "呈現流動與沉積並存的動態畫面。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "隨機"
+      ],
+      "tools": [
+        "openFrameworks",
+        "C++"
+      ],
+      "url": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/"
+    },
+    {
+      "id": "B02-14",
+      "algo": "B02",
+      "title": "珊瑚、礦物樹枝石與電沉積結晶",
+      "creator": "自然現象",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "DLA 被用來描述珊瑚、地衣、礦物樹枝石（dendrite）、硫酸銅電沉積結晶與雪花等自然樹枝狀形態，是學習者觀察自然、蒐集參考影像並對照模擬結果的好題材。",
+      "variations": [
+        {
+          "name": "照片對照調參",
+          "how": "蒐集礦物樹枝石照片，調 stickiness 與偏移直到碎形維度接近。",
+          "effect": "學會用量化方式比對模擬與自然。"
+        },
+        {
+          "name": "晶格 DLA",
+          "how": "把隨機方向限制為 4 或 6 個方向（網格上走）。",
+          "effect": "產生帶晶格方向性的結晶枝。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "分形",
+        "隨機"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation"
+    },
+    {
+      "id": "B05-01",
+      "algo": "B05",
+      "title": "Substrate",
+      "creator": "Jared Tarbell",
+      "year": "2003",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing",
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Jared Tarbell 以 Processing 創作並開源的生成藝術：直線從其他直線上垂直長出、撞到就停，最終形成像都市街道的結晶圖樣，並沿裂紋以沙畫筆觸上色。本課範例即依其規則簡化而來。",
+      "variations": [
+        {
+          "name": "沙畫筆觸",
+          "how": "每條裂紋一側沿法向撒大量半透明點，點的分佈寬度隨機擺動。",
+          "effect": "得到原作那種有深度、有顏色暈染的畫面。"
+        },
+        {
+          "name": "影像取色",
+          "how": "讀入一張圖片作為調色盤，每條裂紋隨機取一色。",
+          "effect": "整體色調可控制。"
+        },
+        {
+          "name": "彎曲模式",
+          "how": "Crack 加入每步微量旋轉。",
+          "effect": "出現原作中的弧形裂紋變體。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "開放生長",
+        "動畫"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "http://www.complexification.net/gallery/machines/substrate/"
+    },
+    {
+      "id": "B05-02",
+      "algo": "B05",
+      "title": "substrate CLI（CityLAB Berlin）",
+      "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "為 CityLAB Berlin 開發的命令列工具，依 Tarbell 演算法產生 A0 尺寸的 SVG，可設定執行時間、最大裂紋數與最短線長過濾（1px = 1mm），用於輸出大型圖面或繪圖機。",
+      "variations": [
+        {
+          "name": "最短線長過濾",
+          "how": "輸出時跳過 TraveledLength 小於門檻的裂紋。",
+          "effect": "去除碎線，繪圖機輸出更乾淨。"
+        },
+        {
+          "name": "以時間控制",
+          "how": "用 Stopwatch 限制總執行時間取代 MaxRounds。",
+          "effect": "大尺寸時仍能在固定時間內得到結果。"
+        },
+        {
+          "name": "紙張比例",
+          "how": "把正方形改為 841×1189 矩形，格子依長寬各自切分。",
+          "effect": "直接輸出 A 系列紙張圖面。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機"
+      ],
+      "tools": [
+        "Node.js",
+        "SVG"
+      ],
+      "url": "https://github.com/technologiestiftung/substrate"
+    },
+    {
+      "id": "B05-03",
+      "algo": "B05",
+      "title": "ARCH 430 Networked Technologies 課程中的 Substrate 研究",
+      "creator": "ARCH 430 修課學習者",
+      "year": "2012",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "群體／都市",
+      "summary": "建築系課程部落格記錄學習者研究 Tarbell 的 Substrate，觀察執行 1.5 小時後浮現類似都市格網的圖樣，並討論 Processing 作為建築設計工具的可能與限制。",
+      "variations": [
+        {
+          "name": "正交化成都市格網",
+          "how": "wobble 設 0 並把起始方向限制為 0°/90°。",
+          "effect": "得到接近棋盤式都市的街廓。"
+        },
+        {
+          "name": "街廓擠出",
+          "how": "取得封閉區域後依面積 Extrude 不同高度。",
+          "effect": "從 2D 圖樣變成 3D 城市量體。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "開放生長"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/"
+    },
+    {
+      "id": "B05-04",
+      "algo": "B05",
+      "title": "Substrate JavaScript 移植（CodePen）",
+      "creator": "josazar（CodePen）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "社群開發者將 Substrate 移植到瀏覽器的 CodePen 版本，可即時看到裂紋生長動畫，說明此演算法已成為生成藝術的經典練習題。",
+      "variations": [
+        {
+          "name": "逐輪動畫",
+          "how": "每次 RunScript 只跑少量輪次，狀態存為欄位並以 Timer 驅動。",
+          "effect": "在 Rhino 視窗重現逐步生長。"
+        },
+        {
+          "name": "點擊新增起點",
+          "how": "新增輸入點清單，每個點產生一條新起始裂紋。",
+          "effect": "使用者可以互動決定裂紋起源。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "Timer"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://codepen.io/josazar/details/wvvRKyL"
+    },
+    {
+      "id": "B05-05",
+      "algo": "B05",
+      "title": "Procedural Modeling of Cities（CityEngine 前身）",
+      "creator": "Yoav I. H. Parish, Pascal Müller",
+      "year": "2001",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "SIGGRAPH 2001 論文以擴充 L-System 生成街道網路，再切分街廓與地塊、以語法產生建築，後發展為 CityEngine。其「道路延伸、碰到既有道路就截止並接上」的規則與 Substrate 的撞停分岔邏輯相通，可作為對照。",
+      "variations": [
+        {
+          "name": "撞到就接上",
+          "how": "撞到別的裂紋時不是停在前一格，而是把終點吸附到被撞裂紋上的最近點。",
+          "effect": "形成乾淨的 T 字路口，可直接轉成路網圖。"
+        },
+        {
+          "name": "主次道路層級",
+          "how": "起始裂紋視為主幹道（較長、線寬大），分岔世代越深越短越細。",
+          "effect": "出現主要道路與巷弄的層級結構。"
+        },
+        {
+          "name": "人口密度圖控制",
+          "how": "以影像或吸引子決定分岔密度。",
+          "effect": "市中心街廓小、郊區街廓大。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "字串改寫",
+        "約束滿足",
+        "多元件"
+      ],
+      "tools": [
+        "CityEngine"
+      ],
+      "url": ""
+    },
+    {
+      "id": "B05-06",
+      "algo": "B05",
+      "title": "Generating Surface Crack Patterns",
+      "creator": "Hayley N. Iben, James F. O'Brien",
+      "year": "2006",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "電腦圖學研究以表面應力場驅動裂紋在網格表面上生長，用來產生泥土、陶瓷釉面、老化油漆等真實裂紋。相較 Substrate 的純幾何規則，它以物理應力決定方向，是進階比較對象。",
+      "variations": [
+        {
+          "name": "應力場決定方向",
+          "how": "給一個向量場（例如收縮中心的放射方向），分岔方向改成垂直於該點的主應力方向。",
+          "effect": "裂紋更像乾裂與收縮造成的真實紋路。"
+        },
+        {
+          "name": "曲面 UV 上生長",
+          "how": "在網格或曲面 UV 空間執行並映射回 3D。",
+          "effect": "裂紋貼附在 3D 物件表面。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "曲面上",
+        "物理模擬"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "B05-07",
+      "algo": "B05",
+      "title": "乾裂泥土圖樣",
+      "creator": "自然現象",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "地景",
+      "summary": "泥土乾燥收縮時先出現的裂紋會成為後來裂紋的邊界，因此多形成 T 字接頭且後生裂紋常垂直於前者，與 Substrate「依序生長、撞停、垂直分岔」的規則高度吻合，是很好的觀察對照。",
+      "variations": [
+        {
+          "name": "垂直角度加大抖動",
+          "how": "wobble 從 ±5 度放大到 ±20 度並加入彎曲。",
+          "effect": "更接近自然泥裂的不規則多邊形。"
+        },
+        {
+          "name": "多層尺度",
+          "how": "先用少量裂紋切出大塊，再在每塊內以小尺度重跑一次。",
+          "effect": "出現大裂縫套小裂縫的階層感。"
+        },
+        {
+          "name": "地景鋪面",
+          "how": "碎片向內 Offset 成鋪面板，縫隙當植栽帶。",
+          "effect": "做出仿泥裂的景觀鋪面。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "拼貼"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "B05-08",
+      "algo": "B05",
+      "title": "哥窯開片（冰裂紋釉）",
+      "creator": "宋代哥窯（傳統陶瓷工藝）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "釉與胎體收縮率不同，冷卻時釉面產生開片裂紋，並可能以大小兩層紋路呈現（俗稱金絲鐵線）。這是材料物理造成的裂紋圖樣，可用 Substrate 加彎曲與多世代線寬來模擬其視覺。",
+      "variations": [
+        {
+          "name": "雙層紋路",
+          "how": "第一輪少量粗裂紋（線寬大、深色），第二輪在碎片內跑大量細裂紋（線寬小、淺色）。",
+          "effect": "呈現大開片中有小開片的層次。"
+        },
+        {
+          "name": "器物曲面上",
+          "how": "在旋轉曲面的 UV 空間生成裂紋並映射回瓶身。",
+          "effect": "得到可雕刻或轉印的器物紋樣。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "曲面上",
+        "隨機"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "B05-09",
+      "algo": "B05",
+      "title": "Voronoi 碎裂（Cell Fracture／RBD Material Fracture）",
+      "creator": "Blender Cell Fracture 外掛、Houdini RBD Material Fracture",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "3D 軟體常用 Voronoi 分割把物件打碎做破壞模擬。Voronoi 是同時分割、接頭多為 Y 字，與 Substrate 依序生長的 T 字接頭形態不同，適合當作兩種裂紋機制的比較教材。",
+      "variations": [
+        {
+          "name": "Substrate 取代 Voronoi 切割",
+          "how": "以 Substrate 產生的封閉碎片作為切割面，對實體做 Brep.Split。",
+          "effect": "得到更像乾裂、層次化的碎裂。"
+        },
+        {
+          "name": "混合",
+          "how": "先 Voronoi 切大塊，再在每塊內跑 Substrate。",
+          "effect": "結合兩種裂紋特徵的碎片。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拼貼",
+        "3D"
+      ],
+      "tools": [
+        "Blender",
+        "Houdini"
+      ],
+      "url": ""
+    },
+    {
+      "id": "B05-10",
+      "algo": "B05",
+      "title": "金繼（Kintsugi）",
+      "creator": "日本傳統修補工藝",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "以漆與金粉修補破碎陶瓷，讓裂縫成為視覺焦點。可作為 Substrate 輸出「裂紋即裝飾」的延伸：用演算法決定裂紋，再以數位製造（CNC 刻溝、金屬填縫）實現。",
+      "variations": [
+        {
+          "name": "裂紋轉刻溝刀路",
+          "how": "把裂紋線段依世代給不同深度，輸出成 CNC 刻溝刀路。",
+          "effect": "在木板或石材上刻出裂紋溝槽可再填金屬或樹脂。"
+        },
+        {
+          "name": "碎片化拼板",
+          "how": "取得封閉碎片後向內 Offset 留縫並編號。",
+          "effect": "做成可拼回的碎片桌面或牆板，縫隙填色。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "拼貼"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "B05-11",
+      "algo": "B05",
+      "title": "油畫龜裂（Craquelure）",
+      "creator": "藝術品保存研究（自然老化現象）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "油畫顏料與底層隨時間收縮產生的細密龜裂網，形態與畫布張力方向相關，是修復與鑑定研究的對象。用 Substrate 加方向偏好可以模擬不同畫布的龜裂風格，作為繪圖表現的肌理。",
+      "variations": [
+        {
+          "name": "方向偏好",
+          "how": "起始方向與分岔方向加入偏好軸（例如畫布經緯向），抖動只在偏好軸附近。",
+          "effect": "出現有方向性的長方形龜裂。"
+        },
+        {
+          "name": "疊加於影像",
+          "how": "裂紋輸出成細線，疊在渲染圖或照片上做老化效果。",
+          "effect": "取得手繪老化質感的圖面。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "影像輸入",
+        "隨機"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "B05-12",
+      "algo": "B05",
+      "title": "Substrate 生長過程影片",
+      "creator": "Vimeo 影片（上傳者未確認；原作 Jared Tarbell）",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Vimeo 上的 Substrate 動態記錄，呈現裂紋逐步延伸、分岔、填滿畫面的時間過程，說明此演算法本身的生長過程就是作品，而不只是最終靜態圖。",
+      "variations": [
+        {
+          "name": "Timer 動態呈現",
+          "how": "將狀態改存欄位，每次 Timer 觸發只推進一輪並輸出已走過的線段。",
+          "effect": "在 Rhino 中錄製生長動畫。"
+        },
+        {
+          "name": "投影裝置",
+          "how": "把輸出即時投影到牆面或地面，觀眾位置作為新起點輸入。",
+          "effect": "成為互動式裂紋投影裝置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "Timer"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://vimeo.com/208903786"
+    }
+  ]
+}

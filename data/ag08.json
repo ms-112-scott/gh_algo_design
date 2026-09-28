@@ -1,0 +1,820 @@
+{
+  "agent": "ag08",
+  "algorithms": [
+    {
+      "id": "B03",
+      "name_zh": "空間殖民",
+      "name_en": "Space Colonization",
+      "family": "B",
+      "family_name": "生長",
+      "file": "B03_SpaceColonization.cs",
+      "loc": 198,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子",
+        "圖（點＋連線）"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "約 200 行、一個自訂 class（TreeNode 用 ParentIndex 串成樹），每步要做「吸引點 × 枝端」的暴力最近鄰搜尋，並需要調 influenceRadius／killDistance／segmentLength 三者比例才長得好；尚未用空間索引，所以停在中階。",
+      "tags": [
+        "開放生長",
+        "鄰居搜尋",
+        "吸引子控制",
+        "隨機",
+        "可重現種子",
+        "自訂 class",
+        "3D"
+      ],
+      "one_liner": "在空間裡撒一堆「養分點」，讓樹枝從根部一步步往最近的養分長過去、吃掉它們，最後長成填滿空間的分枝網路。",
+      "how_it_works": [
+        "準備吸引點（使用者輸入或在根部上方方塊內隨機撒點），樹一開始只有一個根節點。",
+        "每一步：每個吸引點找離它最近的枝端；距離小於 killDistance 就把吸引點刪掉（被吃掉），小於 influenceRadius 就對那個枝端施加一個單位向量拉力。",
+        "每個被拉的枝端把所有拉力加總後取單位方向，往該方向長出一段 segmentLength 的新節點，記住父節點索引。",
+        "若這一步沒有任何枝端被拉（樹幹還沒進入影響範圍），就讓最新的枝端直接朝最近的吸引點長一段，當作「樹幹階段」。",
+        "重複直到吸引點用完、長不動或達到 maxSteps，最後把每個節點與其父節點連成線段輸出。"
+      ],
+      "key_params": [
+        {
+          "name": "influenceRadius",
+          "effect": "吸引點能拉多遠的枝端；越大枝條越早分叉、越直，太小則要靠樹幹階段慢慢爬過去"
+        },
+        {
+          "name": "killDistance",
+          "effect": "枝端多近就吃掉吸引點；越大枝越稀疏、末梢越粗略，越小越細密但步數大增"
+        },
+        {
+          "name": "segmentLength",
+          "effect": "每步生長長度；需小於 killDistance，否則枝端會跳過吸引點而來回抖動"
+        },
+        {
+          "name": "attractorCount / boxSize",
+          "effect": "決定樹冠的密度與包絡形狀；點越多分枝越細碎，換成任意點雲就能控制樹冠形"
+        },
+        {
+          "name": "maxSteps",
+          "effect": "生長上限；可用來做生長動畫或提早截斷得到「幼苗」狀態"
+        },
+        {
+          "name": "seed",
+          "effect": "隨機吸引點的種子；同一種子必得同一棵樹，方便比較參數"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（TreeNode）",
+        "List<T> 與以索引表示父子關係",
+        "Vector3d 加總與單位化",
+        "out 參數",
+        "倒序迴圈 + RemoveAt",
+        "LINQ OrderBy().First()",
+        "System.Random 種子"
+      ],
+      "prerequisites": [
+        "迴圈與 List",
+        "自訂 class",
+        "向量加法與單位化",
+        "距離平方比較（省開根號）"
+      ],
+      "teaching_note": "很適合從零實作：規則只有三條、畫面回饋強，學習者改吸引點分布就立刻看到不同樹形。要特別講清楚「只讓這一步開始前就存在的枝端生長」（nodeCount 快照）與倒序 RemoveAt 的原因；並提醒 segmentLength < killDistance < influenceRadius 的比例關係，否則會無限抖動或長不出來。",
+      "variations": [
+        {
+          "title": "吸引點改用曲面／Brep 內部取樣",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "上游用 Populate Geometry 在任意 Brep、球體或建築量體內撒點接到 attractors，程式碼不用改；也可用 Surface 取樣做成貼在立面上的吸引點。",
+          "result": "樹冠／網路會精準填滿指定的形體，例如長成雲朵狀樹冠或貼著立面的藤蔓。"
+        },
+        {
+          "title": "多根部同時生長（葉脈／根系網路）",
+          "level": 2,
+          "what_changes": "狀態",
+          "how": "把 rootPoint 改成 List<Point3d>，INIT 時每個根都 Add 一個 ParentIndex = -1 的 TreeNode；輸出迴圈要略過 ParentIndex < 0 的節點。",
+          "result": "多棵樹互相搶吸引點，形成邊界分明的競爭式分枝，像葉脈從葉柄與葉緣同時長或多個樹根搶地盤。"
+        },
+        {
+          "title": "向性（Tropism）：加重力或光照偏向",
+          "level": 2,
+          "what_changes": "規則",
+          "how": "在規則 2 算出 direction 後加一個常數向量，例如 direction += tropismVector * tropismWeight 再單位化；新增 tropismVector 與 tropismWeight 兩個輸入。",
+          "result": "枝條整體往上（向光）、往下（垂柳）或往某一方向（受風）偏，形體更有方向性。"
+        },
+        {
+          "title": "依管道流量算枝粗（Pipe Model / Murray 定律）",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "生長結束後從葉端往根部倒推：每個節點的半徑 r^n = 子節點半徑 r^n 總和（n 約 2–3），末梢給最小半徑；再用 Pipe 或 MultiPipe 依每段半徑成管。",
+          "result": "由細末梢逐漸合流成粗主幹的可 3D 列印分枝實體，接近真實樹木或血管的粗細分布。"
+        },
+        {
+          "title": "RTree／網格空間索引加速",
+          "level": 4,
+          "what_changes": "迴圈",
+          "how": "把 NearestNode 的暴力搜尋換成 Rhino.Geometry.RTree 或自製均勻網格（Dictionary<(int,int,int), List<int>>），每步只查鄰近格子；新節點加入時同步插入索引。",
+          "result": "吸引點可從數百提升到數萬，長出細密的葉脈或整片樹林而不卡頓。"
+        },
+        {
+          "title": "開放式 → 封閉式葉脈（產生迴圈）",
+          "level": 4,
+          "what_changes": "規則",
+          "how": "依 Runions 2005 的封閉模型：吸引點不在第一個枝端碰到時就刪除，而是要等所有「朝它生長」的枝端都抵達才刪；允許多個枝端同時被同一個吸引點拉，並把相遇的枝端連起來。",
+          "result": "網路從樹狀變成有環路的網狀，類似雙子葉植物的網狀葉脈或冗餘的管線網路。"
+        },
+        {
+          "title": "生長在曲面上",
+          "level": 3,
+          "what_changes": "維度",
+          "how": "吸引點用曲面 UV 取樣產生；每次長出新點後以 surface.ClosestPoint 拉回曲面，或直接在 UV 平面上生長再用 PointAt 映射回 3D。",
+          "result": "在圓頂、雙曲面或立面上長出貼附的葉脈紋理，可作為表皮開孔或肋骨圖樣。"
+        },
+        {
+          "title": "影像控制吸引點密度",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "讀入灰階圖（System.Drawing.Bitmap），在範圍內隨機撒點時以像素亮度當接受機率（亮度越高越容易留下），再把點轉成 attractors。",
+          "result": "枝網在亮處密、暗處疏，可做出以照片為底的分枝線畫或依日照分析決定開孔疏密的立面。"
+        },
+        {
+          "title": "障礙物與邊界約束",
+          "level": 3,
+          "what_changes": "約束",
+          "how": "新增 obstacles（Brep 或封閉曲線）輸入，長出新節點前用 IsPointInside 或 Contains 檢查，若在障礙內就不加入；邊界外的吸引點一開始就過濾掉。",
+          "result": "樹枝會繞開量體、開口或既有結構生長，適合做避開窗洞的立面藤蔓或繞開柱子的管線。"
+        },
+        {
+          "title": "反向生長：由上往下的樹狀柱／支撐",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "把屋頂或懸挑下緣的支撐點當吸引點、把地面柱腳當根，killDistance 設小讓每個支撐點都被精準碰到；再以 Pipe 模型算粗細並簡化成直線段。",
+          "result": "得到從柱腳分叉、撐住多個屋頂點的樹狀柱，也可類比 3D 列印的樹狀支撐。"
+        },
+        {
+          "title": "Timer 動畫化與逐步輸出",
+          "level": 2,
+          "what_changes": "迴圈",
+          "how": "把 treeNodes 與 targetPoints 存成 class 層級欄位，加 reset 輸入；每次元件被 Timer 觸發只呼叫一次 GrowOneStep 並輸出目前線段。",
+          "result": "可以在 Rhino 視窗即時看樹從根部慢慢長出、吸引點一顆顆消失，適合做展示或錄影。"
+        },
+        {
+          "title": "與其他家族混合：吸引點來自 Noise／Phyllotaxis／DLA",
+          "level": 3,
+          "what_changes": "輸入",
+          "how": "用 C04 Noise 的閾值點、B04 Phyllotaxis 的螺旋點或 E01 Circle Packing 的圓心當 attractors；或反過來把本元件輸出的枝網當 B01 Differential Growth 的起始曲線。",
+          "result": "分枝同時帶有另一個演算法的秩序（螺旋、群聚、均勻分布），產生混種形態。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "葉脈立面：依日照強度長出遮陽肋",
+          "brief": "在立面曲面上依日照分析結果撒吸引點（曝曬高處密），用曲面上的空間殖民長出葉脈狀遮陽肋，最後轉成可雷射切割的板片。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "樹狀柱：大跨屋頂的分枝支撐",
+          "brief": "以屋頂下緣的受力點為吸引點、地面柱腳為根，反向生長出分枝柱，依管道模型給每段斷面，再以 Karamba 或簡化的軸力檢查比較不同參數的用料。",
+          "difficulty": 4,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "3D 列印分枝燈具",
+          "brief": "仿 Nervous System Hyphae，在球體或蛋形量體內撒吸引點、多根部生長，依流量算粗細後成管，輸出可列印的 mesh 燈罩並研究光影。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "校園步道網路生成",
+          "brief": "以建築出入口與人流熱點為吸引點、捷運站或主入口為根，在基地邊界內生長出步道網，並加上障礙物約束與封閉式迴圈，比較與既有路網的差異。",
+          "difficulty": 4,
+          "combine_with": [
+            "D03"
+          ]
+        },
+        {
+          "title": "即時生長樹林：多樹競爭與光照",
+          "brief": "多個根部在共享的吸引點雲中競爭生長，加入向光性與 Timer 動畫，展示樹冠如何互相讓位，作為地景設計的樹冠配置研究。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "大規模血管式管線網（空間索引＋封閉模型）",
+          "brief": "實作 RTree 或均勻網格加速到數萬吸引點，並改寫成 Runions 封閉式葉脈模型，生成可供建築設備管線或冷卻水路參考的冗餘網路。",
+          "difficulty": 5,
+          "combine_with": [
+            "C01"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Modeling and visualization of leaf venation patterns",
+          "author": "Adam Runions, Martin Fuhrer, Brendan Lane, Pavol Federl, Anne-Gaëlle Rolland-Lagan, Przemyslaw Prusinkiewicz",
+          "year": "2005",
+          "url": "https://algorithmicbotany.org/papers/venation.sig2005.html"
+        },
+        {
+          "title": "Modeling Trees with a Space Colonization Algorithm",
+          "author": "Adam Runions, Brendan Lane, Przemyslaw Prusinkiewicz",
+          "year": "2007",
+          "url": "https://algorithmicbotany.org/papers/colonization.egwnp2007.pdf"
+        },
+        {
+          "title": "Modeling Biological Patterns using the Space Colonization Algorithm（碩士論文）",
+          "author": "Adam Runions",
+          "year": "2008",
+          "url": "https://algorithmicbotany.org/papers/runionsa.th2008.html"
+        },
+        {
+          "title": "Modeling organic branching structures with the space colonization algorithm and JavaScript",
+          "author": "Jason Webb",
+          "year": "",
+          "url": "https://medium.com/@jason.webb/modeling-organic-branching-structures-with-the-space-colonization-algorithm-and-javascript-6f683b743dc5"
+        },
+        {
+          "title": "morphogenesis-resources（數位形態生成資源整理）",
+          "author": "Jason Webb",
+          "year": "",
+          "url": "https://github.com/jasonwebb/morphogenesis-resources"
+        },
+        {
+          "title": "Coding Challenge #17: Fractal Trees - Space Colonization",
+          "author": "Daniel Shiffman（The Coding Train）",
+          "year": "",
+          "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "B03-01",
+      "algo": "B03",
+      "title": "葉脈圖樣的建模與視覺化（Leaf Venation Patterns）",
+      "creator": "Adam Runions 等（University of Calgary, Algorithmic Botany）",
+      "year": "2005",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "空間殖民演算法的原點：在葉片中放置生長素（auxin）來源點，葉脈朝來源點生長、靠近後來源點消失，並隨葉片長大持續加入新來源點。論文同時提出開放（樹狀）與封閉（網狀）兩種葉脈，並用 Voronoi 空間分割加速。",
+      "variations": [
+        {
+          "name": "葉片邊界內撒點",
+          "how": "把 RandomPointsAboveRoot 換成在封閉葉形曲線內（Curve.Contains）撒點，根部放在葉柄位置，改成 2D（Z=0）。",
+          "effect": "得到限定在葉形內的開放式葉脈。"
+        },
+        {
+          "name": "邊界成長時持續補點",
+          "how": "每隔 k 步把葉形曲線放大一點（Transform.Scale），並在新增的區域補撒吸引點，模擬葉片邊長邊長脈。",
+          "effect": "主脈先成形、細脈後補，階層感更接近真實葉片。"
+        },
+        {
+          "name": "封閉式葉脈",
+          "how": "吸引點要等所有朝它長的枝端都抵達才刪除，並允許相遇枝端互連。",
+          "effect": "產生有迴圈的網狀葉脈。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "開放生長",
+        "鄰居搜尋",
+        "空間索引",
+        "網格擴散"
+      ],
+      "tools": [
+        "論文",
+        "自製程式"
+      ],
+      "url": "https://algorithmicbotany.org/papers/venation.sig2005.html"
+    },
+    {
+      "id": "B03-02",
+      "algo": "B03",
+      "title": "以空間殖民演算法建模樹木（Modeling Trees with a Space Colonization Algorithm）",
+      "creator": "Adam Runions, Brendan Lane, Przemyslaw Prusinkiewicz",
+      "year": "2007",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "物件",
+      "summary": "把 2005 年的開放式葉脈模型延伸到 3D，以樹冠包絡內的吸引點代表「可用空間」，枝條彼此競爭空間，就能長出相當逼真的樹。基礎範例就是這篇的簡化版。",
+      "variations": [
+        {
+          "name": "自訂樹冠包絡",
+          "how": "attractors 改接在橢球、錐體或手繪 Brep 內 Populate 3D 的點。",
+          "effect": "控制樹種外形（圓冠、尖塔、傘形）。"
+        },
+        {
+          "name": "枝粗與葉片",
+          "how": "輸出時以 Pipe 模型從末梢倒推半徑，末梢節點放置葉片平面。",
+          "effect": "從線框變成可渲染的實體樹。"
+        },
+        {
+          "name": "環境遮擋",
+          "how": "把建築量體內部或陰影區的吸引點先刪除。",
+          "effect": "樹會自然避開牆面、朝開闊處生長。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "開放生長",
+        "吸引子控制"
+      ],
+      "tools": [
+        "論文",
+        "自製程式"
+      ],
+      "url": "https://algorithmicbotany.org/papers/colonization.egwnp2007.pdf"
+    },
+    {
+      "id": "B03-03",
+      "algo": "B03",
+      "title": "Hyphae Lamps 分枝燈具系列",
+      "creator": "Nervous System（Jessica Rosenkrantz, Jesse Louis-Rosenberg）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "受葉脈形成啟發的 3D 列印尼龍燈具，每一盞都獨一無二。設計軟體以 C++（CGAL、Cinder）自製，從一個基底量體與一組根部點出發，讓根部往充滿 auxin 的環境生長，並依流過的量決定枝的粗細，投出分枝狀光影。",
+      "variations": [
+        {
+          "name": "量體表面／內部撒點",
+          "how": "吸引點改為蛋形或球形 Brep 表面附近的點，根部設在燈座一圈。",
+          "effect": "枝網包覆成燈罩外形。"
+        },
+        {
+          "name": "流量決定粗細",
+          "how": "從末梢倒推，每個節點累計下游末梢數，半徑依累計量的 1/2–1/3 次方給定後 Pipe。",
+          "effect": "根部粗、末梢細，結構可列印且有層次。"
+        },
+        {
+          "name": "輸出可列印網格",
+          "how": "用 MultiPipe 或 Dendro 類外掛把線段轉成單一封閉 mesh。",
+          "effect": "得到可直接送 SLS 列印的燈罩檔。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "開放生長",
+        "曲面上"
+      ],
+      "tools": [
+        "C++",
+        "CGAL",
+        "Cinder",
+        "3D 列印（SLS 尼龍）"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog/?p=1701"
+    },
+    {
+      "id": "B03-04",
+      "algo": "B03",
+      "title": "Xylem + Hyphae 演算法草圖",
+      "creator": "Nervous System",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Nervous System 以 Runions 的葉脈論文為基礎，發展出 2D 的 Xylem 與 3D 的 Hyphae 兩套模擬系統；此相簿收錄大量演算法草圖，展示同一規則在不同邊界、根部配置下的網路變化。",
+      "variations": [
+        {
+          "name": "多根部從邊緣長入",
+          "how": "rootPoint 改成邊界曲線上等分的多個點，全部以 ParentIndex = -1 起始。",
+          "effect": "網路由外向內收攏，形成放射狀脈紋。"
+        },
+        {
+          "name": "線寬依階層",
+          "how": "計算每段下游末梢數，輸出時以不同線寬或 Offset 曲線表現。",
+          "effect": "像版畫一樣具主次層次的平面圖樣。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "開放生長",
+        "吸引子控制"
+      ],
+      "tools": [
+        "C++",
+        "自製程式"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/"
+    },
+    {
+      "id": "B03-05",
+      "algo": "B03",
+      "title": "2D Space Colonization Experiments",
+      "creator": "Jason Webb",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "以 JavaScript 與 Canvas 實作的一系列瀏覽器互動實驗，涵蓋基本空間殖民、邊界（bounds）限制、障礙物、開放與封閉葉脈、依階層改變線寬等，是理解參數與變形最直觀的資源。",
+      "variations": [
+        {
+          "name": "邊界＋障礙物",
+          "how": "新增 boundary 與 obstacles 曲線輸入，吸引點與新節點都要通過 Contains 檢查。",
+          "effect": "網路只長在指定形狀內並繞開洞口。"
+        },
+        {
+          "name": "空間索引",
+          "how": "以 RTree 取代 NearestNode 的全掃描。",
+          "effect": "可放上萬吸引點仍即時生長。"
+        },
+        {
+          "name": "末梢加粗顯示",
+          "how": "依節點到根的深度或下游數量設定顯示線寬。",
+          "effect": "得到有粗細變化的線畫。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "空間索引",
+        "動畫",
+        "約束滿足"
+      ],
+      "tools": [
+        "JavaScript",
+        "Canvas API"
+      ],
+      "url": "https://github.com/jasonwebb/2d-space-colonization-experiments"
+    },
+    {
+      "id": "B03-06",
+      "algo": "B03",
+      "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "The Coding Train 演算法植物系列第 4 集，以 p5.js／Processing 從零寫出空間殖民樹生成器，並提供原始碼。邏輯與基礎範例幾乎一一對應，是自學對照的好教材。",
+      "variations": [
+        {
+          "name": "逐步動畫",
+          "how": "改成 Timer 驅動，每次只跑一次 GrowOneStep。",
+          "effect": "看見樹一步步長出。"
+        },
+        {
+          "name": "改成 3D",
+          "how": "基礎範例本身已是 3D，可對照影片的 2D 版本把 Z 固定為 0 比較差異。",
+          "effect": "理解維度只影響撒點範圍。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "動畫",
+        "開放生長"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY"
+    },
+    {
+      "id": "B03-07",
+      "algo": "B03",
+      "title": "以空間殖民生成道路網（Space Colonisation for Procedural Road Generation）",
+      "creator": "",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "群體／都市",
+      "summary": "把吸引點詮釋為需要被道路服務的地點，用空間殖民生成都市與城際道路網，並可結合流場、人口分布、地理與邊界地圖微調路網佈局。",
+      "variations": [
+        {
+          "name": "人口密度撒點",
+          "how": "以人口或容積率圖的灰階當接受機率撒吸引點。",
+          "effect": "密集區道路細密、郊區稀疏。"
+        },
+        {
+          "name": "地形約束",
+          "how": "新節點若落在坡度過大或水域區域就捨棄，並把方向向量混入等高線切線方向。",
+          "effect": "道路順應地形蜿蜒。"
+        },
+        {
+          "name": "封閉成路網",
+          "how": "改寫為封閉式模型，讓相近的末梢互相連接。",
+          "effect": "從樹狀路網變成有環路的街廓網。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "影像輸入",
+        "約束滿足",
+        "吸引子控制"
+      ],
+      "tools": [
+        "論文"
+      ],
+      "url": "https://www.researchgate.net/publication/330256216_Space_Colonisation_for_Procedural_Road_Generation"
+    },
+    {
+      "id": "B03-08",
+      "algo": "B03",
+      "title": "Procedural World：Space Colonization（城市街道的自然生長）",
+      "creator": "Miguel Cepero（Procedural World 部落格）",
+      "year": "2011",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "群體／都市",
+      "summary": "程序化世界生成部落格文章，主張未經規劃的城市街道就像植物一樣「以最經濟的方式佔滿空間」，並用空間殖民演算法生成沿地形蔓延、覆蓋可用空間的街道網。",
+      "variations": [
+        {
+          "name": "地形上生長",
+          "how": "新節點以 Mesh.ClosestPoint 投回地形網格，吸引點也撒在地形上。",
+          "effect": "得到貼合地形的街道網。"
+        },
+        {
+          "name": "主次街道分級",
+          "how": "依每段下游末梢數分主幹道、次要道路與巷弄，輸出不同寬度。",
+          "effect": "形成有階層的道路系統。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "曲面上",
+        "開放生長"
+      ],
+      "tools": [
+        "C++",
+        "自製程式"
+      ],
+      "url": "http://procworld.blogspot.com/2011/02/space-colonization.html"
+    },
+    {
+      "id": "B03-09",
+      "algo": "B03",
+      "title": "Space-Colonization 建築剖面生成工具",
+      "creator": "tiago0320（GitHub）",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "建築",
+      "summary": "互動式生成設計與建築剖面工具：使用者繪製實／虛邊界、放置根部、甚至分析手繪草圖，用空間殖民生成剖面上的分枝空間網路；支援向性偏向、主次枝分級與修剪、曲直形態調整、以及產生次級連接迴圈來模擬結構斜撐與動線，並可匯出到 CAD／3D 軟體。",
+      "variations": [
+        {
+          "name": "剖面內的空間網",
+          "how": "把生長限制在 XZ 平面、以剖面輪廓為邊界，吸引點依樓層或採光需求配置。",
+          "effect": "生成樹狀中庭或垂直動線的剖面構想。"
+        },
+        {
+          "name": "主次分級修剪",
+          "how": "計算每段下游末梢數，低於閾值的枝刪除。",
+          "effect": "只保留主要結構或動線骨架。"
+        },
+        {
+          "name": "直線化",
+          "how": "把 segmentLength 小步合併成長段，方向量化為 0°／45°／90°。",
+          "effect": "得到可施工的直線構架。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "約束滿足",
+        "吸引子控制",
+        "影像輸入"
+      ],
+      "tools": [
+        "JavaScript",
+        "HTML5 Canvas"
+      ],
+      "url": "https://github.com/tiago0320/Space-Colonization"
+    },
+    {
+      "id": "B03-10",
+      "algo": "B03",
+      "title": "以空間殖民在 Blender 中設計軟材料內的血管通道（專利文件）",
+      "creator": "USPTO 專利（Fabrication materials and processes useful to form structures in soft materials）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "專利文件描述以 Blender Python API 自製的空間殖民實作設計血管結構：先在指定邊界內隨機產生 N 個虛擬細胞當吸引點，讓血管網長到每個細胞的擴散距離內，再製造成軟材料中的通道。",
+      "variations": [
+        {
+          "name": "擴散距離當 killDistance",
+          "how": "把 killDistance 設成材料的擴散極限距離，吸引點均勻撒滿整個組織體積。",
+          "effect": "保證每個點都在通道服務範圍內。"
+        },
+        {
+          "name": "入口／出口雙樹",
+          "how": "兩個根部（動脈、靜脈）同時生長，末梢配對連接。",
+          "effect": "形成可灌流的封閉迴路。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "開放生長",
+        "最佳化"
+      ],
+      "tools": [
+        "Blender",
+        "Python"
+      ],
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12208441"
+    },
+    {
+      "id": "B03-11",
+      "algo": "B03",
+      "title": "血管化生物混合組織的多尺度運算框架",
+      "creator": "bioRxiv 預印本作者群",
+      "year": "2026",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "研究以 Space Colonization 作為迭代生長方法，逐步把血管網擴展到尚未被灌流的區域，用於生成可製造的血管化組織構造。可視為「以服務範圍為性能指標」的空間殖民應用，概念上可類比建築設備管線或通風路徑。",
+      "variations": [
+        {
+          "name": "以覆蓋率為收斂條件",
+          "how": "每步計算剩餘吸引點比例，低於門檻即停止，並輸出覆蓋率曲線。",
+          "effect": "可比較不同參數的服務效率。"
+        },
+        {
+          "name": "粗細依 Murray 定律",
+          "how": "從末梢倒推，父段半徑的三次方等於子段半徑三次方總和。",
+          "effect": "得到流體力學上合理的管徑分布。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "收斂",
+        "最佳化"
+      ],
+      "tools": [
+        "論文"
+      ],
+      "url": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full"
+    },
+    {
+      "id": "B03-12",
+      "algo": "B03",
+      "title": "spacetree：Blender 空間殖民樹木外掛",
+      "creator": "Michel Anders（varkenvarken）",
+      "year": "2013",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "物件",
+      "summary": "以 Runions 演算法實作的 Blender 樹木生成外掛，參數對應景觀設計常用的樹形特徵，並特別適合建築表現：可輕易納入建築物或牆面造成的遮蔽效果，讓樹木對周邊環境做出反應。",
+      "variations": [
+        {
+          "name": "建築遮蔽",
+          "how": "以 Brep 量體做 IsPointInside 或以太陽方向做遮蔽射線測試，刪掉陰影中的吸引點。",
+          "effect": "樹冠向開闊或向陽側偏長。"
+        },
+        {
+          "name": "景觀配置批次生成",
+          "how": "把 seed 與樹冠包絡做成清單，一次生成整排行道樹。",
+          "effect": "每棵樹都不同卻同屬一種樹形。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "吸引子控制",
+        "可重現種子"
+      ],
+      "tools": [
+        "Blender",
+        "Python"
+      ],
+      "url": "https://github.com/varkenvarken/spacetree"
+    },
+    {
+      "id": "B03-13",
+      "algo": "B03",
+      "title": "Sverchok Tree Generator（節點式空間殖民）",
+      "creator": "elfnor",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "把空間殖民樹生成器寫成 Blender Sverchok 的腳本節點，與 Grasshopper C# Script 的使用情境非常相似：上游節點提供吸引點與根部，下游接成管或網格。",
+      "variations": [
+        {
+          "name": "上游撒點多樣化",
+          "how": "吸引點改接自 Voronoi、Noise 或曲面取樣元件。",
+          "effect": "同一元件長出截然不同的樹冠。"
+        },
+        {
+          "name": "輸出骨架給 Skin 包覆",
+          "how": "輸出節點與父節點索引，交給 Dendro 或 Mesh 包覆元件。",
+          "effect": "得到平滑連續的分枝實體。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "多元件",
+        "3D"
+      ],
+      "tools": [
+        "Blender",
+        "Sverchok",
+        "Python"
+      ],
+      "url": "https://elfnor.com/sverchok-tree-generator.html"
+    },
+    {
+      "id": "B03-14",
+      "algo": "B03",
+      "title": "VEX in Houdini：Space Colonization",
+      "creator": "Entagma（Manuel）",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "Entagma 免費教學，在 Houdini 中以 VEX 與 SOP Solver 實作 Runions 的空間殖民，利用 Houdini 內建的最近點查詢函式加速，常用於動態圖像與藝術裝置的分枝生長動畫。",
+      "variations": [
+        {
+          "name": "Solver 式逐幀生長",
+          "how": "對應 GH 做法：以 Timer 或 Anemone 迴圈每次生長一步並保留狀態。",
+          "effect": "流暢的生長動畫。"
+        },
+        {
+          "name": "內建最近點查詢",
+          "how": "以 Rhino RTree.Point3dClosestPoints 取代自寫 NearestNode。",
+          "effect": "大幅加速並可處理大量吸引點。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "空間索引",
+        "3D"
+      ],
+      "tools": [
+        "Houdini",
+        "VEX"
+      ],
+      "url": "https://entagma.com/1028-2/"
+    },
+    {
+      "id": "B03-15",
+      "algo": "B03",
+      "title": "Grasshopper 空間殖民範例（Parametric House）",
+      "creator": "Parametric House",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "Grasshopper 教學範例網站提供的空間殖民定義，示範在 GH 中以目標點與起始點建立樹狀結構，可直接與基礎範例的 C# 版本比較元件式與程式碼式實作的差異。",
+      "variations": [
+        {
+          "name": "C# 取代元件迴圈",
+          "how": "把 Anemone 或元件式迴圈換成本課的 C# Script，一次在元件內跑完所有步驟。",
+          "effect": "運算更快、參數更集中。"
+        },
+        {
+          "name": "轉成結構構件",
+          "how": "枝段以 Pipe 成管並在節點處放置接頭球。",
+          "effect": "可作為樹狀柱或裝置構架的初步模型。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "多元件",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://parametrichouse.com/space-colonization/"
+    }
+  ]
+}

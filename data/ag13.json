@@ -1,0 +1,1520 @@
+{
+  "agent": "ag13",
+  "algorithms": [
+    {
+      "id": "C05",
+      "name_zh": "Marching Squares 等值線",
+      "name_en": "Marching Squares",
+      "family": "C",
+      "family_name": "場與擴散",
+      "file": "C05_MarchingSquares.cs",
+      "loc": 186,
+      "logic": [
+        "幾何轉換",
+        "直接公式"
+      ],
+      "data_structure": [
+        "網格"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "186 行、無自訂 class、無遞迴；核心是 2D 陣列加一張 16 格查表與線性內插，C# 基礎程度能讀懂，唯一難點是用位元運算算情況編號與對角（鞍點）情況判斷。",
+      "tags": [
+        "等值面",
+        "網格擴散",
+        "吸引子控制",
+        "查表"
+      ],
+      "one_liner": "先在方格網每個格點算一個「場值」（像地形高度），再逐格找出剛好等於某個數值的位置，連成一圈圈等高線。",
+      "how_it_works": [
+        "依中心點與半徑決定取樣範圍，切成 cellSize 大小的方格網。",
+        "每個格點用 metaball 公式 Σ(半徑² ÷ 距離²) 算場值，存進 double[,]。",
+        "逐格檢查 4 個角是否 ≥ threshold，用 1、2、4、8 相加得到 0–15 的情況編號。",
+        "情況 5、10 是對角（鞍點），用 4 角平均值決定要不要把兩個內側角連起來。",
+        "查 EdgePairs 表得知要連哪兩條邊，在邊上依數值比例線性內插出端點，輸出 Line。"
+      ],
+      "key_params": [
+        {
+          "name": "centers",
+          "effect": "metaball 中心，靠得越近，等值線越容易融合成一團"
+        },
+        {
+          "name": "radii",
+          "effect": "每個中心的影響力，半徑越大圈越大、越容易與鄰居黏在一起"
+        },
+        {
+          "name": "cellSize",
+          "effect": "格子越小線越平滑，但格點數以平方成長，速度變慢"
+        },
+        {
+          "name": "threshold",
+          "effect": "等值線取在哪個數值；調小輪廓變大變胖、調大則縮成各自獨立的小圈"
+        },
+        {
+          "name": "margin",
+          "effect": "邊界外多留的範圍；太小時外圈會被切斷成開口曲線"
+        }
+      ],
+      "csharp_concepts": [
+        "二維陣列 double[,] / Point3d[,]",
+        "static readonly int[][] 查表",
+        "位元位移 1 << corner",
+        "LINQ Min/Max/Average",
+        "線性內插",
+        "List<Line>"
+      ],
+      "prerequisites": [
+        "巢狀迴圈",
+        "陣列索引",
+        "Point3d 與向量加減",
+        "距離平方 DistanceToSquared"
+      ],
+      "teaching_note": "非常適合從零實作：先只畫格點與內外著色，再加查表，最後加內插，每一步都看得到結果。要特別講清楚「角的編號→情況編號→查表」這條對應，以及對角情況為何需要中心值判斷；也可提醒輸出的是零散線段，要成封閉曲線需再 Curve.JoinCurves。",
+      "variations": [
+        {
+          "title": "換場函數：從 metaball 改成 SDF／雜訊",
+          "level": 2,
+          "what_changes": "規則（FieldValue）",
+          "how": "把 FieldValue 換成 Perlin／Simplex noise、到曲線的距離（curve.ClosestPoint 後取距離）或正弦波疊加，其餘掃描程式碼完全不動。",
+          "result": "從泡泡狀融合形變成有機斑紋、等距偏移輪廓或波紋圖樣。"
+        },
+        {
+          "title": "多條等值線：一次輸出整張等高線圖",
+          "level": 1,
+          "what_changes": "迴圈／輸出",
+          "how": "把 threshold 改成 List<double> 或用 start、step、count 產生多個數值，外層多包一個迴圈，輸出 DataTree<Line> 每一層一條分支。",
+          "result": "類似地形圖的多層同心等高線，可直接拿去做分層雷切模型。"
+        },
+        {
+          "title": "影像輸入：照片亮度當場值",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "新增 string imagePath 輸入，用 System.Drawing.Bitmap 讀圖，GetPixel(column,row).GetBrightness() 當作 cornerValues。",
+          "result": "照片或手繪灰階圖轉成向量輪廓線，可用於立面穿孔或地景圖案。"
+        },
+        {
+          "title": "曲面上的等值線",
+          "level": 3,
+          "what_changes": "維度（2D→曲面上）",
+          "how": "格點改成在 Surface 的 (u,v) 參數空間取樣，場值用 surface.PointAt(u,v) 的 3D 位置計算，內插完的 uv 點再用 PointAt 映射回 3D。",
+          "result": "貼在屋頂或曲面立面上的等值線，可做分割線或肋條走向。"
+        },
+        {
+          "title": "Isoband 填色：輸出封閉面域",
+          "level": 3,
+          "what_changes": "輸出",
+          "how": "線段先用 Curve.JoinCurves 接成封閉 Polyline，再用 Brep.CreatePlanarBreps 或 Mesh 填面；進階可實作 Marching Squares 的 isoband 版本（每格 3 態，81 種情況）。",
+          "result": "可擠出成高低分層的地景量體或雷切板材。"
+        },
+        {
+          "title": "升維成 Marching Cubes／四面體",
+          "level": 4,
+          "what_changes": "維度（2D→3D）",
+          "how": "格點改成 double[,,]，每格 8 角；可直接套用 F03 的「立方體切 6 個四面體」寫法避開 256 格大表，輸出 Mesh。",
+          "result": "3D metaball 融合體、有機雕塑或體素化建築量體。"
+        },
+        {
+          "title": "吸引子加權與負電荷",
+          "level": 2,
+          "what_changes": "規則／輸入",
+          "how": "新增 weights 輸入，允許負數：total += weight * r² / d²；負權重的點會把輪廓挖出凹洞。",
+          "result": "能做出孔洞、夾縫與不對稱輪廓的平面配置或景觀水池形狀。"
+        },
+        {
+          "title": "曲線邊界裁切",
+          "level": 2,
+          "what_changes": "加約束",
+          "how": "新增 Curve boundary 輸入，對每個格點用 boundary.Contains(point) 判斷，在邊界外的格點強制設為 0（永遠在外側）。",
+          "result": "等值線只出現在基地範圍內，並自然沿著邊界收邊。"
+        },
+        {
+          "title": "混合反應擴散或生命遊戲",
+          "level": 3,
+          "what_changes": "混合其他家族",
+          "how": "把 C01 Reaction-Diffusion 或 C02 生命遊戲算出的網格濃度直接當 cornerValues 輸入，Marching Squares 只負責「描邊」。",
+          "result": "平滑、可加工的斑紋向量輪廓，而不是鋸齒狀像素。"
+        },
+        {
+          "title": "動畫化：移動中心、流動輪廓",
+          "level": 2,
+          "what_changes": "動畫",
+          "how": "接 Timer 或滑桿時間 t，讓 centers 沿圓或雜訊路徑移動（center + new Vector3d(Math.Cos(t), Math.Sin(t), 0) * amplitude），每次重算。",
+          "result": "熔岩燈般融合又分離的輪廓動畫，可輸出成連續幀做影片或拿每幀疊成 3D 量體。"
+        },
+        {
+          "title": "堆疊成 3D：時間或高度當 Z",
+          "level": 3,
+          "what_changes": "維度／輸出",
+          "how": "對一系列 threshold（或一系列時間步）各算一次，把結果線段 Z 設為對應高度，再用 Loft 或輸出成疊層切片。",
+          "result": "類似地形模型的疊層量體或可逐層列印的切片路徑。"
+        },
+        {
+          "title": "轉成可製造的肋條與刀具路徑",
+          "level": 3,
+          "what_changes": "輸出轉可製造幾何",
+          "how": "Join 後的等值線用 Curve.Offset 做成有寬度的板條，或按高度排序輸出成 CNC／雷切路徑；可加上編號文字方便組裝。",
+          "result": "可以直接雷切的等高線地形模型或疊層立面。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "基地等高線疊層模型產生器",
+          "brief": "以測量點或 DEM 影像為場值，一次產出多層等高線並自動排版成雷切板，附編號。重點在多閾值、Join 封閉曲線與排版。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "人流熱區等值線立面",
+          "brief": "把 D01 Boids 或 D03 行人模擬的密度格網當場值，用等值線決定立面穿孔或遮陽板的疏密分區，讓使用行為變成立面圖樣。",
+          "difficulty": 3,
+          "combine_with": [
+            "D01",
+            "D03"
+          ]
+        },
+        {
+          "title": "反應擴散斑紋的可加工輪廓",
+          "brief": "C01 產生 Turing 斑紋，C05 描邊並偏移成有厚度的板件，輸出為可 CNC 的隔屏或地坪鋪面分割。",
+          "difficulty": 3,
+          "combine_with": [
+            "C01"
+          ]
+        },
+        {
+          "title": "曲面屋頂上的日照等值線分割",
+          "brief": "在屋頂曲面的 uv 網格上計算日照或曲率值，於曲面上畫等值線作為面板分割或肋條走向，比較不同閾值下面板數量與尺寸。",
+          "difficulty": 4,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "自寫 Marching Cubes 有機量體",
+          "brief": "把 C05 升維成 3D 並加入 SDF 布林（聯集、平滑聯集、差集），做出可 3D 列印的 metaball 雕塑或構件接頭，並比較與 Dendro 的結果。",
+          "difficulty": 5,
+          "combine_with": [
+            "F03"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Marching cubes: A high resolution 3D surface construction algorithm",
+          "author": "William E. Lorensen, Harvey E. Cline",
+          "year": "1987",
+          "url": "https://dl.acm.org/doi/10.1145/37402.37422"
+        },
+        {
+          "title": "A Generalization of Algebraic Surface Drawing（metaballs 原始論文，ACM TOG 1(3)）",
+          "author": "James F. Blinn",
+          "year": "1982",
+          "url": ""
+        },
+        {
+          "title": "Polygonising a Scalar Field (Marching Cubes)",
+          "author": "Paul Bourke",
+          "year": "1994",
+          "url": "https://paulbourke.net/geometry/polygonise/"
+        },
+        {
+          "title": "Marching squares（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Marching_squares"
+        },
+        {
+          "title": "C5 — Marching Squares（Coding Train 教學）",
+          "author": "Daniel Shiffman",
+          "year": "",
+          "url": "https://thecodingtrain.com/challenges/c5-marching-squares"
+        },
+        {
+          "title": "Distance functions（SDF 基本形與組合公式）",
+          "author": "Inigo Quilez",
+          "year": "",
+          "url": "https://iquilezles.org/articles/distfunctions/"
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "name_zh": "TPMS 三週期極小曲面",
+      "name_en": "Triply Periodic Minimal Surface (TPMS)",
+      "family": "F",
+      "family_name": "圖樣與最佳化",
+      "file": "F03_TPMS.cs",
+      "loc": 250,
+      "logic": [
+        "直接公式",
+        "幾何轉換"
+      ],
+      "data_structure": [
+        "網格",
+        "幾何"
+      ],
+      "difficulty": 4,
+      "difficulty_reason": "公式本身只有一行，但要處理 3D 網格 double[,,]、立方體切 6 個四面體的查表、三角形朝向判斷與頂點合併，是多階段 3D 網格管線，出錯時很難從畫面看出原因。",
+      "tags": [
+        "等值面",
+        "3D",
+        "對稱",
+        "查表",
+        "晶格"
+      ],
+      "one_liner": "用一行三角函數公式定義一個會在 x、y、z 三方向無限重複的曲面（如 Gyroid），再把「公式等於 0 的地方」轉成可 3D 列印的 Mesh。",
+      "how_it_works": [
+        "把 size 邊長的立方體切成 cellCount³ 個小格，每個格點用公式算一個值（Gyroid：sin x cos y + sin y cos z + sin z cos x）。",
+        "periods 控制公式的頻率，也就是每邊重複幾個單元。",
+        "逐一掃過每個小立方體，取出 8 個角的座標與數值。",
+        "每個立方體切成 6 個四面體；依四面體中「內側角（f < isoValue）」的數量產生 0、1 或 2 個三角形。",
+        "三角形頂點用線性內插放在數值剛好等於 isoValue 的位置，並依內外側方向統一法線，最後合併重複頂點成 Mesh。"
+      ],
+      "key_params": [
+        {
+          "name": "surfaceType",
+          "effect": "0 = Gyroid（螺旋迷宮）、1 = Schwarz P（管狀十字接頭）"
+        },
+        {
+          "name": "cellCount",
+          "effect": "取樣解析度；越高越平滑，但計算量以立方成長（60 已約 21 萬格）"
+        },
+        {
+          "name": "size",
+          "effect": "整個立方體的實際邊長"
+        },
+        {
+          "name": "periods",
+          "effect": "每邊重複幾個單元；越大孔越小越密，但要同步提高 cellCount 才不會破面"
+        },
+        {
+          "name": "isoValue",
+          "effect": "0 為標準極小曲面（兩側體積相等）；偏離 0 會讓一側通道變粗、另一側變細"
+        }
+      ],
+      "csharp_concepts": [
+        "三維陣列 double[,,]",
+        "static readonly int[,] 查表",
+        "Math.Sin / Math.Cos",
+        "向量外積與內積判斷朝向",
+        "Mesh.Vertices / Faces",
+        "CombineIdentical",
+        "List<int> 分組"
+      ],
+      "prerequisites": [
+        "巢狀迴圈",
+        "C05 Marching Squares 概念",
+        "三角函數與弧度",
+        "向量外積／內積"
+      ],
+      "teaching_note": "建議在 C05 之後學，強調「2D 找線 → 3D 找面」是同一個想法；可只改 SurfaceFormula 讓學習者立刻看到不同曲面，四面體切割部分當黑盒子說明即可。要提醒 cellCount 不要一次拉到 60，且 periods 提高時要同步提高解析度。",
+      "variations": [
+        {
+          "title": "換公式：Schwarz D、Neovius、I-WP、Lidinoid",
+          "level": 1,
+          "what_changes": "規則（SurfaceFormula）",
+          "how": "在 SurfaceFormula 加更多 surfaceType 分支，例如 Schwarz D：sin x sin y sin z + sin x cos y cos z + cos x sin y cos z + cos x cos y sin z；Neovius：3(cos x + cos y + cos z) + 4 cos x cos y cos z。",
+          "result": "同一套管線立即得到不同拓樸的晶格，可比較孔洞形態與連通性。"
+        },
+        {
+          "title": "Sheet（薄殼）與 Solid（實心骨架）版本",
+          "level": 2,
+          "what_changes": "規則／輸出",
+          "how": "Sheet：改用 |f| - thickness 當場值，isoValue 設 0，就得到有厚度的雙面殼；Solid：只取 f < isoValue 並在外框補蓋面。",
+          "result": "從無厚度曲面變成可直接列印、有壁厚的晶格構件。"
+        },
+        {
+          "title": "漸變密度（Functionally Graded）",
+          "level": 2,
+          "what_changes": "輸入／規則",
+          "how": "讓 isoValue 或 thickness 隨位置變化，例如 isoValue = map(point.Z) 或依到吸引子曲線的距離調整；即 f(x,y,z) - t(x,y,z)。",
+          "result": "底部密實、頂部通透的漸層晶格，可對應受力或透光需求。"
+        },
+        {
+          "title": "漸變週期與單元尺度",
+          "level": 3,
+          "what_changes": "規則",
+          "how": "讓 periods 隨位置平滑變化（toAngle 依 point 變），或對座標先做非線性變形（如 x' = x + a·sin(y)），再代入公式。",
+          "result": "孔洞大小由小到大漸變、或整體扭曲流動的晶格。"
+        },
+        {
+          "title": "填入任意外形（SDF 交集）",
+          "level": 3,
+          "what_changes": "加約束／輸入",
+          "how": "新增 Mesh 或 Brep 邊界輸入，對每個格點算到邊界的有號距離 d（內負外正），場值改為 max(f, d)，即布林交集。",
+          "result": "Gyroid 晶格被裁成柱子、椅子或構件外形，而不是只能是立方體。"
+        },
+        {
+          "title": "兩種 TPMS 混合過渡",
+          "level": 3,
+          "what_changes": "混合規則",
+          "how": "f = (1 - w)·fGyroid + w·fSchwarzP，其中 w 依位置從 0 漸變到 1（例如依 X 座標或到吸引子的距離）。",
+          "result": "晶格由螺旋迷宮逐漸轉成十字管網，可做空間序列或功能分區的過渡。"
+        },
+        {
+          "title": "圓柱／曲面座標映射",
+          "level": 4,
+          "what_changes": "維度（直角座標→圓柱或曲面座標）",
+          "how": "公式代入前先把 (x,y,z) 轉成 (角度 θ·R, 半徑 r, 高度 z)，讓週期沿圓周閉合；或用曲面 uv＋法向距離當三個座標。",
+          "result": "環繞柱子的 Gyroid 外殼、或順著曲面立面彎曲的 TPMS 表皮。"
+        },
+        {
+          "title": "只取 2D 切片當立面圖樣",
+          "level": 1,
+          "what_changes": "維度（3D→2D）",
+          "how": "固定 z = 常數，把 SurfaceFormula 當作 C05 的 FieldValue 用 Marching Squares 描線；改變 z 就得到一系列不同切片。",
+          "result": "迷宮狀的 2D 花紋，可做穿孔板、地坪或逐層雷切疊合。"
+        },
+        {
+          "title": "輸出可製造幾何：封閉、減面、分件",
+          "level": 3,
+          "what_changes": "輸出轉可製造幾何",
+          "how": "sheet 版本用 Mesh.Offset(thickness, true) 或自寫雙層加側邊封閉；再用 Mesh.Reduce 降面數、依單元切成可列印尺寸的模組並檢查 IsClosed。",
+          "result": "可送 3D 列印（FDM、SLA、砂印）的水密 Mesh 構件。"
+        },
+        {
+          "title": "效能版：只算一次邊點＋平行化",
+          "level": 4,
+          "what_changes": "迴圈／資料結構",
+          "how": "用 Dictionary<(int,int,int,int),int> 快取每條邊的內插頂點避免重複，外層迴圈改 Parallel.For，每執行緒各自收集三角形再合併。",
+          "result": "解析度可拉到 100 以上而仍可互動，Mesh 也不需要事後 CombineIdentical。"
+        },
+        {
+          "title": "動畫化：isoValue 或相位掃描",
+          "level": 2,
+          "what_changes": "動畫",
+          "how": "接 Timer，讓 isoValue 在 -1 到 1 間往復，或在公式座標加相位 x + t；每幀重算。",
+          "result": "晶格通道一邊膨脹一邊收縮、或持續流動的動畫，可展示兩個互鎖空間的關係。"
+        },
+        {
+          "title": "混合其他家族：依應力或生長結果調密度",
+          "level": 4,
+          "what_changes": "混合其他家族",
+          "how": "把 E 家族排列或結構分析（例如 Karamba／Millipede 的應力值）取樣到格點，當成 thickness(x,y,z) 輸入；或用 B 家族 DLA／空間殖民結果的距離場當遮罩。",
+          "result": "受力大處密實、受力小處通透的仿生骨骼式構件。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "TPMS 公式圖鑑與切片花磚",
+          "brief": "至少實作 5 種 TPMS 公式，並取 2D 切片轉成可雷切或陶瓷壓模的花磚圖樣，整理每種曲面的孔隙率與視覺特性。",
+          "difficulty": 2,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "漸變密度 Gyroid 柱或椅",
+          "brief": "把 Gyroid 裁進柱或椅的外形，依支撐位置或載重方向調整壁厚，輸出可 3D 列印的縮尺原型並比較重量。",
+          "difficulty": 3,
+          "combine_with": []
+        },
+        {
+          "title": "TPMS 通風／遮陽表皮模組",
+          "brief": "在曲面立面上做 TPMS 晶格表皮，依日照或視線需求調整 isoValue，讓開孔率沿立面漸變，並切成可製造的模組單元。",
+          "difficulty": 4,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "兩種 TPMS 混合的空間序列裝置",
+          "brief": "在一個可穿越的裝置尺度中，讓 Schwarz P 漸變為 Gyroid，研究兩個互鎖空間的連通與動線，產出分件與組裝圖。",
+          "difficulty": 4,
+          "combine_with": []
+        },
+        {
+          "title": "應力驅動的 TPMS 構件",
+          "brief": "先以結構分析取得構件內部應力場，再轉成 TPMS 壁厚場，比較均勻晶格與漸變晶格的重量與剛度；需自寫高效能等值面。",
+          "difficulty": 5,
+          "combine_with": [
+            "E01"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Infinite Periodic Minimal Surfaces Without Self-Intersections（NASA Technical Note）",
+          "author": "Alan H. Schoen",
+          "year": "1970",
+          "url": "https://schoengeometry.com/e-tpms.html"
+        },
+        {
+          "title": "Triply periodic minimal surface（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Triply_periodic_minimal_surface"
+        },
+        {
+          "title": "Gyroid（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Gyroid"
+        },
+        {
+          "title": "Polygonising a Scalar Field（含四面體切割法）",
+          "author": "Paul Bourke",
+          "year": "1994",
+          "url": "https://paulbourke.net/geometry/polygonise/"
+        },
+        {
+          "title": "Marching cubes: A high resolution 3D surface construction algorithm",
+          "author": "William E. Lorensen, Harvey E. Cline",
+          "year": "1987",
+          "url": "https://dl.acm.org/doi/10.1145/37402.37422"
+        },
+        {
+          "title": "Novel 3D printed TPMS scaffolds: microstructure, characteristics and applications in bone regeneration",
+          "author": "",
+          "year": "",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664"
+        },
+        {
+          "title": "An Overview of Additive Manufacturing of Triply Periodic Minimal Surface (TPMS) Structures",
+          "author": "",
+          "year": "",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12736839"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "C05-01",
+      "algo": "C05",
+      "title": "Marching Cubes：CT／MRI 醫學影像重建",
+      "creator": "William E. Lorensen、Harvey E. Cline（General Electric）",
+      "year": "1987",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "SIGGRAPH 1987 論文，把 CT、MRI 等 3D 醫學掃描資料中「密度相同」的位置轉成三角形模型，是 Marching Squares 的 3D 版本，也是電腦圖學引用最多的論文之一。基礎範例的查表＋邊上內插就是它在 2D 的縮小版。",
+      "variations": [
+        {
+          "name": "改成讀取切片影像",
+          "how": "把 FieldValue 換成讀取一疊灰階影像（每張一層 Z），先在單層上做 C05 的等值線",
+          "effect": "得到每層的輪廓，疊起來就是斷層掃描重建的雛形"
+        },
+        {
+          "name": "升維為 3D 查表",
+          "how": "cornerValues 改成 double[,,]，每格 8 角，用 F03 的四面體切法產生三角形",
+          "effect": "直接從體素資料生成可列印的 3D Mesh"
+        },
+        {
+          "name": "梯度法線",
+          "how": "在格點用中央差分算場的梯度，內插到頂點作為 Mesh 法線",
+          "effect": "著色更平滑，不需加密網格"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D",
+        "查表",
+        "影像輸入"
+      ],
+      "tools": [
+        "C"
+      ],
+      "url": "https://dl.acm.org/doi/10.1145/37402.37422"
+    },
+    {
+      "id": "C05-02",
+      "algo": "C05",
+      "title": "Metaballs：Carl Sagan《Cosmos》的原子模型",
+      "creator": "Jim Blinn",
+      "year": "1982",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Blinn 為電視節目《Cosmos》模擬原子交互作用而發展出 blobby 模型，1982 年發表於 ACM TOG。每個球貢獻一個隨距離衰減的場，相加後取等值面，形體會自然融合——正是基礎範例 FieldValue 的原型。",
+      "variations": [
+        {
+          "name": "換衰減函數",
+          "how": "把 r²/d² 換成高斯函數 exp(-d²/r²) 或 Wyvill 的多項式軟物件函數",
+          "effect": "融合更柔順，且影響範圍有限、遠處不會互相干擾"
+        },
+        {
+          "name": "線段與曲線當場源",
+          "how": "場源改成到線段或 Curve 的距離，而不只是點",
+          "effect": "得到骨架狀、管狀融合的有機形"
+        },
+        {
+          "name": "負球挖洞",
+          "how": "允許半徑權重為負值",
+          "effect": "在融合體中挖出凹陷或孔洞"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "等值面",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Metaballs"
+    },
+    {
+      "id": "C05-03",
+      "algo": "C05",
+      "title": "Blob Architecture（泡泡建築）",
+      "creator": "Greg Lynn",
+      "year": "1995",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "建築",
+      "summary": "Greg Lynn 在 1995 年以 metaball 圖學軟體實驗設計並提出 blob architecture 一詞，影響了一整代以數位工具生成有機曲面的建築。其形體生成邏輯即為多個場源加總後取等值面。",
+      "variations": [
+        {
+          "name": "空間計畫當場源",
+          "how": "每個機能空間一個中心點，半徑對應面積需求，threshold 決定是否融合成一棟",
+          "effect": "由泡泡圖直接長出平面輪廓，可比較不同門檻下的連通關係"
+        },
+        {
+          "name": "多樓層切片",
+          "how": "對每個樓層高度 z 算一次等值線（場源為 3D 點）",
+          "effect": "得到逐層變化的樓板輪廓，疊起來是有機量體"
+        },
+        {
+          "name": "結合 3D 等值面",
+          "how": "改用 F03 的四面體管線輸出 Mesh",
+          "effect": "直接生成泡泡狀量體外殼"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "吸引子控制",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Blob_architecture"
+    },
+    {
+      "id": "C05-04",
+      "algo": "C05",
+      "title": "AR Sandbox 擴增實境沙盤",
+      "creator": "Oliver Kreylos（UC Davis）",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "地景",
+      "summary": "用 Kinect 深度相機即時掃描沙盤高度，再以投影機把高程色帶、地形等高線與模擬水流投回沙面，讓人用手堆沙就能看懂等高線地形圖。全世界已有數千處安裝，軟體開源。",
+      "variations": [
+        {
+          "name": "深度影像當場值",
+          "how": "把 cornerValues 換成深度相機或 DEM 影像的像素高度",
+          "effect": "即時從實體模型生成等高線"
+        },
+        {
+          "name": "多層等高線加色帶",
+          "how": "threshold 改為等距多值，每層用不同顏色輸出",
+          "effect": "完整的地形分層圖"
+        },
+        {
+          "name": "加上水流模擬",
+          "how": "在同一網格上跑簡單的水流擴散（C 家族），水深再描一條等值線",
+          "effect": "看出集水區與積水範圍"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "影像輸入",
+        "動畫",
+        "網格擴散"
+      ],
+      "tools": [
+        "Kinect",
+        "開源軟體"
+      ],
+      "url": "https://datalab.ucdavis.edu/arsandbox/"
+    },
+    {
+      "id": "C05-05",
+      "algo": "C05",
+      "title": "等高線地形圖與氣象等壓線",
+      "creator": "地圖與氣象製圖通用做法",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "地景",
+      "summary": "Marching Squares 最典型的用途：從規則格網的高程或氣壓資料畫出等高線（isoline）與等值帶（isoband）。建築系做基地模型時的分層等高線，背後就是同一件事。",
+      "variations": [
+        {
+          "name": "多閾值等距輸出",
+          "how": "threshold 改為 start + i·step 的迴圈，輸出 DataTree",
+          "effect": "標準等高線圖"
+        },
+        {
+          "name": "封閉並擠出",
+          "how": "JoinCurves 後以 Extrude 依高度擠出板厚",
+          "effect": "可雷切的疊層地形模型"
+        },
+        {
+          "name": "Isoband 填色",
+          "how": "每兩個閾值之間的區域做成面並著色",
+          "effect": "高程色帶地圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "等值面",
+        "影像輸入"
+      ],
+      "tools": [
+        "GIS"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Marching_squares"
+    },
+    {
+      "id": "C05-06",
+      "algo": "C05",
+      "title": "d3-contour：網頁資料視覺化的等值線",
+      "creator": "D3（Mike Bostock 與貢獻者）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "D3 的 d3-contour 模組對矩形數值陣列套用 Marching Squares 計算等值多邊形，常用於密度圖、地形圖等資料視覺化。它輸出的是封閉多邊形，是基礎範例「散線段」的進階版。",
+      "variations": [
+        {
+          "name": "點密度當場值",
+          "how": "把一堆散點（例如人流 GPS 點）以核密度估計累加到格點上",
+          "effect": "人流或事件的熱區等值圖"
+        },
+        {
+          "name": "直接輸出多邊形",
+          "how": "線段依端點相接串成 Polyline，並判斷方向區分外框與洞",
+          "effect": "可直接填色的封閉區塊"
+        },
+        {
+          "name": "平滑處理",
+          "how": "輸出的 Polyline 再做 Chaikin 細分或轉成 NURBS",
+          "effect": "去除格子造成的折角感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "資料視覺化"
+      ],
+      "tools": [
+        "JavaScript",
+        "D3"
+      ],
+      "url": "https://github.com/d3/d3-contour"
+    },
+    {
+      "id": "C05-07",
+      "algo": "C05",
+      "title": "Coding Train C5 — Marching Squares",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 p5.js 逐步講解 Marching Squares，示範把 Open Simplex 雜訊、metaballs、Worley 雜訊、攝影機畫面與影像等各種輸入描成平滑等值線，是自學最好上手的教材。",
+      "variations": [
+        {
+          "name": "換成雜訊場",
+          "how": "FieldValue 改為 Simplex／Perlin noise 取樣",
+          "effect": "有機地形般的斑紋"
+        },
+        {
+          "name": "Worley 雜訊",
+          "how": "場值改為到最近隨機點的距離",
+          "effect": "細胞、龜裂狀圖樣"
+        },
+        {
+          "name": "即時攝影機輸入",
+          "how": "每幀讀取影像亮度當場值（GH 可用 Timer 讀取檔案）",
+          "effect": "會跟著畫面流動的輪廓藝術"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "影像輸入",
+        "動畫"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/c5-marching-squares"
+    },
+    {
+      "id": "C05-08",
+      "algo": "C05",
+      "title": "Dendro：OpenVDB 體素建模外掛",
+      "creator": "ryein（Dendro 開發者）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Grasshopper 外掛，建構於 OpenVDB，把點、曲線、Mesh 包成體積資料後做布林、平滑、偏移、形變，再轉回 Mesh。本質是 3D 場＋等值面擷取，等於基礎範例的工業強度版。",
+      "variations": [
+        {
+          "name": "曲線包覆",
+          "how": "場值改為到多條曲線的最短距離，threshold 當作管徑",
+          "effect": "節點自然融合的管網結構，類似 Dendro 的 curve to volume"
+        },
+        {
+          "name": "平滑聯集",
+          "how": "兩個場用 smooth min 公式合併，而不是直接取 min",
+          "effect": "接合處圓順過渡的構件接頭"
+        },
+        {
+          "name": "偏移與挖空",
+          "how": "對距離場加減常數再取差集",
+          "effect": "有固定壁厚的殼體，可 3D 列印"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D",
+        "空間索引"
+      ],
+      "tools": [
+        "Grasshopper",
+        "OpenVDB",
+        "C#",
+        "C++"
+      ],
+      "url": "https://github.com/ryein/dendro"
+    },
+    {
+      "id": "C05-09",
+      "algo": "C05",
+      "title": "Millipede：結構分析與等值面擷取",
+      "creator": "Panagiotis Michalatos",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "構件",
+      "summary": "Millipede 是 Grasshopper 的結構分析與拓樸最佳化外掛，同時提供從體積純量場擷取等值面 Mesh，以及在 Mesh 上畫曲線等值線的功能。拓樸最佳化得到的密度場，就是靠等值面變成可建造的形。",
+      "variations": [
+        {
+          "name": "應力場等值線",
+          "how": "把結構分析每個格點的應力值當 cornerValues",
+          "effect": "看出高應力區的輪廓，決定加勁或開孔位置"
+        },
+        {
+          "name": "密度場描邊",
+          "how": "拓樸最佳化結果（0–1 密度）取 0.5 等值線",
+          "effect": "從灰階最佳化結果得到清楚的構件外形"
+        },
+        {
+          "name": "Mesh 上的等值線",
+          "how": "在 Mesh 每個三角形上做 marching triangles（3 角、8 種情況）",
+          "effect": "在任意曲面上畫出分析結果的等值線"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "最佳化",
+        "曲面上"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.grasshopper3d.com/group/millipede"
+    },
+    {
+      "id": "C05-10",
+      "algo": "C05",
+      "title": "Axolotl：SDF 體積建模元件",
+      "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "ETH Zurich 數位建築技術研究室開發的 Grasshopper 元件集，以有號距離函數（SDF）表示形體，支援布林、晶格與 TPMS，並用 Marching Cubes 轉成 Mesh。多數元件為 Python 腳本，定位偏向教學。",
+      "variations": [
+        {
+          "name": "SDF 基本形",
+          "how": "FieldValue 改為圓、矩形的有號距離，threshold 設 0",
+          "effect": "精準的幾何輪廓而非泡泡形"
+        },
+        {
+          "name": "SDF 布林",
+          "how": "聯集 min(a,b)、交集 max(a,b)、差集 max(a,-b)",
+          "effect": "用數學組合出複雜平面形"
+        },
+        {
+          "name": "偏移即等值",
+          "how": "threshold 改成 ±offset",
+          "effect": "等距外擴或內縮的輪廓，可做牆厚或退縮線"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Python"
+      ],
+      "url": "https://dbt.arch.ethz.ch/project/axolotl/"
+    },
+    {
+      "id": "C05-11",
+      "algo": "C05",
+      "title": "Modeling with Distance Functions（SDF 建模）",
+      "creator": "Inigo Quilez",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "Shadertoy 共同創辦人 Inigo Quilez 整理的 SDF 基本形與平滑組合公式集，是 demoscene 與程式化建模的重要參考。這些公式可直接貼進基礎範例的 FieldValue，再由 Marching Squares／Cubes 轉成幾何。",
+      "variations": [
+        {
+          "name": "smooth min 融合",
+          "how": "用 smin(a,b,k) 取代加總，k 控制融合圓角",
+          "effect": "可控制圓角大小的有機聯集"
+        },
+        {
+          "name": "空間重複",
+          "how": "座標先取 mod 再算 SDF",
+          "effect": "一個公式得到整片重複圖樣，可做立面花格"
+        },
+        {
+          "name": "扭轉與彎曲",
+          "how": "代入公式前先旋轉座標，角度隨位置變化",
+          "effect": "扭曲、流動的圖樣"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "對稱"
+      ],
+      "tools": [
+        "GLSL",
+        "Shadertoy"
+      ],
+      "url": "https://iquilezles.org/articles/distfunctions/"
+    },
+    {
+      "id": "C05-12",
+      "algo": "C05",
+      "title": "Marching Cubes 程式化地形（Coding Adventure）",
+      "creator": "Sebastian Lague",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "地景",
+      "summary": "以 Unity 與 compute shader 實作 Marching Cubes 產生可挖掘、可有洞穴的程式化地形，並附教學影片與 MIT 授權原始碼。展示了等值面方法能處理高度圖做不到的懸崖與洞穴。",
+      "variations": [
+        {
+          "name": "3D 雜訊地形",
+          "how": "場值 = 雜訊(x,y,z) − z，取 0 等值面",
+          "effect": "有懸挑與洞穴的地形，而非單純高度圖"
+        },
+        {
+          "name": "即時挖填",
+          "how": "滑鼠點擊處對周圍格點加減場值再重算",
+          "effect": "可互動雕塑的地景模型"
+        },
+        {
+          "name": "GPU 加速",
+          "how": "把逐格計算搬到平行迴圈或 shader",
+          "effect": "高解析度仍可即時互動"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D",
+        "隨機",
+        "動畫"
+      ],
+      "tools": [
+        "Unity",
+        "C#",
+        "Compute Shader"
+      ],
+      "url": "https://github.com/SebLague/Marching-Cubes"
+    },
+    {
+      "id": "C05-13",
+      "algo": "C05",
+      "title": "Monolith：多材料體素設計工具",
+      "creator": "Panagiotis Michalatos、Andrew O. Payne（Autodesk）",
+      "year": "2018",
+      "category": "fabrication",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "Autodesk 研究團隊開發的體素化設計工具，以體積場而非邊界曲面描述物件，適合多材料 3D 列印與漸變材質。場的思維與基礎範例一致，最後同樣需要等值面把場轉成可輸出的幾何。",
+      "variations": [
+        {
+          "name": "兩種材料的場",
+          "how": "同時計算兩個場，比較大小決定每格屬於哪種材料，並各自描邊",
+          "effect": "材料分區圖，可對應多材料列印"
+        },
+        {
+          "name": "漸變材料比例",
+          "how": "輸出每格的混合比例並以點雲顏色表示",
+          "effect": "軟硬漸變的構件"
+        },
+        {
+          "name": "逐層切片輸出",
+          "how": "每個 Z 高度做一次 C05，得到該層輪廓",
+          "effect": "可直接給列印機的切片路徑"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "Monolith"
+      ],
+      "url": "https://www.monolith.zone/"
+    },
+    {
+      "id": "F03-01",
+      "algo": "F03",
+      "title": "Gyroid 的發現：NASA 技術報告與實體模型",
+      "creator": "Alan H. Schoen（NASA 電子研究中心）",
+      "year": "1970",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Schoen 在 1970 年 NASA 技術報告〈Infinite Periodic Minimal Surfaces Without Self-Intersections〉中描述了 Gyroid 等 12 種新的 TPMS，並以塑膠模型與電腦動畫展示；嚴格證明要到 1996 年才完成。基礎範例用的 sin·cos 三角函數式則是後來常用的近似公式。",
+      "variations": [
+        {
+          "name": "Bonnet 變形動畫",
+          "how": "以參數 t 在 Schwarz P、D 與 Gyroid 公式之間線性插值並動畫化（近似展示，非精確的 Bonnet 變換）",
+          "effect": "看出三種曲面同屬一家族的直覺"
+        },
+        {
+          "name": "單元模型",
+          "how": "periods 設 1，只輸出一個單元並做成 sheet 版本",
+          "effect": "可 3D 列印的教學用單元模型"
+        },
+        {
+          "name": "骨架圖",
+          "how": "只取 f < isoValue 的格點中心連線（圖：點＋連線）",
+          "effect": "看出曲面兩側的迷宮通道骨架"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "等值面",
+        "對稱",
+        "3D"
+      ],
+      "tools": [],
+      "url": "https://schoengeometry.com/e-tpms.html"
+    },
+    {
+      "id": "F03-02",
+      "algo": "F03",
+      "title": "Gyroid 金屬雕塑",
+      "creator": "Bathsheba Grossman",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "數學雕塑家 Bathsheba Grossman 以 Mathematica 與 Kenneth Brakke 的 Surface Evolver 計算 Gyroid 的一段，再以鋼材 3D 列印成約 3 吋的立方雕塑；她自述自己的創作貢獻是「開的洞」。",
+      "variations": [
+        {
+          "name": "sheet 加厚",
+          "how": "場值改為 |f| − t，t 為壁厚",
+          "effect": "有實體厚度、可金屬列印的雙面殼"
+        },
+        {
+          "name": "外形裁切",
+          "how": "與球或立方體的 SDF 取交集 max(f, d)",
+          "effect": "邊界乾淨的雕塑外形"
+        },
+        {
+          "name": "表面開孔",
+          "how": "在 sheet 上再疊一個低頻 TPMS 或點狀場做差集",
+          "effect": "類似作者加上的孔洞，增加穿透感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "3D",
+        "對稱"
+      ],
+      "tools": [
+        "Mathematica",
+        "Surface Evolver",
+        "金屬 3D 列印"
+      ],
+      "url": "https://www.bathsheba.com/math/gyroid/"
+    },
+    {
+      "id": "F03-03",
+      "algo": "F03",
+      "title": "3D 列印的 Gyroid 填充（Infill）",
+      "creator": "Prusa Research（PrusaSlicer）等切片軟體",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "構件",
+      "summary": "FDM 切片軟體普遍提供 Gyroid 填充樣式：各方向強度接近、同一層內不自我交叉、列印快、重量強度比佳。每一層列印路徑正是 Gyroid 在該高度的 2D 切片等值線。",
+      "variations": [
+        {
+          "name": "逐層切片 = C05",
+          "how": "固定 z，把 Gyroid 公式當 C05 的場，描出等值線當列印路徑",
+          "effect": "自己產生 Gyroid 填充刀具路徑"
+        },
+        {
+          "name": "漸變填充率",
+          "how": "periods 或 isoValue 隨到外殼的距離變化",
+          "effect": "外緣密、中心疏的省料填充"
+        },
+        {
+          "name": "改 Schwarz P／D",
+          "how": "切換公式比較切片路徑",
+          "effect": "不同強度與列印時間的填充樣式"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "PrusaSlicer",
+        "FDM 3D 列印"
+      ],
+      "url": "https://help.prusa3d.com/article/infill-patterns_177130"
+    },
+    {
+      "id": "F03-04",
+      "algo": "F03",
+      "title": "徑向漸變 TPMS 骨骼支架",
+      "creator": "骨組織工程研究（綜述論文）",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "近年以 3D 列印的徑向漸變 TPMS 多孔支架修復骨缺損，常見 Gyroid、Diamond、Schwarz P；材料有 PLA、PCL、PEEK、鈦合金等，製程涵蓋 FDM、光固化、擠出與 SLM。孔隙率、孔徑與連通性直接由公式與 isoValue 控制。",
+      "variations": [
+        {
+          "name": "徑向漸變",
+          "how": "isoValue 依到中心軸的距離 r 變化，例如 iso = a + b·r",
+          "effect": "外圍緻密承重、中心多孔利於長骨"
+        },
+        {
+          "name": "Sheet 型 vs Skeletal 型",
+          "how": "分別用 |f| − t 與 f − t 兩種場",
+          "effect": "比較兩種晶格的孔隙率與表面積"
+        },
+        {
+          "name": "外形來自掃描",
+          "how": "以骨缺損 Mesh 的 SDF 與 TPMS 取交集",
+          "effect": "客製化形狀的植入物"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D",
+        "最佳化"
+      ],
+      "tools": [
+        "3D 列印"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664"
+    },
+    {
+      "id": "F03-05",
+      "algo": "F03",
+      "title": "Gyroid 積層製造熱交換器",
+      "creator": "熱流研究（International Journal of Thermal Sciences 論文）",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Gyroid 把空間分成兩個互不相通、卻彼此緊貼的通道，正好讓冷熱兩股流體各走一邊；金屬 3D 列印可一體成形，不需傳統熱交換器的墊片與組件。研究以 CFD 與實驗分析其流動與傳熱。",
+      "variations": [
+        {
+          "name": "兩側通道分色輸出",
+          "how": "分別輸出 f < 0 與 f > 0 兩側的封閉體",
+          "effect": "清楚看見兩個互鎖的流道"
+        },
+        {
+          "name": "入口漸變",
+          "how": "periods 沿流向漸變，入口大孔、中段小孔",
+          "effect": "兼顧壓損與換熱面積"
+        },
+        {
+          "name": "表面積量測",
+          "how": "用 AreaMassProperties 計算 Mesh 面積與體積比",
+          "effect": "比較不同 isoValue 的換熱面積"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D",
+        "最佳化"
+      ],
+      "tools": [
+        "CFD",
+        "金屬 3D 列印"
+      ],
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1290072925001589"
+    },
+    {
+      "id": "F03-06",
+      "algo": "F03",
+      "title": "3D 石墨烯 Gyroid：超輕高強材料",
+      "creator": "Markus Buehler 團隊（MIT）",
+      "year": "2017",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "MIT 研究以 Gyroid 幾何把石墨烯壓成多孔 3D 結構，密度僅鋼的 5% 卻有其 10 倍強度；團隊並把放大數千倍的 Gyroid 模型 3D 列印出來做力學測試，結論是「幾何才是主要因素」。",
+      "variations": [
+        {
+          "name": "壁厚參數化",
+          "how": "sheet 版本的 thickness 作為滑桿",
+          "effect": "觀察相對密度與形態的關係"
+        },
+        {
+          "name": "列印縮尺試體",
+          "how": "輸出 2×2×2 單元的水密 Mesh",
+          "effect": "可做簡易壓縮測試的教學試體"
+        },
+        {
+          "name": "與桿件晶格比較",
+          "how": "另做一組立方桿件晶格（圖：點＋連線），同重量比較",
+          "effect": "體會曲面晶格與桿件晶格差異"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "3D 列印",
+        "分子模擬"
+      ],
+      "url": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106"
+    },
+    {
+      "id": "F03-07",
+      "algo": "F03",
+      "title": "蝴蝶鱗片的 Gyroid 光子晶體（結構色）",
+      "creator": "自然界（蝴蝶鱗片、鳥類羽毛）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "部分蝴蝶翅膀鱗片與鳥類羽毛含有單一 Gyroid 網路的奈米光子晶體，靠光的干涉產生結構色，而不是色素。這說明 TPMS 不只是數學，也是自然界的材料組織方式。",
+      "variations": [
+        {
+          "name": "切片圖樣",
+          "how": "取不同 z 的 2D 切片並以 C05 描線",
+          "effect": "隨切片高度變化的迷宮花紋，可做一系列表皮圖樣"
+        },
+        {
+          "name": "單側 Gyroid",
+          "how": "只保留 f < isoValue 的一側（single network）",
+          "effect": "對應自然界中的單一網路結構"
+        },
+        {
+          "name": "色彩映射",
+          "how": "依 Mesh 法線方向著色",
+          "effect": "模擬隨視角變化的結構色效果"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "等值面",
+        "對稱"
+      ],
+      "tools": [],
+      "url": "https://en.wikipedia.org/wiki/Gyroid"
+    },
+    {
+      "id": "F03-08",
+      "algo": "F03",
+      "title": "Axolotl 的 TPMS 晶格元件",
+      "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Axolotl 把 Gyroid、Schwarz 等 TPMS 當作 SDF 物件，可與任意外形做布林並以 Marching Cubes 輸出 Mesh。開發團隊 DBT 長期研究 3D 砂印與建築構件，是基礎範例延伸成「裁進建築構件的晶格」的直接參考。",
+      "variations": [
+        {
+          "name": "晶格裁進構件外形",
+          "how": "加入構件 Mesh 的有號距離 d，場值 = max(f, d)",
+          "effect": "柱、梁或節點內部的 TPMS 晶格"
+        },
+        {
+          "name": "外殼＋內部晶格",
+          "how": "外殼 = |d| − t1，晶格 = max(|f| − t2, d)，兩者取聯集",
+          "effect": "外觀完整、內部輕量化的構件"
+        },
+        {
+          "name": "密度依距離漸變",
+          "how": "晶格壁厚隨到外殼的距離變化",
+          "effect": "表面附近較實、核心較空"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Python"
+      ],
+      "url": "https://github.com/GuoyingDong/Axolotl"
+    },
+    {
+      "id": "F03-09",
+      "algo": "F03",
+      "title": "Digital Grotesque：全尺度 3D 砂印洞窟（製造路徑參考）",
+      "creator": "Michael Hansmeyer、Benjamin Dillenburger",
+      "year": "2013",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture",
+        "art-installation"
+      ],
+      "scale": "建築",
+      "summary": "首件可進入、全尺度、完全以砂 3D 列印的封閉空間（約 16 平方公尺，2013 年 Archilab 展出）；續作 Digital Grotesque II 以 7 噸砂岩列印。注意：此作品的形體來自細分（subdivision）演算法而非 TPMS，列在此處是作為「複雜多孔幾何可用砂印做到建築尺度」的製造參考。",
+      "variations": [
+        {
+          "name": "以 TPMS 取代細分形",
+          "how": "用 sheet 型 Gyroid 填滿洞窟牆體的 SDF 範圍",
+          "effect": "同樣多孔、可穿透的砂印牆體，但由公式控制"
+        },
+        {
+          "name": "多尺度疊加",
+          "how": "場 = f(大週期) + 0.3·f(小週期)",
+          "effect": "大孔中有小孔的多層次紋理"
+        },
+        {
+          "name": "分塊列印",
+          "how": "依印表機成型尺寸把 Mesh 切成模組並加上對位榫",
+          "effect": "可分件列印、現場組裝的構件"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "多元件"
+      ],
+      "tools": [
+        "砂印（binder jetting）"
+      ],
+      "url": "https://michael-hansmeyer.com/digital-grotesque-I"
+    },
+    {
+      "id": "F03-10",
+      "algo": "F03",
+      "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
+      "creator": "Benjamin Dillenburger、Robert Flatt、Joseph Schwartz 等（ETH Zurich，DFAB HOUSE）",
+      "year": "2018",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance",
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "在 Empa NEST 的 DFAB HOUSE 中，以黏著劑噴印（binder jetting）的砂模當模板澆置混凝土，做出肋梁分級的輕量樓板，比一般實心樓板輕約 70%。此案本身不是 TPMS，但示範了把演算法生成的複雜多孔幾何變成建築構件的製造路徑。",
+      "variations": [
+        {
+          "name": "TPMS 砂模",
+          "how": "輸出 Gyroid solid 一側作為模具，另一側即為混凝土",
+          "effect": "內含雙連通空腔的輕量混凝土構件"
+        },
+        {
+          "name": "依彎矩漸變",
+          "how": "isoValue 沿跨度依彎矩大小變化",
+          "effect": "支承處密、跨中疏（或相反）的樓板晶格"
+        },
+        {
+          "name": "只做下半部",
+          "how": "上半為實心板，下半 z 範圍內才套 TPMS",
+          "effect": "平整樓面、下方呈現晶格天花"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "最佳化",
+        "多元件"
+      ],
+      "tools": [
+        "砂印（binder jetting）",
+        "混凝土"
+      ],
+      "url": "https://dbt.arch.ethz.ch/project/smart-slab/"
+    },
+    {
+      "id": "F03-11",
+      "algo": "F03",
+      "title": "Minimal Complexity 極小曲面裝置",
+      "creator": "Vlad Tenu",
+      "year": "2010",
+      "category": "art-installation",
+      "categories_extra": [
+        "3d-architecture",
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "以 Schwarz 系列極小曲面單元重複組成的可穿越金屬裝置，是 TEX-FAB 競賽的得獎作品，常被引為 TPMS 進入建築裝置尺度的早期案例。（本條細節未能於本次搜尋中取得網頁佐證，年份與材料請再查證。）",
+      "variations": [
+        {
+          "name": "單元化與展開",
+          "how": "只取一個週期的 Mesh，沿對稱面切成可展開的片",
+          "effect": "可用金屬板雷切彎折組裝的單元"
+        },
+        {
+          "name": "有限重複",
+          "how": "periods 設為非整數並以外形 SDF 裁切",
+          "effect": "邊界處自然開口的裝置外形"
+        },
+        {
+          "name": "改成 Schwarz D",
+          "how": "切換公式",
+          "effect": "更扭轉、更具動感的單元"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "對稱"
+      ],
+      "tools": [],
+      "url": ""
+    },
+    {
+      "id": "F03-12",
+      "algo": "F03",
+      "title": "Gyroid 水凝膠支架：軟組織工程",
+      "creator": "Nature Communications 論文作者群",
+      "year": "2026",
+      "category": "fabrication",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "以 DLP 生物列印製作含細胞的 Gyroid 水凝膠支架，連續曲面與高連通性支持微血管網路在整個構造中形成。展示了 TPMS 從硬材料（骨、金屬）擴展到軟材料的製造挑戰。",
+      "variations": [
+        {
+          "name": "孔徑控制",
+          "how": "由 size ÷ periods 反推單元尺寸，輸出孔徑數值",
+          "effect": "依製程解析度選出可列印的單元大小"
+        },
+        {
+          "name": "連通性檢查",
+          "how": "對 f < iso 的格點做 flood fill，確認是否一側完全連通",
+          "effect": "避免出現封閉死腔"
+        },
+        {
+          "name": "曲率著色",
+          "how": "計算 Mesh 頂點曲率並上色",
+          "effect": "觀察哪些區域彎曲最大"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "DLP 3D 列印"
+      ],
+      "url": "https://www.nature.com/articles/s41467-026-73452-y"
+    },
+    {
+      "id": "F03-13",
+      "algo": "F03",
+      "title": "依最佳化壁厚設計的 TPMS 支架",
+      "creator": "積層製造研究（PMC 論文）",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "研究以最佳化方法決定 TPMS 支架各處的壁厚，在剛度、滲透率與孔隙率之間取得平衡，並以積層製造實作驗證。對應到基礎範例，就是讓 isoValue／thickness 從常數變成一個空間場。",
+      "variations": [
+        {
+          "name": "壁厚場",
+          "how": "thickness(x,y,z) 由外部數值（例如點雲＋插值）提供",
+          "effect": "任意分布的漸變壁厚"
+        },
+        {
+          "name": "參數掃描",
+          "how": "用迴圈掃過多組 isoValue，記錄體積比（孔隙率）",
+          "effect": "得到 isoValue 與孔隙率的對照曲線"
+        },
+        {
+          "name": "搭配 Galapagos",
+          "how": "以體積與表面積為目標讓 GH 最佳化器調 periods、isoValue",
+          "effect": "自動找出符合目標的晶格參數"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "3D",
+        "等值面"
+      ],
+      "tools": [
+        "積層製造"
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549"
+    }
+  ]
+}

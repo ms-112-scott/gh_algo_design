@@ -1,0 +1,786 @@
+{
+  "agent": "ag04",
+  "algorithms": [
+    {
+      "id": "A05",
+      "name_zh": "形狀文法",
+      "name_en": "Shape Grammar",
+      "family": "A",
+      "family_name": "規則與語法",
+      "file": "A05_ShapeGrammar.cs",
+      "loc": 189,
+      "logic": [
+        "改寫／遞迴"
+      ],
+      "data_structure": [
+        "幾何",
+        "符號"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "約 190 行、只有一個自訂 class（LabeledSquare）加一個規則函式，每代把清單整批替換，沒有鄰居搜尋或空間索引；難點只在旋轉向量與直角三角形的邊長換算。",
+      "tags": [
+        "字串改寫",
+        "遞迴",
+        "分形",
+        "自訂 class",
+        "對稱"
+      ],
+      "one_liner": "不改寫文字，而是直接把「帶標籤的形狀」換成新的形狀組合：一個大正方形 A 被換成定住的 B 加上兩個縮小旋轉的 A，反覆套用就長出畢氏樹。",
+      "how_it_works": [
+        "起始形狀：一個標籤為 A 的正方形（左下角、底邊方向、邊長）。",
+        "每一代把清單裡所有形狀同時丟進 ApplyRules：B、C 原樣保留；A 太小就改標籤成 C（葉）；A 夠大就變成 B，並在頂邊架出兩個新的 A。",
+        "兩個新 A 的邊長分別是 size·cos(angle) 與 size·sin(angle)，方向分別轉 angle 與 angle−90°，剛好和頂邊圍成直角三角形。",
+        "新清單取代舊清單；若已經沒有 A 就提早停止。",
+        "輸出每個正方形的封閉 Polyline 與標籤字串，可用標籤分色。"
+      ],
+      "key_params": [
+        {
+          "name": "generations",
+          "effect": "世代數，形狀數最多 2 的 generations 次方，上限 14 代"
+        },
+        {
+          "name": "size",
+          "effect": "第一個正方形邊長，決定整棵樹的尺度"
+        },
+        {
+          "name": "angle",
+          "effect": "分叉角度；45° 左右對稱，偏離 45° 樹會往一側傾倒並形成螺旋"
+        },
+        {
+          "name": "minSize",
+          "effect": "終止條件：邊長小於它的 A 變成葉 C，越大樹越稀疏、越早停"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（欄位＋建構子＋方法）",
+        "List<T> 整批替換（雙緩衝）",
+        "char 標籤判斷",
+        "Vector3d 旋轉（cos/sin 矩陣）",
+        "LINQ Any / Select",
+        "const 常數"
+      ],
+      "prerequisites": [
+        "迴圈與 if",
+        "class 與建構子",
+        "三角函數 cos/sin",
+        "Point3d＋Vector3d 運算"
+      ],
+      "teaching_note": "很適合從零實作：規則函式很短，學習者能立刻改規則看到形變。重點要講清楚「每代同時套用（新清單取代舊清單）」與 L-System 的差別；旋轉向量那段可以先當黑盒子，再回頭解釋。",
+      "variations": [
+        {
+          "title": "隨機分叉角的畢氏樹",
+          "level": 2,
+          "what_changes": "規則",
+          "how": "新增 seed 輸入並建立 Random，在規則 1 裡把 angle 換成 angle + random.NextDouble()*jitter，每個 A 各自決定角度。",
+          "result": "每一枝傾斜不同、像被風吹過的自然樹形，但同一 seed 可重現。"
+        },
+        {
+          "title": "多條規則競爭（機率文法）",
+          "level": 2,
+          "what_changes": "規則",
+          "how": "在 ApplyRules 為 A 準備 2–3 條替換規則（分兩枝、分三枝、只長一枝），用機率或邊長區間選一條套用。",
+          "result": "同一顆種子長出風格一致但細節不同的一整個「家族」設計。"
+        },
+        {
+          "title": "分割文法（split grammar）",
+          "level": 2,
+          "what_changes": "規則／狀態",
+          "how": "把 LabeledSquare 換成矩形，規則改成「A → 沿長邊切成 n 份」，標籤分為 Floor、Bay、Window、Wall，最後一層輸出開口框。",
+          "result": "類似 CityEngine CGA 的立面分割：樓層→開間→窗牆。"
+        },
+        {
+          "title": "冰裂紋窗格（Ice-ray）",
+          "level": 3,
+          "what_changes": "狀態／規則",
+          "how": "形狀改成任意凸多邊形，規則為「A 若面積大於門檻 → 隨機選兩條邊，連一條線把它切成兩個 A」，面積小的變成 C。",
+          "result": "中式冰裂紋窗花，每片大小自然遞減。"
+        },
+        {
+          "title": "3D 畢氏樹（立方體版）",
+          "level": 3,
+          "what_changes": "維度",
+          "how": "LabeledSquare 改成 LabeledBox，用 Plane 取代 Direction/Up，規則在頂面長出 2–4 個繞不同軸旋轉的小方塊，輸出 Box 或 Brep。",
+          "result": "立體分枝的方塊樹，可當雕塑或構架量體。"
+        },
+        {
+          "title": "曲面上的形狀文法",
+          "level": 3,
+          "what_changes": "維度／輸出",
+          "how": "在 UV 參數空間 (0–1) 執行原本的規則，最後用 surface.PointAt(u,v) 把每個正方形的四角映射到曲面上。",
+          "result": "畢氏樹或分割圖樣貼附在自由曲面表皮上。"
+        },
+        {
+          "title": "吸引子控制的終止條件",
+          "level": 2,
+          "what_changes": "輸入／規則",
+          "how": "新增 attractor 點輸入，把 minSize 改成隨形狀中心到吸引子的距離變化，越近越小（越細密）。",
+          "result": "靠近吸引子處分枝細密，遠處早早成葉，形成密度漸層。"
+        },
+        {
+          "title": "邊界約束（不可出界／不可重疊）",
+          "level": 3,
+          "what_changes": "約束",
+          "how": "新增 boundary 曲線輸入，規則 1 產生新 A 前先用 Curve.Contains 或與既有形狀做相交測試，失敗則改標為 C。",
+          "result": "樹被限制在基地或立面範圍內，形成貼合邊界的填充。"
+        },
+        {
+          "title": "標籤驅動的構件語言",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "依標籤輸出不同幾何：B 擠出成實牆、C 變成開口或植栽、A 留空；用 Extrusion.Create 給不同高度。",
+          "result": "一張平面文法圖直接變成有虛實的 2.5D 模型。"
+        },
+        {
+          "title": "逐代動畫",
+          "level": 2,
+          "what_changes": "迴圈／輸出",
+          "how": "把 generations 接 Slider 或 Timer，每次只多跑一代並保留舊形狀；或輸出每一代的 DataTree 分支給 GH 顯示。",
+          "result": "看見規則一步步改寫形狀的過程，適合簡報與教學。"
+        },
+        {
+          "title": "混合 L-System 的語彙",
+          "level": 3,
+          "what_changes": "混合其他家族",
+          "how": "用 A01 的字串產生規則序列（例如 L/R/S 代表左長、右長、停止），逐字元決定每個 A 要套用哪條形狀規則。",
+          "result": "字串控制結構、形狀文法控制幾何，兩層可分開設計。"
+        },
+        {
+          "title": "輸出成可雷切的片材",
+          "level": 3,
+          "what_changes": "輸出轉成可製造幾何",
+          "how": "把每個正方形向內 Offset 板厚並在接觸邊加卡榫缺口，依標籤分層排版到板材上並編號。",
+          "result": "可雷射切割組裝的畢氏樹或分割立面模型。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "我的立面文法",
+          "brief": "觀察一棟既有建築立面，歸納成 5–8 條分割規則（樓層、開間、窗、牆），在 GH 用分割文法重現原立面，再調參數生成 20 種變體並比較。",
+          "difficulty": 2,
+          "combine_with": []
+        },
+        {
+          "title": "冰裂紋遮陽板",
+          "brief": "以 Ice-ray 切割文法生成窗格，依日照方向或吸引子調整格子密度，最後輸出成可雷切的遮陽板。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "Malagueira 式客製化住宅產生器",
+          "brief": "仿照 Duarte 的做法，把一種合院住宅類型整理成規則，輸入家庭人數與基地尺寸，自動產生符合風格的平面配置。",
+          "difficulty": 4,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "3D 方塊樹構架",
+          "brief": "把畢氏樹擴展為 3D 方塊文法，加入不可碰撞約束與重力方向偏好，產生可當亭子或裝置的構架量體並做構件拆解。",
+          "difficulty": 3,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "文法＋性能最佳化的桁架",
+          "brief": "參考 eifForm 的 shape annealing：用形狀規則增刪桁架節點與桿件，搭配簡單結構評估與模擬退火搜尋，比較不同規則集找到的形。",
+          "difficulty": 5,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "街廓尺度 CGA 城市",
+          "brief": "用分割文法把地塊切成量體、量體再切成樓層與立面，依道路距離調整高度與開窗比例，生成一個小街廓。",
+          "difficulty": 4,
+          "combine_with": [
+            "A04",
+            "C04"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Shape Grammars and the Generative Specification of Painting and Sculpture",
+          "author": "George Stiny, James Gips",
+          "year": "1972",
+          "url": "https://www.semanticscholar.org/paper/Shape-Grammars-and-the-Generative-Specification-of-Stiny-Gips/c8f7baf704f7d7713eee196de6cb90cbfb7fc4cd"
+        },
+        {
+          "title": "The Palladian Grammar",
+          "author": "G. Stiny, W. J. Mitchell",
+          "year": "1978",
+          "url": "https://journals.sagepub.com/doi/10.1068/b050005"
+        },
+        {
+          "title": "Procedural Modeling of Buildings",
+          "author": "Pascal Müller, Peter Wonka, Simon Haegler, Andreas Ulmer, Luc Van Gool",
+          "year": "2006",
+          "url": "https://dl.acm.org/doi/10.1145/1141911.1141931"
+        },
+        {
+          "title": "Instant Architecture",
+          "author": "Peter Wonka, Michael Wimmer, François Sillion, William Ribarsky",
+          "year": "2003",
+          "url": "https://www.cg.tuwien.ac.at/research/publications/2003/Wonka-2003-Ins"
+        },
+        {
+          "title": "Shape grammar（Wikipedia）",
+          "author": "",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Shape_grammar"
+        },
+        {
+          "title": "Fifty years of shape grammars: A systematic mapping of its application in engineering and architecture",
+          "author": "Sverre Magnus Haakonsen, Anders Rønnquist, Nathalie Labonnote",
+          "year": "2023",
+          "url": "https://journals.sagepub.com/doi/10.1177/14780771221089882"
+        },
+        {
+          "title": "Shape Computation Lab（Shape Machine、GRAPE 等文法直譯器）",
+          "author": "Georgia Tech",
+          "year": "",
+          "url": "https://shape.gatech.edu/Research/index.html"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "A05-01",
+      "algo": "A05",
+      "title": "形狀文法的起點：繪畫與雕塑的生成規格",
+      "creator": "George Stiny、James Gips",
+      "year": "1972",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Stiny 與 Gips 首次提出形狀文法，主張規則直接作用在形狀上而非符號，並用一組規則生成一系列抽象繪畫與雕塑。這是基礎範例「形狀→形狀」改寫概念的源頭。",
+      "variations": [
+        {
+          "name": "標記點規則",
+          "how": "在 LabeledSquare 加一個標記點（marker）欄位，規則只在標記所在的邊上長出新形狀，並把標記傳給子形狀。",
+          "effect": "用標記控制生長位置，得到不對稱但有秩序的構圖。"
+        },
+        {
+          "name": "形狀疊加上色",
+          "how": "依標籤與世代給不同填色與透明度，輸出 Hatch 而非外框。",
+          "effect": "直接成為一張抽象繪畫。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "字串改寫",
+        "對稱"
+      ],
+      "tools": [
+        "手繪",
+        "理論"
+      ],
+      "url": "https://www.semanticscholar.org/paper/Shape-Grammars-and-the-Generative-Specification-of-Stiny-Gips/c8f7baf704f7d7713eee196de6cb90cbfb7fc4cd"
+    },
+    {
+      "id": "A05-02",
+      "algo": "A05",
+      "title": "Palladian Grammar：帕拉底歐別墅平面文法",
+      "creator": "George Stiny、William J. Mitchell",
+      "year": "1978",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "建築",
+      "summary": "以參數化形狀文法定義帕拉底歐別墅的平面風格，從網格格線開始，經過多個階段的規則逐步生成房間配置、牆、柱廊與門窗，並成功推導出 Villa Malcontenta 的平面。",
+      "variations": [
+        {
+          "name": "分階段規則",
+          "how": "把 ApplyRules 拆成多個階段函式（格網→房間→牆→開口），每個階段只允許特定標籤被改寫。",
+          "effect": "像真正的建築設計流程一樣由粗到細生成平面。"
+        },
+        {
+          "name": "對稱約束",
+          "how": "只在左半部套用規則，再以中軸 Mirror 產生右半部。",
+          "effect": "保證生成的平面具有帕拉底歐式的雙向對稱。"
+        },
+        {
+          "name": "房間比例檢查",
+          "how": "切割矩形房間時只允許 1:1、2:3、3:5 等比例，不符合的切法捨棄。",
+          "effect": "生成的房間符合古典比例系統。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "對稱",
+        "約束滿足"
+      ],
+      "tools": [
+        "手繪",
+        "理論"
+      ],
+      "url": "https://journals.sagepub.com/doi/10.1068/b050005"
+    },
+    {
+      "id": "A05-03",
+      "algo": "A05",
+      "title": "The Language of the Prairie：萊特草原住宅文法",
+      "creator": "Hank Koning、Julie Eizenberg",
+      "year": "1981",
+      "category": "3d-architecture",
+      "categories_extra": [],
+      "scale": "建築",
+      "summary": "以壁爐為起始形狀，用參數化形狀文法生成萊特草原住宅的量體組合與機能分區，證明形狀文法能處理三維建築語彙，並能推導出新的「萊特風格」住宅。",
+      "variations": [
+        {
+          "name": "以核心為種子",
+          "how": "起始形狀改成一個標籤為 Core 的方塊（壁爐），規則讓各翼量體沿十字軸向外長出。",
+          "effect": "形成以壁爐為中心的十字形平面。"
+        },
+        {
+          "name": "3D 量體＋屋頂",
+          "how": "把正方形擠出成 Box，最後一階段依標籤加上出挑的低斜屋頂板。",
+          "effect": "得到有水平延伸感的草原風格量體模型。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D"
+      ],
+      "tools": [
+        "理論"
+      ],
+      "url": ""
+    },
+    {
+      "id": "A05-04",
+      "algo": "A05",
+      "title": "Siza Malagueira 住宅文法與大量客製化",
+      "creator": "José P. Duarte",
+      "year": "2005",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "Duarte 從 Álvaro Siza 在 Malagueira 設計的 35 棟合院住宅歸納出形狀文法，目標是做出讓住戶參與設計的客製化集合住宅系統。文法把「建築師的風格」與「住戶的需求」同時寫進規則裡。",
+      "variations": [
+        {
+          "name": "需求驅動的規則選擇",
+          "how": "新增輸入（臥室數、基地寬度），在 ApplyRules 裡依需求決定要套用哪一條切割規則。",
+          "effect": "同一套文法產生符合不同家庭的平面。"
+        },
+        {
+          "name": "長條基地分割",
+          "how": "起始形狀改成長方形基地，先切出合院與建築帶，再往下細分房間。",
+          "effect": "得到 Malagueira 式前院或後院的合院住宅平面。"
+        },
+        {
+          "name": "整排生成",
+          "how": "外層迴圈沿街道複製基地，每戶用不同 seed 與需求套文法。",
+          "effect": "一整排風格一致但各戶不同的街屋。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "約束滿足",
+        "可重現種子"
+      ],
+      "tools": [
+        "理論",
+        "電腦程式"
+      ],
+      "url": "https://journals.sagepub.com/doi/10.1068/b31124"
+    },
+    {
+      "id": "A05-05",
+      "algo": "A05",
+      "title": "CGA Shape：程序化建築生成與龐貝古城重建",
+      "creator": "Pascal Müller、Peter Wonka、Simon Haegler、Andreas Ulmer、Luc Van Gool",
+      "year": "2006",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "群體／都市",
+      "summary": "CGA shape 把形狀文法轉成以量體、分割（split）、重複（repeat）與構件取代為核心的電腦文法，可大量生成具細節的建築外殼，並以龐貝古城的虛擬重建展示其效率。後來發展為 CityEngine 的核心語言。",
+      "variations": [
+        {
+          "name": "量體→立面→構件三層",
+          "how": "形狀加上 Scope（Box）欄位，規則依序做 extrude、comp（拆面）、split（切樓層），最後把 Window 標籤換成外部構件。",
+          "effect": "從地塊一路生成到有窗的建築外殼。"
+        },
+        {
+          "name": "重複分割",
+          "how": "寫一個 RepeatSplit(長度, 目標寬度) 讓開間數依量體長度自動調整。",
+          "effect": "不同長度的立面都能自動填滿窗戶。"
+        },
+        {
+          "name": "情境敏感規則",
+          "how": "在套用規則前檢查形狀是否與其他量體相交（遮擋），若被擋住就不放窗。",
+          "effect": "避免窗戶開在被鄰棟擋住的牆上。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "多元件"
+      ],
+      "tools": [
+        "CityEngine",
+        "CGA"
+      ],
+      "url": "https://dl.acm.org/doi/10.1145/1141911.1141931"
+    },
+    {
+      "id": "A05-06",
+      "algo": "A05",
+      "title": "CityEngine 立面建模教學（CGA split 規則）",
+      "creator": "Esri",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "立面／表皮",
+      "summary": "CityEngine 官方教學示範以 CGA 規則把立面水平切成樓層、以重複分割讓中間樓層自動填滿高度，再插入窗、門、線腳等構件。是分割文法最直接的業界工具範例。",
+      "variations": [
+        {
+          "name": "樓層索引參數化",
+          "how": "切樓層時把 index 存進形狀，規則依 index 決定一樓店面、頂樓退縮或中間標準層。",
+          "effect": "同一條規則生成有基座、中段、頂部的立面。"
+        },
+        {
+          "name": "在 GH 重現 split",
+          "how": "把 LabeledSquare 換成矩形，寫 SplitY(比例陣列) 與 SplitX 兩個規則函式，模仿 CGA 的 split 語法。",
+          "effect": "不用 CityEngine 也能在 Grasshopper 中做立面文法。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "多元件"
+      ],
+      "tools": [
+        "CityEngine",
+        "CGA"
+      ],
+      "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm"
+    },
+    {
+      "id": "A05-07",
+      "algo": "A05",
+      "title": "Ice-ray：中式冰裂紋窗格文法",
+      "creator": "George Stiny",
+      "year": "1977",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "構件",
+      "summary": "Stiny 分析中式冰裂紋窗格的構成慣例，提出以一條線把多邊形切成兩個多邊形的參數化遞迴規則。簡單的切割規則就能生成大小遞減、看似自然的窗花。",
+      "variations": [
+        {
+          "name": "多邊形切割規則",
+          "how": "LabeledSquare 改成 LabeledPolygon（Polyline），規則為「選兩條邊各取一點連線切開」，面積小於門檻變 C。",
+          "effect": "生成冰裂紋窗格。"
+        },
+        {
+          "name": "切割位置限制",
+          "how": "只允許切在邊的 1/3–2/3 範圍內，並限制新產生的角度不可太尖。",
+          "effect": "避免碎片過細，更接近傳統窗花。"
+        },
+        {
+          "name": "窗框木條輸出",
+          "how": "把每條切割線 Offset 成固定寬度的條材，輸出成可雷切的外框。",
+          "effect": "可以直接製作實體窗花。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "遞迴",
+        "隨機",
+        "拼貼"
+      ],
+      "tools": [
+        "理論"
+      ],
+      "url": "https://journals.sagepub.com/doi/10.1068/b040089"
+    },
+    {
+      "id": "A05-08",
+      "algo": "A05",
+      "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
+      "creator": "designcoding",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "立面／表皮",
+      "summary": "以 Grasshopper 重新實作冰裂紋格柵的生成，把 Stiny 的切割文法轉成可調參數的視覺程式。是學習者從論文走向 GH 實作的好參考。",
+      "variations": [
+        {
+          "name": "改為 C# 一元件完成",
+          "how": "把 GH 元件串接改寫進 A05 的 LOOP 架構，用 List<Polyline> 每代整批替換。",
+          "effect": "可控制世代數與終止面積，運算更集中。"
+        },
+        {
+          "name": "吸引子密度",
+          "how": "終止面積改為隨多邊形中心到吸引子距離變化。",
+          "effect": "窗格在吸引子附近變得細碎，遠處開闊。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "吸引子控制",
+        "拼貼"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.designcoding.net/revisiting-chinese-ice-ray-lattices/"
+    },
+    {
+      "id": "A05-09",
+      "algo": "A05",
+      "title": "The Grammar of Paradise：蒙兀兒花園文法",
+      "creator": "George Stiny、William J. Mitchell",
+      "year": "1980",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "地景",
+      "summary": "以參數化形狀文法描述蒙兀兒四分花園（char-bagh）的設計慣例：正方形基地被水道與步道十字分割，四個象限再遞迴細分並加上邊界。泰姬瑪哈陵的花園平面可由此推導。",
+      "variations": [
+        {
+          "name": "四分遞迴",
+          "how": "規則 1 改成「A → 中央十字水道 B ＋ 四個縮小的 A」，而不是兩個旋轉的 A。",
+          "effect": "生成層層四分的花園平面。"
+        },
+        {
+          "name": "邊界帶",
+          "how": "在每次細分前先 Offset 出一圈步道標籤 D，剩下的內部才繼續切。",
+          "effect": "花圃之間出現步道與水渠系統。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "遞迴",
+        "對稱",
+        "分形"
+      ],
+      "tools": [
+        "理論"
+      ],
+      "url": "https://www.andrew.cmu.edu/user/ramesh/teaching/course/48-747/subFrames/readings/Stiny&MItchell-1980-EPB7_209-226.TheGrammarOfParadise..pdf"
+    },
+    {
+      "id": "A05-10",
+      "algo": "A05",
+      "title": "More than the Sum of Parts：Queen Anne 住宅文法",
+      "creator": "Ulrich Flemming",
+      "year": "1987",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "建築",
+      "summary": "Flemming 為 1880 年代美國 Queen Anne 風格住宅寫出形狀文法，從平面配置、量體外推到複雜屋頂組合逐步生成，說明規則的組合能產生「大於部分總和」的整體風格。",
+      "variations": [
+        {
+          "name": "量體外推規則",
+          "how": "新增規則讓牆面上的 A 往外推出凸窗或塔樓量體，並標記需要加屋頂。",
+          "effect": "形成凹凸豐富的住宅輪廓。"
+        },
+        {
+          "name": "規則順序限制",
+          "how": "某些規則必須在另一條規則之後才能套用（例如先外推再加屋頂），用階段變數控制。",
+          "effect": "避免屋頂和量體衝突，示範規則之間的依賴。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "約束滿足"
+      ],
+      "tools": [
+        "理論"
+      ],
+      "url": "https://journals.sagepub.com/doi/10.1068/b140323"
+    },
+    {
+      "id": "A05-11",
+      "algo": "A05",
+      "title": "Palladian Construction Grammar：文法加快速原型",
+      "creator": "Larry Sass",
+      "year": "2007",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "Sass 把帕拉底歐文法延伸為「構築文法」，從平面圖出發，用規則生成可以實際製造組裝的構件，並透過快速原型製作實體模型，讓文法直接連到數位製造。",
+      "variations": [
+        {
+          "name": "標籤→構件",
+          "how": "最後一階段依標籤把每個形狀轉成牆板、樓板或柱的實體幾何，並加上接合缺口。",
+          "effect": "文法的輸出變成可以組裝的零件。"
+        },
+        {
+          "name": "零件展開與編號",
+          "how": "把所有構件平放到 XY 平面、排版並加上文字編號。",
+          "effect": "可直接送雷切或 CNC 的製造圖。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "多元件"
+      ],
+      "tools": [
+        "CAD",
+        "快速原型"
+      ],
+      "url": "https://www.researchgate.net/publication/23541586_A_Palladian_construction_grammar_-_Design_reasoning_with_shape_grammars_and_rapid_prototyping"
+    },
+    {
+      "id": "A05-12",
+      "algo": "A05",
+      "title": "eifForm：形狀退火結構生成系統",
+      "creator": "Kristina Shea（與 Jonathan Cagan 合作）",
+      "year": "2000",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "構件",
+      "summary": "eifForm 結合參數化形狀文法、結構分析與隨機最佳化（shape annealing），用規則增刪桁架節點與桿件，並以結構性能與成本評估引導搜尋，生成有效率又新穎的平面桁架與空間桁架。",
+      "variations": [
+        {
+          "name": "三角形桁架文法",
+          "how": "把正方形改成三角形元素，規則為「在三角形中加一個節點分成三個三角形」或「翻轉共用邊」。",
+          "effect": "生成不同拓撲的桁架。"
+        },
+        {
+          "name": "退火選規則",
+          "how": "每一步隨機挑一條規則試套，用簡化的評分（總桿長、最長跨距）決定接受與否，接受機率隨溫度下降。",
+          "effect": "文法不再盲目生長，而是朝性能較好的形收斂。"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "最佳化",
+        "隨機",
+        "收斂"
+      ],
+      "tools": [
+        "eifForm",
+        "Java"
+      ],
+      "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf"
+    },
+    {
+      "id": "A05-13",
+      "algo": "A05",
+      "title": "Diebenkorn《Ocean Park》系列的繪畫文法",
+      "creator": "Russell A. Kirsch、Joan L. Kirsch",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "電腦科學家 Russell Kirsch 與藝術史學者 Joan Kirsch 為 Richard Diebenkorn 的《Ocean Park》抽象畫系列寫出形狀文法，以水平與垂直分割規則描述畫面結構，並能生成風格相似的新構圖。",
+      "variations": [
+        {
+          "name": "直交分割構圖",
+          "how": "起始形狀改成直立長方形畫布，規則為依比例水平或垂直切一刀，並標記色塊或留白。",
+          "effect": "生成類似 Ocean Park 的直交分割抽象畫。"
+        },
+        {
+          "name": "斜線例外規則",
+          "how": "加一條低機率規則，允許在某些格子內切一條斜線。",
+          "effect": "在嚴謹格子中加入 Diebenkorn 式的斜向張力。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機"
+      ],
+      "tools": [
+        "電腦程式"
+      ],
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704"
+    },
+    {
+      "id": "A05-14",
+      "algo": "A05",
+      "title": "《營造法式》形狀文法",
+      "creator": "Andrew I-kang Li",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "建築",
+      "summary": "以形狀文法解讀北宋李誡《營造法式》，將單一建築類型的平面、剖面與材分制度寫成可生成的規則，並用於教學，讓學習者自己判斷生成結果是否屬於宋式風格並調整文法。",
+      "variations": [
+        {
+          "name": "模數（材分）參數",
+          "how": "新增一個模數輸入，所有尺寸以模數的倍數計算，改一個數就能縮放整棟建築。",
+          "effect": "示範傳統模數系統如何轉成參數化規則。"
+        },
+        {
+          "name": "平面＋剖面同步生成",
+          "how": "形狀同時帶平面矩形與剖面輪廓兩份資料，規則一次更新兩者。",
+          "effect": "開間與屋架同時生成，一致性由規則保證。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "多元件"
+      ],
+      "tools": [
+        "理論",
+        "電腦程式"
+      ],
+      "url": "https://dspace.mit.edu/handle/1721.1/8631"
+    },
+    {
+      "id": "A05-15",
+      "algo": "A05",
+      "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
+      "creator": "Athanassios Economou（Georgia Tech Shape Computation Lab）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "Shape Machine 是一套在 CAD 系統中做向量形狀「搜尋與取代」的工具，能在任意線稿中辨識出規則左側的形狀（包含子形狀），再換成右側的形狀，是真正「視覺計算」式的形狀文法直譯器。",
+      "variations": [
+        {
+          "name": "輸入任意線稿",
+          "how": "把起始形狀改成 Rhino 裡畫好的曲線集合，規則改成「找到符合的正方形就替換」，用端點距離容差比對。",
+          "effect": "讓學習者在自己的手繪線稿上套用規則。"
+        },
+        {
+          "name": "子形狀辨識",
+          "how": "先把所有線段在交點打斷，再搜尋任意四條能組成正方形的線段。",
+          "effect": "發現畫面中原本沒有被「畫出來」的隱藏正方形，這是形狀文法與符號文法的核心差異。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Shape Machine",
+        "Rhino"
+      ],
+      "url": "https://shape.gatech.edu/Research/index.html"
+    }
+  ]
+}

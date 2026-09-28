@@ -1,0 +1,796 @@
+{
+  "agent": "ag14",
+  "algorithms": [
+    {
+      "id": "D01",
+      "name_zh": "Boids 群聚",
+      "name_en": "Boids (Flocking)",
+      "family": "D",
+      "family_name": "代理人",
+      "file": "D01_Boids.cs",
+      "loc": 213,
+      "logic": [
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "粒子"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "約 210 行、一個自訂 class Bird，每步對所有鳥做 O(n²) 鄰居搜尋並混合三條規則；沒有空間索引但需要同時調 3 組半徑與權重才會出現群聚，屬於需要調參的中階。",
+      "tags": [
+        "自訂 class",
+        "鄰居搜尋",
+        "隨機",
+        "可重現種子",
+        "3D",
+        "物理模擬",
+        "群聚",
+        "軌跡"
+      ],
+      "one_liner": "每隻鳥只看附近的鄰居，照「別太擠、跟著飛、往中間靠」三條規則轉向，整群就自己長出流動的集體軌跡。",
+      "how_it_works": [
+        "在正方體範圍內用固定種子隨機放 birdCount 隻鳥，每隻給一個隨機方向、速度為 maxSpeed。",
+        "每一步先讓每隻鳥掃過所有其他鳥：在分離半徑內累加「遠離」向量（距離平方反比）、在對齊半徑內累加鄰居速度、在聚集半徑內累加鄰居位置。",
+        "把三個方向各自單位化，乘上各自權重相加得到轉向量，只允許轉一小步（TurnStrength = 0.1），再把速度限制在 maxSpeed 以內。",
+        "所有鳥的新速度都算完後才一起移動（同步更新），碰到邊界就把該軸速度反向並夾回範圍內。",
+        "每一步把位置加進該鳥的 Polyline，最後輸出軌跡與最終位置。"
+      ],
+      "key_params": [
+        {
+          "name": "birdCount",
+          "effect": "鳥越多群越密，但計算量是 n² 成長，超過幾百隻會明顯變慢"
+        },
+        {
+          "name": "steps",
+          "effect": "步數越多軌跡越長，群體有時間從隨機狀態收攏成一群或多群"
+        },
+        {
+          "name": "boxSize",
+          "effect": "範圍越小越常撞牆反彈，軌跡在盒子裡纏繞得越密"
+        },
+        {
+          "name": "separationRadius / separationWeight",
+          "effect": "調大會讓鳥彼此保持距離、群體蓬鬆；太小則擠成一團線"
+        },
+        {
+          "name": "alignmentRadius / alignmentWeight",
+          "effect": "調大會讓整群朝同一方向平行飛行，軌跡變成一束束平行的纖維"
+        },
+        {
+          "name": "cohesionRadius / cohesionWeight",
+          "effect": "調大會讓鳥往中心收，形成團塊或繞圈的漩渦；太大會縮成一點"
+        },
+        {
+          "name": "maxSpeed",
+          "effect": "每步移動距離，越大軌跡越粗放、轉彎半徑越大"
+        },
+        {
+          "name": "seed",
+          "effect": "換種子得到不同初始配置，同一種子結果可重現"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class（Bird，參考型別）",
+        "List<Bird>",
+        "Vector3d 向量運算與 Unitize",
+        "Polyline 累加軌跡",
+        "LINQ Select",
+        "三元運算子 ? :",
+        "const 常數",
+        "Random(seed)"
+      ],
+      "prerequisites": [
+        "迴圈與巢狀迴圈",
+        "class vs struct（參考型別在 List 內可直接修改）",
+        "向量加減與長度",
+        "D 家族：代理人與同步更新概念"
+      ],
+      "teaching_note": "很適合從零實作：規則直觀、每改一個權重就看得到變化。要特別講「先算全部新速度、再一起移動」的同步更新，否則學習者會寫成邊算邊動而產生偏差；另外提醒 n² 成本，先用 60 隻以內示範。",
+      "variations": [
+        {
+          "title": "吸引子／目標點群聚",
+          "level": 2,
+          "what_changes": "規則：加第四條力",
+          "how": "新增 List<Point3d> attractors 輸入，在 Steer 裡找最近的吸引點，加上 (target - me.Position) 單位向量乘 attractWeight。",
+          "result": "鳥群會繞著吸引點盤旋、在點與點之間拉出束狀軌跡，可用來控制群聚的空間分布"
+        },
+        {
+          "title": "障礙物迴避（Reynolds steering）",
+          "level": 3,
+          "what_changes": "規則：加迴避力",
+          "how": "輸入 Brep 或 Mesh 障礙物，每步用 ClosestPoint 找最近點，若距離小於 avoidRadius 就加一個背離最近點、與距離成反比的力。",
+          "result": "軌跡會繞過量體流動，形成像水流繞柱的分流與渦旋，可做為量體周邊的動線或結構纖維"
+        },
+        {
+          "title": "曲面上的 Boids",
+          "level": 3,
+          "what_changes": "維度：3D 空間 → 曲面（UV）",
+          "how": "移動後用 surface.ClosestPoint 把位置拉回曲面，並把速度投影到該點切平面（扣掉沿法向量的分量），邊界反彈改成 UV 範圍判斷。",
+          "result": "在屋頂或立面曲面上長出流線紋理，可直接作為表皮開孔、肋條或鋪面圖樣"
+        },
+        {
+          "title": "2D 平面群聚繪圖",
+          "level": 1,
+          "what_changes": "維度：3D → 2D",
+          "how": "初始化時 Z 設 0、速度 Z 分量設 0，並刪掉 Z 軸反彈；步數拉高、把 trails 用漸層線寬或 Offset 表現。",
+          "result": "得到像筆觸或鐵砂紋的平面軌跡繪畫，適合做海報或平面圖樣"
+        },
+        {
+          "title": "向量場引導（混 C03）",
+          "level": 3,
+          "what_changes": "輸入：外部向量場",
+          "how": "在 Steer 裡取鳥所在位置的場向量（例如 C03 VectorField 或 C04 Noise 的方向），乘 fieldWeight 加入轉向。",
+          "result": "群聚同時受局部鄰居與全域場影響，軌跡有整體流向又保留局部的聚散"
+        },
+        {
+          "title": "影像控制密度與速度",
+          "level": 3,
+          "what_changes": "輸入：影像",
+          "how": "讀入 Bitmap，依鳥在 XY 的位置取灰階值，用來縮放 maxSpeed 或 separationRadius（亮處快而疏、暗處慢而密）。",
+          "result": "軌跡密度對應影像明暗，可做出「用鳥群畫出來」的肖像或地形"
+        },
+        {
+          "title": "空間索引加速（RTree／網格分桶）",
+          "level": 4,
+          "what_changes": "迴圈：鄰居搜尋",
+          "how": "每步把所有鳥的位置放進 RTree 或以 cohesionRadius 為邊長的網格 Dictionary，Steer 只查附近格子，取代掃過整個 List。",
+          "result": "可跑上千隻鳥仍流暢，群體尺度能放大到都市或地景"
+        },
+        {
+          "title": "Stigmergy：留痕跡、追痕跡",
+          "level": 4,
+          "what_changes": "狀態：加上環境記憶",
+          "how": "建一個 3D 網格記錄鳥走過的次數（費洛蒙），每步衰減；Steer 多一條力朝附近費洛蒙濃度高的格子轉。",
+          "result": "軌跡會自我強化成少數粗壯的主幹與分支，像蟻道或 Physarum，適合做結構纖維路徑"
+        },
+        {
+          "title": "軌跡轉成可製造的纖維／管件",
+          "level": 3,
+          "what_changes": "輸出：Polyline → 可製造幾何",
+          "how": "把 trails 用 Curve.Rebuild 平滑、依局部密度決定 Pipe 半徑，並剔除過短或重疊太多的線；或輸出成 G-code 路徑供 3D 列印。",
+          "result": "得到可 3D 列印或纏繞纖維的線性構件群，粗細反映群聚密度"
+        },
+        {
+          "title": "Timer 動畫化即時模擬",
+          "level": 3,
+          "what_changes": "迴圈：一次跑完 → 每次 SolveInstance 走一步",
+          "how": "把 birds 提升為 Script_Instance 欄位，加 reset 輸入；每次執行只做一步並用 Timer 觸發，軌跡只保留最近 N 點。",
+          "result": "在 Rhino 視窗即時看到鳥群流動，可邊調權重邊觀察，也能錄成動畫"
+        },
+        {
+          "title": "視野角與個體差異",
+          "level": 2,
+          "what_changes": "規則：鄰居判定",
+          "how": "只把前方 fov 角度內（Vector3d.VectorAngle(me.Velocity, toOther) < fov）的鄰居算進去；每隻鳥的權重再加一點隨機偏差。",
+          "result": "群體出現領頭與追隨、分裂與重組，軌跡更像真實椋鳥群"
+        },
+        {
+          "title": "群聚軌跡連成網（混 E／圖結構）",
+          "level": 4,
+          "what_changes": "輸出：軌跡 → 圖（點＋連線）",
+          "how": "每隔 k 步把距離小於 linkRadius 的兩隻鳥位置連一條 Line，累積成空間網格，再用 Kangaroo 或自寫彈簧鬆弛。",
+          "result": "形成如蜘蛛網或纖維塔的立體網架，可作裝置或結構概念模型"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "群聚紋理屋頂",
+          "brief": "在自由曲面屋頂上跑曲面版 Boids，以天窗位置作吸引子，用軌跡密度決定開孔與肋條。輸出可展開的面板圖樣。",
+          "difficulty": 3,
+          "combine_with": [
+            "C03"
+          ]
+        },
+        {
+          "title": "鳥群畫出的肖像海報",
+          "brief": "2D Boids 讀入照片灰階控制速度與分離半徑，產生只由軌跡構成的影像。比較不同權重組合的畫風。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "Stigmergy 纖維塔",
+          "brief": "在 3D 網格中讓群聚代理人留費洛蒙並互相追蹤，自我強化出主幹纖維，再轉成 Pipe 做 3D 列印模型，致敬 Kokkugia 的 fibrous 系列。",
+          "difficulty": 4,
+          "combine_with": [
+            "D02"
+          ]
+        },
+        {
+          "title": "廣場人流與動線模擬",
+          "brief": "把鳥換成行人，加入障礙物迴避與出入口吸引子，比較不同家具配置下的軌跡密度熱區，作為廣場設計依據。",
+          "difficulty": 4,
+          "combine_with": [
+            "D03"
+          ]
+        },
+        {
+          "title": "千隻代理人的地景流線",
+          "brief": "以 RTree 加速把 Boids 擴大到上千隻，在地形 Mesh 上受坡度場引導，軌跡轉為步道與植栽帶配置。",
+          "difficulty": 5,
+          "combine_with": [
+            "C03",
+            "C05"
+          ]
+        },
+        {
+          "title": "即時互動群聚裝置原型",
+          "brief": "用 Timer 做即時模擬，吸引子由滑鼠或 Rhino 點物件拖曳控制，輸出燈光位置序列，模擬 Studio Drift 式的無人機編隊構想。",
+          "difficulty": 3,
+          "combine_with": []
+        }
+      ],
+      "references": [
+        {
+          "title": "Flocks, Herds, and Schools: A Distributed Behavioral Model",
+          "author": "Craig W. Reynolds",
+          "year": "1987",
+          "url": "https://dl.acm.org/doi/10.1145/37402.37406"
+        },
+        {
+          "title": "Boids (Flocks, Herds, and Schools: a Distributed Behavioral Model)",
+          "author": "Craig W. Reynolds",
+          "year": "",
+          "url": "https://www.red3d.com/cwr/boids/"
+        },
+        {
+          "title": "Steering Behaviors For Autonomous Characters",
+          "author": "Craig W. Reynolds",
+          "year": "1999",
+          "url": ""
+        },
+        {
+          "title": "Behavioural Production: Autonomous Swarm-Constructed Architecture",
+          "author": "Robert Stuart-Smith",
+          "year": "2016",
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/ad.2024"
+        },
+        {
+          "title": "Behavioural Production: Semi-Autonomous Approaches to Architectural Design, Robotic Fabrication and Collective Robotic Construction",
+          "author": "Robert Stuart-Smith",
+          "year": "",
+          "url": "https://www.routledge.com/Behavioural-Production-Semi-Autonomous-Approaches-to-Architectural-Design-Robotic-Fabrication-and-Collective-Robotic-Construction/Stuart-Smith/p/book/9780367463427"
+        },
+        {
+          "title": "Aerial additive manufacturing with multiple autonomous robots",
+          "author": "Zhang et al.（Kovac、Stuart-Smith 等）",
+          "year": "2022",
+          "url": "https://www.nature.com/articles/s41586-022-04988-4"
+        },
+        {
+          "title": "Culebra（Grasshopper 代理人行為函式庫）",
+          "author": "Luis Quinones（elQuixote）",
+          "year": "",
+          "url": "https://github.com/elQuixote/Culebra"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "D01-01",
+      "algo": "D01",
+      "title": "Stanley and Stella in: Breaking the Ice",
+      "creator": "Craig Reynolds／Symbolics Graphics Division 與 Whitney / Demos Productions",
+      "year": "1987",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "群體／都市",
+      "summary": "Boids 模型最早的應用之一，在 SIGGRAPH '87 Electronic Theater 首映的動畫短片。片中鳥群與魚群分別在被冰層隔開的球體兩半中游動，群體運動全由每隻個體的局部規則產生，而不是逐隻打關鍵格。",
+      "variations": [
+        {
+          "name": "球體內群聚",
+          "how": "把 Move 的正方體反彈改成球體邊界：超出半徑就把速度沿法向量反射。",
+          "effect": "群體沿球殼內側流動，呈現片中那種被容器包住的魚群感"
+        },
+        {
+          "name": "雙群體分隔",
+          "how": "建立兩個 List<Bird>，各自只看同群鄰居，中間放一個平面障礙物加迴避力。",
+          "effect": "兩群各自群聚、隔著界面互望，可做成對照的雙群軌跡圖"
+        },
+        {
+          "name": "Timer 動畫輸出",
+          "how": "改成每次執行走一步並用 Timer 驅動，每步輸出鳥的位置與方向作為 Plane。",
+          "effect": "可在 Rhino 中擺放鳥的幾何並錄成動畫"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "3D",
+        "自訂 class",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Symbolics Lisp Machine"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Stanley_and_Stella_in:_Breaking_the_Ice"
+    },
+    {
+      "id": "D01-02",
+      "algo": "D01",
+      "title": "《蝙蝠俠大顯神威》（Batman Returns）蝙蝠群與企鵝群",
+      "creator": "Tim Burton 電影；VIFX（蝙蝠群）、Boss Film（企鵝）",
+      "year": "1992",
+      "category": "drawing",
+      "categories_extra": [],
+      "scale": "群體／都市",
+      "summary": "第一部使用 Boids 模型的劇情長片，以修改過的 Symbolics Boids 程式產生電腦模擬的蝙蝠群，企鵝大軍則以基於 Reynolds 研究的工具製作。說明群聚規則可以從研究原型直接變成大規模視覺表現工具。",
+      "variations": [
+        {
+          "name": "空間路徑引導群體",
+          "how": "輸入一條 Curve，在 Steer 裡加一條力朝曲線上前方一點（ClosestPoint 參數往前加一段）轉向。",
+          "effect": "整群沿指定路線飛行但保有局部的聚散，像被導演安排的群眾鏡頭"
+        },
+        {
+          "name": "地面行走群體",
+          "how": "把維度鎖在 XY、速度下限提高並減少對齊權重，模擬企鵝式的地面行進。",
+          "effect": "得到地面上的密集行進隊伍軌跡"
+        },
+        {
+          "name": "個體幾何擺放",
+          "how": "輸出每隻鳥最後的 Plane（原點為位置、X 軸為速度），用 Orient 擺上蝙蝠或企鵝模型。",
+          "effect": "群聚結果直接變成可渲染的場景"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "3D",
+        "吸引子控制"
+      ],
+      "tools": [
+        "Boids（Symbolics 版修改）"
+      ],
+      "url": "https://en.wikipedia.org/wiki/Boids"
+    },
+    {
+      "id": "D01-03",
+      "algo": "D01",
+      "title": "Swarm Urbanism",
+      "creator": "Kokkugia（Roland Snooks、Robert Stuart-Smith）",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "群體／都市",
+      "summary": "Kokkugia 以群體智能（swarm intelligence）為核心的都市設計研究，把都市元素視為依局部規則互動的代理人，以自下而上的方式生成都市紋理，取代傳統由上而下的總體規劃。",
+      "variations": [
+        {
+          "name": "基地邊界內群聚",
+          "how": "把正方體範圍換成基地邊界 Curve（2D），用 Contains 判斷出界並把速度反射回內部。",
+          "effect": "軌跡限定在真實基地內，密度分布可作為街廓或動線的初稿"
+        },
+        {
+          "name": "既有道路作吸引子",
+          "how": "輸入既有街道 Curve，對最近道路加吸引力、對水岸或綠地加排斥力。",
+          "effect": "群聚軌跡順著城市骨架延伸並避開保留區"
+        },
+        {
+          "name": "軌跡轉量體",
+          "how": "統計網格內軌跡通過次數，次數越高的格子 Extrude 越高。",
+          "effect": "由群聚密度直接長出高低起伏的都市量體場"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "吸引子控制",
+        "空間索引",
+        "鄰居搜尋"
+      ],
+      "tools": [],
+      "url": "https://www.kokkugia.com/swarm-urbanism"
+    },
+    {
+      "id": "D01-04",
+      "algo": "D01",
+      "title": "Composite Swarm",
+      "creator": "Kokkugia／Roland Snooks（與 James Pazzi、Marc Gibson）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "構件",
+      "summary": "以複合材料製作的原型，裝飾性構件的分布由模仿螞蟻以身體相連搭橋邏輯的多代理人演算法決定，屬於 Snooks 的 Behavioral Formation 設計流程，用來測試日後可放大到建築尺度的複合材料構造。",
+      "variations": [
+        {
+          "name": "代理人互相連結搭橋",
+          "how": "當兩隻鳥距離小於 linkRadius 且持續 k 步，就把兩者之間記一條 Line 並降低兩者速度（黏住）。",
+          "effect": "代理人逐漸串成跨越空間的橋狀纖維束"
+        },
+        {
+          "name": "只在兩支點間生成",
+          "how": "輸入兩個錨點作吸引子，代理人從一端出發、被另一端吸引。",
+          "effect": "形成跨距型的纖維構件，可評估跨越能力"
+        },
+        {
+          "name": "纖維加厚輸出",
+          "how": "依每段軌跡附近的鄰居數決定 Pipe 半徑，最後 BooleanUnion。",
+          "effect": "得到可 3D 列印或翻模成複合材料的實體構件"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "鄰居搜尋",
+        "3D",
+        "物理模擬"
+      ],
+      "tools": [],
+      "url": "https://www.kokkugia.com/Composite-Swarm"
+    },
+    {
+      "id": "D01-05",
+      "algo": "D01",
+      "title": "AADRL Aerial Robot Thread Construction",
+      "creator": "Robert Stuart-Smith（Kokkugia／AA DRL）",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "構件",
+      "summary": "在 AA DRL 進行的研究，讓空中機器人依行為式生產（behavioural production）與 swarm-printing 邏輯拉線編織空間結構，機器人的路徑不是預先排好，而是由群體互動與回饋決定。",
+      "variations": [
+        {
+          "name": "軌跡即拉線路徑",
+          "how": "把 trails 重新取樣成等距點，並限制轉角角度，輸出為機器人可執行的航點清單。",
+          "effect": "群聚軌跡直接變成可飛行、可拉線的施工路徑"
+        },
+        {
+          "name": "防碰撞的最小間距",
+          "how": "把 separationRadius 設成機體尺寸加安全距離，並把分離權重拉高到遠大於聚集。",
+          "effect": "群體保持安全間距，軌跡互不相交過近"
+        },
+        {
+          "name": "錨點間往返",
+          "how": "設多個固定錨點輪流作為吸引子，鳥到達一個就換下一個目標。",
+          "effect": "線在錨點間來回纏繞，形成張力網結構"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "3D",
+        "吸引子控制",
+        "動畫"
+      ],
+      "tools": [],
+      "url": "https://www.kokkugia.com/AADRL-aerial-robot-thread-construction"
+    },
+    {
+      "id": "D01-06",
+      "algo": "D01",
+      "title": "Aerial Additive Manufacturing（多台自主無人機空中 3D 列印）",
+      "creator": "Zhang et al.；Mirko Kovac 領導，Robert Stuart-Smith 等共同研究（Imperial College London、Empa、UPenn 等）",
+      "year": "2022",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "建築",
+      "summary": "發表於 Nature 的研究，模仿蜂群分工，由 BuilDrone 在飛行中擠出材料、ScanDrone 持續量測成果並決定下一步，多台無人機依同一份藍圖協作建造與修補結構，目標是高處或災後等難以到達的現場施工。",
+      "variations": [
+        {
+          "name": "分工角色",
+          "how": "在 Bird class 加 role 欄位（建造／掃描），兩種角色用不同權重與目標：建造者追列印路徑、掃描者追建造者。",
+          "effect": "同一群體內出現分工的兩種軌跡"
+        },
+        {
+          "name": "逐層沉積",
+          "how": "給一條螺旋或逐層升高的目標路徑，建造者依序追蹤，走過的軌跡作為沉積材料的中心線。",
+          "effect": "群聚模擬轉成逐層堆疊的列印路徑"
+        },
+        {
+          "name": "回饋修正",
+          "how": "每步比對已沉積軌跡與目標曲面的距離，偏差大的區域設為吸引子讓代理人回來補。",
+          "effect": "形成會自動補洞的閉迴路建造模擬"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "吸引子控制",
+        "多元件"
+      ],
+      "tools": [],
+      "url": "https://www.nature.com/articles/s41586-022-04988-4"
+    },
+    {
+      "id": "D01-07",
+      "algo": "D01",
+      "title": "Behavioural Production: Autonomous Swarm-Constructed Architecture",
+      "creator": "Robert Stuart-Smith",
+      "year": "2016",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "建築",
+      "summary": "刊於 AD（Architectural Design）的論文，探討以多代理人行為式運算做建築設計，並延伸到個體與群體機器人的積層製造，讓機器人以即時回饋參與設計，而不只是照預設指令施工。",
+      "variations": [
+        {
+          "name": "邊飛邊建",
+          "how": "每隻鳥走過的位置寫入 3D 網格作為已建成材料，之後的鳥把這些格子當障礙物並沿其表面爬行。",
+          "effect": "結構在模擬中逐步長出，形態由群體與既有構造互動決定"
+        },
+        {
+          "name": "性能寫入規則",
+          "how": "加一個結構或日照的評估值場，讓代理人往應力高或需要遮陽處聚集。",
+          "effect": "材料自動多放在需要的位置，形成性能導向的密度分布"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "物理模擬",
+        "最佳化"
+      ],
+      "tools": [],
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/ad.2024"
+    },
+    {
+      "id": "D01-08",
+      "algo": "D01",
+      "title": "Ghost Tectonics",
+      "creator": "Roland Snooks／RMIT Architecture Tectonic Formation Lab",
+      "year": "2025",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "fabrication",
+        "performance"
+      ],
+      "scale": "建築",
+      "summary": "實驗性展亭，形體由代理人群互動產生的湧現空間形態生成；再以大尺度 3D 列印的半透明外殼作為犧牲模板，搭配 Tailored Fibre Placement 將連續碳纖維依有限元素分析的應力流向配置。",
+      "variations": [
+        {
+          "name": "群聚軌跡當殼體骨架",
+          "how": "把 trails 用 Loft 或 MeshPipe 包覆，或以軌跡密度做 Marching Cubes（混 C05）轉成殼體。",
+          "effect": "由群聚纖維長出連續的有機殼體形態"
+        },
+        {
+          "name": "沿應力場對齊",
+          "how": "把結構分析得到的主應力方向做成向量場，在 Steer 加一條對齊該場的力。",
+          "effect": "軌跡順著受力方向排列，可直接作為纖維鋪設路徑"
+        },
+        {
+          "name": "列印路徑化",
+          "how": "把曲面上的軌跡依高度切層、重新排序並平滑，輸出為連續的列印／鋪纖維路徑。",
+          "effect": "群聚結果可轉為機器人製造指令"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "3D",
+        "曲面上",
+        "物理模擬"
+      ],
+      "tools": [],
+      "url": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/"
+    },
+    {
+      "id": "D01-09",
+      "algo": "D01",
+      "title": "Franchise Freedom",
+      "creator": "Studio Drift（Lonneke Gordijn、Ralph Nauta）",
+      "year": "2017",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "地景",
+      "summary": "數百台自主飛行的發光無人機模擬椋鳥群的群飛（murmuration），演算法源自團隊十多年對椋鳥飛行行為的研究；每台無人機的燈光強度與顏色依與其他無人機的距離變化，凸顯群體密度。2017 年於邁阿密海灘首演，之後在紐約中央公園以一千台演出。",
+      "variations": [
+        {
+          "name": "依鄰居密度上色",
+          "how": "在 Steer 裡順便回傳 cohesionNeighbors 數量，輸出時依數量對應顏色（Gradient）給每個點。",
+          "effect": "群體密集處發亮、稀疏處轉暗，像空中的密度熱圖"
+        },
+        {
+          "name": "天空範圍與高度限制",
+          "how": "把盒子改成扁平長方體並設最低高度，Z 方向反彈改為較柔和的向上推力。",
+          "effect": "群體在空中水平鋪開、起伏翻滾，接近真實群飛"
+        },
+        {
+          "name": "即時動畫",
+          "how": "改為 Timer 每步更新，只輸出當下位置的點與顏色。",
+          "effect": "在 Rhino 中預覽燈光群體的動態演出"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "3D",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "Intel Shooting Star 無人機"
+      ],
+      "url": "https://studiodrift.com/work/franchise-freedom/"
+    },
+    {
+      "id": "D01-10",
+      "algo": "D01",
+      "title": "Gossamer Skins",
+      "creator": "Alisa Andrasek",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "3d-architecture",
+        "fabrication"
+      ],
+      "scale": "立面／表皮",
+      "summary": "高層建築的機器人 3D 列印立面系統，以 stigmergy（代理人留痕跡、再依痕跡行動）在立面場中分配資料，其痕跡反映在幾何密度上，控制不同孔隙率以回應光、熱等性能需求，並以 octree 產生多解析度面板。",
+      "variations": [
+        {
+          "name": "立面平面上的留痕群聚",
+          "how": "把 Boids 鎖在立面 UV 平面，並加一張 2D 網格記錄走過次數（每步衰減），代理人會朝高濃度處轉。",
+          "effect": "立面上形成自我強化的流線，濃度圖即可作為開孔密度圖"
+        },
+        {
+          "name": "日照值作吸引／排斥",
+          "how": "輸入立面各點的日照量，日照高處加排斥力讓代理人稀疏、背陽處吸引。",
+          "effect": "痕跡密度對應遮陽需求，得到性能導向的立面紋理"
+        },
+        {
+          "name": "密度轉多解析度面板",
+          "how": "把濃度網格依門檻值遞迴細分（高濃度處切小格），每格依濃度決定開孔大小。",
+          "effect": "得到遠看有機、近看像素化的多解析度立面"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "曲面上",
+        "網格擴散",
+        "最佳化"
+      ],
+      "tools": [
+        "機器人 3D 列印"
+      ],
+      "url": "https://www.alisaandrasek.com/projects/gossamer-skins"
+    },
+    {
+      "id": "D01-11",
+      "algo": "D01",
+      "title": "Culebra（Grasshopper 代理人外掛）",
+      "creator": "Luis Quinones（complicitMatter）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 C# 撰寫、包裝 Culebra Java 函式庫的 Grasshopper 即時代理人外掛，提供 2D／3D 的 flocking 與 noise 行為、網格吸引與排斥，以及把軌跡或曲線網自我組織化的功能，是在 GH 裡做群聚軌跡建模最常見的工具之一。",
+      "variations": [
+        {
+          "name": "群聚＋噪聲混合",
+          "how": "在 Steer 加一條依 Perlin noise（C04）取樣方向的力，權重由 noiseWeight 控制。",
+          "effect": "軌跡在群聚中帶有有機擾動，像 Culebra 的 hybrid 行為示範"
+        },
+        {
+          "name": "Mesh 吸引與排斥",
+          "how": "輸入一個 Mesh，用 ClosestPoint 找最近點，距離在範圍內時依正負權重吸引或排斥。",
+          "effect": "軌跡貼附或包覆既有量體，產生纏繞型表面紋理"
+        },
+        {
+          "name": "和外掛比對",
+          "how": "用同樣的權重在 Culebra 與基礎範例的 C# 版各跑一次，比較參數意義與效能。",
+          "effect": "理解外掛背後就是同樣的三條規則，能自行擴充"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "3D",
+        "隨機",
+        "吸引子控制"
+      ],
+      "tools": [
+        "Grasshopper",
+        "C#",
+        "Java"
+      ],
+      "url": "https://github.com/elQuixote/Culebra"
+    },
+    {
+      "id": "D01-12",
+      "algo": "D01",
+      "title": "Quelea：Grasshopper 代理人設計外掛",
+      "creator": "Quelea 開發者（Grasshopper 社群外掛）",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "scale": "群體／都市",
+      "summary": "Grasshopper 的代理人建模與模擬元件庫，可建立 flocking 模擬，也用於模擬人與車輛等群體，並附有教學影片，是學習者從基礎範例 Boids 延伸到更多行為的入門工具。",
+      "variations": [
+        {
+          "name": "發射器與生命週期",
+          "how": "改成每步從一個出生點新增幾隻鳥、並在走完 lifespan 步後移除。",
+          "effect": "形成持續流動的群體流，而不是固定數量"
+        },
+        {
+          "name": "人車群體",
+          "how": "關掉 Z 軸、降低速度並加入道路 Curve 引導力，行人與車輛用不同權重的兩群。",
+          "effect": "得到街道上人車分流的軌跡圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "吸引子控制",
+        "動畫"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.food4rhino.com/en/app/quelea-agent-based-design-grasshopper"
+    },
+    {
+      "id": "D01-13",
+      "algo": "D01",
+      "title": "Brass Swarm",
+      "creator": "Kokkugia／Roland Snooks",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "Kokkugia「agent bodies」研究系列中的黃銅作品，以群體代理人互動生成形體，再轉為金屬實體，示範群聚演算法如何在物件尺度成為裝飾與構造合一的形態。",
+      "variations": [
+        {
+          "name": "小範圍高密度",
+          "how": "boxSize 縮小、步數與鳥數增加、分離半徑壓小，讓軌跡在小空間內密集纏繞。",
+          "effect": "得到像金屬鑄件般緻密的纖維團塊"
+        },
+        {
+          "name": "軌跡轉實體鑄造模型",
+          "how": "軌跡 Pipe 後用 Mesh Boolean 合併，並檢查最小厚度以符合鑄造或金屬列印。",
+          "effect": "可輸出成可製造的小型金屬物件"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "自訂 class"
+      ],
+      "tools": [],
+      "url": "https://www.kokkugia.com/brass-swarm"
+    },
+    {
+      "id": "D01-14",
+      "algo": "D01",
+      "title": "RMIT Mace",
+      "creator": "Kokkugia／Roland Snooks",
+      "year": "",
+      "category": "fabrication",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "同屬 Kokkugia「agent bodies」系列的物件作品，以代理人群互動生成的複雜形體包覆在一個物件軸線周圍，說明群聚演算法在小尺度物件上也能產生豐富細節。",
+      "variations": [
+        {
+          "name": "沿軸線群聚",
+          "how": "輸入一條中心軸 Curve，加吸引力讓鳥保持在距軸線某半徑內，並給一個沿軸線方向的推進力。",
+          "effect": "軌跡沿著軸線螺旋纏繞，形成桿狀的纖維包覆"
+        },
+        {
+          "name": "半徑隨高度變化",
+          "how": "吸引半徑依鳥在軸線上的參數 t 用函數（如 sin）變化。",
+          "effect": "包覆體出現膨脹與收束的節奏"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://www.kokkugia.com/RMIT-Mace"
+    }
+  ]
+}

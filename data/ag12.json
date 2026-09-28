@@ -1,0 +1,1350 @@
+{
+  "agent": "ag12",
+  "algorithms": [
+    {
+      "id": "C03",
+      "name_zh": "向量場流線",
+      "name_en": "Vector Field Streamlines",
+      "family": "C",
+      "family_name": "場與擴散",
+      "file": "C03_VectorField.cs",
+      "loc": 150,
+      "logic": [
+        "直接公式",
+        "迭代模擬"
+      ],
+      "data_structure": [
+        "網格",
+        "粒子"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "約 150 行、沒有自訂 class，只有「場公式」與「沿場走一步」兩個函式加兩層迴圈；最難的是理解外積轉 90° 與距離衰減，C# 基礎程度讀得懂。",
+      "tags": [
+        "吸引子控制",
+        "網格擴散",
+        "開放生長"
+      ],
+      "one_liner": "在基地上每一點用公式算出一個方向（被吸引點拉＋繞著轉），再從格子起點順著方向一步步走，畫出像風、水、磁力線的流線。",
+      "how_it_works": [
+        "在正方形範圍內排出 seedsPerSide × seedsPerSide 個格子起點。",
+        "FieldDirection：對每個吸引點算「指向它的方向 × pullStrength」加「轉 90° 的方向 × swirlStrength」，乘上 1/(1+距離) 的衰減後全部相加，得到該點的場方向。",
+        "TraceStreamline：從起點取場方向、單位化、前進 stepSize，重複 streamlineSteps 次，走出範圍、場為零或碰到吸引點就停，記成 Polyline。",
+        "另外在每個起點輸出一段短線（arrows）顯示場的方向，方便對照場與流線。"
+      ],
+      "key_params": [
+        {
+          "name": "pullStrength",
+          "effect": "吸引力；正值流線被吸進吸引點，負值被推開成放射狀"
+        },
+        {
+          "name": "swirlStrength",
+          "effect": "繞圈力；越大越像漩渦，正負值決定順逆時針"
+        },
+        {
+          "name": "seedsPerSide",
+          "effect": "起點密度；越多流線越密，但可能擠在一起、重疊"
+        },
+        {
+          "name": "streamlineSteps",
+          "effect": "流線最長能走幾步；太少線會很短，太多只是在範圍外提早停止"
+        },
+        {
+          "name": "stepSize",
+          "effect": "每步長度；小則平滑但慢，大則折線感重且可能衝過吸引點"
+        },
+        {
+          "name": "fieldSize",
+          "effect": "場的範圍（也是停止邊界），同時決定起點間距"
+        },
+        {
+          "name": "attractors",
+          "effect": "吸引點的位置與數量；多個吸引點的場會互相疊加出鞍點與分流"
+        }
+      ],
+      "csharp_concepts": [
+        "Vector3d 加減與純量乘法",
+        "Vector3d.CrossProduct",
+        "Vector3d.Unitize() 回傳 bool",
+        "Polyline",
+        "List<Line>",
+        "函式拆分（場公式 vs. 追蹤）"
+      ],
+      "prerequisites": [
+        "雙層迴圈",
+        "向量基本觀念（方向、長度、單位化）",
+        "Point3d 與 Vector3d 的差別"
+      ],
+      "teaching_note": "非常適合從零實作：先只寫 FieldDirection 畫 arrows，讓學習者看到「場」，再加 TraceStreamline 變成流線，兩段各 10 分鐘。要提醒 Unitize() 是改自己並回傳成功與否、場為零時要 break，以及 stepSize 太大會在吸引點附近來回抖動（這正好帶出為何有 IsNearAttractor）。",
+      "variations": [
+        {
+          "title": "換場公式：Perlin Noise 角度場",
+          "level": 2,
+          "what_changes": "規則（場公式）",
+          "how": "把 FieldDirection 改成 angle = noise.ValueAt(x/scale, y/scale) * 2π，回傳 (cos angle, sin angle, 0)；可直接借用 C04 的 PerlinNoise class。",
+          "result": "有機、如頭髮或木紋般流動的曲線，就是 Tyler Hobbs 式 flow field。"
+        },
+        {
+          "title": "電荷場／磁力線",
+          "level": 2,
+          "what_changes": "規則（場公式）",
+          "how": "每個點給正負電荷值，場 = Σ q·(p−a)/|p−a|³，移除 swirl 項；流線從正電荷附近的小圓上出發。",
+          "result": "物理課本上的電力線：從正電荷發散、收到負電荷，同號電荷之間出現分界。"
+        },
+        {
+          "title": "Curl noise 無源場",
+          "level": 3,
+          "what_changes": "規則（場公式）",
+          "how": "先有一個純量場 ψ（例如 noise），用有限差分算 (∂ψ/∂y, −∂ψ/∂x) 當方向；這個場沒有源與匯，流線不會聚成一點。",
+          "result": "像煙、水流的迴旋，流線均勻不擠在一起，適合做鋪面紋理。"
+        },
+        {
+          "title": "改成 RK4 積分",
+          "level": 3,
+          "what_changes": "迴圈（積分方法）",
+          "how": "把 current += dir*step 換成四階 Runge-Kutta：取 k1..k4 四次場方向加權平均後再前進。",
+          "result": "同樣 stepSize 下流線更準、漩渦中心不會螺旋外洩，可以用較大步長。"
+        },
+        {
+          "title": "等間距流線（Jobard–Lefer）",
+          "level": 4,
+          "what_changes": "狀態＋輸出（起點策略）",
+          "how": "不用格子起點，改成從已完成流線的兩側 dsep 距離取新起點；追蹤時用格子型空間索引檢查與既有流線距離 < dtest 就停。",
+          "result": "密度均勻、不重疊的流線，像手繪等高線或雕版畫，可直接拿去雷切或繪圖機。"
+        },
+        {
+          "title": "雙向追蹤",
+          "level": 1,
+          "what_changes": "迴圈",
+          "how": "每個起點同時往 +direction 與 −direction 各走一次，把後半段反轉接在前面。",
+          "result": "流線從上游一路貫穿到下游，不會只從格點開始，構圖完整很多。"
+        },
+        {
+          "title": "曲面上的流線",
+          "level": 3,
+          "what_changes": "維度（2D→曲面）",
+          "how": "新增 Surface 輸入，在 (u,v) 參數空間算場並追蹤，每步用 surface.PointAt(u,v) 映射回 3D；或把 3D 場向量投影到切平面。",
+          "result": "貼在屋頂、殼體或地形上的流線，可當分割線、肋條或排水溝走向。"
+        },
+        {
+          "title": "3D 場與空間流線",
+          "level": 3,
+          "what_changes": "維度（2D→3D）",
+          "how": "拿掉 toAttractor.Z = 0，起點改成 3D 格子，旋轉軸改成可輸入的向量；停止條件改成立方體邊界。",
+          "result": "空間中的螺旋與渦流線，可做懸吊裝置或管線雕塑。"
+        },
+        {
+          "title": "影像／曲線當場的輸入",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "把灰階影像的梯度（相鄰像素亮度差）當方向，或取最近邊界曲線的切線方向（Curve.ClosestPoint + TangentAt）與吸引力混合。",
+          "result": "流線沿著影像輪廓或基地邊界流動，像順著建築外框繞行的人流或風。"
+        },
+        {
+          "title": "流線轉成可製造幾何",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "把 Polyline 平滑成 Curve 後 Offset 成帶狀、或沿線 Sweep 圓管；依場強度（向量長度）決定帶寬或管徑。",
+          "result": "可雷切的鋪面分割、CNC 的地景溝槽、或 3D 列印的流線雕塑。"
+        },
+        {
+          "title": "粒子動畫化",
+          "level": 2,
+          "what_changes": "狀態＋迴圈（Timer）",
+          "how": "把粒子位置存在 class 欄位，每次 Timer 觸發只前進一步並保留最近 N 步當尾巴；場的吸引點可隨時間移動。",
+          "result": "像風場地圖一樣的流動動畫，可錄成影片做分析圖。"
+        },
+        {
+          "title": "與 D01 Boids 混合",
+          "level": 4,
+          "what_changes": "混合其他家族",
+          "how": "把場方向當成 Boids 的一個額外轉向力（steer toward field direction），權重可調。",
+          "result": "群體既有自主避讓又順著環境流動，接近人流或魚群在水流中的行為。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "風流線鋪面",
+          "brief": "以基地盛行風向與建築量體當吸引／排斥點建立向量場，產生等間距流線當廣場鋪面分割線，並依流線密度調整鋪面材料。輸出為可施工的分割圖。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "電荷場屋頂肋條",
+          "brief": "在屋頂曲面上放置正負「電荷」代表柱位與天窗，把場線映射到曲面上成為結構肋條或採光縫；比較不同電荷配置的視覺與結構邏輯。",
+          "difficulty": 4,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "Flow field 繪圖機作品集",
+          "brief": "以 noise 角度場為基礎，實作碰撞檢查讓流線不重疊，輸出一系列可用筆式繪圖機或雷射雕刻的線稿，探索密度、線寬、色帶的變化。",
+          "difficulty": 2,
+          "combine_with": [
+            "C04"
+          ]
+        },
+        {
+          "title": "CFD 結果重繪的都市風環境圖",
+          "brief": "用 Butterfly/OpenFOAM 或簡化的吸引／排斥場取得街廓風速向量，再用本元件的流線追蹤重畫成具表現力的分析圖，並以流線密度標示不舒適區。",
+          "difficulty": 5,
+          "combine_with": [
+            "D03"
+          ]
+        },
+        {
+          "title": "流場導引的地景溝槽",
+          "brief": "以地形坡度（C04 地形的梯度）為場，追蹤雨水流線並 Sweep 成排水溝與種植帶，輸出 CNC 地形模型。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04",
+            "C05"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "Flow Fields",
+          "author": "Tyler Hobbs",
+          "year": "2020",
+          "url": "https://www.tylerxhobbs.com/words/flow-fields"
+        },
+        {
+          "title": "Creating Evenly-Spaced Streamlines of Arbitrary Density",
+          "author": "Bruno Jobard, Wilfrid Lefer",
+          "year": "1997",
+          "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6876-9_5"
+        },
+        {
+          "title": "Curl-Noise for Procedural Fluid Flow",
+          "author": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+          "year": "2007",
+          "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf"
+        },
+        {
+          "title": "The Nature of Code（Flow Field 範例）",
+          "author": "Daniel Shiffman",
+          "year": "",
+          "url": ""
+        },
+        {
+          "title": "Field line",
+          "author": "Wikipedia",
+          "year": "",
+          "url": "https://en.wikipedia.org/wiki/Field_line"
+        },
+        {
+          "title": "Parametricism – A New Global Style for Architecture and Urban Design",
+          "author": "Patrik Schumacher",
+          "year": "2009",
+          "url": "https://patrikschumacher.com/parametricism-a-new-global-style-for-architecture-and-urban-design"
+        }
+      ]
+    },
+    {
+      "id": "C04",
+      "name_zh": "Perlin Noise 雜訊地形",
+      "name_en": "Perlin Noise Terrain",
+      "family": "C",
+      "family_name": "場與擴散",
+      "file": "C04_Noise.cs",
+      "loc": 206,
+      "logic": [
+        "直接公式"
+      ],
+      "data_structure": [
+        "網格"
+      ],
+      "difficulty": 2,
+      "difficulty_reason": "只有一個自訂 class（PerlinNoise）、沒有迭代或鄰居搜尋，每點直接算；門檻在洗牌查表、& 255 位元運算與五次平滑曲線的數學，但可以當黑盒子先用再拆。",
+      "tags": [
+        "隨機",
+        "可重現種子",
+        "自訂 class",
+        "網格擴散"
+      ],
+      "one_liner": "用「平滑、連續的隨機」替每個格點算高度，再疊幾層越來越細的起伏，做出像真的山丘地形 Mesh。",
+      "how_it_works": [
+        "建構 PerlinNoise：0–255 依 seed 洗牌後重複兩次成 512 長的查表，同 seed 永遠得到同一片地形。",
+        "ValueAt(x,y)：找出點所在的整數格，四個角各查表得到一個隨機斜坡方向（8 選 1），算「角到點」與斜坡的內積，再用 6t⁵−15t⁴+10t³ 平滑混合四角。",
+        "LayeredNoise（fBm 疊層）：每一層細節 ×2、強度 ×0.5，共疊 octaves 層後除以總強度，結果約在 −1 到 1。",
+        "對 (width+1)×(depth+1) 個格點算 elevation = LayeredNoise × height，取樣座標加 0.37 偏移避開整數點恆為 0 的問題。",
+        "BuildGridMesh：每相鄰 4 點組成一個四邊形面，計算法線後輸出地形 Mesh。"
+      ],
+      "key_params": [
+        {
+          "name": "scale",
+          "effect": "起伏的水平尺度；越大山丘越寬、越平緩，越小越像碎石"
+        },
+        {
+          "name": "height",
+          "effect": "垂直放大倍率，決定最高與最低點差"
+        },
+        {
+          "name": "octaves",
+          "effect": "疊層數；1 層是圓滑丘陵，4–6 層出現山脊與細部，超過 8 被限制"
+        },
+        {
+          "name": "seed",
+          "effect": "換一片地形但保持同樣「性格」；同 seed 可重現"
+        },
+        {
+          "name": "width / depth / cellSize",
+          "effect": "格點數與間距；格太粗會看不到高層 octave 的細節"
+        }
+      ],
+      "csharp_concepts": [
+        "自訂 class 與建構子",
+        "int[] 陣列查表",
+        "位元運算 & 255",
+        "System.Random(seed) 洗牌（Fisher–Yates）",
+        "switch 語句",
+        "static 方法",
+        "const 欄位",
+        "Mesh.Vertices / Mesh.Faces.AddFace"
+      ],
+      "prerequisites": [
+        "雙層迴圈與一維索引 row*n+col",
+        "內部 vs. 外部 class 版面",
+        "線性內插 Blend 的觀念"
+      ],
+      "teaching_note": "適合從零實作，但建議把 PerlinNoise class 當現成工具直接貼上，只從零寫 LayeredNoise 與網格 Mesh，重點放在 scale／octaves 的直覺。要特別講 SampleOffset：整數座標值恆為 0，不偏移會得到全平的地；也可以對照 System.Random 的白雜訊讓學習者看出「平滑」的差別。",
+      "variations": [
+        {
+          "title": "脊狀雜訊（Ridged）",
+          "level": 1,
+          "what_changes": "規則（每層的值）",
+          "how": "LayeredNoise 內把 noise 值改成 1 − |n|，再平方後疊加。",
+          "result": "尖銳的山脊線與峽谷，像山脈或沙丘脊。"
+        },
+        {
+          "title": "Domain warping 扭曲座標",
+          "level": 2,
+          "what_changes": "規則（取樣座標）",
+          "how": "先算 qx = noise(x,y)、qy = noise(x+5.2, y+1.3)，再用 noise(x + k·qx, y + k·qy) 取值；k 控制扭曲量。",
+          "result": "像大理石、流體或岩層褶皺的紋理，比單純 fBm 更有流動感。"
+        },
+        {
+          "title": "階梯化／等高梯田",
+          "level": 1,
+          "what_changes": "輸出",
+          "how": "elevation = Math.Floor(elevation / step) * step，或只在輸出前量化。",
+          "result": "梯田、層層平台的地景，可直接當等高線模型切片。"
+        },
+        {
+          "title": "吸引點遮罩（島嶼、盆地）",
+          "level": 2,
+          "what_changes": "輸入（吸引子控制）",
+          "how": "新增吸引點或基地邊界曲線，高度乘上 falloff = 1 − 距離/半徑（截在 0–1），或用曲線距離做衰減。",
+          "result": "中心隆起、邊緣下沉的島嶼，或以建築量體為中心的挖填地形。"
+        },
+        {
+          "title": "影像混合高度",
+          "level": 2,
+          "what_changes": "輸入",
+          "how": "讀入灰階圖 Bitmap.GetPixel 當大尺度高度，再加小尺度 noise 做細節。",
+          "result": "人為設計的大地形保留輪廓，同時帶有自然細節。"
+        },
+        {
+          "title": "noise 驅動立面面板",
+          "level": 2,
+          "what_changes": "輸出（從高度改成參數）",
+          "how": "不做地形，而把 noise 值映射到每片立面板的旋轉角、開孔半徑或出挑深度；格點改在立面 UV 上取樣。",
+          "result": "漸變而不規則的立面遮陽或開孔韻律，避免純隨機的雜亂感。"
+        },
+        {
+          "title": "曲面上取樣（3D noise）",
+          "level": 3,
+          "what_changes": "維度（2D→3D）",
+          "how": "把 ValueAt 擴充成 3D（8 個角、12 個梯度方向，參考 Perlin 2002），對任意曲面或 Mesh 的頂點位置取樣，沿法線位移。",
+          "result": "包在球體、殼體或建築表皮上的連續凹凸，不會出現 UV 接縫。"
+        },
+        {
+          "title": "時間當第三維做動畫",
+          "level": 2,
+          "what_changes": "狀態（Timer）",
+          "how": "用 3D noise 的 z = time，Timer 每次加一小段；或 2D 情況下讓取樣偏移量隨時間移動。",
+          "result": "像水面或雲層般緩慢變形的地形動畫。"
+        },
+        {
+          "title": "等高線輸出",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "把 terrainMesh 用 Mesh.CreateContourCurves 或 Brep 切片，或直接交給 C05 Marching Squares 從格點值抽出等值線。",
+          "result": "可雷切疊層的等高線模型（地形模型的標準做法）。"
+        },
+        {
+          "title": "水力侵蝕後處理",
+          "level": 4,
+          "what_changes": "混合迭代模擬",
+          "how": "在 noise 高度場上丟大量水滴粒子，沿坡度往下流、依速度帶走與堆積泥沙，反覆數千次。",
+          "result": "出現沖溝、扇狀堆積與平緩谷底，地形可信度大幅提升。"
+        },
+        {
+          "title": "noise 當向量場角度",
+          "level": 2,
+          "what_changes": "混合其他家族（C03）",
+          "how": "angle = noise(x,y)·2π 當 C03 的 FieldDirection，或取高度梯度當雨水流向。",
+          "result": "flow field 生成藝術或地形上的雨水流線。"
+        },
+        {
+          "title": "閾值分區（生物群系／用地）",
+          "level": 2,
+          "what_changes": "輸出",
+          "how": "用兩張不同 seed 的 noise（例：高度與濕度）查表決定每格類型，對不同類型上色或放不同構件。",
+          "result": "水域、草地、林地、建地的自然分區圖，可當景觀植栽配置草圖。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "可重現的地形模型切片機",
+          "brief": "以 fBm＋吸引點遮罩生成基地假想地形，輸出等高線雷切檔與 CNC 高度圖，並用 seed 系統性比較 10 種地形。",
+          "difficulty": 2,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "noise 立面遮陽系統",
+          "brief": "以 noise 值控制百葉角度與開孔大小，再加入日照方位作為權重，比較純 noise、純日照、混合三種版本的立面效果與遮陽率。",
+          "difficulty": 3,
+          "combine_with": [
+            "E01"
+          ]
+        },
+        {
+          "title": "侵蝕地景公園",
+          "brief": "先用 noise 生成起伏，再做水滴侵蝕模擬，擷取沖溝當步道與排水系統，最後輸出景觀配置圖。",
+          "difficulty": 4,
+          "combine_with": [
+            "C03",
+            "D02"
+          ]
+        },
+        {
+          "title": "3D noise 曲面表皮",
+          "brief": "實作 3D Perlin noise 並對殼體 Mesh 頂點沿法線位移，控制位移不超過製造公差，輸出可 3D 列印或 CNC 的表皮模組。",
+          "difficulty": 3,
+          "combine_with": [
+            "A04"
+          ]
+        },
+        {
+          "title": "Domain warping 生成鋪面與地毯圖樣",
+          "brief": "以多層 domain warping 做出大理石般的紋理，再量化成 4–6 種材料或顏色，輸出可施工的鋪面拼貼圖。",
+          "difficulty": 2,
+          "combine_with": [
+            "C01"
+          ]
+        },
+        {
+          "title": "GPU 即時無限地形",
+          "brief": "把 noise 移到 shader 或平行運算，搭配 LOD 分塊產生可漫遊的大範圍地景，研究效能與接縫問題。",
+          "difficulty": 5,
+          "combine_with": []
+        }
+      ],
+      "references": [
+        {
+          "title": "An Image Synthesizer",
+          "author": "Ken Perlin",
+          "year": "1985",
+          "url": "https://dl.acm.org/doi/10.1145/325165.325247"
+        },
+        {
+          "title": "Improving Noise",
+          "author": "Ken Perlin",
+          "year": "2002",
+          "url": "https://mrl.cs.nyu.edu/~perlin/paper445.pdf"
+        },
+        {
+          "title": "Improved Noise reference implementation",
+          "author": "Ken Perlin",
+          "year": "2002",
+          "url": "https://mrl.cs.nyu.edu/~perlin/noise"
+        },
+        {
+          "title": "Curl-Noise for Procedural Fluid Flow",
+          "author": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+          "year": "2007",
+          "url": "https://dl.acm.org/doi/10.1145/1275808.1276435"
+        },
+        {
+          "title": "Perlin noise and its improvements: A literature review",
+          "author": "",
+          "year": "",
+          "url": "https://ace.ewapub.com/article/view/14225.pdf"
+        },
+        {
+          "title": "Three Ways of Generating Terrain with Erosion Features",
+          "author": "dandrino",
+          "year": "",
+          "url": "https://github.com/dandrino/terrain-erosion-3-ways"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "C03-01",
+      "algo": "C03",
+      "title": "Flow Fields（生成藝術教學文章）",
+      "creator": "Tyler Hobbs",
+      "year": "2020",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "summary": "Hobbs 系統整理 flow field 的做法：在畫面上鋪一張角度格網，讓曲線順著角度前進，並討論起點分布、碰撞檢查、線寬與色彩等讓成品好看的技巧。是本元件「場＋流線」最直接的藝術版本。",
+      "variations": [
+        {
+          "name": "角度格網取代公式",
+          "how": "先把場預先算好存在 double[,] 角度陣列（格網），追蹤時用所在格或雙線性內插查角度，而非每步呼叫 FieldDirection。",
+          "effect": "速度快、可手動塗改場，也方便換成 noise 或影像。"
+        },
+        {
+          "name": "碰撞停止",
+          "how": "追蹤時檢查新點與既有流線點距離，小於間距就 break。",
+          "effect": "流線不重疊，畫面呈現有節奏的留白。"
+        },
+        {
+          "name": "起點隨機分布",
+          "how": "把格子起點換成 Random 點或 Poisson 分布點。",
+          "effect": "消除格子感，構圖更自然。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "可重現種子"
+      ],
+      "tools": [
+        "Processing",
+        "Clojure/Quil"
+      ],
+      "url": "https://www.tylerxhobbs.com/words/flow-fields"
+    },
+    {
+      "id": "C03-02",
+      "algo": "C03",
+      "title": "Fidenza",
+      "creator": "Tyler Hobbs",
+      "year": "2021",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "summary": "在 Art Blocks 發表的 999 件長篇生成藝術，以 flow field 引導大量帶狀曲線形狀排列，亂流程度（none／low／medium／high）是可變特徵之一。展示同一演算法如何透過參數空間產生整個作品系列。",
+      "variations": [
+        {
+          "name": "流線加寬成帶狀色塊",
+          "how": "把每條 Polyline 依法向 Offset 成封閉帶狀，填色並檢查與其他帶的碰撞。",
+          "effect": "從線稿變成有面積與色彩的構圖。"
+        },
+        {
+          "name": "亂流等級參數",
+          "how": "把 swirlStrength 或 noise 振幅做成 0／低／中／高 四檔，其中 0 時流線全直。",
+          "effect": "同一系統產生從規整到混亂的系列作品。"
+        },
+        {
+          "name": "seed 驅動整套特徵",
+          "how": "以一個 seed 決定調色盤、密度、亂流等所有參數。",
+          "effect": "每個 seed 都是獨立但可重現的作品。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "可重現種子"
+      ],
+      "tools": [
+        "JavaScript",
+        "p5.js"
+      ],
+      "url": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs"
+    },
+    {
+      "id": "C03-03",
+      "algo": "C03",
+      "title": "Wind Map",
+      "creator": "Fernanda Viégas, Martin Wattenberg（HINT.FM）",
+      "year": "2012",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "summary": "讀取美國國家數位預報資料庫的風速風向，把全美的風畫成持續流動的細線。場不是公式而是實測資料，流線則以動畫粒子呈現。",
+      "variations": [
+        {
+          "name": "資料格網當場",
+          "how": "FieldDirection 改為從風速格網（CSV 或 Ladybug 風資料）做雙線性內插取向量。",
+          "effect": "流線呈現真實風向而非假想吸引點。"
+        },
+        {
+          "name": "短命粒子動畫",
+          "how": "每個粒子只活 N 步後重生於隨機位置，保留尾巴漸淡。",
+          "effect": "畫面持續流動、密度穩定。"
+        },
+        {
+          "name": "以風速調透明度／線寬",
+          "how": "不 Unitize 前先記錄向量長度，映射到線寬或顏色。",
+          "effect": "強風區一眼可辨。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "動畫",
+        "Timer"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "http://hint.fm/projects/wind/"
+    },
+    {
+      "id": "C03-04",
+      "algo": "C03",
+      "title": "Wind of Boston: Data Paintings",
+      "creator": "Refik Anadol Studio",
+      "year": "",
+      "category": "art-installation",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "summary": "以波士頓洛根機場一年、每 20 秒一筆的風速、風向、陣風資料，在 1.8 m × 4 m 的數位畫布上生成四個章節的動態「資料繪畫」，設於 Fan Pier 100 Northern Avenue 大廳。風場資料成為建築室內的公共藝術。",
+      "variations": [
+        {
+          "name": "時間序列驅動場",
+          "how": "每一 Timer 步讀下一筆風速風向，改變全域場的主方向與 swirl。",
+          "effect": "流線隨真實時間變化。"
+        },
+        {
+          "name": "3D 流線雕塑",
+          "how": "把時間當 Z 軸，每一時刻的流線疊高。",
+          "effect": "一年風況變成可以繞著看的立體紀錄。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "動畫",
+        "3D"
+      ],
+      "tools": [
+        "客製軟體"
+      ],
+      "url": "https://refikanadol.com/works/wind-of-boston-data-paintings/"
+    },
+    {
+      "id": "C03-05",
+      "algo": "C03",
+      "title": "Butterfly：Grasshopper 中的 OpenFOAM 風場模擬",
+      "creator": "Ladybug Tools",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "summary": "Butterfly 把 Grasshopper 幾何匯出到 OpenFOAM 做 CFD，可模擬戶外都市風場與室內通風；結果常以速度向量與流線視覺化。本元件的公式場可以視為 CFD 速度場的簡化替身。",
+      "variations": [
+        {
+          "name": "以 CFD 結果取代公式",
+          "how": "把 Butterfly 輸出的點與速度向量存成清單，FieldDirection 改為取最近點（或 RTree 內插）的向量。",
+          "effect": "流線反映真實的街谷風與角隅加速。"
+        },
+        {
+          "name": "建築量體當排斥點",
+          "how": "在沒有 CFD 前，先把量體中心當 pullStrength 為負的吸引點做快速概念研究。",
+          "effect": "數秒內得到量體配置對氣流的直覺。"
+        },
+        {
+          "name": "風速門檻標示",
+          "how": "依向量長度把流線切段並上色，超過舒適門檻的段落改紅色。",
+          "effect": "直接標出不舒適區。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "空間索引"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Butterfly",
+        "OpenFOAM"
+      ],
+      "url": "https://www.ladybug.tools/butterfly.html"
+    },
+    {
+      "id": "C03-06",
+      "algo": "C03",
+      "title": "Rheotomic Surfaces 流線曲面",
+      "creator": "Daniel Piker",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "summary": "以複數函數的虛部建立曲面，其等高線就是位勢流的流線，實部則是正交的等位線；Piker 把它包成 Grasshopper 工具，可由渦旋與源點配置產生可行走、互相連通的曲面。",
+      "variations": [
+        {
+          "name": "流函數高度場",
+          "how": "不追蹤流線，而在格點上計算流函數 ψ（例如各渦旋的 Γ·ln r 相加）當 Z 值建 Mesh。",
+          "effect": "曲面的等高線就是流線，一次得到空間形體。"
+        },
+        {
+          "name": "等位線與流線雙網格",
+          "how": "同時計算位勢 φ 與流函數 ψ，各取等值線。",
+          "effect": "得到正交的曲線網，可當結構格柵。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "等值面",
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool"
+    },
+    {
+      "id": "C03-07",
+      "algo": "C03",
+      "title": "等間距流線演算法",
+      "creator": "Bruno Jobard, Wilfrid Lefer",
+      "year": "1997",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "summary": "科學視覺化的經典方法：只設定流線間距 dsep，就能產生從紋理到手繪風格的均勻流線圖，且比先前方法計算更便宜。是把本元件從「格子起點」升級成「漂亮構圖」的關鍵。",
+      "variations": [
+        {
+          "name": "由既有流線衍生起點",
+          "how": "維護一個待處理流線佇列，沿每條流線兩側 dsep 處試種新起點。",
+          "effect": "流線自動填滿空間。"
+        },
+        {
+          "name": "格子空間索引",
+          "how": "建立邊長 dsep 的 bucket 格網，追蹤時只查周圍 9 格的點。",
+          "effect": "上千條流線也能即時計算。"
+        },
+        {
+          "name": "變密度",
+          "how": "讓 dsep 隨吸引點距離或影像亮度變化。",
+          "effect": "可做出明暗層次，類似雕版畫。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "空間索引",
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "C",
+        "MATLAB"
+      ],
+      "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6876-9_5"
+    },
+    {
+      "id": "C03-08",
+      "algo": "C03",
+      "title": "evenly_spaced_streamlines（MATLAB 實作）",
+      "creator": "keithfma",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "summary": "以 MATLAB 實作 Jobard & Lefer 1997 等間距流線，提供可直接閱讀的程式碼，適合學習者對照改寫成 C#。",
+      "variations": [
+        {
+          "name": "移植到 GH C#",
+          "how": "把其 dsep／dtest 的邏輯寫成 TraceStreamline 的額外停止條件。",
+          "effect": "本元件輸出立即變得均勻整齊。"
+        },
+        {
+          "name": "輸出成切割線",
+          "how": "流線直接當雷切或雕刻路徑。",
+          "effect": "可製作流線紋理板。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "鄰居搜尋"
+      ],
+      "tools": [
+        "MATLAB"
+      ],
+      "url": "https://github.com/keithfma/evenly_spaced_streamlines"
+    },
+    {
+      "id": "C03-09",
+      "algo": "C03",
+      "title": "Curl-Noise for Procedural Fluid Flow",
+      "creator": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+      "year": "2007",
+      "category": "modeling",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "summary": "SIGGRAPH 2007 論文，以 Perlin noise 的旋度（curl）產生恰好不可壓縮、可尊重固體邊界的亂流速度場，廣泛用於煙、火等特效。它說明了如何從 noise 得到「不會聚成一點」的好流場。",
+      "variations": [
+        {
+          "name": "curl 取代吸引點",
+          "how": "ψ = noise(x/s, y/s)，方向 = (ψ(x,y+h)−ψ(x,y−h), −(ψ(x+h,y)−ψ(x−h,y))) / 2h。",
+          "effect": "流線均勻迴旋、沒有匯點。"
+        },
+        {
+          "name": "靠近邊界時衰減 ψ",
+          "how": "ψ 乘上到障礙物（建築輪廓）距離的平滑函數。",
+          "effect": "流線自然繞過建築而不穿透。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "物理模擬",
+        "隨機"
+      ],
+      "tools": [
+        "Houdini 等 VFX 軟體"
+      ],
+      "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf"
+    },
+    {
+      "id": "C03-10",
+      "algo": "C03",
+      "title": "Kartal-Pendik Masterplan（場域式都市設計）",
+      "creator": "Zaha Hadid Architects",
+      "year": "2006",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "summary": "伊斯坦堡競圖首獎案，以既有東西向道路與主軸交織出「soft grid」，再以 urban script 依位置生成不同建築類型；Schumacher 以此為 Parametric Urbanism 的代表，強調「場的規律性差異化」。注意：此案是場的概念與網格變形，並非直接以本元件的流線追蹤產生。",
+      "variations": [
+        {
+          "name": "流線當 soft grid",
+          "how": "把基地既有道路端點當吸引點（或以道路切線當場），分別追蹤兩組互相接近正交的流線，交織成街廓網。",
+          "effect": "隨基地脈絡彎曲的都市格網。"
+        },
+        {
+          "name": "場強度驅動建築類型",
+          "how": "在每個街廓中心取場強度或 swirl 值，映射到高度或塔／合院類型。",
+          "effect": "建築形態在基地上漸變。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "吸引子控制",
+        "多元件"
+      ],
+      "tools": [],
+      "url": "https://www.zaha-hadid.com/masterplans/kartal-pendik-masterplan"
+    },
+    {
+      "id": "C03-11",
+      "algo": "C03",
+      "title": "StreamLines3D 元件（FlowLines 外掛）",
+      "creator": "FlowLines",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "summary": "Grasshopper 外掛元件，以 RK4 計算 3D 向量場的流線。可與本課程元件對照：本範例用最簡單的 Euler 法，外掛用 RK4 取得更準的路徑。",
+      "variations": [
+        {
+          "name": "Euler → RK4",
+          "how": "在 TraceStreamline 中依 RK4 取四次方向加權。",
+          "effect": "漩渦中心不再外洩、步長可放大。"
+        },
+        {
+          "name": "3D 起點雲",
+          "how": "起點改為 3D 格子或隨機點雲並拿掉 Z=0。",
+          "effect": "空間中的流線束。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D"
+      ],
+      "tools": [
+        "Grasshopper",
+        "FlowLines"
+      ],
+      "url": "https://grasshopperdocs.com/components/flowlines/streamLines3D.html"
+    },
+    {
+      "id": "C03-12",
+      "algo": "C03",
+      "title": "Grasshopper 參數化鋪面教學",
+      "creator": "Landscape Architecture Store",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "summary": "以 Grasshopper 設計動態鋪面圖樣的逐步教學。可把本元件的流線當分割線，將鋪面切成隨流向彎曲的條帶，是流線直接落地成施工圖的應用方向。",
+      "variations": [
+        {
+          "name": "流線分割鋪面",
+          "how": "流線 Offset 成條帶後與基地邊界做 Region 切割，每條帶再依長度切成可施工的鋪面塊。",
+          "effect": "有方向感的廣場鋪面。"
+        },
+        {
+          "name": "場強度決定材料",
+          "how": "取每塊鋪面中心的場向量長度，分 3 級映射成 3 種材料或顏色。",
+          "effect": "鋪面漸層呼應人流或風向。"
+        },
+        {
+          "name": "吸引點＝出入口",
+          "how": "把主要出入口與座椅位置設成吸引點。",
+          "effect": "鋪面紋理引導動線。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "吸引子控制",
+        "拼貼"
+      ],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://landscapearchitecture.store/blogs/news/how-to-design-a-parametric-paving-pattern-using-rhino-grasshopper"
+    },
+    {
+      "id": "C03-13",
+      "algo": "C03",
+      "title": "Grasshopper 論壇：用向量場畫流線",
+      "creator": "McNeel Forum 使用者",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "modeling"
+      ],
+      "summary": "McNeel 論壇上關於在 Grasshopper 以向量場繪製流線的討論，展示原生元件與腳本兩種做法，常見困難是流線均勻分布。適合學習者遇到問題時查閱。",
+      "variations": [
+        {
+          "name": "原生元件 vs. C#",
+          "how": "先用 GH 原生 Field 元件（Point Charge、Spin Force）建場，再與本 C# 元件結果比較。",
+          "effect": "理解公式場的組成。"
+        },
+        {
+          "name": "流線長度篩選",
+          "how": "只保留 Polyline.Length 大於門檻的流線。",
+          "effect": "去除零碎短線，畫面更乾淨。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [],
+      "tools": [
+        "Grasshopper"
+      ],
+      "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056"
+    },
+    {
+      "id": "C04-01",
+      "algo": "C04",
+      "title": "An Image Synthesizer（Perlin noise 原始論文）",
+      "creator": "Ken Perlin",
+      "year": "1985",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "summary": "SIGGRAPH 1985 論文，提出以非線性函數組合產生自然複雜度的「solid texture」，用來做雲、火、水、大理石、木紋、岩石等效果。本元件的 PerlinNoise class 就源自這一系列工作。",
+      "variations": [
+        {
+          "name": "大理石紋",
+          "how": "value = sin(x·k + turbulence(x,y)·a)，turbulence 為各 octave |noise| 的疊加。",
+          "effect": "條紋被 noise 擾動成大理石紋路。"
+        },
+        {
+          "name": "木紋年輪",
+          "how": "以距中心距離 r 加上 noise 擾動，再取 frac(r·k)。",
+          "effect": "不規則的同心年輪。"
+        },
+        {
+          "name": "Solid texture 上色",
+          "how": "對 Mesh 每個頂點位置取 3D noise，映射成頂點顏色。",
+          "effect": "像從實心材料切出來的表面紋理，沒有 UV 接縫。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "隨機",
+        "分形"
+      ],
+      "tools": [
+        "論文"
+      ],
+      "url": "https://dl.acm.org/doi/10.1145/325165.325247"
+    },
+    {
+      "id": "C04-02",
+      "algo": "C04",
+      "title": "Improving Noise 與參考實作",
+      "creator": "Ken Perlin",
+      "year": "2002",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "summary": "修正原版 noise 的兩個缺點：二階導數不連續（改用 6t⁵−15t⁴+10t³ 平滑曲線）與梯度選擇不佳（改用固定的 12 個方向）。本課程範例的 SmoothStep 與 CornerSlope 正是這篇的 2D 簡化版。",
+      "variations": [
+        {
+          "name": "擴充成 3D",
+          "how": "照參考實作把 ValueAt 改成 (x,y,z)、查 8 個角、12 個梯度方向。",
+          "effect": "可對任意 3D 位置取樣，做曲面位移或時間動畫。"
+        },
+        {
+          "name": "比較平滑曲線",
+          "how": "把 SmoothStep 換成 3t²−2t³ 或線性，觀察 Mesh 法線著色。",
+          "effect": "看出舊版在格線上的光影折痕。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "自訂 class"
+      ],
+      "tools": [
+        "Java"
+      ],
+      "url": "https://mrl.cs.nyu.edu/~perlin/noise"
+    },
+    {
+      "id": "C04-03",
+      "algo": "C04",
+      "title": "Minecraft 的地形生成",
+      "creator": "Markus Persson（Notch）／Mojang",
+      "year": "",
+      "category": "3d-architecture",
+      "categories_extra": [
+        "modeling"
+      ],
+      "summary": "Minecraft 最早以 Perlin noise 生成地形，並以多層疊加的 fractal noise 增加細節；後期版本以 Continentalness、Erosion、Peaks & Valleys 等多張 noise 圖共同決定地形。是 noise 生成可探索 3D 空間的代表。",
+      "variations": [
+        {
+          "name": "體素化",
+          "how": "把高度四捨五入成整數層，每格往下堆 Box。",
+          "effect": "方塊堆疊的體素地景，可直接當量體研究。"
+        },
+        {
+          "name": "多張 noise 圖混合",
+          "how": "用不同 seed 產生「大陸性」與「侵蝕度」兩張 noise，查表組合出高度曲線。",
+          "effect": "平原、丘陵、山脈分區明確。"
+        },
+        {
+          "name": "3D noise 洞穴",
+          "how": "對 3D 格點取 noise，小於閾值就挖空。",
+          "effect": "地下洞穴與懸崖。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "3D",
+        "可重現種子"
+      ],
+      "tools": [
+        "Java"
+      ],
+      "url": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you"
+    },
+    {
+      "id": "C04-04",
+      "algo": "C04",
+      "title": "Perlin noise 的 Minecraft 風格渲染實驗",
+      "creator": "Endre Simo",
+      "year": "2014",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "summary": "以 noise 生成類 Minecraft 地圖並做網頁渲染的實驗，附開源程式碼（minecraft.js）。適合學習者對照看 noise 值如何轉成高度與材質顏色。",
+      "variations": [
+        {
+          "name": "依高度上色",
+          "how": "elevation 分成水、沙、草、岩、雪數段，給 Mesh 頂點顏色。",
+          "effect": "一眼看懂的彩色地形圖。"
+        },
+        {
+          "name": "等角投影呈現",
+          "how": "體素化後以等角視角擷取。",
+          "effect": "像素遊戲風格的地景分析圖。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment"
+    },
+    {
+      "id": "C04-05",
+      "algo": "C04",
+      "title": "World Machine 地形生成軟體",
+      "creator": "World Machine Software",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "summary": "專業程序化地形軟體，以 fractal（多層 Perlin）產生基礎地形，再以流水侵蝕與熱侵蝕模擬雕刻出沖溝與崖錐，輸出高度圖給遊戲與影視。展示了「noise 只是第一步」的完整管線。",
+      "variations": [
+        {
+          "name": "節點式管線",
+          "how": "把 noise、遮罩、侵蝕寫成多個 GH 元件串接，每個元件輸入輸出高度陣列 double[,]。",
+          "effect": "可以逐步檢視與替換各階段。"
+        },
+        {
+          "name": "熱侵蝕",
+          "how": "反覆檢查相鄰格高差，超過安息角就把部分高度移給較低鄰格。",
+          "effect": "崖壁坍落成自然的崖錐斜坡。"
+        },
+        {
+          "name": "輸出高度圖",
+          "how": "把 elevation 正規化成 0–255 寫成灰階 Bitmap。",
+          "effect": "可匯入其他軟體或 CNC 軟體。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "迭代模擬",
+        "物理模擬"
+      ],
+      "tools": [
+        "World Machine"
+      ],
+      "url": "https://www.world-machine.com/features.php"
+    },
+    {
+      "id": "C04-06",
+      "algo": "C04",
+      "title": "World Machine：Advanced Perlin Noise 裝置",
+      "creator": "World Machine Software",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "summary": "World Machine 中的進階 Perlin noise 產生器說明頁，列出可調的 noise 參數（尺度、細節層數、各層衰減等），可與本元件的 scale／octaves 一一對照。",
+      "variations": [
+        {
+          "name": "開放 persistence 與 lacunarity",
+          "how": "把 LayeredNoise 中寫死的 0.5 與 2.0 改成輸入參數。",
+          "effect": "控制細節是粗糙還是平滑。"
+        },
+        {
+          "name": "ridged / billow 切換",
+          "how": "每層取 |n| 或 1−|n| 的選項。",
+          "effect": "同一元件產生圓丘、雲朵或山脊。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "分形"
+      ],
+      "tools": [
+        "World Machine"
+      ],
+      "url": "https://help.world-machine.com/topic/device-advancedperlinnoise/"
+    },
+    {
+      "id": "C04-07",
+      "algo": "C04",
+      "title": "Three Ways of Generating Terrain with Erosion Features",
+      "creator": "dandrino",
+      "year": "",
+      "category": "performance",
+      "categories_extra": [
+        "modeling"
+      ],
+      "summary": "開源專案比較三種生成帶侵蝕特徵地形的方法（含以 noise 為起點的模擬式侵蝕）。可作為本元件往「環境過程模擬」延伸的參考。",
+      "variations": [
+        {
+          "name": "水滴侵蝕",
+          "how": "在 noise 高度格上丟數萬個水滴，沿梯度下降並帶走、堆積泥沙。",
+          "effect": "出現枝狀沖溝與沖積扇。"
+        },
+        {
+          "name": "比較指標",
+          "how": "計算坡度分布或流量累積圖，比較侵蝕前後。",
+          "effect": "能量化說明地形變化，用於排水或基地分析。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "迭代模擬",
+        "物理模擬"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://github.com/dandrino/terrain-erosion-3-ways"
+    },
+    {
+      "id": "C04-08",
+      "algo": "C04",
+      "title": "One-North Masterplan（人造地景形態的都市）",
+      "creator": "Zaha Hadid Architects",
+      "year": "2001",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "summary": "新加坡 one-north 總體規劃，把整個街區當作起伏如沙丘的人造地景處理，街廓尺寸差異化、天際線像地形。注意：官方並未說明使用 Perlin noise，此處作為「平滑連續起伏場」的都市尺度類比。",
+      "variations": [
+        {
+          "name": "低頻 noise 當天際線",
+          "how": "octaves 設 1–2、scale 很大，在每個街廓中心取值映射成建築高度。",
+          "effect": "連續起伏、有整體感的天際線。"
+        },
+        {
+          "name": "公園處強制下凹",
+          "how": "以公園範圍曲線做距離遮罩，把高度壓低。",
+          "effect": "中央谷地與周邊高起的地景式配置。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "吸引子控制"
+      ],
+      "tools": [],
+      "url": "https://www.zha.com/projects/masterplans/one-north-masterplan"
+    },
+    {
+      "id": "C04-09",
+      "algo": "C04",
+      "title": "Flow Fields 中以 noise 決定角度",
+      "creator": "Tyler Hobbs",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "summary": "Hobbs 的 flow field 文章指出常見做法是以 Perlin noise 決定格網上每點的角度，再讓曲線順著走。這正是 C04 與 C03 最自然的組合方式。",
+      "variations": [
+        {
+          "name": "noise → 角度",
+          "how": "angle = LayeredNoise(x,y)·2π·k，k>1 時流線更捲曲。",
+          "effect": "有機、連續的流動紋理。"
+        },
+        {
+          "name": "角度量化",
+          "how": "把角度四捨五入到 45° 或 90° 的倍數。",
+          "effect": "流線變成幾何折線，像電路或迷宮。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "隨機",
+        "可重現種子"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://www.tylerxhobbs.com/words/flow-fields"
+    },
+    {
+      "id": "C04-10",
+      "algo": "C04",
+      "title": "Curl noise：從 noise 得到流體速度場",
+      "creator": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+      "year": "2007",
+      "category": "art-installation",
+      "categories_extra": [
+        "modeling"
+      ],
+      "summary": "以 Perlin noise 為基礎、取其旋度產生不可壓縮的亂流場，用於影視特效的煙與粒子。對 C04 而言，是把「高度場」轉成「流動場」的經典方法。",
+      "variations": [
+        {
+          "name": "高度場取旋度",
+          "how": "對 LayeredNoise 做有限差分，取 (∂n/∂y, −∂n/∂x)。",
+          "effect": "流線沿 noise 的等高線環繞，不會匯聚。"
+        },
+        {
+          "name": "粒子雲裝置",
+          "how": "大量粒子在 3D curl noise 中漂移，輸出軌跡成管狀。",
+          "effect": "像煙霧凝固的懸吊雕塑。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "物理模擬",
+        "3D"
+      ],
+      "tools": [
+        "VFX 軟體"
+      ],
+      "url": "https://dl.acm.org/doi/10.1145/1275808.1276435"
+    },
+    {
+      "id": "C04-11",
+      "algo": "C04",
+      "title": "Making maps with noise functions",
+      "creator": "Amit Patel（Red Blob Games）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "summary": "以互動網頁示範如何用 noise 做地圖：頻率、振幅疊加、重新分配高度、以高度與濕度兩張 noise 決定生物群系等。是理解本元件參數最友善的教材。（網址未於本次搜尋中取得）",
+      "variations": [
+        {
+          "name": "高度重新分配",
+          "how": "elevation = Math.Pow(normalized, exponent)，exponent>1 讓低地變多、山峰更尖。",
+          "effect": "從起伏丘陵變成平原＋孤峰。"
+        },
+        {
+          "name": "高度＋濕度分區",
+          "how": "第二個 PerlinNoise(seed+1) 當濕度，二維查表決定分區顏色。",
+          "effect": "自然的植栽／用地分區圖。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "可重現種子"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": ""
+    },
+    {
+      "id": "C04-12",
+      "algo": "C04",
+      "title": "Perlin noise 及其改良：文獻回顧",
+      "creator": "",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [],
+      "summary": "回顧 Perlin noise 1985 原版、2002 改良版（三次→五次平滑曲線、固定梯度表）與 Simplex noise 的差異，附圖比較未內插與內插的 2D noise。適合寫研究報告時引用演算法演進。",
+      "variations": [
+        {
+          "name": "換成 Simplex / OpenSimplex",
+          "how": "把 PerlinNoise class 換成三角形格的 simplex 實作，介面 ValueAt 不變。",
+          "effect": "減少方向性格線痕跡，高維度時更快。"
+        },
+        {
+          "name": "Value noise 對照",
+          "how": "角落直接存隨機值而非梯度，內插得到 value noise。",
+          "effect": "看出 gradient noise 為何較不塊狀。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "自訂 class"
+      ],
+      "tools": [
+        "論文"
+      ],
+      "url": "https://ace.ewapub.com/article/view/14225.pdf"
+    }
+  ]
+}
