@@ -17,6 +17,9 @@ const DS_ICON = {"符號":"i-ds-symbol","網格":"i-grid","粒子":"i-ds-particl
 const SCALE_ICON = {"物件":"c-modeling","構件":"c-fabrication","立面／表皮":"c-2d-pattern","建築":"c-3d-architecture","群體／都市":"c-urban-landscape","地景":"c-urban-landscape"};
 const imgTag = (c, lazy) => `<img src="${esc(c.image.file)}" alt="${esc(c.title)}" width="${c.image.w}" height="${c.image.h}"${lazy ? ' loading="lazy"' : ""}>`;
 const credit = im => [im.note, [im.source, im.author].filter(Boolean).join("／"), im.license].filter(Boolean).map(esc).join("｜");
+// 手機版（≤600px）：部分區塊預設收合；桌機一律展開
+const MQ = matchMedia("(max-width:600px)");
+const FOLD = () => MQ.matches ? "" : " open";
 
 /* ================================================================
    1. 標籤產生器（全站只用這幾個函式產生標籤，確保同類同形）
@@ -105,7 +108,7 @@ const num = id => +id.split("-")[1];
 function pinAlgo(a){
   return {type:"algo", key:`algo:${a.id}`, algo:a.id, fam:a.family, diff:a.difficulty, search:[a.id,a.name_zh,a.name_en,a.one_liner,...(a.tags||[])].join(" "), vis:visual(a.id,"algo",0), html:`
     <div class="media">${badge("algo")}<canvas></canvas><div class="scrim"></div><span class="open">${ico("i-open")}開啟</span></div>
-    <div class="cap"><b>${esc(a.name_zh)}</b><div class="sub">${esc(a.name_en)}</div><div class="row2">${chain(tFam(a.family,true), tAlgo(a.id))}${dots(a.difficulty)}</div></div>`};
+    <div class="cap"><b>${esc(a.name_zh)}</b><div class="sub en">${esc(a.name_en)}</div><div class="row2">${chain(tFam(a.family,true), tAlgo(a.id))}${dots(a.difficulty)}</div></div>`};
 }
 function pinVar(a, i){
   const v = a.variations[i];
@@ -174,6 +177,7 @@ function renderChips(){
   const keep = {};
   document.querySelectorAll("#chips .clwrap").forEach(w => keep[w.dataset.k] = w.querySelector(".chipline").scrollLeft);
   document.getElementById("chips").innerHTML =
+    `<div class="fsheet-h"><b>篩選</b><button class="fsheet-clear" type="button">清除</button><button class="fsheet-done" type="button">完成</button></div>` +
     line("r1", "卡片、來源與難度",
       g("卡片", all("type", state.type === "all") +
         ["algo","var","case","seed"].map(k => `<button class="fchip" data-type="${k}" aria-pressed="${state.type===k}">${badge(k, true)}</button>`).join("")),
@@ -193,6 +197,9 @@ function renderChips(){
   on("[data-algo]", b => { const id = b.dataset.algo; state.algo.has(id) ? state.algo.delete(id) : (state.algo.add(id), bump("algo", id)); });
   on("[data-cat]", b => { state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat; if(state.cat) bump("cat", state.cat); state.type = state.cat ? "case" : "all"; });
   document.querySelectorAll("#chips [data-scroll]").forEach(b => b.onclick = () => { const cl = b.parentElement.querySelector(".chipline"); cl.scrollBy({left: +b.dataset.scroll * cl.clientWidth * .7, behavior: "smooth"}); });
+  document.querySelector("#chips .fsheet-done").onclick = () => filterSheet(false);
+  document.querySelector("#chips .fsheet-clear").onclick = () => { Object.assign(state, {type:"all", cat:null, src:"all"}); ["fam","algo","diff","open"].forEach(k => state[k].clear()); renderChips(); renderFeed(); };
+  filterSummary();
   // 剛展開的家族：讓它的演算法捲進可見範圍
   const opened = document.querySelector("#chips .famgroup.open.just");
   if(opened) opened.scrollIntoView({block: "nearest", inline: "nearest", behavior: "smooth"});
@@ -205,6 +212,32 @@ function chipHints(w){
   w.classList.toggle("can-r", cl.scrollLeft + cl.clientWidth < cl.scrollWidth - 2);
 }
 addEventListener("resize", () => document.querySelectorAll("#chips .clwrap").forEach(chipHints));
+// 手機版：篩選收成底部面板，篩選列只剩「篩選」鈕與已選條件摘要
+function filterSummary(){
+  const parts = [
+    state.type !== "all" && TYPE[state.type][2],
+    state.src !== "all" && (state.src === "cc" ? "Creative Coding" : "建築與研究"),
+    ...[...state.diff].sort().map(d => CAT.difficulty[d]),
+    state.cat && CAT.categories[state.cat],
+    ...[...state.fam].filter(f => ![...state.algo].some(id => ALG[id]?.family === f)).map(f => `${f} 家族`),
+    ...[...state.algo]].filter(Boolean);
+  document.getElementById("fsum").textContent = parts.join("、");
+  const n = document.querySelector("#filterBtn .fb-n"); n.textContent = parts.length || ""; n.hidden = !parts.length;
+}
+function filterSheet(on){
+  document.getElementById("chips").classList.toggle("on", on);
+  document.getElementById("fback").classList.toggle("on", on);
+  document.getElementById("filterBtn").setAttribute("aria-expanded", on);
+  if(!modal.classList.contains("on")) document.body.style.overflow = on ? "hidden" : "";
+}
+document.getElementById("filterBtn").onclick = () => filterSheet(true);
+document.getElementById("fback").onclick = () => { filterSheet(false); legendOn(false); };
+// 頂部列高度：手機版篩選列黏在它下方
+const setTopH = () => document.documentElement.style.setProperty("--toph", document.getElementById("top").offsetHeight + "px");
+addEventListener("resize", setTopH);
+// 手機版搜尋框提示縮短
+const qHint = () => { document.getElementById("q").placeholder = MQ.matches ? "搜尋" : "搜尋演算法、案例、p5.js、Voronoi、樹狀柱…"; };
+MQ.addEventListener?.("change", qHint);
 // 家族與演算法合併篩選：某家族有勾選個別演算法 → 只看那些演算法；只勾家族 → 整個家族；不同家族之間是「或」
 function allowedAlgos(){
   if(!state.fam.size && !state.algo.size) return null;
@@ -229,7 +262,7 @@ const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting)
 function span(el){ const h = el.getBoundingClientRect().height; el.style.gridRowEnd = "span " + Math.ceil((h + 16) / 4); }
 function makePin(p, i){
   const el = document.createElement("button");
-  el.className = "pin" + (p.type === "seed" ? " seed" : ""); el.style.setProperty("--i", i % 12);
+  el.className = "pin" + (p.type === "seed" ? " seed" : ""); el.dataset.type = p.type; el.style.setProperty("--i", i % 12);
   el.innerHTML = p.html; el.dataset.key = p.key; el.setAttribute("aria-label", el.querySelector("b,h4")?.textContent || "");
   const cv = el.querySelector("canvas");
   if(cv && p.vis){ cv.style.aspectRatio = `1 / ${p.vis.ratio}`; cv._draw = () => { p.vis.draw(cv); span(el); }; lazyCv.observe(cv); if(p.vis.grow) el.addEventListener("mouseenter", () => p.vis.grow(cv)); }
@@ -270,6 +303,9 @@ function open(key){
     else if(kind === "var") sheet.innerHTML = varDetail(ALG[id], +n);
     else if(kind === "seed") sheet.innerHTML = seedDetail(ALG[id], +n);
     else { const c = CASES.find(c => c.id === key); if(!c) return; sheet.innerHTML = caseDetail(c); }
+    // 手機版頂部細條顯示目前頁名
+    modal.dataset.title = key === "info" ? "關於這個圖鑑" : kind === "algo" ? ALG[id].name_zh : kind === "var" ? ALG[id].variations[+n].title
+      : kind === "seed" ? ALG[id].project_seeds[+n].title : (CASES.find(c => c.id === key)?.title || "");
     sheet.style.cssText = fv((ALG[id] || ALG[(key.match(/^[A-Z]\d\d/)||["A01"])[0]] || {family:"A"}).family);
     modal.classList.add("on"); modal.scrollTop = 0; document.body.style.overflow = "hidden";
     wireDetail(key);
@@ -296,11 +332,11 @@ function algoDetail(a){
         <div class="row"><label>${ico("w-state")}轉角</label><input type="range" id="an" min="5" max="90" value="22"><output id="ao">22°</output></div>
         <div class="row"><label>${ico("w-geom")}縮放</label><input type="range" id="sc" min="50" max="100" value="100"><output id="so">1.00</output></div>
         <div class="row"><button class="btn" id="replay">${ico("i-play")}重播生長</button></div>` : `
-        <div class="row"><button class="btn" id="reseed">${ico("i-dice")}換一組亂數</button><span class="ctrl-note">網頁版簡化實作，參數與範例程式相同邏輯</span></div>`}
+        <div class="row"><button class="btn" id="reseed">${ico("i-dice")}換一組亂數</button><span class="ctrl-note algo-note">網頁版簡化實作，參數與範例程式相同邏輯</span></div>`}
       </div>
     </div>
     <div class="right in">
-      <div class="kicker">${badge("algo", true)} ${chain(tFam(a.family), tAlgo(a.id))}</div>
+      <div class="kicker">${badge("algo", true)} ${chain(tFam(a.family), tAlgo(a.id))}<span class="kick-m">${a.id}・${esc(CAT.families[a.family])}</span></div>
       <h2>${esc(a.name_zh)}</h2><div class="en">${esc(a.name_en)}</div>
       <p class="oneliner">${esc(a.one_liner)}</p>
       <div class="facts">
@@ -310,23 +346,26 @@ function algoDetail(a){
       </div>
       <div class="mini-h">${ico("i-logic-iterate")}怎麼運作 <small>${rich ? "滑過每一格看動作" : "每一格是一個步驟"}</small></div>
       ${rich ? flowLSystem(true) : flowGeneric(a)}
+      <ol class="steps-m">${(a.how_it_works||[]).map(t => `<li>${esc(t)}</li>`).join("")}</ol>
       <div class="taglines" style="margin-top:22px">
         <div class="tagline"><span class="lbl">屬性</span>${tAttr("i-algo", a.loc + " 行 C#", "規模")}${tAttr("c-modeling", a.file || "", "範例檔")}</div>
         <div class="tagline"><span class="lbl">關鍵字</span>${(a.tags||[]).map(tKw).join("")}</div>
       </div>
     </div>
   </div>
+  <nav class="jumpnav" aria-label="頁內導覽">${[["s-top","概要"], a.pseudo_code?.length && ["s-pseudo","虛擬碼"], ["s-param","參數"], ["s-var","變形"], ["s-case","案例"], (a.project_seeds||[]).length && ["s-seed","專案"]].filter(Boolean)
+    .map(([id,t]) => `<button type="button" data-jump="${id}">${t}</button>`).join("")}</nav>
   ${pseudoBlock(a)}
   ${rich ? `
   <section class="sec reveal"><h3>${ico("i-ds-symbol")}符號表 <small>字串裡每個字元，畫筆怎麼動</small></h3><div class="glyphs">${glyphs()}</div></section>
-  <section class="sec reveal"><h3>${ico("w-state")}參數怎麼影響形 <small>同一條規則，只改一個數字</small></h3><div class="params" id="params"></div></section>` : `
-  <section class="sec reveal"><h3>${ico("w-state")}關鍵參數 <small>改這些數字，形就會變</small></h3><div class="pcards">${(a.key_params||[]).map(p => `<div class="pcard"><div class="pi">${ico("i-slider")}</div><div><code>${esc(p.name)}</code><p>${esc(p.effect)}</p></div></div>`).join("")}</div></section>`}
+  <section class="sec reveal" id="s-param"><h3>${ico("w-state")}參數怎麼影響形 <small>同一條規則，只改一個數字</small></h3><div class="params" id="params"></div></section>` : `
+  <section class="sec reveal" id="s-param"><h3>${ico("w-state")}關鍵參數 <small>改這些數字，形就會變</small></h3><div class="pcards">${(a.key_params||[]).map(p => `<div class="pcard"><div class="pi">${ico("i-slider")}</div><div><code>${esc(p.name)}</code><p>${esc(p.effect)}</p></div></div>`).join("")}</div></section>`}
   <section class="sec reveal"><h3>${ico("i-code")}用到的 C# 積木</h3><div class="blocks">${rich ? blocks() : (a.csharp_concepts||[]).map(k => `<div class="block"><div class="bi">${ico("i-code")}</div><div><code>${esc(k)}</code></div></div>`).join("")}</div>
-    ${a.teaching_note ? `<div class="tipbox">${ico("i-bulb")}<div><b>學習建議</b><p>${esc(a.teaching_note)}</p></div></div>` : ""}</section>
-  <section class="sec"><h3>${ico("i-var")}變形 <small>${a.variations.length} 種</small></h3><div class="subfeed" id="subVar"></div></section>
-  <section class="sec"><h3>${ico("i-case")}應用案例 <small>${cs.length} 個</small></h3><div class="subfeed" id="subCase"></div></section>
-  <section class="sec"><h3>${ico("i-seed")}延伸專案發想</h3><div class="subfeed" id="subSeed"></div></section>
-  ${(a.references||[]).length ? `<section class="sec"><h3>${ico("i-book")}延伸閱讀</h3><ul class="refs">${a.references.map(r => `<li>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}${r.author ? `<span>${esc(r.author)}</span>` : ""}${r.year ? `<span>${esc(r.year)}</span>` : ""}</li>`).join("")}</ul></section>` : ""}`;
+    ${a.teaching_note ? `<details class="tipbox fold"${FOLD()}><summary>${ico("i-bulb")}<b>學習建議</b></summary><p>${esc(a.teaching_note)}</p></details>` : ""}</section>
+  <section class="sec" id="s-var"><h3>${ico("i-var")}變形 <small class="cnt">${a.variations.length} 種</small></h3><div class="subfeed" id="subVar"></div></section>
+  <section class="sec" id="s-case"><h3>${ico("i-case")}應用案例 <small class="cnt">${cs.length} 個</small></h3><div class="subfeed" id="subCase"></div></section>
+  <section class="sec" id="s-seed"><h3>${ico("i-seed")}延伸專案發想</h3><div class="subfeed" id="subSeed"></div></section>
+  ${(a.references||[]).length ? `<section class="sec"><details class="fold"${FOLD()}><summary><h3>${ico("i-book")}延伸閱讀</h3></summary><ul class="refs">${a.references.map(r => `<li>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}${r.author ? `<span>${esc(r.author)}</span>` : ""}${r.year ? `<span>${esc(r.year)}</span>` : ""}</li>`).join("")}</ul></details></section>` : ""}`;
 }
 // 虛擬碼：資料的 pseudo_code（每行一個字串，行首空白＝縮排）；關鍵字加粗、← 用家族色、參數名稱與關鍵參數同色、// 之後是註解
 const PSEUDO_KW = /^(\s*)(輸入|輸出|重複|對|如果|否則|直到|當|回傳|結束)/;
@@ -342,7 +381,10 @@ function pseudoBlock(a){
     h = h.replace(PSEUDO_KW, '$1<span class="kw">$2</span>').replace(/←/g, '<span class="op">←</span>');
     return h + (cm ? `<span class="cm">${esc(cm)}</span>` : "");
   };
-  return `<section class="sec reveal"><h3>${ico("i-code")}虛擬碼 <small>程式邏輯骨架；藍字是上方的關鍵參數</small></h3><pre class="pseudo">${lines.map(fmt).join("\n")}</pre></section>`;
+  // 手機版預設只顯示 RunScript 那一段，「RunScript 下方」之後（Fields／RULE／class）按鈕展開
+  const cut = lines.findIndex(l => /-{3,}\s*RunScript 下方/.test(l)), head = cut > 0 ? lines.slice(0, cut) : lines, tail = cut > 0 ? lines.slice(cut) : [];
+  const nTail = tail.filter(l => l.trim()).length;
+  return `<section class="sec reveal" id="s-pseudo"><h3>${ico("i-code")}虛擬碼 <small>程式邏輯骨架；藍字是上方的關鍵參數</small></h3><pre class="pseudo">${head.map(fmt).join("\n")}${tail.length ? `<span class="ps-tail">\n${tail.map(fmt).join("\n")}</span>` : ""}</pre>${tail.length ? `<button class="ps-more" type="button" aria-expanded="false">展開 RunScript 下方與 class（${nTail} 行）</button>` : ""}</section>`;
 }
 // 一般演算法的圖示流程：依步驟內容挑圖示，只留短標題；完整句子收在下方
 const STEP_ICON = [
@@ -362,6 +404,19 @@ function wireDetail(key){
   const so = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); so.unobserve(e.target); } }), {root:modal, threshold:.15});
   sheet.querySelectorAll(".sec").forEach(s => so.observe(s));
   sheet.querySelectorAll(".vchip").forEach(b => b.onclick = () => b.setAttribute("aria-expanded", b.getAttribute("aria-expanded") !== "true"));
+  const psm = sheet.querySelector(".ps-more");
+  if(psm) psm.onclick = () => { const on = psm.getAttribute("aria-expanded") !== "true"; psm.setAttribute("aria-expanded", on); psm.previousElementSibling.classList.toggle("open", on);
+    psm.textContent = on ? "收合" : psm.dataset.label; };
+  if(psm) psm.dataset.label = psm.textContent;
+  // 頁內跳轉列（手機版）：點了捲到該段，捲動時標出目前所在段落
+  const jn = sheet.querySelector(".jumpnav");
+  if(jn){
+    const bs = [...jn.querySelectorAll("[data-jump]")], tgt = b => b.dataset.jump === "s-top" ? null : document.getElementById(b.dataset.jump);
+    const off = () => jn.offsetHeight + 60;
+    bs.forEach(b => b.onclick = () => { const t = tgt(b); modal.scrollTo({top: t ? modal.scrollTop + t.getBoundingClientRect().top - off() + 8 : 0, behavior: reduced ? "auto" : "smooth"}); });
+    const mark = () => { let cur = bs[0]; bs.forEach(b => { const t = tgt(b); if(t && t.getBoundingClientRect().top - off() < 12) cur = b; }); bs.forEach(b => b.toggleAttribute("aria-current", b === cur)); };
+    modal.onscroll = mark; mark();
+  } else modal.onscroll = null;
   if(key === "info"){ wireInfo(); return; }
   const [kind, id, n] = key.includes(":") ? key.split(":") : ["case", key];
   const cv = document.getElementById("big");
@@ -396,7 +451,7 @@ function varDetail(a, i){
   return `<div class="closeup">
     <div class="left"><canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button></div></div></div>
     <div class="right">
-      <div class="kicker">${badge("var", true)} ${chain(tFam(a.family,true), tAlgo(a.id), tVar(i,a.id))}</div>
+      <div class="kicker">${badge("var", true)} ${chain(tFam(a.family,true), tAlgo(a.id), tVar(i,a.id))}<span class="kick-m">變形 ${a.id}·${vcode(i)}・${esc(a.name_zh)}</span></div>
       <h2>${esc(v.title)}</h2>
       <div class="facts">
         <div class="fact"><div class="ico">${ico(whatIcon(v.what_changes))}</div><small>改哪裡</small>${tAttr(whatIcon(v.what_changes), shortWhat(v.what_changes), "改哪裡")}</div>
@@ -412,9 +467,9 @@ function caseDetail(c){
   const a = ALG[c.algo], img = !!c.image;
   return `<div class="closeup">
     <div class="left">${img ? `${imgTag(c)}<div class="credit">${c.image.page ? `<a href="${esc(c.image.page)}" target="_blank" rel="noopener">${credit(c.image)}</a>` : credit(c.image)}</div>`
-      : `<canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button><span class="ctrl-note">示意圖：以 ${a.id} 的網頁版程式重現概念，非原作</span></div></div>`}</div>
+      : `<canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button><span class="ctrl-note"><span class="note-full">示意圖：以 ${a.id} 的網頁版程式重現概念，非原作</span><span class="note-short">示意圖・非原作</span></span></div></div>`}</div>
     <div class="right">
-      <div class="kicker">${badge("case", true)} ${chain(tFam(a.family,true), tAlgo(a.id))} ${tCat(c.category)}${isCC(c) ? ccBadge : ""}</div>
+      <div class="kicker">${badge("case", true)} ${chain(tFam(a.family,true), tAlgo(a.id))} ${tCat(c.category)}${isCC(c) ? ccBadge : ""}<span class="kick-m">案例・${a.id} ${esc(a.name_zh)}</span></div>
       <h2 style="font-size:28px">${esc(c.title)}</h2><div class="en">${esc(c.creator)}${c.year ? "・"+esc(c.year) : ""}</div>
       <div class="facts">
         <div class="fact"><div class="ico">${ico(SCALE_ICON[c.scale] || "c-3d-architecture")}</div><small>尺度</small>${c.scale ? tAttr(SCALE_ICON[c.scale] || "c-3d-architecture", c.scale, "尺度") : "—"}</div>
@@ -434,10 +489,10 @@ function caseDetail(c){
 }
 function seedDetail(a, i){
   const p = a.project_seeds[i];
-  return `<div class="closeup"><div class="left" style="background:var(--fam-tint);display:grid;place-items:center;min-height:380px"><svg viewBox="0 0 24 24" style="width:140px;height:140px;stroke:var(--fam-deep);fill:none;stroke-width:1.2"><use href="#i-seed"/></svg></div>
-    <div class="right"><div class="kicker">${badge("seed", true)} ${chain(tFam(a.family,true), tAlgo(a.id))}</div><h2 style="font-size:28px">${esc(p.title)}</h2>
+  return `<div class="closeup"><div class="left seed-hero" style="background:var(--fam-tint);display:grid;place-items:center;min-height:380px"><svg viewBox="0 0 24 24" style="width:140px;height:140px;stroke:var(--fam-deep);fill:none;stroke-width:1.2"><use href="#i-seed"/></svg></div>
+    <div class="right"><div class="kicker">${badge("seed", true)} ${chain(tFam(a.family,true), tAlgo(a.id))}<span class="kick-m">專案發想・${a.id} ${esc(a.name_zh)}</span></div><h2 style="font-size:28px">${esc(p.title)}</h2>
     <div class="facts"><div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${p.difficulty}/5</div><small>難度</small><b>${dots(p.difficulty)}</b></div>
-    <div class="fact" style="grid-column:span 2"><div class="ico">${ico("w-hybrid")}</div><small>搭配</small><div class="chain">${[a.id, ...(p.combine_with||[])].filter(id => ALG[id]).map(id => tAlgo(id)).join("<b>＋</b>")}</div></div></div>
+    <div class="fact fact-wide" style="grid-column:span 2"><div class="ico">${ico("w-hybrid")}</div><small>搭配</small><div class="chain">${[a.id, ...(p.combine_with||[])].filter(id => ALG[id]).map(id => tAlgo(id)).join("<b>＋</b>")}</div></div></div>
     <p class="oneliner">${esc(p.brief)}</p></div></div>
   <section class="sec"><h3>${ico("i-var")}可以從這些變形出發</h3><div class="subfeed" id="subMore"></div></section>`;
 }
@@ -446,26 +501,30 @@ function seedDetail(a, i){
    7. 標籤說明（圖例）與「關於」
    ================================================================ */
 document.getElementById("legend").innerHTML = `
-  <h4>標籤怎麼看</h4><div style="font-size:13px;color:var(--mute)">形狀代表「哪一類」；只有身分鏈用家族色。</div>
-  <div class="lg-sec">身分鏈：這張卡屬於誰（家族 › 演算法 › 變形）</div>
+  <div class="lg-head"><h4>標籤怎麼看</h4><button class="lg-close" type="button" aria-label="關閉標籤說明">${ico("i-x")}</button></div><div style="font-size:13px;color:var(--mute)">形狀代表「哪一類」；只有身分鏈用家族色。</div>
+  <details class="lg-grp" open><summary class="lg-sec">身分鏈：這張卡屬於誰（家族 › 演算法 › 變形）</summary>
   <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。依「長出來像什麼」分成七大家族 A–G。</p></div>
   <div class="lg"><span>${tAlgo("A01")}</span><p><b>② 演算法</b>分段膠囊。前段是編號，對應一支 Grasshopper C# 基礎範例（.cs）。</p></div>
-  <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div>
-  <div class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</div>
+  <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div></details>
+  <details class="lg-grp"${FOLD()}><summary class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</summary>
   <div class="lg"><span>${badge("case", true)}</span><p><b>④ 卡片類型</b>圓章，只出現在圖片左上：演算法（黑）／變形（虛線）／案例（白）／專案發想（黑）。</p></div>
   <div class="lg"><span>${ccBadge}</span><p><b>來源</b>creative coding 案例（p5.js、Processing 等）在圖片右上多一個標記。</p></div>
   <div class="lg"><span>${tCat("3d-architecture")}</span><p><b>⑤ 應用類型</b>灰底膠囊＋圖示。案例用在哪個領域（8 類）。</p></div>
   <div class="lg"><span>${tAttr("i-logic-rewrite","改寫／遞迴")}</span><p><b>⑥ 屬性</b>方角細框。邏輯、資料結構、尺度、工具、改哪裡。</p></div>
   <div class="lg"><span>${tKw("遞迴")}</span><p><b>⑦ 關鍵字</b>沒有框，# 開頭，用來搜尋。</p></div>
-  <div class="lg"><span>${dots(3)}</span><p><b>難度</b>5 點，實心越多越難。</p></div>`;
+  <div class="lg"><span>${dots(3)}</span><p><b>難度</b>5 點，實心越多越難。</p></div></details>`;
 const lb = document.getElementById("legendBtn"), lg = document.getElementById("legend");
-lb.onclick = e => { e.stopPropagation(); const on = !lg.classList.contains("on"); lg.classList.toggle("on", on); lb.setAttribute("aria-expanded", on); };
-document.addEventListener("click", e => { if(!lg.contains(e.target)){ lg.classList.remove("on"); lb.setAttribute("aria-expanded", false); } });
+const legendOn = on => { lg.classList.toggle("on", on); lb.setAttribute("aria-expanded", on); if(MQ.matches && !document.getElementById("chips").classList.contains("on")) document.getElementById("fback").classList.toggle("on", on); };
+lb.onclick = e => { e.stopPropagation(); legendOn(!lg.classList.contains("on")); };
+lg.querySelector(".lg-close").onclick = () => legendOn(false);
+document.addEventListener("click", e => { if(!lg.contains(e.target)) legendOn(false); });
 
 function wireInfo(){
   const nV = ALGOS.reduce((s,a) => s + a.variations.length, 0), nS = ALGOS.reduce((s,a) => s + (a.project_seeds||[]).length, 0), nCC = CASES.filter(isCC).length;
   sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length,"應用案例"],[nCC,"creative coding 案例"],[nV,"變形食譜"],[nS,"專案發想"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
-  sheet.querySelector("#iFams").innerHTML = Object.keys(CAT.families).map(f => `<div class="ifam">${tFam(f)}<div class="list">${ALGOS.filter(a => a.family === f).map(a => `<button class="linkchip" data-open="algo:${a.id}">${tAlgo(a.id)}</button>`).join("")}</div></div>`).join("");
+  sheet.querySelector("#iFams").innerHTML = Object.keys(CAT.families).map(f => { const list = ALGOS.filter(a => a.family === f);
+    return `<details class="ifam"${FOLD()}><summary>${tFam(f)}<span class="ifam-n">${list.length}</span></summary><div class="list">${list.map(a => `<button class="linkchip" data-open="algo:${a.id}">${tAlgo(a.id)}</button>`).join("")}</div></details>`; }).join("");
+  if(MQ.matches) sheet.querySelectorAll("details.fold").forEach(d => d.open = false);
   sheet.querySelectorAll("[data-open]").forEach(b => b.onclick = () => open(b.dataset.open));
   const top = (k, name) => Object.entries(prefs[k]).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([key]) => name(key)).join("");
   const pr = sheet.querySelector("#iPrefs");
@@ -478,5 +537,5 @@ function wireInfo(){
 /* ================================================================
    8. 啟動
    ================================================================ */
-renderChips(); renderFeed();
+renderChips(); renderFeed(); setTopH(); qHint();
 if(location.hash.length > 1) setTimeout(() => open(decodeURIComponent(location.hash.slice(1))), 60);

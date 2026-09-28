@@ -16,15 +16,18 @@ JS = r"""
   for(const el of els){
     const b = el.getBoundingClientRect(); if(!b.width || !b.height) continue;
     if(getComputedStyle(el).visibility === 'hidden') continue;
+    // 在橫向捲動容器（手機版的橫滑卡片列等）裡：左右超出是「捲出去」而不是被裁切，外層與視窗只檢查上下
+    let hs = false;
     for(const p of clipAnc(el)){
       if(p === modal || p === document.body) continue;
       const cs = getComputedStyle(p), pb = p.getBoundingClientRect();
       // 可捲動的方向只檢查另一個方向
-      const sx = cs.overflowX === 'auto' || cs.overflowX === 'scroll', sy = cs.overflowY === 'auto' || cs.overflowY === 'scroll';
-      const bad = (b.left < pb.left - 0.5 && (!sx || p.scrollLeft === 0)) || (!sx && b.right > pb.right + 0.5) || (b.top < pb.top - 0.5 && (!sy || p.scrollTop === 0)) || (!sy && b.bottom > pb.bottom + 0.5);
+      const sx = hs || cs.overflowX === 'auto' || cs.overflowX === 'scroll', sy = cs.overflowY === 'auto' || cs.overflowY === 'scroll';
+      const bad = (b.left < pb.left - 0.5 && (!sx || (!hs && p.scrollLeft === 0))) || (!sx && b.right > pb.right + 0.5) || (b.top < pb.top - 0.5 && (!sy || p.scrollTop === 0)) || (!sy && b.bottom > pb.bottom + 0.5);
+      if(cs.overflowX === 'auto' || cs.overflowX === 'scroll') hs = true;
       if(bad){ out.push(`${el.className || el.tagName} ⟂ ${p.className || p.tagName} [${Math.round(b.left)},${Math.round(b.top)},${Math.round(b.right)},${Math.round(b.bottom)}] vs [${Math.round(pb.left)},${Math.round(pb.top)},${Math.round(pb.right)},${Math.round(pb.bottom)}] "${(el.textContent||'').trim().slice(0,20)}"`); break; }
     }
-    if(!el.closest('#chips') && b.right > innerWidth + 0.5) out.push(`${el.className} 超出視窗右緣 ${Math.round(b.right)} > ${innerWidth} "${(el.textContent||'').trim().slice(0,20)}"`);
+    if(!el.closest('#chips') && !hs && b.right > innerWidth + 0.5) out.push(`${el.className} 超出視窗右緣 ${Math.round(b.right)} > ${innerWidth} "${(el.textContent||'').trim().slice(0,20)}"`);
   }
   // 關閉鈕壓到面板內容
   const c = document.getElementById('close').getBoundingClientRect(), sh = document.getElementById('sheet').getBoundingClientRect();

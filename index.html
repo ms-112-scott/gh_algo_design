@@ -426,6 +426,171 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
   .feed,.subfeed{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;padding-left:10px;padding-right:10px}
   .pin .cap b{font-size:13px}.sample-flag{display:none}
 }
+/* ============================================================
+   手機版精簡（≤600px）
+   桌機：以下新增元件隱藏；可收合區塊保持展開、不能收合
+   ============================================================ */
+.filter-btn,.fsum,.fback,.fsheet-h,.steps-m,.kick-m,.jumpnav,.ps-more,.note-short,.lg-close,.ifam-n{display:none}
+details.fold > summary,details.ifam > summary,.lg-grp > summary{list-style:none}
+details > summary::-webkit-details-marker{display:none}
+details.tipbox{display:block}
+details.tipbox > summary{display:flex;align-items:center;gap:12px;list-style:none}
+details.tipbox > p{margin:2px 0 0 32px;font-size:14px;color:var(--ink-2)}
+details.ifam{display:block}
+.ifam > summary{display:flex;flex-direction:column}
+.ifam > .list{margin-top:10px}
+@media (min-width:601px){
+  details.fold > summary,details.ifam > summary,.lg-grp > summary,details.tipbox > summary{pointer-events:none}
+}
+@media (max-width:600px){
+  /* G1 區塊標題旁的說明改到下一行 */
+  .sec h3{flex-wrap:wrap;row-gap:2px}
+  .sec h3 small{flex-basis:100%;padding-left:30px;line-height:1.4}
+  .sec h3 small.cnt{flex-basis:auto;padding-left:0}
+  /* G2／D2／S3 圖片下方按鈕列 */
+  .ctrl{padding:12px 16px 14px}
+  .ctrl .row{flex-wrap:nowrap}
+  .ctrl .btn{white-space:nowrap;flex:none}
+  .ctrl-note{min-width:0}
+  .ctrl-note.algo-note,.note-full{display:none}
+  .note-short{display:inline}
+  /* G3 三格資訊卡 → 左標籤右內容 */
+  .facts{grid-template-columns:minmax(0,1fr)!important;gap:0;background:var(--paper);border-radius:var(--r-sm);padding:2px 14px;margin:16px 0}
+  .fact{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 10px;background:none;border-radius:0;padding:9px 0;border-bottom:1px solid var(--line)}
+  .fact:last-child{border-bottom:0}
+  .fact .ico{display:none}
+  .fact small{width:56px;flex:none}
+  .fact > b,.fact > .chain{flex:1;min-width:0;font-size:13px}
+  .fact.fact-wide{grid-column:auto!important}
+  /* G5 詳細頁裡的子卡片不重複家族鏈 */
+  .subfeed .cap .chain{display:none}
+  /* G6 頂部細條＋頁名 */
+  .modal{padding:60px 10px 40px}
+  .modal.on::before{content:attr(data-title);height:52px;line-height:52px;padding:0 60px 0 18px;color:#fff;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .close{top:6px;right:8px;width:40px;height:40px}
+  /* H1 篩選：底部面板 */
+  .feedbar{position:sticky;top:var(--toph,64px);z-index:15;background:rgba(245,242,236,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 12px;gap:8px;min-height:52px}
+  #count{flex:none}
+  .fsum{display:block;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--ink-2)}
+  .filter-btn{display:inline-flex;align-items:center;gap:6px;margin-left:auto;height:40px;padding:0 14px;border:0;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;flex:none}
+  .filter-btn svg.i{width:18px;height:18px}
+  .fb-n{min-width:20px;height:20px;border-radius:999px;background:#fff;color:var(--ink);font:700 12px "JetBrains Mono",monospace;display:inline-grid;place-items:center;padding:0 5px}
+  .fb-n[hidden]{display:none}
+  .chiprow{position:fixed;left:0;right:0;bottom:0;z-index:36;background:#fff;border-radius:22px 22px 0 0;max-height:78vh;overflow:auto;padding:0 14px calc(18px + env(safe-area-inset-bottom));gap:6px;
+    box-shadow:0 -12px 40px -12px rgba(0,0,0,.35);transform:translateY(105%);visibility:hidden;transition:transform var(--t-med) var(--ease-out),visibility 0s linear var(--t-med)}
+  .chiprow.on{transform:none;visibility:visible;transition:transform var(--t-med) var(--ease-out)}
+  .fsheet-h{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:3;background:#fff;padding:14px 0 10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .fsheet-h b{font-size:17px;margin-right:auto}
+  .fsheet-h button{height:40px;padding:0 16px;border:0;border-radius:999px;font-weight:700;font-size:14px}
+  .fsheet-clear{background:#ECE8E0}
+  .fsheet-done{background:var(--ink);color:#fff}
+  .chiprow .clwrap::before,.chiprow .clwrap::after,.chiprow .clarr,.chiprow .sep{display:none}
+  .chiprow .chipline{flex-direction:column;align-items:stretch;flex-wrap:nowrap;overflow:visible;gap:6px;padding:0}
+  .chiprow .fgroup{flex-wrap:wrap;gap:2px 4px}
+  .chiprow .fgroup > .glabel{width:100%;margin:8px 0 0;font-size:12px}
+  .chiprow .famgroup{flex-wrap:wrap}
+  .chiprow .famgroup.open{flex-basis:100%;padding:4px 6px}
+  .chiprow .falgos{display:flex;flex-wrap:wrap;gap:2px}
+  .chiprow{overflow-x:hidden}
+  .fback{display:block;position:fixed;inset:0;z-index:35;background:rgba(18,18,22,.45);opacity:0;pointer-events:none;transition:opacity var(--t-med)}
+  .fback.on{opacity:1;pointer-events:auto}
+  /* H2／H3／H4 瀑布流卡片 */
+  .pin .cap .sub.en{display:none}
+  .pin .cap .chain > .tg-fam,.pin .cap .chain > .tg-fam + .chev{display:none}
+  .pin[data-type=algo] .cap .tg-algo{padding:0}
+  .pin[data-type=algo] .cap .tg-algo .nm{display:none}
+  .pin[data-type=algo] .cap .tg-algo .id{padding:0 8px}
+  .pin[data-type=var] .cap .chain > .tg-algo,.pin[data-type=var] .cap .chain > .tg-algo + .chev{display:none}
+  .cap .tg-var .nm{display:none}
+  .pin .badge{width:28px;padding:0;gap:0;justify-content:center;font-size:0}
+  /* H6 標籤說明：底部面板，兩組可收合 */
+  .legend{top:auto!important;right:0!important;left:0;bottom:0;z-index:37;width:auto;max-width:none;max-height:80vh;border-radius:22px 22px 0 0;padding:0 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(105%)}
+  .legend.on{transform:none}
+  .lg-head{display:flex;align-items:center;position:sticky;top:0;z-index:1;background:#fff;padding:14px 0 6px}
+  .lg-head h4{margin:0;flex:1;font-size:17px}
+  .lg-close{display:inline-grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:#ECE8E0}
+  .lg-grp > summary{display:flex;align-items:center;gap:8px;min-height:44px;margin:6px 0 0;cursor:pointer}
+  .lg-grp > summary::after,details.fold > summary::after,.ifam > summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);margin:0 6px 0 auto;transition:transform var(--t-fast)}
+  .lg-grp[open] > summary::after,details.fold[open] > summary::after,.ifam[open] > summary::after{transform:rotate(-135deg)}
+  .legend .lg{grid-template-columns:118px minmax(0,1fr)}
+  /* 可收合區塊（學習建議、延伸閱讀、關於頁各段） */
+  details.fold > summary{display:flex;align-items:center;cursor:pointer;min-height:44px}
+  details.fold > summary h3{margin:0;flex:1}
+  details.fold[open] > summary{margin-bottom:14px}
+  details.tipbox{padding:4px 16px}
+  details.tipbox[open]{padding-bottom:14px}
+  details.tipbox[open] > summary{margin-bottom:4px}
+  /* D1 標題上方改成一行小字 */
+  .kicker > .badge,.kicker > .chain{display:none}
+  .kick-m{display:inline;order:-1;font-size:13px;font-weight:700;color:var(--fam-deep)}
+  .closeup h2{font-size:28px;margin-top:4px}
+  /* D3 怎麼運作 → 編號文字清單 */
+  .closeup .flow,.closeup .steps-full,.mini-h small{display:none}
+  .mini-h{margin:18px 0 6px}
+  .steps-m{display:block;margin:0;padding:0;list-style:none;counter-reset:st}
+  .steps-m li{counter-increment:st;position:relative;padding:5px 0 5px 34px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+  .steps-m li::before{content:counter(st);position:absolute;left:0;top:5px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font:700 12px/24px "JetBrains Mono",monospace;text-align:center}
+  /* D4／S4 屬性、關鍵字、工具列 */
+  .closeup .taglines{display:none}
+  /* D5 虛擬碼：預設只顯示 RunScript 段 */
+  .pseudo{font-size:12.5px;line-height:1.65;padding:14px}
+  .pseudo .ps-tail{display:none}
+  .pseudo.open .ps-tail{display:inline}
+  .ps-more{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin-top:8px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:700;font-size:13px;color:var(--ink-2)}
+  /* D6 關鍵參數 → 緊湊清單 */
+  .pcards{grid-template-columns:minmax(0,1fr);gap:0}
+  .pcard{background:none;border-radius:0;padding:10px 0;border-bottom:1px solid var(--line)}
+  .pcard:last-child{border-bottom:0}
+  .pcard .pi{display:none}
+  .pcard p{font-size:13px}
+  /* D7 C# 積木 → 小籤 */
+  .blocks{gap:6px}
+  .block{padding:5px 11px;border-width:1.5px;border-radius:999px;gap:6px}
+  .block .bi,.block small{display:none}
+  .block code{font-size:12px}
+  /* D9–D11／S2 變形、案例、專案、更多 → 橫向滑動 */
+  .subfeed{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;padding:4px 20px 10px;margin:0 -20px;scrollbar-width:none;align-items:flex-start}
+  .subfeed::-webkit-scrollbar{display:none}
+  .subfeed .pin{flex:0 0 64%;scroll-snap-align:start;scroll-margin-left:20px;margin-bottom:0}
+  .subfeed .pin:not(.seed) .media{height:190px}
+  .subfeed .pin:not(.seed) .media img,.subfeed .pin:not(.seed) .media canvas{width:100%;height:100%!important;aspect-ratio:auto!important;object-fit:cover}
+  .pin .open,.pin .scrim{display:none}
+  /* D13 頁內跳轉列 */
+  .sheet{overflow:clip}
+  .jumpnav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;position:sticky;top:52px;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:8px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .jumpnav::-webkit-scrollbar{display:none}
+  .jumpnav button{flex:none;height:36px;padding:0 14px;border:0;border-radius:999px;background:#ECE8E0;font-size:13px;font-weight:700;color:var(--ink-2)}
+  .jumpnav button[aria-current]{background:var(--ink);color:#fff}
+  .jumpnav + .sec{border-top:0}
+  /* D14 A01 符號表 → 兩欄 */
+  .glyphs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .glyph{padding:6px 8px;gap:8px}
+  .glyph .k{width:30px;height:30px;font-size:15px;border-radius:8px}
+  .glyph svg{width:28px;height:28px}
+  /* S1 專案發想頁的大插圖 */
+  .closeup .left.seed-hero{min-height:72px!important}
+  .seed-hero svg{width:44px!important;height:44px!important}
+  /* I1 統計 → 橫向小數字列 */
+  .istats{display:flex;overflow-x:auto;gap:8px;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+  .istats::-webkit-scrollbar{display:none}
+  .istats .stat{flex:none;padding:8px 12px}
+  .istats .stat b{font-size:18px}
+  /* I2 七大家族 → 每族一列，點開才列演算法 */
+  .ifams{gap:6px}
+  .ifam{padding:0 14px}
+  .ifam > summary{flex-direction:row;align-items:center;gap:8px;min-height:50px;cursor:pointer}
+  .ifam-n{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 6px;border-radius:999px;background:#fff;font:700 12px "JetBrains Mono",monospace;color:var(--ink-2)}
+  .ifam > .list{margin:0;padding-bottom:12px}
+  /* I3 五種邏輯表 → 每種一張小卡 */
+  .itable thead{display:none}
+  .itable,.itable tbody,.itable tr,.itable td{display:block}
+  .itable tr{padding:10px 14px;border-bottom:1px solid var(--line)}
+  .itable tr:last-child{border-bottom:0}
+  .itable td{padding:1px 0;border:0}
+  .itable td:first-child{font-size:15px;margin-bottom:2px}
+  .itable td:nth-child(2)::before{content:"怎麼算　";color:var(--mute);font-size:12px}
+  .itable td:nth-child(3)::before{content:"何時停　";color:var(--mute);font-size:12px}
+}
 @media (prefers-reduced-motion:reduce){
   .clwrap.can-r .clarr.r,.falgos{animation:none}
   *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
@@ -502,7 +667,8 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 </header>
 <aside class="legend" id="legend" aria-label="標籤說明"></aside>
 <nav class="chiprow" id="chips" aria-label="篩選"></nav>
-<div class="feedbar"><span id="count"></span></div>
+<div class="fback" id="fback"></div>
+<div class="feedbar"><span id="count"></span><span class="fsum" id="fsum"></span><button class="filter-btn" id="filterBtn" type="button" aria-controls="chips" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-slider"/></svg>篩選<span class="fb-n" hidden></span></button></div>
 <main class="feed" id="feed" aria-live="polite"></main>
 <div id="empty" hidden>沒有符合條件的卡片，試著減少篩選條件。</div>
 <div id="sentinel"></div>
@@ -534,7 +700,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
       <tr><td>搜尋／求解</td><td>在很多可能的解裡，找合法或最好的那個</td><td>找到解，或達到評分門檻</td></tr>
       <tr><td>幾何轉換</td><td>對輸入掃一遍，轉成另一種幾何</td><td>掃完就停</td></tr>
     </tbody></table></section>
-  <section class="sec"><h3><svg class="i"><use href="#i-book"/></svg>課程背景</h3>
+  <section class="sec"><details class="fold" open><summary><h3><svg class="i"><use href="#i-book"/></svg>課程背景</h3></summary>
     <div class="course">
       <div class="card"><dl class="kv">
         <dt>學校</dt><dd>國立陽明交通大學 建築研究所（NYCU GIA）</dd>
@@ -549,16 +715,16 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
         <div><span class="gi"><svg class="i"><use href="#i-logic-rewrite"/></svg></span><span><b>拆得開來</b><p>先用 pseudocode 拆解狀態、規則與迴圈，再實作成 C#。</p></span></div>
         <div><span class="gi"><svg class="i"><use href="#i-seed"/></svg></span><span><b>長成自己的</b><p>挑選一到兩個演算法深入研究、自己做變化，完成一件演算法應用專案。</p></span></div>
       </div>
-    </div></section>
-  <section class="sec"><h3><svg class="i"><use href="#i-eye"/></svg>你的瀏覽偏好 <small>依你點過的卡片與篩選調整排序；只存在這台瀏覽器，不會上傳</small></h3>
-    <div id="iPrefs"></div><button class="btn-reset" id="iReset">清除瀏覽偏好</button></section>
-  <section class="sec"><h3><svg class="i"><use href="#i-info"/></svg>資料來源與使用說明</h3>
+    </div></details></section>
+  <section class="sec"><details class="fold" open><summary><h3><svg class="i"><use href="#i-eye"/></svg>你的瀏覽偏好 <small>依你點過的卡片與篩選調整排序；只存在這台瀏覽器，不會上傳</small></h3></summary>
+    <div id="iPrefs"></div><button class="btn-reset" id="iReset">清除瀏覽偏好</button></details></section>
+  <section class="sec"><details class="fold" open><summary><h3><svg class="i"><use href="#i-info"/></svg>資料來源與使用說明</h3></summary>
     <ul class="notes">
       <li>案例盡量附原始出處；少數出處尚待查證，頁面會標示「出處待查證」。</li>
       <li>案例圖片優先使用 Wikimedia Commons 自由授權照片與 CC BY 開放論文圖；其他官網、論文或作品頁圖片的著作權屬原作者，僅作非商業教學引用並標示來源，如有疑慮請聯絡我們移除。</li>
       <li>標示「示意」的圖，是本站以網頁版程式依演算法概念重畫，不是原作品。</li>
       <li>陽明交通大學建築研究所標誌取自研究所官方網站，僅用於標示課程所屬單位。</li>
-    </ul></section>
+    </ul></details></section>
 </template>
 
 <script src="data.js"></script>
