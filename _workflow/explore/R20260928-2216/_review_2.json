@@ -1,0 +1,82 @@
+{
+ "K02": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": 0,
+  "reason": "核心是單一自由度的剛性摺疊運動學（一個摺角以封閉解決定全部面板位置），與 E04 力平衡迭代、F 家族只產生平面圖樣本質不同；8 個網址皆查證相符（pnas.org 擋爬蟲，改以 CrossRef 確認 Schenk & Guest 2013），150–250 行純 RhinoCommon 可行；但 Al Bahr Towers 與 St-Loup 教堂分別是摺紙啟發的可動遮陽單元與摺板結構，不是三浦摺本身，卡片文字要講清楚。"
+ },
+ "K05": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": 1,
+  "reason": "用太陽位置公式加遮陰線約束取下包絡，直接求出可建高度場，F04 只把日照當評分、C04 的高度來自雜訊，屬新演算法；7 個網址全數查證相符（Knowles 1981／2003、SolCAD、Ladybug、Solar Carve、Capeluto & Shaviv），建築相關性極高且 200 行內可完成；實作時要沿陽光行進方向（影子方向）量到遮陰線，朝太陽方向追溯得到的是「日照收集包絡」，機制說明需區分。"
+ },
+ "K08": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": 0,
+  "reason": "有限元素分析加敏感度排序刪補材料是圖鑑完全沒有的機制與資料結構；9 個網址查證相符（Dezeen、Springer、Wiley 擋爬蟲，改以搜尋與 CrossRef 確認；Xie 2022 內文確實寫卡達國家會議中心以 extended ESO 設計），2D Q4 封閉勁度矩陣加自寫無矩陣 CG 約 250–350 行可行，但 SIMP 與 BESO 應擇一當主體、另一個當變形，兩者都做會超過 400 行。"
+ },
+ "K11": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": -1,
+  "reason": "二階時間的波動方程帶出傳播、反射、干涉與駐波，和 C01 一階擴散只會抹平的行為本質不同，可算新演算法；5 個網址查證相符；但計算骨架（格子拉普拉斯、多緩衝輪替）與 C01 高度重疊，案例也都是聲學研究論文與論壇討論，沒有以此方法設計的建築作品，建築相關性自評 4 偏高。"
+ },
+ "K14": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": 0,
+  "reason": "以形狀圖與力圖互為對偶的幾何作圖一次求出索多邊形與內力，和 E04 迭代、K07 FDM 解線性方程組都不同，不算重複，但宜與 K07 放在同一家族對照；5 個網址全數查證相符（RWTH 頁面寫 Koechlin 以圖解靜力法決定艾菲爾鐵塔形狀、Block 等 2006 推力線），100–200 行即可完成，難度 2 合理。"
+ },
+ "K17": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": 0,
+  "reason": "每格 9 個方向分布函數的碰撞＋串流＋反彈邊界是新的資料結構與機制，C03 只追給定的場、C03 的 Butterfly 案例也是外掛 OpenFOAM；7 個網址查證相符，D2Q9 在 C# 約 250 行加 Parallel.For 可行；但 Urban Wind Lab 只有 1 顆星、2026-09-15 才發布，是教學小工具而非建築作品，建議不收為案例，卡片也要註明只能模擬低雷諾數、結果僅供示意。"
+ },
+ "K20": {
+  "verdict": "variation",
+  "merge_into": "C01",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": -1,
+  "reason": "Jacobi 鬆弛解 Laplace 就等於把 C01 的擴散項跑到穩態，再加固定邊界與材料導熱係數，核心機制、資料結構（double[,] 格子）與產出（純量場＋等值線）都沒有超出 C01（B02 V12 的 DBM 也已經用 Laplace 疊代），屬換規則／換輸出；5 個網址查證相符，冷橋分析很適合寫成 C01 變形「純擴散穩態：多材料熱傳導與冷橋（Gauss–Seidel／SOR）」。"
+ },
+ "K23": {
+  "verdict": "variation",
+  "merge_into": "E04",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": -1,
+  "reason": "逐面投影到擬合平面再在頂點取平均，是 Kangaroo／ShapeOp 式的投影約束求解，與 E04 V12「約束在基底曲面」、專案種子「自寫迷你 Kangaroo」以及本次 to_variation 的「位置式動力學（PBD）」同一套機制，只是換成平面性約束，資料結構與產出（網格）都不變；5 個網址查證相符（Shape-Up 的 EG 頁擋爬蟲，改以 CrossRef 確認），但柏林河馬館是用平移曲面直接得到平面四邊形，並沒有使用這個求解法，不宜當本法案例。"
+ },
+ "K26": {
+  "verdict": "accept",
+  "merge_into": "",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": -1,
+  "reason": "Bellman 更新加 Q 表的試誤學習是圖鑑沒有的機制與資料結構；4 個網址查證相符；但兩個案例都是深度強化學習（機械手臂木構組裝、平面配置生成），和表格式 Q-learning 距離很遠，而且格子世界學出的價值場與最佳路徑幾乎就是 F05 的多起點距離場，建築示範要改用更有設計意義的狀態與獎勵才站得住。"
+ },
+ "K29": {
+  "verdict": "variation",
+  "merge_into": "F06",
+  "dup_of": "",
+  "failed_urls": [],
+  "score_adjust": -2,
+  "reason": "混沌遊戲產出和 F06 一樣是反覆代入映射得到的吸子點雲，只把單一非線性公式換成依機率抽選的仿射變換組，確定性版本又與 A05 畢氏樹重疊；4 個網址查證相符，但建築案例只有兩篇冷門論文，建築相關性弱，建議當 F06 變形「換公式：IFS 仿射變換組（Barnsley 蕨）」。"
+ }
+}

@@ -1,0 +1,4448 @@
+{
+ "run": "R20260928-2216",
+ "stage": "synth",
+ "inputs": [
+  "x1_AF.json",
+  "x2_BC.json",
+  "x3_DE.json",
+  "x4_family.json",
+  "x5_audit.json"
+ ],
+ "summary": {
+  "raw_candidates": 43,
+  "unique_after_dedup": 31,
+  "candidates": 30,
+  "multi_source": 10,
+  "converted_to_variation": 1,
+  "to_variation": 23
+ },
+ "notes": [
+  "排序：被越多方向提到 → 自評 total 高 → 查證網址多；key 只是暫時編號。",
+  "合併的候選以分數最高（同分取查證網址較多）的方向為主體，其餘方向的案例／文獻依網址或標題判斷是否為同一作品：同一作品只在 alt_urls 補網址，不同作品才新增；每筆案例的 via 記錄是哪些方向提出。scores 取主體，各方向分數見 source_totals。",
+  "x5_audit 的部分文獻網址是 api.crossref.org（出版社頁面擋爬蟲時的查證方式，見 x5 的 method_note）；x4_family 則以 Semantic Scholar API 核對。",
+  "to_variation 包含：① 彙整重新比對 _catalog.md 後改判為變形的候選；② 各方向 rejected 裡明確建議「當某既有演算法的變形」、且 _catalog.md 尚未收錄的項目（可交給 gh-enrich 的 VAR 單元）。已是既有變形的重複項目、以及被建議當「本次候選」變形的項目（寫在該候選的 variation_hints）不列入。",
+  "x5_audit 提到拓樸最佳化可移入未來的「結構／性能」家族；本次同性質候選有 K08 拓樸最佳化（BESO／SIMP）、K07 力密度法（FDM）、K14 圖解靜力學（索多邊形與力圖）、K23 四邊形網格平面化（PQ Mesh 投影求解），挑選階段評估新家族時可參考。"
+ ],
+ "candidates": [
+  {
+   "key": "K01",
+   "sources": [
+    "x1_AF",
+    "x4_family",
+    "x5_audit"
+   ],
+   "name_zh": "模擬退火（以房間鄰接配置為例）",
+   "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化）",
+    "x4_family：F 圖樣與最佳化（由 J 家族評估後建議併入，參考編號 F07）",
+    "x5_audit：F（圖樣與最佳化）"
+   ],
+   "one_liner": "只拿一個方案反覆小改：變好就收，變差也有機會收，但「溫度」越降越低、越來越不肯接受變差，於是能跳出小山谷找到更好的配置。",
+   "mechanism": [
+    "準備 n 個房間與 n 個格位，並給一張鄰接需求表 w[i,j]（例如廚房與餐廳要近）；成本 = Σ w[i,j] × 兩房間格位距離（二次指派問題 QAP）。",
+    "從隨機配置與初始溫度 T0 出發，每一步隨機挑兩個房間交換格位，算成本差 Δ。",
+    "Δ ≤ 0 直接接受；Δ > 0 以機率 exp(−Δ／T) 接受（Metropolis 準則），否則換回來。",
+    "每做 k 步就把溫度乘上冷卻率 α（例如 0.995），直到溫度低於門檻或成本不再下降。",
+    "輸出最佳配置的房間矩形、依 w 粗細的鄰接連線、以及成本與溫度的下降曲線。"
+   ],
+   "overlap": {
+    "nearest": "F04 基因演算法（一整群方案、交配與突變）；A05 案例 eifForm（形狀退火，只是案例、不是演算法單元）",
+    "difference": "核心機制不同：模擬退火只維持一個方案，靠溫度與 Metropolis 機率決定是否接受變差，沒有族群、選擇與交配；資料結構是「排列（permutation）＋成本矩陣」而非基因陣列。示範問題（QAP 房間配置）也是圖鑑目前沒有的離散組合最佳化。",
+    "verdict": "new"
+   },
+   "new_concept": "接受變差解的機率思維（跳出局部最佳）、溫度與冷卻排程、組合最佳化的鄰域（swap move）、二次指派問題與鄰接矩陣；可和 F04 對照「單點搜尋 vs 族群搜尋」。",
+   "logic": [
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "完全可行：房間用 class Room { double Area; int Slot; }，格位用 List<Point3d>，鄰接表用 double[,]；距離可用曼哈頓或 Point3d.DistanceTo。輸出 Rectangle3d／PolylineCurve 當房間、Line 當鄰接、Polyline 畫成本曲線。用 Random(seed) 確保可重現；把狀態存成類別欄位接 Timer 就能看到退火過程。純 RhinoCommon，不需外掛。",
+   "architecture_cases": [
+    {
+     "title": "Architectural Layout Design through Simulated Annealing Algorithm（以模擬退火做建築配置設計）",
+     "creator": "Hao Zheng、Yue Ren",
+     "year": "2020",
+     "url": "https://papers.cumincad.org/data/works/att/caadria2020_024.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁標題與作者相符，註明 CAADRIA 2020 論文集 275–284 頁，摘要說明以六種懲罰與獎勵函數評估住宅區配置、再用模擬退火搜尋。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Galapagos 的模擬退火求解器（論壇說明）",
+     "creator": "David Rutten（McNeel）",
+     "year": "2016",
+     "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+     "verified": true,
+     "evidence": "討論串標題「About Simulated Annealing Solver in galapagos」，David Rutten 於 2016 年 4 月 1 日回覆：求解器從最高溫開始、溫度以對數速率下降、跳躍機率依標準模擬退火計算。",
+     "via": [
+      "x1_AF",
+      "x4_family"
+     ],
+     "alt_urls": [
+      "https://www.grasshopper3d.com/video/simulated-annealing-02"
+     ]
+    },
+    {
+     "title": "Optimally Directed Shape Generation by Shape Annealing（形狀退火）",
+     "creator": "Jonathan Cagan、William J. Mitchell",
+     "year": "1993",
+     "url": "https://doi.org/10.1068/b200005",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 J. Cagan 與 W. J. Mitchell、Environment and Planning B 第 20 卷 5–12 頁（1993）。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Make it Home: Automatic Optimization of Furniture Arrangement",
+     "creator": "Lap-Fai Yu、Sai-Kit Yeung、Chi-Keung Tang、Demetri Terzopoulos、Tony F. Chan、Stanley J. Osher",
+     "year": 2011,
+     "url": "https://www.saikit.org/static/projects/furniture/index.html",
+     "verified": true,
+     "evidence": "專案頁標題與六位作者相符，ACM Transactions on Graphics（SIGGRAPH 2011）；摘要寫明「the cost function is optimized by simulated annealing with a Metropolis Hastings state-search step」。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Interactive furniture layout using interior design guidelines",
+     "creator": "Paul Merrell、Eric Schkufza、Zeyang Li、Maneesh Agrawala、Vladlen Koltun",
+     "year": 2011,
+     "url": "https://history.siggraph.org/learning/interactive-furniture-layout-using-interior-design-guidelines-by-merrell-schkufza-li-agrawala-and-koltun/",
+     "verified": true,
+     "evidence": "SIGGRAPH 歷史檔案頁：標題與作者相符、SIGGRAPH 2011；以設計準則組成密度函數，用硬體加速的 Monte Carlo 取樣器產生配置建議，參考文獻含 Metropolis 1953 與 Hastings 1970。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "eifForm: A Generative Structural Design System",
+     "creator": "Kristina Shea（University of Cambridge）",
+     "year": 2000,
+     "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+     "verified": true,
+     "evidence": "ACSA 2000 Technology Conference 論文 PDF，內文寫明 Shape annealing 結合 shape grammar 與 simulated annealing（Kirkpatrick 1983），eifForm 以此生成屋頂桁架等建築結構",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Innovative dome design: Applying geodesic patterns with shape annealing",
+     "creator": "Kristina Shea、Jonathan Cagan",
+     "year": 1997,
+     "url": "https://api.crossref.org/works/10.1017/s0890060400003310",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Artificial Intelligence for Engineering Design, Analysis and Manufacturing 11, 379–394, 1997",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+     "creator": "Todd W. Schneider",
+     "year": "2014",
+     "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+     "verified": true,
+     "evidence": "頁面標題相符，作者 Todd W. Schneider，日期 2014 年 9 月 17 日，含可調冷卻排程的互動退火動畫。",
+     "via": [
+      "x1_AF",
+      "x4_family",
+      "x5_audit"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Optimization by Simulated Annealing",
+     "creator": "S. Kirkpatrick、C. D. Gelatt Jr.、M. P. Vecchi",
+     "year": "1983",
+     "url": "https://doi.org/10.1126/science.220.4598.671",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、1983 年 5 月 13 日刊於 Science。",
+     "via": [
+      "x1_AF",
+      "x4_family",
+      "x5_audit"
+     ],
+     "alt_urls": [
+      "https://www2.stat.duke.edu/~scs/Courses/Stat376/Papers/TemperAnneal/KirkpatrickAnnealScience1983.pdf",
+      "https://api.crossref.org/works/10.1126/science.220.4598.671"
+     ]
+    },
+    {
+     "title": "Hospital Layout as a Quadratic Assignment Problem",
+     "creator": "Alwalid N. Elshafei",
+     "year": "1977",
+     "url": "https://link.springer.com/article/10.1057/jors.1977.29",
+     "verified": true,
+     "evidence": "Springer 頁面顯示 Journal of the Operational Research Society 第 28 卷 167–179 頁（1977），以二次指派問題安排醫院部門以減少病人移動距離。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Galapagos: On the Logic and Limitations of Generic Solvers",
+     "creator": "David Rutten",
+     "year": 2013,
+     "url": "https://api.crossref.org/works/10.1002/ad.1568",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Architectural Design 83, 132–135, 2013，作者 David Rutten",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "card_visual": "格子上八個彩色房間方塊，依鄰接需求畫粗細不同的連線，角落一條從高到低、抖動後收斂的成本曲線。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x1_AF": 18,
+    "x4_family": 18,
+    "x5_audit": 16
+   },
+   "merged_from": [
+    {
+     "source": "x1_AF",
+     "name_zh": "模擬退火（以房間鄰接配置為例）",
+     "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+     "total": 18,
+     "nearest": "F04 基因演算法（一整群方案、交配與突變）；A05 案例 eifForm（形狀退火，只是案例、不是演算法單元）"
+    },
+    {
+     "source": "x4_family",
+     "name_zh": "模擬退火（Metropolis 準則）",
+     "name_en": "Simulated Annealing (Metropolis Criterion)",
+     "total": 18,
+     "nearest": "F04 基因演算法；F04 案例 Galapagos 演化求解器（同一工具另含退火解算器）"
+    },
+    {
+     "source": "x5_audit",
+     "name_zh": "模擬退火",
+     "name_en": "Simulated Annealing",
+     "total": 16,
+     "nearest": "F04 基因演算法（變形「多目標加權」）；E02 變形「TSP 單筆路徑」"
+    }
+   ],
+   "seen_in": [
+    "Galapagos（David Rutten，Grasshopper 內建）",
+    "MIT IDS.338J Multidisciplinary System Design Optimization"
+   ],
+   "variation_hints": [
+    {
+     "name": "TSP 單線畫（2-opt 反轉路段當鄰域）",
+     "from": "x1_AF rejected、x5_audit",
+     "note": "E02 已有「TSP 單筆路徑」變形，這裡只當退火的鄰域示範"
+    },
+    {
+     "name": "家具／構件配置（移動＋旋轉的連續鄰域）",
+     "from": "x4_family",
+     "note": "x4 的主要示範（Make it Home、Merrell 家具配置）"
+    }
+   ],
+   "synth_note": "三個方向都提出（x1、x4、x5）。x1 以二次指派（QAP）房間配置為示範，並把「空間配置／鄰接最佳化」的離散版併入本候選；x4 評估機率家族 J 後建議不開家族、放進 F（參考編號 F07），和 F04 形成「單點退火 vs 族群搜尋」的對照。",
+   "related_keys": [
+    "K28"
+   ]
+  },
+  {
+   "key": "K02",
+   "sources": [
+    "x4_family",
+    "x5_audit",
+    "x3_DE"
+   ],
+   "name_zh": "剛性摺紙鑲嵌（三浦摺）",
+   "name_en": "Rigid Origami Tessellation (Miura-ori Folding)",
+   "family_suggest": "G 幾何處理與網格（新家族）",
+   "family_options": [
+    "x4_family：G 幾何處理與網格（新家族）",
+    "x5_audit：F（圖樣）；或 A（摺痕圖是規則化圖樣）",
+    "x3_DE：E 排列與鬆弛"
+   ],
+   "one_liner": "用幾個參數畫出三浦摺的鋸齒摺痕網，再用一個摺角控制整張板同步摺起；面板本身不彎，只繞摺線轉動，得到可展開、可收合的波浪板。",
+   "mechanism": [
+    "定義單元參數（邊長 a、b 與夾角 α）與排列數 m×n，產生平面摺痕圖並指派山線／谷線。",
+    "三浦摺是單一自由度機構：以一個摺角 ρ，用封閉公式算出單元每個頂點的 3D 位置。",
+    "沿兩個方向平移複製單元，組成整片摺起的平面四邊形面板網格。",
+    "把 ρ 從 0 掃到接近 180°，觀察平面→半摺→收合的過程，並輸出面板、摺線與投影尺寸。",
+    "進階：以頂點的 Maekawa／Kawasaki 條件檢查任意四度頂點摺痕是否可平坦摺疊，或改成 Yoshimura、Resch 等摺痕。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形（可用彈簧模擬摺疊）；F02 伊斯蘭幾何圖樣（平面摺痕圖可視為一種圖樣）",
+    "difference": "E04 以力的迭代求平衡形；本演算法用運動學封閉解，一個摺角直接決定所有面板位置，強調可展（紙張不伸縮）與剛性面板。F 家族只產生平面圖樣，沒有 3D 摺疊運動與自由度的概念。",
+    "verdict": "new"
+   },
+   "new_concept": "運動學與自由度（單一自由度機構）、可展曲面（紙不伸縮）、摺痕圖的山谷指派與平坦可摺條件。",
+   "logic": [
+    "直接公式",
+    "幾何轉換"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250",
+   "gh_feasibility": "純向量運算：以 Point3d、Vector3d 依公式算頂點，Mesh 組平面四邊形面板，摺線輸出 Line 並依山／谷分色；摺角接 Slider 或 Timer 做動畫。完全可行。一般四邊形摺痕的剛性摺疊需數值求解，列為進階變形。",
+   "architecture_cases": [
+    {
+     "title": "Geometric Considerations for the Design of Rigid Origami Structures",
+     "creator": "舘知宏（Tomohiro Tachi）",
+     "year": 2010,
+     "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/DesignOfRigidOrigamiStructures_tachi_IASS2010.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁：IASS 2010 上海研討會論文，作者 Tomohiro Tachi（東京大學）；摘要說明剛性摺紙可用於可動與可展開結構，並列出其作為建築屋頂、立面與半自動展開構造的理由，文中提到三浦摺。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Origami tubes assembled into stiff, yet reconfigurable structures and metamaterials",
+     "creator": "Evgueni T. Filipov、Tomohiro Tachi、Glaucio H. Paulino",
+     "year": 2015,
+     "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/PNAS-2015-FTP.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁：PNAS 論文，標題與三位作者相符；由三浦摺衍生的拉鍊耦合摺紙管，使剛度提高且保有單一自由度展開，Significance 段落提到可用於建築中的可展開結構。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Al Bahr Towers（動態 mashrabiya 遮陽）",
+     "creator": "Aedas（現 AHR）",
+     "year": 2013,
+     "url": "https://www.ahr.co.uk/projects/al-bahr-towers",
+     "verified": true,
+     "evidence": "AHR 專案頁 Al Bahr Towers，Abu Dhabi，頁面標示 2013（大樓 2012 年竣工），記載 2,098 個 adaptive units inspired by origami folding principles，遮陽幾何隨太陽位置摺起與展開",
+     "via": [
+      "x5_audit",
+      "x3_DE"
+     ],
+     "alt_urls": [
+      "https://parametric-architecture.com/al-bahr-towers-case-study/"
+     ]
+    },
+    {
+     "title": "Temporary Chapel for the Deaconesses of St-Loup",
+     "creator": "LOCALARCHITECTURE、Danilo Mondada；結構 EPFL IBOIS（Hani Buri、Yves Weinand）",
+     "year": 2008,
+     "url": "https://www.epfl.ch/labs/ibois/techtransfers/completed-projects/chapelle-saint-loup/",
+     "verified": true,
+     "evidence": "EPFL IBOIS 頁面標題 Origami – geometry of folded plate structures，說明教堂以交錯層積木板的 folded plate structure 建成；ArchDaily 專案頁（archdaily.com/9201）記為 2008 年、Pompaples",
+     "via": [
+      "x5_audit",
+      "x3_DE"
+     ],
+     "alt_urls": [
+      "https://dominikgehl.com/switzerland/vaud/pompaples/chapelle-st-loup"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Origami Simulator：網頁即時摺紙模擬器",
+     "creator": "Amanda Ghassaei",
+     "year": "",
+     "url": "https://origamisimulator.org/",
+     "verified": true,
+     "evidence": "網站標題 Origami Simulator，作者 Amanda Ghassaei（與 Erik Demaine 等人）；以 GPU 反覆求解摺痕造成的小位移，讓所有摺痕同時摺起，可調摺疊比例並匯出 3D 模型。",
+     "via": [
+      "x4_family",
+      "x5_audit",
+      "x3_DE"
+     ],
+     "alt_urls": [
+      "https://github.com/amandaghassaei/OrigamiSimulator"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Geometry of Miura-folded metamaterials",
+     "creator": "Mark Schenk、Simon D. Guest",
+     "year": 2013,
+     "url": "https://www.pnas.org/doi/10.1073/pnas.1217998110",
+     "verified": true,
+     "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI（10.1073/pnas.1217998110）確認標題、作者 M. Schenk 與 S. Guest、2013 年、PNAS。",
+     "via": [
+      "x4_family",
+      "x3_DE"
+     ],
+     "alt_urls": [
+      "https://www-g.eng.cam.ac.uk/advancedstructures/files/pdf/2013GuestD.pdf"
+     ]
+    },
+    {
+     "title": "Rigid folding of periodic origami tessellations",
+     "creator": "Tomohiro Tachi",
+     "year": 2015,
+     "url": "https://api.crossref.org/works/10.1090/mbk/095.1/10",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：收錄於 Origami⁶（AMS），97–108 頁，2015，作者 Tomohiro Tachi",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Simulation of Rigid Origami",
+     "creator": "Tomohiro Tachi",
+     "year": "2009",
+     "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/SimulationOfRigidOrigami_tachi_4OSME.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁標題 Simulation of Rigid Origami，作者 Tomohiro Tachi（東京大學），摘要說明以摺角表示構形、把角度運動投影到約束空間算出摺疊軌跡；檔名標示 4OSME，收錄於 Origami4（2009）。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "一片半摺起的三浦摺鋸齒波浪板，山線與谷線用兩種顏色標示，旁邊附上平面摺痕圖。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 16
+   },
+   "source_totals": {
+    "x4_family": 16,
+    "x5_audit": 16,
+    "x3_DE": 15
+   },
+   "merged_from": [
+    {
+     "source": "x4_family",
+     "name_zh": "剛性摺紙鑲嵌（三浦摺）",
+     "name_en": "Rigid Origami Tessellation (Miura-ori Folding)",
+     "total": 16,
+     "nearest": "E04 動態鬆弛找形（可用彈簧模擬摺疊）；F02 伊斯蘭幾何圖樣（平面摺痕圖可視為一種圖樣）"
+    },
+    {
+     "source": "x5_audit",
+     "name_zh": "摺紙鑲嵌與剛性摺疊（三浦摺）",
+     "name_en": "Origami Tessellation & Rigid Folding (Miura-ori)",
+     "total": 16,
+     "nearest": "E04 動態鬆弛找形（Kangaroo 式約束求解）；F01 Truchet／F02 伊斯蘭圖樣（平面重複圖樣）"
+    },
+    {
+     "source": "x3_DE",
+     "name_zh": "剛性摺紙模擬（Miura-ori 與摺痕圖）",
+     "name_en": "Rigid Origami Simulation (Miura-ori / Crease Pattern Folding)",
+     "total": 15,
+     "nearest": "E04 動態鬆弛找形（bar-and-hinge 求解會沿用彈簧概念）"
+    }
+   ],
+   "seen_in": [
+    "Kangaroo 2（Daniel Piker）",
+    "MIT 6.849 Geometric Folding Algorithms"
+   ],
+   "variation_hints": [
+    {
+     "name": "一般摺痕圖的 bar-and-hinge 迭代求解",
+     "from": "x3_DE、x5_audit",
+     "note": "閉式三浦摺之外的進階版，可沿用 E04 的求解器架構"
+    },
+    {
+     "name": "Maekawa／Kawasaki 平坦可摺檢查；Yoshimura、Resch 摺痕",
+     "from": "x4_family",
+     "note": ""
+    }
+   ],
+   "synth_note": "三個方向都提出（x3、x4、x5），歸屬建議分歧：x4 建議新家族 G、x5 建議 F 或 A、x3 建議 E。主體取 x4；x3 版含通用 bar-and-hinge 求解。"
+  },
+  {
+   "key": "K03",
+   "sources": [
+    "x4_family",
+    "x5_audit"
+   ],
+   "name_zh": "Isovist 可視域與可見性圖分析",
+   "name_en": "Isovist & Visibility Graph Analysis (VGA)",
+   "family_suggest": "H 空間分析與圖論（新家族）",
+   "family_options": [
+    "x4_family：H 空間分析與圖論（新家族）",
+    "x5_audit：C（場與擴散）：平面上每一點算一個可見範圍指標，形成可見性場"
+   ],
+   "one_liner": "從一點向四周打出射線，碰到牆就停，連起來就是「站在這裡看得到的範圍」；把平面上每一格都算一次，就得到顯示開闊、隱蔽與視覺連通程度的可視域地圖。",
+   "mechanism": [
+    "輸入牆線（障礙物）與觀察點，或在平面內布一組格點。",
+    "對每個觀察點，朝每個牆線端點方向（或等角度）發射射線，求最近的交點。",
+    "依極角排序交點連成可視域多邊形，計算面積、周長、緊湊度、遮蔽邊長度等指標。",
+    "對所有格點重複，得到 isovist 場並以色階上色。",
+    "進階（VGA）：兩格互相看得到就連一條邊，對可見性圖做 BFS，求平均深度與整合度。"
+   ],
+   "overlap": {
+    "nearest": "D03 變形「Space syntax 可見度加權」；F04 變形「換適應度：最大化日照或視野」；F05 案例 depthmapX 空間網路分析軟體",
+    "difference": "既有內容只把可見度當作輸入或評分，並沒有教可視域本身怎麼算；本演算法的核心是射線與線段求交、依極角排序組成多邊形，以及由多種形狀指標組成的場。VGA 延伸會用到 F05 的 BFS，但圖的邊是由「互相看得到」產生，屬於新的圖建構方式。",
+    "verdict": "new"
+   },
+   "new_concept": "射線投射與線段求交、極角排序、形狀指標（面積、周長、緊湊度、遮蔽度），以及把「可見性」當成圖的邊。",
+   "logic": [
+    "幾何轉換",
+    "直接公式"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "150–250",
+   "gh_feasibility": "牆線以 List<Line> 或 Curve 輸入；射線用 Rhino.Geometry.Intersect.Intersection.LineLine 或 CurveCurve 求交；可視域用 Polyline 與 AreaMassProperties 算面積；場以 Mesh 頂點上色輸出。完全可行；格點多時計算量為格點數×牆線數，可只朝端點發射射線加速。3D isovist 可改用 Intersection.MeshRay。",
+   "architecture_cases": [
+    {
+     "title": "Exploring Isovist Fields: Space and Shape in Architectural and Urban Morphology",
+     "creator": "Michael Batty",
+     "year": 2001,
+     "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:123-150",
+     "verified": true,
+     "evidence": "EconPapers 書目頁：標題、作者 Michael Batty、Environment and Planning B 第 28 卷第 1 期 123–150 頁（2001）；摘要提到以距離、面積、周長、緊湊度等量測 isovist 場，並應用於倫敦 Tate Gallery 與 Wolverhampton 市中心。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "From Isovists to Visibility Graphs: A Methodology for the Analysis of Architectural Space",
+     "creator": "Alasdair Turner、Maria Doxa、David O'Sullivan、Alan Penn",
+     "year": 2001,
+     "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:103-121",
+     "verified": true,
+     "evidence": "EconPapers 書目頁：標題與四位作者相符，Environment and Planning B 第 28 卷第 1 期 103–121 頁（2001）；摘要說明由一組 isovist 建立互相可見的圖，用來分析建築空間組構。",
+     "via": [
+      "x4_family",
+      "x5_audit"
+     ],
+     "alt_urls": [
+      "https://api.crossref.org/works/10.1068/b2684"
+     ]
+    },
+    {
+     "title": "DeCodingSpaces：2D 與 3D isovist 可視性分析教學",
+     "creator": "Martin Bielik、Ekaterina Fuchkina、Sven Schneider、Reinhard Koenig",
+     "year": 2019,
+     "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+     "verified": true,
+     "evidence": "教學頁標題「Tutorial | 2D and 3D isovists for visibility analysis」，2019 年 9 月 30 日；列出 Area、Perimeter、Compactness、Occlusivity 等 2D isovist 指標與 3D 的 Sky factor 等。（D03 已收同一工具箱首頁作人流案例；此處取其 isovist 教學，角色是 isovist 場的計算。）",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Spatio-visual experience of movement through the Yuyuan Garden: A computational analysis based on isovists and visibility graphs",
+     "creator": "Rongrong Yu、Michael J. Ostwald",
+     "year": 2018,
+     "url": "https://api.crossref.org/works/10.1016/j.foar.2018.08.003",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Frontiers of Architectural Research 7(4), 497–509, 2018，以 isovist 與可見性圖分析上海豫園的動線視覺經驗",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Prospect-Refuge theory and the textile-block houses of Frank Lloyd Wright: An analysis of spatio-visual characteristics using isovists",
+     "creator": "Michael J. Dawes、Michael J. Ostwald",
+     "year": 2014,
+     "url": "https://api.crossref.org/works/10.1016/j.buildenv.2014.05.026",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Building and Environment 80, 228–240, 2014，以 isovist 分析 Frank Lloyd Wright 織物磚住宅的視覺特性",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "2D Visibility（2D 可視範圍演算法互動解說）",
+     "creator": "Amit J. Patel（Red Blob Games）",
+     "year": 2012,
+     "url": "https://www.redblobgames.com/articles/visibility/",
+     "verified": true,
+     "evidence": "文章標題「2D Visibility」，作者 Amit J. Patel，2012 年 6 月（後續更新）；以掃描線繞觀察點旋轉、只朝牆端點投射射線，組成可視多邊形。",
+     "via": [
+      "x4_family",
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Sight & Light：2D 視線與光影效果教學",
+     "creator": "Nicky Case",
+     "year": "",
+     "url": "https://ncase.me/sight-and-light/",
+     "verified": true,
+     "evidence": "頁面標題「SIGHT & LIGHT - How to create 2D visibility/shadow effects for your game」；教射線與線段求交、只朝線段端點投射射線、依角度排序組成可視多邊形。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "To Take Hold of Space: Isovists and Isovist Fields",
+     "creator": "Michael L. Benedikt",
+     "year": 1979,
+     "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:6:y:1979:i:1:p:47-65",
+     "verified": true,
+     "evidence": "EconPapers 書目頁：標題、作者 M L Benedikt、Environment and Planning B 第 6 卷第 1 期 47–65 頁（1979）；定義 isovist 為從某一視點可見的所有點的集合，並提出形成 isovist 場的量測。",
+     "via": [
+      "x4_family",
+      "x5_audit"
+     ],
+     "alt_urls": [
+      "https://api.crossref.org/works/10.1068/b060047"
+     ]
+    }
+   ],
+   "card_visual": "一張平面牆線圖上，從一個觀察點展開的淡色可視域多邊形，背景以色階顯示每一點的可視面積場。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x4_family": 18,
+    "x5_audit": 18
+   },
+   "merged_from": [
+    {
+     "source": "x4_family",
+     "name_zh": "Isovist 可視域與可見性圖分析",
+     "name_en": "Isovist & Visibility Graph Analysis (VGA)",
+     "total": 18,
+     "nearest": "D03 變形「Space syntax 可見度加權」；F04 變形「換適應度：最大化日照或視野」；F05 案例 depthmapX 空間網路分析軟體"
+    },
+    {
+     "source": "x5_audit",
+     "name_zh": "等視域分析（Isovist 場與可見性圖）",
+     "name_en": "Isovist Field & Visibility Graph Analysis (VGA)",
+     "total": 18,
+     "nearest": "D03 人流模擬（變形「Space syntax 可見度加權」）；F05 最短路徑（變形「多起點距離場」）"
+    }
+   ],
+   "seen_in": [
+    "DeCodingSpaces Toolbox",
+    "Space Syntax for Grasshopper（Pirouz Nourian）",
+    "SpaceVisual（POLY LAB）"
+   ],
+   "variation_hints": [
+    {
+     "name": "Monte Carlo 隨機射線取樣（天空可視率）",
+     "from": "x4_family rejected",
+     "note": "x4 建議作為 H1／H2 的延伸，不另立演算法"
+    }
+   ],
+   "synth_note": "x4 建議歸新家族 H，x5 建議歸 C（可見性場）。D03 變形「Space syntax 可見度加權」只使用可見度，本候選教可視域本身怎麼算。",
+   "related_keys": [
+    "K05"
+   ]
+  },
+  {
+   "key": "K04",
+   "sources": [
+    "x1_AF",
+    "x4_family"
+   ],
+   "name_zh": "最小生成樹與 Steiner 樹",
+   "name_en": "Minimum Spanning Tree & Steiner Tree",
+   "family_suggest": "F（圖樣與最佳化，與 F05 同屬圖論）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化，與 F05 同屬圖論）",
+    "x4_family：H 空間分析與圖論（新家族）；不開家族時可併入 F"
+   ],
+   "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先按長度由短到長挑邊、會成環就跳過；再在分岔處加入 120° 的 Steiner 點，讓網路更短。",
+   "mechanism": [
+    "把所有點兩兩連成候選邊（或只取 Delaunay 邊），依長度排序。",
+    "Kruskal：由短到長檢查每條邊，用 union-find（並查集）判斷兩端是否已在同一群；不同群才加入並合併，直到 n−1 條邊。",
+    "Steiner 改良：找出夾角小於 120° 的相鄰兩邊，在三點之間插入 Fermat 點（用 Weiszfeld 迭代求到三點距離和最小的點），改接成三叉。",
+    "反覆鬆弛所有 Steiner 點位置並刪除退化的點，比較 MST 與 Steiner 網路的總長度。",
+    "輸出網路線段、節點度數與總長，可再依流量給管徑或路寬。"
+   ],
+   "overlap": {
+    "nearest": "F05 最短路徑（變形「在曲線網路上走」）；D02 變形「混合 Voronoi／Delaunay 比較」（只拿 MST 當對照圖）；F05 案例 Frei Otto 羊毛線最小路徑系統",
+    "difference": "F05 解「兩點之間」的最短路，資料結構是優先佇列與距離場；MST／Steiner 解「連起全部點」的最短網路，核心是排序＋並查集的貪婪法，Steiner 部分還加入 120° 幾何條件與點位鬆弛，產出是樹狀網路而不是單一路徑。D02 只是順帶畫出 MST 比較，沒有教演算法。",
+    "verdict": "new"
+   },
+   "new_concept": "並查集（union-find）資料結構、貪婪演算法為何能得到全域最佳（切割性質）、Prim 與 Kruskal 兩種思路、NP-hard 問題的啟發式近似（Steiner）、Fermat 點與 120° 平衡條件。",
+   "logic": [
+    "搜尋／求解",
+    "幾何轉換"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "120–220 行（MST 約 60 行，Steiner 改良另加 80–150 行）",
+   "gh_feasibility": "完全可行：點用 List<Point3d>，邊用 List<(int a, int b, double len)> 排序，並查集用 int[] parent＋路徑壓縮；n ≤ 500 時全連接約 12 萬條邊仍很快。輸出 Line／Polyline 與總長數字。Steiner 部分用簡單啟發式（逐一插入 Fermat 點再局部鬆弛），不保證全域最佳但足以教學；精確 Steiner（Smith／GeoSteiner）超出單一元件範圍。3D 版本只要改用 3D 距離即可。",
+   "architecture_cases": [
+    {
+     "title": "Occupying and Connecting（佔據與連結：以最少路徑連接聚落的研究）",
+     "creator": "Frei Otto（與 Berthold Burkhardt）",
+     "year": "2009",
+     "url": "https://evolutionaryurbanism.com/2018/11/14/occupying-and-connecting-frei-otto/",
+     "verified": true,
+     "evidence": "頁面標題「Occupying and Connecting. Frei Otto.」，說明此 2009 年出版物源自 Otto 1964 年在斯圖加特 IL 的研究，探討聚落的佔據與連結（交通、基礎設施）網路的自組織形態。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+     "creator": "Marc Barthelemy、Geoff Boeing",
+     "year": "2025",
+     "url": "https://arxiv.org/abs/2509.21931",
+     "verified": true,
+     "evidence": "arXiv 摘要頁標題與作者相符（2025 年 9 月 26 日提交），模型「以生成樹為骨幹，再逐步加邊」重現 9,000 個城市街網的共同性質。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Euclidean Steiner tree algorithm applied to street networks?（Grasshopper 以 Steiner 樹生成街網）",
+     "creator": "McNeel 論壇（mcfjoshua 發問，Laurent Delrieu 等回覆）",
+     "year": "2018",
+     "url": "https://discourse.mcneel.com/t/euclidean-steiner-tree-algorithm-applied-to-street-networks/72892",
+     "verified": true,
+     "evidence": "討論串標題相符，日期 2018 年 10 月 11 日，內容為在 Grasshopper 中以 Steiner 樹連接道路端點、並嘗試 Kangaroo 與 Shortest Walk 等做法。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns",
+     "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+     "year": 2018,
+     "url": "https://doi.org/10.1080/13658816.2017.1384830",
+     "verified": true,
+     "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI 確認標題、作者與期刊 International Journal of Geographical Information Science（2018）；以延伸最小生成樹描述建築物層級的局部都市形態。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Rules for Biologically Inspired Adaptive Network Design（黏菌網路與東京鐵路網）",
+     "creator": "Atsushi Tero、中垣俊之等",
+     "year": 2010,
+     "url": "https://doi.org/10.1126/science.1177894",
+     "verified": true,
+     "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI 確認標題、作者（A. Tero、T. Nakagaki 等）、Science 2010。本作品已是 D02 案例；此處的角色是以最小生成樹作為網路總長（成本）的比較基準。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+     "creator": "Jamis Buck",
+     "year": "2011",
+     "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm",
+     "verified": true,
+     "evidence": "標題與作者相符，日期 2011 年 1 月 3 日，以隨機權重邊＋並查集示範生成完美迷宮。",
+     "via": [
+      "x1_AF",
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "On the shortest spanning subtree of a graph and the traveling salesman problem",
+     "creator": "Joseph B. Kruskal",
+     "year": "1956",
+     "url": "https://doi.org/10.1090/S0002-9939-1956-0078686-7",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Joseph B. Kruskal、1956 年 Proceedings of the American Mathematical Society。",
+     "via": [
+      "x1_AF",
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Steiner Minimal Trees",
+     "creator": "E. N. Gilbert、H. O. Pollak",
+     "year": "1968",
+     "url": "https://doi.org/10.1137/0116001",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 E. N. Gilbert 與 H. O. Pollak、1968 年 SIAM Journal on Applied Mathematics。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "散點之間先畫細灰線的最小生成樹，再疊一層加入 120° 三叉 Steiner 點、總長更短的粗線網路，角落標出兩者長度比。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x1_AF": 18,
+    "x4_family": 17
+   },
+   "merged_from": [
+    {
+     "source": "x1_AF",
+     "name_zh": "最小生成樹與 Steiner 樹",
+     "name_en": "Minimum Spanning Tree & Steiner Tree",
+     "total": 18,
+     "nearest": "F05 最短路徑（變形「在曲線網路上走」）；D02 變形「混合 Voronoi／Delaunay 比較」（只拿 MST 當對照圖）；F05 案例 Frei Otto 羊毛線最小路徑系統"
+    },
+    {
+     "source": "x4_family",
+     "name_zh": "最小生成樹（Kruskal＋並查集）",
+     "name_en": "Minimum Spanning Tree (Kruskal & Union-Find)",
+     "total": 17,
+     "nearest": "D02 變形「混合 Voronoi／Delaunay 比較」（只把最小生成樹當對照）；E03 變形「Delaunay 對偶網路」；F05 最短路徑（Dijkstra）"
+    }
+   ],
+   "variation_hints": [],
+   "synth_note": "x1 版含 Steiner 樹改良，x4 版以 Kruskal＋並查集為主；主體取 x1。x4 建議若 H 家族不成立可併入 F（放在 F05 旁）。D02 變形「混合 Voronoi／Delaunay 比較」只把最小生成樹當對照圖。"
+  },
+  {
+   "key": "K05",
+   "sources": [
+    "x4_family",
+    "x5_audit"
+   ],
+   "name_zh": "太陽包絡（Solar Envelope）",
+   "name_en": "Solar Envelope",
+   "family_suggest": "H 空間分析與圖論（新家族）",
+   "family_options": [
+    "x4_family：H 空間分析與圖論（新家族）",
+    "x5_audit：C（場與擴散）：基地上每一格算出一個高度上限，形成約束場；或併入未來的性能家族"
+   ],
+   "one_liner": "先用天文公式算出冬季關鍵時段的太陽方向，再從鄰地要保護的邊界沿陽光反推，得到一個在這些時段都不會遮到鄰居的最大可建量體。",
+   "mechanism": [
+    "依緯度、日期與時刻，用太陽位置公式（赤緯、時角 → 高度角、方位角）算出一組太陽方向向量。",
+    "在基地內布格點。",
+    "對每個格點與每個太陽向量，沿太陽光的反方向找到需保護的鄰地邊界或遮陰線（shadow fence），求出這個時刻允許的最大高度。",
+    "對所有太陽向量取最小值（下包絡），得到高度場 h(x, y)。",
+    "把高度場轉成量體 Mesh，可再和退縮、容積等限制取交集；反過來則可求「太陽收集包絡」。"
+   ],
+   "overlap": {
+    "nearest": "F04 變形「換適應度：最大化日照或視野」；C04 Perlin Noise 地形（高度場輸出）",
+    "difference": "F04 只把日照當作評分，靠演化搜尋；本演算法用太陽位置公式＋射線約束直接算出可建高度場（多個約束取下包絡），是決定性的幾何求解。C04 的高度來自雜訊，本演算法的高度來自環境權利（日照權）的約束。",
+    "verdict": "new"
+   },
+   "new_concept": "太陽位置天文公式（赤緯、時角、高度角、方位角）、多個約束取最小值的下包絡、以日照權反推可建量體。",
+   "logic": [
+    "直接公式",
+    "幾何轉換"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "200–300",
+   "gh_feasibility": "太陽位置用 Math 自寫簡化公式；基地用封閉 Curve 並以 Contains 過濾格點；遮陰線以 Line 與 Curve 求交；輸出 Mesh 高度場（Mesh.CreateFromPlane 後改頂點 Z）。完全可行；時區與真太陽時的換算要小心，教學用簡化公式即可，可和 Ladybug 的 Solar Envelope 元件互相對照。",
+   "architecture_cases": [
+    {
+     "title": "Solar Carve（40 Tenth Ave）",
+     "creator": "Studio Gang",
+     "year": 2019,
+     "url": "https://studiogang.com/projects/40-tenth-ave",
+     "verified": true,
+     "evidence": "Studio Gang 專案頁「Solar Carve」，紐約，2019；說明「solar carving involves using incident angles of the sun's rays to sculpt a building's form」，以保留相鄰 High Line 公園的日照。",
+     "via": [
+      "x4_family",
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "SolCAD: 3D Spatial Design Tool to Generate Solar Envelope",
+     "creator": "Manu Juyal、Karen Kensek、Ralph Knowles",
+     "year": 2003,
+     "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁：標題 SolCAD 與三位作者（Arizona State University、University of Southern California）相符，ACADIA 2003 digital works-in-progress；摘要說明以太陽包絡概念開發可在任意形狀基地產生包絡的 3D 設計工具。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Ladybug Solar Envelope 元件",
+     "creator": "Ladybug Tools",
+     "year": "",
+     "url": "https://grasshopperdocs.com/components/ladybug/solarEnvelope.html",
+     "verified": true,
+     "evidence": "Grasshopper Docs 元件頁「Solar Envelope」（Ladybug），說明為對給定測試面、太陽向量與要保護日照的周邊幾何產生太陽包絡。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "On the use of 'solar volume' for determining the urban fabric",
+     "creator": "Isaac G. Capeluto、Edna Shaviv",
+     "year": 2001,
+     "url": "https://api.crossref.org/works/10.1016/s0038-092x(00)00088-8",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Solar Energy 70, 275–280, 2001，作者 I.G. Capeluto 與 E. Shaviv",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "SunCalc：計算太陽位置與日出日落的 JavaScript 函式庫",
+     "creator": "mourner（Vladimir Agafonkin）",
+     "year": "",
+     "url": "https://github.com/mourner/suncalc",
+     "verified": true,
+     "evidence": "GitHub 儲存庫說明為輕量、無相依的太陽與月亮位置計算函式庫，公式來自 Jean Meeus《Astronomical Algorithms》，BSD-2-Clause。",
+     "via": [
+      "x4_family",
+      "x5_audit"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Sun Rhythm Form",
+     "creator": "Ralph L. Knowles",
+     "year": 1981,
+     "url": "https://archive.org/details/sunrhythmform0000know",
+     "verified": true,
+     "evidence": "Internet Archive 書目頁：書名 Sun Rhythm Form、作者 Ralph L. Knowles、MIT Press 1981，主題為太陽能與建築日照；本書提出 solar envelope 作為分區設計方法。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "The solar envelope: its meaning for energy and buildings",
+     "creator": "Ralph L. Knowles",
+     "year": 2003,
+     "url": "https://api.crossref.org/works/10.1016/s0378-7788(02)00076-2",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Energy and Buildings 35, 15–25, 2003，作者 Ralph L Knowles",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "card_visual": "一塊基地上被斜向削切的階梯狀量體（高度場），旁邊畫出幾條不同時刻的太陽光線與被保護的鄰地邊界。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 17
+   },
+   "source_totals": {
+    "x4_family": 17,
+    "x5_audit": 17
+   },
+   "merged_from": [
+    {
+     "source": "x4_family",
+     "name_zh": "太陽包絡（Solar Envelope）",
+     "name_en": "Solar Envelope",
+     "total": 17,
+     "nearest": "F04 變形「換適應度：最大化日照或視野」；C04 Perlin Noise 地形（高度場輸出）"
+    },
+    {
+     "source": "x5_audit",
+     "name_zh": "日照包絡（Solar Envelope）",
+     "name_en": "Solar Envelope (Solar Rights / Solar Collection)",
+     "total": 17,
+     "nearest": "F04 基因演算法（變形「換適應度：最大化日照或視野」）；C04 雜訊地形（高度場 Mesh）"
+    }
+   ],
+   "seen_in": [
+    "Ladybug Tools：LB Solar Envelope",
+    "AAD Algorithms-Aided Design（Tedeschi, 2014）"
+   ],
+   "variation_hints": [
+    {
+     "name": "Monte Carlo 日照時數估計",
+     "from": "x4_family rejected",
+     "note": ""
+    }
+   ],
+   "synth_note": "x4 建議歸新家族 H，x5 建議歸 C（高度上限約束場）或未來的性能家族。F04 變形「換適應度：最大化日照或視野」只評分、不產生包絡。",
+   "related_keys": [
+    "K03"
+   ]
+  },
+  {
+   "key": "K06",
+   "sources": [
+    "x3_DE",
+    "x1_AF"
+   ],
+   "name_zh": "矩形裝箱排版（MaxRects 板材排料）",
+   "name_en": "2D Rectangle Bin Packing / Nesting (MaxRects)",
+   "family_suggest": "E 排列與鬆弛",
+   "family_options": [
+    "x3_DE：E 排列與鬆弛",
+    "x1_AF：E（排列與鬆弛，與 E01 同屬排列問題）；或 F（最佳化）"
+   ],
+   "one_liner": "把一堆尺寸固定的矩形零件（板材、面板、構件）依序塞進有限大小的板子，每放一塊就更新「還剩哪些空白矩形」，用最省料的方式排滿，不夠再開新板。",
+   "mechanism": [
+    "零件依面積、長邊或周長排序（排序策略本身就是可調參數）。",
+    "每張板維護一份「最大空白矩形」清單，初始為整張板。",
+    "對目前零件檢查所有空白矩形（可含 90° 旋轉），用啟發式（最佳短邊貼合、左下角優先、接觸周長最大等）選位置。",
+    "放下後，把與零件重疊的空白矩形切成最多四個新矩形，並刪除被其他空白矩形完全包含者。",
+    "放不下就開新板；輸出各板排版與使用率，並可用隨機排序多次重試取最佳。"
+   ],
+   "overlap": {
+    "nearest": "A04 變形「面積比例驅動（Treemap 平面配置）」；E01 圓填充與其變形「貪婪插入式填充（先大後小）」",
+    "difference": "A04 的 Treemap 是把一個已知矩形依比例切開，沒有剩料也沒有零件尺寸限制；E01 是以推擠物理讓圓不重疊，或在連續空間找空位插圓。矩形裝箱的零件尺寸固定不可變形，要在有限板材內找放置點，核心是「空白矩形清單」的切分與包含修剪，加上貪婪啟發式，屬 NP-hard 的組合排列，產出直接是 CNC／雷切的排料圖。",
+    "verdict": "new"
+   },
+   "new_concept": "組合最佳化與 NP-hard 的直覺、貪婪啟發式與排序比較器（IComparer）、自由空間資料結構（矩形清單的切分與修剪）、多次隨機重啟、材料使用率評估；直接連到數位製造與成本。",
+   "logic": [
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "完全可行：零件以 Rectangle3d 或寬高數字清單輸入，空白區用 List<BoundingBox> 或自訂 struct；輸出每個零件的 Transform（原幾何 → 排版位置）與板框，可直接接雷切輸出。不規則零件的 no-fit polygon 版本需要 Minkowski 和，較難，建議只做「以包圍盒排版＋旋轉」的簡化變形。",
+   "architecture_cases": [
+    {
+     "title": "OpenNest：Rhino／Grasshopper 的 2D 排料外掛",
+     "creator": "Petras Vestartas",
+     "year": "",
+     "url": "https://github.com/petrasvestartas/OpenNest",
+     "verified": true,
+     "evidence": "GitHub 說明 OpenNest 為 Rhino 與 Grasshopper 的 2D 多邊形排料工具，可把不規則零件以最少廢料排到板材上（支援有孔零件與非矩形板材），MIT 授權；Food4Rhino 亦有 OpenNest（by petrasvestartas）頁面。",
+     "via": [
+      "x3_DE",
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "More on the Representation and Generation of Loosely Packed Arrangements of Rectangles（LOOS 配置系統）",
+     "creator": "Ulrich Flemming（Carnegie Mellon University 建築系）",
+     "year": "1989",
+     "url": "https://ideas.repec.org/a/sae/envirb/v16y1989i3p327-359.html",
+     "verified": true,
+     "evidence": "IDEAS/RePEc 頁面顯示刊於 Environment and Planning B 16(3)，1989，作者 U Flemming（CMU 建築系），研究矩形排列的表示與生成，支撐自動產生建築配置的 LOOS 系統。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "WikiHouse 專案採用的 SVGnest 排版工具（fork）",
+     "creator": "WikiHouse Project",
+     "year": "",
+     "url": "https://github.com/wikihouseproject/SVGnest",
+     "verified": true,
+     "evidence": "GitHub 顯示 wikihouseproject/SVGnest 為 Jack000/SVGnest 的 fork，說明以基因演算法與 No Fit Polygon 排版不規則零件以減少雷切與 CNC 廢料，2018 年 1 月 26 日封存。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Inventory Informed Computational Design Method for Upcycling Cross-Laminated Timber Leftovers into Floor Slabs（以庫存資訊排版 CLT 剩料做樓板）",
+     "creator": "Qiming Sun、Mathias Bernhard、Benjamin Dillenburger",
+     "year": "2026",
+     "url": "https://link.springer.com/chapter/10.1007/978-981-92-0615-5_20",
+     "verified": true,
+     "evidence": "Springer 章節頁標題與作者相符，收於《Transindividual Intelligence》（CDRF 2025），摘要以「inventory-informed slicing and adaptive nesting」重用 CLT 剩料，比較 first-fit 與 best-fit 放置策略。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "SVGnest：開源排料工具",
+     "creator": "Jack Qiao（Jack000）",
+     "year": "",
+     "url": "https://svgnest.com/",
+     "verified": true,
+     "evidence": "SVGnest 頁面說明為雷射、電漿與 CNC 切割用的開源排料工具，以基因演算法搭配 no-fit polygon 排列零件以節省材料；頁面未標示日期。",
+     "via": [
+      "x3_DE",
+      "x1_AF"
+     ],
+     "alt_urls": [
+      "https://github.com/Jack000/SVGnest"
+     ]
+    },
+    {
+     "title": "Rectangle Packing: An Incredibly Difficult Problem",
+     "creator": "Ahmad Moussa（Gorilla Sun）",
+     "year": "2021",
+     "url": "https://www.gorillasun.de/blog/rectangle-packing-an-incredibly-difficult-problem/",
+     "verified": true,
+     "evidence": "文章發表於 2021 年 2 月 27 日，作者 Ahmad Moussa，說明矩形裝箱屬最佳化難題，並以 rectpack 求解後在 p5.js 做生成藝術呈現。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "A Thousand Ways to Pack the Bin – A Practical Approach to Two-Dimensional Rectangle Bin Packing",
+     "creator": "Jukka Jylänki",
+     "year": "2010",
+     "url": "https://github.com/juj/RectangleBinPack",
+     "verified": true,
+     "evidence": "GitHub 儲存庫 juj/RectangleBinPack 實作 MaxRects、Skyline、Guillotine、Shelf，並附 RectangleBinPack.pdf，首頁標題為 A Thousand Ways to Pack the Bin，作者 Jukka Jylänki，日期 2010 年 2 月 27 日。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Orthogonal Packings in Two Dimensions",
+     "creator": "Brenda S. Baker、E. G. Coffman Jr.、Ronald L. Rivest",
+     "year": "1980",
+     "url": "https://doi.org/10.1137/0209064",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、1980 年 SIAM Journal on Computing（Bottom-Left 放置法的經典論文）。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Complete and robust no-fit polygon generation for the irregular stock cutting problem",
+     "creator": "E. K. Burke、R. S. R. Hellier、G. Kendall、G. Whitwell",
+     "year": "2007",
+     "url": "https://doi.org/10.1016/j.ejor.2006.03.011",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、四位作者、2007 年 European Journal of Operational Research。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "幾張灰色板材上排滿大小不一的彩色矩形零件，每張板下方標示材料使用率百分比。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 17
+   },
+   "source_totals": {
+    "x3_DE": 17,
+    "x1_AF": 15
+   },
+   "merged_from": [
+    {
+     "source": "x3_DE",
+     "name_zh": "矩形裝箱排版（MaxRects 板材排料）",
+     "name_en": "2D Rectangle Bin Packing / Nesting (MaxRects)",
+     "total": 17,
+     "nearest": "A04 變形「面積比例驅動（Treemap 平面配置）」；E01 圓填充與其變形「貪婪插入式填充（先大後小）」"
+    },
+    {
+     "source": "x1_AF",
+     "name_zh": "板材排版（Nesting／二維裝箱）",
+     "name_en": "2D Nesting / Bin Packing for Fabrication",
+     "total": 15,
+     "nearest": "E01 圓填充（連續推擠直到不重疊）；A04 變形「可製造的面板與框料」（只統計尺寸、不排版）；F04 基因演算法（可當外層最佳化器）"
+    }
+   ],
+   "variation_hints": [
+    {
+     "name": "不規則零件的柵格化 Bottom-Left Fill（First Fit Decreasing）",
+     "from": "x1_AF",
+     "note": "x1 版本的核心機制，可當第二種排料法"
+    },
+    {
+     "name": "No-Fit Polygon 精確排料",
+     "from": "x3_DE rejected、x1_AF",
+     "note": "需要 Minkowski 和，列為進階變形"
+    },
+    {
+     "name": "排序順序交給 F04 基因演算法最佳化",
+     "from": "x1_AF",
+     "note": ""
+    }
+   ],
+   "synth_note": "x1 提出「不規則零件柵格化排料」、x3 提出「MaxRects 矩形排料」，是同一個問題（板材排料），合併為一筆，主體取分數較高的 x3。"
+  },
+  {
+   "key": "K07",
+   "sources": [
+    "x5_audit",
+    "x3_DE"
+   ],
+   "name_zh": "力密度法（FDM）",
+   "name_en": "Force Density Method (FDM)",
+   "family_suggest": "E（排列與鬆弛，與 E04 同屬找形）",
+   "family_options": [
+    "x5_audit：E（排列與鬆弛，與 E04 同屬找形）",
+    "x3_DE：E 排列與鬆弛"
+   ],
+   "one_liner": "替索網裡每一根索指定「拉力 ÷ 長度」的力密度，整張網的平衡形狀就變成一組線性方程式，一次解出來，不必像動態鬆弛那樣慢慢晃到靜止。",
+   "mechanism": [
+    "把 Mesh 或線段網路轉成圖：節點分成自由點與固定點，建立邊與節點的連接矩陣 C（每一列是一條邊，兩端分別填 +1 與 −1）。",
+    "替每條邊指定力密度 q（可以全部相同，也可以依位置或吸引子漸變），組成對角矩陣 Q。",
+    "組出 D = Cₙᵀ·Q·Cₙ，對 x、y、z 三個方向各解一次 D·xₙ = p − Cₙᵀ·Q·Cꜰ·xꜰ（p 為節點外力，例如自重），得到自由節點座標。",
+    "由「內力 = 力密度 × 長度」算出每根桿件的力並上色；改 q 立刻重算，即時看到形狀變化。",
+    "延伸：指定目標高度或目標長度，反推需要的 q（非線性、逆向找形）。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形（變形「張拉膜：原長縮短」「改用 Kinetic Damping 加速收斂」）",
+    "difference": "E04 以質點加彈簧做顯式時間積分，一步步迭代到靜止；FDM 用連接矩陣組成線性系統一次解出平衡形。核心機制（矩陣求解 vs 時間積分）與資料結構（稀疏連接矩陣 vs 粒子列表）都不同，而且控制的是每根桿件的力而不是材料彈性。產出同為平衡網，審查可能視為 E04 的求解器替換，單元內容要強調矩陣與圖的觀念。",
+    "verdict": "new"
+   },
+   "new_concept": "圖的連接矩陣（incidence matrix）、線性系統求解（高斯消去、共軛梯度）、把非線性平衡線性化的力密度觀念、逆向找形；也是 FDM 與推力網路分析（TNA）的入門。",
+   "logic": [
+    "搜尋／求解"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "輸入 Mesh 可用 TopologyEdges、TopologyVertices 取得邊與節點，固定點取裸邊或指定點；以 double[,] 組出 D，自寫高斯消去或共軛梯度求解，1,000 個自由點以內可即時。輸出 Line、Mesh 與內力色彩，完全不需外掛；超大網格才需要稀疏矩陣求解器。",
+   "architecture_cases": [
+    {
+     "title": "Design process for prototype concrete shells using a hybrid cable-net and fabric formwork（NEST HiLo 原型殼）",
+     "creator": "Diederik Veenendaal、Philippe Block（ETH Zürich BLOCK Research Group）",
+     "year": 2014,
+     "url": "https://block.arch.ethz.ch/brg/files/2014-veendendaal-engstruct-design-process-for-prototype-concrete-shells-using-a-hybrid-cable-net-and-fabric-formwork_1402752074.pdf",
+     "verified": true,
+     "evidence": "BRG 網站上的論文 PDF：Engineering Structures 75 (2014) 39–50，以索網加織物模板建造兩座原型混凝土殼；內文寫明實作 non-linear extension of the force density method，並以力密度乘長度求預力",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "JAX FDM: A differentiable solver for inverse form-finding",
+     "creator": "Rafael Pastrana、Deniz Oktay、Ryan P. Adams、Sigrid Adriaenssens",
+     "year": 2023,
+     "url": "https://arxiv.org/abs/2307.12407",
+     "verified": true,
+     "evidence": "arXiv 2023-07-23 論文，摘要說明以力密度法結合梯度最佳化，針對穹頂、索網、塔等結構做逆向找形",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "慕尼黑奧林匹克屋頂索網的找形計算（FDM 的誕生場景）",
+     "creator": "H.-J. Schek（FDM）；屋頂設計 Frei Otto、Günter Behnisch",
+     "year": "1972",
+     "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method",
+     "verified": true,
+     "evidence": "COMPAS FoFin 文件 Force Densities Method 頁說明 Schek 於 1974 年為慕尼黑奧林匹克屋頂提出此法，因為這些索網的精確施工需要數值找形；並說明預先指定力密度即可把平衡方程變成線性。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Kurilpa Bridge（張拉整體混合橋）",
+     "creator": "Cox Rayner Architects、Arup",
+     "year": "2009",
+     "url": "https://en.wikipedia.org/wiki/Kurilpa_Bridge",
+     "verified": true,
+     "evidence": "Wikipedia 條目記載 2009 年 10 月 4 日啟用，由 Cox Rayner Architects 與 Arup 設計，是世界最大的混合式張拉整體橋，以平衡的受拉與受壓構件形成輕量結構。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "COMPAS FD：以力密度法做約束找形",
+     "creator": "Block Research Group（ETH Zurich）",
+     "year": "",
+     "url": "https://github.com/blockresearchgroup/compas_fd",
+     "verified": true,
+     "evidence": "GitHub 說明此套件提供以 force density method 做 constrained form finding 的平衡求解器與約束，可經由 COMPAS FormFinder 圖形介面使用。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Force_Density_Method（Python 實作）",
+     "creator": "Vahid Moosavi",
+     "year": 2019,
+     "url": "https://github.com/sevamoo/Force_Density_Method",
+     "verified": true,
+     "evidence": "GitHub 專案說明 An implementation of Force Density Method (FDM) in Python，建立於 2019-12-05，附參數化指定力密度的 Jupyter 範例",
+     "via": [
+      "x5_audit",
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "The force density method for form finding and computation of general networks",
+     "creator": "H.-J. Schek",
+     "year": 1974,
+     "url": "https://api.crossref.org/works/10.1016/0045-7825(74)90045-0",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Computer Methods in Applied Mechanics and Engineering 3, 115–134, 1974，作者 H.-J. Schek",
+     "via": [
+      "x5_audit",
+      "x3_DE"
+     ],
+     "alt_urls": [
+      "https://www.sciencedirect.com/science/article/pii/0045782574900450"
+     ]
+    }
+   ],
+   "card_visual": "四角固定的方形索網，力密度由中央向外漸變，被自重拉成倒掛的碗形，桿件依內力由藍到紅上色，旁邊一小張稀疏矩陣示意圖。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 17
+   },
+   "source_totals": {
+    "x5_audit": 17,
+    "x3_DE": 16
+   },
+   "merged_from": [
+    {
+     "source": "x5_audit",
+     "name_zh": "力密度法（FDM）",
+     "name_en": "Force Density Method (FDM)",
+     "total": 17,
+     "nearest": "E04 動態鬆弛找形（變形「張拉膜：原長縮短」「改用 Kinetic Damping 加速收斂」）"
+    },
+    {
+     "source": "x3_DE",
+     "name_zh": "力密度法找形（FDM）",
+     "name_en": "Force Density Method (FDM) Form-Finding",
+     "total": 16,
+     "nearest": "E04 動態鬆弛找形（同樣處理索網與受壓殼找形）"
+    }
+   ],
+   "seen_in": [
+    "EQlib（Thomas Oberbichler）",
+    "Ariadne（Adam Burke）",
+    "ETH Zürich Computational Structural Design I（eQUILIBRIUM）"
+   ],
+   "variation_hints": [
+    {
+     "name": "張拉整體（受壓桿給負力密度）",
+     "from": "x3_DE rejected",
+     "note": "x3 判定張拉整體的標準找形法就是 FDM"
+    },
+    {
+     "name": "逆向找形（指定目標高度反推力密度）",
+     "from": "x5_audit",
+     "note": ""
+    }
+   ],
+   "synth_note": "與 E04 動態鬆弛找形處理同類問題，但以連接矩陣與線性方程組一次求解，核心機制與資料結構不同。與 K14「圖解靜力學」同屬平衡找形，差在一個解矩陣、一個幾何作圖。",
+   "related_keys": [
+    "K14"
+   ]
+  },
+  {
+   "key": "K08",
+   "sources": [
+    "x1_AF",
+    "x5_audit"
+   ],
+   "name_zh": "拓樸最佳化（BESO／SIMP）",
+   "name_en": "Structural Topology Optimization (BESO / SIMP)",
+   "family_suggest": "F（圖樣與最佳化）；也可考慮 E（與 E04 同屬結構找形）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化）；也可考慮 E（與 E04 同屬結構找形）",
+    "x5_audit：F（圖樣與最佳化）；若之後新增結構／性能家族可移入"
+   ],
+   "one_liner": "把設計範圍切成一格一格的材料，每一輪用有限元素算出哪些格子最不受力，把它們慢慢挖掉，最後留下像骨頭或樹枝一樣的受力骨架。",
+   "mechanism": [
+    "把矩形設計範圍切成 nx × ny 個四邊形元素，每格一個密度 x（BESO 只有 0／1，SIMP 為 0–1 並以 x^p 懲罰中間值）。",
+    "組出整體勁度矩陣 K，依支承與載重解 K·u = f（用共軛梯度法 CG 逐元素相乘，不必存整個矩陣），得到每個節點位移。",
+    "算每個元素的應變能（敏感度），做鄰近平均濾波以避免棋盤格紋。",
+    "BESO：依敏感度排序，刪去最低的一批、補回最高的一批，使體積比每輪減少 evolutionaryRatio，直到達到目標體積；SIMP：用最佳化準則法（OC）更新密度。",
+    "把密度場輸出成黑白 Mesh，或交給 C05 Marching Squares 抽出可製造的輪廓。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形；F04 基因演算法（變形「結構或性能外掛評分」要靠 Karamba 等外掛）；C05 Marching Squares（只負責抽輪廓）",
+    "difference": "核心機制是「有限元素分析＋敏感度排序刪加材料」，資料結構是元素網格、節點自由度與線性方程組，產出是連續體的材料分布；E04 是質點彈簧找懸垂形（只處理線網、不算應力），F04 是黑盒子隨機搜尋，都不會自己解勁度方程。圖鑑目前沒有任何單元教到結構分析本身。",
+    "verdict": "new"
+   },
+   "new_concept": "有限元素法（元素勁度矩陣、組裝、邊界條件）、稀疏線性方程組與共軛梯度法求解、敏感度分析、體積約束下的最佳化準則、濾波消除數值不穩定。",
+   "logic": [
+    "迭代模擬",
+    "搜尋／求解"
+   ],
+   "difficulty": 5,
+   "loc_estimate": "300–400 行（含 Q4 元素勁度、CG 求解器、BESO 更新與 Mesh 輸出）",
+   "gh_feasibility": "可行但偏重：RhinoCommon 沒有稀疏矩陣求解器，要自寫 double[] 陣列版的逐元素 CG（Rhino.Geometry.Matrix 是密矩陣，60×30 格就要上百 MB，不可用）。Q4 平面應力元素的 8×8 勁度矩陣有封閉公式可直接寫死。輸出用 Mesh（每格一個四邊形面＋VertexColors）或 Polyline 輪廓；支承與載重用 Point3d 輸入吸附到最近節點。60×30 元素、40–60 輪在一般筆電約數秒到數十秒；再大建議接 Timer 分段跑。只做 2D；3D 版本會超過行數與效能上限。",
+   "architecture_cases": [
+    {
+     "title": "卡達國家會議中心 Sidra 樹狀巨柱（Qatar National Convention Centre）",
+     "creator": "磯崎新（Arata Isozaki）團隊",
+     "year": "2011",
+     "url": "https://www.dezeen.com/2013/08/22/qatar-national-convention-centre-by-arata-isozaki",
+     "verified": true,
+     "evidence": "Dezeen 頁面標題「Qatar National Convention Centre by Arata Isozaki」，描述巨大樹狀鋼柱支撐懸挑屋頂、2011 年 12 月開幕；Xie（2022）論文指出此結構以 extended ESO 方法設計。",
+     "via": [
+      "x1_AF",
+      "x5_audit"
+     ],
+     "alt_urls": [
+      "https://en.wikiarquitectura.com/building/qatar-national-convention-center/"
+     ]
+    },
+    {
+     "title": "Generalized topology optimization for architectural design（建築設計的廣義拓樸最佳化）",
+     "creator": "Yi Min Xie（RMIT 創新結構與材料中心）",
+     "year": "2022",
+     "url": "https://papers.cumincad.org/data/works/att/architectural_intelligence2022_2.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁為 Architectural Intelligence (2022) 1:2「Generalized topology optimization for architectural design」，作者 Yi Min Xie，內文說明 ESO／BESO 是建築設計最常用的拓樸最佳化法，並以卡達國家會議中心為例。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Ameba：Rhino／Grasshopper 上的 BESO 拓樸最佳化軟體",
+     "creator": "XIE Technologies（Yi-Min Xie 團隊）",
+     "year": "",
+     "url": "https://ameba.xieym.com/",
+     "verified": true,
+     "evidence": "頁面標題「Ameba: Topology optimization software」，說明以 BESO 技術為基礎、使用 Rhino-Grasshopper 建模與後處理。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Bone Chair",
+     "creator": "Joris Laarman",
+     "year": 2006,
+     "url": "https://www.jorislaarman.com/work/bone-chair/",
+     "verified": true,
+     "evidence": "作者官網頁面 Bone Chair (2006)，說明使用 Lothar Harzheim 與 Adam Opel GmbH 開發的最佳化軟體，反覆在需要強度處加料、其他地方去料",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "TopOpt 互動 App 與程式碼集（含 99 行／88 行教學程式）",
+     "creator": "DTU TopOpt 研究群（Ole Sigmund 等）",
+     "year": "",
+     "url": "https://www.topopt.mek.dtu.dk/apps-and-software",
+     "verified": true,
+     "evidence": "頁面標題「Apps/Software - TopOpt」，列出 iOS 互動拓樸最佳化 App 與多套公開程式碼（含 99 行 MATLAB 程式頁）。",
+     "via": [
+      "x1_AF",
+      "x5_audit"
+     ],
+     "alt_urls": [
+      "https://www.topopt.mek.dtu.dk/apps-and-software/Interactive-2D-TopOpt-App"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "A 99 line topology optimization code written in Matlab",
+     "creator": "Ole Sigmund",
+     "year": "2001",
+     "url": "https://link.springer.com/article/10.1007/s001580050176",
+     "verified": true,
+     "evidence": "Springer 頁面顯示 Struct Multidisc Optim 21, 120–127 (2001)，作者 O. Sigmund，摘要說明 99 行含最佳化器與有限元素副程式。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Evolutionary Topology Optimization of Continuum Structures: Methods and Applications",
+     "creator": "X. Huang、Y. M. Xie",
+     "year": "2010",
+     "url": "https://doi.org/10.1002/9780470689486",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認書名、作者 X. Huang 與 Y. M. Xie、2010 年 Wiley 出版。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Generating optimal topologies in structural design using a homogenization method",
+     "creator": "Martin P. Bendsøe、Noboru Kikuchi",
+     "year": 1988,
+     "url": "https://api.crossref.org/works/10.1016/0045-7825(88)90086-2",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Computer Methods in Applied Mechanics and Engineering 71, 197–224, 1988，作者 Bendsøe 與 Kikuchi",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Efficient topology optimization in MATLAB using 88 lines of code",
+     "creator": "Andreassen、Clausen、Schevenels、Lazarov、Sigmund",
+     "year": 2011,
+     "url": "https://www.topopt.mek.dtu.dk/apps-and-software/efficient-topology-optimization-in-matlab",
+     "verified": true,
+     "evidence": "DTU 頁面標題 Efficient topology optimization in MATLAB using 88 lines of code，引用 Structural and Multidisciplinary Optimization 43(1):1–16（2011），並說明承接 Sigmund 2001 年的 99 行程式",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "card_visual": "懸臂梁設計範圍中的灰色方格一輪輪被挖空，最後剩下黑色的桁架狀受力骨架，左側畫支承、右端畫載重箭頭。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 5,
+    "teachability": 3,
+    "feasibility": 3,
+    "total": 16
+   },
+   "source_totals": {
+    "x1_AF": 16,
+    "x5_audit": 16
+   },
+   "merged_from": [
+    {
+     "source": "x1_AF",
+     "name_zh": "拓樸最佳化（BESO／SIMP）",
+     "name_en": "Structural Topology Optimization (BESO / SIMP)",
+     "total": 16,
+     "nearest": "E04 動態鬆弛找形；F04 基因演算法（變形「結構或性能外掛評分」要靠 Karamba 等外掛）；C05 Marching Squares（只負責抽輪廓）"
+    },
+    {
+     "source": "x5_audit",
+     "name_zh": "拓樸最佳化（SIMP 密度法）",
+     "name_en": "Topology Optimization (SIMP / BESO)",
+     "total": 16,
+     "nearest": "F04 基因演算法（變形「結構或性能外掛評分」）；E04 動態鬆弛找形"
+    }
+   ],
+   "seen_in": [
+    "Millipede（Panagiotis Michalatos）",
+    "AAD Algorithms-Aided Design（Tedeschi, 2014）",
+    "TU Delft AR0202 Computational Intelligence for Integrated Design",
+    "Topology Optimization for Computational Fabrication（Jun Wu 等，TU Delft）"
+   ],
+   "variation_hints": [
+    {
+     "name": "主應力線網格",
+     "from": "x5_audit rejected",
+     "note": "x5 建議若拓樸最佳化入選可當其變形（目前也與 C03「換場公式」相關）"
+    },
+    {
+     "name": "有限元素分析（FEA）",
+     "from": "x5_audit rejected",
+     "note": "是本演算法的核心步驟，不單獨提"
+    }
+   ],
+   "synth_note": "x1、x5 都提出；難度 5、可行性自評 3，是否能在 400 行內完成（Q4 元素勁度＋共軛梯度＋濾波）請審查確認。x5 提到若之後新增結構／性能家族可移入。"
+  },
+  {
+   "key": "K09",
+   "sources": [
+    "x5_audit",
+    "x4_family"
+   ],
+   "name_zh": "類神經網路（感知器與多層感知器）",
+   "name_en": "Neural Network (Perceptron / Multilayer Perceptron)",
+   "family_suggest": "建議新家族 G「學習」（與強化學習同組）；不新增家族時放 F",
+   "family_options": [
+    "x5_audit：建議新家族 G「學習」（與強化學習同組）；不新增家族時放 F",
+    "x4_family：I 機器學習與資料驅動（新家族）；不開家族時可併入 F"
+   ],
+   "one_liner": "讓一群「加權加總再過濾」的小神經元，從範例資料中自己調整權重，學會把輸入（例如量體參數）對應到輸出（例如日照分數或類別）。",
+   "mechanism": [
+    "準備訓練資料：輸入向量（平面點座標或設計參數）與目標輸出（類別或數值），並切出一小部分當測試資料。",
+    "前向傳播：每個神經元計算輸入的加權和加上偏差，經 sigmoid 或 tanh 活化函數後傳給下一層。",
+    "以均方誤差計算輸出與目標的差距，用反向傳播（鏈鎖律）算出每個權重的梯度。",
+    "以學習率做梯度下降更新權重，重複多個訓練回合（epoch）直到誤差收斂，並用測試資料檢查有沒有過度擬合。",
+    "用訓練好的網路預測整張網格或新設計：畫出決策邊界色塊，或當代理模型（surrogate）替 F04 快速評分。"
+   ],
+   "overlap": {
+    "nearest": "F04 基因演算法（變形「換適應度」「互動式演化」）",
+    "difference": "F04 在設計空間裡搜尋一組好的解；類神經網路是從資料學出一個函數，核心機制是梯度下降與反向傳播，資料結構是多層權重矩陣，產出是可重複使用的預測模型而不是單一設計。圖鑑目前沒有任何「從資料學習」的演算法。",
+    "verdict": "new"
+   },
+   "new_concept": "監督式學習、權重矩陣與矩陣乘法、活化函數、損失函數、梯度下降與反向傳播、訓練與測試資料、過度擬合；變形可延伸到神經演化（NEAT，混 F04）、自組織映射（SOM）與代理模型。",
+   "logic": [
+    "迭代模擬",
+    "搜尋／求解"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "150–300 行（2 層 MLP、反向傳播、網格視覺化與誤差曲線）",
+   "gh_feasibility": "只需 double[,] 陣列與 Random，不需外部函式庫；以迴圈或 Timer 跑數千個 epoch，2–3 層、每層 16 個神經元以內可在元件內即時訓練。視覺化：平面網格每點的輸出畫成 Mesh 頂點色（決策邊界），誤差曲線畫成 Polyline，網路結構畫成 Line（粗細代表權重）。限制：影像級的卷積網路或 GAN 不適合在 C# Script 內從零訓練。",
+   "architecture_cases": [
+    {
+     "title": "ArchiGAN: a Generative Stack for Apartment Building Design",
+     "creator": "Stanislas Chaillou",
+     "year": 2019,
+     "url": "https://developer.nvidia.com/blog/archigan-generative-stack-apartment-building-design/",
+     "verified": true,
+     "evidence": "NVIDIA 技術部落格 2019-07-17 文章，作者 Stanislas Chaillou（Harvard GSD 碩士研究），以三個串接的條件式 GAN 神經網路生成量體、房間配置與家具",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Real-time design of architectural structures with differentiable mechanics and neural networks",
+     "creator": "Rafael Pastrana、Eder Medina、Isabel M. de Oliveira、Sigrid Adriaenssens、Ryan P. Adams",
+     "year": 2024,
+     "url": "https://arxiv.org/abs/2409.02606",
+     "verified": true,
+     "evidence": "arXiv 2024-09-04 論文，摘要說明結合類神經網路與可微分力學模擬器，即時生成殼、塔、橋等桿件結構的形狀",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Development of a Machine-Learning Framework for Overall Daylight and Visual Comfort Assessment in Early Design Stages",
+     "creator": "Hanieh Nourkojouri、Nastaran Seyed Shafavi、Mohammad Tahsildoost、Zahra Sadat Zomorodian",
+     "year": 2021,
+     "url": "https://solarlits.com/jd/8-270",
+     "verified": true,
+     "evidence": "Journal of Daylighting 第 8 卷第 2 期（2021）文章頁：標題與作者相符；以單一隱藏層 40 個神經元的人工神經網路，從 Honeybee for Grasshopper 產生的 2,880 筆參數化模擬學習預測日照與眩光指標。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Crow：Grasshopper 的人工神經網路元件",
+     "creator": "Benjamin Felbrich",
+     "year": 2014,
+     "url": "https://www.grasshopper3d.com/video/crow-artificial-neural-network-component-for-grasshopper",
+     "verified": true,
+     "evidence": "Grasshopper 官方社群影片頁，Benjamin Felbrich 於 2014 年 7 月 21 日上傳；說明外掛使用 Kohonen 網路與 classic backpropagation networks，並支援圖樣辨識。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "The Nature of Code, Chapter 10: Neural Networks",
+     "creator": "Daniel Shiffman",
+     "year": 2024,
+     "url": "https://natureofcode.com/neural-networks/",
+     "verified": true,
+     "evidence": "章節頁小節包含 The Perceptron、Putting the Network in Neural Network、Classification and Regression，從單一神經元一路講到多層網路",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "TensorFlow Neural Network Playground",
+     "creator": "Daniel Smilkov、Shan Carter",
+     "year": "",
+     "url": "https://playground.tensorflow.org/",
+     "verified": true,
+     "evidence": "網頁說明由 Daniel Smilkov 與 Shan Carter 製作，可即時增減層數、調學習率與活化函數，並以背景色顯示網路對平面的分類結果，Apache 授權開源。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Evolving Three-Dimensional Objects with a Generative Encoding Inspired by Developmental Biology（CPPN 3D 物件）",
+     "creator": "Jeff Clune、Hod Lipson",
+     "year": 2011,
+     "url": "http://jeffclune.com/publications/2011-CluneLipson-Evolving3DObjectsWithCPPNs-ECAL.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁：標題與作者（Cornell University）相符；以 Compositional Pattern Producing Networks 把座標映射成形體，並 3D 列印出演化物件。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Learning representations by back-propagating errors",
+     "creator": "David E. Rumelhart、Geoffrey E. Hinton、Ronald J. Williams",
+     "year": 1986,
+     "url": "https://api.crossref.org/works/10.1038/323533a0",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Nature 323, 533–536, 1986，作者 Rumelhart、Hinton、Williams",
+     "via": [
+      "x5_audit",
+      "x4_family"
+     ],
+     "alt_urls": [
+      "https://doi.org/10.1038/323533a0"
+     ]
+    }
+   ],
+   "card_visual": "平面上紅藍兩色散點被一個小型多層感知器學出彎曲的分界線，背景網格依預測值漸層上色，右上角畫出三層神經元與粗細不一的權重連線。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 16
+   },
+   "source_totals": {
+    "x5_audit": 16,
+    "x4_family": 15
+   },
+   "merged_from": [
+    {
+     "source": "x5_audit",
+     "name_zh": "類神經網路（感知器與多層感知器）",
+     "name_en": "Neural Network (Perceptron / Multilayer Perceptron)",
+     "total": 16,
+     "nearest": "F04 基因演算法（變形「換適應度」「互動式演化」）"
+    },
+    {
+     "source": "x4_family",
+     "name_zh": "多層感知器（小型神經網路）",
+     "name_en": "Multilayer Perceptron (Small Neural Network from Scratch)",
+     "total": 15,
+     "nearest": "F04 基因演算法（同屬最佳化但不用梯度）；C04 Perlin Noise／C05 Marching Squares（網路輸出可視為場）"
+    }
+   ],
+   "seen_in": [
+    "The Nature of Code（2024 第二版）",
+    "Octopus（Robert Vierlinger）",
+    "TU Delft AR0202 Computational Intelligence for Integrated Design",
+    "Harvard GSD SCI-6485 Introduction to Machine Learning for Designers"
+   ],
+   "variation_hints": [
+    {
+     "name": "神經演化（NEAT：以 F04 演化權重）",
+     "from": "x5_audit rejected",
+     "note": ""
+    },
+    {
+     "name": "代理模型（以網路取代昂貴模擬）",
+     "from": "x5_audit rejected",
+     "note": ""
+    },
+    {
+     "name": "CPPN：學出來的場函數",
+     "from": "x4_family",
+     "note": ""
+    }
+   ],
+   "synth_note": "x4 建議新家族 I（與 SOM 同組），x5 建議新家族「學習」（與強化學習 Q-learning 同組）；不開家族時 x4、x5 都建議放 F。",
+   "related_keys": [
+    "K19",
+    "K26"
+   ]
+  },
+  {
+   "key": "K10",
+   "sources": [
+    "x4_family",
+    "x2_BC"
+   ],
+   "name_zh": "測地線距離與測地線網（熱方法）",
+   "name_en": "Geodesic Distance & Geodesic Patterns (Heat Method)",
+   "family_suggest": "G 幾何處理與網格（新家族）",
+   "family_options": [
+    "x4_family：G 幾何處理與網格（新家族）",
+    "x2_BC：C"
+   ],
+   "one_liner": "在曲面網格上先讓「熱」從起點擴散一小段時間，取熱流方向當最短路方向，再解一次方程式，就得到每個頂點沿曲面走回起點的距離；等距線與測地線可直接變成網殼木條或鋪面分割。",
+   "mechanism": [
+    "由三角網格建立餘切權重的拉普拉斯矩陣 L 與頂點面積 A（稀疏矩陣）。",
+    "解 (A − t·L) u = δ（δ 為起點熱源、t 約為平均邊長平方），得到短時間的熱分佈 u。",
+    "在每個三角形計算 −∇u 並正規化，得到指向「遠離起點」的單位向量場 X。",
+    "計算 X 在每個頂點的散度，再解 Poisson 方程 L φ = ∇·X，得到測地距離 φ。",
+    "對 φ 取等值線（逐面線性插值）或沿測地方向追蹤曲線，輸出測地線網與等距環。"
+   ],
+   "overlap": {
+    "nearest": "F05 變形「多起點距離場（可及性地圖）」與「在曲線網路上走（真正的圖）」；C05 變形「曲面上的等值線」",
+    "difference": "F05 沿格網或圖的邊累加距離，結果會被網格方向扭曲；本演算法在連續曲面上求真正的測地距離，核心是稀疏線性系統（共軛梯度法）與離散微分運算子（梯度、散度、拉普拉斯）。C05 只負責把場畫成等值線，本演算法負責算出曲面上的距離場本身。",
+    "verdict": "new"
+   },
+   "new_concept": "稀疏矩陣與共軛梯度法、離散微分幾何（餘切權重、梯度、散度、拉普拉斯）、曲面度量與測地曲率為零的曲線。",
+   "logic": [
+    "搜尋／求解",
+    "幾何轉換"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "250–350",
+   "gh_feasibility": "先 Mesh.Faces.ConvertQuadsToTriangles，取頂點與面；自寫稀疏矩陣（每列一個 Dictionary<int,double>）與共軛梯度求解器，不需外部數值函式庫；等值線用逐面插值輸出 Polyline。可行；需注意網格品質（鈍角三角形會影響精度）與時間步 t 的選擇。Rhino 內建 Surface.ShortPath 可當對照驗證。",
+   "architecture_cases": [
+    {
+     "title": "UWE Research Pavilion：沿測地線排列木條的網殼",
+     "creator": "University of the West of England 與 Format Engineers",
+     "year": 2016,
+     "url": "https://formatengineers.com/research/UWE-pavilion.html",
+     "verified": true,
+     "evidence": "Format Engineers 研究頁標題「UWE Pavilion (2016)」，說明主木條由曲面測地線產生，「Secondary elements were then woven around these primaries, again by generating geodesics」。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Design, fabrication and assembly of a geodesic gridshell（工作營中完成的 11×11 m 測地線網殼）",
+     "creator": "Emil Adiels、Chris Williams 等",
+     "year": 2018,
+     "url": "https://research.chalmers.se/publication/504469",
+     "verified": true,
+     "evidence": "Chalmers 研究資料庫頁：標題相符，IASS 2018（Boston）；以直的預鑽孔膠合板條彎曲後依序鎖定成測地線網殼，合作單位含 BIG Engineering、Buro Happold 與 Thornton Tomasetti CORE studio。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "On Elastic Geodesic Grids and Their Planar to Spatial Deployment",
+     "creator": "Stefan Pillwein、Kurt Leimer、Michael Birsak、Przemyslaw Musialski",
+     "year": 2020,
+     "url": "https://arxiv.org/abs/2007.00201",
+     "verified": true,
+     "evidence": "arXiv 摘要頁：標題與四位作者相符，2020 年 7 月 1 日提交；以測地線排列的彈性條帶組成可由平面展開成 3D 的可展建築結構。",
+     "via": [
+      "x4_family",
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Geodesics on Meshes（Houdini 中的測地距離實驗）",
+     "creator": "Houdini Gubbins",
+     "year": 2017,
+     "url": "https://houdinigubbins.wordpress.com/2017/05/02/geodesics-on-meshes/",
+     "verified": true,
+     "evidence": "部落格文章標題「Geodesics on Meshes」，2017 年 5 月 2 日；比較 Dijkstra、展開法、Fast Marching 與 Geodesics in Heat 四種方法，最後以 Eigen 稀疏矩陣實作熱方法。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Heat Geodesic 幾何節點",
+     "creator": "SideFX（Houdini）",
+     "year": "",
+     "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heatgeodesic.html",
+     "verified": true,
+     "evidence": "Houdini 官方文件頁「Heat Geodesic」，說明為「Measures the distance of each point to a group of source points along a polygonal surface」。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Heat Method（Grasshopper 腳本分享）",
+     "creator": "Daniel Piker",
+     "year": 2020,
+     "url": "https://discourse.mcneel.com/t/heat-method/105135",
+     "verified": true,
+     "evidence": "McNeel 論壇貼文（2020 年 7 月 3 日）由 Daniel Piker 分享以迭代方式、不依賴外部數值函式庫的 Grasshopper 熱方法腳本，用於沿曲面的等距線、陰影線與變形權重。",
+     "role": "證明熱方法可在 Grasshopper 內從零實作，並示範創作用途（沿曲面的排線）。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "The Heat Method for Distance Computation",
+     "creator": "Keenan Crane、Clarisse Weischedel、Max Wardetzky",
+     "year": 2017,
+     "url": "https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/",
+     "verified": true,
+     "evidence": "作者專案頁：標題與三位作者相符，列 Communications of the ACM 2017 年 11 月（原始論文 Geodesics in Heat 為 2013 年）；方法為先以熱擴散求梯度方向，再解稀疏線性系統得距離。",
+     "via": [
+      "x4_family",
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Geodesic Patterns",
+     "creator": "Helmut Pottmann、Qixing Huang、Bailin Deng、Alexander Schiftner、Martin Kilian、Leonidas Guibas、Johannes Wallner",
+     "year": 2010,
+     "url": "https://history.siggraph.org/learning/geodesic-patterns-by-pottmann-huang-deng-schiftner-kilian-et-al/",
+     "verified": true,
+     "evidence": "SIGGRAPH 歷史檔案頁：標題與作者相符、SIGGRAPH 2010；說明測地線圖樣可用於以「不能側向彎曲的木板」包覆自由曲面的建築應用。",
+     "via": [
+      "x4_family",
+      "x2_BC"
+     ],
+     "alt_urls": [
+      "https://www.dmg.tuwien.ac.at/geom/ig/pottmann/oldpub/2010/pattern10/pattern10.html"
+     ]
+    }
+   ],
+   "card_visual": "一片起伏的曲面網格，從一個起點擴散出彩色漸層的等距環線，再疊上幾條沿曲面行走的測地線（像網殼木條）。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 4,
+    "teachability": 3,
+    "feasibility": 3,
+    "total": 15
+   },
+   "source_totals": {
+    "x4_family": 15,
+    "x2_BC": 14
+   },
+   "merged_from": [
+    {
+     "source": "x4_family",
+     "name_zh": "測地線距離與測地線網（熱方法）",
+     "name_en": "Geodesic Distance & Geodesic Patterns (Heat Method)",
+     "total": 15,
+     "nearest": "F05 變形「多起點距離場（可及性地圖）」與「在曲線網路上走（真正的圖）」；C05 變形「曲面上的等值線」"
+    },
+    {
+     "source": "x2_BC",
+     "name_zh": "熱方法測地距離場（Heat Method）",
+     "name_en": "Geodesic Distance via the Heat Method",
+     "total": 14,
+     "nearest": "F05 最短路徑（Dijkstra）變形「多起點距離場（可及性地圖）」「在曲線網路上走（真正的圖）」；C01 反應擴散變形「Mesh 上的反應擴散（曲面上）」"
+    }
+   ],
+   "variation_hints": [],
+   "synth_note": "x2 自評 14（剛好等於 min_total_score）、x4 自評 15，主體取 x4。與「穩態熱傳導與 Laplace 場」都解擴散／Poisson 型方程，但本候選在不規則三角網格上解稀疏線性系統求曲面距離（x2 說明）。F05 變形「多起點距離場」是格子上的 Dijkstra。",
+   "related_keys": [
+    "K20"
+   ]
+  },
+  {
+   "key": "K11",
+   "sources": [
+    "x2_BC"
+   ],
+   "name_zh": "波動方程與干涉（FDTD 水波／聲波）",
+   "name_en": "Wave Equation & Interference (FDTD / Ripple Tank)",
+   "family_suggest": "C",
+   "family_options": [
+    "x2_BC：C"
+   ],
+   "one_liner": "在格子上記住「現在」和「上一刻」的高度，每一格下一刻的高度由鄰居推算，於是點波源會擴散成一圈圈漣漪，碰牆反射、彼此相遇產生干涉條紋。",
+   "mechanism": [
+    "建立三張（或兩張輪替的）double[,]：上一刻 u_prev、現在 u、下一刻 u_next；牆與障礙用遮罩標記。",
+    "波源：在指定格子每一步寫入 A·sin(ωt)（或一次性脈衝）。",
+    "更新：u_next = 2u − u_prev + (c·Δt/Δx)²·∇²u（∇² 為上下左右四鄰居之和減 4 倍自身），再乘上阻尼係數；障礙格強制為 0 形成反射。",
+    "邊界吸收：外圍加一圈逐漸加大阻尼的吸收帶，避免波從畫面邊緣反彈；輪替緩衝，重複到干涉圖樣穩定。",
+    "輸出：高度場 Mesh、振幅的時間平均（找出駐波節點線）或等值線；也可用解析式疊加多個圓形波當對照。"
+   ],
+   "overlap": {
+    "nearest": "C01 反應擴散（格子上的拉普拉斯運算子）；C05 Marching Squares（場的等值線）；C04 變形「時間當第三維做動畫」",
+    "difference": "C01 的擴散是一階時間方程，濃度只會被抹平；波動方程是二階時間方程，必須同時記住前一刻的狀態，才會出現傳播、反射、繞射與建設性／破壞性干涉，並受 CFL 穩定條件限制。產出是會振盪的波場與駐波節點線（Chladni 圖樣的由來），不是靜態斑紋。",
+    "verdict": "new"
+   },
+   "new_concept": "二階時間積分與多緩衝輪替、CFL 數值穩定條件、反射與吸收邊界、疊加原理與駐波（固有模態）；把「聲學」帶進圖鑑，對應房間聲學的波動模擬。",
+   "logic": [
+    "迭代模擬"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "120–200 行",
+   "gh_feasibility": "完全可在 C# 元件內完成：三張 double[,]、雙層 for 迴圈，300×300 格可即時更新；障礙物以平面 Curve 遮罩；輸出 Mesh 頂點色，或把振幅當 Z 做成浮雕。房間聲學等級的 3D 寬頻模擬需要每個波長 6–10 格以上，格數暴增，只適合示意低頻行為。",
+   "architecture_cases": [
+    {
+     "title": "Pachyderm Numeric_Time_Domain",
+     "creator": "Arthur van der Harten（Pachyderm Acoustic）",
+     "year": 2016,
+     "url": "https://www.grasshopper3d.com/group/pachyderm/forum/topics/pachyderm-numeric-time-domain",
+     "verified": true,
+     "evidence": "Grasshopper 論壇主題由 Arthur van der Harten 於 2016 年 12 月 30 日發起，討論 Pachyderm 的數值時域模擬：固有頻率（Eigenfrequencies）、波場視覺化與散射係數分析。",
+     "role": "Rhino／Grasshopper 內的時域波動數值模擬，用於房間聲學與表面散射設計。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "FDTD Methods for 3-D Room Acoustics Simulation with High-order Accuracy in Space and Time",
+     "creator": "Brian Hamilton, Stefan Bilbao",
+     "year": 2017,
+     "url": "https://www.research.ed.ac.uk/en/publications/fdtd-methods-for-3-d-room-acoustics-simulation-with-high-order-ac/",
+     "verified": true,
+     "evidence": "愛丁堡大學研究資料頁顯示此文刊於 IEEE/ACM Transactions on Audio, Speech and Language Processing 第 25 卷第 11 期（2017），研究 3D 房間聲學的 FDTD 格式與數值色散。",
+     "role": "以有限差分波動方程模擬整個房間的聲場。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Real-time 3D finite-difference time-domain simulation of low- and mid-frequency room acoustics",
+     "creator": "Lauri Savioja",
+     "year": 2010,
+     "url": "https://www.dafx.de/paper-archive/2010/DAFx10/Savioja_DAFx10_P43.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁為 DAFx-10（Graz, 2010）論文，作者 Lauri Savioja，說明在 GPU 上以 FDTD 即時模擬約 100 m³ 房間的聲場並可聽化。",
+     "role": "FDTD 波動模擬用於房間聲學的即時可聽化。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Coding Challenge #102: 2D Water Ripple",
+     "creator": "Daniel Shiffman（The Coding Train）",
+     "year": 2018,
+     "url": "https://thecodingtrain.com/challenges/102-2d-water-ripple",
+     "verified": true,
+     "evidence": "The Coding Train 頁面標題為 2D Water Ripple，參考資料連到 Hugo Elias 的「2D Water」水波演算法；官方典藏的 front matter 記錄日期為 2018-05-07。",
+     "role": "雙緩衝水波漣漪的經典入門寫法，幾乎可直接轉成 C#。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Numerical Sound Synthesis: Finite Difference Schemes and Simulation in Musical Acoustics",
+     "creator": "Stefan Bilbao",
+     "year": 2009,
+     "url": "https://www2.ph.ed.ac.uk/~sbilbao/nss.html",
+     "verified": true,
+     "evidence": "作者的書籍配套網頁列出書名、作者 Stefan Bilbao、出版社 John Wiley and Sons（2009），456 頁含 230 題程式練習。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "card_visual": "兩個點波源在方形水槽中發出同心漣漪，干涉條紋以明暗帶呈現，並在一道開縫牆後產生繞射。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x2_BC": 18
+   },
+   "variation_hints": [
+    {
+     "name": "Chladni 駐波圖形",
+     "from": "x2_BC rejected",
+     "note": "數值版＝波動方程的駐波（振幅時間平均）"
+    }
+   ],
+   "synth_note": "C01 反應擴散同樣用格子拉普拉斯運算子，但本候選是二階時間的波動方程（干涉、反射、駐波）。"
+  },
+  {
+   "key": "K12",
+   "sources": [
+    "x2_BC"
+   ],
+   "name_zh": "地表逕流與集水區（D8 流向累積）",
+   "name_en": "Flow Accumulation & Watershed Delineation (D8)",
+   "family_suggest": "C",
+   "family_options": [
+    "x2_BC：C"
+   ],
+   "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
+   "mechanism": [
+    "地形轉格子：從 Surface／Mesh 取樣成高程陣列 z[i,j]（可直接接 C04 雜訊地形）。",
+    "填窪：用 Priority-Flood（優先佇列由邊界往內淹）把封閉窪地抬高到溢流高度，確保每格都有出路。",
+    "流向（D8）：每格找 8 鄰居中「高差 ÷ 距離」最大的下坡鄰居並記成箭頭，全部箭頭構成以出口為根的樹（森林）。",
+    "累積：依高程由高到低逐格處理，把自己的水量（降雨 × 面積）加到下游格；累積量超過門檻的格子連成河道 Polyline，並可算 Strahler 河序決定線寬。",
+    "集水區：從每個出口沿箭頭反向追溯，標記所有流到該出口的格子，輸出集水區邊界。"
+   ],
+   "overlap": {
+    "nearest": "C04 Perlin 雜訊地形變形「水力侵蝕後處理」；C03 向量場流線（沿梯度追線）；F05 最短路徑（Dijkstra）變形「多起點距離場（可及性地圖）」",
+    "difference": "C04 的水力侵蝕是用水滴粒子改寫地形，C03 只追單條梯度線；D8 不移動粒子，而是把整張地形轉成「每格一個下游指標」的樹狀流向圖，再以拓樸順序累加面積，同時得到整個河網階層與集水區分割。填窪用的優先佇列與 Dijkstra 相似，但目的與產出（水系、分水嶺）完全不同。",
+    "verdict": "new"
+   },
+   "new_concept": "格網上的有向樹（每格一個父節點）、依高程排序的拓樸累加、優先佇列填窪（Priority-Flood）、反向追溯做區域標記、河序（Strahler）階層；把景觀水文分析帶進圖鑑。",
+   "logic": [
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–260 行",
+   "gh_feasibility": "可在 C# 元件內完成：Surface.PointAt 或對 Mesh 投射取樣建立高程格，int[,] 存流向、double[,] 存累積量；以 Array.Sort 依高程排序索引；填窪需要優先佇列（Rhino 8 的 .NET 可用 PriorityQueue<TElement,TPriority>，Rhino 7 需自寫二元堆積約 40 行）；輸出河道 Polyline（線寬依累積量）與集水區彩色 Mesh。D8 只允許單一下游方向，平坦區與發散流需用 D∞ 等變形改善。",
+   "architecture_cases": [
+    {
+     "title": "Groundhog",
+     "creator": "Philip Belesky（RMIT 景觀建築）",
+     "year": 2018,
+     "url": "https://philipbelesky.com/projects/groundhog",
+     "verified": true,
+     "evidence": "作者專案頁（2018 年 1 月）說明 Groundhog 是景觀建築用的 Grasshopper 外掛，提供坡度計算、地表逕流投影等景觀分析；其文件另有 Flow Paths 與 Flow Catchments（依流向終點合併集水區）元件。",
+     "role": "景觀設計中以程式計算地表水流與集水區。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Integrated Stormwater Analysis Model to Support Sustainable Urban Green Space Design",
+     "creator": "J. Jia, S. Zlatanova, K. Zhang, H. Liu",
+     "year": 2022,
+     "url": "https://isprs-annals.copernicus.org/articles/X-4-W2-2022/153/2022/isprs-annals-X-4-W2-2022-153-2022.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁為 ISPRS Annals X-4/W2-2022（17th 3D GeoInfo Conference, Sydney），在 Rhino＋Grasshopper 中模擬都市綠地的雨水逕流，並提到 GIS 中常用 D8 演算法判定逕流方向。",
+     "role": "把逕流方向與匯流分析整合進綠地設計平台。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "A multi-objective optimization framework for terrain modification based on a combined hydrological and earthwork cost-benefit",
+     "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
+     "year": 2024,
+     "url": "https://arxiv.org/abs/2401.02698",
+     "verified": true,
+     "evidence": "arXiv 摘要頁（2024）說明以 NSGA-II 結合 DEM 水文成本分析最佳化地形改造，目標包含逕流路徑長度與流速，用於雨水管理。",
+     "role": "以 DEM 流向分析驅動景觀地形設計。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Mapgen4 Procedural Map Generator",
+     "creator": "Amit J. Patel（Red Blob Games）",
+     "year": 2018,
+     "url": "https://www.redblobgames.com/maps/mapgen4/",
+     "verified": true,
+     "evidence": "Red Blob Games 頁面（2018 年 7 月，2023 年 4 月更新）說明以蒸發、風與降雨模擬決定河流與生物群系，水往下坡流並累積成河道，可調 raininess 與 lg_min_flow 觀察小溪出現。",
+     "role": "地圖生成中以流量累積長出河網的代表作。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm for Digital Elevation Models",
+     "creator": "Richard Barnes, Clarence Lehman, David Mulla",
+     "year": 2014,
+     "url": "https://arxiv.org/abs/1511.04463",
+     "verified": true,
+     "evidence": "arXiv 頁面註明刊於 Computers & Geosciences 第 62 卷（2014 年 1 月），以優先佇列由 DEM 邊界向內淹填窪地，並可標記集水區與決定流向。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "card_visual": "起伏的雜訊地形上畫出 D8 河網，線寬依累積集水面積由細變粗，底色以不同淡色區分各個集水區。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x2_BC": 18
+   },
+   "variation_hints": [],
+   "synth_note": "最接近 C04 變形「水力侵蝕後處理」（粒子侵蝕）；本候選是流向指定＋依高程排序累積流量、切集水區，x2 已說明差異。"
+  },
+  {
+   "key": "K13",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "測地線圓頂（二十面體細分）",
+   "name_en": "Geodesic Dome (Icosahedral Subdivision)",
+   "family_suggest": "E 排列與鬆弛（亦可歸 A 規則與語法）",
+   "family_options": [
+    "x3_DE：E 排列與鬆弛（亦可歸 A 規則與語法）"
+   ],
+   "one_liner": "從 20 個正三角形組成的二十面體出發，把每個三角形切成更小的三角形、再把新點推到球面上，就得到 Buckminster Fuller 式、桿件種類很少的測地線圓頂。",
+   "mechanism": [
+    "以黃金比例座標建立正二十面體的 12 個頂點與 20 個面。",
+    "設定頻率 ν：每條邊等分成 ν 段，每個面切成 ν² 個小三角形（或以中點遞迴切分）；用以邊為鍵的 Dictionary 共用邊上新點，避免重複頂點。",
+    "把所有頂點正規化到半徑 R（投影到球面），可只保留 z 大於某值的部分當圓頂並整理底邊。",
+    "依長度把桿件分群（容差內視為同一型），統計桿件種類與數量——這正是建造成本的關鍵。",
+    "變形：取對偶得到六角＋五角的 Goldberg 面（Eden Project 式）、改用八面體基底、或以球面電荷互斥（Thomson 問題）鬆弛讓點更均勻。"
+   ],
+   "overlap": {
+    "nearest": "B04 變形「Fibonacci Sphere 球面均佈」與 B04 專案種子「Fibonacci 圓頂分割與構件化」；A04 變形「網格細分（Catmull-Clark 精神）」",
+    "difference": "B04 的 Fibonacci 球只產生點，沒有連結，也不追求重複構件；A04 的細分處理平面矩形或一般網格。測地線圓頂從正多面體的對稱出發做三角細分與球面投影，產出是有明確桿件拓樸的結構網格，核心是頂點去重的索引資料結構、對偶網格與「桿件種類最少化」的構件思維。",
+    "verdict": "new"
+   },
+   "new_concept": "正多面體與對稱性、網格的頂點／面索引與邊鍵字典去重、投影（向量正規化）、對偶網格（三角 ↔ 六角五角）、依長度分群統計構件種類（製造導向的標準化思維）。",
+   "logic": [
+    "幾何轉換",
+    "改寫／遞迴"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "120–200 行",
+   "gh_feasibility": "完全可行：Point3d、Vector3d.Unitize、Mesh.Faces.AddFace 即可完成；桿件分群用排序後依容差切段；輸出 Mesh、依桿件種類著色的 Line 清單與種類統計。對偶網格需自寫面中心與鄰接排序，約多 60 行。",
+   "architecture_cases": [
+    {
+     "title": "Montreal Biosphère（1967 年世博會美國館）",
+     "creator": "Buckminster Fuller",
+     "year": "1967",
+     "url": "https://www.archdaily.com/572135/ad-classics-montreal-biosphere-buckminster-fuller",
+     "verified": true,
+     "evidence": "ArchDaily AD Classics 頁面說明此為 1967 年世博會美國館，幾何為二十面體，面細分成三角形並彎成殼，直徑 76 公尺、高 62 公尺，桿件全為焊接鋼管。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Eden Project 生態溫室（Biomes）",
+     "creator": "Grimshaw Architects；結構 Anthony Hunt Associates、MERO",
+     "year": "2001",
+     "url": "https://en.wikipedia.org/wiki/Eden_Project",
+     "verified": true,
+     "evidence": "Wikipedia 條目記載 2001 年 3 月 17 日對外開放，Biomes 由 Grimshaw Architects 設計、Anthony Hunt and Associates 負責結構，為無內柱的測地線結構，由數百個六角形與五角形 ETFE 氣墊構成。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "icosphere：依細分頻率建立測地線二十面體",
+     "creator": "Vedrana A. Dahl",
+     "year": "",
+     "url": "https://github.com/vedranaa/icosphere",
+     "verified": true,
+     "evidence": "GitHub 說明 Constructs geodesic icosahedron given subdivision frequency：每條邊分成 ν 段、每個面分成 ν² 個面，頂點數約 12 + 10(ν² − 1)。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Parakeet：Geodesic Dome 元件",
+     "creator": "Esmaeil（Parakeet 外掛）",
+     "year": "",
+     "url": "https://grasshopperdocs.com/components/parakeet/geodesicDome.html",
+     "verified": true,
+     "evidence": "Grasshopper Docs 頁面說明此元件 Generates a Geodesic Dome based on a Icosahedron，輸入基準點、半徑與圓頂頻率，輸出網格、點與邊。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "US Patent 2,682,235：Building Construction（測地線圓頂專利）",
+     "creator": "Richard Buckminster Fuller",
+     "year": "1954",
+     "url": "https://patents.google.com/patent/US2682235A/en",
+     "verified": true,
+     "evidence": "Google Patents 頁面顯示 1951 年 12 月 12 日申請、1954 年 6 月 29 日公告，發明人 Richard Buckminster Fuller，描述以近似大圓弧構成三向格網、以球面二十面體為基礎的框架。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "半球形測地線圓頂線框，桿件依長度種類分成三到四種顏色，旁邊標示頻率與桿件種類數。",
+   "scores": {
+    "novelty": 3,
+    "architecture_relevance": 5,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x3_DE": 18
+   },
+   "variation_hints": [
+    {
+     "name": "球面電荷互斥均佈（Thomson 問題）",
+     "from": "x3_DE rejected",
+     "note": ""
+    }
+   ],
+   "synth_note": "最接近 B04 變形「Fibonacci Sphere 球面均佈」與專案種子「Fibonacci 圓頂分割與構件化」，以及 A04 變形「網格細分」；本候選以二十面體細分＋投影到球面產生網殼。x3 建議 E，也可歸 A。"
+  },
+  {
+   "key": "K14",
+   "sources": [
+    "x5_audit"
+   ],
+   "name_zh": "圖解靜力學（索多邊形與力圖）",
+   "name_en": "Graphic Statics (Funicular Polygon & Force Diagram)",
+   "family_suggest": "E（找形）；或 A（幾何作圖規則）",
+   "family_options": [
+    "x5_audit：E（找形）；或 A（幾何作圖規則）"
+   ],
+   "one_liner": "不列方程式而是作圖：把載重依序接成一條力的折線，從一個極點拉出射線，再平行畫回形狀圖，就得到剛好只受拉的索或只受壓的拱，每段內力直接用線段長度讀出來。",
+   "mechanism": [
+    "在形狀圖上沿跨度放一串垂直載重，在旁邊的力圖上把這些載重向量首尾相接，排成一條載重線。",
+    "在力圖上選一個極點 O，從 O 連到載重線上每一個分點，得到一組射線，每條射線代表一段索的內力。",
+    "回到形狀圖，從支承點開始逐段畫出與對應射線平行的線段，交到下一條載重作用線上，連成索多邊形（funicular polygon）。",
+    "調整極點位置（等於調整水平推力），或用三點條件反求極點，讓索多邊形通過指定支點與矢高；上下翻轉就是純受壓的拱。",
+    "由射線長度讀出各段內力並以線寬顯示；進階可延伸到桁架的 Cremona 交互力圖。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形（懸垂網倒轉成受壓殼）",
+    "difference": "E04 以數值模擬（質點加彈簧迭代）得到懸垂形；圖解靜力學是純幾何作圖、一次完成，核心是形狀圖與力圖互為對偶（reciprocal）的關係，資料結構是兩張一一對應的平面圖，產出多了一張能直接讀出內力的力圖。它也是 FDM 與推力網路分析的 2D 入門。",
+    "verdict": "new"
+   },
+   "new_concept": "向量加法的圖解、形狀圖與力圖的對偶關係、水平推力與矢高的取捨、用幾何判讀平衡；把結構觀念變成可以畫的東西。",
+   "logic": [
+    "幾何轉換",
+    "直接公式"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "120–220 行（索多邊形與三點求極點；Cremona 力圖另加約 150 行）",
+   "gh_feasibility": "只需 Line、Point3d、Vector3d 與線線交點（Intersection.LineLine），形狀圖與力圖並排輸出，滑桿控制極點位置與載重分布，完全不需外部函式庫。桁架的 Cremona 力圖需要平面圖的面與對偶資料結構，屬進階變形。",
+   "architecture_cases": [
+    {
+     "title": "Eiffel Tower（艾菲爾鐵塔）",
+     "creator": "Maurice Koechlin（Gustave Eiffel 公司）",
+     "year": 1889,
+     "url": "https://trako.arch.rwth-aachen.de/cms/trako/forschung/bautechnikgeschichte/~mmso/maurice-koechlin-der-eigentliche-erfin/?lidx=1",
+     "verified": true,
+     "evidence": "RWTH Aachen 結構設計講座研究頁 Maurice Koechlin - The real inventor of the Eiffel tower：Koechlin 師承 Culmann，以 graphostatic methods 決定 300 m 鐵塔的幾何，讓塔身成為等強度懸臂",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "As Hangs the Flexible Line: Equilibrium of Masonry Arches",
+     "creator": "Philippe Block、Matt DeJong、John Ochsendorf",
+     "year": 2006,
+     "url": "https://api.crossref.org/works/10.1007/s00004-006-0015-9",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Nexus Network Journal 8, 13–24, 2006，作者 Block、DeJong、Ochsendorf，以推力線分析砌體拱的平衡",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Active Statics",
+     "creator": "Simon Greenwold、Edward Allen（MIT）",
+     "year": 2003,
+     "url": "http://acg.media.mit.edu/people/simong/statics/data/",
+     "verified": true,
+     "evidence": "頁面標題 Active Statics，八個互動示範，拖動形狀或載重時力多邊形即時更新，以顏色區分拉力與壓力",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "i3DGS: interactive 3D/Polyhedral Graphic Statics",
+     "creator": "Hua Chai、Wenxi Chen、Masoud Akbarzadeh（UPenn Polyhedral Structures Lab）",
+     "year": 2020,
+     "url": "https://psl.design.upenn.edu/i3dgs/",
+     "verified": true,
+     "evidence": "PSL 頁面標題 i3DGS: interactive 3D/Polyhedral Graphic Statics，互動式教學平台，以互為對偶的多面體圖講解平衡",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Die graphische Statik",
+     "creator": "Karl Culmann",
+     "year": 1864,
+     "url": "https://en.wikipedia.org/wiki/Graphic_statics",
+     "verified": true,
+     "evidence": "Wikipedia Graphic statics 條目記載 Carl Culmann 於 1864 年的著作 Die Graphische Statik 奠定此學科，Cremona 於 1872 年提出桁架力圖",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "card_visual": "左側一串向下箭頭撐出的倒懸索多邊形（翻轉成拱），右側是對應的力多邊形與極點射線，同色線段一一對應、線寬代表內力。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 18
+   },
+   "source_totals": {
+    "x5_audit": 18
+   },
+   "seen_in": [
+    "ETH Zürich Computational Structural Design I（eQUILIBRIUM）",
+    "MIT 4.450 Computational Structural Design and Optimization"
+   ],
+   "variation_hints": [],
+   "synth_note": "只有 x5 提出。與 FDM 同屬平衡找形，但核心是幾何作圖（形圖與力圖互為倒數），難度 2，適合當結構找形的入門。",
+   "related_keys": [
+    "K07"
+   ]
+  },
+  {
+   "key": "K15",
+   "sources": [
+    "x1_AF"
+   ],
+   "name_zh": "準週期鋪磚（Penrose 鋪磚／de Bruijn 五格線法）",
+   "name_en": "Quasiperiodic Tiling (Penrose / de Bruijn Pentagrid)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化）"
+   ],
+   "one_liner": "畫五組互成 72° 的平行線，每一個交點就換成一片菱形，拼起來就是永遠不重複、卻處處有五重對稱的 Penrose 鋪面。",
+   "mechanism": [
+    "取五個方向 e_k = (cos 72°k, sin 72°k) 與五個偏移 γ_k（總和為 0 以得到標準 Penrose），每個方向畫一組間距 1 的平行線（五格線 pentagrid）。",
+    "對每一對方向 (j, k) 的每一個交點 p，計算整數座標 K_i = ⌈p·e_i − γ_i⌉（i ≠ j, k 時），並令 K_j、K_k 為交點所屬的線號。",
+    "菱形的四個頂點為 Σ K_i e_i，再分別加上 e_j、e_k、e_j + e_k；方向差 72° 的是胖菱形、36° 的是瘦菱形。",
+    "所有交點各自換成菱形，就得到彼此無縫接合的準週期鋪面；改 γ_k 或方向數（7、8、12 格線）可得到其他準晶鋪面。",
+    "變形：改用 Robinson 三角形替換（deflation）做自相似版本，或以 2023 年 hat 單形磚的替換規則產生非週期單形鋪面。"
+   ],
+   "overlap": {
+    "nearest": "F02 變形「Penrose／準週期底圖」（先用 deflation 產生 Penrose 當 Hankin 法的底圖）；A05 形狀文法（標籤形狀替換，與 deflation 相近）；F02 案例 Lu & Steinhardt 準晶 girih",
+    "difference": "F02 只把 Penrose 當「別人給的底圖」，重點在 Hankin 射線；本演算法的核心是 de Bruijn 對偶法：由直線族的交點換算整數座標、直接構造菱形，資料結構是「線族交點 → 高維整數格點投影」，教到週期與非週期的差別。替換法版本雖與 A05 相近，但放在本單元當變形即可。",
+    "verdict": "new"
+   },
+   "new_concept": "對偶（線的排列 ↔ 鋪磚）、高維格點投影（cut-and-project）、黃金比例與五重對稱、非週期性與局部同構；可和 F01、F02 的週期性底圖對照。",
+   "logic": [
+    "幾何轉換",
+    "改寫／遞迴"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "120–200 行（五格線法約 100 行，deflation 變形另加 60 行）",
+   "gh_feasibility": "完全可行：方向用 Vector3d[5]，交點用解二元一次方程，菱形用 Polyline／PolylineCurve 輸出並依類型分成兩個 DataTree 分支上色；用 Curve.Contains 以圓或任意曲線裁切。deflation 版用 List<(int type, Point3d a, b, c)> 反覆細分。hat 單形磚的 H7／H8 替換規則較繁瑣，建議當進階變形或讀入預先算好的座標。",
+   "architecture_cases": [
+    {
+     "title": "RMIT Storey Hall 的 Penrose 鋪磚立面與室內",
+     "creator": "ARM Architecture（Ashton Raggatt McDougall）",
+     "year": "1995",
+     "url": "https://armarchitecture.com.au/projects/rmit-storey-hall-and-green-brain/",
+     "verified": true,
+     "evidence": "ARM 專案頁標題「RMIT Storey Hall and Green Brain」，說明 Storey Hall 1995 年完成，立面以 Roger Penrose 兩種磚「無限鋪滿而不重複」的概念做成青銅磚。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "牛津大學 Andrew Wiles Building 入口的 Penrose 鋪面",
+     "creator": "Roger Penrose（地坪圖樣）；牛津大學數學研究所",
+     "year": "2013",
+     "url": "https://en.wikipedia.org/wiki/Mathematical_Institute,_University_of_Oxford",
+     "verified": true,
+     "evidence": "條目寫明 Andrew Wiles Building 於 2013 年完成，並有「Sir Roger Penrose designed a non-periodic pattern (a Penrose tiling) to decorate the ground at the entrance」。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Aperiodic Tiling, Penrose Tiling and the Generation of Architectural Forms",
+     "creator": "Michael J. Ostwald",
+     "year": "2014",
+     "url": "https://doi.org/10.1007/978-3-319-00143-2_31",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Michael J. Ostwald、收於《Architecture and Mathematics from Antiquity to the Future》（2014）。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Penrose Tiling Explained（以 Robinson 三角形遞迴產生 Penrose 鋪磚）",
+     "creator": "Jeff Preshing",
+     "year": "2011",
+     "url": "https://preshing.com/20110831/penrose-tiling-explained/",
+     "verified": true,
+     "evidence": "標題與作者相符，日期 2011 年 8 月 31 日，以 Python 將紅、藍兩種三角形依黃金比例反覆細分。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "An aperiodic monotile（hat 單形磚互動產生器與原始碼）",
+     "creator": "David Smith、Joseph Samuel Myers、Craig S. Kaplan、Chaim Goodman-Strauss",
+     "year": "2023",
+     "url": "https://cs.uwaterloo.ca/~csk/hat/",
+     "verified": true,
+     "evidence": "頁面標題「An aperiodic monotile」，提供可匯出 PNG／SVG 的互動網頁工具與 H7／H8 替換規則工具，原始碼以 BSD 授權公開。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Algebraic theory of Penrose's non-periodic tilings of the plane. I",
+     "creator": "N. G. de Bruijn",
+     "year": "1981",
+     "url": "https://doi.org/10.1016/1385-7258(81)90016-0",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 N.G. de Bruijn、1981 年 Indagationes Mathematicae (Proceedings)。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "An aperiodic monotile",
+     "creator": "David Smith、Joseph Samuel Myers、Craig S. Kaplan、Chaim Goodman-Strauss",
+     "year": "2023",
+     "url": "https://arxiv.org/abs/2303.10798",
+     "verified": true,
+     "evidence": "arXiv 摘要頁標題與四位作者相符，2023 年 3 月 20 日提交，提出可鋪滿平面但永不週期的「hat」多邊形。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "圓形範圍內五重對稱的 Penrose 鋪面，胖菱形與瘦菱形用兩種顏色，中心隱約浮出十角星。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 17
+   },
+   "source_totals": {
+    "x1_AF": 17
+   },
+   "variation_hints": [
+    {
+     "name": "Robinson 三角形 deflation（替換法）",
+     "from": "x1_AF",
+     "note": ""
+    },
+    {
+     "name": "hat 單形磚（2023）替換規則",
+     "from": "x1_AF rejected",
+     "note": "進階變形"
+    }
+   ],
+   "synth_note": "x5_audit 把「Penrose 等非週期鋪磚」判為 F02 變形 V06「Penrose / 準週期底圖」（該變形已用 deflation 產生 Penrose 底圖，再套 Hankin 法）。x1 主張本候選核心是 de Bruijn 五格線對偶法（線族交點 → 高維整數格點投影），與 F02 的 Hankin 射線機制不同。彙整依「核心機制不同」保留為候選，請審查判斷是否應改為 F02 變形。"
+  },
+  {
+   "key": "K16",
+   "sources": [
+    "x2_BC"
+   ],
+   "name_zh": "離散聚合（連接點規則生長）",
+   "name_en": "Discrete Aggregation (Connection-based Stochastic Aggregation)",
+   "family_suggest": "B",
+   "family_options": [
+    "x2_BC：B"
+   ],
+   "one_liner": "每個模組身上有幾個「接頭平面」，電腦反覆挑一個還空著的接頭、依規則把新模組對齊接上，撞到既有模組就放棄，於是一顆顆零件自己長成可拆裝的量體。",
+   "mechanism": [
+    "定義零件：每種零件＝幾何（Mesh）＋數個連接平面（Plane，Z 軸朝外），再寫下規則表「零件 A 的接頭 i 可以接零件 B 的接頭 j」。",
+    "放入種子零件，把它所有的接頭放進「開放接頭」清單（生長前緣）。",
+    "每一步隨機（或依吸引點、純量場加權）挑一個開放接頭與一條可用規則，用平面到平面的轉換把新零件的接頭 j（先翻轉 180°）對齊到接頭 i。",
+    "用包圍盒快篩＋網格相交檢查碰撞與邊界；通過就加入並更新開放接頭（移除已用的、加入新零件其餘接頭），否則記為失敗再試別的組合。",
+    "重複到零件數上限或沒有開放接頭為止；輸出零件、連接圖（誰接誰）與組裝順序。"
+   ],
+   "overlap": {
+    "nearest": "A05 形狀文法（畢氏樹：帶標籤形狀換成縮小旋轉的組合）；A06 WFC 變形「tile 換成 Rhino 幾何模組」「2D → 3D 體素 WFC」；B02 DLA（粒子黏附成群集）",
+    "difference": "A05 是遞迴地「替換」形狀，多為確定性的縮放規則；A06 綁定在規則格子上用限制傳播求解。離散聚合沒有格子、零件不縮放，而是在自由 3D 空間中以「連接平面對齊＋碰撞拒絕」逐步做加法生長，核心資料結構是開放接頭的前緣清單與零件連接圖。和 B02 DLA 相比，黏附位置由接頭與規則決定，而不是隨機行走。",
+    "verdict": "new"
+   },
+   "new_concept": "以「平面到平面」座標轉換組裝剛體零件、開放連接前緣（frontier）清單、零件連接圖（graph）、碰撞偵測（包圍盒快篩＋空間索引），以及「可逆、可拆組的數位材料」設計思維。",
+   "logic": [
+    "迭代模擬",
+    "幾何轉換"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "220–320 行",
+   "gh_feasibility": "可在單一 C# 元件內完成：零件用 Mesh 與 List<Plane> 表示，Transform.PlaneToPlane 對齊（新接頭平面先用 Transform.Rotation 繞自身 X 軸翻轉 180°），碰撞用 BoundingBox 快篩＋Intersection.MeshMeshFast 或以 Mesh.IsPointInside 抽樣檢查，零件多時用 RTree 加速；規則可用字串（例如 A|0>B|2）輸入。上千個零件時精確碰撞會變慢，需以包圍盒近似。",
+   "architecture_cases": [
+    {
+     "title": "Wasp：Combinatorial Design with Grasshopper",
+     "creator": "Andrea Rossi（TU Darmstadt DDU）",
+     "year": 2017,
+     "url": "https://github.com/ar0551/Wasp",
+     "verified": true,
+     "evidence": "GitHub 頁面說明 Wasp 是 Andrea Rossi 發起、以 Python 撰寫的 Grasshopper 離散設計元件組，零件以幾何＋連接點描述，提供 stochastic aggregation 與 field-driven aggregation，並列出 Rossi & Tessmann 2017 CAADRIA 論文。",
+     "role": "本演算法的代表實作：零件、連接平面、聚合規則與碰撞避免。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Tallinn Architecture Biennale Pavilion",
+     "creator": "Gilles Retsin Architecture",
+     "year": 2017,
+     "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+     "verified": true,
+     "evidence": "designboom 標題為「gilles retsin completes lego-like wooden pavilion for the tallinn architecture biennale」，說明以直線、45°、90°、135° 四種合板積木組成 80 個離散構件並錯縫組合成梁與跨距。",
+     "role": "少數種類的離散構件依接合規則組合成結構，是離散聚合在建築尺度的實現。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Combinatorial Nest（Combo-nest）",
+     "creator": "Jose Sanchez／Plethora Project（主設計 Brendan Ho）",
+     "year": 2019,
+     "url": "https://www.plethora-project.com/combinatorial-nest",
+     "verified": true,
+     "evidence": "Plethora Project 頁面描述此案為「discrete open-ended tectonic system」，以標準化材料單元的排列組合在體積上「grow」，並用實體積木、指令卡與遊戲模擬介面產生變化。",
+     "role": "以固定單元的組合規則逐步長出量體，示範聚合規則如何產生不同構型。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Jigsaw Block（程序化結構拼接）",
+     "creator": "Mojang Studios（Minecraft）",
+     "year": 2019,
+     "url": "https://minecraft.wiki/w/Jigsaw_Block",
+     "verified": true,
+     "evidence": "Minecraft Wiki 說明 Jigsaw Block 於 Java Edition 1.14（2019）加入，透過 template pool 與 target name 把小結構片段一層層接成村莊、遺跡等大型結構，並有層數與優先權設定。",
+     "role": "遊戲世界生成中的「接頭＋規則池＋深度上限」拼接，與本演算法同構。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "From Voxels to Parts: Hierarchical Discrete Modeling for Design and Assembly",
+     "creator": "Andrea Rossi, Oliver Tessmann",
+     "year": 2018,
+     "url": "https://link.springer.com/chapter/10.1007/978-3-319-95588-9_86",
+     "verified": true,
+     "evidence": "Springer 頁面顯示為 ICGG 2018 會議論文（2018 年 7 月線上發表），摘要說明 Wasp 將物件建模為模組零件的聚合，並提供聚合程序、零件碰撞避免與階層式建模。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "card_visual": "一組 L 形與直線形模組沿著接頭隨機接合、避開彼此長成的離散聚合量體（等角視圖，依加入順序由深到淺上色）。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 17
+   },
+   "source_totals": {
+    "x2_BC": 17
+   },
+   "variation_hints": [],
+   "synth_note": "x2 提醒可能與「白蟻式群體建造」被視為同類：本候選是全域隨機挑選開放連接點、逐件接上幾何模組（Wasp 式），白蟻式是代理人依局部構形規則放磚。也接近 A06 變形「tile 換成 Rhino 幾何模組」。",
+   "related_keys": [
+    "K18"
+   ]
+  },
+  {
+   "key": "K17",
+   "sources": [
+    "x2_BC"
+   ],
+   "name_zh": "格子波茲曼風場（LBM）",
+   "name_en": "Lattice Boltzmann Wind Field (D2Q9 LBM)",
+   "family_suggest": "C",
+   "family_options": [
+    "x2_BC：C"
+   ],
+   "one_liner": "把空氣想成在格子上只能往 9 個方向跳的「粒子分布」，每一步先在格子內碰撞趨向平衡、再沿方向跳到鄰格，碰到建築就彈回，幾千步後就算出建築周圍的風場與渦流。",
+   "mechanism": [
+    "建立 nx×ny 格子，每格存 9 個方向的分布值 f_i（D2Q9），初始化為入口風速對應的平衡分布；用建築平面輪廓標記障礙格。",
+    "碰撞：每格由 f_i 算出密度 ρ 與速度 u，再依 BGK 規則把 f_i 往平衡分布 f_i^eq(ρ,u) 拉近（鬆弛時間 τ 決定黏滯度）。",
+    "串流：每個 f_i 沿自己的方向移到鄰格；障礙格用「反彈（bounce-back）」把分布原路送回，形成無滑移牆面。",
+    "邊界：左側持續注入固定風速、右側讓流體流出；重複碰撞＋串流數千步，直到流場穩定或出現週期性的渦街。",
+    "輸出速度大小與渦度（curl）的彩色 Mesh，並可交給 C03 追出風線。"
+   ],
+   "overlap": {
+    "nearest": "C03 向量場流線（場由公式給定；專案種子「CFD 結果重繪的都市風環境圖」）；C01 反應擴散（格子上的局部更新）",
+    "difference": "C03 的場是事先寫好的公式或外部 CFD 結果，本身不會「算」流體；LBM 真的在格子上模擬質量與動量守恆，速度場是解出來的，會繞過障礙物、產生回流區與隨時間擺動的卡門渦街。資料結構是每格 9 個方向的分布函數（不是單一濃度值），更新規則是「碰撞＋串流＋反彈邊界」，和 C01 的擴散方程不同。",
+    "verdict": "new"
+   },
+   "new_concept": "用微觀粒子分布（動力學理論）求巨觀流體；守恆律、鬆弛時間與黏滯度、雷諾數與數值穩定性、邊界條件（反彈、入流、出流）、時間相依的非穩態流。可附帶介紹另一條路線 Stable Fluids（半拉格朗日平流＋壓力投影）當變形。",
+   "logic": [
+    "迭代模擬"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "180–280 行",
+   "gh_feasibility": "2D D2Q9 可在 C# 元件內完成：double[9,nx,ny] 兩組緩衝，200×80 格每步約 14 萬次更新，可用 System.Threading.Tasks.Parallel.For 加速並配合 GH Timer 逐步顯示；障礙物由 Curve.Contains 判斷平面輪廓。3D（D3Q19）在單一元件中只能做很粗的格子，速度不足；τ 太接近 0.5 或入口風速過大會發散。結果屬概念示意，不可取代認證的風環境評估。",
+   "architecture_cases": [
+    {
+     "title": "Modelling urban airflow and natural ventilation using a GPU-based lattice-Boltzmann method",
+     "creator": "M-F King, A Khan, N Delbosc, HL Gough, C Halios, JF Barlow, CJ Noakes",
+     "year": 2017,
+     "url": "https://eprints.whiterose.ac.uk/120807/",
+     "verified": true,
+     "evidence": "White Rose 典藏頁顯示此文刊於 Building and Environment 第 125 卷（2017），以 GPU 上的 LBM 模擬建築周圍氣流與跨向通風，精度與 Fluent 相近但快上數個數量級。",
+     "role": "LBM 用於建築群的風場與自然通風研究。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Leverage Rhino® 3D CAD and Simulate Architecture for Pedestrian Wind Comfort",
+     "creator": "Naghman Khan（SimScale）",
+     "year": 2023,
+     "url": "https://www.simscale.com/blog/rhino-3d-cad-simulate-architecture-pedestrian-wind-comfort/",
+     "verified": true,
+     "evidence": "SimScale 部落格（2023 年 6 月 1 日）說明其外部風場研究使用 LBM 求解器 Pacefish，並與 Rhino／Grasshopper 早期設計流程串接產生行人風舒適度圖。",
+     "role": "商業實務中以 LBM 做行人層風舒適度分析並回饋到 Grasshopper 設計。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Urban Wind Lab",
+     "creator": "Karam M. Al-Obaidi",
+     "year": 2026,
+     "url": "https://github.com/arch85-km/urban-wind-lab",
+     "verified": true,
+     "evidence": "GitHub 說明這是為建築系學生設計的互動式 3D 都市風場教學工具，核心為 D3Q19 格子波茲曼求解器，v1.0.0 於 2026 年 9 月 15 日發布，並註明僅供教學與概念階段使用。",
+     "role": "以 LBM 讓設計者在早期階段直觀理解建築量體對風的影響。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Fluid Dynamics Simulation",
+     "creator": "Daniel V. Schroeder（Weber State University）",
+     "year": 2013,
+     "url": "https://physics.weber.edu/schroeder/fluids/",
+     "verified": true,
+     "evidence": "頁面標題為 Fluid Dynamics Simulation，說明以 lattice-Boltzmann 演算法模擬 2D 流體，黑色障礙物使流體偏轉並產生渦旋，頁面提及 2013 年 AAPT 海報發表與 2019 年的瀏覽器效能說明。",
+     "role": "可互動畫障礙物、看渦度的 LBM 網頁版，是本演算法最直接的程式參考。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "WebGL Fluid Simulation",
+     "creator": "Pavel Dobryakov",
+     "year": 2017,
+     "url": "https://github.com/PavelDoGreat/WebGL-Fluid-Simulation",
+     "verified": true,
+     "evidence": "GitHub 專案為瀏覽器上的 GPU 流體模擬，參考 GPU Gems 第 38 章 Fast Fluid Dynamics Simulation on the GPU，LICENSE 寫明 Copyright (c) 2017 Pavel Dobryakov。",
+     "role": "Stable Fluids 路線的代表性創作程式，可當本演算法的變形對照。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Lattice-Boltzmann Fluid Dynamics（Physics 3300 課程講義）",
+     "creator": "Daniel V. Schroeder（Weber State University）",
+     "year": 2012,
+     "url": "https://physics.weber.edu/schroeder/javacourse/LatticeBoltzmann.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁標題為「Lattice-Boltzmann Fluid Dynamics, Physics 3300, Weber State University, Spring Semester, 2012」，內文說明 D2Q9 的 9 個方向向量與權重 4/9、1/9、1/36。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Stable Fluids",
+     "creator": "Jos Stam",
+     "year": 1999,
+     "url": "https://history.siggraph.org/learning/stable-fluids-by-stam/",
+     "verified": true,
+     "evidence": "ACM SIGGRAPH 歷史檔案頁顯示此為 Jos Stam 於 SIGGRAPH 1999 發表的技術論文，提出無條件穩定的流體模擬方法。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "card_visual": "風從左側吹過三棟方塊建物的平面，渦度場以冷暖雙色顯示，建物下游拖出交錯的卡門渦街。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 5,
+    "teachability": 3,
+    "feasibility": 4,
+    "total": 17
+   },
+   "source_totals": {
+    "x2_BC": 17
+   },
+   "variation_hints": [
+    {
+     "name": "Stable Fluids（平流＋擴散＋壓力投影）",
+     "from": "x2_BC rejected",
+     "note": "x2 建議當本演算法的變形，不另立"
+    }
+   ],
+   "synth_note": "C03 專案種子「CFD 結果重繪的都市風環境圖」只重繪外部結果；本候選自己在格子上解流場。"
+  },
+  {
+   "key": "K18",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "白蟻式群體建造（晶格群體／Stigmergy 建造）",
+   "name_en": "Lattice Swarm Construction (Stigmergic Building)",
+   "family_suggest": "D 代理人",
+   "family_options": [
+    "x3_DE：D 代理人"
+   ],
+   "one_liner": "一群沒有藍圖的小代理人在 3D 格子裡亂走，只看自己周圍 26 格已經放了什麼磚，符合規則表的樣子就放一塊磚，最後集體「蓋」出像蜂巢、塔或拱的構造。",
+   "mechanism": [
+    "建立 3D 體素格，用 HashSet 記錄已放的磚，先放一顆種子磚。",
+    "每隻代理人在既有結構附近隨機行走（只能走空格，且必須貼著結構）。",
+    "每走一步就讀取周圍 3×3×3 鄰域的佔用狀態，編成 26 位元的整數鍵。",
+    "查規則表（Dictionary<int, 磚型>，可含旋轉對稱）：命中就在目前位置放磚，否則繼續走。",
+    "重複到磚數上限；比較不同規則表（例如 Theraulaz–Bonabeau 的胡蜂巢規則、TERMES 的「不可形成爬不上去的階差」限制）長出的形態。"
+   ],
+   "overlap": {
+    "nearest": "D01 變形「Stigmergy：留痕跡、追痕跡」與 D01 案例（Kokkugia／Robert Stuart-Smith 的群體建造）；C02 變形「真 3D 生命遊戲（26 鄰居）」；B02 DLA",
+    "difference": "D01 的 stigmergy 是在連續空間留下會蒸發的痕跡再被跟隨，產出是軌跡線；本演算法的「痕跡」就是永久的建材本身，代理人以局部構形比對規則表決定是否放磚，產出是離散的體素構造。C02 的 3D 生命遊戲是全格同步更新、會生也會死；這裡是非同步、只增不減、由移動代理人觸發。B02 DLA 是碰到就黏、沒有構形規則，只能長出樹枝狀；規則表則能長出有層、有柱、有拱的建築性構造。",
+    "verdict": "new"
+   },
+   "new_concept": "局部構形的位元編碼與查表（bitmask → Dictionary）、非同步的代理人建造、「環境就是記憶」的 stigmergy 建造觀念、規則表設計即形態設計（可比較規則與產物），以及可建造性約束（TERMES 的可攀爬規則）。",
+   "logic": [
+    "迭代模擬"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "180–300 行",
+   "gh_feasibility": "可行：佔用格用 HashSet<long> 編碼整數座標；代理人用 struct 陣列；每一步以位移運算組出 26 位元鍵查 Dictionary<int,int>；輸出以 Mesh 合併的方塊（逐塊 Append）。規則表可由 GH 輸入的整數清單讀入。上萬塊磚時必須合併成單一 Mesh 以免預覽過慢；不需外掛。",
+   "architecture_cases": [
+    {
+     "title": "TERMES：白蟻啟發的機器人建造團隊（Designing Collective Behavior in a Termite-Inspired Robot Construction Team）",
+     "creator": "Justin Werfel、Kirstin Petersen、Radhika Nagpal（Harvard）",
+     "year": "2014",
+     "url": "https://seas.harvard.edu/news/2014/02/robotic-construction-crew-needs-no-foreman",
+     "verified": true,
+     "evidence": "Harvard SEAS 2014 年 2 月 13 日新聞〈Robotic construction crew needs no foreman〉寫明研究刊於 Science 2 月 14 日號，機器人以 stigmergy（觀察彼此對環境的改變）與局部規則，在幾何上合適的空位放磚。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "FIBERBOTS：多代理人纖維複合數位製造系統",
+     "creator": "Markus Kayser、Levi Cai、Christoph Bader 等，Neri Oxman（MIT Media Lab Mediated Matter）",
+     "year": "2016–2019",
+     "url": "https://www.media.mit.edu/projects/fiberbots/overview/",
+     "verified": true,
+     "evidence": "MIT Media Lab 專案頁標題 FIBERBOTS: Design of a multi-agent, fiber composite digital fabrication system，期間 2016 年 1 月至 2019 年 5 月，16 台機器人依感測回饋與群聚式設計協定自主纏繞出約 4.5 公尺高的管狀結構。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "NetLogo Termites（白蟻堆木屑模型）",
+     "creator": "Uri Wilensky",
+     "year": "1997",
+     "url": "https://ccl.northwestern.edu/netlogo/models/Termites",
+     "verified": true,
+     "evidence": "NetLogo 模型庫頁面：白蟻隨機遊走，撿到木屑後遇到另一塊木屑就放下，沒有任何白蟻指揮，木屑最後聚成大堆；引用格式為 Wilensky (1997)。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Modelling the Collective Building of Complex Architectures in Social Insects with Lattice Swarms",
+     "creator": "Guy Theraulaz、Eric Bonabeau",
+     "year": "1995",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S002251938570255X",
+     "verified": true,
+     "evidence": "ScienceDirect 頁面顯示 Journal of Theoretical Biology 177(4)，1995 年 12 月 21 日，381–400 頁，作者 Guy Theraulaz、Eric Bonabeau；引用摘錄提到以 3D lattice swarm 生成建築形體。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Extended stigmergy in collective construction",
+     "creator": "Justin Werfel、Radhika Nagpal",
+     "year": "2006",
+     "url": "https://collaborate.princeton.edu/en/publications/extended-stigmergy-in-collective-construction/",
+     "verified": true,
+     "evidence": "Princeton 研究資料頁顯示刊於 IEEE Intelligent Systems 21(2)，2006 年 3 月，20–28 頁，作者 Justin Werfel、Radhika Nagpal。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "等角視角下，一堆小方塊從種子向外堆出帶層次的塔狀蜂巢，幾個亮色代理人在表面遊走。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 17
+   },
+   "source_totals": {
+    "x3_DE": 17
+   },
+   "variation_hints": [
+    {
+     "name": "機器人／無人機群體建造（應用情境）",
+     "from": "x3_DE rejected",
+     "note": ""
+    }
+   ],
+   "synth_note": "最接近 D01 變形「Stigmergy：留痕跡、追痕跡」與 D01 的 Kokkugia 群體建造案例；本候選的產出是依局部構形規則表堆出的 3D 晶格構造。與「離散聚合」同屬「放構件的生長」，請審查確認兩者是否重複。",
+   "related_keys": [
+    "K16"
+   ]
+  },
+  {
+   "key": "K19",
+   "sources": [
+    "x4_family"
+   ],
+   "name_zh": "自組織映射（SOM）",
+   "name_en": "Self-Organizing Map (Kohonen Network)",
+   "family_suggest": "I 機器學習與資料驅動（新家族）；不開家族時可併入 E",
+   "family_options": [
+    "x4_family：I 機器學習與資料驅動（新家族）；不開家族時可併入 E"
+   ],
+   "one_liner": "一張由神經元組成的彈性網格，每次隨機抽一筆資料，就把最像它的神經元和網格上的鄰居一起拉過去一點；久了網格會自己攤開、貼合資料的形狀。",
+   "mechanism": [
+    "建立 m×n（或一維環狀）神經元網格，每個神經元帶一個權重向量（例如 3D 座標或一組設計參數）。",
+    "隨機抽一筆輸入資料，找出權重最接近的勝出神經元（BMU）。",
+    "依神經元在網格上與 BMU 的距離，用高斯鄰域函數把 BMU 與鄰居往輸入拉近：w ← w + η·h·(x − w)。",
+    "學習率 η 與鄰域半徑隨迭代逐步縮小。",
+    "輸出攤開的網格（貼合點雲的曲面、TSP 環路），或把設計樣本排成相似度地圖。"
+   ],
+   "overlap": {
+    "nearest": "E03 Voronoi＋Lloyd 鬆弛（向量量化，與 k-means 同源）；E02 變形「TSP 單筆路徑」；E04 變形「從任意 Mesh 找形」",
+    "difference": "Lloyd／k-means 的每個點各自移向重心；SOM 的神經元之間有固定的網格拓樸，勝出者會帶著鄰居一起學，並隨時間縮小鄰域與學習率，因此能保持拓樸順序、把高維資料攤成 2D 地圖。它不是力的平衡（E04），而是逐筆資料的線上學習。",
+    "verdict": "new"
+   },
+   "new_concept": "競爭式學習與權重更新、學習率與鄰域半徑的遞減排程、保持拓樸的映射、把高維資料降成 2D 地圖。",
+   "logic": [
+    "迭代模擬",
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250",
+   "gh_feasibility": "神經元權重用 double[][] 或 Point3d[,]；輸入可為點雲（List<Point3d>）或設計參數表（DataTree<double>）；輸出以 Mesh 重建網格或 Polyline 環；Timer 動畫化學習過程。完全可行，不需外部函式庫。",
+   "architecture_cases": [
+    {
+     "title": "Design space exploration and optimization using self-organizing maps",
+     "creator": "Sidhant Pravinkumar Thole、Palaniappan Ramu",
+     "year": 2020,
+     "url": "https://doi.org/10.1007/s00158-020-02665-6",
+     "verified": true,
+     "evidence": "出版社頁需登入；以 Semantic Scholar API 查同一 DOI 確認標題、兩位作者與期刊 Structural and Multidisciplinary Optimization（2020）；以 SOM 視覺化並探索設計空間。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Mesh Fitter：用 Crow 的 2D 自組織映射把網格貼合點雲",
+     "creator": "Benjamin Felbrich",
+     "year": 2016,
+     "url": "https://www.grasshopper3d.com/video/mesh-fitter-2-dimensional-self-organizing-maps-using-crow-in",
+     "verified": true,
+     "evidence": "Grasshopper 官方社群影片頁，Benjamin Felbrich 於 2016 年 5 月 25 日上傳；說明以 Crow 0.2 外掛的 2D Kohonen 層（SOM）把管狀網格貼合點雲。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Using Self-Organizing Maps to Solve the Traveling Salesman Problem",
+     "creator": "Diego Vicente",
+     "year": "",
+     "url": "https://diego.codes/post/som-tsp/",
+     "verified": true,
+     "evidence": "部落格文章標題相符，作者 Diego Vicente；把神經元排成環狀一維陣列，像彈性繩圈收縮到城市上，以學習率與鄰域衰減求 TSP 近似解。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Self-organized formation of topologically correct feature maps",
+     "creator": "Teuvo Kohonen",
+     "year": 1982,
+     "url": "https://doi.org/10.1007/BF00337288",
+     "verified": true,
+     "evidence": "出版社頁需登入；以 Semantic Scholar API 查同一 DOI 確認標題、作者 T. Kohonen、期刊 Biological Cybernetics（API 年份欄誤標為 2004，原刊為 1982 年第 43 卷）。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "card_visual": "一團 3D 點雲中，一張彩色神經元網格從平面慢慢攤開、貼合點雲形狀，網格線表示神經元之間的鄰接。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 17
+   },
+   "source_totals": {
+    "x4_family": 17
+   },
+   "variation_hints": [],
+   "synth_note": "x5_audit 把 SOM 判為其「類神經網路」候選的非監督式變形（僅 1 個稽核來源）；x4 主張 SOM 的「網格拓樸鄰居一起學」與 E03 Lloyd／k-means 不同，若新家族 I 不成立建議併入 E。",
+   "related_keys": [
+    "K09"
+   ]
+  },
+  {
+   "key": "K20",
+   "sources": [
+    "x2_BC"
+   ],
+   "name_zh": "穩態熱傳導與 Laplace 場（鬆弛法）",
+   "name_en": "Steady-State Heat Conduction / Laplace Solver (Jacobi, Gauss–Seidel, SOR)",
+   "family_suggest": "C",
+   "family_options": [
+    "x2_BC：C"
+   ],
+   "one_liner": "把牆的剖面切成格子，室內外兩側固定溫度，其餘每一格反覆改成「四周鄰居的加權平均」，直到數值不再變動，就得到溫度分布、等溫線和冷橋位置。",
+   "mechanism": [
+    "建立格子：每格有溫度 T 與導熱係數 k（依材料區域的封閉曲線指定，例如混凝土、保溫層、鋼構）；邊界格標記為固定溫度（Dirichlet）或絕熱（Neumann）。",
+    "迭代：非固定格更新為鄰居溫度以界面導熱係數加權的平均（Jacobi 用舊值、Gauss–Seidel 就地更新、SOR 再乘上超鬆弛因子 ω≈1.8 加速）。",
+    "收斂判斷：記錄每一輪的最大變化量，小於容許值就停止。",
+    "後處理：由溫度梯度算熱流 q = −k∇T，沿邊界積分得總熱流與等效 U 值；畫等溫線（交給 C05）與熱流線（交給 C03）。",
+    "同一個求解器換邊界條件，也能解位勢流、電位或平滑內插（調和場）。"
+   ],
+   "overlap": {
+    "nearest": "C01 反應擴散（格子上的擴散項）；B02 DLA 變形「混合 C 家族：場驅動 DLA（DBM）」（解 Laplace 方程當生長機率）",
+    "difference": "C01 是沒有固定邊界的時間演化，重點在反應項造出圖樣；B02 的 DBM 只把 Laplace 解當成生長的中間步驟。本演算法把「邊界值問題」本身當主角：固定邊界、多材料導熱係數、求穩態（橢圓型方程）而不是動態，產出是可量化的溫度場、熱流與 U 值，並教到迭代線性求解器的收斂與加速。",
+    "verdict": "new"
+   },
+   "new_concept": "邊界值問題（Dirichlet／Neumann）、穩態橢圓型偏微分方程、迭代線性求解（Jacobi → Gauss–Seidel → SOR）與收斂判斷、由場求梯度與通量的後處理；對應建築物理的冷橋與 U 值分析。",
+   "logic": [
+    "搜尋／求解",
+    "迭代模擬"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "120–220 行",
+   "gh_feasibility": "C# 元件內容易完成：double[,] T、double[,] k、bool[,] fixed，材料區域以 Curve.Contains 指定；Gauss–Seidel＋SOR 對 200×200 格數百輪即可收斂；輸出彩色 Mesh、等溫線與熱流數值。限制：只做 2D 穩態傳導，不含輻射、對流與濕氣（THERM 等專業工具才有），適合概念比較而非認證計算。",
+   "architecture_cases": [
+    {
+     "title": "THERM 2.0: a PC Program for Analyzing Two-Dimensional Heat Transfer through Building Products",
+     "creator": "Elizabeth U. Finlayson, Robin Mitchell, Dariush K. Arasteh, Charlie Huizenga, D. Charlie Curcija（LBNL）",
+     "year": 1998,
+     "url": "https://windows.lbl.gov/publications/therm-20-pc-program-analyzing-two",
+     "verified": true,
+     "evidence": "LBNL Windows & Daylighting 出版頁列出此 1998 年文件與作者，說明 THERM 用於分析窗、牆、門等建築構件的二維熱傳，評估節能與溫度相關問題。",
+     "role": "建築構件二維熱傳（冷橋）分析的標準工具，本演算法是其簡化版核心。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Using Honeybee THERM to Calculate Psi-Values",
+     "creator": "Ed May（Ladybug Tools 論壇）",
+     "year": 2018,
+     "url": "https://discourse.ladybug.tools/t/using-honeybee-therm-to-calculate-psi-values/3328",
+     "verified": true,
+     "evidence": "Ladybug Tools 論壇貼文（2018 年 7 月 25 日）示範在 Grasshopper 中以 Honeybee THERM 元件做二維熱傳模擬，依 ISO 10211 計算鋼柱、外角、女兒牆等細部的線性熱橋係數 Psi 值。",
+     "role": "在 Grasshopper 設計流程中量化構造細部的冷橋。",
+     "via": [
+      "x2_BC"
+     ]
+    },
+    {
+     "title": "Analysis of the Occurrence of Thermal Bridges in Several Variants of Connections of the Wall and the Ground Floor in Construction Technology with the Use of a Hemp–Lime Composite",
+     "creator": "Przemysław Brzyski, Magdalena Grudzińska, Dariusz Majerek",
+     "year": 2019,
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6695749/",
+     "verified": true,
+     "evidence": "PMC 頁面顯示此文刊於 Materials（2019），以 THERM 7.4 的二維熱傳計算牆與地坪接頭的溫度分布，並以等溫線與線性熱傳透係數比較多種構造變體。",
+     "role": "用穩態熱傳導比較構造接頭設計方案。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Diffusion Curves: A Vector Representation for Smooth-Shaded Images",
+     "creator": "Alexandrina Orzan, Adrien Bousseau, Holger Winnemöller, Pascal Barla, Joëlle Thollot, David Salesin",
+     "year": 2008,
+     "url": "https://maverick.inria.fr/Publications/2008/OBWBTS08/",
+     "verified": true,
+     "evidence": "INRIA Maverick 出版頁列出此 SIGGRAPH 2008（ACM TOG 第 27 卷）論文，說明最終影像是以曲線上的顏色為邊界條件解 Poisson 方程而得。",
+     "role": "把「邊界固定、內部解 Laplace／Poisson」用在繪圖工具上，是同一個求解器的創作應用。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Poisson Image Editing",
+     "creator": "Patrick Pérez, Michel Gangnet, Andrew Blake",
+     "year": 2003,
+     "url": "https://history.siggraph.org/learning/poisson-image-editing-by-perez-blake-and-gangnet/",
+     "verified": true,
+     "evidence": "ACM SIGGRAPH 歷史檔案頁顯示此為 SIGGRAPH 2003 技術論文，以解 Poisson 方程做為影像區域的無縫內插與編輯框架。",
+     "via": [
+      "x2_BC"
+     ]
+    }
+   ],
+   "card_visual": "牆角斷面（混凝土＋外保溫，中間穿過一根鋼梁）的穩態溫度以冷暖色帶呈現，疊上等溫線，鋼梁處的冷橋明顯凹陷。",
+   "scores": {
+    "novelty": 3,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 16
+   },
+   "source_totals": {
+    "x2_BC": 16
+   },
+   "variation_hints": [],
+   "synth_note": "B02 變形「場驅動 DLA（DBM）」已在內部用 Laplace 疊代，但只當生長機率；本候選以鬆弛法（Jacobi、Gauss–Seidel、SOR）本身為主題。與「熱方法測地距離」的差異見該筆。",
+   "related_keys": [
+    "K10"
+   ]
+  },
+  {
+   "key": "K21",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "蟻群最佳化（ACO）",
+   "name_en": "Ant Colony Optimization (Ant System)",
+   "family_suggest": "D 代理人（亦可歸 F 圖樣與最佳化）",
+   "family_options": [
+    "x3_DE：D 代理人（亦可歸 F 圖樣與最佳化）"
+   ],
+   "one_liner": "一群虛擬螞蟻在「點與連線」構成的圖上一次次走完整條路線，走得短的路線留下更濃的費洛蒙、舊的費洛蒙慢慢蒸發，幾十輪後大家就收斂到一條又短又好的路徑。",
+   "mechanism": [
+    "把點位（要雷切的孔、要走訪的節點、桁架桿件的斷面選項）建成完全圖，每條邊記錄距離 d 與費洛蒙 τ（二維陣列）。",
+    "每隻螞蟻從隨機起點出發，依機率 p ∝ τ^α ·(1/d)^β 用輪盤法挑下一個還沒去過的點，直到走完一圈。",
+    "全部螞蟻走完後計算各自路線長度 L：所有邊的費洛蒙先乘上 (1−ρ) 蒸發，再讓每隻螞蟻在走過的邊上加 Q/L。",
+    "記錄目前最佳路線並重複多輪；可加 MAX-MIN（上下限）或精英螞蟻避免過早收斂。",
+    "輸出最佳路線 Polyline，並把每條邊的費洛蒙濃度畫成線寬，看見集體記憶如何形成。"
+   ],
+   "overlap": {
+    "nearest": "D02 Physarum 黏菌；D01 變形「Stigmergy：留痕跡、追痕跡」；F05 最短路徑（Dijkstra）；E02 變形「TSP 單筆路徑」",
+    "difference": "D01／D02 的痕跡是鋪在連續網格上的濃度場，代理人只做局部感測與轉向，沒有「完整解」的概念；ACO 的費洛蒙存在圖的邊上（鄰接矩陣），每隻螞蟻每輪都要建構一個完整的組合解，再依解的品質回饋，是組合最佳化的搜尋法。F05 是確定性的單源最短路，無法處理 TSP 這種要走遍所有點的問題；E02 的 TSP 路徑只是用貪婪法把點連起來，沒有群體學習。",
+    "verdict": "new"
+   },
+   "new_concept": "圖上的機率建構（輪盤選擇）、以「解的品質」回饋的正回饋＋蒸發（集體記憶）、組合最佳化（TSP、指派問題）與二維費洛蒙矩陣；可和 F04 基因演算法形成「兩種群體最佳化」的對照。",
+   "logic": [
+    "搜尋／求解",
+    "迭代模擬"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "完全可行：點位用 List<Point3d>，距離與費洛蒙用 double[,]，亂數用 System.Random；每次 SolveInstance 跑固定輪數，或用 Timer 逐輪顯示；輸出最佳 Polyline 與依 τ 設定粗細的 Line 清單。點數超過約 300 時 O(n²×螞蟻數) 會變慢，需限制點數或只連 k 個最近鄰。",
+   "architecture_cases": [
+    {
+     "title": "Design of Space Trusses Using Ant Colony Optimization（以 ACO 設計空間桁架）",
+     "creator": "Charles V. Camp、Barron J. Bichon",
+     "year": "2004",
+     "url": "https://ascelibrary.org/doi/abs/10.1061/(ASCE)0733-9445(2004)130:5(741)",
+     "verified": true,
+     "evidence": "ASCE Library 頁面標題為 Design of Space Trusses Using Ant Colony Optimization，作者 Charles V. Camp 與 Barron J. Bichon，刊於 Journal of Structural Engineering 130(5)，2004 年 5 月，741–751 頁；研究把桿件斷面選擇轉成修改版 TSP，以 ACO 最小化結構重量。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Dynamic construction site layout planning using max-min ant system（以 MAX-MIN 蟻群系統做動態工地配置）",
+     "creator": "Xin Ning、Ka-Chi Lam、Mike Chun-Kit Lam",
+     "year": "2010",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580509001277",
+     "verified": true,
+     "evidence": "ScienceDirect 頁面顯示 Automation in Construction 19(1)，2010 年 1 月，55–65 頁，作者 Xin Ning、Ka-Chi Lam、Mike Chun-Kit Lam，以 MMAS 解多階段工地設施配置問題。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "p5js_ants：p5.js 蟻群最佳化模擬器",
+     "creator": "oxling",
+     "year": "2020",
+     "url": "https://github.com/oxling/p5js_ants",
+     "verified": true,
+     "evidence": "GitHub 說明為 A p5.js ant colony optimization simulator，作者寫明 I used this to create weird generative art；連結的部落格文章日期為 2020 年 1 月 1 日。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Ant Colony Optimization: Quick & Easy Visual Simulator",
+     "creator": "OndiTech",
+     "year": "",
+     "url": "https://onditech.itch.io/ant-colony-optimization",
+     "verified": true,
+     "evidence": "itch.io 頁面說明使用者放置城市點後，觀看螞蟻以 ACO 解旅行推銷員問題，費洛蒙以線條呈現、最佳路徑為紅線；頁面未標示日期。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "The Ant System: Optimization by a colony of cooperating agents",
+     "creator": "Marco Dorigo、Vittorio Maniezzo、Alberto Colorni",
+     "year": "1996",
+     "url": "https://jmvidal.cse.sc.edu/library/dorigo96a.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁標題 The Ant System: Optimization by a colony of cooperating agents，頁首標示 IEEE Transactions on Systems, Man, and Cybernetics–Part B, Vol.26, No.1, 1996，摘要說明應用於旅行推銷員問題。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "散布的城市點之間布滿半透明連線，線寬代表費洛蒙濃度，一條最粗的封閉路線逐漸浮現。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 16
+   },
+   "source_totals": {
+    "x3_DE": 16
+   },
+   "variation_hints": [],
+   "synth_note": "x3 刻意與「網格上的蟻群覓食」區分（後者屬 D02／D01 Stigmergy，已判為變形）；本候選是在圖上做組合最佳化（TSP、路徑）。x3 建議 D，也可歸 F。",
+   "related_keys": [
+    "K04"
+   ]
+  },
+  {
+   "key": "K22",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "Schelling 隔離模型（鄰里偏好與遷居）",
+   "name_en": "Schelling Segregation Model",
+   "family_suggest": "D 代理人",
+   "family_options": [
+    "x3_DE：D 代理人"
+   ],
+   "one_liner": "格子上住著兩種居民，每個人只要求「鄰居裡至少三成跟我一樣」，不滿意就搬到空房；結果連輕微的偏好也會讓整座城自己分成一塊塊同質社區。",
+   "mechanism": [
+    "在方格（或任意地塊的鄰接圖）上隨機放 A、B 兩類居民，並保留一定比例的空房。",
+    "對每位居民計算 Moore 鄰域中同類的比例 s。",
+    "s 低於門檻 T 的居民標為不滿意；以隨機順序讓不滿意者搬到隨機的、或最近且能讓自己滿意的空房。",
+    "重複到沒有人想搬或達到步數上限，過程中記錄整體隔離指數（平均同類鄰居比例）。",
+    "輸出格子上色、搬遷路徑與隔離指數曲線；變形可加多族群、要求多樣性的反向偏好、房價等第二種效用。"
+   ],
+   "overlap": {
+    "nearest": "C02 生命遊戲疊層（格子＋鄰域規則）與其專案種子「都市擴張 CA 模擬」；D02 變形「多物種互斥」",
+    "difference": "C02 是全格同步的生死規則，格子狀態會生成或消失；Schelling 的居民數量守恆，核心動作是「不滿意 → 找空房搬家」，需要空房清單與搜尋，並以滿意度門檻（效用）驅動。D02 的多物種互斥是在濃度場上跟隨痕跡，不涉及個體偏好與位置交換。產出是社會空間分布，而不是形體或痕跡。",
+    "verdict": "new"
+   },
+   "new_concept": "個體效用與滿意度門檻、臨界點（tipping point）與參數掃描、守恆的代理人搬遷（空房清單、隨機順序更新）、以整體指標（隔離指數）量化湧現現象；讓學習者體會個人小偏好如何放大成都市尺度的社會結果。",
+   "logic": [
+    "迭代模擬"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "120–200 行",
+   "gh_feasibility": "非常容易：int[,] 表示格子、List<int> 存空房索引、Random 打亂更新順序；輸出以 Mesh 面上色，另輸出隔離指數數列接 Quick Graph。改成不規則地塊時，可用地塊中心點與距離門檻建立鄰接清單。",
+   "architecture_cases": [
+    {
+     "title": "From Schelling to Spatially Explicit Modeling of Urban Ethnic and Economic Residential Dynamics",
+     "creator": "Itzhak Benenson、Erez Hatna、Ehud Or",
+     "year": "2009",
+     "url": "https://journals.sagepub.com/doi/10.1177/0049124109334792",
+     "verified": true,
+     "evidence": "SAGE 頁面顯示此文 2009 年 5 月刊出（37 卷 4 期），作者 Benenson、Hatna、Or，摘要以 Schelling 居住隔離模型為起點發展空間顯式的都市族群與經濟居住動態模型。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Constructing and Implementing an Agent-Based Model of Residential Segregation through Vector GIS",
+     "creator": "Andrew T. Crooks（UCL CASA）",
+     "year": "2008",
+     "url": "https://discovery.ucl.ac.uk/id/eprint/15185/",
+     "verified": true,
+     "evidence": "UCL Discovery 頁面顯示 Crooks, AT (2008)，CASA Working Paper Series 133，Centre for Advanced Spatial Analysis；研究把 Schelling 式隔離模型放進以建築與街廓多邊形表示的向量 GIS 城市。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Parable of the Polygons（多邊形寓言）",
+     "creator": "Vi Hart、Nicky Case",
+     "year": "2014",
+     "url": "https://ncase.me/polygons/",
+     "verified": true,
+     "evidence": "頁面寫明模擬基於 Thomas Schelling 1971 年的 Dynamic Models of Segregation；Wikipedia 條目記載此互動作品於 2014 年 12 月由 Vi Hart 與 Nicky Case 發布。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "NetLogo Segregation",
+     "creator": "Uri Wilensky",
+     "year": "1997",
+     "url": "https://ccl.northwestern.edu/netlogo/models/Segregation",
+     "verified": true,
+     "evidence": "NetLogo 模型庫頁面的 HOW TO CITE 寫 Wilensky, U. (1997). NetLogo Segregation model；說明同色鄰居不足的代理人會搬到附近的空格。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Dynamic models of segregation",
+     "creator": "Thomas C. Schelling",
+     "year": "1971",
+     "url": "https://www.tandfonline.com/doi/abs/10.1080/0022250X.1971.9989794",
+     "verified": true,
+     "evidence": "Taylor & Francis 頁面顯示 The Journal of Mathematical Sociology 第 1 卷 1971 年第 2 期，143–186 頁，作者 Thomas C. Schelling（Harvard University）。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "兩色小方格從隨機的雜色逐步聚成大塊同色斑區，角落一條隔離指數曲線往上爬。",
+   "scores": {
+    "novelty": 3,
+    "architecture_relevance": 3,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 16
+   },
+   "source_totals": {
+    "x3_DE": 16
+   },
+   "variation_hints": [],
+   "synth_note": "最接近 C02 專案種子「都市擴張 CA 模擬」與 D02 變形「多物種互斥」；本候選的核心是代理人依鄰里滿意度遷居。"
+  },
+  {
+   "key": "K23",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "四邊形網格平面化（PQ Mesh 投影求解）",
+   "name_en": "Planar Quad (PQ) Mesh Planarization by Projection",
+   "family_suggest": "E 排列與鬆弛",
+   "family_options": [
+    "x3_DE：E 排列與鬆弛"
+   ],
+   "one_liner": "自由曲面切成的四邊形玻璃片通常是翹的；這個演算法反覆把每一片投影到自己的最佳擬合平面，再把共用頂點得到的多個答案取平均，直到每片都能用平板玻璃製作。",
+   "mechanism": [
+    "以自由曲面的 UV 或曲率線取樣得到四邊形網格（頂點陣列＋每面四個索引）。",
+    "對每個面以最小平方法求最佳擬合平面，把四個角點投影到該平面，得到「這個面希望的頂點位置」。",
+    "每個頂點收集所有相鄰面給的目標位置，再加上「貼近原曲面」「邊界固定」等目標，以權重平均得到新位置（局部投影＋全域平均）。",
+    "重複直到最大翹曲量（四點到擬合平面的距離）小於容許值。",
+    "輸出平面化網格、每片翹曲著色與偏離原曲面的距離；變形可改成圓形網格或錐形網格約束。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形與其專案種子「自寫迷你 Kangaroo：多目標約束求解器」；E04 變形「曲面上的網：約束在基底曲面」",
+    "difference": "E04 以質點、速度、彈簧力做時間積分，追求受力平衡的形；平面化沒有質量與速度，是純幾何的約束投影：每個約束各自算出理想位置，再在頂點上取加權平均（Shape-Up／ShapeOp 的 local-global 觀念），目標是可製造性（平板面板），並盡量貼近原設計曲面。E04 的迷你 Kangaroo 種子只提到多目標求解器，沒有教平面性約束與投影法。",
+    "verdict": "new"
+   },
+   "new_concept": "最小平方擬合平面（協方差的觀念）、約束投影求解（projection-based／local-global）、以翹曲量量化可製造性、可製造性與造形忠實度之間的權衡。",
+   "logic": [
+    "搜尋／求解",
+    "迭代模擬"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "180–300 行",
+   "gh_feasibility": "可行：Plane.FitPlaneToPoints 直接給最佳擬合平面，Plane.ClosestPoint 做投影，Surface.ClosestPoint 拉回原曲面；以 Point3d[] 累加器與計數陣列做平均；輸出四邊形 Mesh 與依翹曲量著色的 VertexColors。不需矩陣函式庫。",
+   "architecture_cases": [
+    {
+     "title": "Capital C（阿姆斯特丹）自由形鋼網殼的平面四邊形玻璃幾何最佳化",
+     "creator": "Koos Fritzsche、Wouter van der Sluis、Erik Smits、Jack Bakker；建築設計 ZJA Zwarts & Jansma Architects",
+     "year": "2021",
+     "url": "https://www.glassonweb.com/article/capital-c-geometric-optimization-free-form-steel-gridshell-towards-planar-quadrilateral",
+     "verified": true,
+     "evidence": "glassonweb 文章〈Capital C, Geometric Optimization of a Free-Form Steel Gridshell Towards Planar Quadrilateral Glass Units〉（2021），說明以 Grasshopper＋Kangaroo 自訂程式迭代求解，要求每個網格面都是平面並貼近參考曲面。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "柏林動物園河馬館玻璃屋頂（House for Hippopotamus, Zoo Berlin）",
+     "creator": "schlaich bergermann partner（Hans Schober）；建築師 J. Gribl",
+     "year": "1996",
+     "url": "https://www.sbp.de/en/project/house-for-hippopotamus-zoo-berlin/",
+     "verified": true,
+     "evidence": "sbp 專案頁說明此為第一個以平移曲面原理設計的建築，因此能以平面四邊形玻璃覆蓋雙曲網殼；Structurae 記載完工年為 1996。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "compas_3gs：Planarisation（平面化）",
+     "creator": "Block Research Group（COMPAS）",
+     "year": "",
+     "url": "https://blockresearchgroup.github.io/compas_3gs/latest/user_manual/01_multi-cell_polyhedron/01_40_planarisation.html",
+     "verified": true,
+     "evidence": "文件頁說明每輪把各面投影到其中心與法向或最佳擬合平面，頂點得到多個座標後取平均，重複到誤差小於容許值；屬 Block Research Group 的 COMPAS 套件。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Geometric modeling with conical meshes and developable surfaces",
+     "creator": "Yang Liu、Helmut Pottmann、Johannes Wallner、Yong-Liang Yang、Wenping Wang",
+     "year": "2006",
+     "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2006/lhwyw_conical_06/lhwyw_conical_06.html",
+     "verified": true,
+     "evidence": "TU Wien 頁面顯示 SIGGRAPH 2006 論文，說明如何最佳化四邊形網格使其面變成平面，甚至成為錐形網格。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Shape-Up: Shaping Discrete Geometry with Projections",
+     "creator": "Sofien Bouaziz、Mario Deuss、Yuliy Schwartzburg、Thibaut Weise、Mark Pauly",
+     "year": "2012",
+     "url": "https://diglib.eg.org/items/a4c90034-74dc-4bd9-82a9-79c7f77c9ab0",
+     "verified": true,
+     "evidence": "Eurographics Digital Library 頁面顯示 Computer Graphics Forum 31(5)，2012，作者 Bouaziz、Deuss、Schwartzburg、Weise、Pauly。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "一片自由曲面四邊形網格，面片由紅色（翹曲）逐步轉成綠色（平面），角落顯示最大翹曲量數值。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 5,
+    "teachability": 3,
+    "feasibility": 4,
+    "total": 16
+   },
+   "source_totals": {
+    "x3_DE": 16
+   },
+   "variation_hints": [],
+   "synth_note": "x4_family、x5_audit 都判為 E04 的約束求解變形（建議 E04 變形「平面性約束」），E04 專案種子「自寫迷你 Kangaroo：多目標約束求解器」也涵蓋投影求解的精神；x3 主張投影式 local–global 求解與動態鬆弛不同。catalog 裡沒有對應變形，彙整保留為候選，請審查判斷。"
+  },
+  {
+   "key": "K24",
+   "sources": [
+    "x4_family"
+   ],
+   "name_zh": "網格展開（展開圖）",
+   "name_en": "Mesh Unfolding (Polyhedral Nets)",
+   "family_suggest": "G 幾何處理與網格（新家族）",
+   "family_options": [
+    "x4_family：G 幾何處理與網格（新家族）"
+   ],
+   "one_liner": "把一個多面體網格沿「面鄰接圖的生成樹」剪開，一片片以共用邊為軸轉平，攤成一張可以印出、切割再摺回去的展開圖。",
+   "mechanism": [
+    "建立面鄰接圖（對偶圖）：每個面是節點、共用邊是連線，連線權重可用摺角大小或邊長。",
+    "從起始面做 BFS 或最小生成樹，決定哪些邊保留為摺線、其餘邊剪開。",
+    "依樹的順序，把每個子面以和父面共用的邊為軸旋轉到父面所在平面，變換沿樹一路累乘。",
+    "每放一片就檢查是否與已放好的面重疊（2D 多邊形相交），重疊就在該邊剪斷、另起一個島。",
+    "輸出切割線、山線／谷線、黏貼翼片與面編號。"
+   ],
+   "overlap": {
+    "nearest": "E04 變形「受壓殼 → 可製造構件」（每格四邊形輸出平板並展開編號）；A04 變形「可製造的面板與框料」",
+    "difference": "既有做法是把每片面板各自獨立攤平；本演算法以面鄰接圖＋生成樹讓相鄰面保持相連，得到連續的展開圖，並處理重疊與分島。核心資料結構是對偶圖與樹上的累積剛體變換，產出是可摺回原形的單張或少數幾張板材。",
+    "verdict": "new"
+   },
+   "new_concept": "對偶圖（面鄰接圖）、以生成樹決定剪開哪些邊、沿樹累乘的剛體變換（Transform 串接）、2D 重疊偵測與分島。",
+   "logic": [
+    "幾何轉換",
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "200–300",
+   "gh_feasibility": "以 Mesh.Faces 與 Mesh.TopologyEdges.GetConnectedFaces 建面鄰接圖；Transform.Rotation（角度、軸、點）與 Transform.PlaneToPlane 把面轉平；重疊用 Curve.PlanarCurveCollision 或 Curve.CreateBooleanIntersection 判斷。全部 RhinoCommon 可完成。只處理三角面或平面四邊形面（非平面面先 Triangulate）；「最少分島」是困難問題，範例用貪婪法即可。",
+   "architecture_cases": [
+    {
+     "title": "n|Strip：以可展開長條鋁片組成的自承重裝置",
+     "creator": "Marc Fornes / THEVERYMANY",
+     "year": 2010,
+     "url": "https://theverymany.com/constructs/10-nstrip",
+     "verified": true,
+     "evidence": "專案頁標題「10 n|Strip」，2010 年 3–4 月於巴黎 Galerie Synesthésie；文中說明長條形態「developable (therefore still able to be unrolled)」，501 條鋁條平切後現場鉚接組裝。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Ivy：Grasshopper 的網格分析、分割與展開外掛",
+     "creator": "Andrei Nejur",
+     "year": "",
+     "url": "https://grasshopperdocs.com/addons/ivy.html",
+     "verified": true,
+     "evidence": "Grasshopper Docs 外掛頁「Ivy」，作者 Andrei Nejur，說明為 mesh analysis, segmentation and unrolling，把網格面當節點、拓樸邊當連線（MeshGraph）套用圖論演算法；同外掛的 MeshGraph Unroll 元件說明為「Unroll the underlying mesh of a tree graph」。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Pepakura Designer：把 3D 模型轉成紙模型展開圖",
+     "creator": "Tama Software",
+     "year": "",
+     "url": "https://pepakura.tamasoft.co.jp/pepakura_designer/index.html",
+     "verified": true,
+     "evidence": "官方產品頁，開發者 Tama Software Ltd.，說明軟體把 3D 模型轉成可剪下、摺起、黏合的 2D 展開圖樣。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Making papercraft toys from meshes using strip-based approximate unfolding",
+     "creator": "Jun Mitani、Hiromasa Suzuki",
+     "year": 2004,
+     "url": "https://history.siggraph.org/learning/making-papercraft-toys-from-meshes-using-strip-based-approximate-unfolding-by-mitani-and-suzuki/",
+     "verified": true,
+     "evidence": "SIGGRAPH 歷史檔案頁：標題、作者 Jun Mitani 與 Hiromasa Suzuki、SIGGRAPH 2004；內容為把三角網格近似成無內部頂點的三角帶再展開成紙模型。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "A Survey of Developable Surfaces: From Shape Modeling to Manufacturing",
+     "creator": "Chao Yuan、Nan Cao、Yang Shi",
+     "year": 2023,
+     "url": "https://arxiv.org/abs/2304.09587",
+     "verified": true,
+     "evidence": "arXiv 摘要頁：標題與作者相符，2023 年 4 月 19 日提交；摘要提到可展曲面衍生出分割、展開（unfolding）與製造方法。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "card_visual": "左邊一個立體多面體（如截角二十面體），右邊同色攤開的展開圖，實線為切割線、虛線為摺線。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 4,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 16
+   },
+   "source_totals": {
+    "x4_family": 16
+   },
+   "variation_hints": [],
+   "synth_note": "E04 變形「受壓殼 → 可製造構件」與 A04 變形「可製造的面板與框料」只輸出單片平板；本候選處理整體展開圖（對偶圖生成樹＋重疊檢查）。"
+  },
+  {
+   "key": "K25",
+   "sources": [
+    "x4_family"
+   ],
+   "name_zh": "直骨架屋頂（Straight Skeleton）",
+   "name_en": "Straight Skeleton (Hip Roof Generation)",
+   "family_suggest": "G 幾何處理與網格（新家族）",
+   "family_options": [
+    "x4_family：G 幾何處理與網格（新家族）"
+   ],
+   "one_liner": "讓建築平面輪廓的每條邊以相同速度往內平移，記下頂點走過的軌跡與相撞的位置，就得到四坡屋頂的屋脊與斜脊線。",
+   "mechanism": [
+    "對多邊形每個頂點算出角平分線方向，以及讓相鄰兩邊等速內縮所需的頂點速度。",
+    "預測兩種事件：某條邊縮成零長（edge event）、凹頂點撞上對邊（split event），依發生時間放進優先佇列。",
+    "取出最早的事件，更新內縮中的多邊形（合併頂點或把多邊形分裂成兩個），並重新預測受影響頂點的事件。",
+    "重複直到多邊形完全消失；所有頂點的移動軌跡就是直骨架。",
+    "以事件時間乘上屋面坡度當高度，把骨架抬升成屋面，每條原始外牆邊對應一片屋面。"
+   ],
+   "overlap": {
+    "nearest": "E03 Voronoi＋Lloyd（中軸／等距概念相近）；A04 變形「任意多邊形基地（OBB 分割）」；A05 變形「分割文法（split grammar）」",
+    "difference": "Voronoi 以點的距離分區、多邊形的中軸會出現拋物線；直骨架以邊的等速內縮產生全為直線的骨架，且每條邊恰好對應一個面，能直接變成屋面。演算法是事件驅動的波前傳播（優先佇列＋拓樸更新），和 A04 的遞迴切割、A05 的規則改寫都不同。",
+    "verdict": "new"
+   },
+   "new_concept": "事件驅動模擬（依時間排序的優先佇列）、波前傳播、角平分線與凹頂點的 split event 拓樸變化；「時間＝高度」的轉換。",
+   "logic": [
+    "幾何轉換",
+    "搜尋／求解"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "250–400（只處理凸多邊形的簡化版約 120 行）",
+   "gh_feasibility": "輸入平面封閉 Polyline；以 Vector3d 算角平分線、Rhino.Geometry.Intersect.Intersection.LineLine 求事件點；優先佇列用 SortedSet 或排序後的 List；輸出骨架 Line 與以 Brep.CreateFromCornerPoints 或 Mesh 組成的屋面。完全用 RhinoCommon 可做。難點在數值容差與同時發生的多個事件：基礎範例限定無洞、一般位置的多邊形，split event、加權（不同坡度）與有洞平面列為進階變形。",
+   "architecture_cases": [
+    {
+     "title": "Interactive Architectural Modeling With Procedural Extrusions",
+     "creator": "Tom Kelly、Peter Wonka",
+     "year": 2011,
+     "url": "https://history.siggraph.org/learning/interactive-architectural-modeling-with-procedural-extrusions-by-kelly-and-wonka/",
+     "verified": true,
+     "evidence": "SIGGRAPH 歷史檔案頁：標題、作者 Tom Kelly 與 Peter Wonka、SIGGRAPH 2011；內容為由建築平面輪廓做程序化擠出，產生曲面屋頂、出挑屋頂、老虎窗等，參考文獻大量引用直骨架研究。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "Straight Skeletons with Additive and Multiplicative Weights and Their Application to the Algorithmic Generation of Roofs and Terrains",
+     "creator": "Martin Held、Peter Palfrader",
+     "year": 2016,
+     "url": "https://arxiv.org/abs/1604.03362",
+     "verified": true,
+     "evidence": "arXiv 摘要頁：標題與作者相符，2016 年 4 月 12 日提交；摘要說明以加權直骨架為建築平面輪廓自動產生屋頂與地形。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "CityEngine CGA roofHip 四坡屋頂運算",
+     "creator": "Esri",
+     "year": "",
+     "url": "https://doc.arcgis.com/en/cityengine/latest/cga/cga-roof-hip.htm",
+     "verified": true,
+     "evidence": "官方文件頁標題「roofHip operation—ArcGIS CityEngine Resources」，第一句為「The roofHip operation builds a hip roof perpendicular to each face of the current shape's geometry」；每條邊產生固定角度平面並互相切割成屋面，即直骨架屋頂的工具化應用。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "bpypolyskel：Blender 直骨架四坡屋頂函式庫",
+     "creator": "prochitecture",
+     "year": "",
+     "url": "https://github.com/prochitecture/bpypolyskel",
+     "verified": true,
+     "evidence": "GitHub 儲存庫說明：由建築平面輪廓計算直骨架並產生 hipped roof，以 OpenStreetMap 約 32 萬個四坡屋頂測試、99.99% 成功；演算法源自 Felkel 與 Obdržálek 1998，GPL-3.0。",
+     "via": [
+      "x4_family"
+     ]
+    },
+    {
+     "title": "campskeleton：加權直骨架的 Java 實作",
+     "creator": "Tom Kelly（twak）",
+     "year": "",
+     "url": "https://github.com/twak/campskeleton",
+     "verified": true,
+     "evidence": "GitHub 儲存庫說明為 weighted straight skeleton implementation in Java，實作 Felkel 演算法並允許負權重，README 引用 Kelly 與 Wonka 2011 的 procedural extrusions 論文。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "A Novel Type of Skeleton for Polygons",
+     "creator": "Oswin Aichholzer、David Alberts、Franz Aurenhammer、Bernd Gärtner",
+     "year": 1995,
+     "url": "https://www.jucs.org/jucs_1_12/a_novel_type_of/Aichholzer_O.html",
+     "verified": true,
+     "evidence": "J.UCS 期刊頁：標題、四位作者、Journal of Universal Computer Science 第 1 卷第 12 期（1995）；文中首次定義 straight skeleton 為由角平分線片段組成、把 n 邊形樹狀分割的內部結構。",
+     "via": [
+      "x4_family"
+     ]
+    }
+   ],
+   "card_visual": "一個不規則 L 形或 T 形平面輪廓，內部畫出直骨架的屋脊與斜脊，並用淡色塊區分每條外牆邊對應的屋面。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 5,
+    "teachability": 3,
+    "feasibility": 3,
+    "total": 16
+   },
+   "source_totals": {
+    "x4_family": 16
+   },
+   "variation_hints": [],
+   "synth_note": "簡化版（只處理凸多邊形）約 120 行；一般多邊形含分裂事件需 250–400 行，可行性自評 3。"
+  },
+  {
+   "key": "K26",
+   "sources": [
+    "x5_audit"
+   ],
+   "name_zh": "強化學習（Q-learning）",
+   "name_en": "Reinforcement Learning (Tabular Q-learning)",
+   "family_suggest": "建議新家族 G「學習」（與類神經網路同組）；不新增家族時放 D（代理人）",
+   "family_options": [
+    "x5_audit：建議新家族 G「學習」（與類神經網路同組）；不新增家族時放 D（代理人）"
+   ],
+   "one_liner": "讓一個代理人在格子世界裡反覆試走，走到好地方給獎勵、撞牆或繞遠路扣分，它把每一步的經驗記在一張表裡，最後自己學會最好的走法。",
+   "mechanism": [
+    "定義狀態（格子位置或設計的部分狀態）、動作（上下左右，或放置、切割）與獎勵（到達目標加分、碰撞扣分、每走一步小扣分）。",
+    "建立 Q 表 Q(s, a)，所有值從 0 開始。",
+    "每一回合從起點出發，用 ε-greedy 選動作（多半選 Q 值最大的，偶爾隨機探索），得到新狀態 s' 與獎勵 r。",
+    "更新 Q(s, a) ← Q(s, a) + α·[r + γ·max Q(s', ·) − Q(s, a)]，直到抵達終點；重複數千回合並逐漸降低 ε。",
+    "把每格的最大 Q 值畫成價值場、最佳動作畫成箭頭，再用學到的策略產生路徑或設計序列。"
+   ],
+   "overlap": {
+    "nearest": "F05 最短路徑（Dijkstra，變形「多起點距離場」）；D01 Boids、D03 人流（規則式代理人）",
+    "difference": "F05 在已知整張地圖時一次算出最短路；D01、D03 的代理人照固定規則行動。Q-learning 的代理人一開始一無所知，靠試誤與獎勵累積經驗值表而學出策略；核心是獎勵與 Bellman 價值更新，資料結構是狀態 × 動作的 Q 表，產出是可重複使用的策略而不是單一路徑。",
+    "verdict": "new"
+   },
+   "new_concept": "馬可夫決策過程（狀態、動作、獎勵）、Bellman 更新與折扣率、探索與利用（ε-greedy）、價值函數與策略、用獎勵描述設計目標。",
+   "logic": [
+    "迭代模擬",
+    "搜尋／求解"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "Q 表用 double[狀態數, 動作數] 即可，格子世界以整數座標表示，障礙物由 Curve 取樣成格子；Timer 逐回合訓練並即時畫出價值場 Mesh 與策略箭頭（Line）。表格法不需外部函式庫；若改用深度 Q 網路，需搭配類神經網路候選，運算量較高。",
+   "architecture_cases": [
+    {
+     "title": "Robotic assembly of timber joints using reinforcement learning",
+     "creator": "Aleksandra Anna Apolinarska、Matteo Pacher、Hui Li、Nicholas Cote、Rafael Pastrana、Fabio Gramazio、Matthias Kohler",
+     "year": 2021,
+     "url": "https://api.crossref.org/works/10.1016/j.autcon.2021.103569",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Automation in Construction 125, 2021，ETH Gramazio Kohler 團隊以強化學習訓練機械手臂組裝木構接頭",
+     "via": [
+      "x5_audit"
+     ]
+    },
+    {
+     "title": "Illuminating Spaces: Deep Reinforcement Learning and Laser-Wall Partitioning for Architectural Layout Generation",
+     "creator": "Reza Kakooee、Benjamin Dillenburger",
+     "year": 2025,
+     "url": "https://arxiv.org/abs/2502.04407",
+     "verified": true,
+     "evidence": "arXiv 2025-02-06 論文，摘要說明以深度強化學習搭配 laser-wall 分割法生成建築空間配置",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "REINFORCEjs",
+     "creator": "Andrej Karpathy",
+     "year": 2015,
+     "url": "https://cs.stanford.edu/people/karpathy/reinforcejs/",
+     "verified": true,
+     "evidence": "頁面標題 REINFORCEjs，含 GridWorld 動態規劃與 TD（SARSA、Q-Learning）互動示範；GitHub 專案 karpathy/reinforcejs 建立於 2015-04-19",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Q-learning",
+     "creator": "Christopher J. C. H. Watkins、Peter Dayan",
+     "year": 1992,
+     "url": "https://api.crossref.org/works/10.1007/BF00992698",
+     "verified": true,
+     "evidence": "CrossRef 紀錄：Machine Learning 8, 279–292, 1992",
+     "via": [
+      "x5_audit"
+     ]
+    }
+   ],
+   "card_visual": "格子迷宮中每格依學到的價值由暗到亮上色，格內小箭頭指向最佳動作，一條亮色路徑從起點彎到目標。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 16
+   },
+   "source_totals": {
+    "x5_audit": 16
+   },
+   "seen_in": [
+    "The Nature of Code（2024 第二版）",
+    "TU Delft AR0202 Computational Intelligence for Integrated Design",
+    "Harvard GSD SCI-6485 Introduction to Machine Learning for Designers"
+   ],
+   "variation_hints": [],
+   "synth_note": "只有 x5 提出；x5 建議與類神經網路組成新家族「學習」，不新增家族時放 D（代理人）。",
+   "related_keys": [
+    "K09"
+   ]
+  },
+  {
+   "key": "K27",
+   "sources": [
+    "x1_AF"
+   ],
+   "name_zh": "等面鋪磚與 Escher 化（Heesch 型鑲嵌）",
+   "name_en": "Isohedral Tiling & Escherization (Heesch Types)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化）"
+   ],
+   "one_liner": "先選一種對稱規則（例如一邊怎麼彎、對邊就平移照彎，或繞中點轉半圈），把正方形或六角形的邊變形成蜥蜴、鳥的輪廓，同一塊磚就能無縫鋪滿整面牆。",
+   "mechanism": [
+    "選一種 Heesch／等面鋪磚類型（例如 TTTT 平行四邊形、TTTTTT 六角形、TCTC、CCC），決定格子向量與每條邊的配對關係。",
+    "設計者只畫「自由邊」的曲線；程式依規則自動生成配對邊：T 邊＝平移複製、C 邊＝繞邊中點旋轉 180° 的點對稱曲線、G 邊＝滑移反射。",
+    "把所有邊依序接成一條封閉曲線，就是可以鋪滿平面的原型磚。",
+    "依該類型的對稱群（平移＋旋轉或滑移反射）把原型磚複製到格子上，並用兩色或三色交錯著色。",
+    "變形：以最佳化自動調整頂點與邊形，使磚形最接近使用者給的目標輪廓（Kaplan 的 Escherization）。"
+   ],
+   "overlap": {
+    "nearest": "F01 Truchet 磁磚（固定方磚內的圖案旋轉）；F02 伊斯蘭圖樣（固定多邊形底圖上的射線）",
+    "difference": "Truchet 與 Hankin 法都是「方磚或多邊形的外形固定、只改內部圖案」；等面鋪磚改的是「磚本身的邊界」，核心機制是依對稱群把一條自由邊推導出其他邊，資料結構是格子向量＋邊類型（T／C／G）＋變換組合，產出是可互鎖的單一異形磚。",
+    "verdict": "new"
+   },
+   "new_concept": "平面對稱群（壁紙群）與等面鋪磚分類、邊的約束（平移／點對稱／滑移反射）、Transform 的組合與格子座標；也是「一個模具量產互鎖構件」的製造思維。",
+   "logic": [
+    "幾何轉換"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行（實作 4–6 種 Heesch 型）",
+   "gh_feasibility": "可行：自由邊用 Curve 輸入或 Polyline 控制點，Transform.Translation、Transform.Rotation(π, 中點)、Transform.Mirror 產生配對邊，Curve.JoinCurves 接成封閉輪廓；以雙層迴圈乘格子向量複製（Transform 可直接套在 Curve.Duplicate 上）。只做 4–6 種常用類型即可；完整 93 種等面類型與 Escherization 最佳化要查表與數值最佳化，超出單一元件，列為進階變形。",
+   "architecture_cases": [
+    {
+     "title": "Metamorphosis III 放大壁畫（海牙郵政總局，今移至史基浦機場）",
+     "creator": "M. C. Escher（放大繪製：Huug Vooys）",
+     "year": "1969",
+     "url": "https://escherinhetpaleis.nl/en/about-escher/escher-today/metamorphosis-iii-revealed-hague-1969",
+     "verified": true,
+     "evidence": "頁面標題「Metamorphosis III is revealed in The Hague, 1969」，說明 7 公尺原作放大為 48 公尺，1969 年 2 月 20 日於海牙新郵局揭幕，2008 年 1 月移至史基浦機場。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Creating 3D texture tessellation on planar surface using a single tile or a few tiles（以單一或少數磚在平面上形成 3D 紋理鑲嵌）",
+     "creator": "Anooshe Rezaee Javan、Ahmed Abdelaal、Yi Min Xie",
+     "year": "2024",
+     "url": "https://doi.org/10.1016/j.foar.2024.05.001",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、2024 年刊於 Frontiers of Architectural Research，參考文獻包含 3D Escher 磚 CAD 工具與等面鋪磚研究。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "tactile-js：等面鋪磚的 JavaScript 函式庫（含 p5.js 範例）",
+     "creator": "Craig S. Kaplan（isohedral）",
+     "year": "",
+     "url": "https://github.com/isohedral/tactile-js",
+     "verified": true,
+     "evidence": "GitHub 專案 tactile-js 說明為表示、操作與繪製平面週期鋪磚的函式庫，支援 93 種等面類型中的 81 種，附 P5.js 範例。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Escherization",
+     "creator": "Craig S. Kaplan、David H. Salesin",
+     "year": "2000",
+     "url": "https://history.siggraph.org/learning/escherization-by-kaplan-and-salesin/",
+     "verified": true,
+     "evidence": "ACM SIGGRAPH 歷史檔案頁標題「“Escherization” by Kaplan and Salesin」，2000 年技術論文，以在等面鋪磚參數空間中最佳化找出近似目標輪廓的磚形。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "一塊由方形邊界彎成鳥形的磚，以平移與半圈旋轉鋪滿畫面，相鄰磚以兩色交錯，旁邊用細線標出原本的方格。",
+   "scores": {
+    "novelty": 4,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 4,
+    "total": 15
+   },
+   "source_totals": {
+    "x1_AF": 15
+   },
+   "variation_hints": [],
+   "synth_note": "只有 x1 提出；x1 已把「Heesch 型／Escher 鑲嵌」併入本候選。最接近 F01 Truchet 與 F02 伊斯蘭圖樣（都是固定底圖上放圖案），本候選改變的是磚本身的邊界。"
+  },
+  {
+   "key": "K28",
+   "sources": [
+    "x1_AF"
+   ],
+   "name_zh": "粒子群最佳化（PSO）",
+   "name_en": "Particle Swarm Optimization (PSO)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "family_options": [
+    "x1_AF：F（圖樣與最佳化）"
+   ],
+   "one_liner": "一群「粒子」在參數空間裡飛，每顆都記得自己找過最好的地方，也知道整群最好的地方，速度就朝這兩個方向拉，整群慢慢聚到好解上。",
+   "mechanism": [
+    "每顆粒子有位置 x（一組設計參數）與速度 v，隨機初始化在參數範圍內。",
+    "評估每顆粒子的適應度，更新個體最佳 pbest 與群體最佳 gbest。",
+    "更新速度 v = w·v + c1·r1·(pbest − x) + c2·r2·(gbest − x)，再更新位置 x = x + v，並把超出範圍的參數夾回邊界。",
+    "重複指定代數或直到 gbest 不再進步，輸出 gbest 與收斂曲線。",
+    "變形：慣性權重遞減、鄰域拓樸（只看附近粒子的 lbest）、離散版 PSO。"
+   ],
+   "overlap": {
+    "nearest": "F04 基因演算法（同為族群式隨機最佳化）；D01 Boids（同樣用速度向量更新）",
+    "difference": "PSO 沒有選擇、交配與突變，粒子帶著速度與「記憶」（pbest）在連續參數空間移動，靠社會學習收斂；F04 的機制是基因重組。與 D01 的差別是 PSO 的粒子飛在「參數空間」而不是實體空間，目的是最佳化而非群聚行為。三者中只有核心機制不同，資料結構與產出類型接近，屬於邊界案例；若 F 家族名額有限，建議優先收模擬退火。",
+    "verdict": "new"
+   },
+   "new_concept": "群體智慧與社會學習、速度與慣性在參數空間中的意義、探索與利用的權衡（w、c1、c2）；可和 F04、模擬退火並列比較三種黑盒子最佳化。",
+   "logic": [
+    "搜尋／求解",
+    "迭代模擬"
+   ],
+   "difficulty": 3,
+   "loc_estimate": "120–200 行",
+   "gh_feasibility": "完全可行：粒子用 class Particle { double[] X, V, Best; double BestScore; }；示範的適應度可直接在元件內計算（例如在地形 Surface 上找最高點，或以 Ray 與 Mesh 求交算點位日照）；輸出 Point3d 與速度 Line、gbest 收斂 Polyline。接 Timer 可看到粒子飛行；若要評估外部元件的結果，和 F04 一樣需要多元件迴圈或改用 Silvereye。",
+   "architecture_cases": [
+    {
+     "title": "SILVEREYE – The Implementation of Particle Swarm Optimization Algorithm in a Design Optimization Tool",
+     "creator": "Judyta M. Cichocka、Agata Migalska、Will N. Browne、Edgar Rodriguez",
+     "year": "2017",
+     "url": "https://link.springer.com/chapter/10.1007/978-981-10-5197-5_9",
+     "verified": true,
+     "evidence": "Springer 章節頁標題與四位作者相符，收於 CAAD Futures 2017（151–169 頁），以屋頂幾何最佳化實驗比較 PSO 與演化式求解器。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Genetic evolution vs. function approximation: Benchmarking algorithms for architectural design optimization",
+     "creator": "Thomas Wortmann",
+     "year": "2019",
+     "url": "https://academic.oup.com/jcde/article/6/3/414/5732355",
+     "verified": true,
+     "evidence": "Journal of Computational Design and Engineering 6(3):414–428 頁面，作者 Thomas Wortmann，基準測試包含以 Silvereye 實作的 PSO，涵蓋結構、建築能耗與採光七個問題。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "PySwarms：Python 粒子群最佳化研究工具（含 2D／3D 粒子動畫）",
+     "creator": "Lester James V. Miranda",
+     "year": "2018",
+     "url": "https://github.com/ljvmiranda921/pyswarms",
+     "verified": true,
+     "evidence": "GitHub 專案說明為「A research toolkit for particle swarm optimization in Python」，2018 年發表於 JOSS，附等高線與曲面上的粒子移動動畫工具。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Particle swarm optimization",
+     "creator": "J. Kennedy、R. Eberhart",
+     "year": "1995",
+     "url": "https://doi.org/10.1109/ICNN.1995.488968",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 J. Kennedy 與 R. Eberhart、刊於 Proceedings of ICNN'95（1995）。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "等高線地形上散布的粒子帶著速度箭頭，朝最高峰聚攏，最佳粒子以亮色標出。",
+   "scores": {
+    "novelty": 3,
+    "architecture_relevance": 3,
+    "teachability": 4,
+    "feasibility": 5,
+    "total": 15
+   },
+   "source_totals": {
+    "x1_AF": 15
+   },
+   "variation_hints": [],
+   "synth_note": "只有 x1 提出（x3 把 PSO 留給 x1）。與 F04 同為族群式隨機最佳化、與 D01 同用速度向量更新，novelty 自評 3。",
+   "related_keys": [
+    "K01"
+   ]
+  },
+  {
+   "key": "K29",
+   "sources": [
+    "x1_AF"
+   ],
+   "name_zh": "迭代函數系統（IFS／混沌遊戲）",
+   "name_en": "Iterated Function System (IFS / Chaos Game)",
+   "family_suggest": "A（規則與語法）；或 F（與 F06 奇異吸子同屬吸子）",
+   "family_options": [
+    "x1_AF：A（規則與語法）；或 F（與 F06 奇異吸子同屬吸子）"
+   ],
+   "one_liner": "準備幾個「縮小＋旋轉＋平移」的變換，每次隨機挑一個套在目前的點上，點了幾萬次之後，點雲自己浮現出 Barnsley 蕨或 Sierpinski 三角形。",
+   "mechanism": [
+    "定義 k 個收縮仿射變換 f_i(p) = A_i·p + b_i（2×2 或 3×3 矩陣＋平移），並為每個變換指定機率（常用 |det A_i| 的比例）。",
+    "從任意一點出發，每一步依機率抽一個變換套上去，得到下一個點（混沌遊戲）。",
+    "捨棄前幾十步，其餘點全部記錄；因為每個變換都會收縮，點雲一定收斂到同一個自相似的吸子，與起點無關。",
+    "依點是由哪個變換產生來上色，或把點數累積成密度圖。",
+    "確定性版本：把初始圖形同時套用全部變換、反覆 d 層（Hutchinson 運算子），可和機率版本對照。"
+   ],
+   "overlap": {
+    "nearest": "F06 奇異吸子（單一非線性公式反覆代入）；A05 形狀文法（畢氏樹其實就是確定性 IFS）；A02 Koch 曲線（遞迴自相似）",
+    "difference": "F06 只有一條固定的非線性公式，本演算法是「多個仿射變換＋機率抽選」，資料結構是變換矩陣集合，教到矩陣與收縮映射；A05 的畢氏樹是確定性地替換帶標籤的形狀，IFS 的隨機迭代（混沌遊戲）與「由變換集合唯一決定吸子」的觀念在圖鑑中還沒有。屬於邊界案例，若審查認為過近，可改列 A05 或 F06 的變形。",
+    "verdict": "new"
+   },
+   "new_concept": "仿射變換矩陣（Transform 的 M00–M23）與矩陣組合、收縮映射與不動點（吸子唯一性）、以機率迭代取代遞迴展開、自相似與碎形維度。",
+   "logic": [
+    "改寫／遞迴",
+    "迭代模擬"
+   ],
+   "difficulty": 2,
+   "loc_estimate": "80–150 行",
+   "gh_feasibility": "完全可行：變換用 List<Transform>（直接設定 Transform 的 M00、M01、M03 等欄位，或用 Transform.Scale × Rotation × Translation 組合），機率用 double[] 累積分佈抽選；點用 PointCloud 輸出並依變換編號上色，十萬點以內即時。3D IFS 只要改用 4×4 Transform；確定性版本對 Curve 或 Brep 套 Transform 複製即可，但層數要控制（k^d 成長）。",
+   "architecture_cases": [
+    {
+     "title": "Fractal-Based Generative Design of Structural Trusses Using Iterated Function System（以 IFS 生成桁架）",
+     "creator": "Iasef Md Rian、Mario Sassone",
+     "year": "2014",
+     "url": "https://doi.org/10.1260/0266-3511.29.4.181",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Iasef Md Rian 與 Mario Sassone、2014 年刊於 International Journal of Space Structures。",
+     "via": [
+      "x1_AF"
+     ]
+    },
+    {
+     "title": "Research on Generation of Fractal Architecture Model Scheme via Iterated Function System (IFS)",
+     "creator": "Yongsop U、Ying Yu、Dong Han、Jizhou Sun",
+     "year": "2015",
+     "url": "https://doi.org/10.2991/csic-15.2015.18",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題與四位作者，收於 2015 年 International Conference on Computer Science and Intelligent Communication 論文集。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Coding Challenge #108：Barnsley Fern（Barnsley 蕨）",
+     "creator": "Daniel Shiffman（The Coding Train）",
+     "year": "2018",
+     "url": "https://thecodingtrain.com/challenges/108-barnsley-fern/",
+     "verified": true,
+     "evidence": "頁面標題「#108 — Barnsley Fern」，內容講解矩陣與以機率挑選變換公式畫出蕨葉，附 p5.js 與 Processing 程式。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "Iterated function systems and the global construction of fractals",
+     "creator": "M. F. Barnsley、S. Demko",
+     "year": "1985",
+     "url": "https://doi.org/10.1098/rspa.1985.0057",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 M. F. Barnsley 與 S. Demko、1985 年 Proceedings of the Royal Society of London A。",
+     "via": [
+      "x1_AF"
+     ]
+    }
+   ],
+   "card_visual": "深色背景上由四個仿射變換隨機迭代出的 Barnsley 蕨點雲，每個變換產生的點用不同綠色。",
+   "scores": {
+    "novelty": 3,
+    "architecture_relevance": 2,
+    "teachability": 5,
+    "feasibility": 5,
+    "total": 15
+   },
+   "source_totals": {
+    "x1_AF": 15
+   },
+   "variation_hints": [
+    {
+     "name": "Barnsley 蕨",
+     "from": "x1_AF rejected",
+     "note": "IFS 的代表範例"
+    }
+   ],
+   "synth_note": "x5_audit 判為 A05 形狀文法（畢氏樹即確定性 IFS）與 F06 奇異吸子可涵蓋（僅 1 個來源）；catalog 裡沒有 IFS／混沌遊戲的變形，彙整保留為候選。建築相關性自評 2。"
+  },
+  {
+   "key": "K30",
+   "sources": [
+    "x3_DE"
+   ],
+   "name_zh": "等向性重新網格（Isotropic Remeshing）",
+   "name_en": "Isotropic Remeshing (Split–Collapse–Flip–Relax)",
+   "family_suggest": "E 排列與鬆弛",
+   "family_options": [
+    "x3_DE：E 排列與鬆弛"
+   ],
+   "one_liner": "把一張三角形大小亂七八糟的曲面網格，反覆「太長就切、太短就併、翻邊讓每點接近六條邊、再沿曲面滑順」，變成三角形幾乎一樣大的均勻網格。",
+   "mechanism": [
+    "由目標邊長 L 設定上下限（約 4/3·L 與 4/5·L）。",
+    "切分：長於上限的邊在中點切開。",
+    "收縮：短於下限的邊合併兩端點（先檢查不會產生過長邊或翻面）。",
+    "翻邊：若翻轉某條邊能讓四個相關頂點的價數更接近 6（邊界點為 4）就翻。",
+    "切向鬆弛：每點往鄰點重心移動、只保留切向分量，再投影回原曲面；以上步驟重複 5–20 輪。"
+   ],
+   "overlap": {
+    "nearest": "B01 變形「3D 網格差異生長」；A04 變形「網格細分（Catmull-Clark 精神）」；E04 變形「從任意 Mesh 找形」",
+    "difference": "B01 的 3D 網格生長只切邊加點、讓曲面長大起皺，沒有收縮與翻邊，也不綁在原曲面上；A04 的細分是規則地一分為四，網格只會變密、不會變勻；E04 只移動頂點、拓樸不變。重新網格的核心是拓樸編輯：在固定曲面上同時做切、併、翻三種連結性改變，目標是網格品質（邊長一致、價數 6），產出是可施工的均勻三角面板。",
+    "verdict": "new"
+   },
+   "new_concept": "半邊（half-edge）或邊–面鄰接資料結構、網格拓樸編輯（split／collapse／flip）、頂點價數與網格品質指標、切向平滑加上投影回曲面；既有單元都只「移點不改連結」，這裡第一次教改連結。",
+   "logic": [
+    "迭代模擬",
+    "幾何轉換"
+   ],
+   "difficulty": 4,
+   "loc_estimate": "300–400 行",
+   "gh_feasibility": "可行但偏長：RhinoCommon 的 Mesh 沒有現成拓樸編輯 API，需自寫精簡的邊–面鄰接表（List<int[]> 面＋Dictionary<(int,int), 邊>），每輪重建一次；投影用 Mesh.ClosestPoint 或 Brep.ClosestPoint；輸出重建後的 Mesh 與依邊長偏差著色。每輪重建鄰接較慢，但數千個面仍可接受；Plankton 僅作參考，不可依賴外掛。",
+   "architecture_cases": [
+    {
+     "title": "A triangular grid generation and optimization framework for the design of free-form gridshells",
+     "creator": "Qi-sheng Wang、Jun Ye、Hui Wu、Bo-qing Gao、Paul Shepherd",
+     "year": "2019",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0010448518302732",
+     "verified": true,
+     "evidence": "ScienceDirect 頁面顯示 Computer-Aided Design 113 卷（2019 年 8 月）96–113 頁，研究在自由曲面上產生均勻、形狀良好的三角網格，供自由形網殼結構設計。",
+     "via": [
+      "x3_DE"
+     ]
+    },
+    {
+     "title": "Dynamic remeshing（MeshMachine 動態重新網格）",
+     "creator": "Daniel Piker",
+     "year": "2014",
+     "url": "https://www.grasshopper3d.com/profiles/blogs/dynamic-remeshing-now-with-feature-preservation-curvature",
+     "verified": true,
+     "evidence": "Grasshopper 社群 2014 年 4 月 22 日文章〈Dynamic remeshing - now with feature preservation, curvature adaptivity, and minimal surfaces〉，作者 Daniel Piker，說明控制邊長、依曲率調整密度，並可做極小曲面找形。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Plankton：Grasshopper 用的 half-edge 網格函式庫",
+     "creator": "Daniel Piker、Will Pearson",
+     "year": "2013",
+     "url": "https://github.com/meshmash/Plankton",
+     "verified": true,
+     "evidence": "GitHub README 說明 Plankton 是以 half-edge 結構處理 n 邊形網格的 C# 函式庫，原為 Grasshopper C#/VB 腳本元件而寫，含 edge collapse、face split 等拓樸操作，版權 2013 Daniel Piker 與 Will Pearson。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "references": [
+    {
+     "title": "A Remeshing Approach to Multiresolution Modeling",
+     "creator": "Mario Botsch、Leif Kobbelt",
+     "year": "2004",
+     "url": "https://www.graphics.rwth-aachen.de/publication/03101/",
+     "verified": true,
+     "evidence": "RWTH Aachen 論文頁顯示 Symposium on Geometry Processing 2004，189–196 頁，作者 Mario Botsch、Leif Kobbelt。",
+     "via": [
+      "x3_DE"
+     ]
+    }
+   ],
+   "card_visual": "同一片曲面左半邊是大小懸殊的破碎三角網，右半邊是邊長一致、近乎六價的均勻三角網，交界以漸層過渡。",
+   "scores": {
+    "novelty": 5,
+    "architecture_relevance": 4,
+    "teachability": 3,
+    "feasibility": 3,
+    "total": 15
+   },
+   "source_totals": {
+    "x3_DE": 15
+   },
+   "variation_hints": [
+    {
+     "name": "Delaunay 翻邊（Bowyer–Watson 逐點插入）",
+     "from": "x3_DE rejected",
+     "note": ""
+    }
+   ],
+   "synth_note": "x4_family 判為 B01 變形 V08「3D 網格差異生長」的延伸（已有 split edge 與半邊結構），並認為需要分割、合併、翻邊、平滑四種操作，超過 400 行、屬研究級；x3 主張它是保形的網格品質最佳化，目的與 B01 的生長不同。請審查判斷可行性與是否重複。"
+  }
+ ],
+ "to_variation": [
+  {
+   "name": "鄰接圖彈簧：泡泡圖配置（力導向 Fruchterman–Reingold）",
+   "merge_into": "E01",
+   "reason": "房間圓依需求面積定半徑、兩兩互斥推開是 E01 的核心，鄰接房間以彈簧相吸是 E04 的彈簧；核心機制、資料結構與產出（圓的配置）都沒有超出 E01／E04，只是多了鄰接圖輸入。可作為 E01 變形，並銜接 E03 變形「Power diagram（加權 Voronoi）」與 E03 專案種子「面積指定的泡泡平面生成器」。x1、x4、x5 三個方向也各自判為變形。",
+   "origin": "彙整改判（原 x3_DE 候選「力導向泡泡圖配置（鄰接圖 → 平面）」，自評 18）",
+   "sources": [
+    "x3_DE",
+    "x1_AF",
+    "x4_family",
+    "x5_audit"
+   ],
+   "refs": [
+    {
+     "title": "Modeling architectural design objectives in physically based space planning",
+     "creator": "Scott A. Arvin、Donald H. House",
+     "year": "2002",
+     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580500000996"
+    },
+    {
+     "title": "A Syntactic Architectural Design Methodology（SYNTACTIC Grasshopper 工具）",
+     "creator": "Pirouz Nourian、Samaneh Rezvani、Sevil Sariyildiz（TU Delft）",
+     "year": "2013",
+     "url": "https://www.researchgate.net/publication/283311082_A_SYNTACTIC_ARCHITECTURAL_DESIGN_METHODOLOGY_Integrating_real-time_Space_Syntax_analysis_in_a_configurative_architectural_design_process"
+    },
+    {
+     "title": "Automated architectural space layout planning using a physics-inspired generative design framework",
+     "creator": "Zhipeng Li、Sichao Li、Geoff Hinchcliffe、Noam Maitless、Nick Birbilis",
+     "year": "2024",
+     "url": "https://arxiv.org/abs/2406.14840"
+    },
+    {
+     "title": "d3-force（力導向圖佈局）",
+     "creator": "Mike Bostock／D3",
+     "year": "2015",
+     "url": "https://github.com/d3/d3-force"
+    },
+    {
+     "title": "Graph drawing by force-directed placement",
+     "creator": "Thomas M. J. Fruchterman、Edward M. Reingold",
+     "year": "1991",
+     "url": "https://onlinelibrary.wiley.com/doi/10.1002/spe.4380211102"
+    }
+   ]
+  },
+  {
+   "name": "非支配排序多目標（NSGA-II／Pareto 前緣）",
+   "merge_into": "F04",
+   "reason": "在 GA 上加非支配排序與擁擠距離；F04 目前只有「多目標加權」變形與專案種子「迷你 Octopus：兩目標 Pareto 前緣」，建議補成正式變形。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x1_AF",
+    "x5_audit"
+   ]
+  },
+  {
+   "name": "逃逸時間分形場（Mandelbrot／Julia）",
+   "merge_into": "C05",
+   "reason": "逐點迭代得到逃逸步數當場值，再取等值線，是 C05「換場函數」的一種；x5 補充查不到以此為核心的建築案例，所以只當變形。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x1_AF",
+    "x5_audit"
+   ]
+  },
+  {
+   "name": "疊紋（Moiré）：雙層週期圖樣的干涉紋",
+   "merge_into": "F02",
+   "reason": "兩層週期圖樣相對旋轉或縮放產生的視覺現象，不是獨立演算法；與 F02 V11「多層疊合（穹頂光影）」相近但重點在干涉紋，也可放 F01（雙層穿孔板的疊紋立面）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x1_AF"
+   ]
+  },
+  {
+   "name": "鏡曲線：Kolam 與凱爾特結",
+   "merge_into": "F01",
+   "reason": "鏡曲線可化約為三種磚（交叉、兩種反射）的 Truchet 鋪排再加上下交織。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x1_AF"
+   ]
+  },
+  {
+   "name": "圖文法：改寫規則作用在房間鄰接圖上",
+   "merge_into": "A05",
+   "reason": "核心仍是改寫規則，只是對象換成鄰接圖；子圖比對在單一元件內負擔重、建築案例多停留在學術工具。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x1_AF"
+   ]
+  },
+  {
+   "name": "周界隨機生長（Eden 模型）",
+   "merge_into": "B02",
+   "reason": "Eden 模型等同 DBM 取 η=0（周界格等機率長出），是 B02 群集生長換一條黏附規則。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "對數螺線掃掠成殼（Raup 貝殼模型）",
+   "merge_into": "B04",
+   "reason": "截面沿對數螺線掃掠並等比放大，是 B04 螺線公式的 3D 曲面版；參考 Fowler, Meinhardt & Prusinkiewicz〈Modeling seashells〉（SIGGRAPH 1992）與 Gene Kogan SeashellGenerator（x2 已開啟確認）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "六角格連續 CA（Reiter 雪花）",
+   "merge_into": "C02",
+   "reason": "六角鄰域＋連續狀態＋鄰居平均擴散，是 C02 連續狀態 CA 換成六角格；查不到建築案例，只當變形。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "Fast Marching：Eikonal 距離場",
+   "merge_into": "F05",
+   "reason": "同樣是優先佇列的波前擴散，只把 Dijkstra 的邊權更新換成 Eikonal 局部更新公式，可減少格子方向造成的距離誤差；補在 F05 V04「多起點距離場」旁。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "守恆型相分離（Cahn–Hilliard／spinodal 雙連續結構）",
+   "merge_into": "C01",
+   "reason": "計算骨架同 C01（格子拉普拉斯更新），差在守恆型方程；產出迷宮狀雙相圖樣。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "中點位移／Diamond-square 地形",
+   "merge_into": "C04",
+   "reason": "另一種分形高程生成法，產出與用途同 C04。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x2_BC"
+   ]
+  },
+  {
+   "name": "追逐與逃離的雙物種群聚（捕食者–獵物）",
+   "merge_into": "D01",
+   "reason": "核心是 Reynolds 的 pursue／evade 轉向，再加出生與死亡規則；建築案例薄弱，只當變形。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x3_DE"
+   ]
+  },
+  {
+   "name": "Lévy flight 步長",
+   "merge_into": "B02",
+   "reason": "只把隨機行走的步長換成冪次律分布，機制與資料結構不變（x3 也提到可放 D01）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x3_DE",
+    "x4_family"
+   ]
+  },
+  {
+   "name": "交通 CA 時空圖（Rule 184／Nagel–Schreckenberg）",
+   "merge_into": "C02",
+   "reason": "NaSch 在最高速 1、無隨機減速時就是 Wolfram Rule 184，本質是一維 CA 換規則與狀態。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x3_DE"
+   ]
+  },
+  {
+   "name": "彎曲桿件與編織網殼",
+   "merge_into": "E04",
+   "reason": "核心是彈簧＋彎曲鬆弛，再加上下交錯的標記（E04 已收 KnitCandela 案例）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x3_DE"
+   ]
+  },
+  {
+   "name": "布料下垂與碰撞",
+   "merge_into": "E04",
+   "reason": "質點＋彈簧＋重力＋阻尼與 E04 機制相同；x4 評估「物理與動力」家族後建議改為替 E04 補此變形。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family"
+   ]
+  },
+  {
+   "name": "位置式動力學（PBD／投影約束求解器）",
+   "merge_into": "E04",
+   "reason": "Kangaroo 2 本身就是投影式約束求解，屬 E04 的求解器變形（呼應 E04 專案種子「自寫迷你 Kangaroo」）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family"
+   ]
+  },
+  {
+   "name": "複數共形映射（e^z、Möbius 變換、Droste 效果）",
+   "merge_into": "F01",
+   "reason": "本質是對既有圖樣做座標轉換；查不到足量建築案例，適合當 F 家族圖樣的映射變形（也可放 F02）。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family"
+   ]
+  },
+  {
+   "name": "網路中心性：closeness／Space syntax 整合度（平均深度）",
+   "merge_into": "F05",
+   "reason": "F05 V07「多組起終點＋流量疊加」已接近 betweenness；這裡補的是全點對最短路徑的平均深度（closeness、integration）與正規化指標。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family",
+    "x5_audit"
+   ]
+  },
+  {
+   "name": "k-means 面板分群（自由曲面面板歸成少數模具類型）",
+   "merge_into": "E03",
+   "reason": "k-means 就是在資料空間做 Lloyd 迭代。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family",
+    "x5_audit"
+   ]
+  },
+  {
+   "name": "Markov 鏈序列生成（n-gram，一維範例驅動）",
+   "merge_into": "A06",
+   "reason": "由範例統計轉移機率再抽樣，與 A06「從範例學規則（範例驅動）」的教學重點重疊，可當一維版本。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x4_family"
+   ]
+  },
+  {
+   "name": "Superformula（Gielis 超公式）形狀場",
+   "merge_into": "C05",
+   "reason": "只是一條極座標公式、查無真實建築案例；可作為 C05「換場函數」或 E01／B04 的形狀輸入。",
+   "origin": "探索方向 rejected 的建議",
+   "sources": [
+    "x5_audit"
+   ]
+  }
+ ],
+ "families": [
+  {
+   "letter_suggest": "G",
+   "name_zh": "幾何處理與網格",
+   "name_en": "Geometry Processing & Meshes",
+   "definition": "以既有幾何（多邊形、網格、曲面）為輸入，透過拓樸鄰接結構（面鄰接圖、頂點鄰接）、曲面量測或運動學，把形體轉換成可建造或可分析的另一種表示：展開圖、屋面、測地線網、可摺疊鑲嵌。重點在「處理既有幾何」，而不是從無到有生成。",
+   "boundary_vs_existing": "A 規則與語法：A 以字串／形狀改寫由規則長出幾何；G 以既有網格或輪廓為輸入做轉換。A04 的「網格細分（Catmull-Clark 精神）」變形屬於遞迴細分，保留在 A04，不併入 G。B 生長：B 是逐步加點的生長模擬；B01 的 3D 網格差異生長雖會用到網格拓樸，但目的在生長。C 場與擴散：C 在規則格網上算場；G3 熱方法雖然用擴散，但是在不規則網格上解線性系統求曲面距離，重點是曲面度量。D 代理人：無重疊。E 排列與鬆弛：E04 以力平衡迭代找形；G 以幾何或運動學約束（展開、直骨架事件、剛性摺疊）直接求解，不做力的迭代。F 圖樣與最佳化：F 產生平面圖樣或做最佳化；G4 的摺痕圖可看成圖樣，但核心是 3D 摺疊運動學。",
+   "recommendation": "建議新增家族",
+   "reason": "四個候選都查得到建築實作或研究（THEVERYMANY 鋁條、CityEngine／OSM 屋頂、UWE 與 Chalmers 測地線網殼、舘知宏的剛性摺紙），而且都教到既有六個家族沒有的東西：對偶圖與生成樹展開、事件驅動的優先佇列、稀疏線性系統、運動學自由度。它們都偏向「把設計變成可製造的形」，和既有以生成為主的家族互補。難度偏高（3–4），適合放在圖鑑後段。",
+   "source": "x4_family",
+   "candidate_keys": [
+    "K24",
+    "K25",
+    "K10",
+    "K02"
+   ],
+   "candidate_names": [
+    "網格展開（展開圖）",
+    "直骨架屋頂（Straight Skeleton）",
+    "測地線距離與測地線網（熱方法）",
+    "剛性摺紙鑲嵌（三浦摺）"
+   ],
+   "synth_note": "其他方向也有可歸入 G 的候選：K30 等向性重新網格（x3）、K23 四邊形網格平面化（x3）、K13 測地線圓頂（x3，也可歸 A／E）。"
+  },
+  {
+   "letter_suggest": "H",
+   "name_zh": "空間分析與圖論",
+   "name_en": "Spatial Analysis & Graphs",
+   "definition": "把基地、平面或點位轉成「關係」來計算：誰看得到誰（視線）、太陽照得到哪裡（光線約束）、點與點如何以最短總長相連（生成樹）。產出是分析場，或受這些關係約束的形體與網路，也就是用空間關係反推設計。",
+   "boundary_vs_existing": "A：規則改寫，不涉及視線或全域的圖量測。B：B03 空間殖民會連成樹，但由吸引點逐步長出，不是在既有點集上求最小總長。C：C 的場由公式或擴散算出；H 的場來自射線投射（可見度、日照）等幾何關係。D：D03 人流模擬的「Space syntax 可見度加權」變形只使用可見度；H1 則教可視域本身怎麼算。E：E03 的 Delaunay 對偶只是副產品，沒有全域最佳化。F：F05 已涵蓋最短路徑、可及性與流量疊加（接近網路中心性），因此網路中心性與 Space syntax 軸線整合度不列新演算法；H 補的是另外兩類：可見性（射線）與生成樹（並查集）。F04 的日照適應度變形只評分，不產生包絡。",
+   "recommendation": "建議新增家族",
+   "reason": "三個候選都有大量真實建築與都市研究應用（Space syntax／isovist、日照權與 Solar Carve、建築群形態分析），在 GH C# 中 100–300 行就能從零做出，難度 2–3 適合前中段。它們共同教「以空間關係計算」這種既有家族沒有的思考方式。若不想新開家族，H3 可併入 F（放在 F05 旁），但 H1、H2 在既有家族中沒有合適歸屬。",
+   "source": "x4_family",
+   "candidate_keys": [
+    "K03",
+    "K05",
+    "K04"
+   ],
+   "candidate_names": [
+    "Isovist 可視域與可見性圖分析",
+    "太陽包絡（Solar Envelope）",
+    "最小生成樹（Kruskal＋並查集）"
+   ],
+   "synth_note": "x5 對 K03、K05 建議歸 C；K12 地表逕流與集水區（x2）也屬空間分析，可一併考量。"
+  },
+  {
+   "letter_suggest": "I",
+   "name_zh": "機器學習與資料驅動",
+   "name_en": "Machine Learning & Data-driven",
+   "definition": "演算法的行為不是由設計者寫死的規則決定，而是「看資料調整自己的參數」：用範例（點雲、設計樣本、模擬結果）反覆更新權重，學到映射或分布之後再拿來生成或預測。",
+   "boundary_vs_existing": "A06 WFC 的「從範例學規則」只統計相鄰組合，沒有可調權重與誤差修正。B、C、D 都是規則寫死的模擬。E03 Lloyd 與 k-means 同源（向量量化），所以 k-means 應作為 E03 的變形；SOM 多了「網格拓樸鄰居一起學」與遞減排程，才放在本家族。F04 GA 是無梯度的族群搜尋；MLP 以梯度下降與反向傳播修正權重，思考方式不同。C 家族的場由公式定義；MLP 可以當成「學出來的場函數」（CPPN 變形），但重點在訓練。",
+   "recommendation": "建議新增家族",
+   "reason": "「從資料學習」是既有六個家族都沒有的思考方式，也是學習者最想接觸的主題。目前可查證又能在 GH C# 內從零實作（不依賴外掛）的只有 SOM 與 MLP 兩個；PCA 建築案例查證不足、k-means 屬 E03 變形、神經細胞自動機與 GAN／擴散模型無法在元件內訓練，所以家族先收 2 個。若家族至少要 3 個演算法才開，建議 SOM 併入 E（鬆弛／向量量化旁）、MLP 併入 F（最佳化）。",
+   "source": "x4_family",
+   "candidate_keys": [
+    "K19",
+    "K09"
+   ],
+   "candidate_names": [
+    "自組織映射（SOM）",
+    "多層感知器（小型神經網路）"
+   ],
+   "synth_note": "x5_audit 另建議新家族「學習」＝K09 類神經網路＋K26 強化學習（Q-learning），定義與 I 一致，K26 可列入 I；x5 把 SOM 視為類神經網路的變形，x4 則獨立列為 K19。"
+  },
+  {
+   "letter_suggest": "J",
+   "name_zh": "機率與隨機過程",
+   "name_en": "Stochastic Processes",
+   "definition": "以機率分布與隨機取樣為核心：用 Markov 鏈、Monte Carlo 取樣或 Metropolis 接受準則，在巨大的可能性中抽樣或搜尋。",
+   "boundary_vs_existing": "機率在既有家族已普遍作為「亂數輸入」：A01 隨機 L-System、A05 機率文法、A06 WFC 加權挑選、B02 DLA 隨機漫步、E02 Poisson 取樣。Markov 鏈序列生成與 A06「從範例學規則」、A05「多條規則競爭（機率文法）」重疊；Monte Carlo 光線取樣可作為 H1、H2 的變形。真正新的只有「以機率接受較差解」的 Metropolis／模擬退火，它本質上是最佳化，應與 F04 GA 並列。",
+   "recommendation": "候選可分散併入既有家族",
+   "reason": "家族大部分內容已散在 A、B、E；唯一的新演算法模擬退火建議放進 F（參考編號 F07），和 F04 GA 形成「族群搜尋 vs 單點退火」的對照，不必另開家族。",
+   "source": "x4_family",
+   "candidate_keys": [
+    "K01"
+   ],
+   "candidate_names": [
+    "模擬退火（Metropolis 準則）"
+   ],
+   "synth_note": "唯一候選模擬退火已和 x1、x5 的同名候選合併為 K01。"
+  },
+  {
+   "letter_suggest": "K",
+   "name_zh": "物理與動力",
+   "name_en": "Physics & Dynamics",
+   "definition": "以牛頓力學或約束投影模擬布料、剛體、流體等物理行為，得到下垂、碰撞、流動的形體。",
+   "boundary_vs_existing": "E04 動態鬆弛已是質點彈簧＋阻尼的物理引擎（含張拉膜、充氣、Kinetic Damping、曲面約束，專案種子還有「自寫迷你 Kangaroo：多目標約束求解器」）；D01、D03 已有粒子受力與鄰居搜尋；C04 已有「水力侵蝕後處理」變形。布料、位置式動力學（PBD）、質點彈簧都會變成 E04 的變形或重複。",
+   "recommendation": "不建議",
+   "reason": "可做的部分幾乎都被 E04 涵蓋；剩下的剛體模擬（慣性張量、碰撞與接觸）與 SPH 流體在 GH C# 400 行內難以穩定實作，而且查不到足量可查證的建築案例。候選全部列入 rejected，建議改為替 E04 補「布料／PBD」變形。",
+   "source": "x4_family",
+   "candidate_keys": [],
+   "candidate_names": [],
+   "synth_note": "沒有候選；x4 建議改為替 E04 補「布料下垂與碰撞」「位置式動力學（PBD）」變形，已列入 to_variation。"
+  }
+ ]
+}

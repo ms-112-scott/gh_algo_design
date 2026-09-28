@@ -1,0 +1,982 @@
+{
+ "scope": "new families",
+ "direction": "既有家族以外的全新家族：幾何處理／網格、空間分析／圖論、機器學習／資料驅動、機率與隨機過程、物理與動力",
+ "run": "R20260928-2216",
+ "agent": "x4_family",
+ "families": [
+  {
+   "letter_suggest": "G",
+   "name_zh": "幾何處理與網格",
+   "name_en": "Geometry Processing & Meshes",
+   "definition": "以既有幾何（多邊形、網格、曲面）為輸入，透過拓撲鄰接結構（面鄰接圖、頂點鄰接）、曲面量測或運動學，把形體轉換成可建造或可分析的另一種表示：展開圖、屋面、測地線網、可摺疊鑲嵌。重點在「處理既有幾何」，而不是從無到有生成。",
+   "boundary_vs_existing": "A 規則與語法：A 以字串／形狀改寫由規則長出幾何；G 以既有網格或輪廓為輸入做轉換。A04 的「網格細分（Catmull-Clark 精神）」變形屬於遞迴細分，保留在 A04，不併入 G。B 生長：B 是逐步加點的生長模擬；B01 的 3D 網格差異生長雖會用到網格拓撲，但目的在生長。C 場與擴散：C 在規則格網上算場；G3 熱方法雖然用擴散，但是在不規則網格上解線性系統求曲面距離，重點是曲面度量。D 代理人：無重疊。E 排列與鬆弛：E04 以力平衡迭代找形；G 以幾何或運動學約束（展開、直骨架事件、剛性摺疊）直接求解，不做力的迭代。F 圖樣與最佳化：F 產生平面圖樣或做最佳化；G4 的摺痕圖可看成圖樣，但核心是 3D 摺疊運動學。",
+   "recommendation": "建議新增家族",
+   "reason": "四個候選都查得到建築實作或研究（THEVERYMANY 鋁條、CityEngine／OSM 屋頂、UWE 與 Chalmers 測地線網殼、舘知宏的剛性摺紙），而且都教到既有六個家族沒有的東西：對偶圖與生成樹展開、事件驅動的優先佇列、稀疏線性系統、運動學自由度。它們都偏向「把設計變成可製造的形」，和既有以生成為主的家族互補。難度偏高（3–4），適合放在圖鑑後段。",
+   "candidates": [
+    {
+     "name_zh": "網格展開（展開圖）",
+     "name_en": "Mesh Unfolding (Polyhedral Nets)",
+     "family_suggest": "G 幾何處理與網格（新家族）",
+     "one_liner": "把一個多面體網格沿「面鄰接圖的生成樹」剪開，一片片以共用邊為軸轉平，攤成一張可以印出、切割再摺回去的展開圖。",
+     "mechanism": [
+      "建立面鄰接圖（對偶圖）：每個面是節點、共用邊是連線，連線權重可用摺角大小或邊長。",
+      "從起始面做 BFS 或最小生成樹，決定哪些邊保留為摺線、其餘邊剪開。",
+      "依樹的順序，把每個子面以和父面共用的邊為軸旋轉到父面所在平面，變換沿樹一路累乘。",
+      "每放一片就檢查是否與已放好的面重疊（2D 多邊形相交），重疊就在該邊剪斷、另起一個島。",
+      "輸出切割線、山線／谷線、黏貼翼片與面編號。"
+     ],
+     "overlap": {
+      "nearest": "E04 變形「受壓殼 → 可製造構件」（每格四邊形輸出平板並展開編號）；A04 變形「可製造的面板與框料」",
+      "difference": "既有做法是把每片面板各自獨立攤平；本演算法以面鄰接圖＋生成樹讓相鄰面保持相連，得到連續的展開圖，並處理重疊與分島。核心資料結構是對偶圖與樹上的累積剛體變換，產出是可摺回原形的單張或少數幾張板材。",
+      "verdict": "new"
+     },
+     "new_concept": "對偶圖（面鄰接圖）、以生成樹決定剪開哪些邊、沿樹累乘的剛體變換（Transform 串接）、2D 重疊偵測與分島。",
+     "logic": [
+      "幾何轉換",
+      "搜尋／求解"
+     ],
+     "difficulty": 3,
+     "loc_estimate": "200–300",
+     "gh_feasibility": "以 Mesh.Faces 與 Mesh.TopologyEdges.GetConnectedFaces 建面鄰接圖；Transform.Rotation（角度、軸、點）與 Transform.PlaneToPlane 把面轉平；重疊用 Curve.PlanarCurveCollision 或 Curve.CreateBooleanIntersection 判斷。全部 RhinoCommon 可完成。只處理三角面或平面四邊形面（非平面面先 Triangulate）；「最少分島」是困難問題，範例用貪婪法即可。",
+     "architecture_cases": [
+      {
+       "title": "n|Strip：以可展開長條鋁片組成的自承重裝置",
+       "creator": "Marc Fornes / THEVERYMANY",
+       "year": 2010,
+       "url": "https://theverymany.com/constructs/10-nstrip",
+       "verified": true,
+       "evidence": "專案頁標題「10 n|Strip」，2010 年 3–4 月於巴黎 Galerie Synesthésie；文中說明長條形態「developable (therefore still able to be unrolled)」，501 條鋁條平切後現場鉚接組裝。"
+      },
+      {
+       "title": "Ivy：Grasshopper 的網格分析、分割與展開外掛",
+       "creator": "Andrei Nejur",
+       "year": "",
+       "url": "https://grasshopperdocs.com/addons/ivy.html",
+       "verified": true,
+       "evidence": "Grasshopper Docs 外掛頁「Ivy」，作者 Andrei Nejur，說明為 mesh analysis, segmentation and unrolling，把網格面當節點、拓撲邊當連線（MeshGraph）套用圖論演算法；同外掛的 MeshGraph Unroll 元件說明為「Unroll the underlying mesh of a tree graph」。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "Pepakura Designer：把 3D 模型轉成紙模型展開圖",
+       "creator": "Tama Software",
+       "year": "",
+       "url": "https://pepakura.tamasoft.co.jp/pepakura_designer/index.html",
+       "verified": true,
+       "evidence": "官方產品頁，開發者 Tama Software Ltd.，說明軟體把 3D 模型轉成可剪下、摺起、黏合的 2D 展開圖樣。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Making papercraft toys from meshes using strip-based approximate unfolding",
+       "creator": "Jun Mitani、Hiromasa Suzuki",
+       "year": 2004,
+       "url": "https://history.siggraph.org/learning/making-papercraft-toys-from-meshes-using-strip-based-approximate-unfolding-by-mitani-and-suzuki/",
+       "verified": true,
+       "evidence": "SIGGRAPH 歷史檔案頁：標題、作者 Jun Mitani 與 Hiromasa Suzuki、SIGGRAPH 2004；內容為把三角網格近似成無內部頂點的三角帶再展開成紙模型。"
+      },
+      {
+       "title": "A Survey of Developable Surfaces: From Shape Modeling to Manufacturing",
+       "creator": "Chao Yuan、Nan Cao、Yang Shi",
+       "year": 2023,
+       "url": "https://arxiv.org/abs/2304.09587",
+       "verified": true,
+       "evidence": "arXiv 摘要頁：標題與作者相符，2023 年 4 月 19 日提交；摘要提到可展曲面衍生出分割、展開（unfolding）與製造方法。"
+      }
+     ],
+     "card_visual": "左邊一個立體多面體（如截角二十面體），右邊同色攤開的展開圖，實線為切割線、虛線為摺線。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 4,
+      "teachability": 4,
+      "feasibility": 4,
+      "total": 16
+     }
+    },
+    {
+     "name_zh": "直骨架屋頂（Straight Skeleton）",
+     "name_en": "Straight Skeleton (Hip Roof Generation)",
+     "family_suggest": "G 幾何處理與網格（新家族）",
+     "one_liner": "讓建築平面輪廓的每條邊以相同速度往內平移，記下頂點走過的軌跡與相撞的位置，就得到四坡屋頂的屋脊與斜脊線。",
+     "mechanism": [
+      "對多邊形每個頂點算出角平分線方向，以及讓相鄰兩邊等速內縮所需的頂點速度。",
+      "預測兩種事件：某條邊縮成零長（edge event）、凹頂點撞上對邊（split event），依發生時間放進優先佇列。",
+      "取出最早的事件，更新內縮中的多邊形（合併頂點或把多邊形分裂成兩個），並重新預測受影響頂點的事件。",
+      "重複直到多邊形完全消失；所有頂點的移動軌跡就是直骨架。",
+      "以事件時間乘上屋面坡度當高度，把骨架抬升成屋面，每條原始外牆邊對應一片屋面。"
+     ],
+     "overlap": {
+      "nearest": "E03 Voronoi＋Lloyd（中軸／等距概念相近）；A04 變形「任意多邊形基地（OBB 分割）」；A05 變形「分割文法（split grammar）」",
+      "difference": "Voronoi 以點的距離分區、多邊形的中軸會出現拋物線；直骨架以邊的等速內縮產生全為直線的骨架，且每條邊恰好對應一個面，能直接變成屋面。演算法是事件驅動的波前傳播（優先佇列＋拓撲更新），和 A04 的遞迴切割、A05 的規則改寫都不同。",
+      "verdict": "new"
+     },
+     "new_concept": "事件驅動模擬（依時間排序的優先佇列）、波前傳播、角平分線與凹頂點的 split event 拓撲變化；「時間＝高度」的轉換。",
+     "logic": [
+      "幾何轉換",
+      "搜尋／求解"
+     ],
+     "difficulty": 4,
+     "loc_estimate": "250–400（只處理凸多邊形的簡化版約 120 行）",
+     "gh_feasibility": "輸入平面封閉 Polyline；以 Vector3d 算角平分線、Rhino.Geometry.Intersect.Intersection.LineLine 求事件點；優先佇列用 SortedSet 或排序後的 List；輸出骨架 Line 與以 Brep.CreateFromCornerPoints 或 Mesh 組成的屋面。完全用 RhinoCommon 可做。難點在數值容差與同時發生的多個事件：基礎範例限定無洞、一般位置的多邊形，split event、加權（不同坡度）與有洞平面列為進階變形。",
+     "architecture_cases": [
+      {
+       "title": "Interactive Architectural Modeling With Procedural Extrusions",
+       "creator": "Tom Kelly、Peter Wonka",
+       "year": 2011,
+       "url": "https://history.siggraph.org/learning/interactive-architectural-modeling-with-procedural-extrusions-by-kelly-and-wonka/",
+       "verified": true,
+       "evidence": "SIGGRAPH 歷史檔案頁：標題、作者 Tom Kelly 與 Peter Wonka、SIGGRAPH 2011；內容為由建築平面輪廓做程序化擠出，產生曲面屋頂、出挑屋頂、老虎窗等，參考文獻大量引用直骨架研究。"
+      },
+      {
+       "title": "Straight Skeletons with Additive and Multiplicative Weights and Their Application to the Algorithmic Generation of Roofs and Terrains",
+       "creator": "Martin Held、Peter Palfrader",
+       "year": 2016,
+       "url": "https://arxiv.org/abs/1604.03362",
+       "verified": true,
+       "evidence": "arXiv 摘要頁：標題與作者相符，2016 年 4 月 12 日提交；摘要說明以加權直骨架為建築平面輪廓自動產生屋頂與地形。"
+      },
+      {
+       "title": "CityEngine CGA roofHip 四坡屋頂運算",
+       "creator": "Esri",
+       "year": "",
+       "url": "https://doc.arcgis.com/en/cityengine/latest/cga/cga-roof-hip.htm",
+       "verified": true,
+       "evidence": "官方文件頁標題「roofHip operation—ArcGIS CityEngine Resources」，第一句為「The roofHip operation builds a hip roof perpendicular to each face of the current shape's geometry」；每條邊產生固定角度平面並互相切割成屋面，即直骨架屋頂的工具化應用。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "bpypolyskel：Blender 直骨架四坡屋頂函式庫",
+       "creator": "prochitecture",
+       "year": "",
+       "url": "https://github.com/prochitecture/bpypolyskel",
+       "verified": true,
+       "evidence": "GitHub 儲存庫說明：由建築平面輪廓計算直骨架並產生 hipped roof，以 OpenStreetMap 約 32 萬個四坡屋頂測試、99.99% 成功；演算法源自 Felkel 與 Obdržálek 1998，GPL-3.0。"
+      },
+      {
+       "title": "campskeleton：加權直骨架的 Java 實作",
+       "creator": "Tom Kelly（twak）",
+       "year": "",
+       "url": "https://github.com/twak/campskeleton",
+       "verified": true,
+       "evidence": "GitHub 儲存庫說明為 weighted straight skeleton implementation in Java，實作 Felkel 演算法並允許負權重，README 引用 Kelly 與 Wonka 2011 的 procedural extrusions 論文。"
+      }
+     ],
+     "references": [
+      {
+       "title": "A Novel Type of Skeleton for Polygons",
+       "creator": "Oswin Aichholzer、David Alberts、Franz Aurenhammer、Bernd Gärtner",
+       "year": 1995,
+       "url": "https://www.jucs.org/jucs_1_12/a_novel_type_of/Aichholzer_O.html",
+       "verified": true,
+       "evidence": "J.UCS 期刊頁：標題、四位作者、Journal of Universal Computer Science 第 1 卷第 12 期（1995）；文中首次定義 straight skeleton 為由角平分線片段組成、把 n 邊形樹狀分割的內部結構。"
+      }
+     ],
+     "card_visual": "一個不規則 L 形或 T 形平面輪廓，內部畫出直骨架的屋脊與斜脊，並用淡色塊區分每條外牆邊對應的屋面。",
+     "scores": {
+      "novelty": 5,
+      "architecture_relevance": 5,
+      "teachability": 3,
+      "feasibility": 3,
+      "total": 16
+     }
+    },
+    {
+     "name_zh": "測地線距離與測地線網（熱方法）",
+     "name_en": "Geodesic Distance & Geodesic Patterns (Heat Method)",
+     "family_suggest": "G 幾何處理與網格（新家族）",
+     "one_liner": "在曲面網格上先讓「熱」從起點擴散一小段時間，取熱流方向當最短路方向，再解一次方程式，就得到每個頂點沿曲面走回起點的距離；等距線與測地線可直接變成網殼木條或鋪面分割。",
+     "mechanism": [
+      "由三角網格建立餘切權重的拉普拉斯矩陣 L 與頂點面積 A（稀疏矩陣）。",
+      "解 (A − t·L) u = δ（δ 為起點熱源、t 約為平均邊長平方），得到短時間的熱分佈 u。",
+      "在每個三角形計算 −∇u 並正規化，得到指向「遠離起點」的單位向量場 X。",
+      "計算 X 在每個頂點的散度，再解 Poisson 方程 L φ = ∇·X，得到測地距離 φ。",
+      "對 φ 取等值線（逐面線性插值）或沿測地方向追蹤曲線，輸出測地線網與等距環。"
+     ],
+     "overlap": {
+      "nearest": "F05 變形「多起點距離場（可及性地圖）」與「在曲線網路上走（真正的圖）」；C05 變形「曲面上的等值線」",
+      "difference": "F05 沿格網或圖的邊累加距離，結果會被網格方向扭曲；本演算法在連續曲面上求真正的測地距離，核心是稀疏線性系統（共軛梯度法）與離散微分運算子（梯度、散度、拉普拉斯）。C05 只負責把場畫成等值線，本演算法負責算出曲面上的距離場本身。",
+      "verdict": "new"
+     },
+     "new_concept": "稀疏矩陣與共軛梯度法、離散微分幾何（餘切權重、梯度、散度、拉普拉斯）、曲面度量與測地曲率為零的曲線。",
+     "logic": [
+      "搜尋／求解",
+      "幾何轉換"
+     ],
+     "difficulty": 4,
+     "loc_estimate": "250–350",
+     "gh_feasibility": "先 Mesh.Faces.ConvertQuadsToTriangles，取頂點與面；自寫稀疏矩陣（每列一個 Dictionary<int,double>）與共軛梯度求解器，不需外部數值函式庫；等值線用逐面插值輸出 Polyline。可行；需注意網格品質（鈍角三角形會影響精度）與時間步 t 的選擇。Rhino 內建 Surface.ShortPath 可當對照驗證。",
+     "architecture_cases": [
+      {
+       "title": "UWE Research Pavilion：沿測地線排列木條的網殼",
+       "creator": "University of the West of England 與 Format Engineers",
+       "year": 2016,
+       "url": "https://formatengineers.com/research/UWE-pavilion.html",
+       "verified": true,
+       "evidence": "Format Engineers 研究頁標題「UWE Pavilion (2016)」，說明主木條由曲面測地線產生，「Secondary elements were then woven around these primaries, again by generating geodesics」。"
+      },
+      {
+       "title": "Design, fabrication and assembly of a geodesic gridshell（工作營中完成的 11×11 m 測地線網殼）",
+       "creator": "Emil Adiels、Chris Williams 等",
+       "year": 2018,
+       "url": "https://research.chalmers.se/publication/504469",
+       "verified": true,
+       "evidence": "Chalmers 研究資料庫頁：標題相符，IASS 2018（Boston）；以直的預鑽孔膠合板條彎曲後依序鎖定成測地線網殼，合作單位含 BIG Engineering、Buro Happold 與 Thornton Tomasetti CORE studio。"
+      },
+      {
+       "title": "On Elastic Geodesic Grids and Their Planar to Spatial Deployment",
+       "creator": "Stefan Pillwein、Kurt Leimer、Michael Birsak、Przemyslaw Musialski",
+       "year": 2020,
+       "url": "https://arxiv.org/abs/2007.00201",
+       "verified": true,
+       "evidence": "arXiv 摘要頁：標題與四位作者相符，2020 年 7 月 1 日提交；以測地線排列的彈性條帶組成可由平面展開成 3D 的可展建築結構。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "Geodesics on Meshes（Houdini 中的測地距離實驗）",
+       "creator": "Houdini Gubbins",
+       "year": 2017,
+       "url": "https://houdinigubbins.wordpress.com/2017/05/02/geodesics-on-meshes/",
+       "verified": true,
+       "evidence": "部落格文章標題「Geodesics on Meshes」，2017 年 5 月 2 日；比較 Dijkstra、展開法、Fast Marching 與 Geodesics in Heat 四種方法，最後以 Eigen 稀疏矩陣實作熱方法。"
+      },
+      {
+       "title": "Heat Geodesic 幾何節點",
+       "creator": "SideFX（Houdini）",
+       "year": "",
+       "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heatgeodesic.html",
+       "verified": true,
+       "evidence": "Houdini 官方文件頁「Heat Geodesic」，說明為「Measures the distance of each point to a group of source points along a polygonal surface」。"
+      }
+     ],
+     "references": [
+      {
+       "title": "The Heat Method for Distance Computation",
+       "creator": "Keenan Crane、Clarisse Weischedel、Max Wardetzky",
+       "year": 2017,
+       "url": "https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/",
+       "verified": true,
+       "evidence": "作者專案頁：標題與三位作者相符，列 Communications of the ACM 2017 年 11 月（原始論文 Geodesics in Heat 為 2013 年）；方法為先以熱擴散求梯度方向，再解稀疏線性系統得距離。"
+      },
+      {
+       "title": "Geodesic Patterns",
+       "creator": "Helmut Pottmann、Qixing Huang、Bailin Deng、Alexander Schiftner、Martin Kilian、Leonidas Guibas、Johannes Wallner",
+       "year": 2010,
+       "url": "https://history.siggraph.org/learning/geodesic-patterns-by-pottmann-huang-deng-schiftner-kilian-et-al/",
+       "verified": true,
+       "evidence": "SIGGRAPH 歷史檔案頁：標題與作者相符、SIGGRAPH 2010；說明測地線圖樣可用於以「不能側向彎曲的木板」包覆自由曲面的建築應用。"
+      }
+     ],
+     "card_visual": "一片起伏的曲面網格，從一個起點擴散出彩色漸層的等距環線，再疊上幾條沿曲面行走的測地線（像網殼木條）。",
+     "scores": {
+      "novelty": 5,
+      "architecture_relevance": 4,
+      "teachability": 3,
+      "feasibility": 3,
+      "total": 15
+     }
+    },
+    {
+     "name_zh": "剛性摺紙鑲嵌（三浦摺）",
+     "name_en": "Rigid Origami Tessellation (Miura-ori Folding)",
+     "family_suggest": "G 幾何處理與網格（新家族）",
+     "one_liner": "用幾個參數畫出三浦摺的鋸齒摺痕網，再用一個摺角控制整張板同步摺起；面板本身不彎，只繞摺線轉動，得到可展開、可收合的波浪板。",
+     "mechanism": [
+      "定義單元參數（邊長 a、b 與夾角 α）與排列數 m×n，產生平面摺痕圖並指派山線／谷線。",
+      "三浦摺是單一自由度機構：以一個摺角 ρ，用封閉公式算出單元每個頂點的 3D 位置。",
+      "沿兩個方向平移複製單元，組成整片摺起的平面四邊形面板網格。",
+      "把 ρ 從 0 掃到接近 180°，觀察平面→半摺→收合的過程，並輸出面板、摺線與投影尺寸。",
+      "進階：以頂點的 Maekawa／Kawasaki 條件檢查任意四度頂點摺痕是否可平坦摺疊，或改成 Yoshimura、Resch 等摺痕。"
+     ],
+     "overlap": {
+      "nearest": "E04 動態鬆弛找形（可用彈簧模擬摺疊）；F02 伊斯蘭幾何圖樣（平面摺痕圖可視為一種圖樣）",
+      "difference": "E04 以力的迭代求平衡形；本演算法用運動學封閉解，一個摺角直接決定所有面板位置，強調可展（紙張不伸縮）與剛性面板。F 家族只產生平面圖樣，沒有 3D 摺疊運動與自由度的概念。",
+      "verdict": "new"
+     },
+     "new_concept": "運動學與自由度（單一自由度機構）、可展曲面（紙不伸縮）、摺痕圖的山谷指派與平坦可摺條件。",
+     "logic": [
+      "直接公式",
+      "幾何轉換"
+     ],
+     "difficulty": 3,
+     "loc_estimate": "150–250",
+     "gh_feasibility": "純向量運算：以 Point3d、Vector3d 依公式算頂點，Mesh 組平面四邊形面板，摺線輸出 Line 並依山／谷分色；摺角接 Slider 或 Timer 做動畫。完全可行。一般四邊形摺痕的剛性摺疊需數值求解，列為進階變形。",
+     "architecture_cases": [
+      {
+       "title": "Geometric Considerations for the Design of Rigid Origami Structures",
+       "creator": "舘知宏（Tomohiro Tachi）",
+       "year": 2010,
+       "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/DesignOfRigidOrigamiStructures_tachi_IASS2010.pdf",
+       "verified": true,
+       "evidence": "PDF 首頁：IASS 2010 上海研討會論文，作者 Tomohiro Tachi（東京大學）；摘要說明剛性摺紙可用於可動與可展開結構，並列出其作為建築屋頂、立面與半自動展開構造的理由，文中提到三浦摺。"
+      },
+      {
+       "title": "Origami tubes assembled into stiff, yet reconfigurable structures and metamaterials",
+       "creator": "Evgueni T. Filipov、Tomohiro Tachi、Glaucio H. Paulino",
+       "year": 2015,
+       "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/PNAS-2015-FTP.pdf",
+       "verified": true,
+       "evidence": "PDF 首頁：PNAS 論文，標題與三位作者相符；由三浦摺衍生的拉鍊耦合摺紙管，使剛度提高且保有單一自由度展開，Significance 段落提到可用於建築中的可展開結構。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "Origami Simulator：網頁即時摺紙模擬器",
+       "creator": "Amanda Ghassaei",
+       "year": "",
+       "url": "https://origamisimulator.org/",
+       "verified": true,
+       "evidence": "網站標題 Origami Simulator，作者 Amanda Ghassaei（與 Erik Demaine 等人）；以 GPU 反覆求解摺痕造成的小位移，讓所有摺痕同時摺起，可調摺疊比例並匯出 3D 模型。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Geometry of Miura-folded metamaterials",
+       "creator": "Mark Schenk、Simon D. Guest",
+       "year": 2013,
+       "url": "https://www.pnas.org/doi/10.1073/pnas.1217998110",
+       "verified": true,
+       "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI（10.1073/pnas.1217998110）確認標題、作者 M. Schenk 與 S. Guest、2013 年、PNAS。"
+      }
+     ],
+     "card_visual": "一片半摺起的三浦摺鋸齒波浪板，山線與谷線用兩種顏色標示，旁邊附上平面摺痕圖。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 4,
+      "teachability": 4,
+      "feasibility": 4,
+      "total": 16
+     }
+    }
+   ]
+  },
+  {
+   "letter_suggest": "H",
+   "name_zh": "空間分析與圖論",
+   "name_en": "Spatial Analysis & Graphs",
+   "definition": "把基地、平面或點位轉成「關係」來計算：誰看得到誰（視線）、太陽照得到哪裡（光線約束）、點與點如何以最短總長相連（生成樹）。產出是分析場，或受這些關係約束的形體與網路，也就是用空間關係反推設計。",
+   "boundary_vs_existing": "A：規則改寫，不涉及視線或全域的圖量測。B：B03 空間殖民會連成樹，但由吸引點逐步長出，不是在既有點集上求最小總長。C：C 的場由公式或擴散算出；H 的場來自射線投射（可見度、日照）等幾何關係。D：D03 人流模擬的「Space syntax 可見度加權」變形只使用可見度；H1 則教可視域本身怎麼算。E：E03 的 Delaunay 對偶只是副產品，沒有全域最佳化。F：F05 已涵蓋最短路徑、可及性與流量疊加（接近網路中心性），因此網路中心性與 Space syntax 軸線整合度不列新演算法；H 補的是另外兩類：可見性（射線）與生成樹（並查集）。F04 的日照適應度變形只評分，不產生包絡。",
+   "recommendation": "建議新增家族",
+   "reason": "三個候選都有大量真實建築與都市研究應用（Space syntax／isovist、日照權與 Solar Carve、建築群形態分析），在 GH C# 中 100–300 行就能從零做出，難度 2–3 適合前中段。它們共同教「以空間關係計算」這種既有家族沒有的思考方式。若不想新開家族，H3 可併入 F（放在 F05 旁），但 H1、H2 在既有家族中沒有合適歸屬。",
+   "candidates": [
+    {
+     "name_zh": "Isovist 可視域與可見性圖分析",
+     "name_en": "Isovist & Visibility Graph Analysis (VGA)",
+     "family_suggest": "H 空間分析與圖論（新家族）",
+     "one_liner": "從一點向四周打出射線，碰到牆就停，連起來就是「站在這裡看得到的範圍」；把平面上每一格都算一次，就得到顯示開闊、隱蔽與視覺連通程度的可視域地圖。",
+     "mechanism": [
+      "輸入牆線（障礙物）與觀察點，或在平面內布一組格點。",
+      "對每個觀察點，朝每個牆線端點方向（或等角度）發射射線，求最近的交點。",
+      "依極角排序交點連成可視域多邊形，計算面積、周長、緊湊度、遮蔽邊長度等指標。",
+      "對所有格點重複，得到 isovist 場並以色階上色。",
+      "進階（VGA）：兩格互相看得到就連一條邊，對可見性圖做 BFS，求平均深度與整合度。"
+     ],
+     "overlap": {
+      "nearest": "D03 變形「Space syntax 可見度加權」；F04 變形「換適應度：最大化日照或視野」；F05 案例 depthmapX 空間網路分析軟體",
+      "difference": "既有內容只把可見度當作輸入或評分，並沒有教可視域本身怎麼算；本演算法的核心是射線與線段求交、依極角排序組成多邊形，以及由多種形狀指標組成的場。VGA 延伸會用到 F05 的 BFS，但圖的邊是由「互相看得到」產生，屬於新的圖建構方式。",
+      "verdict": "new"
+     },
+     "new_concept": "射線投射與線段求交、極角排序、形狀指標（面積、周長、緊湊度、遮蔽度），以及把「可見性」當成圖的邊。",
+     "logic": [
+      "幾何轉換",
+      "直接公式"
+     ],
+     "difficulty": 2,
+     "loc_estimate": "150–250",
+     "gh_feasibility": "牆線以 List<Line> 或 Curve 輸入；射線用 Rhino.Geometry.Intersect.Intersection.LineLine 或 CurveCurve 求交；可視域用 Polyline 與 AreaMassProperties 算面積；場以 Mesh 頂點上色輸出。完全可行；格點多時計算量為格點數×牆線數，可只朝端點發射射線加速。3D isovist 可改用 Intersection.MeshRay。",
+     "architecture_cases": [
+      {
+       "title": "Exploring Isovist Fields: Space and Shape in Architectural and Urban Morphology",
+       "creator": "Michael Batty",
+       "year": 2001,
+       "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:123-150",
+       "verified": true,
+       "evidence": "EconPapers 書目頁：標題、作者 Michael Batty、Environment and Planning B 第 28 卷第 1 期 123–150 頁（2001）；摘要提到以距離、面積、周長、緊湊度等量測 isovist 場，並應用於倫敦 Tate Gallery 與 Wolverhampton 市中心。"
+      },
+      {
+       "title": "From Isovists to Visibility Graphs: A Methodology for the Analysis of Architectural Space",
+       "creator": "Alasdair Turner、Maria Doxa、David O'Sullivan、Alan Penn",
+       "year": 2001,
+       "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:28:y:2001:i:1:p:103-121",
+       "verified": true,
+       "evidence": "EconPapers 書目頁：標題與四位作者相符，Environment and Planning B 第 28 卷第 1 期 103–121 頁（2001）；摘要說明由一組 isovist 建立互相可見的圖，用來分析建築空間組構。"
+      },
+      {
+       "title": "DeCodingSpaces：2D 與 3D isovist 可視性分析教學",
+       "creator": "Martin Bielik、Ekaterina Fuchkina、Sven Schneider、Reinhard Koenig",
+       "year": 2019,
+       "url": "https://toolbox.decodingspaces.net/tutorial-2d-and-3d-isovists-for-visibility-analysis/",
+       "verified": true,
+       "evidence": "教學頁標題「Tutorial | 2D and 3D isovists for visibility analysis」，2019 年 9 月 30 日；列出 Area、Perimeter、Compactness、Occlusivity 等 2D isovist 指標與 3D 的 Sky factor 等。（D03 已收同一工具箱首頁作人流案例；此處取其 isovist 教學，角色是 isovist 場的計算。）"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "2D Visibility（2D 可視範圍演算法互動解說）",
+       "creator": "Amit J. Patel（Red Blob Games）",
+       "year": 2012,
+       "url": "https://www.redblobgames.com/articles/visibility/",
+       "verified": true,
+       "evidence": "文章標題「2D Visibility」，作者 Amit J. Patel，2012 年 6 月（後續更新）；以掃描線繞觀察點旋轉、只朝牆端點投射射線，組成可視多邊形。"
+      },
+      {
+       "title": "Sight & Light：2D 視線與光影效果教學",
+       "creator": "Nicky Case",
+       "year": "",
+       "url": "https://ncase.me/sight-and-light/",
+       "verified": true,
+       "evidence": "頁面標題「SIGHT & LIGHT - How to create 2D visibility/shadow effects for your game」；教射線與線段求交、只朝線段端點投射射線、依角度排序組成可視多邊形。"
+      }
+     ],
+     "references": [
+      {
+       "title": "To Take Hold of Space: Isovists and Isovist Fields",
+       "creator": "Michael L. Benedikt",
+       "year": 1979,
+       "url": "https://econpapers.repec.org/RePEc:sae:envirb:v:6:y:1979:i:1:p:47-65",
+       "verified": true,
+       "evidence": "EconPapers 書目頁：標題、作者 M L Benedikt、Environment and Planning B 第 6 卷第 1 期 47–65 頁（1979）；定義 isovist 為從某一視點可見的所有點的集合，並提出形成 isovist 場的量測。"
+      }
+     ],
+     "card_visual": "一張平面牆線圖上，從一個觀察點展開的淡色可視域多邊形，背景以色階顯示每一點的可視面積場。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 5,
+      "teachability": 4,
+      "feasibility": 5,
+      "total": 18
+     }
+    },
+    {
+     "name_zh": "太陽包絡（Solar Envelope）",
+     "name_en": "Solar Envelope",
+     "family_suggest": "H 空間分析與圖論（新家族）",
+     "one_liner": "先用天文公式算出冬季關鍵時段的太陽方向，再從鄰地要保護的邊界沿陽光反推，得到一個在這些時段都不會遮到鄰居的最大可建量體。",
+     "mechanism": [
+      "依緯度、日期與時刻，用太陽位置公式（赤緯、時角 → 高度角、方位角）算出一組太陽方向向量。",
+      "在基地內布格點。",
+      "對每個格點與每個太陽向量，沿太陽光的反方向找到需保護的鄰地邊界或遮陰線（shadow fence），求出這個時刻允許的最大高度。",
+      "對所有太陽向量取最小值（下包絡），得到高度場 h(x, y)。",
+      "把高度場轉成量體 Mesh，可再和退縮、容積等限制取交集；反過來則可求「太陽收集包絡」。"
+     ],
+     "overlap": {
+      "nearest": "F04 變形「換適應度：最大化日照或視野」；C04 Perlin Noise 地形（高度場輸出）",
+      "difference": "F04 只把日照當作評分，靠演化搜尋；本演算法用太陽位置公式＋射線約束直接算出可建高度場（多個約束取下包絡），是決定性的幾何求解。C04 的高度來自雜訊，本演算法的高度來自環境權利（日照權）的約束。",
+      "verdict": "new"
+     },
+     "new_concept": "太陽位置天文公式（赤緯、時角、高度角、方位角）、多個約束取最小值的下包絡、以日照權反推可建量體。",
+     "logic": [
+      "直接公式",
+      "幾何轉換"
+     ],
+     "difficulty": 3,
+     "loc_estimate": "200–300",
+     "gh_feasibility": "太陽位置用 Math 自寫簡化公式；基地用封閉 Curve 並以 Contains 過濾格點；遮陰線以 Line 與 Curve 求交；輸出 Mesh 高度場（Mesh.CreateFromPlane 後改頂點 Z）。完全可行；時區與真太陽時的換算要小心，教學用簡化公式即可，可和 Ladybug 的 Solar Envelope 元件互相對照。",
+     "architecture_cases": [
+      {
+       "title": "Solar Carve（40 Tenth Ave）",
+       "creator": "Studio Gang",
+       "year": 2019,
+       "url": "https://studiogang.com/projects/40-tenth-ave",
+       "verified": true,
+       "evidence": "Studio Gang 專案頁「Solar Carve」，紐約，2019；說明「solar carving involves using incident angles of the sun's rays to sculpt a building's form」，以保留相鄰 High Line 公園的日照。"
+      },
+      {
+       "title": "SolCAD: 3D Spatial Design Tool to Generate Solar Envelope",
+       "creator": "Manu Juyal、Karen Kensek、Ralph Knowles",
+       "year": 2003,
+       "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf",
+       "verified": true,
+       "evidence": "PDF 首頁：標題 SolCAD 與三位作者（Arizona State University、University of Southern California）相符，ACADIA 2003 digital works-in-progress；摘要說明以太陽包絡概念開發可在任意形狀基地產生包絡的 3D 設計工具。"
+      },
+      {
+       "title": "Ladybug Solar Envelope 元件",
+       "creator": "Ladybug Tools",
+       "year": "",
+       "url": "https://grasshopperdocs.com/components/ladybug/solarEnvelope.html",
+       "verified": true,
+       "evidence": "Grasshopper Docs 元件頁「Solar Envelope」（Ladybug），說明為對給定測試面、太陽向量與要保護日照的周邊幾何產生太陽包絡。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "SunCalc：計算太陽位置與日出日落的 JavaScript 函式庫",
+       "creator": "mourner（Vladimir Agafonkin）",
+       "year": "",
+       "url": "https://github.com/mourner/suncalc",
+       "verified": true,
+       "evidence": "GitHub 儲存庫說明為輕量、無相依的太陽與月亮位置計算函式庫，公式來自 Jean Meeus《Astronomical Algorithms》，BSD-2-Clause。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Sun Rhythm Form",
+       "creator": "Ralph L. Knowles",
+       "year": 1981,
+       "url": "https://archive.org/details/sunrhythmform0000know",
+       "verified": true,
+       "evidence": "Internet Archive 書目頁：書名 Sun Rhythm Form、作者 Ralph L. Knowles、MIT Press 1981，主題為太陽能與建築日照；本書提出 solar envelope 作為分區設計方法。"
+      }
+     ],
+     "card_visual": "一塊基地上被斜向削切的階梯狀量體（高度場），旁邊畫出幾條不同時刻的太陽光線與被保護的鄰地邊界。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 5,
+      "teachability": 4,
+      "feasibility": 4,
+      "total": 17
+     }
+    },
+    {
+     "name_zh": "最小生成樹（Kruskal＋並查集）",
+     "name_en": "Minimum Spanning Tree (Kruskal & Union-Find)",
+     "family_suggest": "H 空間分析與圖論（新家族）；不開家族時可併入 F",
+     "one_liner": "把點與點之間所有可能的連線由短到長排好，從最短的開始挑，只要不會繞成迴圈就收下，最後用最短的總長度把所有點串成一棵樹。",
+     "mechanism": [
+      "由點集建立候選邊（全部兩兩相連，或只取 k 個最近鄰），計算權重（長度、坡度成本等）。",
+      "把所有邊依權重由小到大排序。",
+      "用並查集（Union-Find，含路徑壓縮）逐一檢查邊的兩端是否已經連通：不連通才收下並合併兩群。",
+      "收滿 n−1 條邊就停止，得到最小生成樹。",
+      "應用：依門檻切斷最長的邊得到群聚（聚落辨識）、隨機權重得到迷宮、或把樹轉成管件與步道。"
+     ],
+     "overlap": {
+      "nearest": "D02 變形「混合 Voronoi／Delaunay 比較」（只把最小生成樹當對照）；E03 變形「Delaunay 對偶網路」；F05 最短路徑（Dijkstra）",
+      "difference": "既有內容只提到最小生成樹當比較對象、沒有實作；F05 求單一起點的最短路（優先佇列），最小生成樹求全體連通的最小總長，核心是排序＋並查集這個新的資料結構；B03 空間殖民的樹由吸引點逐步長出，不保證總長最小。",
+      "verdict": "new"
+     },
+     "new_concept": "並查集（不相交集合、路徑壓縮）、貪婪演算法為何能得到最佳解、圖的連通與迴圈偵測；切斷最長邊的分群。",
+     "logic": [
+      "搜尋／求解"
+     ],
+     "difficulty": 2,
+     "loc_estimate": "100–180",
+     "gh_feasibility": "點用 List<Point3d>，邊用 List<(int a, int b, double w)> 排序；並查集只需一個 int[] parent 陣列；輸出 List<Line>。完全可行、效能好；點數多時候選邊可用 RTree 取 k 近鄰減量。",
+     "architecture_cases": [
+      {
+       "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns",
+       "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+       "year": 2018,
+       "url": "https://doi.org/10.1080/13658816.2017.1384830",
+       "verified": true,
+       "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI 確認標題、作者與期刊 International Journal of Geographical Information Science（2018）；以延伸最小生成樹描述建築物層級的局部都市形態。"
+      },
+      {
+       "title": "Rules for Biologically Inspired Adaptive Network Design（黏菌網路與東京鐵路網）",
+       "creator": "Atsushi Tero、中垣俊之等",
+       "year": 2010,
+       "url": "https://doi.org/10.1126/science.1177894",
+       "verified": true,
+       "evidence": "出版社頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI 確認標題、作者（A. Tero、T. Nakagaki 等）、Science 2010。本作品已是 D02 案例；此處的角色是以最小生成樹作為網路總長（成本）的比較基準。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "Maze Generation: Kruskal's Algorithm",
+       "creator": "Jamis Buck",
+       "year": 2011,
+       "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm",
+       "verified": true,
+       "evidence": "部落格文章標題「Maze Generation: Kruskal's Algorithm」，作者 Jamis Buck，2011 年 1 月 3 日；以隨機權重的 Kruskal 生成樹產生完美迷宮。"
+      }
+     ],
+     "references": [
+      {
+       "title": "On the shortest spanning subtree of a graph and the traveling salesman problem",
+       "creator": "Joseph B. Kruskal",
+       "year": 1956,
+       "url": "https://doi.org/10.1090/S0002-9939-1956-0078686-7",
+       "verified": true,
+       "evidence": "AMS 頁阻擋自動讀取；以 Semantic Scholar API 查同一 DOI 確認標題、作者 J. Kruskal、1956 年。"
+      }
+     ],
+     "card_visual": "一片散點以最小生成樹的細線連成分枝網，最長的幾條邊以虛線表示「切斷後形成的群聚」，各群聚用不同顏色。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 3,
+      "teachability": 5,
+      "feasibility": 5,
+      "total": 17
+     }
+    }
+   ]
+  },
+  {
+   "letter_suggest": "I",
+   "name_zh": "機器學習與資料驅動",
+   "name_en": "Machine Learning & Data-driven",
+   "definition": "演算法的行為不是由設計者寫死的規則決定，而是「看資料調整自己的參數」：用範例（點雲、設計樣本、模擬結果）反覆更新權重，學到映射或分布之後再拿來生成或預測。",
+   "boundary_vs_existing": "A06 WFC 的「從範例學規則」只統計相鄰組合，沒有可調權重與誤差修正。B、C、D 都是規則寫死的模擬。E03 Lloyd 與 k-means 同源（向量量化），所以 k-means 應作為 E03 的變形；SOM 多了「網格拓撲鄰居一起學」與遞減排程，才放在本家族。F04 GA 是無梯度的族群搜尋；MLP 以梯度下降與反向傳播修正權重，思考方式不同。C 家族的場由公式定義；MLP 可以當成「學出來的場函數」（CPPN 變形），但重點在訓練。",
+   "recommendation": "建議新增家族",
+   "reason": "「從資料學習」是既有六個家族都沒有的思考方式，也是學習者最想接觸的主題。目前可查證又能在 GH C# 內從零實作（不依賴外掛）的只有 SOM 與 MLP 兩個；PCA 建築案例查證不足、k-means 屬 E03 變形、神經細胞自動機與 GAN／擴散模型無法在元件內訓練，所以家族先收 2 個。若家族至少要 3 個演算法才開，建議 SOM 併入 E（鬆弛／向量量化旁）、MLP 併入 F（最佳化）。",
+   "candidates": [
+    {
+     "name_zh": "自組織映射（SOM）",
+     "name_en": "Self-Organizing Map (Kohonen Network)",
+     "family_suggest": "I 機器學習與資料驅動（新家族）；不開家族時可併入 E",
+     "one_liner": "一張由神經元組成的彈性網格，每次隨機抽一筆資料，就把最像它的神經元和網格上的鄰居一起拉過去一點；久了網格會自己攤開、貼合資料的形狀。",
+     "mechanism": [
+      "建立 m×n（或一維環狀）神經元網格，每個神經元帶一個權重向量（例如 3D 座標或一組設計參數）。",
+      "隨機抽一筆輸入資料，找出權重最接近的勝出神經元（BMU）。",
+      "依神經元在網格上與 BMU 的距離，用高斯鄰域函數把 BMU 與鄰居往輸入拉近：w ← w + η·h·(x − w)。",
+      "學習率 η 與鄰域半徑隨迭代逐步縮小。",
+      "輸出攤開的網格（貼合點雲的曲面、TSP 環路），或把設計樣本排成相似度地圖。"
+     ],
+     "overlap": {
+      "nearest": "E03 Voronoi＋Lloyd 鬆弛（向量量化，與 k-means 同源）；E02 變形「TSP 單筆路徑」；E04 變形「從任意 Mesh 找形」",
+      "difference": "Lloyd／k-means 的每個點各自移向重心；SOM 的神經元之間有固定的網格拓撲，勝出者會帶著鄰居一起學，並隨時間縮小鄰域與學習率，因此能保持拓撲順序、把高維資料攤成 2D 地圖。它不是力的平衡（E04），而是逐筆資料的線上學習。",
+      "verdict": "new"
+     },
+     "new_concept": "競爭式學習與權重更新、學習率與鄰域半徑的遞減排程、保持拓撲的映射、把高維資料降成 2D 地圖。",
+     "logic": [
+      "迭代模擬",
+      "搜尋／求解"
+     ],
+     "difficulty": 3,
+     "loc_estimate": "150–250",
+     "gh_feasibility": "神經元權重用 double[][] 或 Point3d[,]；輸入可為點雲（List<Point3d>）或設計參數表（DataTree<double>）；輸出以 Mesh 重建網格或 Polyline 環；Timer 動畫化學習過程。完全可行，不需外部函式庫。",
+     "architecture_cases": [
+      {
+       "title": "Design space exploration and optimization using self-organizing maps",
+       "creator": "Sidhant Pravinkumar Thole、Palaniappan Ramu",
+       "year": 2020,
+       "url": "https://doi.org/10.1007/s00158-020-02665-6",
+       "verified": true,
+       "evidence": "出版社頁需登入；以 Semantic Scholar API 查同一 DOI 確認標題、兩位作者與期刊 Structural and Multidisciplinary Optimization（2020）；以 SOM 視覺化並探索設計空間。"
+      },
+      {
+       "title": "Mesh Fitter：用 Crow 的 2D 自組織映射把網格貼合點雲",
+       "creator": "Benjamin Felbrich",
+       "year": 2016,
+       "url": "https://www.grasshopper3d.com/video/mesh-fitter-2-dimensional-self-organizing-maps-using-crow-in",
+       "verified": true,
+       "evidence": "Grasshopper 官方社群影片頁，Benjamin Felbrich 於 2016 年 5 月 25 日上傳；說明以 Crow 0.2 外掛的 2D Kohonen 層（SOM）把管狀網格貼合點雲。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "Using Self-Organizing Maps to Solve the Traveling Salesman Problem",
+       "creator": "Diego Vicente",
+       "year": "",
+       "url": "https://diego.codes/post/som-tsp/",
+       "verified": true,
+       "evidence": "部落格文章標題相符，作者 Diego Vicente；把神經元排成環狀一維陣列，像彈性繩圈收縮到城市上，以學習率與鄰域衰減求 TSP 近似解。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Self-organized formation of topologically correct feature maps",
+       "creator": "Teuvo Kohonen",
+       "year": 1982,
+       "url": "https://doi.org/10.1007/BF00337288",
+       "verified": true,
+       "evidence": "出版社頁需登入；以 Semantic Scholar API 查同一 DOI 確認標題、作者 T. Kohonen、期刊 Biological Cybernetics（API 年份欄誤標為 2004，原刊為 1982 年第 43 卷）。"
+      }
+     ],
+     "card_visual": "一團 3D 點雲中，一張彩色神經元網格從平面慢慢攤開、貼合點雲形狀，網格線表示神經元之間的鄰接。",
+     "scores": {
+      "novelty": 5,
+      "architecture_relevance": 3,
+      "teachability": 4,
+      "feasibility": 5,
+      "total": 17
+     }
+    },
+    {
+     "name_zh": "多層感知器（小型神經網路）",
+     "name_en": "Multilayer Perceptron (Small Neural Network from Scratch)",
+     "family_suggest": "I 機器學習與資料驅動（新家族）；不開家族時可併入 F",
+     "one_liner": "用幾層「加權相加再過一個彎曲函數」的神經元組成小網路，拿模擬資料反覆比對誤差、往回修正權重，學會從設計參數快速預測日照等性能，或把座標直接映射成圖樣。",
+     "mechanism": [
+      "準備訓練資料：輸入（例如開窗比、進深、方位）與輸出（例如日照指標），並做正規化。",
+      "前向傳播：每層計算 a = f(W·x + b)，f 用 tanh 或 ReLU。",
+      "計算輸出與正確答案的誤差（均方差）。",
+      "反向傳播：依連鎖律由輸出層往回算每個權重的梯度，用梯度下降更新 W 與 b。",
+      "重複多個 epoch 直到誤差收斂；訓練好的網路當代理模型即時預測，或把 (x, y) 餵進網路得到場值（CPPN 圖樣）。"
+     ],
+     "overlap": {
+      "nearest": "F04 基因演算法（同屬最佳化但不用梯度）；C04 Perlin Noise／C05 Marching Squares（網路輸出可視為場）",
+      "difference": "GA 以族群隨機搜尋設計；MLP 用反向傳播的梯度逐步修正權重，是「從資料學一個函數」而不是「搜尋一個設計」。C 家族的場由固定公式定義，MLP 的場由訓練資料決定。",
+      "verdict": "new"
+     },
+     "new_concept": "矩陣與向量運算、激活函數、損失函數、梯度下降與反向傳播（連鎖律）、訓練／驗證資料分割與過擬合。",
+     "logic": [
+      "迭代模擬",
+      "搜尋／求解"
+     ],
+     "difficulty": 4,
+     "loc_estimate": "250–400",
+     "gh_feasibility": "權重用 double[,]，自寫矩陣乘法與反向傳播；訓練資料由上游參數化模型＋模擬結果（或 CSV）以 DataTree 輸入；輸出預測值、誤差曲線，CPPN 模式則輸出 Mesh 頂點色。完全可行；網路要小（數百個權重以內），訓練以 Timer 分段執行避免 GH 卡住。",
+     "architecture_cases": [
+      {
+       "title": "Development of a Machine-Learning Framework for Overall Daylight and Visual Comfort Assessment in Early Design Stages",
+       "creator": "Hanieh Nourkojouri、Nastaran Seyed Shafavi、Mohammad Tahsildoost、Zahra Sadat Zomorodian",
+       "year": 2021,
+       "url": "https://solarlits.com/jd/8-270",
+       "verified": true,
+       "evidence": "Journal of Daylighting 第 8 卷第 2 期（2021）文章頁：標題與作者相符；以單一隱藏層 40 個神經元的人工神經網路，從 Honeybee for Grasshopper 產生的 2,880 筆參數化模擬學習預測日照與眩光指標。"
+      },
+      {
+       "title": "Crow：Grasshopper 的人工神經網路元件",
+       "creator": "Benjamin Felbrich",
+       "year": 2014,
+       "url": "https://www.grasshopper3d.com/video/crow-artificial-neural-network-component-for-grasshopper",
+       "verified": true,
+       "evidence": "Grasshopper 官方社群影片頁，Benjamin Felbrich 於 2014 年 7 月 21 日上傳；說明外掛使用 Kohonen 網路與 classic backpropagation networks，並支援圖樣辨識。"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "TensorFlow Neural Network Playground",
+       "creator": "Daniel Smilkov、Shan Carter",
+       "year": "",
+       "url": "https://playground.tensorflow.org/",
+       "verified": true,
+       "evidence": "網頁說明由 Daniel Smilkov 與 Shan Carter 製作，可即時增減層數、調學習率與激活函數，並以背景色顯示網路對平面的分類結果，Apache 授權開源。"
+      },
+      {
+       "title": "Evolving Three-Dimensional Objects with a Generative Encoding Inspired by Developmental Biology（CPPN 3D 物件）",
+       "creator": "Jeff Clune、Hod Lipson",
+       "year": 2011,
+       "url": "http://jeffclune.com/publications/2011-CluneLipson-Evolving3DObjectsWithCPPNs-ECAL.pdf",
+       "verified": true,
+       "evidence": "PDF 首頁：標題與作者（Cornell University）相符；以 Compositional Pattern Producing Networks 把座標映射成形體，並 3D 列印出演化物件。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Learning representations by back-propagating errors",
+       "creator": "David E. Rumelhart、Geoffrey E. Hinton、Ronald J. Williams",
+       "year": 1986,
+       "url": "https://doi.org/10.1038/323533a0",
+       "verified": true,
+       "evidence": "出版社頁需登入；以 Semantic Scholar API 查同一 DOI 確認標題、三位作者、Nature 1986。"
+      }
+     ],
+     "card_visual": "左邊是節點與連線（粗細代表權重）的小型網路圖，右邊是網路把 (x, y) 映射出的平滑彩色分區，像神經網路的分類背景。",
+     "scores": {
+      "novelty": 5,
+      "architecture_relevance": 3,
+      "teachability": 3,
+      "feasibility": 4,
+      "total": 15
+     }
+    }
+   ]
+  },
+  {
+   "letter_suggest": "J",
+   "name_zh": "機率與隨機過程",
+   "name_en": "Stochastic Processes",
+   "definition": "以機率分布與隨機取樣為核心：用 Markov 鏈、Monte Carlo 取樣或 Metropolis 接受準則，在巨大的可能性中抽樣或搜尋。",
+   "boundary_vs_existing": "機率在既有家族已普遍作為「亂數輸入」：A01 隨機 L-System、A05 機率文法、A06 WFC 加權挑選、B02 DLA 隨機漫步、E02 Poisson 取樣。Markov 鏈序列生成與 A06「從範例學規則」、A05「多條規則競爭（機率文法）」重疊；Monte Carlo 光線取樣可作為 H1、H2 的變形。真正新的只有「以機率接受較差解」的 Metropolis／模擬退火，它本質上是最佳化，應與 F04 GA 並列。",
+   "recommendation": "候選可分散併入既有家族",
+   "reason": "家族大部分內容已散在 A、B、E；唯一的新演算法模擬退火建議放進 F（參考編號 F07），和 F04 GA 形成「族群搜尋 vs 單點退火」的對照，不必另開家族。",
+   "candidates": [
+    {
+     "name_zh": "模擬退火（Metropolis 準則）",
+     "name_en": "Simulated Annealing (Metropolis Criterion)",
+     "family_suggest": "F 圖樣與最佳化（由 J 家族評估後建議併入，參考編號 F07）",
+     "one_liner": "從一個配置出發，每次隨機小改一下；變好就接受，變差也有由「溫度」決定的機率接受。溫度慢慢降低，搜尋先大膽亂跳、再收斂到好解，可用來排家具、房間或路線。",
+     "mechanism": [
+      "定義狀態（例如房間或家具的位置與旋轉）與成本函數（重疊、動線、鄰接、日照等懲罰的加權和）。",
+      "產生鄰近狀態：隨機移動、旋轉或交換一個元件。",
+      "計算成本差 ΔE：ΔE ≤ 0 直接接受；否則以機率 exp(−ΔE / T) 接受（Metropolis 準則）。",
+      "依降溫排程 T ← α·T 重複步驟 2–3。",
+      "記錄歷來最佳解，溫度夠低或長時間不再改善就停止。"
+     ],
+     "overlap": {
+      "nearest": "F04 基因演算法；F04 案例 Galapagos 演化求解器（同一工具另含退火解算器）",
+      "difference": "GA 維護整個族群，靠交配與突變產生後代；模擬退火只追蹤單一狀態，靠溫度控制「接受變差」的機率來跳出局部最佳，是源自統計力學的單點隨機搜尋。程式結構、參數（溫度、降溫率、鄰域移動）與收斂行為都不同，可與 F04 並列比較。",
+      "verdict": "new"
+     },
+     "new_concept": "Metropolis 接受準則與機率、溫度與降溫排程、局部最佳與探索／利用的取捨、鄰域移動的設計。",
+     "logic": [
+      "搜尋／求解",
+      "迭代模擬"
+     ],
+     "difficulty": 3,
+     "loc_estimate": "150–250",
+     "gh_feasibility": "狀態用 List<Rectangle3d> 或 Point3d＋角度陣列；成本以 Curve.PlanarCurveCollision、距離與面積計算；System.Random 產生移動；Timer 動畫化降溫過程並輸出成本曲線。完全可行。",
+     "architecture_cases": [
+      {
+       "title": "Make it Home: Automatic Optimization of Furniture Arrangement",
+       "creator": "Lap-Fai Yu、Sai-Kit Yeung、Chi-Keung Tang、Demetri Terzopoulos、Tony F. Chan、Stanley J. Osher",
+       "year": 2011,
+       "url": "https://www.saikit.org/static/projects/furniture/index.html",
+       "verified": true,
+       "evidence": "專案頁標題與六位作者相符，ACM Transactions on Graphics（SIGGRAPH 2011）；摘要寫明「the cost function is optimized by simulated annealing with a Metropolis Hastings state-search step」。"
+      },
+      {
+       "title": "Interactive furniture layout using interior design guidelines",
+       "creator": "Paul Merrell、Eric Schkufza、Zeyang Li、Maneesh Agrawala、Vladlen Koltun",
+       "year": 2011,
+       "url": "https://history.siggraph.org/learning/interactive-furniture-layout-using-interior-design-guidelines-by-merrell-schkufza-li-agrawala-and-koltun/",
+       "verified": true,
+       "evidence": "SIGGRAPH 歷史檔案頁：標題與作者相符、SIGGRAPH 2011；以設計準則組成密度函數，用硬體加速的 Monte Carlo 取樣器產生配置建議，參考文獻含 Metropolis 1953 與 Hastings 1970。"
+      },
+      {
+       "title": "Galapagos 模擬退火解算器（Simulated Annealing 02）",
+       "creator": "David Rutten",
+       "year": 2011,
+       "url": "https://www.grasshopper3d.com/video/simulated-annealing-02",
+       "verified": true,
+       "evidence": "Grasshopper 官方社群影片頁，David Rutten 於 2011 年 8 月 20 日上傳；示範 Galapagos 更新後的模擬退火解算器在 16 維搜尋空間找最高點，並說明退火擅長找到最佳區域、演化擅長精修。（F04 已收 Galapagos 作 GA 案例；此處的角色是退火解算器。）"
+      }
+     ],
+     "cc_refs": [
+      {
+       "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+       "creator": "Todd W. Schneider",
+       "year": 2014,
+       "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+       "verified": true,
+       "evidence": "部落格文章標題與作者相符，2014 年 9 月 17 日；以互動 Shiny 程式展示模擬退火解 TSP，說明接受較差路線的機率取決於差距與溫度。"
+      }
+     ],
+     "references": [
+      {
+       "title": "Optimization by Simulated Annealing",
+       "creator": "S. Kirkpatrick、C. D. Gelatt、M. P. Vecchi",
+       "year": 1983,
+       "url": "https://www2.stat.duke.edu/~scs/Courses/Stat376/Papers/TemperAnneal/KirkpatrickAnnealScience1983.pdf",
+       "verified": true,
+       "evidence": "PDF 首頁（JSTOR 封面）：標題、三位作者、Science 第 220 卷第 4598 期 671–680 頁（1983 年 5 月 13 日）。"
+      }
+     ],
+     "card_visual": "一個房間平面裡幾件家具矩形，從雜亂重疊逐步排成靠牆、互不重疊的配置，旁邊一條先劇烈震盪後收斂的成本曲線。",
+     "scores": {
+      "novelty": 4,
+      "architecture_relevance": 4,
+      "teachability": 5,
+      "feasibility": 5,
+      "total": 18
+     }
+    }
+   ]
+  },
+  {
+   "letter_suggest": "K",
+   "name_zh": "物理與動力",
+   "name_en": "Physics & Dynamics",
+   "definition": "以牛頓力學或約束投影模擬布料、剛體、流體等物理行為，得到下垂、碰撞、流動的形體。",
+   "boundary_vs_existing": "E04 動態鬆弛已是質點彈簧＋阻尼的物理引擎（含張拉膜、充氣、Kinetic Damping、曲面約束，專案種子還有「自寫迷你 Kangaroo：多目標約束求解器」）；D01、D03 已有粒子受力與鄰居搜尋；C04 已有「水力侵蝕後處理」變形。布料、位置式動力學（PBD）、質點彈簧都會變成 E04 的變形或重複。",
+   "recommendation": "不建議",
+   "reason": "可做的部分幾乎都被 E04 涵蓋；剩下的剛體模擬（慣性張量、碰撞與接觸）與 SPH 流體在 GH C# 400 行內難以穩定實作，而且查不到足量可查證的建築案例。候選全部列入 rejected，建議改為替 E04 補「布料／PBD」變形。",
+   "candidates": []
+  }
+ ],
+ "rejected": [
+  {
+   "name": "細分曲面（Catmull-Clark／Loop／Doo-Sabin）",
+   "overlap_with": "A04 變形「網格細分（Catmull-Clark 精神）」及 A04 案例 Hansmeyer《Subdivided Columns》",
+   "reason": "圖鑑已把細分曲面歸在 A04 的變形與案例；若要完整教半邊結構，建議擴寫該變形，不另立演算法。"
+  },
+  {
+   "name": "拉普拉斯網格平滑（Laplacian／Taubin 平滑）",
+   "overlap_with": "E04 變形「張拉膜：原長縮短（預力）」（原長為 0 的彈簧即拉普拉斯平滑）；E03 Lloyd 鬆弛",
+   "reason": "每個頂點移向鄰居平均，與既有鬆弛機制相同，只是換成網格鄰接。"
+  },
+  {
+   "name": "平面四邊形網格化（PQ planarization）",
+   "overlap_with": "E04 專案種子「自寫迷你 Kangaroo：多目標約束求解器」與變形「曲面上的網：約束在基底曲面」",
+   "reason": "以投影約束反覆修正頂點，屬於 E04 約束求解的延伸，建議作為 E04 變形「平面性約束」。"
+  },
+  {
+   "name": "等向重新網格化（isotropic remeshing）",
+   "overlap_with": "B01 變形「3D 網格差異生長」（split edge、半邊結構）",
+   "reason": "需完整半邊結構與分割／合併／翻邊／平滑四種操作，超過 400 行且屬研究級；邊分割的觀念已在 B01 變形出現。"
+  },
+  {
+   "name": "複數共形映射（f(z) = e^z、Möbius 變換、Droste 效果）",
+   "overlap_with": "F01／F02 變形「曲面上的 Truchet 立面」「曲面上的星形圖樣」（圖樣座標映射）",
+   "reason": "本質是對既有圖樣做座標轉換，查不到足量可查證的建築案例，較適合作為 F 家族圖樣的映射變形。"
+  },
+  {
+   "name": "網路中心性（betweenness／closeness）",
+   "overlap_with": "F05 變形「多組起終點＋流量疊加」及 F05 案例 Urban Network Analysis、cityseer",
+   "reason": "對所有起終點求最短路並累計通過次數，就是 F05 的流量疊加變形；中心性指標可作為 F05 變形補充。"
+  },
+  {
+   "name": "Space syntax 軸線圖與整合度",
+   "overlap_with": "F05 案例 depthmapX、SpiderWeb；D03 變形「Space syntax 可見度加權」",
+   "reason": "軸線圖整合度是在線段圖上做 BFS 深度計算，屬 F05 的圖搜尋；可見性部分已由 H1 涵蓋。"
+  },
+  {
+   "name": "可見性圖最短路（多邊形頂點可見性圖）",
+   "overlap_with": "F05 變形「在曲線網路上走（真正的圖）」",
+   "reason": "只是換一種建圖方式再跑 Dijkstra，建圖所需的射線求交已在 H1 教到。"
+  },
+  {
+   "name": "力導向泡泡圖（Fruchterman–Reingold 鄰接配置）",
+   "overlap_with": "E04 變形「混合 E 家族：Circle Packing＋鬆弛」；E01 圓填充",
+   "reason": "房間圓互相排斥（E01）＋鄰接房間以彈簧相吸（E04），機制完全重疊；建議作為 E01 或 E04 的「鄰接圖輸入」變形。"
+  },
+  {
+   "name": "Delaunay 三角剖分（Bowyer–Watson）",
+   "overlap_with": "E03 變形「Delaunay 對偶網路」",
+   "reason": "已作為 Voronoi 的對偶在 E03 出現。"
+  },
+  {
+   "name": "k-means 分群（面板合理化）",
+   "overlap_with": "E03 Voronoi＋Lloyd 鬆弛（Lloyd 演算法即 k-means）",
+   "reason": "k-means 就是在離散資料上的 Lloyd 迭代；建議新增 E03 變形「k-means 面板分群」（把自由曲面面板依形狀分成少數模具類型）。"
+  },
+  {
+   "name": "主成分分析（PCA 形態空間）",
+   "overlap_with": "無直接重疊（概念接近 F04 變形「基因改成滑桿參數」的設計空間）",
+   "reason": "演算法本身可在 GH 實作（冪次法求特徵向量），但本次查不到可開啟查證的建築案例（出版社頁面皆阻擋），寧缺勿濫，列為 I 家族日後擴充。"
+  },
+  {
+   "name": "神經細胞自動機（Neural CA）",
+   "overlap_with": "C02 變形「連續狀態（Lenia 式）」",
+   "reason": "推論部分是 C02 連續狀態 CA 的延伸；訓練需要大量反向傳播與 GPU，無法在 GH C# 元件內從零完成。"
+  },
+  {
+   "name": "GAN／擴散模型",
+   "overlap_with": "無（僅作參考）",
+   "reason": "需大型網路與 GPU 訓練，無法只用 RhinoCommon 在 100–400 行內實作；可在 I 家族的延伸閱讀中提及。"
+  },
+  {
+   "name": "Markov 鏈序列生成（n-gram）",
+   "overlap_with": "A06 變形「從範例學規則（範例驅動）」；A05 變形「多條規則競爭（機率文法）」；A01 變形「隨機 L-System」",
+   "reason": "由範例統計轉移機率再抽樣，和 A06 範例學規則、A05 機率文法的教學重點重疊，建議作為 A06 的一維變形。"
+  },
+  {
+   "name": "Monte Carlo 光線取樣（天空可視率、日照時數估計）",
+   "overlap_with": "F04 變形「換適應度：最大化日照或視野」；本次候選 H1、H2",
+   "reason": "隨機射線取樣是 H1、H2 的延伸，也可當 F04 的評分方式，不另立演算法。"
+  },
+  {
+   "name": "隨機漫步／Lévy flight",
+   "overlap_with": "B02 DLA（粒子隨機漫步）",
+   "reason": "B02 已教隨機漫步；Lévy flight 只是步長分布不同，可作為 B02 變形。"
+  },
+  {
+   "name": "布料模擬（質點彈簧布料）",
+   "overlap_with": "E04 動態鬆弛找形（質點＋彈簧＋重力＋阻尼）",
+   "reason": "與 E04 機制相同，屬重複；可補 E04 變形「布料下垂與碰撞」。"
+  },
+  {
+   "name": "位置式動力學（PBD／投影約束）",
+   "overlap_with": "E04 專案種子「自寫迷你 Kangaroo：多目標約束求解器」；E04 變形「改用 Kinetic Damping 加速收斂」",
+   "reason": "Kangaroo 2 本身就是投影式約束求解，屬 E04 的求解器變形。"
+  },
+  {
+   "name": "剛體模擬（方塊堆疊、碰撞）",
+   "overlap_with": "E01 變形「3D 球體堆疊」（只處理球體）",
+   "reason": "需慣性張量、四元數旋轉與接觸求解，GH C# 400 行內難以穩定；建築案例（石塊堆疊、剛體平衡）也未能查證足量。"
+  },
+  {
+   "name": "SPH 流體",
+   "overlap_with": "D01 Boids（鄰居搜尋與粒子受力）；E01 圓填充（排斥）",
+   "reason": "鄰居搜尋與粒子力與 D01 重疊；查不到足量可查證的建築設計案例，建築關聯低。"
+  },
+  {
+   "name": "水力侵蝕地形",
+   "overlap_with": "C04 變形「水力侵蝕後處理」",
+   "reason": "已是 C04 的變形。"
+  }
+ ],
+ "notes": "查證方式：網址均以 WebFetch 開啟確認；ScienceDirect、SAGE、Springer、Wiley、AMS 等出版社頁面回應 403 或導向登入時，改以 Semantic Scholar API 查同一 DOI 核對標題、作者、年份與期刊，evidence 中已註明。family_suggest 的字母僅為建議，編號由挑選階段決定。"
+}

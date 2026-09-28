@@ -1,0 +1,665 @@
+{
+ "scope": "A 規則與語法、F 圖樣與最佳化",
+ "direction": "x1_AF：在 A、F 家族方向內找可新增的演算法（RUN=R20260928-2216）",
+ "candidates": [
+  {
+   "name_zh": "拓撲最佳化（BESO／SIMP）",
+   "name_en": "Structural Topology Optimization (BESO / SIMP)",
+   "family_suggest": "F（圖樣與最佳化）；也可考慮 E（與 E04 同屬結構找形）",
+   "one_liner": "把設計範圍切成一格一格的材料，每一輪用有限元素算出哪些格子最不受力，把它們慢慢挖掉，最後留下像骨頭或樹枝一樣的受力骨架。",
+   "mechanism": [
+    "把矩形設計範圍切成 nx × ny 個四邊形元素，每格一個密度 x（BESO 只有 0／1，SIMP 為 0–1 並以 x^p 懲罰中間值）。",
+    "組出整體勁度矩陣 K，依支承與載重解 K·u = f（用共軛梯度法 CG 逐元素相乘，不必存整個矩陣），得到每個節點位移。",
+    "算每個元素的應變能（敏感度），做鄰近平均濾波以避免棋盤格紋。",
+    "BESO：依敏感度排序，刪去最低的一批、補回最高的一批，使體積比每輪減少 evolutionaryRatio，直到達到目標體積；SIMP：用最佳化準則法（OC）更新密度。",
+    "把密度場輸出成黑白 Mesh，或交給 C05 Marching Squares 抽出可製造的輪廓。"
+   ],
+   "overlap": {
+    "nearest": "E04 動態鬆弛找形；F04 基因演算法（變形「結構或性能外掛評分」要靠 Karamba 等外掛）；C05 Marching Squares（只負責抽輪廓）",
+    "difference": "核心機制是「有限元素分析＋敏感度排序刪加材料」，資料結構是元素網格、節點自由度與線性方程組，產出是連續體的材料分布；E04 是質點彈簧找懸垂形（只處理線網、不算應力），F04 是黑盒子隨機搜尋，都不會自己解勁度方程。圖鑑目前沒有任何單元教到結構分析本身。",
+    "verdict": "new"
+   },
+   "new_concept": "有限元素法（元素勁度矩陣、組裝、邊界條件）、稀疏線性方程組與共軛梯度法求解、敏感度分析、體積約束下的最佳化準則、濾波消除數值不穩定。",
+   "logic": ["迭代模擬", "搜尋／求解"],
+   "difficulty": 5,
+   "loc_estimate": "300–400 行（含 Q4 元素勁度、CG 求解器、BESO 更新與 Mesh 輸出）",
+   "gh_feasibility": "可行但偏重：RhinoCommon 沒有稀疏矩陣求解器，要自寫 double[] 陣列版的逐元素 CG（Rhino.Geometry.Matrix 是密矩陣，60×30 格就要上百 MB，不可用）。Q4 平面應力元素的 8×8 勁度矩陣有封閉公式可直接寫死。輸出用 Mesh（每格一個四邊形面＋VertexColors）或 Polyline 輪廓；支承與載重用 Point3d 輸入吸附到最近節點。60×30 元素、40–60 輪在一般筆電約數秒到數十秒；再大建議接 Timer 分段跑。只做 2D；3D 版本會超過行數與效能上限。",
+   "architecture_cases": [
+    {
+     "title": "卡達國家會議中心 Sidra 樹狀巨柱（Qatar National Convention Centre）",
+     "creator": "磯崎新（Arata Isozaki）團隊",
+     "year": "2011",
+     "url": "https://www.dezeen.com/2013/08/22/qatar-national-convention-centre-by-arata-isozaki",
+     "verified": true,
+     "evidence": "Dezeen 頁面標題「Qatar National Convention Centre by Arata Isozaki」，描述巨大樹狀鋼柱支撐懸挑屋頂、2011 年 12 月開幕；Xie（2022）論文指出此結構以 extended ESO 方法設計。"
+    },
+    {
+     "title": "Generalized topology optimization for architectural design（建築設計的廣義拓撲最佳化）",
+     "creator": "Yi Min Xie（RMIT 創新結構與材料中心）",
+     "year": "2022",
+     "url": "https://papers.cumincad.org/data/works/att/architectural_intelligence2022_2.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁為 Architectural Intelligence (2022) 1:2「Generalized topology optimization for architectural design」，作者 Yi Min Xie，內文說明 ESO／BESO 是建築設計最常用的拓撲最佳化法，並以卡達國家會議中心為例。"
+    },
+    {
+     "title": "Ameba：Rhino／Grasshopper 上的 BESO 拓撲最佳化軟體",
+     "creator": "XIE Technologies（Yi-Min Xie 團隊）",
+     "year": "",
+     "url": "https://ameba.xieym.com/",
+     "verified": true,
+     "evidence": "頁面標題「Ameba: Topology optimization software」，說明以 BESO 技術為基礎、使用 Rhino-Grasshopper 建模與後處理。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "TopOpt 互動 App 與程式碼集（含 99 行／88 行教學程式）",
+     "creator": "DTU TopOpt 研究群（Ole Sigmund 等）",
+     "year": "",
+     "url": "https://www.topopt.mek.dtu.dk/apps-and-software",
+     "verified": true,
+     "evidence": "頁面標題「Apps/Software - TopOpt」，列出 iOS 互動拓撲最佳化 App 與多套公開程式碼（含 99 行 MATLAB 程式頁）。"
+    }
+   ],
+   "references": [
+    {
+     "title": "A 99 line topology optimization code written in Matlab",
+     "creator": "Ole Sigmund",
+     "year": "2001",
+     "url": "https://link.springer.com/article/10.1007/s001580050176",
+     "verified": true,
+     "evidence": "Springer 頁面顯示 Struct Multidisc Optim 21, 120–127 (2001)，作者 O. Sigmund，摘要說明 99 行含最佳化器與有限元素副程式。"
+    },
+    {
+     "title": "Evolutionary Topology Optimization of Continuum Structures: Methods and Applications",
+     "creator": "X. Huang、Y. M. Xie",
+     "year": "2010",
+     "url": "https://doi.org/10.1002/9780470689486",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認書名、作者 X. Huang 與 Y. M. Xie、2010 年 Wiley 出版。"
+    }
+   ],
+   "card_visual": "懸臂梁設計範圍中的灰色方格一輪輪被挖空，最後剩下黑色的桁架狀受力骨架，左側畫支承、右端畫載重箭頭。",
+   "scores": {"novelty": 5, "architecture_relevance": 5, "teachability": 3, "feasibility": 3, "total": 16}
+  },
+  {
+   "name_zh": "模擬退火（以房間鄰接配置為例）",
+   "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "one_liner": "只拿一個方案反覆小改：變好就收，變差也有機會收，但「溫度」越降越低、越來越不肯接受變差，於是能跳出小山谷找到更好的配置。",
+   "mechanism": [
+    "準備 n 個房間與 n 個格位，並給一張鄰接需求表 w[i,j]（例如廚房與餐廳要近）；成本 = Σ w[i,j] × 兩房間格位距離（二次指派問題 QAP）。",
+    "從隨機配置與初始溫度 T0 出發，每一步隨機挑兩個房間交換格位，算成本差 Δ。",
+    "Δ ≤ 0 直接接受；Δ > 0 以機率 exp(−Δ／T) 接受（Metropolis 準則），否則換回來。",
+    "每做 k 步就把溫度乘上冷卻率 α（例如 0.995），直到溫度低於門檻或成本不再下降。",
+    "輸出最佳配置的房間矩形、依 w 粗細的鄰接連線、以及成本與溫度的下降曲線。"
+   ],
+   "overlap": {
+    "nearest": "F04 基因演算法（一整群方案、交配與突變）；A05 案例 eifForm（形狀退火，只是案例、不是演算法單元）",
+    "difference": "核心機制不同：模擬退火只維持一個方案，靠溫度與 Metropolis 機率決定是否接受變差，沒有族群、選擇與交配；資料結構是「排列（permutation）＋成本矩陣」而非基因陣列。示範問題（QAP 房間配置）也是圖鑑目前沒有的離散組合最佳化。",
+    "verdict": "new"
+   },
+   "new_concept": "接受變差解的機率思維（跳出局部最佳）、溫度與冷卻排程、組合最佳化的鄰域（swap move）、二次指派問題與鄰接矩陣；可和 F04 對照「單點搜尋 vs 族群搜尋」。",
+   "logic": ["搜尋／求解"],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行",
+   "gh_feasibility": "完全可行：房間用 class Room { double Area; int Slot; }，格位用 List<Point3d>，鄰接表用 double[,]；距離可用曼哈頓或 Point3d.DistanceTo。輸出 Rectangle3d／PolylineCurve 當房間、Line 當鄰接、Polyline 畫成本曲線。用 Random(seed) 確保可重現；把狀態存成類別欄位接 Timer 就能看到退火過程。純 RhinoCommon，不需外掛。",
+   "architecture_cases": [
+    {
+     "title": "Architectural Layout Design through Simulated Annealing Algorithm（以模擬退火做建築配置設計）",
+     "creator": "Hao Zheng、Yue Ren",
+     "year": "2020",
+     "url": "https://papers.cumincad.org/data/works/att/caadria2020_024.pdf",
+     "verified": true,
+     "evidence": "PDF 首頁標題與作者相符，註明 CAADRIA 2020 論文集 275–284 頁，摘要說明以六種懲罰與獎勵函數評估住宅區配置、再用模擬退火搜尋。"
+    },
+    {
+     "title": "Galapagos 的模擬退火求解器（論壇說明）",
+     "creator": "David Rutten（McNeel）",
+     "year": "2016",
+     "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+     "verified": true,
+     "evidence": "討論串標題「About Simulated Annealing Solver in galapagos」，David Rutten 於 2016 年 4 月 1 日回覆：求解器從最高溫開始、溫度以對數速率下降、跳躍機率依標準模擬退火計算。"
+    },
+    {
+     "title": "Optimally Directed Shape Generation by Shape Annealing（形狀退火）",
+     "creator": "Jonathan Cagan、William J. Mitchell",
+     "year": "1993",
+     "url": "https://doi.org/10.1068/b200005",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 J. Cagan 與 W. J. Mitchell、Environment and Planning B 第 20 卷 5–12 頁（1993）。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+     "creator": "Todd W. Schneider",
+     "year": "2014",
+     "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+     "verified": true,
+     "evidence": "頁面標題相符，作者 Todd W. Schneider，日期 2014 年 9 月 17 日，含可調冷卻排程的互動退火動畫。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Optimization by Simulated Annealing",
+     "creator": "S. Kirkpatrick、C. D. Gelatt Jr.、M. P. Vecchi",
+     "year": "1983",
+     "url": "https://doi.org/10.1126/science.220.4598.671",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、1983 年 5 月 13 日刊於 Science。"
+    },
+    {
+     "title": "Hospital Layout as a Quadratic Assignment Problem",
+     "creator": "Alwalid N. Elshafei",
+     "year": "1977",
+     "url": "https://link.springer.com/article/10.1057/jors.1977.29",
+     "verified": true,
+     "evidence": "Springer 頁面顯示 Journal of the Operational Research Society 第 28 卷 167–179 頁（1977），以二次指派問題安排醫院部門以減少病人移動距離。"
+    }
+   ],
+   "card_visual": "格子上八個彩色房間方塊，依鄰接需求畫粗細不同的連線，角落一條從高到低、抖動後收斂的成本曲線。",
+   "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 5, "feasibility": 5, "total": 18}
+  },
+  {
+   "name_zh": "最小生成樹與 Steiner 樹",
+   "name_en": "Minimum Spanning Tree & Steiner Tree",
+   "family_suggest": "F（圖樣與最佳化，與 F05 同屬圖論）",
+   "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先按長度由短到長挑邊、會成環就跳過；再在分岔處加入 120° 的 Steiner 點，讓網路更短。",
+   "mechanism": [
+    "把所有點兩兩連成候選邊（或只取 Delaunay 邊），依長度排序。",
+    "Kruskal：由短到長檢查每條邊，用 union-find（並查集）判斷兩端是否已在同一群；不同群才加入並合併，直到 n−1 條邊。",
+    "Steiner 改良：找出夾角小於 120° 的相鄰兩邊，在三點之間插入 Fermat 點（用 Weiszfeld 迭代求到三點距離和最小的點），改接成三叉。",
+    "反覆鬆弛所有 Steiner 點位置並刪除退化的點，比較 MST 與 Steiner 網路的總長度。",
+    "輸出網路線段、節點度數與總長，可再依流量給管徑或路寬。"
+   ],
+   "overlap": {
+    "nearest": "F05 最短路徑（變形「在曲線網路上走」）；D02 變形「混合 Voronoi／Delaunay 比較」（只拿 MST 當對照圖）；F05 案例 Frei Otto 羊毛線最小路徑系統",
+    "difference": "F05 解「兩點之間」的最短路，資料結構是優先佇列與距離場；MST／Steiner 解「連起全部點」的最短網路，核心是排序＋並查集的貪婪法，Steiner 部分還加入 120° 幾何條件與點位鬆弛，產出是樹狀網路而不是單一路徑。D02 只是順帶畫出 MST 比較，沒有教演算法。",
+    "verdict": "new"
+   },
+   "new_concept": "並查集（union-find）資料結構、貪婪演算法為何能得到全域最佳（切割性質）、Prim 與 Kruskal 兩種思路、NP-hard 問題的啟發式近似（Steiner）、Fermat 點與 120° 平衡條件。",
+   "logic": ["搜尋／求解", "幾何轉換"],
+   "difficulty": 3,
+   "loc_estimate": "120–220 行（MST 約 60 行，Steiner 改良另加 80–150 行）",
+   "gh_feasibility": "完全可行：點用 List<Point3d>，邊用 List<(int a, int b, double len)> 排序，並查集用 int[] parent＋路徑壓縮；n ≤ 500 時全連接約 12 萬條邊仍很快。輸出 Line／Polyline 與總長數字。Steiner 部分用簡單啟發式（逐一插入 Fermat 點再局部鬆弛），不保證全域最佳但足以教學；精確 Steiner（Smith／GeoSteiner）超出單一元件範圍。3D 版本只要改用 3D 距離即可。",
+   "architecture_cases": [
+    {
+     "title": "Occupying and Connecting（佔據與連結：以最少路徑連接聚落的研究）",
+     "creator": "Frei Otto（與 Berthold Burkhardt）",
+     "year": "2009",
+     "url": "https://evolutionaryurbanism.com/2018/11/14/occupying-and-connecting-frei-otto/",
+     "verified": true,
+     "evidence": "頁面標題「Occupying and Connecting. Frei Otto.」，說明此 2009 年出版物源自 Otto 1964 年在斯圖加特 IL 的研究，探討聚落的佔據與連結（交通、基礎設施）網路的自組織形態。"
+    },
+    {
+     "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+     "creator": "Marc Barthelemy、Geoff Boeing",
+     "year": "2025",
+     "url": "https://arxiv.org/abs/2509.21931",
+     "verified": true,
+     "evidence": "arXiv 摘要頁標題與作者相符（2025 年 9 月 26 日提交），模型「以生成樹為骨幹，再逐步加邊」重現 9,000 個城市街網的共同性質。"
+    },
+    {
+     "title": "Euclidean Steiner tree algorithm applied to street networks?（Grasshopper 以 Steiner 樹生成街網）",
+     "creator": "McNeel 論壇（mcfjoshua 發問，Laurent Delrieu 等回覆）",
+     "year": "2018",
+     "url": "https://discourse.mcneel.com/t/euclidean-steiner-tree-algorithm-applied-to-street-networks/72892",
+     "verified": true,
+     "evidence": "討論串標題相符，日期 2018 年 10 月 11 日，內容為在 Grasshopper 中以 Steiner 樹連接道路端點、並嘗試 Kangaroo 與 Shortest Walk 等做法。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+     "creator": "Jamis Buck",
+     "year": "2011",
+     "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm",
+     "verified": true,
+     "evidence": "標題與作者相符，日期 2011 年 1 月 3 日，以隨機權重邊＋並查集示範生成完美迷宮。"
+    }
+   ],
+   "references": [
+    {
+     "title": "On the shortest spanning subtree of a graph and the traveling salesman problem",
+     "creator": "Joseph B. Kruskal",
+     "year": "1956",
+     "url": "https://doi.org/10.1090/S0002-9939-1956-0078686-7",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Joseph B. Kruskal、1956 年 Proceedings of the American Mathematical Society。"
+    },
+    {
+     "title": "Steiner Minimal Trees",
+     "creator": "E. N. Gilbert、H. O. Pollak",
+     "year": "1968",
+     "url": "https://doi.org/10.1137/0116001",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 E. N. Gilbert 與 H. O. Pollak、1968 年 SIAM Journal on Applied Mathematics。"
+    }
+   ],
+   "card_visual": "散點之間先畫細灰線的最小生成樹，再疊一層加入 120° 三叉 Steiner 點、總長更短的粗線網路，角落標出兩者長度比。",
+   "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 5, "feasibility": 5, "total": 18}
+  },
+  {
+   "name_zh": "準週期鋪磚（Penrose 鋪磚／de Bruijn 五格線法）",
+   "name_en": "Quasiperiodic Tiling (Penrose / de Bruijn Pentagrid)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "one_liner": "畫五組互成 72° 的平行線，每一個交點就換成一片菱形，拼起來就是永遠不重複、卻處處有五重對稱的 Penrose 鋪面。",
+   "mechanism": [
+    "取五個方向 e_k = (cos 72°k, sin 72°k) 與五個偏移 γ_k（總和為 0 以得到標準 Penrose），每個方向畫一組間距 1 的平行線（五格線 pentagrid）。",
+    "對每一對方向 (j, k) 的每一個交點 p，計算整數座標 K_i = ⌈p·e_i − γ_i⌉（i ≠ j, k 時），並令 K_j、K_k 為交點所屬的線號。",
+    "菱形的四個頂點為 Σ K_i e_i，再分別加上 e_j、e_k、e_j + e_k；方向差 72° 的是胖菱形、36° 的是瘦菱形。",
+    "所有交點各自換成菱形，就得到彼此無縫接合的準週期鋪面；改 γ_k 或方向數（7、8、12 格線）可得到其他準晶鋪面。",
+    "變形：改用 Robinson 三角形替換（deflation）做自相似版本，或以 2023 年 hat 單形磚的替換規則產生非週期單形鋪面。"
+   ],
+   "overlap": {
+    "nearest": "F02 變形「Penrose／準週期底圖」（先用 deflation 產生 Penrose 當 Hankin 法的底圖）；A05 形狀文法（標籤形狀替換，與 deflation 相近）；F02 案例 Lu & Steinhardt 準晶 girih",
+    "difference": "F02 只把 Penrose 當「別人給的底圖」，重點在 Hankin 射線；本演算法的核心是 de Bruijn 對偶法：由直線族的交點換算整數座標、直接構造菱形，資料結構是「線族交點 → 高維整數格點投影」，教到週期與非週期的差別。替換法版本雖與 A05 相近，但放在本單元當變形即可。",
+    "verdict": "new"
+   },
+   "new_concept": "對偶（線的排列 ↔ 鋪磚）、高維格點投影（cut-and-project）、黃金比例與五重對稱、非週期性與局部同構；可和 F01、F02 的週期性底圖對照。",
+   "logic": ["幾何轉換", "改寫／遞迴"],
+   "difficulty": 3,
+   "loc_estimate": "120–200 行（五格線法約 100 行，deflation 變形另加 60 行）",
+   "gh_feasibility": "完全可行：方向用 Vector3d[5]，交點用解二元一次方程，菱形用 Polyline／PolylineCurve 輸出並依類型分成兩個 DataTree 分支上色；用 Curve.Contains 以圓或任意曲線裁切。deflation 版用 List<(int type, Point3d a, b, c)> 反覆細分。hat 單形磚的 H7／H8 替換規則較繁瑣，建議當進階變形或讀入預先算好的座標。",
+   "architecture_cases": [
+    {
+     "title": "RMIT Storey Hall 的 Penrose 鋪磚立面與室內",
+     "creator": "ARM Architecture（Ashton Raggatt McDougall）",
+     "year": "1995",
+     "url": "https://armarchitecture.com.au/projects/rmit-storey-hall-and-green-brain/",
+     "verified": true,
+     "evidence": "ARM 專案頁標題「RMIT Storey Hall and Green Brain」，說明 Storey Hall 1995 年完成，立面以 Roger Penrose 兩種磚「無限鋪滿而不重複」的概念做成青銅磚。"
+    },
+    {
+     "title": "牛津大學 Andrew Wiles Building 入口的 Penrose 鋪面",
+     "creator": "Roger Penrose（地坪圖樣）；牛津大學數學研究所",
+     "year": "2013",
+     "url": "https://en.wikipedia.org/wiki/Mathematical_Institute,_University_of_Oxford",
+     "verified": true,
+     "evidence": "條目寫明 Andrew Wiles Building 於 2013 年完成，並有「Sir Roger Penrose designed a non-periodic pattern (a Penrose tiling) to decorate the ground at the entrance」。"
+    },
+    {
+     "title": "Aperiodic Tiling, Penrose Tiling and the Generation of Architectural Forms",
+     "creator": "Michael J. Ostwald",
+     "year": "2014",
+     "url": "https://doi.org/10.1007/978-3-319-00143-2_31",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Michael J. Ostwald、收於《Architecture and Mathematics from Antiquity to the Future》（2014）。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Penrose Tiling Explained（以 Robinson 三角形遞迴產生 Penrose 鋪磚）",
+     "creator": "Jeff Preshing",
+     "year": "2011",
+     "url": "https://preshing.com/20110831/penrose-tiling-explained/",
+     "verified": true,
+     "evidence": "標題與作者相符，日期 2011 年 8 月 31 日，以 Python 將紅、藍兩種三角形依黃金比例反覆細分。"
+    },
+    {
+     "title": "An aperiodic monotile（hat 單形磚互動產生器與原始碼）",
+     "creator": "David Smith、Joseph Samuel Myers、Craig S. Kaplan、Chaim Goodman-Strauss",
+     "year": "2023",
+     "url": "https://cs.uwaterloo.ca/~csk/hat/",
+     "verified": true,
+     "evidence": "頁面標題「An aperiodic monotile」，提供可匯出 PNG／SVG 的互動網頁工具與 H7／H8 替換規則工具，原始碼以 BSD 授權公開。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Algebraic theory of Penrose's non-periodic tilings of the plane. I",
+     "creator": "N. G. de Bruijn",
+     "year": "1981",
+     "url": "https://doi.org/10.1016/1385-7258(81)90016-0",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 N.G. de Bruijn、1981 年 Indagationes Mathematicae (Proceedings)。"
+    },
+    {
+     "title": "An aperiodic monotile",
+     "creator": "David Smith、Joseph Samuel Myers、Craig S. Kaplan、Chaim Goodman-Strauss",
+     "year": "2023",
+     "url": "https://arxiv.org/abs/2303.10798",
+     "verified": true,
+     "evidence": "arXiv 摘要頁標題與四位作者相符，2023 年 3 月 20 日提交，提出可鋪滿平面但永不週期的「hat」多邊形。"
+    }
+   ],
+   "card_visual": "圓形範圍內五重對稱的 Penrose 鋪面，胖菱形與瘦菱形用兩種顏色，中心隱約浮出十角星。",
+   "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 4, "feasibility": 5, "total": 17}
+  },
+  {
+   "name_zh": "等面鋪磚與 Escher 化（Heesch 型鑲嵌）",
+   "name_en": "Isohedral Tiling & Escherization (Heesch Types)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "one_liner": "先選一種對稱規則（例如一邊怎麼彎、對邊就平移照彎，或繞中點轉半圈），把正方形或六角形的邊變形成蜥蜴、鳥的輪廓，同一塊磚就能無縫鋪滿整面牆。",
+   "mechanism": [
+    "選一種 Heesch／等面鋪磚類型（例如 TTTT 平行四邊形、TTTTTT 六角形、TCTC、CCC），決定格子向量與每條邊的配對關係。",
+    "設計者只畫「自由邊」的曲線；程式依規則自動生成配對邊：T 邊＝平移複製、C 邊＝繞邊中點旋轉 180° 的點對稱曲線、G 邊＝滑移反射。",
+    "把所有邊依序接成一條封閉曲線，就是可以鋪滿平面的原型磚。",
+    "依該類型的對稱群（平移＋旋轉或滑移反射）把原型磚複製到格子上，並用兩色或三色交錯著色。",
+    "變形：以最佳化自動調整頂點與邊形，使磚形最接近使用者給的目標輪廓（Kaplan 的 Escherization）。"
+   ],
+   "overlap": {
+    "nearest": "F01 Truchet 磁磚（固定方磚內的圖案旋轉）；F02 伊斯蘭圖樣（固定多邊形底圖上的射線）",
+    "difference": "Truchet 與 Hankin 法都是「方磚或多邊形的外形固定、只改內部圖案」；等面鋪磚改的是「磚本身的邊界」，核心機制是依對稱群把一條自由邊推導出其他邊，資料結構是格子向量＋邊類型（T／C／G）＋變換組合，產出是可互鎖的單一異形磚。",
+    "verdict": "new"
+   },
+   "new_concept": "平面對稱群（壁紙群）與等面鋪磚分類、邊的約束（平移／點對稱／滑移反射）、Transform 的組合與格子座標；也是「一個模具量產互鎖構件」的製造思維。",
+   "logic": ["幾何轉換"],
+   "difficulty": 3,
+   "loc_estimate": "150–250 行（實作 4–6 種 Heesch 型）",
+   "gh_feasibility": "可行：自由邊用 Curve 輸入或 Polyline 控制點，Transform.Translation、Transform.Rotation(π, 中點)、Transform.Mirror 產生配對邊，Curve.JoinCurves 接成封閉輪廓；以雙層迴圈乘格子向量複製（Transform 可直接套在 Curve.Duplicate 上）。只做 4–6 種常用類型即可；完整 93 種等面類型與 Escherization 最佳化要查表與數值最佳化，超出單一元件，列為進階變形。",
+   "architecture_cases": [
+    {
+     "title": "Metamorphosis III 放大壁畫（海牙郵政總局，今移至史基浦機場）",
+     "creator": "M. C. Escher（放大繪製：Huug Vooys）",
+     "year": "1969",
+     "url": "https://escherinhetpaleis.nl/en/about-escher/escher-today/metamorphosis-iii-revealed-hague-1969",
+     "verified": true,
+     "evidence": "頁面標題「Metamorphosis III is revealed in The Hague, 1969」，說明 7 公尺原作放大為 48 公尺，1969 年 2 月 20 日於海牙新郵局揭幕，2008 年 1 月移至史基浦機場。"
+    },
+    {
+     "title": "Creating 3D texture tessellation on planar surface using a single tile or a few tiles（以單一或少數磚在平面上形成 3D 紋理鑲嵌）",
+     "creator": "Anooshe Rezaee Javan、Ahmed Abdelaal、Yi Min Xie",
+     "year": "2024",
+     "url": "https://doi.org/10.1016/j.foar.2024.05.001",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、2024 年刊於 Frontiers of Architectural Research，參考文獻包含 3D Escher 磚 CAD 工具與等面鋪磚研究。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "tactile-js：等面鋪磚的 JavaScript 函式庫（含 p5.js 範例）",
+     "creator": "Craig S. Kaplan（isohedral）",
+     "year": "",
+     "url": "https://github.com/isohedral/tactile-js",
+     "verified": true,
+     "evidence": "GitHub 專案 tactile-js 說明為表示、操作與繪製平面週期鋪磚的函式庫，支援 93 種等面類型中的 81 種，附 P5.js 範例。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Escherization",
+     "creator": "Craig S. Kaplan、David H. Salesin",
+     "year": "2000",
+     "url": "https://history.siggraph.org/learning/escherization-by-kaplan-and-salesin/",
+     "verified": true,
+     "evidence": "ACM SIGGRAPH 歷史檔案頁標題「“Escherization” by Kaplan and Salesin」，2000 年技術論文，以在等面鋪磚參數空間中最佳化找出近似目標輪廓的磚形。"
+    }
+   ],
+   "card_visual": "一塊由方形邊界彎成鳥形的磚，以平移與半圈旋轉鋪滿畫面，相鄰磚以兩色交錯，旁邊用細線標出原本的方格。",
+   "scores": {"novelty": 4, "architecture_relevance": 3, "teachability": 4, "feasibility": 4, "total": 15}
+  },
+  {
+   "name_zh": "板材排版（Nesting／二維裝箱）",
+   "name_en": "2D Nesting / Bin Packing for Fabrication",
+   "family_suggest": "E（排列與鬆弛，與 E01 同屬排列問題）；或 F（最佳化）",
+   "one_liner": "把一堆要雷切或 CNC 的不規則零件，由大到小一片片塞進板材的左下角，會撞到就往右或往上挪，盡量少用幾張板、少浪費材料。",
+   "mechanism": [
+    "讀入所有零件輪廓與板材尺寸，依面積（或外接框）由大到小排序（First Fit Decreasing）。",
+    "把板材與每個零件（含 0°／90°／180°／270° 旋轉版本、加上刀具間隙）轉成網格化的佔用矩陣 bool[,]。",
+    "對每個零件，從下到上、從左到右掃描可放位置，找到第一個不與已放零件重疊的位置（Bottom-Left Fill）；放不下就開新板。",
+    "放定後把該零件的格子標為已佔用，並用 Transform 把原始曲線搬到對應位置。",
+    "計算每張板的利用率；進階可改用 No-Fit Polygon 精確判斷，或把排序順序交給 F04 基因演算法最佳化。"
+   ],
+   "overlap": {
+    "nearest": "E01 圓填充（連續推擠直到不重疊）；A04 變形「可製造的面板與框料」（只統計尺寸、不排版）；F04 基因演算法（可當外層最佳化器）",
+    "difference": "E01 是連續的力學鬆弛、物件都是圓；排版是離散的組合放置問題：物件是任意多邊形、要考慮旋轉與多張板，核心機制是排序啟發式＋碰撞查詢的貪婪放置，資料結構是佔用網格（或 NFP 多邊形），產出是製造用的排版圖與利用率。",
+    "verdict": "new"
+   },
+   "new_concept": "NP-hard 組合問題的貪婪啟發式（FFD、Bottom-Left）、柵格化碰撞偵測、No-Fit Polygon 概念、材料利用率指標；直接連到數位製造與減少廢料。",
+   "logic": ["搜尋／求解"],
+   "difficulty": 4,
+   "loc_estimate": "200–320 行（柵格法）",
+   "gh_feasibility": "可行（柵格法）：零件用 List<Curve>，以 Curve.Contains 在網格點取樣得到 bool[,]；掃描放置純陣列運算；結果用 Transform.Translation × Transform.Rotation 套回原始曲線，輸出每張板的 Rectangle3d 與零件曲線、利用率數字。解析度與速度需取捨（30–60 個零件、每格 5 mm 可在數秒內完成）。精確 NFP 需要多邊形 Minkowski 和，RhinoCommon 沒有現成函式，列為進階變形或只支援凸多邊形。",
+   "architecture_cases": [
+    {
+     "title": "WikiHouse 專案採用的 SVGnest 排版工具（fork）",
+     "creator": "WikiHouse Project",
+     "year": "",
+     "url": "https://github.com/wikihouseproject/SVGnest",
+     "verified": true,
+     "evidence": "GitHub 顯示 wikihouseproject/SVGnest 為 Jack000/SVGnest 的 fork，說明以基因演算法與 No Fit Polygon 排版不規則零件以減少雷切與 CNC 廢料，2018 年 1 月 26 日封存。"
+    },
+    {
+     "title": "Inventory Informed Computational Design Method for Upcycling Cross-Laminated Timber Leftovers into Floor Slabs（以庫存資訊排版 CLT 剩料做樓板）",
+     "creator": "Qiming Sun、Mathias Bernhard、Benjamin Dillenburger",
+     "year": "2026",
+     "url": "https://link.springer.com/chapter/10.1007/978-981-92-0615-5_20",
+     "verified": true,
+     "evidence": "Springer 章節頁標題與作者相符，收於《Transindividual Intelligence》（CDRF 2025），摘要以「inventory-informed slicing and adaptive nesting」重用 CLT 剩料，比較 first-fit 與 best-fit 放置策略。"
+    },
+    {
+     "title": "OpenNest：Rhino／Grasshopper 的 2D 多邊形排版外掛",
+     "creator": "Petras Vestartas",
+     "year": "",
+     "url": "https://github.com/petrasvestartas/OpenNest",
+     "verified": true,
+     "evidence": "GitHub 專案 OpenNest 說明為 Rhino/Grasshopper 的 2D 多邊形排版工具，可把不規則零件排到板材上並支援孔洞與非矩形板材，MIT 授權。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "SVGnest：開源向量排版工具（瀏覽器版）",
+     "creator": "Jack Qiao（Jack000）",
+     "year": "",
+     "url": "https://github.com/Jack000/SVGnest",
+     "verified": true,
+     "evidence": "GitHub 專案說明為在瀏覽器中把任意 SVG 形狀排入容器的排版工具，放置用 No-Fit Polygon、順序用基因演算法與 first-fit-decreasing 啟發式。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Orthogonal Packings in Two Dimensions",
+     "creator": "Brenda S. Baker、E. G. Coffman Jr.、Ronald L. Rivest",
+     "year": "1980",
+     "url": "https://doi.org/10.1137/0209064",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、三位作者、1980 年 SIAM Journal on Computing（Bottom-Left 放置法的經典論文）。"
+    },
+    {
+     "title": "Complete and robust no-fit polygon generation for the irregular stock cutting problem",
+     "creator": "E. K. Burke、R. S. R. Hellier、G. Kendall、G. Whitwell",
+     "year": "2007",
+     "url": "https://doi.org/10.1016/j.ejor.2006.03.011",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、四位作者、2007 年 European Journal of Operational Research。"
+    }
+   ],
+   "card_visual": "兩張矩形板材上擠滿大小不一的不規則零件輪廓（依大小深淺上色），板材右上角標出利用率百分比。",
+   "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 3, "feasibility": 4, "total": 15}
+  },
+  {
+   "name_zh": "粒子群最佳化（PSO）",
+   "name_en": "Particle Swarm Optimization (PSO)",
+   "family_suggest": "F（圖樣與最佳化）",
+   "one_liner": "一群「粒子」在參數空間裡飛，每顆都記得自己找過最好的地方，也知道整群最好的地方，速度就朝這兩個方向拉，整群慢慢聚到好解上。",
+   "mechanism": [
+    "每顆粒子有位置 x（一組設計參數）與速度 v，隨機初始化在參數範圍內。",
+    "評估每顆粒子的適應度，更新個體最佳 pbest 與群體最佳 gbest。",
+    "更新速度 v = w·v + c1·r1·(pbest − x) + c2·r2·(gbest − x)，再更新位置 x = x + v，並把超出範圍的參數夾回邊界。",
+    "重複指定代數或直到 gbest 不再進步，輸出 gbest 與收斂曲線。",
+    "變形：慣性權重遞減、鄰域拓撲（只看附近粒子的 lbest）、離散版 PSO。"
+   ],
+   "overlap": {
+    "nearest": "F04 基因演算法（同為族群式隨機最佳化）；D01 Boids（同樣用速度向量更新）",
+    "difference": "PSO 沒有選擇、交配與突變，粒子帶著速度與「記憶」（pbest）在連續參數空間移動，靠社會學習收斂；F04 的機制是基因重組。與 D01 的差別是 PSO 的粒子飛在「參數空間」而不是實體空間，目的是最佳化而非群聚行為。三者中只有核心機制不同，資料結構與產出類型接近，屬於邊界案例；若 F 家族名額有限，建議優先收模擬退火。",
+    "verdict": "new"
+   },
+   "new_concept": "群體智慧與社會學習、速度與慣性在參數空間中的意義、探索與利用的權衡（w、c1、c2）；可和 F04、模擬退火並列比較三種黑盒子最佳化。",
+   "logic": ["搜尋／求解", "迭代模擬"],
+   "difficulty": 3,
+   "loc_estimate": "120–200 行",
+   "gh_feasibility": "完全可行：粒子用 class Particle { double[] X, V, Best; double BestScore; }；示範的適應度可直接在元件內計算（例如在地形 Surface 上找最高點，或以 Ray 與 Mesh 求交算點位日照）；輸出 Point3d 與速度 Line、gbest 收斂 Polyline。接 Timer 可看到粒子飛行；若要評估外部元件的結果，和 F04 一樣需要多元件迴圈或改用 Silvereye。",
+   "architecture_cases": [
+    {
+     "title": "SILVEREYE – The Implementation of Particle Swarm Optimization Algorithm in a Design Optimization Tool",
+     "creator": "Judyta M. Cichocka、Agata Migalska、Will N. Browne、Edgar Rodriguez",
+     "year": "2017",
+     "url": "https://link.springer.com/chapter/10.1007/978-981-10-5197-5_9",
+     "verified": true,
+     "evidence": "Springer 章節頁標題與四位作者相符，收於 CAAD Futures 2017（151–169 頁），以屋頂幾何最佳化實驗比較 PSO 與演化式求解器。"
+    },
+    {
+     "title": "Genetic evolution vs. function approximation: Benchmarking algorithms for architectural design optimization",
+     "creator": "Thomas Wortmann",
+     "year": "2019",
+     "url": "https://academic.oup.com/jcde/article/6/3/414/5732355",
+     "verified": true,
+     "evidence": "Journal of Computational Design and Engineering 6(3):414–428 頁面，作者 Thomas Wortmann，基準測試包含以 Silvereye 實作的 PSO，涵蓋結構、建築能耗與採光七個問題。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "PySwarms：Python 粒子群最佳化研究工具（含 2D／3D 粒子動畫）",
+     "creator": "Lester James V. Miranda",
+     "year": "2018",
+     "url": "https://github.com/ljvmiranda921/pyswarms",
+     "verified": true,
+     "evidence": "GitHub 專案說明為「A research toolkit for particle swarm optimization in Python」，2018 年發表於 JOSS，附等高線與曲面上的粒子移動動畫工具。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Particle swarm optimization",
+     "creator": "J. Kennedy、R. Eberhart",
+     "year": "1995",
+     "url": "https://doi.org/10.1109/ICNN.1995.488968",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 J. Kennedy 與 R. Eberhart、刊於 Proceedings of ICNN'95（1995）。"
+    }
+   ],
+   "card_visual": "等高線地形上散布的粒子帶著速度箭頭，朝最高峰聚攏，最佳粒子以亮色標出。",
+   "scores": {"novelty": 3, "architecture_relevance": 3, "teachability": 4, "feasibility": 5, "total": 15}
+  },
+  {
+   "name_zh": "迭代函數系統（IFS／混沌遊戲）",
+   "name_en": "Iterated Function System (IFS / Chaos Game)",
+   "family_suggest": "A（規則與語法）；或 F（與 F06 奇異吸子同屬吸子）",
+   "one_liner": "準備幾個「縮小＋旋轉＋平移」的變換，每次隨機挑一個套在目前的點上，點了幾萬次之後，點雲自己浮現出 Barnsley 蕨或 Sierpinski 三角形。",
+   "mechanism": [
+    "定義 k 個收縮仿射變換 f_i(p) = A_i·p + b_i（2×2 或 3×3 矩陣＋平移），並為每個變換指定機率（常用 |det A_i| 的比例）。",
+    "從任意一點出發，每一步依機率抽一個變換套上去，得到下一個點（混沌遊戲）。",
+    "捨棄前幾十步，其餘點全部記錄；因為每個變換都會收縮，點雲一定收斂到同一個自相似的吸子，與起點無關。",
+    "依點是由哪個變換產生來上色，或把點數累積成密度圖。",
+    "確定性版本：把初始圖形同時套用全部變換、反覆 d 層（Hutchinson 運算子），可和機率版本對照。"
+   ],
+   "overlap": {
+    "nearest": "F06 奇異吸子（單一非線性公式反覆代入）；A05 形狀文法（畢氏樹其實就是確定性 IFS）；A02 Koch 曲線（遞迴自相似）",
+    "difference": "F06 只有一條固定的非線性公式，本演算法是「多個仿射變換＋機率抽選」，資料結構是變換矩陣集合，教到矩陣與收縮映射；A05 的畢氏樹是確定性地替換帶標籤的形狀，IFS 的隨機迭代（混沌遊戲）與「由變換集合唯一決定吸子」的觀念在圖鑑中還沒有。屬於邊界案例，若審查認為過近，可改列 A05 或 F06 的變形。",
+    "verdict": "new"
+   },
+   "new_concept": "仿射變換矩陣（Transform 的 M00–M23）與矩陣組合、收縮映射與不動點（吸子唯一性）、以機率迭代取代遞迴展開、自相似與碎形維度。",
+   "logic": ["改寫／遞迴", "迭代模擬"],
+   "difficulty": 2,
+   "loc_estimate": "80–150 行",
+   "gh_feasibility": "完全可行：變換用 List<Transform>（直接設定 Transform 的 M00、M01、M03 等欄位，或用 Transform.Scale × Rotation × Translation 組合），機率用 double[] 累積分佈抽選；點用 PointCloud 輸出並依變換編號上色，十萬點以內即時。3D IFS 只要改用 4×4 Transform；確定性版本對 Curve 或 Brep 套 Transform 複製即可，但層數要控制（k^d 成長）。",
+   "architecture_cases": [
+    {
+     "title": "Fractal-Based Generative Design of Structural Trusses Using Iterated Function System（以 IFS 生成桁架）",
+     "creator": "Iasef Md Rian、Mario Sassone",
+     "year": "2014",
+     "url": "https://doi.org/10.1260/0266-3511.29.4.181",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 Iasef Md Rian 與 Mario Sassone、2014 年刊於 International Journal of Space Structures。"
+    },
+    {
+     "title": "Research on Generation of Fractal Architecture Model Scheme via Iterated Function System (IFS)",
+     "creator": "Yongsop U、Ying Yu、Dong Han、Jizhou Sun",
+     "year": "2015",
+     "url": "https://doi.org/10.2991/csic-15.2015.18",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題與四位作者，收於 2015 年 International Conference on Computer Science and Intelligent Communication 論文集。"
+    }
+   ],
+   "cc_refs": [
+    {
+     "title": "Coding Challenge #108：Barnsley Fern（Barnsley 蕨）",
+     "creator": "Daniel Shiffman（The Coding Train）",
+     "year": "2018",
+     "url": "https://thecodingtrain.com/challenges/108-barnsley-fern/",
+     "verified": true,
+     "evidence": "頁面標題「#108 — Barnsley Fern」，內容講解矩陣與以機率挑選變換公式畫出蕨葉，附 p5.js 與 Processing 程式。"
+    }
+   ],
+   "references": [
+    {
+     "title": "Iterated function systems and the global construction of fractals",
+     "creator": "M. F. Barnsley、S. Demko",
+     "year": "1985",
+     "url": "https://doi.org/10.1098/rspa.1985.0057",
+     "verified": true,
+     "evidence": "Crossref 中繼資料確認標題、作者 M. F. Barnsley 與 S. Demko、1985 年 Proceedings of the Royal Society of London A。"
+    }
+   ],
+   "card_visual": "深色背景上由四個仿射變換隨機迭代出的 Barnsley 蕨點雲，每個變換產生的點用不同綠色。",
+   "scores": {"novelty": 3, "architecture_relevance": 2, "teachability": 5, "feasibility": 5, "total": 15}
+  }
+ ],
+ "rejected": [
+  {
+   "name": "細分曲面（Catmull-Clark／Loop）",
+   "overlap_with": "A04 變形「網格細分（Catmull-Clark 精神）」；A04 案例 Hansmeyer Subdivided Columns、Platonic Solids、Weaverbird",
+   "reason": "A04 已有此變形且案例高度重疊；真正的 Catmull-Clark／Loop 權重遮罩可交給 gh-enrich 把 A04 該變形寫完整，不另立單元。"
+  },
+  {
+   "name": "一維基本細胞自動機（Wolfram 規則）",
+   "overlap_with": "C02 變形「一維 Wolfram 規則立面」；C02 案例 Cambridge North 車站 Rule 30 立面、Coding Challenge 179",
+   "reason": "已完整收錄為 C02 變形，重複。"
+  },
+  {
+   "name": "CGA split grammar（分割文法）",
+   "overlap_with": "A05 變形「分割文法（split grammar）」；A04／A05 案例 CGA Shape、CityEngine 立面教學",
+   "reason": "機制與案例都已在 A05，重複。"
+  },
+  {
+   "name": "多目標最佳化（NSGA-II／Pareto 前緣）",
+   "overlap_with": "F04 變形「多目標加權」與專案種子「迷你 Octopus：兩目標 Pareto 前緣」；F04 案例 Octopus、Wallacei",
+   "reason": "本質是在 GA 上加非支配排序與擁擠距離，建議作為 F04 的新變形「非支配排序（NSGA-II）」。"
+  },
+  {
+   "name": "旅行推銷員問題與單線畫（TSP art）",
+   "overlap_with": "E02 變形「TSP 單筆路徑」；E02 案例 StippleGen",
+   "reason": "已是 E02 變形；另可當本檔「模擬退火」的變形（用 2-opt 交換做退火）。"
+  },
+  {
+   "name": "空間配置／鄰接最佳化（泡泡圖）",
+   "overlap_with": "本檔候選「模擬退火」（以 QAP 房間配置為示範）；力導向泡泡圖＝E01 圓填充＋E04 彈簧；E03 專案種子「面積指定的泡泡平面生成器」",
+   "reason": "是問題類型而不是單一演算法；離散版併入模擬退火示範，連續版屬 E01／E04 變形。"
+  },
+  {
+   "name": "Mandelbrot／Julia 逃逸時間分形",
+   "overlap_with": "C05 變形「換場函數」（逃逸步數就是另一種場值）；F06 奇異吸子（公式反覆代入）",
+   "reason": "機制是逐點迭代產生純量場再取等值線，和 C05／F06 的組合重疊，且找不到可查證的建築應用案例，建議當 C05 變形。"
+  },
+  {
+   "name": "疊紋（Moiré）",
+   "overlap_with": "F02 變形「多層疊合（穹頂光影）」；F01／C04 圖樣疊加",
+   "reason": "是兩層週期圖樣疊加產生的視覺現象，不是獨立演算法，建議當 F02 或 F01 的變形（雙層穿孔板的疊紋立面）。"
+  },
+  {
+   "name": "凱爾特結／Kolam（鏡曲線）",
+   "overlap_with": "F01 Truchet 磁磚（每格放交叉或反射磚即可得鏡曲線）；F02 變形「交織帶（over-under strapwork）」",
+   "reason": "鏡曲線可化約為三種磚的 Truchet 鋪排再加上下交織，建議當 F01 變形「鏡曲線：Kolam 與凱爾特結」。"
+  },
+  {
+   "name": "圖文法（Graph grammar）",
+   "overlap_with": "A05 形狀文法（改寫規則）、A01 L-System",
+   "reason": "核心仍是改寫規則，只是作用在房間鄰接圖上；子圖比對在單一 C# 元件內負擔重，建築案例多停留在學術工具，建議當 A05 變形「規則作用在鄰接圖上」。"
+  },
+  {
+   "name": "Barnsley 蕨",
+   "overlap_with": "本檔候選「迭代函數系統（IFS／混沌遊戲）」",
+   "reason": "是 IFS 的代表範例，併入該候選。"
+  },
+  {
+   "name": "hat 單形磚（2023）",
+   "overlap_with": "本檔候選「準週期鋪磚（Penrose／de Bruijn）」",
+   "reason": "屬非週期鋪磚的替換規則，併入該候選當進階變形。"
+  },
+  {
+   "name": "Heesch 型／Escher 鑲嵌",
+   "overlap_with": "本檔候選「等面鋪磚與 Escher 化」",
+   "reason": "同一件事，併入該候選。"
+  }
+ ]
+}

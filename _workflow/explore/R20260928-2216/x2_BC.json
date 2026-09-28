@@ -1,0 +1,501 @@
+{
+  "run": "R20260928-2216",
+  "key": "x2_BC",
+  "scope": "B 生長、C 場與擴散 家族內的新演算法",
+  "direction": "x2_BC：B 生長、C 場與擴散",
+  "cross_direction_notes": [
+    "「熱方法測地距離場」可能與 x4 新家族方向的「幾何處理／網格（測地線）」重疊，彙整時請合併比對。",
+    "「離散聚合」可能與 x1 的「圖文法」或 x3 的「代理人建構」被同時提出；本檔主張它屬於 B 生長（加法式逐步生長）。",
+    "「穩態熱傳導」與「熱方法測地距離場」都會解擴散／Poisson 型方程，但前者在規則格子上用鬆弛法、後者在三角網格上用稀疏矩陣，產出與應用不同。"
+  ],
+  "candidates": [
+    {
+      "local_id": "x2-1",
+      "name_zh": "離散聚合（連接點規則生長）",
+      "name_en": "Discrete Aggregation (Connection-based Stochastic Aggregation)",
+      "family_suggest": "B",
+      "one_liner": "每個模組身上有幾個「接頭平面」，電腦反覆挑一個還空著的接頭、依規則把新模組對齊接上，撞到既有模組就放棄，於是一顆顆零件自己長成可拆裝的量體。",
+      "mechanism": [
+        "定義零件：每種零件＝幾何（Mesh）＋數個連接平面（Plane，Z 軸朝外），再寫下規則表「零件 A 的接頭 i 可以接零件 B 的接頭 j」。",
+        "放入種子零件，把它所有的接頭放進「開放接頭」清單（生長前緣）。",
+        "每一步隨機（或依吸引點、純量場加權）挑一個開放接頭與一條可用規則，用平面到平面的轉換把新零件的接頭 j（先翻轉 180°）對齊到接頭 i。",
+        "用包圍盒快篩＋網格相交檢查碰撞與邊界；通過就加入並更新開放接頭（移除已用的、加入新零件其餘接頭），否則記為失敗再試別的組合。",
+        "重複到零件數上限或沒有開放接頭為止；輸出零件、連接圖（誰接誰）與組裝順序。"
+      ],
+      "overlap": {
+        "nearest": "A05 形狀文法（畢氏樹：帶標籤形狀換成縮小旋轉的組合）；A06 WFC 變形「tile 換成 Rhino 幾何模組」「2D → 3D 體素 WFC」；B02 DLA（粒子黏附成群集）",
+        "difference": "A05 是遞迴地「替換」形狀，多為確定性的縮放規則；A06 綁定在規則格子上用限制傳播求解。離散聚合沒有格子、零件不縮放，而是在自由 3D 空間中以「連接平面對齊＋碰撞拒絕」逐步做加法生長，核心資料結構是開放接頭的前緣清單與零件連接圖。和 B02 DLA 相比，黏附位置由接頭與規則決定，而不是隨機行走。",
+        "verdict": "new"
+      },
+      "new_concept": "以「平面到平面」座標轉換組裝剛體零件、開放連接前緣（frontier）清單、零件連接圖（graph）、碰撞偵測（包圍盒快篩＋空間索引），以及「可逆、可拆組的數位材料」設計思維。",
+      "logic": ["迭代模擬", "幾何轉換"],
+      "difficulty": 3,
+      "loc_estimate": "220–320 行",
+      "gh_feasibility": "可在單一 C# 元件內完成：零件用 Mesh 與 List<Plane> 表示，Transform.PlaneToPlane 對齊（新接頭平面先用 Transform.Rotation 繞自身 X 軸翻轉 180°），碰撞用 BoundingBox 快篩＋Intersection.MeshMeshFast 或以 Mesh.IsPointInside 抽樣檢查，零件多時用 RTree 加速；規則可用字串（例如 A|0>B|2）輸入。上千個零件時精確碰撞會變慢，需以包圍盒近似。",
+      "architecture_cases": [
+        {
+          "title": "Wasp：Combinatorial Design with Grasshopper",
+          "creator": "Andrea Rossi（TU Darmstadt DDU）",
+          "year": 2017,
+          "url": "https://github.com/ar0551/Wasp",
+          "verified": true,
+          "evidence": "GitHub 頁面說明 Wasp 是 Andrea Rossi 發起、以 Python 撰寫的 Grasshopper 離散設計元件組，零件以幾何＋連接點描述，提供 stochastic aggregation 與 field-driven aggregation，並列出 Rossi & Tessmann 2017 CAADRIA 論文。",
+          "role": "本演算法的代表實作：零件、連接平面、聚合規則與碰撞避免。"
+        },
+        {
+          "title": "Tallinn Architecture Biennale Pavilion",
+          "creator": "Gilles Retsin Architecture",
+          "year": 2017,
+          "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+          "verified": true,
+          "evidence": "designboom 標題為「gilles retsin completes lego-like wooden pavilion for the tallinn architecture biennale」，說明以直線、45°、90°、135° 四種合板積木組成 80 個離散構件並錯縫組合成梁與跨距。",
+          "role": "少數種類的離散構件依接合規則組合成結構，是離散聚合在建築尺度的實現。"
+        },
+        {
+          "title": "Combinatorial Nest（Combo-nest）",
+          "creator": "Jose Sanchez／Plethora Project（主設計 Brendan Ho）",
+          "year": 2019,
+          "url": "https://www.plethora-project.com/combinatorial-nest",
+          "verified": true,
+          "evidence": "Plethora Project 頁面描述此案為「discrete open-ended tectonic system」，以標準化材料單元的排列組合在體積上「grow」，並用實體積木、指令卡與遊戲模擬介面產生變化。",
+          "role": "以固定單元的組合規則逐步長出量體，示範聚合規則如何產生不同構型。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Jigsaw Block（程序化結構拼接）",
+          "creator": "Mojang Studios（Minecraft）",
+          "year": 2019,
+          "url": "https://minecraft.wiki/w/Jigsaw_Block",
+          "verified": true,
+          "evidence": "Minecraft Wiki 說明 Jigsaw Block 於 Java Edition 1.14（2019）加入，透過 template pool 與 target name 把小結構片段一層層接成村莊、遺跡等大型結構，並有層數與優先權設定。",
+          "role": "遊戲世界生成中的「接頭＋規則池＋深度上限」拼接，與本演算法同構。"
+        }
+      ],
+      "references": [
+        {
+          "title": "From Voxels to Parts: Hierarchical Discrete Modeling for Design and Assembly",
+          "creator": "Andrea Rossi, Oliver Tessmann",
+          "year": 2018,
+          "url": "https://link.springer.com/chapter/10.1007/978-3-319-95588-9_86",
+          "verified": true,
+          "evidence": "Springer 頁面顯示為 ICGG 2018 會議論文（2018 年 7 月線上發表），摘要說明 Wasp 將物件建模為模組零件的聚合，並提供聚合程序、零件碰撞避免與階層式建模。"
+        }
+      ],
+      "card_visual": "一組 L 形與直線形模組沿著接頭隨機接合、避開彼此長成的離散聚合量體（等角視圖，依加入順序由深到淺上色）。",
+      "scores": {"novelty": 4, "architecture_relevance": 5, "teachability": 4, "feasibility": 4, "total": 17}
+    },
+    {
+      "local_id": "x2-2",
+      "name_zh": "格子波茲曼風場（LBM）",
+      "name_en": "Lattice Boltzmann Wind Field (D2Q9 LBM)",
+      "family_suggest": "C",
+      "one_liner": "把空氣想成在格子上只能往 9 個方向跳的「粒子分布」，每一步先在格子內碰撞趨向平衡、再沿方向跳到鄰格，碰到建築就彈回，幾千步後就算出建築周圍的風場與渦流。",
+      "mechanism": [
+        "建立 nx×ny 格子，每格存 9 個方向的分布值 f_i（D2Q9），初始化為入口風速對應的平衡分布；用建築平面輪廓標記障礙格。",
+        "碰撞：每格由 f_i 算出密度 ρ 與速度 u，再依 BGK 規則把 f_i 往平衡分布 f_i^eq(ρ,u) 拉近（鬆弛時間 τ 決定黏滯度）。",
+        "串流：每個 f_i 沿自己的方向移到鄰格；障礙格用「反彈（bounce-back）」把分布原路送回，形成無滑移牆面。",
+        "邊界：左側持續注入固定風速、右側讓流體流出；重複碰撞＋串流數千步，直到流場穩定或出現週期性的渦街。",
+        "輸出速度大小與渦度（curl）的彩色 Mesh，並可交給 C03 追出風線。"
+      ],
+      "overlap": {
+        "nearest": "C03 向量場流線（場由公式給定；專案種子「CFD 結果重繪的都市風環境圖」）；C01 反應擴散（格子上的局部更新）",
+        "difference": "C03 的場是事先寫好的公式或外部 CFD 結果，本身不會「算」流體；LBM 真的在格子上模擬質量與動量守恆，速度場是解出來的，會繞過障礙物、產生回流區與隨時間擺動的卡門渦街。資料結構是每格 9 個方向的分布函數（不是單一濃度值），更新規則是「碰撞＋串流＋反彈邊界」，和 C01 的擴散方程不同。",
+        "verdict": "new"
+      },
+      "new_concept": "用微觀粒子分布（動力學理論）求巨觀流體；守恆律、鬆弛時間與黏滯度、雷諾數與數值穩定性、邊界條件（反彈、入流、出流）、時間相依的非穩態流。可附帶介紹另一條路線 Stable Fluids（半拉格朗日平流＋壓力投影）當變形。",
+      "logic": ["迭代模擬"],
+      "difficulty": 4,
+      "loc_estimate": "180–280 行",
+      "gh_feasibility": "2D D2Q9 可在 C# 元件內完成：double[9,nx,ny] 兩組緩衝，200×80 格每步約 14 萬次更新，可用 System.Threading.Tasks.Parallel.For 加速並配合 GH Timer 逐步顯示；障礙物由 Curve.Contains 判斷平面輪廓。3D（D3Q19）在單一元件中只能做很粗的格子，速度不足；τ 太接近 0.5 或入口風速過大會發散。結果屬概念示意，不可取代認證的風環境評估。",
+      "architecture_cases": [
+        {
+          "title": "Modelling urban airflow and natural ventilation using a GPU-based lattice-Boltzmann method",
+          "creator": "M-F King, A Khan, N Delbosc, HL Gough, C Halios, JF Barlow, CJ Noakes",
+          "year": 2017,
+          "url": "https://eprints.whiterose.ac.uk/120807/",
+          "verified": true,
+          "evidence": "White Rose 典藏頁顯示此文刊於 Building and Environment 第 125 卷（2017），以 GPU 上的 LBM 模擬建築周圍氣流與跨向通風，精度與 Fluent 相近但快上數個數量級。",
+          "role": "LBM 用於建築群的風場與自然通風研究。"
+        },
+        {
+          "title": "Leverage Rhino® 3D CAD and Simulate Architecture for Pedestrian Wind Comfort",
+          "creator": "Naghman Khan（SimScale）",
+          "year": 2023,
+          "url": "https://www.simscale.com/blog/rhino-3d-cad-simulate-architecture-pedestrian-wind-comfort/",
+          "verified": true,
+          "evidence": "SimScale 部落格（2023 年 6 月 1 日）說明其外部風場研究使用 LBM 求解器 Pacefish，並與 Rhino／Grasshopper 早期設計流程串接產生行人風舒適度圖。",
+          "role": "商業實務中以 LBM 做行人層風舒適度分析並回饋到 Grasshopper 設計。"
+        },
+        {
+          "title": "Urban Wind Lab",
+          "creator": "Karam M. Al-Obaidi",
+          "year": 2026,
+          "url": "https://github.com/arch85-km/urban-wind-lab",
+          "verified": true,
+          "evidence": "GitHub 說明這是為建築系學生設計的互動式 3D 都市風場教學工具，核心為 D3Q19 格子波茲曼求解器，v1.0.0 於 2026 年 9 月 15 日發布，並註明僅供教學與概念階段使用。",
+          "role": "以 LBM 讓設計者在早期階段直觀理解建築量體對風的影響。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Fluid Dynamics Simulation",
+          "creator": "Daniel V. Schroeder（Weber State University）",
+          "year": 2013,
+          "url": "https://physics.weber.edu/schroeder/fluids/",
+          "verified": true,
+          "evidence": "頁面標題為 Fluid Dynamics Simulation，說明以 lattice-Boltzmann 演算法模擬 2D 流體，黑色障礙物使流體偏轉並產生渦旋，頁面提及 2013 年 AAPT 海報發表與 2019 年的瀏覽器效能說明。",
+          "role": "可互動畫障礙物、看渦度的 LBM 網頁版，是本演算法最直接的程式參考。"
+        },
+        {
+          "title": "WebGL Fluid Simulation",
+          "creator": "Pavel Dobryakov",
+          "year": 2017,
+          "url": "https://github.com/PavelDoGreat/WebGL-Fluid-Simulation",
+          "verified": true,
+          "evidence": "GitHub 專案為瀏覽器上的 GPU 流體模擬，參考 GPU Gems 第 38 章 Fast Fluid Dynamics Simulation on the GPU，LICENSE 寫明 Copyright (c) 2017 Pavel Dobryakov。",
+          "role": "Stable Fluids 路線的代表性創作程式，可當本演算法的變形對照。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Lattice-Boltzmann Fluid Dynamics（Physics 3300 課程講義）",
+          "creator": "Daniel V. Schroeder（Weber State University）",
+          "year": 2012,
+          "url": "https://physics.weber.edu/schroeder/javacourse/LatticeBoltzmann.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁標題為「Lattice-Boltzmann Fluid Dynamics, Physics 3300, Weber State University, Spring Semester, 2012」，內文說明 D2Q9 的 9 個方向向量與權重 4/9、1/9、1/36。"
+        },
+        {
+          "title": "Stable Fluids",
+          "creator": "Jos Stam",
+          "year": 1999,
+          "url": "https://history.siggraph.org/learning/stable-fluids-by-stam/",
+          "verified": true,
+          "evidence": "ACM SIGGRAPH 歷史檔案頁顯示此為 Jos Stam 於 SIGGRAPH 1999 發表的技術論文，提出無條件穩定的流體模擬方法。"
+        }
+      ],
+      "card_visual": "風從左側吹過三棟方塊建物的平面，渦度場以冷暖雙色顯示，建物下游拖出交錯的卡門渦街。",
+      "scores": {"novelty": 5, "architecture_relevance": 5, "teachability": 3, "feasibility": 4, "total": 17}
+    },
+    {
+      "local_id": "x2-3",
+      "name_zh": "波動方程與干涉（FDTD 水波／聲波）",
+      "name_en": "Wave Equation & Interference (FDTD / Ripple Tank)",
+      "family_suggest": "C",
+      "one_liner": "在格子上記住「現在」和「上一刻」的高度，每一格下一刻的高度由鄰居推算，於是點波源會擴散成一圈圈漣漪，碰牆反射、彼此相遇產生干涉條紋。",
+      "mechanism": [
+        "建立三張（或兩張輪替的）double[,]：上一刻 u_prev、現在 u、下一刻 u_next；牆與障礙用遮罩標記。",
+        "波源：在指定格子每一步寫入 A·sin(ωt)（或一次性脈衝）。",
+        "更新：u_next = 2u − u_prev + (c·Δt/Δx)²·∇²u（∇² 為上下左右四鄰居之和減 4 倍自身），再乘上阻尼係數；障礙格強制為 0 形成反射。",
+        "邊界吸收：外圍加一圈逐漸加大阻尼的吸收帶，避免波從畫面邊緣反彈；輪替緩衝，重複到干涉圖樣穩定。",
+        "輸出：高度場 Mesh、振幅的時間平均（找出駐波節點線）或等值線；也可用解析式疊加多個圓形波當對照。"
+      ],
+      "overlap": {
+        "nearest": "C01 反應擴散（格子上的拉普拉斯運算子）；C05 Marching Squares（場的等值線）；C04 變形「時間當第三維做動畫」",
+        "difference": "C01 的擴散是一階時間方程，濃度只會被抹平；波動方程是二階時間方程，必須同時記住前一刻的狀態，才會出現傳播、反射、繞射與建設性／破壞性干涉，並受 CFL 穩定條件限制。產出是會振盪的波場與駐波節點線（Chladni 圖樣的由來），不是靜態斑紋。",
+        "verdict": "new"
+      },
+      "new_concept": "二階時間積分與多緩衝輪替、CFL 數值穩定條件、反射與吸收邊界、疊加原理與駐波（固有模態）；把「聲學」帶進圖鑑，對應房間聲學的波動模擬。",
+      "logic": ["迭代模擬"],
+      "difficulty": 2,
+      "loc_estimate": "120–200 行",
+      "gh_feasibility": "完全可在 C# 元件內完成：三張 double[,]、雙層 for 迴圈，300×300 格可即時更新；障礙物以平面 Curve 遮罩；輸出 Mesh 頂點色，或把振幅當 Z 做成浮雕。房間聲學等級的 3D 寬頻模擬需要每個波長 6–10 格以上，格數暴增，只適合示意低頻行為。",
+      "architecture_cases": [
+        {
+          "title": "Pachyderm Numeric_Time_Domain",
+          "creator": "Arthur van der Harten（Pachyderm Acoustic）",
+          "year": 2016,
+          "url": "https://www.grasshopper3d.com/group/pachyderm/forum/topics/pachyderm-numeric-time-domain",
+          "verified": true,
+          "evidence": "Grasshopper 論壇主題由 Arthur van der Harten 於 2016 年 12 月 30 日發起，討論 Pachyderm 的數值時域模擬：固有頻率（Eigenfrequencies）、波場視覺化與散射係數分析。",
+          "role": "Rhino／Grasshopper 內的時域波動數值模擬，用於房間聲學與表面散射設計。"
+        },
+        {
+          "title": "FDTD Methods for 3-D Room Acoustics Simulation with High-order Accuracy in Space and Time",
+          "creator": "Brian Hamilton, Stefan Bilbao",
+          "year": 2017,
+          "url": "https://www.research.ed.ac.uk/en/publications/fdtd-methods-for-3-d-room-acoustics-simulation-with-high-order-ac/",
+          "verified": true,
+          "evidence": "愛丁堡大學研究資料頁顯示此文刊於 IEEE/ACM Transactions on Audio, Speech and Language Processing 第 25 卷第 11 期（2017），研究 3D 房間聲學的 FDTD 格式與數值色散。",
+          "role": "以有限差分波動方程模擬整個房間的聲場。"
+        },
+        {
+          "title": "Real-time 3D finite-difference time-domain simulation of low- and mid-frequency room acoustics",
+          "creator": "Lauri Savioja",
+          "year": 2010,
+          "url": "https://www.dafx.de/paper-archive/2010/DAFx10/Savioja_DAFx10_P43.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁為 DAFx-10（Graz, 2010）論文，作者 Lauri Savioja，說明在 GPU 上以 FDTD 即時模擬約 100 m³ 房間的聲場並可聽化。",
+          "role": "FDTD 波動模擬用於房間聲學的即時可聽化。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Coding Challenge #102: 2D Water Ripple",
+          "creator": "Daniel Shiffman（The Coding Train）",
+          "year": 2018,
+          "url": "https://thecodingtrain.com/challenges/102-2d-water-ripple",
+          "verified": true,
+          "evidence": "The Coding Train 頁面標題為 2D Water Ripple，參考資料連到 Hugo Elias 的「2D Water」水波演算法；官方典藏的 front matter 記錄日期為 2018-05-07。",
+          "role": "雙緩衝水波漣漪的經典入門寫法，幾乎可直接轉成 C#。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Numerical Sound Synthesis: Finite Difference Schemes and Simulation in Musical Acoustics",
+          "creator": "Stefan Bilbao",
+          "year": 2009,
+          "url": "https://www2.ph.ed.ac.uk/~sbilbao/nss.html",
+          "verified": true,
+          "evidence": "作者的書籍配套網頁列出書名、作者 Stefan Bilbao、出版社 John Wiley and Sons（2009），456 頁含 230 題程式練習。"
+        }
+      ],
+      "card_visual": "兩個點波源在方形水槽中發出同心漣漪，干涉條紋以明暗帶呈現，並在一道開縫牆後產生繞射。",
+      "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 5, "feasibility": 5, "total": 18}
+    },
+    {
+      "local_id": "x2-4",
+      "name_zh": "穩態熱傳導與 Laplace 場（鬆弛法）",
+      "name_en": "Steady-State Heat Conduction / Laplace Solver (Jacobi, Gauss–Seidel, SOR)",
+      "family_suggest": "C",
+      "one_liner": "把牆的剖面切成格子，室內外兩側固定溫度，其餘每一格反覆改成「四周鄰居的加權平均」，直到數值不再變動，就得到溫度分布、等溫線和冷橋位置。",
+      "mechanism": [
+        "建立格子：每格有溫度 T 與導熱係數 k（依材料區域的封閉曲線指定，例如混凝土、保溫層、鋼構）；邊界格標記為固定溫度（Dirichlet）或絕熱（Neumann）。",
+        "迭代：非固定格更新為鄰居溫度以界面導熱係數加權的平均（Jacobi 用舊值、Gauss–Seidel 就地更新、SOR 再乘上超鬆弛因子 ω≈1.8 加速）。",
+        "收斂判斷：記錄每一輪的最大變化量，小於容許值就停止。",
+        "後處理：由溫度梯度算熱流 q = −k∇T，沿邊界積分得總熱流與等效 U 值；畫等溫線（交給 C05）與熱流線（交給 C03）。",
+        "同一個求解器換邊界條件，也能解位勢流、電位或平滑內插（調和場）。"
+      ],
+      "overlap": {
+        "nearest": "C01 反應擴散（格子上的擴散項）；B02 DLA 變形「混合 C 家族：場驅動 DLA（DBM）」（解 Laplace 方程當生長機率）",
+        "difference": "C01 是沒有固定邊界的時間演化，重點在反應項造出圖樣；B02 的 DBM 只把 Laplace 解當成生長的中間步驟。本演算法把「邊界值問題」本身當主角：固定邊界、多材料導熱係數、求穩態（橢圓型方程）而不是動態，產出是可量化的溫度場、熱流與 U 值，並教到迭代線性求解器的收斂與加速。",
+        "verdict": "new"
+      },
+      "new_concept": "邊界值問題（Dirichlet／Neumann）、穩態橢圓型偏微分方程、迭代線性求解（Jacobi → Gauss–Seidel → SOR）與收斂判斷、由場求梯度與通量的後處理；對應建築物理的冷橋與 U 值分析。",
+      "logic": ["搜尋／求解", "迭代模擬"],
+      "difficulty": 2,
+      "loc_estimate": "120–220 行",
+      "gh_feasibility": "C# 元件內容易完成：double[,] T、double[,] k、bool[,] fixed，材料區域以 Curve.Contains 指定；Gauss–Seidel＋SOR 對 200×200 格數百輪即可收斂；輸出彩色 Mesh、等溫線與熱流數值。限制：只做 2D 穩態傳導，不含輻射、對流與濕氣（THERM 等專業工具才有），適合概念比較而非認證計算。",
+      "architecture_cases": [
+        {
+          "title": "THERM 2.0: a PC Program for Analyzing Two-Dimensional Heat Transfer through Building Products",
+          "creator": "Elizabeth U. Finlayson, Robin Mitchell, Dariush K. Arasteh, Charlie Huizenga, D. Charlie Curcija（LBNL）",
+          "year": 1998,
+          "url": "https://windows.lbl.gov/publications/therm-20-pc-program-analyzing-two",
+          "verified": true,
+          "evidence": "LBNL Windows & Daylighting 出版頁列出此 1998 年文件與作者，說明 THERM 用於分析窗、牆、門等建築構件的二維熱傳，評估節能與溫度相關問題。",
+          "role": "建築構件二維熱傳（冷橋）分析的標準工具，本演算法是其簡化版核心。"
+        },
+        {
+          "title": "Using Honeybee THERM to Calculate Psi-Values",
+          "creator": "Ed May（Ladybug Tools 論壇）",
+          "year": 2018,
+          "url": "https://discourse.ladybug.tools/t/using-honeybee-therm-to-calculate-psi-values/3328",
+          "verified": true,
+          "evidence": "Ladybug Tools 論壇貼文（2018 年 7 月 25 日）示範在 Grasshopper 中以 Honeybee THERM 元件做二維熱傳模擬，依 ISO 10211 計算鋼柱、外角、女兒牆等細部的線性熱橋係數 Psi 值。",
+          "role": "在 Grasshopper 設計流程中量化構造細部的冷橋。"
+        },
+        {
+          "title": "Analysis of the Occurrence of Thermal Bridges in Several Variants of Connections of the Wall and the Ground Floor in Construction Technology with the Use of a Hemp–Lime Composite",
+          "creator": "Przemysław Brzyski, Magdalena Grudzińska, Dariusz Majerek",
+          "year": 2019,
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6695749/",
+          "verified": true,
+          "evidence": "PMC 頁面顯示此文刊於 Materials（2019），以 THERM 7.4 的二維熱傳計算牆與地坪接頭的溫度分布，並以等溫線與線性熱傳透係數比較多種構造變體。",
+          "role": "用穩態熱傳導比較構造接頭設計方案。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Diffusion Curves: A Vector Representation for Smooth-Shaded Images",
+          "creator": "Alexandrina Orzan, Adrien Bousseau, Holger Winnemöller, Pascal Barla, Joëlle Thollot, David Salesin",
+          "year": 2008,
+          "url": "https://maverick.inria.fr/Publications/2008/OBWBTS08/",
+          "verified": true,
+          "evidence": "INRIA Maverick 出版頁列出此 SIGGRAPH 2008（ACM TOG 第 27 卷）論文，說明最終影像是以曲線上的顏色為邊界條件解 Poisson 方程而得。",
+          "role": "把「邊界固定、內部解 Laplace／Poisson」用在繪圖工具上，是同一個求解器的創作應用。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Poisson Image Editing",
+          "creator": "Patrick Pérez, Michel Gangnet, Andrew Blake",
+          "year": 2003,
+          "url": "https://history.siggraph.org/learning/poisson-image-editing-by-perez-blake-and-gangnet/",
+          "verified": true,
+          "evidence": "ACM SIGGRAPH 歷史檔案頁顯示此為 SIGGRAPH 2003 技術論文，以解 Poisson 方程做為影像區域的無縫內插與編輯框架。"
+        }
+      ],
+      "card_visual": "牆角斷面（混凝土＋外保溫，中間穿過一根鋼梁）的穩態溫度以冷暖色帶呈現，疊上等溫線，鋼梁處的冷橋明顯凹陷。",
+      "scores": {"novelty": 3, "architecture_relevance": 4, "teachability": 4, "feasibility": 5, "total": 16}
+    },
+    {
+      "local_id": "x2-5",
+      "name_zh": "地表逕流與集水區（D8 流向累積）",
+      "name_en": "Flow Accumulation & Watershed Delineation (D8)",
+      "family_suggest": "C",
+      "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
+      "mechanism": [
+        "地形轉格子：從 Surface／Mesh 取樣成高程陣列 z[i,j]（可直接接 C04 雜訊地形）。",
+        "填窪：用 Priority-Flood（優先佇列由邊界往內淹）把封閉窪地抬高到溢流高度，確保每格都有出路。",
+        "流向（D8）：每格找 8 鄰居中「高差 ÷ 距離」最大的下坡鄰居並記成箭頭，全部箭頭構成以出口為根的樹（森林）。",
+        "累積：依高程由高到低逐格處理，把自己的水量（降雨 × 面積）加到下游格；累積量超過門檻的格子連成河道 Polyline，並可算 Strahler 河序決定線寬。",
+        "集水區：從每個出口沿箭頭反向追溯，標記所有流到該出口的格子，輸出集水區邊界。"
+      ],
+      "overlap": {
+        "nearest": "C04 Perlin 雜訊地形變形「水力侵蝕後處理」；C03 向量場流線（沿梯度追線）；F05 最短路徑（Dijkstra）變形「多起點距離場（可及性地圖）」",
+        "difference": "C04 的水力侵蝕是用水滴粒子改寫地形，C03 只追單條梯度線；D8 不移動粒子，而是把整張地形轉成「每格一個下游指標」的樹狀流向圖，再以拓撲順序累加面積，同時得到整個河網階層與集水區分割。填窪用的優先佇列與 Dijkstra 相似，但目的與產出（水系、分水嶺）完全不同。",
+        "verdict": "new"
+      },
+      "new_concept": "格網上的有向樹（每格一個父節點）、依高程排序的拓撲累加、優先佇列填窪（Priority-Flood）、反向追溯做區域標記、河序（Strahler）階層；把景觀水文分析帶進圖鑑。",
+      "logic": ["搜尋／求解"],
+      "difficulty": 3,
+      "loc_estimate": "150–260 行",
+      "gh_feasibility": "可在 C# 元件內完成：Surface.PointAt 或對 Mesh 投射取樣建立高程格，int[,] 存流向、double[,] 存累積量；以 Array.Sort 依高程排序索引；填窪需要優先佇列（Rhino 8 的 .NET 可用 PriorityQueue<TElement,TPriority>，Rhino 7 需自寫二元堆積約 40 行）；輸出河道 Polyline（線寬依累積量）與集水區彩色 Mesh。D8 只允許單一下游方向，平坦區與發散流需用 D∞ 等變形改善。",
+      "architecture_cases": [
+        {
+          "title": "Groundhog",
+          "creator": "Philip Belesky（RMIT 景觀建築）",
+          "year": 2018,
+          "url": "https://philipbelesky.com/projects/groundhog",
+          "verified": true,
+          "evidence": "作者專案頁（2018 年 1 月）說明 Groundhog 是景觀建築用的 Grasshopper 外掛，提供坡度計算、地表逕流投影等景觀分析；其文件另有 Flow Paths 與 Flow Catchments（依流向終點合併集水區）元件。",
+          "role": "景觀設計中以程式計算地表水流與集水區。"
+        },
+        {
+          "title": "Integrated Stormwater Analysis Model to Support Sustainable Urban Green Space Design",
+          "creator": "J. Jia, S. Zlatanova, K. Zhang, H. Liu",
+          "year": 2022,
+          "url": "https://isprs-annals.copernicus.org/articles/X-4-W2-2022/153/2022/isprs-annals-X-4-W2-2022-153-2022.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁為 ISPRS Annals X-4/W2-2022（17th 3D GeoInfo Conference, Sydney），在 Rhino＋Grasshopper 中模擬都市綠地的雨水逕流，並提到 GIS 中常用 D8 演算法判定逕流方向。",
+          "role": "把逕流方向與匯流分析整合進綠地設計平台。"
+        },
+        {
+          "title": "A multi-objective optimization framework for terrain modification based on a combined hydrological and earthwork cost-benefit",
+          "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
+          "year": 2024,
+          "url": "https://arxiv.org/abs/2401.02698",
+          "verified": true,
+          "evidence": "arXiv 摘要頁（2024）說明以 NSGA-II 結合 DEM 水文成本分析最佳化地形改造，目標包含逕流路徑長度與流速，用於雨水管理。",
+          "role": "以 DEM 流向分析驅動景觀地形設計。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Mapgen4 Procedural Map Generator",
+          "creator": "Amit J. Patel（Red Blob Games）",
+          "year": 2018,
+          "url": "https://www.redblobgames.com/maps/mapgen4/",
+          "verified": true,
+          "evidence": "Red Blob Games 頁面（2018 年 7 月，2023 年 4 月更新）說明以蒸發、風與降雨模擬決定河流與生物群系，水往下坡流並累積成河道，可調 raininess 與 lg_min_flow 觀察小溪出現。",
+          "role": "地圖生成中以流量累積長出河網的代表作。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm for Digital Elevation Models",
+          "creator": "Richard Barnes, Clarence Lehman, David Mulla",
+          "year": 2014,
+          "url": "https://arxiv.org/abs/1511.04463",
+          "verified": true,
+          "evidence": "arXiv 頁面註明刊於 Computers & Geosciences 第 62 卷（2014 年 1 月），以優先佇列由 DEM 邊界向內淹填窪地，並可標記集水區與決定流向。"
+        }
+      ],
+      "card_visual": "起伏的雜訊地形上畫出 D8 河網，線寬依累積集水面積由細變粗，底色以不同淡色區分各個集水區。",
+      "scores": {"novelty": 4, "architecture_relevance": 5, "teachability": 4, "feasibility": 5, "total": 18}
+    },
+    {
+      "local_id": "x2-6",
+      "name_zh": "熱方法測地距離場（Heat Method）",
+      "name_en": "Geodesic Distance via the Heat Method",
+      "family_suggest": "C",
+      "one_liner": "在曲面網格上從起點「放一點熱」擴散一小段時間，只取熱量變化的方向並正規化，再反解出梯度剛好符合這些方向的場，就得到沿著曲面量的距離。",
+      "mechanism": [
+        "準備三角網格：計算每條邊的 cotan 權重（組成拉普拉斯矩陣 L）與每個頂點的面積 A。",
+        "熱擴散一步：解 (A − t·L)u = δ（δ 在來源頂點為 1），t 取平均邊長的平方；以共軛梯度法或 Gauss–Seidel 迭代求解。",
+        "取方向：在每個三角面算 ∇u，並正規化成 X = −∇u / |∇u|（只留方向、丟掉大小）。",
+        "反解距離：算出每個頂點的散度 ∇·X，再解 Poisson 方程 Lφ = ∇·X，把 φ 平移使來源處為 0，即為測地距離。",
+        "輸出：頂點著色、等距線（網格上的 Marching Triangles），可再用來排肋條、分割板片或規劃列印路徑；多個來源即得曲面上的測地 Voronoi。"
+      ],
+      "overlap": {
+        "nearest": "F05 最短路徑（Dijkstra）變形「多起點距離場（可及性地圖）」「在曲線網路上走（真正的圖）」；C01 反應擴散變形「Mesh 上的反應擴散（曲面上）」",
+        "difference": "F05 在格子或網格邊上做圖搜尋，距離只能沿邊走，會有明顯的格狀偏差，核心是優先佇列；熱方法改用兩個稀疏線性系統（熱方程＋Poisson）一次求出平滑、與網格走向無關的距離場，核心是網格上的微分運算子（梯度、散度、cotan 拉普拉斯），這些在圖鑑中尚未出現。C01 在網格上只做擴散的時間演化，不求距離。",
+        "verdict": "new"
+      },
+      "new_concept": "離散微分幾何：cotan 拉普拉斯、三角面上的梯度與頂點散度；稀疏矩陣與共軛梯度求解；「先求方向、再積分回純量場」的兩階段思路。",
+      "logic": ["搜尋／求解", "迭代模擬"],
+      "difficulty": 4,
+      "loc_estimate": "250–380 行",
+      "gh_feasibility": "可行但偏進階：用 Mesh.TopologyEdges、Mesh.Faces 建鄰接與 cotan 權重，以 Dictionary 或 CSR 陣列存稀疏矩陣，自寫共軛梯度（約 60–80 行）即可，不需外部函式庫（Daniel Piker 在 McNeel 論壇示範過只用迭代的 Grasshopper 版本）；需要乾淨的三角網格（非流形或極細長三角形會使 cotan 權重失真）；超過 5 萬頂點時迭代求解會變慢。",
+      "architecture_cases": [
+        {
+          "title": "Geodesic Patterns",
+          "creator": "Helmut Pottmann, Qixing Huang, Bailin Deng, Alexander Schiftner, Martin Kilian, Leonidas Guibas, Johannes Wallner",
+          "year": 2010,
+          "url": "https://www.dmg.tuwien.ac.at/geom/ig/pottmann/oldpub/2010/pattern10/pattern10.html",
+          "verified": true,
+          "evidence": "TU Wien 論文頁列出此 ACM Transactions on Graphics（2010）論文與作者，說明測地線圖樣用於自由曲面建築的木板披覆與木構支撐，並以等值集（level set）處理多組測地線的整體佈局。",
+          "role": "以曲面上的測地距離等值線規劃自由曲面建築的板片與木肋。"
+        },
+        {
+          "title": "On Elastic Geodesic Grids and Their Planar to Spatial Deployment",
+          "creator": "Stefan Pillwein, Kurt Leimer, Michael Birsak, Przemyslaw Musialski",
+          "year": 2020,
+          "url": "https://arxiv.org/abs/2007.00201",
+          "verified": true,
+          "evidence": "arXiv 頁面顯示此文發表於 ACM Transactions on Graphics（SIGGRAPH 2020），提出沿目標曲面測地路徑配置桿件、由平面展開成空間形的彈性格構殼並做實體原型驗證。",
+          "role": "測地線在可展開格構殼（gridshell）設計與製造上的應用。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Heat Method（Grasshopper 腳本分享）",
+          "creator": "Daniel Piker",
+          "year": 2020,
+          "url": "https://discourse.mcneel.com/t/heat-method/105135",
+          "verified": true,
+          "evidence": "McNeel 論壇貼文（2020 年 7 月 3 日）由 Daniel Piker 分享以迭代方式、不依賴外部數值函式庫的 Grasshopper 熱方法腳本，用於沿曲面的等距線、陰影線與變形權重。",
+          "role": "證明熱方法可在 Grasshopper 內從零實作，並示範創作用途（沿曲面的排線）。"
+        }
+      ],
+      "references": [
+        {
+          "title": "The Heat Method for Distance Computation",
+          "creator": "Keenan Crane, Clarisse Weischedel, Max Wardetzky",
+          "year": 2017,
+          "url": "https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/",
+          "verified": true,
+          "evidence": "CMU 專案頁列出此 Communications of the ACM（2017）論文與作者，說明「先求距離增加的方向、再求距離本身」，只需解兩個標準稀疏線性系統。"
+        }
+      ],
+      "card_visual": "一片起伏的自由曲面網格上，從單一點出發的測地距離以色帶與等距環線呈現，環線隨曲面起伏彎曲、不是平面上的同心圓。",
+      "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 2, "feasibility": 4, "total": 14}
+    }
+  ],
+  "rejected": [
+    {"name": "Eden 生長", "overlap_with": "B02 變形「混合 C 家族：場驅動 DLA（DBM）」", "reason": "Eden 模型等同 DBM 取 η=0（周界格等機率長出），只是 B02 群集生長框架換一條黏附規則，建議當 B02 變形「周界隨機生長（Eden）」。"},
+    {"name": "介電崩潰模型／Laplacian 生長（DBM）", "overlap_with": "B02 變形「混合 C 家族：場驅動 DLA（DBM）」", "reason": "已是 B02 的既有變形（duplicate）。"},
+    {"name": "侵入滲流（Invasion Percolation）", "overlap_with": "B02 變形「黏著機率（stickiness）」", "reason": "周界格依固定隨機門檻用優先佇列挑最小者生長，產出仍是分形群集，屬 B02 群集生長的另一種挑選規則；且查不到可驗證的建築案例。"},
+    {"name": "細胞形態生長（Andy Lomas Cellular Forms）", "overlap_with": "B01 變形「3D 網格差異生長」", "reason": "細胞即網格頂點，養分累積觸發分裂、彈簧＋排斥讓表面起皺，本質是 3D 網格差異生長加上分裂條件。"},
+    {"name": "累積生長（曲面 accretion／Floraform 式）", "overlap_with": "B01 變形「3D 網格差異生長」「生長時間轉高度（可製造）」", "reason": "邊長增長觸發細分、鄰點排斥的機制與 B01 相同，只是換成曲面。"},
+    {"name": "菌絲生長（Hyphae）", "overlap_with": "B05 變形「彎曲裂紋」；B03 空間殖民", "reason": "尖端逐步前進、碰到既有節點就停、隨機分岔，與 Substrate 的「前進—碰撞停止—分岔」同構；無吸引點版本也可視為 B03 的簡化。"},
+    {"name": "貝殼生長（Raup 模型）", "overlap_with": "B04 變形「改變半徑函數（Fermat → 阿基米德／指數）」「Blooms 式的 3D 花苞與動畫」", "reason": "對數螺線＋截面沿螺線掃掠並等比放大，是 B04 螺線直接公式的 3D 曲面版，建議當 B04 變形「對數螺線掃掠成殼」；另外可開啟驗證的建築案例不足（Jirapong & Krawczyk 2003〈Seashell Architectures〉的 CumInCAD／ResearchGate 頁面皆被擋）。參考：Gene Kogan SeashellGenerator（2012）、Fowler, Meinhardt & Prusinkiewicz〈Modeling seashells〉SIGGRAPH 1992 皆已開啟確認。"},
+    {"name": "雪花結晶（Reiter 模型）", "overlap_with": "C02 變形「連續狀態（Lenia 式）」；B02 DLA", "reason": "六角格＋連續狀態＋鄰居平均擴散＋受體格常數累加，是連續狀態 CA 換成六角鄰域，產出的枝狀結晶也接近 B02；查不到建築案例，建議當 C02 變形「六角格連續 CA（Reiter 雪花）」。"},
+    {"name": "Stable Fluids（半拉格朗日流體）", "overlap_with": "本檔候選 x2-2「格子波茲曼風場（LBM）」", "reason": "教學目標相同（格子上解不可壓縮流場），建議當 LBM 演算法的變形「改用 Stable Fluids：平流＋擴散＋壓力投影」，不另立演算法。"},
+    {"name": "Chladni 圖形／駐波模態", "overlap_with": "本檔候選 x2-3「波動方程與干涉」；C05 變形「換場函數」", "reason": "數值版是波動方程的駐波（振幅時間平均）變形；解析式 cos·cos 疊加版只是換一個場函數再取零等值線。"},
+    {"name": "SDF 與 Marching Cubes 3D 等值面", "overlap_with": "C05 變形「升維成 Marching Cubes／四面體」「換場函數：從 metaball 改成 SDF／雜訊」；F03 變形「填入任意外形（SDF 交集）」", "reason": "既有變形已涵蓋（duplicate）。"},
+    {"name": "Curl noise", "overlap_with": "C03 變形「Curl noise 無源場」", "reason": "既有變形（duplicate）。"},
+    {"name": "Fast Marching（格子上的 Eikonal 距離場）", "overlap_with": "F05 變形「多起點距離場（可及性地圖）」", "reason": "同樣是優先佇列的波前擴散，只換成 Eikonal 的局部更新公式，屬 F05 變形；曲面上的平滑測地距離改由本檔候選 x2-6「熱方法測地距離場」處理。"},
+    {"name": "循環細胞自動機／Brian's Brain", "overlap_with": "C02 變形「改規則字串（B/S 記法）」「年齡／歷史累積」", "reason": "多狀態 CA 只是換規則與狀態數，資料結構與更新流程同 C02。"},
+    {"name": "Lenia", "overlap_with": "C02 變形「連續狀態（Lenia 式）」；專案種子「Lenia 連續場表皮」", "reason": "既有變形（duplicate）。"},
+    {"name": "Domain warping", "overlap_with": "C04 變形「Domain warping 扭曲座標」", "reason": "既有變形（duplicate）。"},
+    {"name": "Gierer–Meinhardt 等其他圖靈斑紋模型", "overlap_with": "C01 變形「改成其他反應模型（FitzHugh-Nagumo 等）」", "reason": "只換反應項公式，格子擴散架構相同。"},
+    {"name": "貝殼色素花紋（Meinhardt 一維反應擴散）", "overlap_with": "C01 變形「改成其他反應模型」；C02 的「時間疊層」思路", "reason": "一維反應擴散逐列疊成時間圖，是 C01 降維＋疊層的組合。"},
+    {"name": "Cahn–Hilliard 相分離（spinodal 雙連續結構）", "overlap_with": "C01 反應擴散（格子拉普拉斯更新）", "reason": "雖是守恆型相分離而非反應擴散，但計算骨架相同、產出迷宮狀雙相圖樣與 C01 迷宮斑紋相近，建議當 C01 變形「守恆型相分離」。"},
+    {"name": "中點位移／Diamond-square 地形", "overlap_with": "C04 Perlin 雜訊地形", "reason": "另一種分形高程生成法，產出與用途同 C04，建議當 C04 變形。"},
+    {"name": "多尺度圖靈斑紋（McCabe 式）", "overlap_with": "C01 變形「多尺度疊層（級聯）」", "reason": "既有變形已涵蓋。"},
+    {"name": "水力侵蝕", "overlap_with": "C04 變形「水力侵蝕後處理」；專案種子「侵蝕地景公園」", "reason": "既有變形（duplicate）；與本檔 x2-5 D8 流向累積的差異已在 x2-5 說明。"}
+  ]
+}

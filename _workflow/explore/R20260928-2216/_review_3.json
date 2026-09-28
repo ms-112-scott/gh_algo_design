@@ -1,0 +1,82 @@
+{
+  "K03": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 1,
+    "reason": "射線與線段求交、依極角排序組成可視多邊形，再延伸成可見性圖，這套機制在既有 30 個演算法中沒有對應（D03 V12、F04 V01 只把可見度當輸入或評分），8 個網址全部開啟確認，Batty、Turner 等、Yu & Ostwald、Dawes & Ostwald 都是真實的建築空間分析案例，純 RhinoCommon 150–250 行可行；需注意 DeCodingSpaces 同站首頁已是 D03 案例，摘要要寫 isovist 場的角色，VGA 平均深度延伸也要和 to_variation 的 F05「網路中心性」變形劃清界線（ncase.me 頁面未署名，作者依網域判定）。"
+  },
+  "K06": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "空白矩形清單的切分與包含修剪加上貪婪啟發式，和 E01 V07（在連續空間試放圓）、A04 V06（Treemap 切分已知矩形）機制不同，可以獨立成演算法，也直接連到數位製造；扣 1 分的原因：OpenNest、SVGnest、WikiHouse fork 都是不規則零件的 NFP＋GA 排料而非 MaxRects，WikiHouse fork 和 cc_ref 的 SVGnest 是同一件軟體應擇一，Flemming 的 LOOS 是配置生成而非裝箱、關聯偏弱，CLT 剩料章節頁面寫的是 depthwise 與 first-fit 啟發式（不是 first-fit 對 best-fit），evidence 需更正。"
+  },
+  "K09": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "圖鑑目前沒有任何從資料學習的演算法，前向傳播、反向傳播與權重矩陣和 F04 的演化搜尋本質不同，和 K19 SOM、K26 Q-learning 也是不同機制（相關但不重複），2 層 MLP 以 double[,] 在 150–300 行內可從零實作；8 個網址皆確認，Nourkojouri 等（單隱藏層 40 個神經元、以 Honeybee 產生的 2,880 筆模擬訓練日照代理模型）與 Crow 是最貼切的案例，ArchiGAN 是條件式 GAN、無法在 C# Script 重現，摘要只能寫成神經網路在建築的應用脈絡，不可暗示本元件做得到。"
+  },
+  "K12": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "每格一個下游指標的流向樹、依高程排序累加、Priority-Flood 填窪與反向追溯切集水區，和 C04 V10 的水滴粒子侵蝕、C03 的單條流線在機制與產出上都不同，150–260 行可行（Rhino 7 需自寫二元堆積）；5 個網址皆確認，但 ISPRS 論文本身用的是 Grasshopper 粒子系統、D8 只在背景段落提到，摘要應寫成「把逕流分析整合進綠地設計」而不是 D8 實作，Mapgen4 已是 E02 案例，跨演算法引用時要寫它以流量累積長出河網的角色。"
+  },
+  "K15": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "de Bruijn 五格線對偶（線族交點換算整數格點、投影成菱形）和 F02 的 Hankin 射線是不同的核心機制，可以成立為新演算法，Storey Hall（ARM 頁面寫明 1995 年、青銅 Penrose 磚）、Andrew Wiles Building 與 7 個網址皆確認；扣 1 分是因為 F02 V06 已用 deflation 產生 Penrose 底圖，F02 也已收 Lu & Steinhardt 準晶 girih，本候選的 Robinson 三角形 deflation 變形和 F02 V06 重疊，建議只當對照並互相連結，主體聚焦五格線法。"
+  },
+  "K18": {
+    "verdict": "variation",
+    "merge_into": "B02",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "在晶格上隨機行走、貼著結構時依 26 鄰域構形查表決定是否放磚，本質是 B02 DLA 的「換黏著規則＋3D 晶格」（DLA 等於「任何非空構形都黏」的特例），產出同為體素聚合體，依判斷規則應併為 B02 變形（並和 D01 V08 Stigmergy 互相連結）；另外 FIBERBOTS 是纏繞纖維管的機器人群，不是晶格放磚，案例牽強，TERMES 頁面寫明機器人遵守預先決定的交通規則（由使用者指定的目標結構編譯而來），和 one_liner「沒有藍圖」不符需改寫；和 K16 離散聚合（接頭平面對齊）不是同一件事。"
+  },
+  "K21": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "費洛蒙存在圖的邊上、每隻螞蟻建構完整解再依解的品質回饋，和 D02、D01 V08 的連續痕跡場、F05 的確定性最短路、F04 的交配突變都不同，150–250 行可行，5 個網址皆確認；扣 1 分是 novelty 高估（留痕跡加蒸發的概念 D01 V08 與 D02 已經教過），兩個案例分別是桁架斷面離散最佳化與工地配置，偏結構工程與營建管理而非設計，且本次另有 K01 模擬退火、K28 PSO 等最佳化候選，挑選時宜只取一兩種。"
+  },
+  "K24": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "以面鄰接對偶圖加生成樹決定剪開哪些邊、沿樹累乘剛體變換並做重疊檢查與分島，和 E04 V08、A04 V10 的「單片各自攤平」本質不同，全用 RhinoCommon 200–300 行可行；5 個網址皆確認，Ivy 的 MeshGraph Unroll 與 Mitani & Suzuki 最貼切，n|Strip 頁面確有「developable (therefore still able to be unrolled)」與 501 條鋁條，但它展開的是可展長條而不是多面體展開圖，摘要要寫清楚，RhinoCommon 內建的 Unroller 可當對照說明；和 K02、K25 不重複。"
+  },
+  "K27": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "依 T、C、G 邊的約束由自由邊推導整塊磚的邊界，再依對稱群複製，改的是磚本身的外形，F01 Truchet 與 F02 Hankin 都只在固定底圖內放圖案，核心機制與產出不同；5 個網址皆確認（tactile-js 支援 93 型中的 81 型並附 p5.js 範例），只做 4–6 種 Heesch 型在 150–250 行內可行，建築案例偏少（Metamorphosis III 放大壁畫、FoAR 2024 的 3D 紋理鑲嵌），architecture_relevance 給 3 分合理；和 K15 準週期鋪磚不重複。"
+  },
+  "K30": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "在固定曲面上同時做切、併、翻與切向鬆弛並投影回曲面，目標是網格品質，和 B01 V08（只切邊翻邊讓曲面長大）、A04 V12（規則細分）、E04 V03（只移點不改連結）的產出本質不同，可以成立為新演算法，4 個網址皆確認；扣 1 分是可行性偏樂觀：RhinoCommon 沒有拓樸編輯 API，需自寫邊–面鄰接，並檢查邊收縮的 link condition 與翻面，300–400 行已頂到上限，範例宜限定三角網、固定邊界、每輪重建鄰接，且和 B01 V08 共用 split、flip 操作，文字要交代差異。"
+  }
+}

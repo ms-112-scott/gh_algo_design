@@ -1,0 +1,777 @@
+{
+  "scope": "existing families D/E",
+  "direction": "D 代理人、E 排列與鬆弛 家族內的新演算法（粒子群最佳化 PSO 由 x1 負責，本檔不列）",
+  "run": "R20260928-2216",
+  "agent": "x3_DE",
+  "candidates": [
+    {
+      "name_zh": "蟻群最佳化（ACO）",
+      "name_en": "Ant Colony Optimization (Ant System)",
+      "family_suggest": "D 代理人（亦可歸 F 圖樣與最佳化）",
+      "one_liner": "一群虛擬螞蟻在「點與連線」構成的圖上一次次走完整條路線，走得短的路線留下更濃的費洛蒙、舊的費洛蒙慢慢蒸發，幾十輪後大家就收斂到一條又短又好的路徑。",
+      "mechanism": [
+        "把點位（要雷切的孔、要走訪的節點、桁架桿件的斷面選項）建成完全圖，每條邊記錄距離 d 與費洛蒙 τ（二維陣列）。",
+        "每隻螞蟻從隨機起點出發，依機率 p ∝ τ^α ·(1/d)^β 用輪盤法挑下一個還沒去過的點，直到走完一圈。",
+        "全部螞蟻走完後計算各自路線長度 L：所有邊的費洛蒙先乘上 (1−ρ) 蒸發，再讓每隻螞蟻在走過的邊上加 Q/L。",
+        "記錄目前最佳路線並重複多輪；可加 MAX-MIN（上下限）或精英螞蟻避免過早收斂。",
+        "輸出最佳路線 Polyline，並把每條邊的費洛蒙濃度畫成線寬，看見集體記憶如何形成。"
+      ],
+      "overlap": {
+        "nearest": "D02 Physarum 黏菌；D01 變形「Stigmergy：留痕跡、追痕跡」；F05 最短路徑（Dijkstra）；E02 變形「TSP 單筆路徑」",
+        "difference": "D01／D02 的痕跡是鋪在連續網格上的濃度場，代理人只做局部感測與轉向，沒有「完整解」的概念；ACO 的費洛蒙存在圖的邊上（鄰接矩陣），每隻螞蟻每輪都要建構一個完整的組合解，再依解的品質回饋，是組合最佳化的搜尋法。F05 是確定性的單源最短路，無法處理 TSP 這種要走遍所有點的問題；E02 的 TSP 路徑只是用貪婪法把點連起來，沒有群體學習。",
+        "verdict": "new"
+      },
+      "new_concept": "圖上的機率建構（輪盤選擇）、以「解的品質」回饋的正回饋＋蒸發（集體記憶）、組合最佳化（TSP、指派問題）與二維費洛蒙矩陣；可和 F04 基因演算法形成「兩種群體最佳化」的對照。",
+      "logic": ["搜尋／求解", "迭代模擬"],
+      "difficulty": 3,
+      "loc_estimate": "150–250 行",
+      "gh_feasibility": "完全可行：點位用 List<Point3d>，距離與費洛蒙用 double[,]，亂數用 System.Random；每次 SolveInstance 跑固定輪數，或用 Timer 逐輪顯示；輸出最佳 Polyline 與依 τ 設定粗細的 Line 清單。點數超過約 300 時 O(n²×螞蟻數) 會變慢，需限制點數或只連 k 個最近鄰。",
+      "architecture_cases": [
+        {
+          "title": "Design of Space Trusses Using Ant Colony Optimization（以 ACO 設計空間桁架）",
+          "creator": "Charles V. Camp、Barron J. Bichon",
+          "year": "2004",
+          "url": "https://ascelibrary.org/doi/abs/10.1061/(ASCE)0733-9445(2004)130:5(741)",
+          "verified": true,
+          "evidence": "ASCE Library 頁面標題為 Design of Space Trusses Using Ant Colony Optimization，作者 Charles V. Camp 與 Barron J. Bichon，刊於 Journal of Structural Engineering 130(5)，2004 年 5 月，741–751 頁；研究把桿件斷面選擇轉成修改版 TSP，以 ACO 最小化結構重量。"
+        },
+        {
+          "title": "Dynamic construction site layout planning using max-min ant system（以 MAX-MIN 蟻群系統做動態工地配置）",
+          "creator": "Xin Ning、Ka-Chi Lam、Mike Chun-Kit Lam",
+          "year": "2010",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580509001277",
+          "verified": true,
+          "evidence": "ScienceDirect 頁面顯示 Automation in Construction 19(1)，2010 年 1 月，55–65 頁，作者 Xin Ning、Ka-Chi Lam、Mike Chun-Kit Lam，以 MMAS 解多階段工地設施配置問題。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "p5js_ants：p5.js 蟻群最佳化模擬器",
+          "creator": "oxling",
+          "year": "2020",
+          "url": "https://github.com/oxling/p5js_ants",
+          "verified": true,
+          "evidence": "GitHub 說明為 A p5.js ant colony optimization simulator，作者寫明 I used this to create weird generative art；連結的部落格文章日期為 2020 年 1 月 1 日。"
+        },
+        {
+          "title": "Ant Colony Optimization: Quick & Easy Visual Simulator",
+          "creator": "OndiTech",
+          "year": "",
+          "url": "https://onditech.itch.io/ant-colony-optimization",
+          "verified": true,
+          "evidence": "itch.io 頁面說明使用者放置城市點後，觀看螞蟻以 ACO 解旅行推銷員問題，費洛蒙以線條呈現、最佳路徑為紅線；頁面未標示日期。"
+        }
+      ],
+      "references": [
+        {
+          "title": "The Ant System: Optimization by a colony of cooperating agents",
+          "creator": "Marco Dorigo、Vittorio Maniezzo、Alberto Colorni",
+          "year": "1996",
+          "url": "https://jmvidal.cse.sc.edu/library/dorigo96a.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁標題 The Ant System: Optimization by a colony of cooperating agents，頁首標示 IEEE Transactions on Systems, Man, and Cybernetics–Part B, Vol.26, No.1, 1996，摘要說明應用於旅行推銷員問題。"
+        }
+      ],
+      "card_visual": "散布的城市點之間布滿半透明連線，線寬代表費洛蒙濃度，一條最粗的封閉路線逐漸浮現。",
+      "scores": {"novelty": 4, "architecture_relevance": 3, "teachability": 4, "feasibility": 5, "total": 16}
+    },
+    {
+      "name_zh": "白蟻式群體建造（晶格群體／Stigmergy 建造）",
+      "name_en": "Lattice Swarm Construction (Stigmergic Building)",
+      "family_suggest": "D 代理人",
+      "one_liner": "一群沒有藍圖的小代理人在 3D 格子裡亂走，只看自己周圍 26 格已經放了什麼磚，符合規則表的樣子就放一塊磚，最後集體「蓋」出像蜂巢、塔或拱的構造。",
+      "mechanism": [
+        "建立 3D 體素格，用 HashSet 記錄已放的磚，先放一顆種子磚。",
+        "每隻代理人在既有結構附近隨機行走（只能走空格，且必須貼著結構）。",
+        "每走一步就讀取周圍 3×3×3 鄰域的佔用狀態，編成 26 位元的整數鍵。",
+        "查規則表（Dictionary<int, 磚型>，可含旋轉對稱）：命中就在目前位置放磚，否則繼續走。",
+        "重複到磚數上限；比較不同規則表（例如 Theraulaz–Bonabeau 的胡蜂巢規則、TERMES 的「不可形成爬不上去的階差」限制）長出的形態。"
+      ],
+      "overlap": {
+        "nearest": "D01 變形「Stigmergy：留痕跡、追痕跡」與 D01 案例（Kokkugia／Robert Stuart-Smith 的群體建造）；C02 變形「真 3D 生命遊戲（26 鄰居）」；B02 DLA",
+        "difference": "D01 的 stigmergy 是在連續空間留下會蒸發的痕跡再被跟隨，產出是軌跡線；本演算法的「痕跡」就是永久的建材本身，代理人以局部構形比對規則表決定是否放磚，產出是離散的體素構造。C02 的 3D 生命遊戲是全格同步更新、會生也會死；這裡是非同步、只增不減、由移動代理人觸發。B02 DLA 是碰到就黏、沒有構形規則，只能長出樹枝狀；規則表則能長出有層、有柱、有拱的建築性構造。",
+        "verdict": "new"
+      },
+      "new_concept": "局部構形的位元編碼與查表（bitmask → Dictionary）、非同步的代理人建造、「環境就是記憶」的 stigmergy 建造觀念、規則表設計即形態設計（可比較規則與產物），以及可建造性約束（TERMES 的可攀爬規則）。",
+      "logic": ["迭代模擬"],
+      "difficulty": 3,
+      "loc_estimate": "180–300 行",
+      "gh_feasibility": "可行：佔用格用 HashSet<long> 編碼整數座標；代理人用 struct 陣列；每一步以位移運算組出 26 位元鍵查 Dictionary<int,int>；輸出以 Mesh 合併的方塊（逐塊 Append）。規則表可由 GH 輸入的整數清單讀入。上萬塊磚時必須合併成單一 Mesh 以免預覽過慢；不需外掛。",
+      "architecture_cases": [
+        {
+          "title": "TERMES：白蟻啟發的機器人建造團隊（Designing Collective Behavior in a Termite-Inspired Robot Construction Team）",
+          "creator": "Justin Werfel、Kirstin Petersen、Radhika Nagpal（Harvard）",
+          "year": "2014",
+          "url": "https://seas.harvard.edu/news/2014/02/robotic-construction-crew-needs-no-foreman",
+          "verified": true,
+          "evidence": "Harvard SEAS 2014 年 2 月 13 日新聞〈Robotic construction crew needs no foreman〉寫明研究刊於 Science 2 月 14 日號，機器人以 stigmergy（觀察彼此對環境的改變）與局部規則，在幾何上合適的空位放磚。"
+        },
+        {
+          "title": "FIBERBOTS：多代理人纖維複合數位製造系統",
+          "creator": "Markus Kayser、Levi Cai、Christoph Bader 等，Neri Oxman（MIT Media Lab Mediated Matter）",
+          "year": "2016–2019",
+          "url": "https://www.media.mit.edu/projects/fiberbots/overview/",
+          "verified": true,
+          "evidence": "MIT Media Lab 專案頁標題 FIBERBOTS: Design of a multi-agent, fiber composite digital fabrication system，期間 2016 年 1 月至 2019 年 5 月，16 台機器人依感測回饋與群聚式設計協定自主纏繞出約 4.5 公尺高的管狀結構。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "NetLogo Termites（白蟻堆木屑模型）",
+          "creator": "Uri Wilensky",
+          "year": "1997",
+          "url": "https://ccl.northwestern.edu/netlogo/models/Termites",
+          "verified": true,
+          "evidence": "NetLogo 模型庫頁面：白蟻隨機遊走，撿到木屑後遇到另一塊木屑就放下，沒有任何白蟻指揮，木屑最後聚成大堆；引用格式為 Wilensky (1997)。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Modelling the Collective Building of Complex Architectures in Social Insects with Lattice Swarms",
+          "creator": "Guy Theraulaz、Eric Bonabeau",
+          "year": "1995",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S002251938570255X",
+          "verified": true,
+          "evidence": "ScienceDirect 頁面顯示 Journal of Theoretical Biology 177(4)，1995 年 12 月 21 日，381–400 頁，作者 Guy Theraulaz、Eric Bonabeau；引用摘錄提到以 3D lattice swarm 生成建築形體。"
+        },
+        {
+          "title": "Extended stigmergy in collective construction",
+          "creator": "Justin Werfel、Radhika Nagpal",
+          "year": "2006",
+          "url": "https://collaborate.princeton.edu/en/publications/extended-stigmergy-in-collective-construction/",
+          "verified": true,
+          "evidence": "Princeton 研究資料頁顯示刊於 IEEE Intelligent Systems 21(2)，2006 年 3 月，20–28 頁，作者 Justin Werfel、Radhika Nagpal。"
+        }
+      ],
+      "card_visual": "等角視角下，一堆小方塊從種子向外堆出帶層次的塔狀蜂巢，幾個亮色代理人在表面遊走。",
+      "scores": {"novelty": 5, "architecture_relevance": 4, "teachability": 4, "feasibility": 4, "total": 17}
+    },
+    {
+      "name_zh": "Schelling 隔離模型（鄰里偏好與遷居）",
+      "name_en": "Schelling Segregation Model",
+      "family_suggest": "D 代理人",
+      "one_liner": "格子上住著兩種居民，每個人只要求「鄰居裡至少三成跟我一樣」，不滿意就搬到空房；結果連輕微的偏好也會讓整座城自己分成一塊塊同質社區。",
+      "mechanism": [
+        "在方格（或任意地塊的鄰接圖）上隨機放 A、B 兩類居民，並保留一定比例的空房。",
+        "對每位居民計算 Moore 鄰域中同類的比例 s。",
+        "s 低於門檻 T 的居民標為不滿意；以隨機順序讓不滿意者搬到隨機的、或最近且能讓自己滿意的空房。",
+        "重複到沒有人想搬或達到步數上限，過程中記錄整體隔離指數（平均同類鄰居比例）。",
+        "輸出格子上色、搬遷路徑與隔離指數曲線；變形可加多族群、要求多樣性的反向偏好、房價等第二種效用。"
+      ],
+      "overlap": {
+        "nearest": "C02 生命遊戲疊層（格子＋鄰域規則）與其專案種子「都市擴張 CA 模擬」；D02 變形「多物種互斥」",
+        "difference": "C02 是全格同步的生死規則，格子狀態會生成或消失；Schelling 的居民數量守恆，核心動作是「不滿意 → 找空房搬家」，需要空房清單與搜尋，並以滿意度門檻（效用）驅動。D02 的多物種互斥是在濃度場上跟隨痕跡，不涉及個體偏好與位置交換。產出是社會空間分布，而不是形體或痕跡。",
+        "verdict": "new"
+      },
+      "new_concept": "個體效用與滿意度門檻、臨界點（tipping point）與參數掃描、守恆的代理人搬遷（空房清單、隨機順序更新）、以整體指標（隔離指數）量化湧現現象；讓學習者體會個人小偏好如何放大成都市尺度的社會結果。",
+      "logic": ["迭代模擬"],
+      "difficulty": 2,
+      "loc_estimate": "120–200 行",
+      "gh_feasibility": "非常容易：int[,] 表示格子、List<int> 存空房索引、Random 打亂更新順序；輸出以 Mesh 面上色，另輸出隔離指數數列接 Quick Graph。改成不規則地塊時，可用地塊中心點與距離門檻建立鄰接清單。",
+      "architecture_cases": [
+        {
+          "title": "From Schelling to Spatially Explicit Modeling of Urban Ethnic and Economic Residential Dynamics",
+          "creator": "Itzhak Benenson、Erez Hatna、Ehud Or",
+          "year": "2009",
+          "url": "https://journals.sagepub.com/doi/10.1177/0049124109334792",
+          "verified": true,
+          "evidence": "SAGE 頁面顯示此文 2009 年 5 月刊出（37 卷 4 期），作者 Benenson、Hatna、Or，摘要以 Schelling 居住隔離模型為起點發展空間顯式的都市族群與經濟居住動態模型。"
+        },
+        {
+          "title": "Constructing and Implementing an Agent-Based Model of Residential Segregation through Vector GIS",
+          "creator": "Andrew T. Crooks（UCL CASA）",
+          "year": "2008",
+          "url": "https://discovery.ucl.ac.uk/id/eprint/15185/",
+          "verified": true,
+          "evidence": "UCL Discovery 頁面顯示 Crooks, AT (2008)，CASA Working Paper Series 133，Centre for Advanced Spatial Analysis；研究把 Schelling 式隔離模型放進以建築與街廓多邊形表示的向量 GIS 城市。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Parable of the Polygons（多邊形寓言）",
+          "creator": "Vi Hart、Nicky Case",
+          "year": "2014",
+          "url": "https://ncase.me/polygons/",
+          "verified": true,
+          "evidence": "頁面寫明模擬基於 Thomas Schelling 1971 年的 Dynamic Models of Segregation；Wikipedia 條目記載此互動作品於 2014 年 12 月由 Vi Hart 與 Nicky Case 發布。"
+        },
+        {
+          "title": "NetLogo Segregation",
+          "creator": "Uri Wilensky",
+          "year": "1997",
+          "url": "https://ccl.northwestern.edu/netlogo/models/Segregation",
+          "verified": true,
+          "evidence": "NetLogo 模型庫頁面的 HOW TO CITE 寫 Wilensky, U. (1997). NetLogo Segregation model；說明同色鄰居不足的代理人會搬到附近的空格。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Dynamic models of segregation",
+          "creator": "Thomas C. Schelling",
+          "year": "1971",
+          "url": "https://www.tandfonline.com/doi/abs/10.1080/0022250X.1971.9989794",
+          "verified": true,
+          "evidence": "Taylor & Francis 頁面顯示 The Journal of Mathematical Sociology 第 1 卷 1971 年第 2 期，143–186 頁，作者 Thomas C. Schelling（Harvard University）。"
+        }
+      ],
+      "card_visual": "兩色小方格從隨機的雜色逐步聚成大塊同色斑區，角落一條隔離指數曲線往上爬。",
+      "scores": {"novelty": 3, "architecture_relevance": 3, "teachability": 5, "feasibility": 5, "total": 16}
+    },
+    {
+      "name_zh": "力導向泡泡圖配置（鄰接圖 → 平面）",
+      "name_en": "Force-Directed Bubble Diagram Layout (Fruchterman–Reingold)",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "先寫下「哪些房間要相鄰」的關係圖，每個房間是一顆依面積定大小的泡泡，有關係的互相拉、全部互相推，搖一搖就自己排出一張合理的泡泡配置圖。",
+      "mechanism": [
+        "輸入房間清單（名稱、需求面積 → 半徑）與鄰接清單（邊，可帶權重），建成鄰接串列。",
+        "每一步：所有泡泡兩兩互斥（F = k²/d，或依半徑和做碰撞推開）；有邊相連的泡泡以彈簧吸引到目標距離 r_i + r_j。",
+        "加上基地邊界約束與固定的入口節點（錨點）。",
+        "以「溫度」限制每步最大位移，溫度逐步下降（Fruchterman–Reingold 退火），直到配置穩定。",
+        "輸出泡泡圓、鄰接線，並把沒達成的鄰接（距離過長）標成紅色；可再接 Voronoi 或矩形化得到平面。"
+      ],
+      "overlap": {
+        "nearest": "E01 圓填充（互斥推開）；E04 動態鬆弛找形（彈簧）；E03 專案種子「面積指定的泡泡平面生成器」",
+        "difference": "E01 只有「不重疊」一種關係，沒有拓撲；E04 的彈簧是幾何網格的邊，目標是受力平衡的形；本演算法的輸入是抽象的鄰接圖（誰要靠近誰），彈簧只存在於圖的邊、斥力作用於所有節點對，並用退火溫度控制收斂，產出是「拓撲 → 幾何」的配置。E03 的泡泡平面是先有點再算 power diagram，本法負責的正是「點該放哪裡」這一步。",
+        "verdict": "new"
+      },
+      "new_concept": "以圖（節點、邊、鄰接串列）作為設計輸入、拓撲轉幾何（graph drawing）、模擬退火式的溫度排程、以鄰接滿足率評估配置；是從建築計畫（program）走到平面的第一座橋。",
+      "logic": ["迭代模擬", "幾何轉換"],
+      "difficulty": 2,
+      "loc_estimate": "150–250 行",
+      "gh_feasibility": "完全可行：房間用 GH 的文字與數字清單輸入，邊用兩個整數清單；位置用 Point3d[]、位移用 Vector3d[]；50 個房間以內兩兩斥力可即時計算；輸出 Circle、Line 與顏色。基地約束用 Curve.Contains 與 ClosestPoint 拉回。",
+      "architecture_cases": [
+        {
+          "title": "Modeling architectural design objectives in physically based space planning",
+          "creator": "Scott A. Arvin、Donald H. House",
+          "year": "2002",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580500000996",
+          "verified": true,
+          "evidence": "ScienceDirect 頁面顯示 Automation in Construction 11(2)，2002 年 2 月，213–225 頁，作者 Scott A. Arvin、Donald H. House，以物理（彈簧）模型做建築空間配置。"
+        },
+        {
+          "title": "A Syntactic Architectural Design Methodology（SYNTACTIC Grasshopper 工具）",
+          "creator": "Pirouz Nourian、Samaneh Rezvani、Sevil Sariyildiz（TU Delft）",
+          "year": "2013",
+          "url": "https://www.researchgate.net/publication/283311082_A_SYNTACTIC_ARCHITECTURAL_DESIGN_METHODOLOGY_Integrating_real-time_Space_Syntax_analysis_in_a_configurative_architectural_design_process",
+          "verified": true,
+          "evidence": "第九屆 Space Syntax Symposium（首爾，2013 年 10 月）論文；內文說明工具以自寫的力導向圖繪製演算法把泡泡圖畫成 kissing disk 圖，靠吸引與排斥力反覆作用於圖頂點。"
+        },
+        {
+          "title": "Automated architectural space layout planning using a physics-inspired generative design framework",
+          "creator": "Zhipeng Li、Sichao Li、Geoff Hinchcliffe、Noam Maitless、Nick Birbilis",
+          "year": "2024",
+          "url": "https://arxiv.org/abs/2406.14840",
+          "verified": true,
+          "evidence": "arXiv 2406.14840 頁面標題相符，摘要說明結合受物理啟發的參數化空間配置模型與演化最佳化，自動產生建築空間配置。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "d3-force（力導向圖佈局）",
+          "creator": "Mike Bostock／D3",
+          "year": "2015",
+          "url": "https://github.com/d3/d3-force",
+          "verified": true,
+          "evidence": "GitHub 說明為 Force-directed graph layout using velocity Verlet integration，儲存庫建立於 2015-11-03，README 提到可用於網路、階層與泡泡碰撞。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Graph drawing by force-directed placement",
+          "creator": "Thomas M. J. Fruchterman、Edward M. Reingold",
+          "year": "1991",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/spe.4380211102",
+          "verified": true,
+          "evidence": "Wiley 頁面顯示 Software: Practice and Experience 21(11)，1991 年 11 月，1129–1164 頁，摘要說明修改 Eades 的 spring-embedder 以求一致邊長。"
+        }
+      ],
+      "card_visual": "十幾顆大小不一的彩色泡泡以細線相連，從糾纏狀態展開成鄰接清楚的泡泡配置圖。",
+      "scores": {"novelty": 3, "architecture_relevance": 5, "teachability": 5, "feasibility": 5, "total": 18}
+    },
+    {
+      "name_zh": "矩形裝箱排版（MaxRects 板材排料）",
+      "name_en": "2D Rectangle Bin Packing / Nesting (MaxRects)",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "把一堆尺寸固定的矩形零件（板材、面板、構件）依序塞進有限大小的板子，每放一塊就更新「還剩哪些空白矩形」，用最省料的方式排滿，不夠再開新板。",
+      "mechanism": [
+        "零件依面積、長邊或周長排序（排序策略本身就是可調參數）。",
+        "每張板維護一份「最大空白矩形」清單，初始為整張板。",
+        "對目前零件檢查所有空白矩形（可含 90° 旋轉），用啟發式（最佳短邊貼合、左下角優先、接觸周長最大等）選位置。",
+        "放下後，把與零件重疊的空白矩形切成最多四個新矩形，並刪除被其他空白矩形完全包含者。",
+        "放不下就開新板；輸出各板排版與使用率，並可用隨機排序多次重試取最佳。"
+      ],
+      "overlap": {
+        "nearest": "A04 變形「面積比例驅動（Treemap 平面配置）」；E01 圓填充與其變形「貪婪插入式填充（先大後小）」",
+        "difference": "A04 的 Treemap 是把一個已知矩形依比例切開，沒有剩料也沒有零件尺寸限制；E01 是以推擠物理讓圓不重疊，或在連續空間找空位插圓。矩形裝箱的零件尺寸固定不可變形，要在有限板材內找放置點，核心是「空白矩形清單」的切分與包含修剪，加上貪婪啟發式，屬 NP-hard 的組合排列，產出直接是 CNC／雷切的排料圖。",
+        "verdict": "new"
+      },
+      "new_concept": "組合最佳化與 NP-hard 的直覺、貪婪啟發式與排序比較器（IComparer）、自由空間資料結構（矩形清單的切分與修剪）、多次隨機重啟、材料使用率評估；直接連到數位製造與成本。",
+      "logic": ["搜尋／求解"],
+      "difficulty": 3,
+      "loc_estimate": "150–250 行",
+      "gh_feasibility": "完全可行：零件以 Rectangle3d 或寬高數字清單輸入，空白區用 List<BoundingBox> 或自訂 struct；輸出每個零件的 Transform（原幾何 → 排版位置）與板框，可直接接雷切輸出。不規則零件的 no-fit polygon 版本需要 Minkowski 和，較難，建議只做「以包圍盒排版＋旋轉」的簡化變形。",
+      "architecture_cases": [
+        {
+          "title": "OpenNest：Rhino／Grasshopper 的 2D 排料外掛",
+          "creator": "Petras Vestartas",
+          "year": "",
+          "url": "https://github.com/petrasvestartas/OpenNest",
+          "verified": true,
+          "evidence": "GitHub 說明 OpenNest 為 Rhino 與 Grasshopper 的 2D 多邊形排料工具，可把不規則零件以最少廢料排到板材上（支援有孔零件與非矩形板材），MIT 授權；Food4Rhino 亦有 OpenNest（by petrasvestartas）頁面。"
+        },
+        {
+          "title": "More on the Representation and Generation of Loosely Packed Arrangements of Rectangles（LOOS 配置系統）",
+          "creator": "Ulrich Flemming（Carnegie Mellon University 建築系）",
+          "year": "1989",
+          "url": "https://ideas.repec.org/a/sae/envirb/v16y1989i3p327-359.html",
+          "verified": true,
+          "evidence": "IDEAS/RePEc 頁面顯示刊於 Environment and Planning B 16(3)，1989，作者 U Flemming（CMU 建築系），研究矩形排列的表示與生成，支撐自動產生建築配置的 LOOS 系統。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "SVGnest：開源排料工具",
+          "creator": "Jack Qiao（Jack000）",
+          "year": "",
+          "url": "https://svgnest.com/",
+          "verified": true,
+          "evidence": "SVGnest 頁面說明為雷射、電漿與 CNC 切割用的開源排料工具，以基因演算法搭配 no-fit polygon 排列零件以節省材料；頁面未標示日期。"
+        },
+        {
+          "title": "Rectangle Packing: An Incredibly Difficult Problem",
+          "creator": "Ahmad Moussa（Gorilla Sun）",
+          "year": "2021",
+          "url": "https://www.gorillasun.de/blog/rectangle-packing-an-incredibly-difficult-problem/",
+          "verified": true,
+          "evidence": "文章發表於 2021 年 2 月 27 日，作者 Ahmad Moussa，說明矩形裝箱屬最佳化難題，並以 rectpack 求解後在 p5.js 做生成藝術呈現。"
+        }
+      ],
+      "references": [
+        {
+          "title": "A Thousand Ways to Pack the Bin – A Practical Approach to Two-Dimensional Rectangle Bin Packing",
+          "creator": "Jukka Jylänki",
+          "year": "2010",
+          "url": "https://github.com/juj/RectangleBinPack",
+          "verified": true,
+          "evidence": "GitHub 儲存庫 juj/RectangleBinPack 實作 MaxRects、Skyline、Guillotine、Shelf，並附 RectangleBinPack.pdf，首頁標題為 A Thousand Ways to Pack the Bin，作者 Jukka Jylänki，日期 2010 年 2 月 27 日。"
+        }
+      ],
+      "card_visual": "幾張灰色板材上排滿大小不一的彩色矩形零件，每張板下方標示材料使用率百分比。",
+      "scores": {"novelty": 4, "architecture_relevance": 4, "teachability": 4, "feasibility": 5, "total": 17}
+    },
+    {
+      "name_zh": "等向性重新網格（Isotropic Remeshing）",
+      "name_en": "Isotropic Remeshing (Split–Collapse–Flip–Relax)",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "把一張三角形大小亂七八糟的曲面網格，反覆「太長就切、太短就併、翻邊讓每點接近六條邊、再沿曲面滑順」，變成三角形幾乎一樣大的均勻網格。",
+      "mechanism": [
+        "由目標邊長 L 設定上下限（約 4/3·L 與 4/5·L）。",
+        "切分：長於上限的邊在中點切開。",
+        "收縮：短於下限的邊合併兩端點（先檢查不會產生過長邊或翻面）。",
+        "翻邊：若翻轉某條邊能讓四個相關頂點的價數更接近 6（邊界點為 4）就翻。",
+        "切向鬆弛：每點往鄰點重心移動、只保留切向分量，再投影回原曲面；以上步驟重複 5–20 輪。"
+      ],
+      "overlap": {
+        "nearest": "B01 變形「3D 網格差異生長」；A04 變形「網格細分（Catmull-Clark 精神）」；E04 變形「從任意 Mesh 找形」",
+        "difference": "B01 的 3D 網格生長只切邊加點、讓曲面長大起皺，沒有收縮與翻邊，也不綁在原曲面上；A04 的細分是規則地一分為四，網格只會變密、不會變勻；E04 只移動頂點、拓撲不變。重新網格的核心是拓撲編輯：在固定曲面上同時做切、併、翻三種連結性改變，目標是網格品質（邊長一致、價數 6），產出是可施工的均勻三角面板。",
+        "verdict": "new"
+      },
+      "new_concept": "半邊（half-edge）或邊–面鄰接資料結構、網格拓撲編輯（split／collapse／flip）、頂點價數與網格品質指標、切向平滑加上投影回曲面；既有單元都只「移點不改連結」，這裡第一次教改連結。",
+      "logic": ["迭代模擬", "幾何轉換"],
+      "difficulty": 4,
+      "loc_estimate": "300–400 行",
+      "gh_feasibility": "可行但偏長：RhinoCommon 的 Mesh 沒有現成拓撲編輯 API，需自寫精簡的邊–面鄰接表（List<int[]> 面＋Dictionary<(int,int), 邊>），每輪重建一次；投影用 Mesh.ClosestPoint 或 Brep.ClosestPoint；輸出重建後的 Mesh 與依邊長偏差著色。每輪重建鄰接較慢，但數千個面仍可接受；Plankton 僅作參考，不可依賴外掛。",
+      "architecture_cases": [
+        {
+          "title": "A triangular grid generation and optimization framework for the design of free-form gridshells",
+          "creator": "Qi-sheng Wang、Jun Ye、Hui Wu、Bo-qing Gao、Paul Shepherd",
+          "year": "2019",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0010448518302732",
+          "verified": true,
+          "evidence": "ScienceDirect 頁面顯示 Computer-Aided Design 113 卷（2019 年 8 月）96–113 頁，研究在自由曲面上產生均勻、形狀良好的三角網格，供自由形網殼結構設計。"
+        },
+        {
+          "title": "Dynamic remeshing（MeshMachine 動態重新網格）",
+          "creator": "Daniel Piker",
+          "year": "2014",
+          "url": "https://www.grasshopper3d.com/profiles/blogs/dynamic-remeshing-now-with-feature-preservation-curvature",
+          "verified": true,
+          "evidence": "Grasshopper 社群 2014 年 4 月 22 日文章〈Dynamic remeshing - now with feature preservation, curvature adaptivity, and minimal surfaces〉，作者 Daniel Piker，說明控制邊長、依曲率調整密度，並可做極小曲面找形。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Plankton：Grasshopper 用的 half-edge 網格函式庫",
+          "creator": "Daniel Piker、Will Pearson",
+          "year": "2013",
+          "url": "https://github.com/meshmash/Plankton",
+          "verified": true,
+          "evidence": "GitHub README 說明 Plankton 是以 half-edge 結構處理 n 邊形網格的 C# 函式庫，原為 Grasshopper C#/VB 腳本元件而寫，含 edge collapse、face split 等拓撲操作，版權 2013 Daniel Piker 與 Will Pearson。"
+        }
+      ],
+      "references": [
+        {
+          "title": "A Remeshing Approach to Multiresolution Modeling",
+          "creator": "Mario Botsch、Leif Kobbelt",
+          "year": "2004",
+          "url": "https://www.graphics.rwth-aachen.de/publication/03101/",
+          "verified": true,
+          "evidence": "RWTH Aachen 論文頁顯示 Symposium on Geometry Processing 2004，189–196 頁，作者 Mario Botsch、Leif Kobbelt。"
+        }
+      ],
+      "card_visual": "同一片曲面左半邊是大小懸殊的破碎三角網，右半邊是邊長一致、近乎六價的均勻三角網，交界以漸層過渡。",
+      "scores": {"novelty": 5, "architecture_relevance": 4, "teachability": 3, "feasibility": 3, "total": 15}
+    },
+    {
+      "name_zh": "四邊形網格平面化（PQ Mesh 投影求解）",
+      "name_en": "Planar Quad (PQ) Mesh Planarization by Projection",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "自由曲面切成的四邊形玻璃片通常是翹的；這個演算法反覆把每一片投影到自己的最佳擬合平面，再把共用頂點得到的多個答案取平均，直到每片都能用平板玻璃製作。",
+      "mechanism": [
+        "以自由曲面的 UV 或曲率線取樣得到四邊形網格（頂點陣列＋每面四個索引）。",
+        "對每個面以最小平方法求最佳擬合平面，把四個角點投影到該平面，得到「這個面希望的頂點位置」。",
+        "每個頂點收集所有相鄰面給的目標位置，再加上「貼近原曲面」「邊界固定」等目標，以權重平均得到新位置（局部投影＋全域平均）。",
+        "重複直到最大翹曲量（四點到擬合平面的距離）小於容許值。",
+        "輸出平面化網格、每片翹曲著色與偏離原曲面的距離；變形可改成圓形網格或錐形網格約束。"
+      ],
+      "overlap": {
+        "nearest": "E04 動態鬆弛找形與其專案種子「自寫迷你 Kangaroo：多目標約束求解器」；E04 變形「曲面上的網：約束在基底曲面」",
+        "difference": "E04 以質點、速度、彈簧力做時間積分，追求受力平衡的形；平面化沒有質量與速度，是純幾何的約束投影：每個約束各自算出理想位置，再在頂點上取加權平均（Shape-Up／ShapeOp 的 local-global 觀念），目標是可製造性（平板面板），並盡量貼近原設計曲面。E04 的迷你 Kangaroo 種子只提到多目標求解器，沒有教平面性約束與投影法。",
+        "verdict": "new"
+      },
+      "new_concept": "最小平方擬合平面（協方差的觀念）、約束投影求解（projection-based／local-global）、以翹曲量量化可製造性、可製造性與造形忠實度之間的權衡。",
+      "logic": ["搜尋／求解", "迭代模擬"],
+      "difficulty": 4,
+      "loc_estimate": "180–300 行",
+      "gh_feasibility": "可行：Plane.FitPlaneToPoints 直接給最佳擬合平面，Plane.ClosestPoint 做投影，Surface.ClosestPoint 拉回原曲面；以 Point3d[] 累加器與計數陣列做平均；輸出四邊形 Mesh 與依翹曲量著色的 VertexColors。不需矩陣函式庫。",
+      "architecture_cases": [
+        {
+          "title": "Capital C（阿姆斯特丹）自由形鋼網殼的平面四邊形玻璃幾何最佳化",
+          "creator": "Koos Fritzsche、Wouter van der Sluis、Erik Smits、Jack Bakker；建築設計 ZJA Zwarts & Jansma Architects",
+          "year": "2021",
+          "url": "https://www.glassonweb.com/article/capital-c-geometric-optimization-free-form-steel-gridshell-towards-planar-quadrilateral",
+          "verified": true,
+          "evidence": "glassonweb 文章〈Capital C, Geometric Optimization of a Free-Form Steel Gridshell Towards Planar Quadrilateral Glass Units〉（2021），說明以 Grasshopper＋Kangaroo 自訂程式迭代求解，要求每個網格面都是平面並貼近參考曲面。"
+        },
+        {
+          "title": "柏林動物園河馬館玻璃屋頂（House for Hippopotamus, Zoo Berlin）",
+          "creator": "schlaich bergermann partner（Hans Schober）；建築師 J. Gribl",
+          "year": "1996",
+          "url": "https://www.sbp.de/en/project/house-for-hippopotamus-zoo-berlin/",
+          "verified": true,
+          "evidence": "sbp 專案頁說明此為第一個以平移曲面原理設計的建築，因此能以平面四邊形玻璃覆蓋雙曲網殼；Structurae 記載完工年為 1996。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "compas_3gs：Planarisation（平面化）",
+          "creator": "Block Research Group（COMPAS）",
+          "year": "",
+          "url": "https://blockresearchgroup.github.io/compas_3gs/latest/user_manual/01_multi-cell_polyhedron/01_40_planarisation.html",
+          "verified": true,
+          "evidence": "文件頁說明每輪把各面投影到其中心與法向或最佳擬合平面，頂點得到多個座標後取平均，重複到誤差小於容許值；屬 Block Research Group 的 COMPAS 套件。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Geometric modeling with conical meshes and developable surfaces",
+          "creator": "Yang Liu、Helmut Pottmann、Johannes Wallner、Yong-Liang Yang、Wenping Wang",
+          "year": "2006",
+          "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2006/lhwyw_conical_06/lhwyw_conical_06.html",
+          "verified": true,
+          "evidence": "TU Wien 頁面顯示 SIGGRAPH 2006 論文，說明如何最佳化四邊形網格使其面變成平面，甚至成為錐形網格。"
+        },
+        {
+          "title": "Shape-Up: Shaping Discrete Geometry with Projections",
+          "creator": "Sofien Bouaziz、Mario Deuss、Yuliy Schwartzburg、Thibaut Weise、Mark Pauly",
+          "year": "2012",
+          "url": "https://diglib.eg.org/items/a4c90034-74dc-4bd9-82a9-79c7f77c9ab0",
+          "verified": true,
+          "evidence": "Eurographics Digital Library 頁面顯示 Computer Graphics Forum 31(5)，2012，作者 Bouaziz、Deuss、Schwartzburg、Weise、Pauly。"
+        }
+      ],
+      "card_visual": "一片自由曲面四邊形網格，面片由紅色（翹曲）逐步轉成綠色（平面），角落顯示最大翹曲量數值。",
+      "scores": {"novelty": 4, "architecture_relevance": 5, "teachability": 3, "feasibility": 4, "total": 16}
+    },
+    {
+      "name_zh": "剛性摺紙模擬（Miura-ori 與摺痕圖）",
+      "name_en": "Rigid Origami Simulation (Miura-ori / Crease Pattern Folding)",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "把一張畫好山摺、谷摺的紙當成由硬面板和鉸鏈組成的機構，只轉動摺角、不讓面板彎曲，就能算出整張紙從攤平到收合的每一個中間形狀。",
+      "mechanism": [
+        "定義摺痕圖：頂點、摺線（山／谷）、面板；入門用 Miura-ori 單元（邊長 a、b 與夾角 γ）。",
+        "閉式版：Miura-ori 只由一個摺角 θ 決定，依 Schenk 與 Guest 的公式算出單元高 H、寬 S、長 L，直接擺出所有頂點（一個參數驅動整片）。",
+        "通用版：面板當剛體、摺線當鉸鏈，用 bar-and-hinge 模型——邊長當硬彈簧、摺角當旋轉彈簧朝目標角推進，反覆鬆弛到收斂（進階可依 Tachi 的作法把摺角變化投影到約束空間）。",
+        "逐步增加目標摺角（0 → 180°）產生收合動畫，並檢查面板是否保持平面、是否自我穿透。",
+        "輸出每個摺疊狀態的面板 Mesh、摺線與收合比例，作為可動遮陽、摺板屋頂的構件。"
+      ],
+      "overlap": {
+        "nearest": "E04 動態鬆弛找形（bar-and-hinge 求解會沿用彈簧概念）",
+        "difference": "E04 的目標是重力下的平衡曲面，網格可自由伸縮；剛性摺紙要求每塊面板保持平面且不伸縮，只能沿摺線轉動，自由度是摺角而不是頂點座標，屬機構運動學。資料結構是摺痕圖（面板–摺線–頂點的平面圖）加上山谷指定，產出是可展開、可收合的摺板構件及其運動序列；既有單元沒有任何一個處理可展開性與機構運動。",
+        "verdict": "new"
+      },
+      "new_concept": "運動學與自由度、剛體鉸鏈機構、可展開性與面板平面性約束、以單一參數驅動整個構件族（閉式公式）、收合動畫即設計流程。",
+      "logic": ["幾何轉換", "迭代模擬"],
+      "difficulty": 4,
+      "loc_estimate": "閉式 Miura-ori 約 120 行；通用 bar-and-hinge 求解約 300–400 行",
+      "gh_feasibility": "Miura-ori 閉式版完全可行（Point3d 陣列＋Mesh 面）；通用摺痕圖以 bar-and-hinge 迭代實作可行，需自寫二面角與其梯度（Vector3d.CrossProduct、Vector3d.VectorAngle）；Tachi 式約束投影需要矩陣偽逆，沒有外部函式庫時要自寫小型高斯消去，建議列為進階變形。曲線摺痕不建議納入。",
+      "architecture_cases": [
+        {
+          "title": "Al Bahr Towers 動態 mashrabiya 遮陽立面",
+          "creator": "Aedas",
+          "year": "2013",
+          "url": "https://parametric-architecture.com/al-bahr-towers-case-study/",
+          "verified": true,
+          "evidence": "Parametric Architecture 案例頁（標示 Completed 2013）寫明設計團隊以簡單的摺紙模型理解動態 mashrabiya 三角形單元如何開合；designboom 2014 年報導亦說明遮陽單元隨太陽位置開合、降低日射得熱達 50%。"
+        },
+        {
+          "title": "聖盧臨時禮拜堂（Temporary Chapel of St-Loup）",
+          "creator": "LOCALARCHITECTURE；EPFL IBOIS（Hani Buri、Yves Weinand）",
+          "year": "2008",
+          "url": "https://dominikgehl.com/switzerland/vaud/pompaples/chapelle-st-loup",
+          "verified": true,
+          "evidence": "頁面記載 2008 年由 Localarchitecture 與 EPFL IBOIS 的 Hani Buri、Yves Weinand 合作，以類摺紙的折板構成，軟體計算承重並直接把 6 公分厚木板資料傳給切割機。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Origami Simulator",
+          "creator": "Amanda Ghassaei（與 Erik Demaine、Neil Gershenfeld、Sasaki Kosuke）",
+          "year": "2017",
+          "url": "https://github.com/amandaghassaei/OrigamiSimulator",
+          "verified": true,
+          "evidence": "GitHub 說明為即時 WebGL 摺紙模擬器，同時摺疊所有摺線、迭代求解小位移，於 2017 年 7OSME 發表，求解法延伸 Schenk & Guest 與 Tachi 的研究。"
+        }
+      ],
+      "references": [
+        {
+          "title": "Simulation of Rigid Origami",
+          "creator": "Tomohiro Tachi",
+          "year": "2009",
+          "url": "https://origami.c.u-tokyo.ac.jp/~tachi/cg/SimulationOfRigidOrigami_tachi_4OSME.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁標題 Simulation of Rigid Origami，作者 Tomohiro Tachi（東京大學），摘要說明以摺角表示構形、把角度運動投影到約束空間算出摺疊軌跡；檔名標示 4OSME，收錄於 Origami4（2009）。"
+        },
+        {
+          "title": "Geometry of Miura-folded metamaterials",
+          "creator": "Mark Schenk、Simon D. Guest",
+          "year": "2013",
+          "url": "https://www-g.eng.cam.ac.uk/advancedstructures/files/pdf/2013GuestD.pdf",
+          "verified": true,
+          "evidence": "PDF 首頁顯示 PNAS 110(9) 3276–3281，2013 年 2 月 26 日，作者 Mark Schenk、Simon D. Guest，並列出以摺角 θ 表示 Miura 單元 H、S、L 的閉式公式。"
+        }
+      ],
+      "card_visual": "同一片 Miura-ori 摺板以三種摺角並排：攤平、半收合、幾乎全收合，山摺與谷摺以兩種顏色標示。",
+      "scores": {"novelty": 5, "architecture_relevance": 4, "teachability": 3, "feasibility": 3, "total": 15}
+    },
+    {
+      "name_zh": "力密度法找形（FDM）",
+      "name_en": "Force Density Method (FDM) Form-Finding",
+      "family_suggest": "E 排列與鬆弛",
+      "one_liner": "不像動態鬆弛那樣一步步晃到靜止，而是替每根索指定「力 ÷ 長度」的力密度，把所有節點的平衡寫成一組線性方程，一次解出整張索網或受壓殼的形狀。",
+      "mechanism": [
+        "建立網路：節點分成自由點與固定點，邊用連接矩陣 C 表示（每列一條邊，兩端分別為 +1 與 −1）。",
+        "為每條邊指定力密度 q（軸力／長度），組成對角矩陣 Q；外載重 P（例如向下的自重）。",
+        "組出 D = Cᵀ Q C，拆成自由部分 Dn 與固定部分 Df，對 x、y、z 各解一次線性方程 Dn·xn = Pn − Df·xf。",
+        "以 Gauss-Seidel、共軛梯度或自寫 Cholesky 求解（D 對稱正定且稀疏）；調整 q 的分布（例如加大邊界索）立刻得到不同的形。",
+        "由新座標回算各邊長度與軸力 F = q·L，輸出形狀與力流著色；變形：受壓桿用負力密度 → 張拉整體（tensegrity）。"
+      ],
+      "overlap": {
+        "nearest": "E04 動態鬆弛找形（同樣處理索網與受壓殼找形）",
+        "difference": "E04 以質點、速度、阻尼做顯式時間積分，要跑數百到上千步才靜止，力取決於彈簧剛度與原長；FDM 以力密度取代剛度，把非線性的平衡問題變成一次線性方程組，沒有時間也沒有速度，核心資料結構是連接矩陣與稀疏對稱矩陣。兩者是同一問題的兩種求解哲學，FDM 教的是 E04 完全沒碰到的矩陣組裝與線性求解，並自然延伸到張拉整體。",
+        "verdict": "new"
+      },
+      "new_concept": "連接矩陣（圖的關聯矩陣）與拉普拉斯型矩陣、線性方程組迭代求解（Gauss-Seidel／共軛梯度）、以力密度作為設計參數、平衡方程的矩陣寫法；並引出張拉整體的受拉／受壓符號。",
+      "logic": ["搜尋／求解"],
+      "difficulty": 4,
+      "loc_estimate": "200–300 行",
+      "gh_feasibility": "可行：節點與邊由 Mesh.TopologyVertices／TopologyEdges 或 Line 清單建立；數百節點內 D 用 double[,]，更多時改自寫稀疏列表，以 Gauss-Seidel 或共軛梯度迭代求解（約 40 行），不需外部矩陣庫。輸出新網格與依 q·L 著色的線。",
+      "architecture_cases": [
+        {
+          "title": "慕尼黑奧林匹克屋頂索網的找形計算（FDM 的誕生場景）",
+          "creator": "H.-J. Schek（FDM）；屋頂設計 Frei Otto、Günter Behnisch",
+          "year": "1972",
+          "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method",
+          "verified": true,
+          "evidence": "COMPAS FoFin 文件 Force Densities Method 頁說明 Schek 於 1974 年為慕尼黑奧林匹克屋頂提出此法，因為這些索網的精確施工需要數值找形；並說明預先指定力密度即可把平衡方程變成線性。"
+        },
+        {
+          "title": "Kurilpa Bridge（張拉整體混合橋）",
+          "creator": "Cox Rayner Architects、Arup",
+          "year": "2009",
+          "url": "https://en.wikipedia.org/wiki/Kurilpa_Bridge",
+          "verified": true,
+          "evidence": "Wikipedia 條目記載 2009 年 10 月 4 日啟用，由 Cox Rayner Architects 與 Arup 設計，是世界最大的混合式張拉整體橋，以平衡的受拉與受壓構件形成輕量結構。"
+        },
+        {
+          "title": "COMPAS FD：以力密度法做約束找形",
+          "creator": "Block Research Group（ETH Zurich）",
+          "year": "",
+          "url": "https://github.com/blockresearchgroup/compas_fd",
+          "verified": true,
+          "evidence": "GitHub 說明此套件提供以 force density method 做 constrained form finding 的平衡求解器與約束，可經由 COMPAS FormFinder 圖形介面使用。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "Force_Density_Method（Python 實作）",
+          "creator": "Vahid Moosavi",
+          "year": "",
+          "url": "https://github.com/sevamoo/Force_Density_Method",
+          "verified": true,
+          "evidence": "GitHub README 說明依 Schek 1974 的方法以線性方程求節點座標，範例含參數化力密度的殼體、圓形邊界屋頂與大量生成形體的聚類分析。"
+        }
+      ],
+      "references": [
+        {
+          "title": "The force density method for form finding and computation of general networks",
+          "creator": "H.-J. Schek",
+          "year": "1974",
+          "url": "https://www.sciencedirect.com/science/article/pii/0045782574900450",
+          "verified": true,
+          "evidence": "ScienceDirect 頁面顯示 Computer Methods in Applied Mechanics and Engineering 3(1)，1974 年 1 月，115–134 頁，作者 H.-J. Schek。"
+        }
+      ],
+      "card_visual": "一張方格索網四角固定、邊界索加粗，網面依力密度下垂成碗形，邊線依軸力由藍到紅著色。",
+      "scores": {"novelty": 4, "architecture_relevance": 5, "teachability": 3, "feasibility": 4, "total": 16}
+    },
+    {
+      "name_zh": "測地線圓頂（二十面體細分）",
+      "name_en": "Geodesic Dome (Icosahedral Subdivision)",
+      "family_suggest": "E 排列與鬆弛（亦可歸 A 規則與語法）",
+      "one_liner": "從 20 個正三角形組成的二十面體出發，把每個三角形切成更小的三角形、再把新點推到球面上，就得到 Buckminster Fuller 式、桿件種類很少的測地線圓頂。",
+      "mechanism": [
+        "以黃金比例座標建立正二十面體的 12 個頂點與 20 個面。",
+        "設定頻率 ν：每條邊等分成 ν 段，每個面切成 ν² 個小三角形（或以中點遞迴切分）；用以邊為鍵的 Dictionary 共用邊上新點，避免重複頂點。",
+        "把所有頂點正規化到半徑 R（投影到球面），可只保留 z 大於某值的部分當圓頂並整理底邊。",
+        "依長度把桿件分群（容差內視為同一型），統計桿件種類與數量——這正是建造成本的關鍵。",
+        "變形：取對偶得到六角＋五角的 Goldberg 面（Eden Project 式）、改用八面體基底、或以球面電荷互斥（Thomson 問題）鬆弛讓點更均勻。"
+      ],
+      "overlap": {
+        "nearest": "B04 變形「Fibonacci Sphere 球面均佈」與 B04 專案種子「Fibonacci 圓頂分割與構件化」；A04 變形「網格細分（Catmull-Clark 精神）」",
+        "difference": "B04 的 Fibonacci 球只產生點，沒有連結，也不追求重複構件；A04 的細分處理平面矩形或一般網格。測地線圓頂從正多面體的對稱出發做三角細分與球面投影，產出是有明確桿件拓撲的結構網格，核心是頂點去重的索引資料結構、對偶網格與「桿件種類最少化」的構件思維。",
+        "verdict": "new"
+      },
+      "new_concept": "正多面體與對稱性、網格的頂點／面索引與邊鍵字典去重、投影（向量正規化）、對偶網格（三角 ↔ 六角五角）、依長度分群統計構件種類（製造導向的標準化思維）。",
+      "logic": ["幾何轉換", "改寫／遞迴"],
+      "difficulty": 2,
+      "loc_estimate": "120–200 行",
+      "gh_feasibility": "完全可行：Point3d、Vector3d.Unitize、Mesh.Faces.AddFace 即可完成；桿件分群用排序後依容差切段；輸出 Mesh、依桿件種類著色的 Line 清單與種類統計。對偶網格需自寫面中心與鄰接排序，約多 60 行。",
+      "architecture_cases": [
+        {
+          "title": "Montreal Biosphère（1967 年世博會美國館）",
+          "creator": "Buckminster Fuller",
+          "year": "1967",
+          "url": "https://www.archdaily.com/572135/ad-classics-montreal-biosphere-buckminster-fuller",
+          "verified": true,
+          "evidence": "ArchDaily AD Classics 頁面說明此為 1967 年世博會美國館，幾何為二十面體，面細分成三角形並彎成殼，直徑 76 公尺、高 62 公尺，桿件全為焊接鋼管。"
+        },
+        {
+          "title": "Eden Project 生態溫室（Biomes）",
+          "creator": "Grimshaw Architects；結構 Anthony Hunt Associates、MERO",
+          "year": "2001",
+          "url": "https://en.wikipedia.org/wiki/Eden_Project",
+          "verified": true,
+          "evidence": "Wikipedia 條目記載 2001 年 3 月 17 日對外開放，Biomes 由 Grimshaw Architects 設計、Anthony Hunt and Associates 負責結構，為無內柱的測地線結構，由數百個六角形與五角形 ETFE 氣墊構成。"
+        }
+      ],
+      "cc_refs": [
+        {
+          "title": "icosphere：依細分頻率建立測地線二十面體",
+          "creator": "Vedrana A. Dahl",
+          "year": "",
+          "url": "https://github.com/vedranaa/icosphere",
+          "verified": true,
+          "evidence": "GitHub 說明 Constructs geodesic icosahedron given subdivision frequency：每條邊分成 ν 段、每個面分成 ν² 個面，頂點數約 12 + 10(ν² − 1)。"
+        },
+        {
+          "title": "Parakeet：Geodesic Dome 元件",
+          "creator": "Esmaeil（Parakeet 外掛）",
+          "year": "",
+          "url": "https://grasshopperdocs.com/components/parakeet/geodesicDome.html",
+          "verified": true,
+          "evidence": "Grasshopper Docs 頁面說明此元件 Generates a Geodesic Dome based on a Icosahedron，輸入基準點、半徑與圓頂頻率，輸出網格、點與邊。"
+        }
+      ],
+      "references": [
+        {
+          "title": "US Patent 2,682,235：Building Construction（測地線圓頂專利）",
+          "creator": "Richard Buckminster Fuller",
+          "year": "1954",
+          "url": "https://patents.google.com/patent/US2682235A/en",
+          "verified": true,
+          "evidence": "Google Patents 頁面顯示 1951 年 12 月 12 日申請、1954 年 6 月 29 日公告，發明人 Richard Buckminster Fuller，描述以近似大圓弧構成三向格網、以球面二十面體為基礎的框架。"
+        }
+      ],
+      "card_visual": "半球形測地線圓頂線框，桿件依長度種類分成三到四種顏色，旁邊標示頻率與桿件種類數。",
+      "scores": {"novelty": 3, "architecture_relevance": 5, "teachability": 5, "feasibility": 5, "total": 18}
+    }
+  ],
+  "rejected": [
+    {
+      "name": "捕食者–獵物（Lotka–Volterra 代理人模型）",
+      "overlap_with": "D01 變形「吸引子／目標點群聚」「障礙物迴避（Reynolds steering）」＋D02 變形「多物種互斥」",
+      "reason": "核心仍是 Reynolds 的追逐（seek／pursue）與逃離（flee／evade）轉向，再加上出生與死亡規則；建議併入 D01 當變形「追逐與逃離的雙物種群聚」。建築案例薄弱。"
+    },
+    {
+      "name": "Lévy flight 與隨機行走",
+      "overlap_with": "B02 DLA（隨機行走粒子）與 D01 的遊走行為",
+      "reason": "只是把隨機行走的步長換成冪次律分布，機制與資料結構不變；建議當 B02 或 D01 的變形「Lévy flight 步長」。"
+    },
+    {
+      "name": "Nagel–Schreckenberg 交通細胞自動機",
+      "overlap_with": "C02 變形「一維 Wolfram 規則立面」＋D03 變形「雙向對流與車道形成」",
+      "reason": "NaSch 在最高速為 1 且無隨機減速時即 Wolfram Rule 184，本質是一維 CA 換規則與狀態；建議併入 C02 當變形「交通 CA 時空圖（Rule 184／NaSch）」。"
+    },
+    {
+      "name": "代理人建構的構造（Roland Snooks／Kokkugia behavioral formation）",
+      "overlap_with": "D01 Boids 群聚（案例已收 Swarm Urbanism、Composite Swarm、Brass Swarm、RMIT Mace、Ghost Tectonics）",
+      "reason": "重複：其演算法核心就是群聚代理人加上局部構造規則，已是 D01 的主要建築案例。"
+    },
+    {
+      "name": "機器人群體建造（空中機器人、無人機列印）",
+      "overlap_with": "候選「白蟻式群體建造」＋D01 案例（Aerial Additive Manufacturing、AADRL Aerial Robot Thread Construction）",
+      "reason": "屬應用而非獨立演算法；stigmergy 放磚的部分已由白蟻式群體建造涵蓋，空中群體軌跡已在 D01。"
+    },
+    {
+      "name": "3D 球體堆積",
+      "overlap_with": "E01 變形「3D 球體堆疊」",
+      "reason": "重複：只是 E01 圓填充升維。"
+    },
+    {
+      "name": "Delaunay 三角化（Bowyer–Watson 逐點插入）",
+      "overlap_with": "E03 變形「Delaunay 對偶網路」、E02 變形「Poisson 點 → Voronoi／Delaunay」",
+      "reason": "已是 E03 的對偶產物；逐點插入與翻邊的拓撲操作可作為候選「等向性重新網格」的變形（Delaunay flip）一併教。"
+    },
+    {
+      "name": "編織與針織鬆弛",
+      "overlap_with": "E04 動態鬆弛找形（案例已收 KnitCandela）＋F02 變形「交織帶（over-under strapwork）」",
+      "reason": "核心是彈簧與彎曲鬆弛，加上上下交錯的標記；建議當 E04 變形「彎曲桿件與編織網殼」。"
+    },
+    {
+      "name": "張拉整體（tensegrity）找形",
+      "overlap_with": "候選「力密度法找形（FDM）」",
+      "reason": "張拉整體的標準找形法就是對受壓桿給負力密度的 FDM，建議作為 FDM 的變形，而不是獨立演算法。"
+    },
+    {
+      "name": "網格上的蟻群覓食（費洛蒙濃度場）",
+      "overlap_with": "D02 Physarum 黏菌、D01 變形「Stigmergy：留痕跡、追痕跡」",
+      "reason": "在網格上留費洛蒙、感測後轉向與 D02 的「聞、轉、走、留」相同；與候選 ACO（圖上的組合最佳化）刻意區分，網格版不另列。"
+    },
+    {
+      "name": "可見度代理人（Turner & Penn 的 EVA 視覺驅動代理人）",
+      "overlap_with": "D03 變形「Space syntax 可見度加權」",
+      "reason": "以可見度決定行走方向，是 D03 人流模擬換導航規則。"
+    },
+    {
+      "name": "球面電荷互斥（Thomson 問題）",
+      "overlap_with": "候選「測地線圓頂」變形；E01 變形「曲面上 circle packing」",
+      "reason": "機制是球面上點的互斥鬆弛，與 E01 相同；作為測地線圓頂的均勻化變形即可。"
+    },
+    {
+      "name": "不規則零件排料（no-fit polygon）",
+      "overlap_with": "候選「矩形裝箱排版」",
+      "reason": "屬同一問題的進階版，需 Minkowski 和與多邊形運算，建議當矩形裝箱的進階變形。"
+    }
+  ]
+}

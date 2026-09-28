@@ -1,0 +1,82 @@
+{
+  "K01": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "核心機制（只維持單一解、Metropolis 準則接受變差解、溫度冷卻排程）與 F04 基因演算法的族群＋交配本質不同，QAP 房間鄰接配置也是圖鑑沒有的離散組合最佳化，可在單一元件內 150–250 行完成；11 個網址都查證相符（CAADRIA 2020 PDF 用 WebFetch 逾時，改由 CityU Scholars 頁確認標題、作者 Hao Zheng／Yue Ren、275–284 頁；Sage 與 Springer 擋爬的兩筆改由 Crossref 確認）；要注意 eifForm（同網址，已是 A05-12）與 Rutten 2013〈Galapagos: On the Logic and Limitations of Generic Solvers〉（已是 F04-04 的同一作品）是跨演算法引用，摘要必須寫退火在其中的角色；Merrell 2011 用的是 Monte Carlo 取樣（MCMC），不算嚴格的模擬退火，建議列為次要或不收。"
+  },
+  "K04": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "排序＋並查集的貪婪法（Kruskal）與 Steiner 點的 120° 條件及 Weiszfeld 鬆弛，和 F05 兩點最短路（優先佇列＋距離場）在機制、資料結構與產出（樹狀網路）都不同，D02 V11 只把 MST 當對照圖；8 個網址都查證相符（Wu 等人一文 Crossref 顯示 2017 年線上、2018 年刊於 IJGIS 第 32 卷）；但 Tero 2010 已是 D02-01（同 DOI），Frei Otto《Occupying and Connecting》和 F05-11 羊毛線最小路徑屬同一研究脈絡，而且頁面只談 shorter paths，沒有直接提到生成樹或 Steiner；McNeel 論壇串的回覆主要是 Shortest Walk 與邊束化，不是 Steiner 演算法本身；建立時建議補一件直接使用 MST／Steiner 的設計案例；Steiner 部分以啟發式做，可行。"
+  },
+  "K07": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "以連接矩陣＋力密度把平衡方程一次線性求解，和 E04 質點彈簧顯式時間積分的核心機制與資料結構都不同，控制變數也從材料剛度換成桿件力，不只是 E04 換求解器（與 E04 V06 Kinetic Damping 不同層次）；7 個網址中 6 個直接查證相符，BRG 的 Veenendaal & Block 2014 PDF（約 4.8 MB）WebFetch 中斷，改由搜尋結果確認該網址的標題、作者與 Engineering Structures 75:39–50；Kurilpa Bridge 條目只寫它是張拉整體混合橋，完全沒提到力密度法或任何找形方法，屬於牽強案例，建議刪除；COMPAS FoFin 頁談的慕尼黑奧林匹克屋頂和 E04-01 是同一座建築，摘要要限定在「FDM 因此案而生」；自寫高斯消去或共軛梯度，1,000 個自由點以內可行。"
+  },
+  "K10": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "在不規則三角網格上用餘切拉普拉斯＋兩次稀疏線性求解算出真正的測地距離，和 F05 在格子或圖上累加邊長（V04 多起點距離場、V05 曲線網路）的機制與資料結構都不同，C05 只負責畫等值線；8 個網址全部查證相符（UWE Pavilion、Chalmers IASS 2018 測地線網殼、Pillwein 2020、Crane 熱方法、Pottmann Geodesic Patterns 的木板包覆應用都確認）；Piker 的論壇腳本證明可以不靠數值函式庫在 GH 內實作，但它需要 Plankton，C# 版本應改用 Mesh 拓樸自建鄰接；250–350 行、可行性 3 的自評合理。"
+  },
+  "K13": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "以正二十面體做 ν 頻率三角細分再投影到球面，產出有明確桿件拓樸、可統計桿件種類的球面網殼，並能延伸到 Goldberg 對偶；它和 B04 V04 Fibonacci Sphere（只有點）不同，建築相關性也很高；5 個網址都查證相符（ArchDaily Biosphère、Wikipedia Eden Project、icosphere、Parakeet 元件頁、Fuller 專利 US2682235）；但演算法核心偏向直接幾何構造，和 A04 V12「網格細分」及 B04 專案種子「Fibonacci 圓頂分割與構件化」相當接近，新穎度是邊界案例，因此扣 1 分；建立時要把教學重點放在頻率細分、頂點去重、對偶與桿件分群，和 A04 做出區隔。"
+  },
+  "K16": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "開放接頭前緣清單、平面到平面的剛體對齊、碰撞拒絕與零件連接圖，是在自由 3D 空間中逐件做加法的機制，和 A06 WFC（格子上的限制傳播，含 V03 幾何模組）、A05 形狀文法（整代同時替換並縮放）、B02 DLA（隨機行走黏附）都不同；5 個網址都查證相符（Wasp README、designboom 2017-12-03 Retsin 塔林館、Plethora Combinatorial Nest 2019、Minecraft Jigsaw Block 於 Java 1.14 加入、Rossi & Tessmann ICGG 2018 改由 Crossref 確認）；A05 V02＋V05＋V08 的組合（機率規則、3D 方塊、不可重疊）有部分重疊，建立時要強調前緣與連接圖；另外 Retsin 館是手動組合的離散構件，不是隨機聚合生成，摘要要寫清楚它的角色。"
+  },
+  "K19": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "神經元網格拓樸加上勝出者帶鄰居一起學、鄰域與學習率遞減的競爭式學習，和 E03 Lloyd／k-means 各點獨立移向重心、E04 力平衡本質不同；與 K09 類神經網路（MLP）不是同一個演算法；4 個網址都查證相符（Thole & Ramu 2020、Felbrich 2016 影片、Diego Vicente SOM-TSP、Kohonen 1982）；但兩件「建築案例」一件是一般工程設計空間探索（SMO 期刊，非建築），一件是用 Crow 外掛的 GH 示範影片，都沒有建築專案，建築相關性偏弱，因此扣 1 分，建立前宜補實際建築或空間設計應用。"
+  },
+  "K22": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "居民數量守恆、依滿意度門檻搬到空房（需要空房清單與隨機順序更新），和 C02 生命遊戲同步生死規則、D02 多物種濃度場都不同，可以算新演算法，實作也很簡單；5 個網址都查證相符（Parable of the Polygons、NetLogo Segregation 直接確認；Benenson 2009 與 Schelling 1971 的出版社頁回 403，改由 Crossref 確認標題、作者、卷期頁；UCL Discovery 回 403，改由搜尋結果確認 Crooks 2008 CASA Working Paper 133）；但產出是社會分布圖而不是形體，兩件案例都是都市社會學／GIS 研究，沒有設計專案，建築相關性偏弱，因此扣 1 分。"
+  },
+  "K25": {
+    "verdict": "accept",
+    "merge_into": "",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": 0,
+    "reason": "邊等速內縮的事件驅動波前（edge／split event、優先佇列、拓樸更新），和 E03 以點分區的 Voronoi、A04 遞迴切割、A05 分割文法都不同，每條外牆邊對應一片屋面，建築相關性很高；6 個網址都查證相符（Kelly & Wonka 2011、Held & Palfrader 2016、bpypolyskel、campskeleton、Aichholzer 1995 摘要也提到由牆線建屋頂）；但 CityEngine roofHip 文件本身沒提到直骨架，證據描述有推論成分；一般多邊形的 split event 與同時事件數值上容易出錯，可行性 3 的自評合理，建立時先限定無洞、一般位置的多邊形。"
+  },
+  "K28": {
+    "verdict": "variation",
+    "merge_into": "F04",
+    "dup_of": "",
+    "failed_urls": [],
+    "score_adjust": -1,
+    "reason": "PSO 與 F04 同樣是一群參數向量的黑盒子最佳化，資料結構（double[] 參數，和 F04 V05「基因改成滑桿參數」相同）與產出（最佳參數＋收斂曲線）都一樣，只把選擇／交配／突變換成速度與 pbest／gbest 的更新規則，候選自己也承認是邊界案例；兩件建築案例（Silvereye、Wortmann 2019）都是最佳化工具基準測試，沒有建築專案；4 個網址都查證相符（Silvereye 的 Springer 頁擋爬，改由 Crossref 確認）；建議當 F04 變形「換搜尋機制：粒子群最佳化」，和 K01 模擬退火一起做成單點、族群、群體三種搜尋的對照。"
+  }
+}
