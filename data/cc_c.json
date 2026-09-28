@@ -1,0 +1,1110 @@
+{
+  "agent": "c",
+  "algorithms": [],
+  "cases": [
+    {
+      "id": "C01-51",
+      "algo": "C01",
+      "title": "Coding Challenge #13：Reaction Diffusion Algorithm in p5.js",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 p5.js 逐像素實作 Gray-Scott 反應擴散：兩個二維陣列存 A、B 濃度，用 3×3 卷積核算拉普拉斯，再把結果寫回畫布像素。邏輯和 Grasshopper C# 基礎範例相同，但輸出直接是即時動畫的像素，而不是網格點或曲面，適合先看懂 feed／kill 參數怎麼改變圖樣。",
+      "variations": [
+        {
+          "name": "雙緩衝交換",
+          "how": "把基礎範例的更新改成 grid／next 兩個陣列，每幀算完後交換參照，不在同一個陣列上就地寫入",
+          "effect": "避免更新順序造成的方向性偏差，圖樣更對稱"
+        },
+        {
+          "name": "直接寫像素",
+          "how": "不輸出點或網格，改為把 A−B 映射成灰階後寫入點陣圖（GH 裡可用 Bitmap 或 Mesh 頂點色）",
+          "effect": "解析度可以拉高，觀察斑點、條紋的生成過程"
+        },
+        {
+          "name": "改變初始種子",
+          "how": "把中央一小塊 B=1 的初始條件改成數個隨機方塊或文字形狀",
+          "effect": "圖樣從多個起點向外長，彼此相遇後形成邊界"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "JavaScript",
+        "Gray-Scott",
+        "教學影片",
+        "動畫"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/13-reaction-diffusion"
+    },
+    {
+      "id": "C01-52",
+      "algo": "C01",
+      "title": "Reaction-Diffusion Playground 反應擴散遊樂場",
+      "creator": "Jason Webb",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "瀏覽器上的互動式反應擴散模擬：用 three.js 的 data texture 當格點，GLSL 片段著色器以 ping-pong 方式每幀迭代多次，再由另一個著色器把濃度映射成顏色。提供 f、k、dA、dB 參數、筆刷、預設樣式與可空間變化的參數地圖，比 Grasshopper 的 CPU 迴圈快上數個量級。",
+      "variations": [
+        {
+          "name": "GPU ping-pong",
+          "how": "把基礎範例的雙重 for 迴圈搬進片段著色器，兩張 render target 輪流讀寫，一幀迭代數十次",
+          "effect": "可即時跑到螢幕解析度，互動時幾乎無延遲"
+        },
+        {
+          "name": "參數隨空間變化",
+          "how": "f、k 不再是常數，而是讀一張灰階圖或依座標內插取得",
+          "effect": "同一畫面中由斑點漸變為迷宮紋，可當立面材質漸層的草圖"
+        },
+        {
+          "name": "外部圖像當種子",
+          "how": "把圖片或文字的亮度寫入初始 B 濃度",
+          "effect": "反應擴散沿著既有圖形生長，形成有字形或輪廓的紋理"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "three.js",
+        "GLSL",
+        "WebGL",
+        "互動",
+        "Gray-Scott"
+      ],
+      "tools": [
+        "three.js",
+        "GLSL"
+      ],
+      "url": "https://github.com/jasonwebb/reaction-diffusion-playground"
+    },
+    {
+      "id": "C01-53",
+      "algo": "C01",
+      "title": "Gray-Scott Reaction Diffusion in TouchDesigner（Part 1）",
+      "creator": "Lake Heckaman",
+      "year": "2024",
+      "category": "performance",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "TouchDesigner 教學影片：用 GLSL 著色器在 GPU 上模擬 Gray-Scott 系統，說明數學基礎、著色器實作、無縫拼接（tiling），以及如何用任意色盤替模擬上色。和 Grasshopper 的離線計算不同，這是即時視覺表演的做法，模擬結果可直接接到其他影像節點或互動輸入。",
+      "variations": [
+        {
+          "name": "Feedback 迴圈",
+          "how": "把基礎範例的「迭代 N 次後輸出」改成每幀讀上一幀結果再算一次（TD 的 Feedback TOP，GH 可用計時器或 Anemone 迴圈）",
+          "effect": "圖樣持續演化，可做成現場投影"
+        },
+        {
+          "name": "無縫拼接",
+          "how": "取鄰格時座標取餘數（環狀邊界），不讓邊緣固定為 0",
+          "effect": "輸出紋理左右上下可以無縫重複鋪貼"
+        },
+        {
+          "name": "色盤映射",
+          "how": "把 B 濃度當索引去查一條漸層色帶，而非直接輸出灰階",
+          "effect": "同一個模擬可快速換成不同配色氛圍"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "即時影像",
+        "教學影片"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA"
+    },
+    {
+      "id": "C01-54",
+      "algo": "C01",
+      "title": "Reaction diffusion simulation（WebGL Gray-Scott 實驗）",
+      "creator": "Pablo Márquez Neila（pmneila）",
+      "year": "2012",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "早期的網頁版 Gray-Scott 模擬，用 three.js 建立兩張紋理互相渲染，GLSL 著色器計算擴散與反應，並以五段顏色漸層顯示。提供 Solitons、Worms、Mazes、Holes、Chaos、Moving spots、Waves 等預設參數，可用滑鼠直接在畫面上畫入 B 物質。原始碼以 BSD-3-Clause 公開，是很多後續網頁 RD 作品的參考。",
+      "variations": [
+        {
+          "name": "預設參數組",
+          "how": "把基礎範例的 feed／kill 做成下拉選單，對應 Pearson 分類中的幾組值",
+          "effect": "一鍵切換孤立子、蠕蟲、迷宮等不同形態，方便比較"
+        },
+        {
+          "name": "滑鼠筆刷",
+          "how": "在每一步更新前，把游標附近半徑內的 B 設為 1",
+          "effect": "使用者可以即時「播種」，看圖樣從筆跡長出"
+        },
+        {
+          "name": "多段色帶",
+          "how": "B 濃度分成五個門檻，各段之間線性插值顏色",
+          "effect": "同一張濃度圖呈現出等高線般的色階"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "three.js",
+        "GLSL",
+        "WebGL",
+        "互動",
+        "開源"
+      ],
+      "tools": [
+        "three.js",
+        "GLSL"
+      ],
+      "url": "https://pmneila.github.io/jsexp/grayscott/"
+    },
+    {
+      "id": "C01-55",
+      "algo": "C01",
+      "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+      "creator": "Robert Munafo",
+      "year": "2009",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "把 Gray-Scott 模型在 k–F 參數平面上逐格計算，做成可點選的參數地圖，每一格連到該組參數的圖片、動畫與說明，並延伸 Pearson 的圖樣分類與命名。作者也記錄了多核心與 GPU 的加速實作方法。對 Grasshopper 使用者而言，它是挑選 feed／kill 數值的視覺索引。",
+      "variations": [
+        {
+          "name": "參數掃描",
+          "how": "把基礎範例包在兩層迴圈外，F 與 k 各取一段範圍，每組參數跑固定步數後縮圖排成矩陣",
+          "effect": "一次看出哪些參數區產生斑點、條紋或混沌"
+        },
+        {
+          "name": "空間漸變參數",
+          "how": "讓 F 沿 x 軸、k 沿 y 軸線性變化，只跑一次模擬",
+          "effect": "單張圖就呈現完整的形態光譜"
+        },
+        {
+          "name": "多執行緒",
+          "how": "把格點分成多個橫條，用 Parallel.For 分別更新",
+          "effect": "大尺寸格點的計算時間大幅縮短"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "C",
+        "OpenGL",
+        "參數空間",
+        "視覺化"
+      ],
+      "tools": [
+        "C",
+        "OpenGL"
+      ],
+      "url": "https://www.mrob.com/pub/comp/xmorphia/"
+    },
+    {
+      "id": "C02-51",
+      "algo": "C02",
+      "title": "Coding Challenge 85：The Game of Life",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2017",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "用 p5.js 從零寫出 Conway 生命遊戲：建立二維陣列、隨機初始化、計算八鄰格存活數，並依規則產生下一代，同時說明邊界處理。和 Grasshopper C# 範例同一套規則，但以畫布方格即時播放世代變化。",
+      "variations": [
+        {
+          "name": "環狀邊界",
+          "how": "計算鄰居時用 (i + x + cols) % cols 取餘數，讓左右上下相接",
+          "effect": "滑翔機可從一邊出去、另一邊回來，不會在邊緣卡死"
+        },
+        {
+          "name": "新陣列取代就地更新",
+          "how": "每一代都寫入新陣列，算完再整批替換",
+          "effect": "所有細胞同時更新，結果才符合規則定義"
+        },
+        {
+          "name": "年齡上色",
+          "how": "除了 0／1 再多存一個存活代數，依代數決定顏色或高度",
+          "effect": "穩定結構與新生區域一眼可分"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "JavaScript",
+        "細胞自動機",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/85-the-game-of-life"
+    },
+    {
+      "id": "C02-52",
+      "algo": "C02",
+      "title": "A Processing implementation of Game of Life（Processing 官方範例）",
+      "creator": "Joan Soler-Adillon",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "Processing 官方範例庫「Cellular Automata」類別中的生命遊戲，可用空白鍵暫停、在暫停時用滑鼠點選切換細胞，按 R 隨機重設、按 C 清空。重點是把規則做成可以手動介入的互動畫面，而不只是自動跑。",
+      "variations": [
+        {
+          "name": "暫停與手繪",
+          "how": "加一個 bool 暫停開關；暫停時把游標所在格反轉狀態（GH 可用 Point 輸入或 Human UI 取代）",
+          "effect": "可以手動擺出滑翔機、振盪器等特定圖形再觀察"
+        },
+        {
+          "name": "計時器控制世代",
+          "how": "不是每幀都更新，而是累積到固定毫秒數才算下一代",
+          "effect": "繪圖流暢度和演化速度可以分開調整"
+        },
+        {
+          "name": "重設與清空",
+          "how": "把初始化寫成獨立方法，以按鍵或布林輸入觸發",
+          "effect": "方便反覆實驗不同的初始密度"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "Java",
+        "細胞自動機",
+        "互動"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://processing.org/examples/gameoflife.html"
+    },
+    {
+      "id": "C02-53",
+      "algo": "C02",
+      "title": "The Nature of Code 第 7 章：Cellular Automata",
+      "creator": "Daniel Shiffman",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "《The Nature of Code》2024 年版（p5.js）的細胞自動機章節，從 Wolfram 一維基本 CA（Rule 30、90、110 等）講到二維生命遊戲，並示範穩定、振盪、移動的典型圖形與物件導向的細胞寫法。比 Grasshopper 基礎範例多了規則分類與變形的系統整理。",
+      "variations": [
+        {
+          "name": "一維規則疊層",
+          "how": "把二維格點改成一列 bool，用 rule 數字的位元查表產生下一列，並把每一代往下排",
+          "effect": "得到 Rule 30、Rule 90 等三角形與謝爾賓斯基圖樣"
+        },
+        {
+          "name": "細胞物件化",
+          "how": "每個細胞寫成類別，記錄目前與前一個狀態",
+          "effect": "可以依「剛誕生」「剛死亡」分別上色，看出變化前緣"
+        },
+        {
+          "name": "連續或機率規則",
+          "how": "把 0／1 換成 0–1 的浮點數，或讓規則以一定機率成立",
+          "effect": "形態變得柔和或帶雜訊，脫離純格子感"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "細胞自動機",
+        "Wolfram CA",
+        "線上教科書"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://natureofcode.com/cellular-automata/"
+    },
+    {
+      "id": "C02-54",
+      "algo": "C02",
+      "title": "Creating Generative Visuals with Complex Systems（TouchDesigner Summit 2019 工作坊）",
+      "creator": "Simon Alexander-Adams",
+      "year": "2019",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "2019 年 TouchDesigner Summit 工作坊，以 GLSL 從零建構一維與二維細胞自動機，並示範衰減細胞（generations 變體）、在同一系統中使用多組規則，以及把 CA 圖樣拿去驅動粒子、變形幾何，搭配聲音或 Kinect、Leap Motion 互動。工作坊也涵蓋反應擴散，範例檔（CA_Explorer.tox、Wolfram.tox）以 MIT 授權公開在 GitHub。",
+      "variations": [
+        {
+          "name": "Generations 衰減",
+          "how": "死亡的細胞不直接歸 0，而是在數代內逐步遞減一個狀態值",
+          "effect": "活躍區域後方拖出漸淡的尾跡，畫面更有動態層次"
+        },
+        {
+          "name": "多規則混合",
+          "how": "依空間遮罩或時間切換不同的誕生／存活條件（B/S 規則）",
+          "effect": "同一畫面出現不同質感的區塊"
+        },
+        {
+          "name": "CA 當驅動訊號",
+          "how": "把細胞狀態圖當作粒子發射位置或頂點位移貼圖",
+          "effect": "CA 不只是方格圖，而變成立體形體或粒子動畫的控制層"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "細胞自動機",
+        "即時影像",
+        "工作坊"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://www.simonaa.media/tutorials/complex-systems-workshop"
+    },
+    {
+      "id": "C02-55",
+      "algo": "C02",
+      "title": "Coding Challenge 179：Elementary Cellular Automata（Wolfram CA）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 p5.js 實作 Wolfram 的一維基本細胞自動機：一列細胞依左右與自身三格的狀態查 8 位元規則表，逐代往下堆疊成二維圖樣。是二維生命遊戲的「降維版」，也是 Rule 30 等立面圖樣背後的程式寫法。",
+      "variations": [
+        {
+          "name": "規則編號輸入",
+          "how": "把規則寫成 0–255 的整數，用 (rule >> index) & 1 取出對應位元",
+          "effect": "一個滑桿就能瀏覽全部 256 條規則"
+        },
+        {
+          "name": "捲動堆疊",
+          "how": "每代畫一列，畫到底部後整張往上捲",
+          "effect": "得到無限延伸的圖樣帶，可當長條立面或織帶"
+        },
+        {
+          "name": "隨機或單點起始",
+          "how": "第一代改成只有中央一格為 1，或隨機分布",
+          "effect": "對稱三角形與不規則紋理兩種結果差異明顯"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "細胞自動機",
+        "Wolfram CA",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/179-wolfram-ca"
+    },
+    {
+      "id": "C03-51",
+      "algo": "C03",
+      "title": "Coding Challenge #24：Perlin Noise Flow Field",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "用 p5.js 以 Perlin noise 產生隨時間變化的向量格，讓大量粒子依所在格的向量加速前進，並以半透明線條累積軌跡。與 Grasshopper 範例的逐條追蹤流線不同，這裡是很多粒子同時被場推動，畫面由累積的筆觸構成。",
+      "variations": [
+        {
+          "name": "粒子累積筆觸",
+          "how": "不再一次算完整條流線，而是維持一組粒子，每步只前進一小段並畫出前後兩點的線段（低不透明度）",
+          "effect": "重疊越多處越深，形成絲綢般的密度變化"
+        },
+        {
+          "name": "場隨時間變化",
+          "how": "向量角度改用 noise(x, y, z) 並讓 z 隨時間增加",
+          "effect": "流場緩慢扭動，軌跡呈現動態漩渦"
+        },
+        {
+          "name": "邊界環繞",
+          "how": "粒子超出畫面時從對側回來，並同步重設前一點避免畫出長直線",
+          "effect": "粒子數量守恆，畫面均勻被填滿"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Perlin noise",
+        "粒子",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field"
+    },
+    {
+      "id": "C03-52",
+      "algo": "C03",
+      "title": "The Nature of Code 第 5 章：Autonomous Agents（Flow Fields 小節）",
+      "creator": "Daniel Shiffman",
+      "year": "2024",
+      "category": "drawing",
+      "categories_extra": [],
+      "scale": "物件",
+      "summary": "《The Nature of Code》2024 年版把流場放在「自主代理人」脈絡中：流場是一張向量格，每個 vehicle 查詢所在格的向量當作「期望速度」，再以轉向力（desired − velocity，限制最大力）逐步修正方向。和直接沿向量積分的流線相比，多了速度與轉向的慣性。",
+      "variations": [
+        {
+          "name": "轉向力取代直接跟隨",
+          "how": "流線追蹤時不直接把位置加上場向量，而是 steer = desired − velocity，限制長度後加到速度",
+          "effect": "路徑有慣性、轉彎較圓滑，不會瞬間折角"
+        },
+        {
+          "name": "多種場來源",
+          "how": "把場換成全部向右、隨機方向、Perlin noise 三種版本比較",
+          "effect": "清楚看到場的結構如何決定軌跡"
+        },
+        {
+          "name": "由影像產生場",
+          "how": "以圖片亮度梯度或自訂函數計算每格角度",
+          "effect": "軌跡沿著影像輪廓或指定圖形流動"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "自主代理人",
+        "線上教科書"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://natureofcode.com/autonomous-agents/"
+    },
+    {
+      "id": "C03-53",
+      "algo": "C03",
+      "title": "Getting Creative with Perlin Noise Fields",
+      "creator": "Manohar Vanga（Sighack）",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "作者用幾個 Processing 類別快速迭代 Perlin noise 力場中粒子的畫法：從白底低透明度黑色粒子開始，陸續嘗試黑白反轉、手選色盤分層、1% 透明度、方形筆觸端點、黃金比例配色、改畫弧線，以及依粒子壽命改變飽和度與線寬，逐步衍生出大量不同風格；程式與圖檔公開在 GitHub。重點在「同一演算法的設計變化」。",
+      "variations": [
+        {
+          "name": "分層疊色",
+          "how": "同一流場分多批粒子繪製，每批換一個由暗到亮的顏色（或用黃金比例在 HSB 色相環上取色）",
+          "effect": "畫面產生深度感，色彩不需手動逐一挑選"
+        },
+        {
+          "name": "筆觸形式",
+          "how": "改變線寬、透明度（約 1%）與線端樣式（圓頭改方頭），或把線段換成弧線",
+          "effect": "同一組軌跡呈現炭筆、絲線或碎片等不同質感"
+        },
+        {
+          "name": "依壽命變化",
+          "how": "粒子帶一個壽命值，隨壽命遞減調整線寬、飽和度或透明度",
+          "effect": "軌跡像彗星般由粗到細、由濃到淡"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "Perlin noise",
+        "生成藝術"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields"
+    },
+    {
+      "id": "C03-54",
+      "algo": "C03",
+      "title": "Particle system with 2D vector field in TouchDesigner",
+      "creator": "exsstas",
+      "year": "2020",
+      "category": "performance",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "TouchDesigner 教學影片：把「建立向量場並用它驅動粒子」這個生成藝術常見手法搬進 TouchDesigner，主要工作由兩個 GLSL 節點完成，程式碼簡短並逐行講解，適合 GLSL 初學者。專案檔（2D vector fields - full.toe）公開在作者的 GitHub；2021 年另有進階續集。",
+      "variations": [
+        {
+          "name": "場存成紋理",
+          "how": "把基礎範例的向量函數預先算成一張 RG 貼圖（R=x、G=y），查詢時取樣貼圖",
+          "effect": "場可以用任何影像處理手法修改（模糊、疊加、手繪）"
+        },
+        {
+          "name": "粒子位置存成紋理",
+          "how": "每個像素代表一顆粒子的位置，每幀用著色器讀場並加上位移",
+          "effect": "數十萬粒子也能即時運算"
+        },
+        {
+          "name": "即時輸入改變場",
+          "how": "把攝影機、聲音或滑鼠轉成貼圖後疊加到向量場",
+          "effect": "觀眾動作可即時擾動流動方向"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "粒子",
+        "即時影像",
+        "教學影片"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://www.youtube.com/watch?v=Dke6OCePR6E"
+    },
+    {
+      "id": "C03-55",
+      "algo": "C03",
+      "title": "GLSL Particle Simulations in TouchDesigner Tutorial",
+      "creator": "Dean Cheesman",
+      "year": "2024",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "TouchDesigner 教學影片：以 GLSL 搭配 Feedback 迴圈建立 GPU 粒子系統，章節包含 Flow Field 設定、Curl Noise、以速度控制深度、高度衰減、上色、打光、旋轉縮放與壽命重映射，最後以 Instancing 渲染成立體粒子。把平面流場延伸到三維、並加入渲染設計。",
+      "variations": [
+        {
+          "name": "Curl noise 取代一般 noise",
+          "how": "向量不是直接由 noise 值轉角度，而是取 noise 場的旋度（curl）",
+          "effect": "流場無散度，粒子不會聚成點或散開，看起來像流體"
+        },
+        {
+          "name": "速度映射到深度與顏色",
+          "how": "用粒子當下速度大小控制 z 位移、顏色或尺寸",
+          "effect": "靜態的流場圖變成有層次的立體雕塑感"
+        },
+        {
+          "name": "壽命重生",
+          "how": "每顆粒子有壽命，歸零時在隨機位置重生，並依壽命調整透明度",
+          "effect": "畫面持續更新，不會全部聚集在匯流處"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "curl noise",
+        "粒子",
+        "教學影片"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM"
+    },
+    {
+      "id": "C04-51",
+      "algo": "C04",
+      "title": "Coding Challenge 11：3D Terrain Generation with Perlin Noise in Processing",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "地景",
+      "summary": "用 Processing 建立三角網格（TRIANGLE_STRIP），以二維 Perlin noise 決定每個頂點高度，並讓 noise 取樣座標隨時間平移，做出像飛越山脈般的無限地形動畫。和 Grasshopper 範例的靜態高度場相比，重點在「移動 noise 取樣窗」產生連續動態。",
+      "variations": [
+        {
+          "name": "取樣窗平移",
+          "how": "每幀把 noise 的 y 起點加上一個小值（flying），其餘不變",
+          "effect": "地形看起來往前捲動，像在飛行"
+        },
+        {
+          "name": "調整取樣間距",
+          "how": "改變 xoff、yoff 每格遞增量",
+          "effect": "遞增量小得到緩丘，大則得到尖銳崎嶇的山"
+        },
+        {
+          "name": "以高度上色",
+          "how": "依頂點高度套用水、草、岩、雪的色帶",
+          "effect": "純網格變成可讀的地形圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "Perlin noise",
+        "地形",
+        "教學影片"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise"
+    },
+    {
+      "id": "C04-52",
+      "algo": "C04",
+      "title": "Coding Challenge #136：Polar Perlin Noise Loops",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2019",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "兩部分的挑戰：先用極座標繞圓在 noise 空間中取樣，讓不規則圓形的起點與終點相接不留接縫；再用同樣原理讓粒子隨機移動但在固定幀數後回到原位，做成完美循環的 GIF。提供 p5.js 與 Processing 版本。",
+      "variations": [
+        {
+          "name": "沿圓周取樣",
+          "how": "半徑擾動不用 noise(angle)，而是 noise(cos(a)·r, sin(a)·r)",
+          "effect": "封閉曲線首尾平滑相接，沒有斷點"
+        },
+        {
+          "name": "時間也走圓",
+          "how": "把時間參數也換成在 noise 空間中繞一圈（多一個維度）",
+          "effect": "動畫完美循環，可輸出無縫 GIF"
+        },
+        {
+          "name": "取樣半徑當粗糙度",
+          "how": "增大 noise 空間中的圓半徑",
+          "effect": "形狀由圓潤變得皺摺豐富"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Processing",
+        "Perlin noise",
+        "循環動畫",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/136-polar-noise-loops"
+    },
+    {
+      "id": "C04-53",
+      "algo": "C04",
+      "title": "Noise loop／noise propagation（Processing 循環動畫教學）",
+      "creator": "Étienne Jacob（bleuje）",
+      "year": "2020",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "以循環 GIF 作品聞名的 Étienne Jacob 的教學：先用「在 2D noise 中繞圓」得到平滑的隨機週期函數，再用 4D OpenSimplex noise 的另外兩個維度讓週期函數隨空間位置緩慢變化，加上徑向偏移，讓大量小點產生像波浪傳遞般的完美循環動畫。",
+      "variations": [
+        {
+          "name": "4D noise",
+          "how": "noise 取樣座標改為 (圓周 x, 圓周 y, 位置 x·scl, 位置 y·scl)",
+          "effect": "每個點的運動都循環，但彼此在空間中平滑相異"
+        },
+        {
+          "name": "徑向延遲",
+          "how": "每個點的時間參數減去與中心距離乘上係數",
+          "effect": "運動由中心向外一圈圈傳播"
+        },
+        {
+          "name": "改用 OpenSimplex",
+          "how": "把內建 Perlin noise 換成 OpenSimplex 實作",
+          "effect": "較少方向性格線瑕疵，質感不同"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "OpenSimplex noise",
+        "循環動畫"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://bleuje.com/tutorial3/"
+    },
+    {
+      "id": "C04-54",
+      "algo": "C04",
+      "title": "Looping Noise Part 1: Ending at the Beginning（TouchDesigner）",
+      "creator": "Simon Alexander-Adams",
+      "year": "2019",
+      "category": "performance",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "入門級 TouchDesigner 教學，說明如何讓 noise 在時間上首尾相接以製作循環動畫，並在 TouchDesigner 中重現 Étienne Jacob 部落格文章裡的 Processing 草圖。示範同一個 noise 技巧如何從程式碼環境移植到節點式的即時影像環境。",
+      "variations": [
+        {
+          "name": "節點化的 noise 取樣",
+          "how": "把程式裡的 noise 呼叫改成 Noise CHOP／TOP，以圓形路徑的座標作為輸入",
+          "effect": "不用寫程式就能調整循環 noise"
+        },
+        {
+          "name": "循環週期參數化",
+          "how": "把一圈的幀數做成可調參數，與輸出影格數綁定",
+          "effect": "輸出長度改變時仍保持無縫"
+        },
+        {
+          "name": "移植到 Grasshopper",
+          "how": "以 Series 產生角度，cos／sin 得到座標後餵給 noise 元件，再驅動點位移",
+          "effect": "在 GH 中也能做出可循環的參數動畫"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "Perlin noise",
+        "循環動畫",
+        "教學"
+      ],
+      "tools": [
+        "TouchDesigner"
+      ],
+      "url": "https://www.simonaa.media/tutorials/looping-noise-part-1"
+    },
+    {
+      "id": "C04-55",
+      "algo": "C04",
+      "title": "The Book of Shaders 第 11 章：Noise",
+      "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+      "year": "2015",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "GLSL 片段著色器入門書的雜訊章節：從 value noise 開始，說明其塊狀感的來源，再介紹 Ken Perlin 的梯度雜訊（gradient noise）與 simplex noise，每個概念都附可即時編修的著色器範例。和 Grasshopper 中逐點呼叫 noise 不同，這裡每個像素平行計算。",
+      "variations": [
+        {
+          "name": "Value 改 Gradient",
+          "how": "格點上不存隨機數值，而是隨機梯度向量，內插的是點積",
+          "effect": "消除方塊狀瑕疵，得到更自然的起伏"
+        },
+        {
+          "name": "平滑內插函數",
+          "how": "把線性內插換成 smoothstep 或五次曲線",
+          "effect": "格線邊界的折痕消失"
+        },
+        {
+          "name": "Noise 驅動圖樣",
+          "how": "用 noise 值扭曲線條、同心圓或木紋函數的輸入",
+          "effect": "得到木紋、大理石、水波等材質"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "GLSL",
+        "shader",
+        "Perlin noise",
+        "simplex noise",
+        "線上教科書"
+      ],
+      "tools": [
+        "GLSL"
+      ],
+      "url": "https://thebookofshaders.com/11/"
+    },
+    {
+      "id": "C04-56",
+      "algo": "C04",
+      "title": "Domain Warping 領域扭曲",
+      "creator": "Inigo Quilez",
+      "year": "2002",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "把 fBM（多層不同頻率 noise 疊加）的輸入座標再用另一組 fBM 扭曲，形成 f(p + fbm(p + fbm(p))) 的巢狀結構，得到類似大理石、煙霧、流體的有機紋理，並用中間變數上色。文章附 GLSL 程式與 Shadertoy 即時範例，是 noise 在 shader 藝術中最常見的進階用法之一。",
+      "variations": [
+        {
+          "name": "fBM 疊層",
+          "how": "把單一 noise 改成 4–8 個八度相加，頻率倍增、振幅減半",
+          "effect": "同時具有大起伏與細節"
+        },
+        {
+          "name": "一層或兩層扭曲",
+          "how": "先算 q = (fbm(p), fbm(p+偏移))，再算 fbm(p + 4q)；可再多套一層",
+          "effect": "每多一層，紋理越捲曲、越像流體"
+        },
+        {
+          "name": "以中間值上色",
+          "how": "把 q、r 等中間向量的長度或分量拿來混合顏色",
+          "effect": "色彩隨扭曲結構分布，層次比單純灰階豐富"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "GLSL",
+        "Shadertoy",
+        "fBM",
+        "shader"
+      ],
+      "tools": [
+        "GLSL",
+        "Shadertoy"
+      ],
+      "url": "https://iquilezles.org/articles/warp/"
+    },
+    {
+      "id": "C05-51",
+      "algo": "C05",
+      "title": "Coding Challenge #28：Metaballs",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "以 Processing 對每個像素計算多顆移動圓的距離倒數總和，得到會互相融合的「變形球」純量場並依數值上色。它示範的是等值線要擷取的那個純量場本身；後續 C5 Marching Squares 挑戰再把同類場轉成輪廓線。",
+      "variations": [
+        {
+          "name": "場函數 Σ r/d",
+          "how": "把基礎範例的場函數改成多個移動中心的 r／距離 總和",
+          "effect": "等值線會像水滴般融合與分離"
+        },
+        {
+          "name": "逐像素上色",
+          "how": "不擷取輪廓，直接把場值映射成亮度或色相",
+          "effect": "看出整個場的分布，便於決定等值門檻"
+        },
+        {
+          "name": "中心點運動",
+          "how": "每顆球有速度並在邊界反彈，每幀重算場",
+          "effect": "得到持續變形的有機形體動畫"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "metaballs",
+        "純量場",
+        "教學影片"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/28-metaballs"
+    },
+    {
+      "id": "C05-52",
+      "algo": "C05",
+      "title": "Metaballs and Marching Squares",
+      "creator": "Jamie Wong",
+      "year": "2014",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "互動式文章，在 HTML canvas 上逐步說明 metaball 的場函數、marching squares 的 16 種角點情況對應表，以及用線性內插讓輪廓頂點落在正確位置，每一步都有可操作的 JavaScript 示範。是 Grasshopper C# 範例背後演算法的圖解版。",
+      "variations": [
+        {
+          "name": "線性內插頂點",
+          "how": "邊上的頂點不放在邊中點，而是依兩端場值與門檻比例內插",
+          "effect": "輪廓由鋸齒狀變成平滑曲線"
+        },
+        {
+          "name": "只算邊界附近",
+          "how": "先找出跨越門檻的格子，只在該區域細分計算",
+          "effect": "大格點時效能明顯提升"
+        },
+        {
+          "name": "調整網格解析度",
+          "how": "改變取樣格大小並比較輪廓品質",
+          "effect": "直觀理解解析度與精度、速度的取捨"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "Canvas",
+        "metaballs",
+        "互動文章"
+      ],
+      "tools": [
+        "JavaScript",
+        "HTML Canvas"
+      ],
+      "url": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/"
+    },
+    {
+      "id": "C05-53",
+      "algo": "C05",
+      "title": "Polygonising a scalar field（Marching Cubes 參考實作）",
+      "creator": "Paul Bourke（表格來自 Cory Gene Bloyd）",
+      "year": "1994",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "把 marching squares 延伸到三維：對每個立方體的 8 個角點判斷內外，查 256 種情況的邊表與三角形表，在跨越等值的邊上內插頂點並輸出三角面。這份網頁附短小的 C 程式與查表，被後來無數 creative coding 與遊戲的 marching cubes 實作沿用。",
+      "variations": [
+        {
+          "name": "2D 到 3D",
+          "how": "把 cornerValues 從 4 個角點改為 8 個，case 索引由 4 位元變 8 位元，查 edgeTable／triTable",
+          "effect": "從等值線變成等值面網格"
+        },
+        {
+          "name": "頂點法向量",
+          "how": "以場的梯度（中央差分）作為頂點法向量",
+          "effect": "著色平滑，不會看到網格面折"
+        },
+        {
+          "name": "讀入體積資料",
+          "how": "場值改為讀取醫學影像切片或模擬結果的 3D 陣列",
+          "effect": "可重建器官、土壤或結構應力的等值面"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "C",
+        "marching cubes",
+        "等值面",
+        "參考實作"
+      ],
+      "tools": [
+        "C",
+        "OpenGL"
+      ],
+      "url": "https://paulbourke.net/geometry/polygonise/"
+    },
+    {
+      "id": "C05-54",
+      "algo": "C05",
+      "title": "ofxMetaballs：openFrameworks 變形球外掛",
+      "creator": "Kyle McDonald",
+      "year": "2012",
+      "category": "modeling",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "openFrameworks 的 addon，提供 marching cubes（MC）與 marching tetrahedrons（MT）兩種三維等值面擷取實作，附以 noise 為場的範例。README 說明兩者差異：MT 產生的網格一定可 3D 列印，MC 較快但不一定是流形。適合比較兩種擷取法在可製造性上的取捨。",
+      "variations": [
+        {
+          "name": "改用四面體切分",
+          "how": "每個立方體再切成 6 個四面體，對每個四面體做 marching",
+          "effect": "沒有 MC 的歧義情況，網格保證封閉可列印"
+        },
+        {
+          "name": "noise 當場",
+          "how": "場函數用 3D noise 取代 metaball 距離函數",
+          "effect": "得到像洞穴或珊瑚的有機體積"
+        },
+        {
+          "name": "場值正規化",
+          "how": "輸入前先把場值縮放到 0–1（MC 內部為 −1 到 1）",
+          "effect": "同一組資料可在兩種方法間切換而不需改門檻"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "C++",
+        "marching cubes",
+        "3D 列印"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/kylemcdonald/ofxMetaballs"
+    },
+    {
+      "id": "C05-55",
+      "algo": "C05",
+      "title": "Smooth Voxel Terrain（Part 2）：Marching Cubes 與 Surface Nets",
+      "creator": "Mikola Lysenko（0 FPS）",
+      "year": "2012",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "scale": "地景",
+      "summary": "比較三種從體素純量場擷取網格的方法：marching cubes、marching tetrahedra 與 surface nets，說明 marching cubes 的歷史、查表結構與實作難處，並提供可在瀏覽器執行的 JavaScript 示範。適合了解 marching 系列之外的等值面替代做法。",
+      "variations": [
+        {
+          "name": "Surface Nets",
+          "how": "不在每條邊放頂點，而是每個跨越門檻的格子放一個頂點（取邊交點平均），再連接相鄰格子的頂點",
+          "effect": "網格頂點數較少、四邊形為主、表面較平順"
+        },
+        {
+          "name": "Minecraft 式體素",
+          "how": "只輸出場值大於門檻的方塊面",
+          "effect": "得到方塊風格地形，可與平滑版本對照"
+        },
+        {
+          "name": "三線性內插場",
+          "how": "粗格點上的場值用三線性內插取得中間值",
+          "effect": "解析度與平滑度可分開控制"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "WebGL",
+        "marching cubes",
+        "surface nets",
+        "體素"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL"
+      ],
+      "url": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/"
+    }
+  ]
+}

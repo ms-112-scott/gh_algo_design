@@ -1,0 +1,186 @@
+{
+  "C01-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+    "note": "挑戰頁預覽圖：紫黃相間的反應擴散迷宮紋"
+  },
+  "C01-52": {
+    "source": "GitHub jasonwebb/reaction-diffusion-playground",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/reaction-diffusion-playground",
+    "note": "README 中的 12 張模擬截圖拼貼"
+  },
+  "C01-53": {
+    "source": "YouTube",
+    "author": "Lake Heckaman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+    "note": "教學影片縮圖：TouchDesigner 中的 Gray-Scott 斑塊"
+  },
+  "C01-55": {
+    "source": "MROB（mrob.com）",
+    "author": "Robert Munafo",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.mrob.com/pub/comp/xmorphia/",
+    "note": "Gray-Scott 模型 k–F 參數平面的圖樣地圖"
+  },
+  "C02-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+    "note": "挑戰頁預覽圖：生命遊戲方格"
+  },
+  "C02-52": {
+    "source": "Processing.org",
+    "author": "Joan Soler-Adillon",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://processing.org/examples/gameoflife.html",
+    "note": "Processing 官方範例的生命遊戲畫面"
+  },
+  "C02-53": {
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/cellular-automata/",
+    "note": "書中 Figure 7.30：會移動的圖形（滑翔機、輕型太空船）"
+  },
+  "C02-54": {
+    "source": "simonaa.media",
+    "author": "Simon Alexander-Adams",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+    "note": "工作坊頁面橫幅：生成圖樣"
+  },
+  "C02-55": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+    "note": "挑戰頁預覽圖：一維 CA 世代疊層圖樣"
+  },
+  "C03-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+    "note": "挑戰頁預覽圖：流場粒子累積的半透明線條"
+  },
+  "C03-52": {
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/autonomous-agents/",
+    "note": "書中 Figure 5.16：以 Perlin noise 計算的流場向量格"
+  },
+  "C03-53": {
+    "source": "Sighack",
+    "author": "Manohar Vanga",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+    "note": "文章範例圖：彩色 Perlin noise 流場筆觸"
+  },
+  "C03-54": {
+    "source": "YouTube",
+    "author": "exsstas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+    "note": "教學影片縮圖：TouchDesigner 2D 向量場粒子"
+  },
+  "C03-55": {
+    "source": "YouTube",
+    "author": "Dean Cheesman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+    "note": "教學影片縮圖：GLSL 粒子流場"
+  },
+  "C04-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise",
+    "note": "挑戰頁預覽圖：Perlin noise 三角網格地形"
+  },
+  "C04-52": {
+    "source": "YouTube／The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
+    "note": "影片縮圖：以極座標 noise 繪製的封閉形狀"
+  },
+  "C04-53": {
+    "source": "bleuje.com",
+    "author": "Étienne Jacob",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://bleuje.com/tutorial3/",
+    "note": "教學成品 GIF 第一格：noise 傳播的點陣循環動畫"
+  },
+  "C04-54": {
+    "source": "simonaa.media",
+    "author": "Simon Alexander-Adams",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.simonaa.media/tutorials/looping-noise-part-1",
+    "note": "教學頁 GIF 第一格：循環 noise 點雲"
+  },
+  "C04-56": {
+    "source": "iquilezles.org",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://iquilezles.org/articles/warp/",
+    "note": "文章首圖：f(p)=fbm(p+fbm(p+fbm(p))) 的領域扭曲紋理"
+  },
+  "C05-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/28-metaballs",
+    "note": "挑戰頁預覽圖：metaball 純量場上色"
+  },
+  "C05-52": {
+    "source": "jamie-wong.com",
+    "author": "Jamie Wong",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+    "note": "文章圖：兩顆 metaball 逐步融合的過程"
+  },
+  "C05-53": {
+    "source": "paulbourke.net",
+    "author": "Paul Bourke",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/geometry/polygonise/",
+    "note": "立方體頂點與邊的編號圖（查表用）"
+  },
+  "C05-55": {
+    "source": "0fps.net",
+    "author": "Mikola Lysenko",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+    "note": "文章預覽圖：marching cubes 的立方體情況"
+  }
+}

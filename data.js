@@ -7585,6 +7585,232 @@ window.CATALOG = {
    }
   },
   {
+   "id": "A01-51",
+   "algo": "A01",
+   "title": "Coding Challenge #16：L-System Fractal Trees（L-System 分形樹）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Daniel Shiffman 在 p5.js 裡從零寫出 L-System：先做字串改寫，再用 turtle（translate／rotate／push／pop）把字串畫成樹。流程與 Grasshopper 範例幾乎一一對應，差別在 p5.js 用畫布座標變換取代 Plane，而且用一個按鈕觸發 generate()，每按一次長一代，可以逐代觀察字串與圖形一起變長。",
+   "variations": [
+    {
+     "name": "逐代互動生長",
+     "how": "把 generations 迴圈拆開：每次按鈕（或 Grasshopper 的 Button／Timer）只做一次改寫並重畫，同時輸出目前字串長度。",
+     "effect": "學習者能一代一代看到字串爆炸與形態加密的對應關係。"
+    },
+    {
+     "name": "分枝越深越細、越透明",
+     "how": "Pen 多存一個 depth，遇到 [ 時 depth+1，畫線時用 depth 決定線寬（或管徑）與透明度。",
+     "effect": "主幹粗、末梢細，接近真實樹木的視覺層次。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "字串改寫",
+    "分形",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
+   "image": {
+    "file": "img/cases/A01-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
+    "note": "Coding Challenge #16 影片縮圖"
+   }
+  },
+  {
+   "id": "A01-52",
+   "algo": "A01",
+   "title": "ofxLSystem：openFrameworks 的 3D L-System 網格樹",
+   "creator": "Davide Prati（edap）",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "openFrameworks 外掛，搭配同作者的 ofxLSystemGrammar（實作《The Algorithmic Beauty of Plants》中多數改寫文法），把 L-System 字串用 3D turtle 轉成帶材質的網格，可以做出森林、環狀結構與動畫。和基礎範例只輸出線段不同，它直接生成可著色、可即時算圖的實體枝幹。",
+   "variations": [
+    {
+     "name": "線段轉成管狀實體",
+     "how": "把每條輸出線段依分枝深度給半徑，用 Pipe 或自建圓環斷面 Loft 成網格，而不是只輸出 Line。",
+     "effect": "得到可算圖、可 3D 列印的實體枝幹。"
+    },
+    {
+     "name": "改用參數化文法",
+     "how": "規則表從 Dictionary<char,string> 擴充成帶參數的符號（例如 F(l) → F(l*0.7)），改寫時一併計算參數。",
+     "effect": "每段長度與角度可以隨代數連續變化，形態更自然。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D",
+    "網格"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxLSystem",
+   "image": {
+    "file": "img/cases/A01-52.jpg",
+    "w": 800,
+    "h": 466,
+    "source": "GitHub edap/ofxLSystem",
+    "author": "Davide Prati",
+    "license": "MIT",
+    "license_url": "https://github.com/edap/ofxLSystem",
+    "page": "https://github.com/edap/ofxLSystem",
+    "note": "README 示範圖：以 ofxLSystem 生成的 3D 森林"
+   }
+  },
+  {
+   "id": "A01-53",
+   "algo": "A01",
+   "title": "lindenmayer：可把 JavaScript 函式當規則的 L-System 函式庫",
+   "creator": "Tom Brewe（nylki）",
+   "year": "2015",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "JavaScript 的 L-System 函式庫，支援經典的分枝、上下文相關與參數化 L-System，也允許直接用 JavaScript 函式當改寫規則；它只負責改寫，繪圖交給使用者（範例用 canvas 畫出 Koch 雪花，另有 A-Frame 的 3D／VR 元件）。對照基礎範例，重點是把「改寫」與「畫筆解讀」徹底分開。",
+   "variations": [
+    {
+     "name": "規則寫成函式",
+     "how": "把規則表的值從字串改成 Func<int,string>（輸入目前位置或代數），改寫時呼叫函式決定要換成什麼。",
+     "effect": "可以做隨機、依位置而變的規則，而不需要擴充語法。"
+    },
+    {
+     "name": "上下文相關規則",
+     "how": "改寫每個字元時同時檢查左右鄰字元（a<b>c 形式），符合才替換。",
+     "effect": "能模擬訊號沿枝幹傳遞，例如開花從基部逐漸往上。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "字串改寫",
+    "函式庫"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/nylki/lindenmayer",
+   "image": {
+    "file": "img/cases/A01-53.jpg",
+    "w": 477,
+    "h": 491,
+    "source": "GitHub nylki/lindenmayer",
+    "author": "Tom Brewe",
+    "license": "MIT",
+    "license_url": "https://github.com/nylki/lindenmayer",
+    "page": "https://github.com/nylki/lindenmayer",
+    "note": "README 範例結果：以 L-System 函式庫畫出的 Koch 雪花"
+   }
+  },
+  {
+   "id": "A01-54",
+   "algo": "A01",
+   "title": "TouchDesigner LSystem SOP",
+   "creator": "Derivative",
+   "year": "",
+   "category": "performance",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "物件",
+   "summary": "TouchDesigner 內建的 L-System 節點，支援上下文相關規則、機率、參數符號與管狀（Tube）輸出。官方文件指出 Generations 可以放時間函式來驅動生長動畫，適合在即時影像與演出中讓樹、閃電或雪花隨時間長出來；它是節點參數化，而不是像基礎範例那樣自己寫改寫迴圈。",
+   "variations": [
+    {
+     "name": "時間驅動生長",
+     "how": "把 generations 改成可以是小數，整數部分決定完整代數，小數部分用來縮放最後一代新增線段的長度，接上 Grasshopper Timer 或滑桿動畫。",
+     "effect": "枝幹連續地長出，而不是一代一代跳動。"
+    },
+    {
+     "name": "Skeleton／Tube 兩種輸出",
+     "how": "加一個 bool 輸入：false 只輸出線段，true 則依深度給半徑轉成管狀網格。",
+     "effect": "同一組規則可以切換草圖預覽與實體算圖。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "即時影像",
+    "節點式"
+   ],
+   "tools": [
+    "TouchDesigner"
+   ],
+   "url": "https://docs.derivative.ca/LSystem_SOP"
+  },
+  {
+   "id": "A01-55",
+   "algo": "A01",
+   "title": "The Nature of Code 第 8 章：L-systems",
+   "creator": "Daniel Shiffman",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "《The Nature of Code》p5.js 版第 8 章「Fractals」的 L-systems 小節，先用程式產生 L-System 句子（Example 8.8），再把句子交給 turtle 畫成樹（Example 8.9），並從遞迴樹、隨機樹一路銜接。適合當作基礎範例的前導閱讀：同一個樹形先用遞迴寫、再改用字串改寫寫，比較兩種思路。",
+   "variations": [
+    {
+     "name": "遞迴版與改寫版對照",
+     "how": "另寫一個直接遞迴畫分枝的版本（不產生字串），與 L-System 版輸出同一棵樹並排比較。",
+     "effect": "看清楚 L-System 是把遞迴結構「先存成字串」再解讀。"
+    },
+    {
+     "name": "隨機規則",
+     "how": "同一個符號給多條規則並附機率，改寫時用 Random(seed) 挑選。",
+     "effect": "每棵樹都不同但風格一致，可做一片樹林。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "教科書",
+    "分形"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/fractals/#l-systems",
+   "image": {
+    "file": "img/cases/A01-55.jpg",
+    "w": 900,
+    "h": 491,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/fractals/",
+    "note": "第 8 章 Figure 8.17：依產生規則逐代長出的分形樹"
+   }
+  },
+  {
    "id": "A02-01",
    "algo": "A02",
    "title": "Koch 雪花分形天線（寬頻透明天線）",
@@ -8112,6 +8338,182 @@ window.CATALOG = {
    "url": "https://arxiv.org/pdf/2502.00815"
   },
   {
+   "id": "A02-51",
+   "algo": "A02",
+   "title": "Coding Challenge #129：Koch Fractal Snowflake（Koch 雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "The Coding Train 雪花系列第 3 集，用 Processing（Java）畫出 Koch 曲線與雪花。以 Segment 類別與 ArrayList 存放所有線段，每按一次滑鼠（mousePressed）就把每段切成四段、產生下一代清單；這是「迭代換清單」寫法，和基礎範例一次遞迴到指定深度不同，因此可以逐代觀察。",
+   "variations": [
+    {
+     "name": "逐代動畫",
+     "how": "把遞迴 SplitEdge 改成「每次呼叫只把目前線段清單全部細分一次」，用 Timer 或按鈕觸發下一代。",
+     "effect": "可以一代一代看雪花長出尖角。"
+    },
+    {
+     "name": "各代疊印",
+     "how": "保留每一代的 Polyline 並輸出成 DataTree，依代數給不同顏色或 Z 高度。",
+     "effect": "得到層層疊加的等高線式圖樣，可做雷射切割分層板。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "分形",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+   "image": {
+    "file": "img/cases/A02-51.jpg",
+    "w": 900,
+    "h": 509,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+    "note": "Coding Challenge #129 影片縮圖"
+   }
+  },
+  {
+   "id": "A02-52",
+   "algo": "A02",
+   "title": "The Nature of Code 第 8 章：The Koch Curve",
+   "creator": "Daniel Shiffman",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "《The Nature of Code》p5.js 版第 8 章的 Koch 曲線小節（Example 8.5 與雪花練習），用 KochLine 物件存兩端點，以 p5.Vector 除以 3、旋轉 60° 算出五個點。它把每條線段當成物件並用 ArrayList 世代替換，和基礎範例的遞迴函式寫法互為對照。",
+   "variations": [
+    {
+     "name": "線段物件化",
+     "how": "新增 class KochLine { Point3d A, B; }，寫 KochPoints() 回傳五個點；每代把 List<KochLine> 全部換成 4 倍數量的新清單。",
+     "effect": "結構清楚，方便日後替每條線段附加屬性（顏色、代數）。"
+    },
+    {
+     "name": "隨機凸凹",
+     "how": "每條線段擲骰決定旋轉 -60° 或 +60°。",
+     "effect": "尖角有進有出，輪廓變成不規則的海岸線狀。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "教科書",
+    "向量"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/fractals/#the-koch-curve",
+   "image": {
+    "file": "img/cases/A02-52.jpg",
+    "w": 900,
+    "h": 99,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/fractals/#the-koch-curve",
+    "note": "第 8 章 Figure 8.12：Koch 曲線的逐代演變"
+   }
+  },
+  {
+   "id": "A02-53",
+   "algo": "A02",
+   "title": "3Blue1Brown：Fractals are typically not self-similar（碎形維度）",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "3Blue1Brown 解說碎形維度的影片，以 Koch 曲線等碎形說明「縮小為 1/3 時長度變成 4 倍」如何導出約 1.262 的 Hausdorff 維度；動畫由 Grant Sanderson 自己用 Python 寫的 Manim 產生。它提醒學習者：基礎範例的 depth 不只是細緻度，也是量測「粗糙度」的方法。",
+   "variations": [
+    {
+     "name": "輸出碎形量測",
+     "how": "在程式中同時輸出每一代的周長與線段數，並計算 log(線段數)/log(3^depth)。",
+     "effect": "數值會逼近 log4/log3 ≈ 1.262，把 Koch 當作維度量測的教具。"
+    },
+    {
+     "name": "改變縮放比",
+     "how": "把三等分改成可調比例 r（中段長度也跟著變），重新計算維度 log4/log(1/r)。",
+     "effect": "觀察同樣四段規則下，比例越接近 1/2 輪廓越粗糙、越接近填滿平面。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Manim",
+    "Python",
+    "數學動畫",
+    "碎形維度"
+   ],
+   "tools": [
+    "Manim"
+   ],
+   "url": "https://www.3blue1brown.com/lessons/fractal-dimension",
+   "image": {
+    "file": "img/cases/A02-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（3Blue1Brown）",
+    "author": "Grant Sanderson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=gB9n2gHsHN4",
+    "note": "影片「Fractals are typically not self-similar」縮圖"
+   }
+  },
+  {
+   "id": "A02-54",
+   "algo": "A02",
+   "title": "Koch Snowflake using VEX（Houdini VEX 版 Koch 雪花）",
+   "creator": "secarri（GitHub）",
+   "year": "",
+   "category": "modeling",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "在 Houdini 中以 VEX 建立正三角形，並在 For-Each 迴圈用 Fetch Feedback 方式一代一代細分出 Koch 雪花，最後再用 VEX 把點連成幾何；另附 ArtStation 文章解說。它以節點迴圈與點屬性取代基礎範例的 C# 遞迴，是同一演算法在程序化特效流程中的寫法。",
+   "variations": [
+    {
+     "name": "迴圈回饋取代遞迴",
+     "how": "不寫遞迴函式，改用 Grasshopper 的 Anemone 迴圈（或 C# 內 for 迴圈）每次把上一代點列整條細分一次。",
+     "effect": "流程與 Houdini 的 Feedback 迴圈相同，也方便輸出每代結果。"
+    },
+    {
+     "name": "擠出成浮雕",
+     "how": "把最後的封閉 Polyline 依代數偏移或擠出不同高度，疊成階梯狀量體。",
+     "effect": "從平面圖樣變成可列印的雪花浮雕或裝飾構件。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "程序化建模"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://github.com/secarri/KochSnowflake"
+  },
+  {
    "id": "A03-01",
    "algo": "A03",
    "title": "Map of the Internet（xkcd 195）",
@@ -8628,6 +9030,184 @@ window.CATALOG = {
    "url": "https://www.designcoding.net/gosper-peano-curve-in-grasshopper/"
   },
   {
+   "id": "A03-51",
+   "algo": "A03",
+   "title": "Coding in the Cabana 3：Hilbert Curve（Hilbert 曲線）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "The Coding Train「Coding in the Cabana」系列，用 Processing 以「迭代演算法」算出 Hilbert 曲線：由每個索引的二進位位元逐層推出格子位置，而不是遞迴切格，把路徑逐點畫出並加上顏色。與基礎範例的遞迴 VisitSquare 形成對照。",
+   "variations": [
+    {
+     "name": "索引轉座標（非遞迴）",
+     "how": "寫 IndexToPoint(i, order)：每次取 i 的最低 2 位元決定象限，依象限做翻轉並累加偏移，迴圈 order 次。",
+     "effect": "可以直接查任一索引的位置，不用生成整條曲線。"
+    },
+    {
+     "name": "沿曲線漸層",
+     "how": "依點的索引 i／總點數映射到色相，替每段線上色或當作 3D 高度。",
+     "effect": "一眼看出一維順序在平面上的「相鄰保持」性質。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "空間填充",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+   "image": {
+    "file": "img/cases/A03-51.jpg",
+    "w": 900,
+    "h": 496,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+    "note": "Coding in the Cabana 3 影片縮圖"
+   }
+  },
+  {
+   "id": "A03-52",
+   "algo": "A03",
+   "title": "3Blue1Brown：Hilbert's Curve: Is infinite math useful?",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "3Blue1Brown 以 Manim 動畫說明 Hilbert 曲線如何把一維位置對應到二維平面，並以「用聲音頻率讓人『聽見』影像」的假想應用，說明為什麼要用 Hilbert 而不是逐行掃描：階數提高時，同一個點的位置幾乎不變。這正是基礎範例 teaching note 所說「相鄰索引在空間上也相鄰」的直覺版。",
+   "variations": [
+    {
+     "name": "蛇形掃描對照",
+     "how": "另寫一個逐行來回（boustrophedon）掃描同一格網的版本，與 Hilbert 版並排，並標出同一索引比例（例如 0.3）在兩個階數下的位置。",
+     "effect": "看出 Hilbert 在提高階數時位置穩定，蛇形掃描則會大幅跳動。"
+    },
+    {
+     "name": "連續化的曲線",
+     "how": "將多個階數的點列依參數 t 插值（order n 與 n+1 之間做 morph）。",
+     "effect": "做出曲線逐漸填滿平面的動畫。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Manim",
+    "Python",
+    "數學動畫",
+    "空間填充"
+   ],
+   "tools": [
+    "Manim"
+   ],
+   "url": "https://www.3blue1brown.com/lessons/hilbert-curve",
+   "image": {
+    "file": "img/cases/A03-52.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（3Blue1Brown）",
+    "author": "Grant Sanderson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=3s7h2MHQtxc",
+    "note": "影片「Hilbert's Curve: Is infinite math useful?」縮圖"
+   }
+  },
+  {
+   "id": "A03-53",
+   "algo": "A03",
+   "title": "Hilbert Curve（D3.js 互動展示）",
+   "creator": "Jason Davies",
+   "year": "2012",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Jason Davies 以 D3.js 與 SVG 做的互動頁面：拉動 n 看 Hilbert 曲線的第 n 次近似如何逐漸填滿正方形，並可切換「show colours」，把彩虹色依曲線順序排上，讓相近顏色永遠落在相鄰位置（參考 Mike Bostock 的 Hilbert Tiles）。展示的是基礎範例輸出結果在網頁上的即時視覺化。",
+   "variations": [
+    {
+     "name": "彩虹著色",
+     "how": "依點索引把色相 0–360° 均勻分配，替每一小格填色（以格中心畫小正方形）。",
+     "effect": "顏色在平面上呈連續色塊，直觀呈現局部性。"
+    },
+    {
+     "name": "階數切換動畫",
+     "how": "把 order 滑桿接到 Timer，並把前一階的線淡出、新一階淡入。",
+     "effect": "適合簡報或網站展示遞迴層級的變化。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "D3.js",
+    "JavaScript",
+    "互動網頁",
+    "資料視覺化"
+   ],
+   "tools": [
+    "D3.js"
+   ],
+   "url": "https://www.jasondavies.com/hilbert-curve/"
+  },
+  {
+   "id": "A03-54",
+   "algo": "A03",
+   "title": "Portrait of the Hilbert curve（Hilbert 曲線肖像）",
+   "creator": "Aldo Cortesi",
+   "year": "2010",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "立面／表皮",
+   "summary": "Aldo Cortesi 的文章：先用 3D Hilbert 曲線走遍 RGB 色彩立方體，再把這串顏色依 2D Hilbert 順序鋪滿平面，得到「Hilbert on Hilbert」的抽象色塊畫，並與 Zigzag 順序比較；文中 3D Hilbert 曲線以 POV-Ray 算圖，也說明 N 維 Hilbert 曲線（Gray code）的演算法。它把基礎範例的 2D 曲線延伸到 3D，並把順序當成色彩映射工具。",
+   "variations": [
+    {
+     "name": "3D Hilbert 曲線",
+     "how": "把正方形換成立方體（角點＋三個邊向量），每層切成 2×2×2 共八格，依 Gray code 順序走訪並做對應的軸對調。",
+     "effect": "得到可做空間走道、3D 列印填充路徑的立體連續線。"
+    },
+    {
+     "name": "兩條曲線對映上色",
+     "how": "以 3D Hilbert 順序列出一組顏色（或材料等級），再按 2D Hilbert 順序填入面板格網。",
+     "effect": "立面或地磚上的色塊漸變平順、局部聚集，而不是條紋。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "POV-Ray",
+    "資料視覺化",
+    "色彩",
+    "空間填充"
+   ],
+   "tools": [
+    "POV-Ray"
+   ],
+   "url": "https://corte.si/posts/code/hilbert/portrait/",
+   "image": {
+    "file": "img/cases/A03-54.jpg",
+    "w": 512,
+    "h": 512,
+    "source": "corte.si",
+    "author": "Aldo Cortesi",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://corte.si/posts/code/hilbert/portrait/",
+    "note": "文中「Hilbert on Hilbert」：3D Hilbert 走訪 RGB 色彩，鋪在 2D Hilbert 曲線上"
+   }
+  },
+  {
    "id": "A04-01",
    "algo": "A04",
    "title": "Subdivided Columns – A New Order",
@@ -9124,6 +9704,184 @@ window.CATALOG = {
     "Anemone"
    ],
    "url": "https://www.grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples"
+  },
+  {
+   "id": "A04-51",
+   "algo": "A04",
+   "title": "Coding Challenge #77：Recursion（遞迴）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "用 p5.js 示範函式呼叫自己來畫碎形：drawCircle 在畫完一個圓後，於兩側呼叫自己畫出較小的圓，加上離開條件，最後再加入隨機性。雖然切的是圓不是矩形，但「檢查停止條件 → 產生子圖形 → 再丟回同一函式」的結構和基礎範例的 SplitBlock 完全相同，是理解遞迴分割最直接的入門。",
+   "variations": [
+    {
+     "name": "四向遞迴",
+     "how": "SplitBlock 不再只切成兩塊，而是一次切成 2×2 四塊，各自遞迴。",
+     "effect": "得到類似四分樹的規則網格，對比二分切割的 Mondrian 感。"
+    },
+    {
+     "name": "以深度控制停止",
+     "how": "停止條件改成 depth ≥ maxDepth，並讓 stopChance 隨 depth 變大。",
+     "effect": "可以更直覺控制層級數量與疏密。"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "遞迴",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/77-recursion",
+   "image": {
+    "file": "img/cases/A04-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/77-recursion",
+    "note": "Coding Challenge #77 影片縮圖"
+   }
+  },
+  {
+   "id": "A04-52",
+   "algo": "A04",
+   "title": "Coding Challenge #98：Quadtree（四分樹）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "多集的 p5.js 挑戰，實作 Quadtree：一個格子內的點數超過容量就平均切成四塊，再遞迴處理，並用它加速碰撞偵測與範圍查詢。和基礎範例相比，切割不是隨機而是「依資料密度」觸發，所以點越密的地方分割越細。",
+   "variations": [
+    {
+     "name": "依點密度分割",
+     "how": "新增一組點輸入（例如人流、樹木或建物中心），停止條件改成「區塊內點數 ≤ capacity」，否則切四等分。",
+     "effect": "高密度區自動細分，得到反映使用強度的分區。"
+    },
+    {
+     "name": "範圍查詢",
+     "how": "保留 Block 樹狀結構（子節點清單），寫一個函式只走進與查詢矩形相交的子區塊。",
+     "effect": "大量元素時能快速找出鄰近物件，可接到後續的配置或模擬。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "空間索引",
+    "資料結構"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/98-quadtree",
+   "image": {
+    "file": "img/cases/A04-52.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/98-quadtree",
+    "note": "Coding Challenge #98 影片縮圖"
+   }
+  },
+  {
+   "id": "A04-53",
+   "algo": "A04",
+   "title": "Aesthetically Pleasing Triangle Subdivision（好看的三角形遞迴分割）",
+   "creator": "Tyler Hobbs",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "立面／表皮",
+   "summary": "生成藝術家 Tyler Hobbs 的文章：從頂點連到對邊的一點把三角形切成兩個，遞迴下去。他比較中點切割（僵硬）、以截尾常態分布隨機取點、永遠切最長邊（自我平衡、避免細長三角形），以及以機率或依位置決定何時停止；文中程式為 Clojure 語法。和基礎範例一樣是二分遞迴，只是單元從矩形換成三角形。",
+   "variations": [
+    {
+     "name": "三角形版本",
+     "how": "把 Block 改成三個頂點，永遠找最長邊，在上面取 t（以常態分布集中在 0.5 附近）連到對角頂點，切成兩個三角形遞迴。",
+     "effect": "得到不規則但均衡的三角網，可作面板分割。"
+    },
+    {
+     "name": "依位置調整停止機率",
+     "how": "stopChance 改成三角形中心 y 座標（或到吸引點距離）的函數。",
+     "effect": "畫面一側密、一側疏，形成漸層式的細分。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Clojure",
+    "生成藝術",
+    "三角網"
+   ],
+   "tools": [
+    "Clojure"
+   ],
+   "url": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+   "image": {
+    "file": "img/cases/A04-53.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "tylerxhobbs.com",
+    "author": "Tyler Hobbs",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+    "note": "文中插圖：隨機取點的三角形遞迴分割"
+   }
+  },
+  {
+   "id": "A04-54",
+   "algo": "A04",
+   "title": "SideFX Labs Lot Subdivision（Houdini 地塊／面板細分節點）",
+   "creator": "SideFX",
+   "year": "",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "3d-architecture",
+    "modeling"
+   ],
+   "scale": "群體／都市",
+   "summary": "Houdini SideFX Labs 的節點，把多邊形反覆切割成大小不一的「lot」，可用於太空船面板、科幻室內、城市街廓與不規則牆面；可選依世界座標或最長邊對齊切割，設定最小尺寸、迭代次數、不規則度，還能把相鄰小塊合併成更有趣的形狀。它把基礎範例的矩形遞迴推廣到任意多邊形。",
+   "variations": [
+    {
+     "name": "任意多邊形切割",
+     "how": "Block 改存封閉 Polyline，找最長邊，用垂直於該邊的直線在隨機比例處切開（Curve.Split 或 Brep 切割），兩塊各自遞迴。",
+     "effect": "可以直接細分不規則基地或斜向街廓。"
+    },
+    {
+     "name": "切完再合併",
+     "how": "遞迴結束後，隨機挑選共用一條邊的相鄰小塊，以 Region Union 合併成 L 形或 T 形。",
+     "effect": "打破全是矩形的單調感，更接近真實地塊。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "程序化建模",
+    "街廓"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/labs--lot_subdivision-2.0.html"
   },
   {
    "id": "A05-01",
@@ -9658,6 +10416,214 @@ window.CATALOG = {
     "Rhino"
    ],
    "url": "https://shape.gatech.edu/Research/index.html"
+  },
+  {
+   "id": "A05-51",
+   "algo": "A05",
+   "title": "Context Free Art（CFDG 設計文法）",
+   "creator": "Chris Coyne（CFDG 語言）；Mark Lentczner、John Horigan（Context Free 程式）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Context Free 是以「上下文無關設計文法」（cfdg）生成圖像的程式：從 startshape 出發，每條 shape rule 把一個形狀換成一組帶有位移、縮放、旋轉、色彩調整的子形狀，最後只剩圓、方、三角等基本形；同一形狀可有多條加權規則。這與基礎範例「A 換成 B + 兩個縮小旋轉的 A」是同一件事，只是寫成文字文法。社群藝廊收錄近千件作品。",
+   "variations": [
+    {
+     "name": "加權多規則",
+     "how": "替 A 寫兩三條不同的替換規則並給權重（例如 0.8 分叉、0.2 只長一支），套用時用 Random(seed) 依權重挑選。",
+     "effect": "畢氏樹變成有機、不對稱的形態，每個種子都不同。"
+    },
+    {
+     "name": "相對狀態累積",
+     "how": "LabeledSquare 多存 hue、brightness，子形狀在父形狀的值上加減。",
+     "effect": "越往末梢顏色越淡或色相漸變，和 CFDG 的 adjustment 一樣。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Context Free",
+    "CFDG",
+    "文法",
+    "生成藝術"
+   ],
+   "tools": [
+    "Context Free"
+   ],
+   "url": "https://www.contextfreeart.org/"
+  },
+  {
+   "id": "A05-52",
+   "algo": "A05",
+   "title": "Structure Synth（EisenScript 3D 設計文法）",
+   "creator": "Mikael Hvidtfeldt Christensen（Syntopia）",
+   "year": "",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "Structure Synth 是用設計文法（EisenScript）生成 3D 結構的跨平台程式，構想來自 Chris Coyne 的 Context Free；有 OpenGL 預覽、內建光線追蹤、可匯出 OBJ 或交給 Sunflow、POV-Ray 算圖。它把基礎範例的 2D 正方形替換規則推到 3D 方塊與球體，常用來生成巨構、塔樓狀的抽象量體。",
+   "variations": [
+    {
+     "name": "3D 方塊文法",
+     "how": "LabeledSquare 改成帶 Plane 的 LabeledBox，規則在頂面生出兩個縮小、繞 X／Y 軸旋轉的子方塊。",
+     "effect": "長出立體的畢氏樹或分枝塔。"
+    },
+    {
+     "name": "最大深度與最小尺寸並用",
+     "how": "除了 minSize，另設全域最大物件數，超過就停止所有替換。",
+     "effect": "避免 3D 版本數量暴增，也對應 EisenScript 的 maxobjects 概念。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Structure Synth",
+    "EisenScript",
+    "3D",
+    "文法"
+   ],
+   "tools": [
+    "Structure Synth"
+   ],
+   "url": "https://structuresynth.sourceforge.net/"
+  },
+  {
+   "id": "A05-53",
+   "algo": "A05",
+   "title": "MarkovJunior：以改寫規則與約束傳播生成的機率式程式語言",
+   "creator": "Maxim Gumin（mxgmn）",
+   "year": "2022",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "2d-pattern",
+    "urban-landscape"
+   ],
+   "scale": "建築",
+   "summary": "WFC 作者 Maxim Gumin 的新專案：程式就是一串改寫規則（例如 RBB=GGR），直譯器每一步找到第一條能匹配的規則並隨機套用一處，可組合 WFC、路徑搜尋等節點；範例包含迷宮、地牢，以及等角視圖的 ModernHouse 等建築。它是格網上的「形狀文法」：左手邊是一小塊圖樣，右手邊是替換結果。",
+   "variations": [
+    {
+     "name": "格網圖樣替換",
+     "how": "把形狀換成格網上的標籤陣列，規則為「左邊 1×3 圖樣 → 右邊 1×3 圖樣」，每步隨機挑一處匹配替換，直到沒有規則可用。",
+     "effect": "用幾條規則就能長出迷宮、走道或房間配置。"
+    },
+    {
+     "name": "規則分階段",
+     "how": "把規則分成數個有順序的組（先長走道、再長房間、再放門），前一組無匹配才進入下一組。",
+     "effect": "得到有層級的建築平面生成流程。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "C#",
+    "改寫規則",
+    "體素",
+    "程序化生成"
+   ],
+   "tools": [
+    "C#"
+   ],
+   "url": "https://github.com/mxgmn/MarkovJunior",
+   "image": {
+    "file": "img/cases/A05-53.jpg",
+    "w": 480,
+    "h": 330,
+    "source": "GitHub mxgmn/MarkovJunior",
+    "author": "Maxim Gumin",
+    "license": "MIT",
+    "license_url": "https://github.com/mxgmn/MarkovJunior",
+    "page": "https://github.com/mxgmn/MarkovJunior",
+    "note": "README 動圖（取一格）：ModernHouse 範例與其規則樹"
+   }
+  },
+  {
+   "id": "A05-54",
+   "algo": "A05",
+   "title": "ShapeML：規則式程序化 3D 建模語言",
+   "creator": "Stefan Lienhard",
+   "year": "",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "受形狀文法、L-System、CGA／CityEngine 與 G² 啟發的規則式建模框架：文法反覆把粗略的部件替換成更細的構件，附互動預覽程式 ShapeMaker，可即時調整文法參數；範例包含城堡、農舍、威尼斯建築與樹木（部分移植自 Lienhard 等人 2017 年論文）。和基礎範例相比，它的形狀是 3D 量體，規則以分割（split）與替換為主。",
+   "variations": [
+    {
+     "name": "量體分割規則",
+     "how": "新增標籤 Facade、Floor、Window：Facade 依樓高切成多個 Floor，Floor 再依開間切成 Window 與 Wall，每種標籤各自一條規則。",
+     "effect": "從一個量體逐層長出立面細節。"
+    },
+    {
+     "name": "參數即時調整",
+     "how": "把樓高、開間寬、窗比例拉成 Grasshopper 滑桿輸入給規則函式。",
+     "effect": "像 ShapeMaker 一樣即時探索同一文法的變化。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "C++",
+    "OpenGL",
+    "程序化建模",
+    "文法"
+   ],
+   "tools": [
+    "ShapeML"
+   ],
+   "url": "https://github.com/stefalie/shapeml",
+   "image": {
+    "file": "img/cases/A05-54.jpg",
+    "w": 900,
+    "h": 601,
+    "source": "GitHub stefalie/shapeml",
+    "author": "Stefan Lienhard",
+    "license": "GPL-3.0",
+    "license_url": "https://github.com/stefalie/shapeml",
+    "page": "https://github.com/stefalie/shapeml",
+    "note": "README showcase：以 ShapeML 文法生成的地形、樹木、城堡、建築等模型"
+   }
+  },
+  {
+   "id": "A05-55",
+   "algo": "A05",
+   "title": "CGAjs：瀏覽器中的 CGA 形狀文法編輯器",
+   "creator": "Gunnar Aastrand Grimnes（gromgull）",
+   "year": "",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "建築",
+   "summary": "以 JavaScript 實作的 CGA Shape Grammar 解析、處理與視覺化工具，用 PEG.js 解析、three.js 顯示：在文字框輸入文法，3D 視窗立即更新，內建 house、church、castle、office building 等範例，支援 split、comp、extrude、taper、隨機規則等。作者自述只實作了 CGA 的一小部分，但很適合用來體驗「文字文法 → 建築量體」。",
+   "variations": [
+    {
+     "name": "comp 拆面",
+     "how": "把量體 Brep 拆成頂面與各側面（依法向量分類），分別貼上不同標籤，再各自套規則（頂面生屋頂、側面切窗）。",
+     "effect": "對應 CGA 的 comp(f) 操作，量體可以長出不同的屋頂與立面。"
+    },
+    {
+     "name": "隨機規則選擇",
+     "how": "同一標籤寫 2–3 條規則並給百分比，用 Random(seed) 選擇。",
+     "effect": "同一套文法生成一整排風格一致但各不相同的房子。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "three.js",
+    "JavaScript",
+    "CGA",
+    "互動網頁"
+   ],
+   "tools": [
+    "three.js"
+   ],
+   "url": "https://gromgull.github.io/cgajs/"
   },
   {
    "id": "A06-01",
@@ -10208,6 +11174,216 @@ window.CATALOG = {
    "url": "https://arxiv.org/pdf/2311.12272"
   },
   {
+   "id": "A06-51",
+   "algo": "A06",
+   "title": "Coding Challenge 171：Wave Function Collapse",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2022",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "分三次直播錄成的 p5.js 挑戰，實作 WFC 的 tiled model：每格保留可能的 tile 清單，挑熵最低的格子塌縮，再依規則刪減鄰居選項；第二天重構成 Tile 類別並由 Tile 物件自動產生規則、換上電路板 tile 組，第三天替邊緣編索引以處理不對稱 tile，並在無解時重來。和基礎範例相同屬 tiled model，但 tile 是圖片、相容性由邊緣編碼比對而得。",
+   "variations": [
+    {
+     "name": "邊緣編碼自動比對",
+     "how": "每個 tile 的四邊改存字串（例如 \"ABA\"），兩格相容的條件是一邊字串等於另一邊字串反轉，不再手寫 0/1 開口表。",
+     "effect": "新增 tile 時不用重寫規則，tile 組可以更豐富。"
+    },
+    {
+     "name": "自動旋轉產生 tile",
+     "how": "寫 Rotate(tile) 把四邊字串循環位移，從少數原始 tile 自動產生 90°、180°、270° 版本並去除重複。",
+     "effect": "只畫幾種模組就能得到完整的 tile 組。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "約束滿足",
+    "拼貼",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+   "image": {
+    "file": "img/cases/A06-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+    "note": "Coding Challenge 171 縮圖"
+   }
+  },
+  {
+   "id": "A06-52",
+   "algo": "A06",
+   "title": "wavefunctioncollapse：WFC 的 JavaScript 移植",
+   "creator": "Kevin Chapelier（kchapelier）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "mxgmn 原始 WFC 的 JavaScript 移植（npm 套件，MIT 授權），同時提供 OverlappingModel 與 SimpleTiledModel，可設定圖樣大小 N、輸入／輸出是否週期性、對稱數以及 ground 圖樣，並以 iterate() 分步執行。它讓網頁創作者直接把 WFC 當成函式庫使用；與基礎範例的差別在於多了從範例圖學習的 overlapping model。",
+   "variations": [
+    {
+     "name": "Overlapping model",
+     "how": "從一張範例格網擷取所有 N×N 小圖樣當 tile，兩圖樣相容的條件是重疊部分相同，其餘流程（塌縮、傳播）不變。",
+     "effect": "不用手訂規則，畫一張範例就能生成風格相似的大圖。"
+    },
+    {
+     "name": "分步迭代",
+     "how": "把主迴圈改成每次只做 k 次「塌縮＋傳播」，接 Timer 反覆呼叫。",
+     "effect": "可以看見網格從不確定逐步被填滿的動畫。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "npm",
+    "函式庫"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/kchapelier/wavefunctioncollapse"
+  },
+  {
+   "id": "A06-53",
+   "algo": "A06",
+   "title": "Wave：瀏覽器中的互動 WFC tiled model",
+   "creator": "Oskar Stålberg",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "建築",
+   "summary": "Oskar Stålberg 做的互動版 tiled model，以 Unity WebGL 在瀏覽器中執行，mxgmn 的 WFC README 把它列為可直接體驗的互動示範。Stålberg 後來把 WFC 發展到 3D tile、不規則網格與球面上，並用於 Bad North 與 Townscaper。它和基礎範例的差別是「人機互動」：使用者可以指定格子，其餘交給演算法補完。",
+   "variations": [
+    {
+     "name": "使用者預先指定",
+     "how": "加一組輸入（格子索引＋tile 編號），在開始前先把這些格子塌縮並傳播，再跑自動流程。",
+     "effect": "設計者畫出關鍵位置，演算法自動補齊合法的周邊。"
+    },
+    {
+     "name": "3D tile",
+     "how": "把四方向擴充成六方向（上下前後左右），PipeTile 改成六位元開口，網格改為三維索引。",
+     "effect": "生成立體管線或模組化建築量體。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "WebGL",
+    "互動",
+    "約束滿足"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://oskarstalberg.com/game/wave/wave.html"
+  },
+  {
+   "id": "A06-54",
+   "algo": "A06",
+   "title": "wfc_houdini：在 Houdini 中實作 WFC（2D Wang tiles、3D 管線、拱橋）",
+   "creator": "Chloe Sun",
+   "year": "2020",
+   "category": "3d-architecture",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "在 Houdini（18.0，Python 2.7）中實作 mxgmn WFC 的 Simple Tiled Model，示範 2D Wang tiles、3D 管線與 3D 拱／橋三種 tile 組，並有 Medium 文章與示範影片。其中 3D 管線範例幾乎就是基礎範例水管 tile 的立體版本，展示 WFC 從平面拼貼走向 3D 內容生成。",
+   "variations": [
+    {
+     "name": "水管升級成 3D",
+     "how": "把四方向開口擴成六方向，每個 tile 對應一個彎管／直管／三通的 3D 模組（Block Instance），依格子位置與旋轉放置。",
+     "effect": "生成連續不斷的立體管線雕塑或構架。"
+    },
+    {
+     "name": "拱與橋模組",
+     "how": "加入有上下關係的 tile（柱、拱、橋面），並限制「拱的上方只能接橋面」等垂直規則。",
+     "effect": "得到有結構邏輯的橋梁／拱廊組合。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "Python",
+    "3D",
+    "模組化"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://github.com/chloesun/wfc_houdini",
+   "image": {
+    "file": "img/cases/A06-54.jpg",
+    "w": 640,
+    "h": 360,
+    "source": "GitHub chloesun/wfc_houdini",
+    "author": "Chloe Sun",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/chloesun/wfc_houdini",
+    "note": "README 動圖最後一格：Houdini 中以 WFC 生成的 3D 管線"
+   }
+  },
+  {
+   "id": "A06-55",
+   "algo": "A06",
+   "title": "The Wavefunction Collapse Algorithm explained very clearly",
+   "creator": "Robert Heaton",
+   "year": "2018",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "以終端機文字方塊（陸地 L、海岸 C、海 S）為例，用 Python 一步步說明 WFC：從範例學出相鄰規則與出現權重，以 Shannon 熵挑選最不確定性最低的格子、依權重塌縮、再傳播約束。和基礎範例相比，它多了「從範例統計權重」與「以熵加權挑格」兩項。",
+   "variations": [
+    {
+     "name": "從範例學規則與權重",
+     "how": "輸入一張小範例格網，掃描所有相鄰配對建立相容表，並統計每種 tile 出現次數當權重。",
+     "effect": "不用手寫規則，而且生成結果的比例會接近範例。"
+    },
+    {
+     "name": "Shannon 熵挑格",
+     "how": "把「候選數最少」改成計算 −Σ p log p（p 依權重），挑熵最小的格子，並加一點隨機雜訊打破平手。",
+     "effect": "權重懸殊時選格更合理，結果更像範例。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "教學文章",
+    "約束滿足"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+   "image": {
+    "file": "img/cases/A06-55.jpg",
+    "w": 900,
+    "h": 485,
+    "source": "robertheaton.com",
+    "author": "Robert Heaton",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+    "note": "文章預覽圖：終端機中以 L／C／S 字元生成的陸地、海岸、海洋"
+   }
+  },
+  {
    "id": "B01-01",
    "algo": "B01",
    "title": "Differential Line",
@@ -10700,6 +11876,244 @@ window.CATALOG = {
    ],
    "tools": [],
    "url": "https://arxiv.org/pdf/2504.18040"
+  },
+  {
+   "id": "B01-51",
+   "algo": "B01",
+   "title": "Differential Line（差異線）",
+   "creator": "Anders Hoff（Inconvergent）",
+   "year": "2015",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Anders Hoff 以一條由節點串成的閉合線為起點，隨機在相鄰節點之間插入新節點，讓每個節點在「靠近鄰居、遠離其他節點」之間反覆調整位置，長出類似紅高麗菜切面、腸道般的皺褶。原始碼以 Python 撰寫並公開於 GitHub（MIT 授權）。和 Grasshopper C# 基礎範例相比，它更強調大量節點下的長時間生長與黑白細線的繪圖質感。",
+   "variations": [
+    {
+     "name": "隨機插入點 vs. 均勻插入",
+     "how": "把每回合固定在最長邊插點，改成依機率隨機挑選相鄰節點對插入新節點",
+     "effect": "生長不對稱，皺褶疏密不均，更接近自然組織"
+    },
+    {
+     "name": "累積軌跡繪圖",
+     "how": "每一回合不清除畫面，而以極淡的線把當前曲線疊加繪製",
+     "effect": "得到有年輪般層次的灰階圖，記錄整個生長過程"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "生成藝術",
+    "開源"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://inconvergent.net/generative/differential-line/",
+   "image": {
+    "file": "img/cases/B01-51.jpg",
+    "w": 800,
+    "h": 800,
+    "source": "inconvergent.net",
+    "author": "Anders Hoff",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://inconvergent.net/generative/differential-line/",
+    "note": "差異線生長後形成的密集皺褶黑白線圖"
+   }
+  },
+  {
+   "id": "B01-52",
+   "algo": "B01",
+   "title": "2D Differential Growth Experiments（2D 差異生長實驗）",
+   "creator": "Jason Webb",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "物件",
+   "summary": "Jason Webb 以 JavaScript 在瀏覽器中實作一系列差異生長實驗，節點遵守吸引、對齊、排斥與超距分裂等規則，可從圓形、SVG 圖形或文字開始長出皺褶曲線。作者明確以數位製造為目標，輸出以向量線與 SVG 匯出為主。相較於基礎範例，它多了邊界約束、SVG 輸入與互動參數面板。",
+   "variations": [
+    {
+     "name": "SVG 形狀作為邊界",
+     "how": "把外框曲線當作不可穿越的邊界，節點越界時推回內部",
+     "effect": "皺褶被限制在指定輪廓裡，適合做成填滿圖樣或雷射切割圖"
+    },
+    {
+     "name": "以文字或圖形作為起始路徑",
+     "how": "把初始的圓換成字型或 SVG 路徑的取樣點",
+     "effect": "從可辨識的形狀逐漸長成有機紋理"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "SVG",
+    "數位製造",
+    "互動"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-differential-growth-experiments",
+   "image": {
+    "file": "img/cases/B01-52.jpg",
+    "w": 900,
+    "h": 440,
+    "source": "GitHub Pages（jasonwebb）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://jasonwebb.github.io/2d-differential-growth-experiments/",
+    "note": "專案社群預覽圖，差異生長曲線"
+   }
+  },
+  {
+   "id": "B01-53",
+   "algo": "B01",
+   "title": "Floraform",
+   "creator": "Nervous System",
+   "year": "2015",
+   "category": "fabrication",
+   "categories_extra": [
+    "3d-architecture",
+    "modeling"
+   ],
+   "scale": "物件",
+   "summary": "Nervous System 從雞冠花出發，建立一套「薄殼彈性曲面的差異生長」模擬：三角網格以 half-edge 結構表示，每步計算頂點受力並依生長速率擴張邊長，邊緣長得快就產生皺摺。成果以 3D 列印製成雕塑與首飾，工作室表示所用軟體皆為自行撰寫。它把基礎範例的 2D 曲線生長擴展為 3D 曲面生長。",
+   "variations": [
+    {
+     "name": "由線到面",
+     "how": "把節點串成的曲線換成三角網格，邊長超過門檻就細分三角形，並加入彎曲剛性",
+     "effect": "得到會起伏、捲曲的 3D 皺摺曲面"
+    },
+    {
+     "name": "空間分布的生長速率",
+     "how": "讓生長速率隨與邊緣距離變化，邊緣長得比中心快",
+     "effect": "形成花瓣或雞冠花般的波浪狀邊緣"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "creative coding",
+    "3D 列印",
+    "網格",
+    "模擬",
+    "自製軟體"
+   ],
+   "tools": [
+    "自製模擬軟體"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform/",
+   "image": {
+    "file": "img/cases/B01-53.jpg",
+    "w": 900,
+    "h": 596,
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/sets/floraform/",
+    "note": "Floraform 差異生長曲面測試圖"
+   }
+  },
+  {
+   "id": "B01-54",
+   "algo": "B01",
+   "title": "Differential line growth with Processing（Processing 差異線生長教學）",
+   "creator": "Alberto Giachino（CodePlastic）",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "CodePlastic 的教學文章以 Processing 實作差異線生長，作者指出其行為與鳥群（flocking）相似，因此直接以 Daniel Shiffman 的 Flocking 範例為基礎，把分離與凝聚力改寫成節點規則。文章提供完整程式碼並示範如何改變參數與生長方式。和基礎範例相比，它用 Boids 的轉向力框架來組織程式。",
+   "variations": [
+    {
+     "name": "以雜訊調變節點參數",
+     "how": "新增節點時用 noise(i) 乘上 maxForce 等參數，讓每個節點的力不同",
+     "effect": "曲線各段的皺褶尺度不同，更有變化"
+    },
+    {
+     "name": "調整分離／凝聚比例",
+     "how": "改變 separationCohesionRation 參數",
+     "effect": "比例高時線條鬆散，比例低時皺褶緊密"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "教學",
+    "Boids"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "http://www.codeplastic.com/2017/07/22/differential-line-growth-with-processing/",
+   "image": {
+    "file": "img/cases/B01-54.jpg",
+    "w": 370,
+    "h": 264,
+    "source": "CodePlastic",
+    "author": "Alberto Giachino",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.codeplastic.com/2017/07/22/differential-line-growth-with-processing/",
+    "note": "Processing 差異線生長的迷宮狀曲線"
+   }
+  },
+  {
+   "id": "B01-55",
+   "algo": "B01",
+   "title": "Differential Line Growth（Houdini 差異線生長）",
+   "creator": "Moritz Schwind（Entagma）",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "Entagma 的 Houdini 教學以 Point Relax SOP 為核心做出簡化版差異線生長，並用雜訊場傳遞數值來控制各處的生長量。把一個幾何體接進 Relax SOP 的第二個輸入，就能讓曲線貼著曲面生長。相較於基礎範例手寫受力迴圈，它用 Houdini 的現成節點組合出相同行為並直接算圖。",
+   "variations": [
+    {
+     "name": "雜訊場控制生長",
+     "how": "以 3D noise 產生每點的生長權重，只在權重高的區段插入新點",
+     "effect": "局部密集生長，形成疏密對比"
+    },
+    {
+     "name": "在曲面上生長",
+     "how": "把目標曲面當作鬆弛運算的約束，點每回合投影回曲面",
+     "effect": "皺褶曲線包覆在任意 3D 形體表面"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "教學",
+    "3D"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "http://www.entagma.com/differential-line-growth/",
+   "image": {
+    "file": "img/cases/B01-55.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Entagma",
+    "author": "Moritz Schwind",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.entagma.com/differential-line-growth/",
+    "note": "Houdini 差異線生長算圖"
+   }
   },
   {
    "id": "B02-01",
@@ -11202,6 +12616,252 @@ window.CATALOG = {
    ],
    "tools": [],
    "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation"
+  },
+  {
+   "id": "B02-51",
+   "algo": "B02",
+   "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "The Coding Train 的程式挑戰影片，以 p5.js 從零寫出擴散限制聚集：隨機漫步的粒子碰到已固定的團簇就黏上去，逐漸長成布朗樹。影片同時提供 p5.js 與 Processing 程式碼。適合作為把 Grasshopper C# 範例移植到網頁的入門對照。",
+   "variations": [
+    {
+     "name": "粒子逐漸變小",
+     "how": "每黏上一個粒子，就把下一個漫步者的半徑乘上一個略小於 1 的係數",
+     "effect": "越外圍的枝越細，形成由粗到細的樹狀層次"
+    },
+    {
+     "name": "依生成順序上色",
+     "how": "以粒子加入團簇的順序對應色相",
+     "effect": "可以直接看出團簇由內往外的生長歷程"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+   "image": {
+    "file": "img/cases/B02-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+    "note": "Coding Challenge #34 影片縮圖，DLA 團簇"
+   }
+  },
+  {
+   "id": "B02-52",
+   "algo": "B02",
+   "title": "Coding Challenge #127：Brownian Tree Snowflake（布朗樹雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "這一集把 DLA 限制在一個 30° 的楔形區域中生長：粒子從外側沿水平方向往中心漂移，黏住後再把這一片鏡射、旋轉 6 次，組成六重對稱的雪花。它示範了「只算一小塊，再用對稱性複製」的做法。",
+   "variations": [
+    {
+     "name": "楔形區域＋鏡射",
+     "how": "粒子只在 0°–30° 的扇形內漫步並黏附，繪圖時做鏡射與 6 次旋轉",
+     "effect": "計算量大減，並得到六重對稱的雪花"
+    },
+    {
+     "name": "改變對稱次數",
+     "how": "把 6 次旋轉改成 4、5 或 8 次，楔形角度同步調整",
+     "effect": "得到不同對稱性的晶體或花窗圖樣"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "對稱",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+   "image": {
+    "file": "img/cases/B02-52.jpg",
+    "w": 900,
+    "h": 509,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+    "note": "Coding Challenge #127 影片縮圖，布朗樹雪花"
+   }
+  },
+  {
+   "id": "B02-53",
+   "algo": "B02",
+   "title": "2D Diffusion-Limited Aggregation Experiments（2D DLA 實驗）",
+   "creator": "Jason Webb",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "物件",
+   "summary": "Jason Webb 以 JavaScript 做的一系列 DLA 實驗，採用「非網格（off-lattice）」的粒子方式而非像素格點，以便輸出適合數位製造的向量 SVG。實驗包含方向偏移、不同粒子大小與形狀、以 SVG 圖形作為種子或障礙等。相較於基礎範例，它著重可調參數與向量輸出。",
+   "variations": [
+    {
+     "name": "方向偏移（directional bias）",
+     "how": "漫步者每步的隨機位移加上一個固定方向分量",
+     "effect": "團簇朝單一方向生長，像閃電或冰晶"
+    },
+    {
+     "name": "SVG 形狀作為種子",
+     "how": "把 SVG 路徑取樣成固定粒子，當作初始團簇",
+     "effect": "枝狀結構沿著指定輪廓長出來"
+    },
+    {
+     "name": "線段渲染",
+     "how": "以父子粒子之間的連線取代圓點繪製",
+     "effect": "得到可直接繪圖機輸出的線稿"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "SVG",
+    "數位製造"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "image": {
+    "file": "img/cases/B02-53.jpg",
+    "w": 900,
+    "h": 471,
+    "source": "GitHub（jasonwebb/2d-diffusion-limited-aggregation-experiments）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+    "note": "README 中「方向偏移」實驗的預覽圖"
+   }
+  },
+  {
+   "id": "B02-54",
+   "algo": "B02",
+   "title": "dlaf：Diffusion-limited aggregation, fast",
+   "creator": "Michael Fogleman",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "Michael Fogleman 以 C++ 與 Boost 空間索引寫成的高速 DLA 程式，支援 2D 與 3D，單核心約 35 秒可算出一百萬個粒子；README 中展示了一千萬粒子的 3D 光線追蹤成果。程式輸出每個粒子的 id、父節點與座標，並提供黏附距離、黏性（Stickiness）等參數。和基礎範例相比，它示範空間索引如何把 DLA 推到百萬級規模。",
+   "variations": [
+    {
+     "name": "空間索引加速",
+     "how": "以 R-tree 等空間索引查詢最近的固定粒子，取代逐一比對",
+     "effect": "粒子數可從數千提高到數百萬"
+    },
+    {
+     "name": "調整黏性機率",
+     "how": "粒子碰觸時只以 Stickiness 機率黏住，否則繼續漫步",
+     "effect": "枝幹變粗、分枝變少，形體更緊實"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "C++",
+    "3D",
+    "高效能",
+    "開源"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://github.com/fogleman/dlaf",
+   "image": {
+    "file": "img/cases/B02-54.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "GitHub（fogleman/dlaf）README",
+    "author": "Michael Fogleman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/fogleman/dlaf",
+    "note": "一千萬粒子 3D DLA 光線追蹤算圖"
+   }
+  },
+  {
+   "id": "B02-55",
+   "algo": "B02",
+   "title": "VEX in Houdini：Diffusion Limited Aggregation",
+   "creator": "Entagma",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "物件",
+   "summary": "Entagma 的影片教學先講解 DLA 理論，再用 Houdini 的 VEX 實作基本演算法、調整模擬形態，最後分別以 Mantra 與 Redshift 算圖，並提供專案檔下載。相較於基礎範例，它把 DLA 放進 3D 視覺特效流程，從模擬直接接到高品質渲染。",
+   "variations": [
+    {
+     "name": "3D 空間的 DLA",
+     "how": "漫步粒子在 3D 空間移動，並以點雲查詢最近的已固定點",
+     "effect": "長出珊瑚狀的立體枝狀結構"
+    },
+    {
+     "name": "塑形模擬範圍",
+     "how": "讓漫步者只在指定形體內生成或受力場偏移",
+     "effect": "枝狀結構被引導成特定外形"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "3D",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://vimeo.com/218372128",
+   "image": {
+    "file": "img/cases/B02-55.jpg",
+    "w": 640,
+    "h": 360,
+    "source": "Vimeo（Entagma）",
+    "author": "Entagma",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://vimeo.com/218372128",
+    "note": "Houdini VEX DLA 教學影片縮圖"
+   }
   },
   {
    "id": "B03-01",
@@ -11770,6 +13430,253 @@ window.CATALOG = {
    "url": "https://parametrichouse.com/space-colonization/"
   },
   {
+   "id": "B03-51",
+   "algo": "B03",
+   "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "The Coding Train 依 Runions 等人的空間殖民演算法，在畫面上散布「葉子」吸引點，樹枝節點朝影響範圍內的吸引點平均方向長出新枝，吸引點被觸及後就移除。影片提供 p5.js 與 Processing 程式碼。適合對照 Grasshopper C# 版本的吸引距離與消除距離參數。",
+   "variations": [
+    {
+     "name": "吸引點分布改變樹形",
+     "how": "把吸引點從矩形隨機分布改成圓形或特定輪廓內",
+     "effect": "樹冠自然長成吸引點所定義的外形"
+    },
+    {
+     "name": "3D 版本",
+     "how": "吸引點改在 3D 空間中分布並以 3D 向量運算",
+     "effect": "得到立體的樹冠枝幹"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+   "image": {
+    "file": "img/cases/B03-51.jpg",
+    "w": 900,
+    "h": 504,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+    "note": "Coding Challenge #17 影片縮圖，空間殖民樹"
+   }
+  },
+  {
+   "id": "B03-52",
+   "algo": "B03",
+   "title": "2D Space Colonization Experiments（2D 空間殖民實驗）",
+   "creator": "Jason Webb",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": [
+    "fabrication",
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Jason Webb 以 JavaScript 實作空間殖民演算法的開放（open）與封閉（closed）葉脈兩種模式，並加入依末端累加的葉脈加粗（auxin flux canalization）、SVG 邊界與障礙物等功能。目標同樣是可輸出向量的數位製造用圖樣。相較於基礎範例，它多了封閉迴圈葉脈與粗細層級。",
+   "variations": [
+    {
+     "name": "封閉葉脈",
+     "how": "吸引點改與相對鄰域（relative neighborhood）內所有葉脈段關聯，直到全部抵達才移除",
+     "effect": "葉脈彼此接合成網狀迴圈"
+    },
+    {
+     "name": "葉脈加粗",
+     "how": "從末端往根部回溯，把子段粗細累加到父段",
+     "effect": "主脈粗、細脈細，接近真實葉脈層級"
+    },
+    {
+     "name": "邊界與障礙",
+     "how": "以 SVG 輪廓限制生長範圍，並設定不可穿越的障礙形狀",
+     "effect": "葉脈繞過孔洞，填滿指定輪廓"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "SVG",
+    "葉脈",
+    "數位製造"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "image": {
+    "file": "img/cases/B03-52.jpg",
+    "w": 847,
+    "h": 793,
+    "source": "GitHub（jasonwebb/2d-space-colonization-experiments）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+    "note": "圓形範圍內的空間殖民葉脈圖"
+   }
+  },
+  {
+   "id": "B03-53",
+   "algo": "B03",
+   "title": "Hyphae Lamps（Hyphae 燈具）",
+   "creator": "Nervous System",
+   "year": "2011",
+   "category": "fabrication",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "Nervous System 以葉脈形成為靈感設計的生成式燈具，每盞燈從基礎體積與一組根點出發，在充滿 auxin 吸引點的環境中反覆生長出分枝網路，再以選擇性雷射燒結 3D 列印製作。設計軟體是工作室以 C++ 與 CGAL 自行開發。部落格記錄了他們如何改成以機率讓流量大的葉脈優先生長，並以隱函數曲面產生網格。",
+   "variations": [
+    {
+     "name": "機率式生長",
+     "how": "葉脈不是全部同時沿平均方向生長，而是依流向它的吸引點數量決定生長機率",
+     "effect": "先出現主脈再長出次脈，層級更清楚"
+    },
+    {
+     "name": "封閉網格與隱函數曲面",
+     "how": "以 3D Delaunay 決定鄰域形成封閉網格，再用隱函數把骨架轉成實體",
+     "effect": "結構連續、強度足以 3D 列印"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "creative coding",
+    "C++",
+    "CGAL",
+    "3D 列印",
+    "產品設計"
+   ],
+   "tools": [
+    "C++",
+    "CGAL"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+   "image": {
+    "file": "img/cases/B03-53.jpg",
+    "w": 900,
+    "h": 602,
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+    "note": "Hyphae 燈具內部分枝結構照片"
+   }
+  },
+  {
+   "id": "B03-54",
+   "algo": "B03",
+   "title": "ofxSpaceColonization",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "openFrameworks 的附加套件，實作 Runions、Lane 與 Prusinkiewicz 的論文〈Modeling Trees with a Space Colonization Algorithm〉，只要 build()、grow()、draw() 三步即可在 3D 中長出樹。可設定最大／最小吸引距離等選項，並能以包絡體（envelope）決定樹冠外形。相較於基礎範例，它著重即時 3D 繪製與可重用的 C++ 套件介面。",
+   "variations": [
+    {
+     "name": "自訂包絡體",
+     "how": "搭配 ofxEnvelope，把吸引點散布在自訂的樹冠曲面內",
+     "effect": "控制樹冠輪廓，例如球形或柱形"
+    },
+    {
+     "name": "調整吸引距離",
+     "how": "修改 maxDist／minDist 參數",
+     "effect": "分枝密度與枝距跟著改變"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D",
+    "即時"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxSpaceColonization",
+   "image": {
+    "file": "img/cases/B03-54.jpg",
+    "w": 900,
+    "h": 536,
+    "source": "GitHub（edap/ofxSpaceColonization）README",
+    "author": "Davide Prati",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/edap/ofxSpaceColonization",
+    "note": "README 封面圖，openFrameworks 生成的 3D 樹"
+   }
+  },
+  {
+   "id": "B03-55",
+   "algo": "B03",
+   "title": "Dendrite",
+   "creator": "mattatz",
+   "year": "2018",
+   "category": "art-installation",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "mattatz 在 Unity 中以 GPU 運算實作空間殖民演算法，以輸入的點作為種子長出樹枝狀（dendrite）圖樣，並提供以 GPU marching cubes 把枝條轉成體積的渲染方式；SkinnedDendrite 還能讓分枝附著在動畫角色的蒙皮網格上。相較於基礎範例，它把演算法搬到 GPU 上以支援即時大量運算。",
+   "variations": [
+    {
+     "name": "GPU 平行運算",
+     "how": "以 Compute Shader 平行計算每個吸引點的最近節點",
+     "effect": "可即時處理大量吸引點與節點"
+    },
+    {
+     "name": "附著在動畫網格上",
+     "how": "從 SkinnedMeshRenderer 取樣體積點作為吸引點",
+     "effect": "樹枝結構跟著角色動作一起變形"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "GPU",
+    "即時"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://github.com/mattatz/Dendrite",
+   "image": {
+    "file": "img/cases/B03-55.jpg",
+    "w": 480,
+    "h": 312,
+    "source": "GitHub（mattatz/Dendrite）README",
+    "author": "mattatz",
+    "license": "MIT（圖在 repo 中）",
+    "license_url": "https://github.com/mattatz/Dendrite/blob/master/LICENSE",
+    "page": "https://github.com/mattatz/Dendrite",
+    "note": "DendriteSphere 動畫的第一格，球體上的分枝"
+   }
+  },
+  {
    "id": "B04-01",
    "algo": "B04",
    "title": "Blooms 頻閃動畫雕塑",
@@ -12298,6 +14205,197 @@ window.CATALOG = {
    "url": "https://www.designcoding.net/fibonacci-sphere/"
   },
   {
+   "id": "B04-51",
+   "algo": "B04",
+   "title": "Coding Challenge #30：Phyllotaxis（葉序）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "The Coding Train 以 p5.js 實作 Vogel 葉序模型：第 n 個點的角度為 n × 137.5°、半徑為 c√n，逐幀加一個點就畫出向日葵般的螺旋。是 Grasshopper C# 葉序範例最直接的網頁對照。",
+   "variations": [
+    {
+     "name": "微調發散角",
+     "how": "把 137.5° 改成 137.3° 或 137.6°",
+     "effect": "螺旋臂變成明顯的直線放射或斷裂，說明黃金角的關鍵性"
+    },
+    {
+     "name": "依序號上色",
+     "how": "以 n 或與中心的距離對應色相",
+     "effect": "更容易看出斐波那契螺旋線（parastichy）"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "黃金角",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+   "image": {
+    "file": "img/cases/B04-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+    "note": "Coding Challenge #30 影片縮圖，葉序螺旋"
+   }
+  },
+  {
+   "id": "B04-52",
+   "algo": "B04",
+   "title": "ofxPhyllotaxis",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "openFrameworks 附加套件，只提供三個靜態方法：simple（平面圓盤）、conical（沿 y 軸推出的圓錐）與 apple（包成蘋果般的球面），傳入序號、發散角與間距就回傳位置，可用來排列任何 2D 或 3D 物件。相較於基礎範例只在平面上放點，它把葉序當成可套用在 3D 場景的排列工具。",
+   "variations": [
+    {
+     "name": "圓錐葉序",
+     "how": "每個點的 y 值依序號遞增（extrude 參數）",
+     "effect": "排列成松果或多肉植物般的錐形"
+    },
+    {
+     "name": "球面葉序（apple）",
+     "how": "依總數 total 把點映射到封閉的球狀曲面",
+     "effect": "物件均勻包覆整個球面"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxPhyllotaxis",
+   "image": {
+    "file": "img/cases/B04-52.jpg",
+    "w": 900,
+    "h": 508,
+    "source": "GitHub（edap/ofxPhyllotaxis）README",
+    "author": "Davide Prati",
+    "license": "MIT（圖在 repo 中）",
+    "license_url": "https://github.com/edap/ofxPhyllotaxis",
+    "page": "https://github.com/edap/ofxPhyllotaxis",
+    "note": "README 中 apple 方法的 3D 葉序排列圖"
+   }
+  },
+  {
+   "id": "B04-53",
+   "algo": "B04",
+   "title": "TD Essentials：Create a Swept Phyllotaxis Operator in Houdini",
+   "creator": "Manuel（Entagma）",
+   "year": "2021",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "Entagma 的教學以 VEX 在 Houdini 中建立葉序運算子，但不只做平面圓盤模型，而是讓葉序分布在一條輪廓旋轉而成的曲面（surface of revolution）上。成果可作為可重複使用的 Houdini 工具。相較於基礎範例，它處理了曲面上面積不均時如何保持密鋪。",
+   "variations": [
+    {
+     "name": "沿旋轉曲面分布",
+     "how": "以輪廓曲線的弧長或面積累積來決定每個點的高度，再乘上黃金角旋轉",
+     "effect": "點在鳳梨、松果般的曲面上仍保持均勻密度"
+    },
+    {
+     "name": "封裝成運算子",
+     "how": "把 VEX 程式與參數包成 HDA",
+     "effect": "可在不同專案重複套用並即時調參"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/",
+   "image": {
+    "file": "img/cases/B04-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（Entagma）",
+    "author": "Entagma",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=yGwhnt7mZ50",
+    "note": "Houdini 旋轉曲面葉序教學影片縮圖"
+   }
+  },
+  {
+   "id": "B04-54",
+   "algo": "B04",
+   "title": "ECS-Phyllotaxis（Unity ECS 葉序方塊）",
+   "creator": "avvie",
+   "year": "2018",
+   "category": "performance",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "一個學習 Unity ECS（Entity Component System）的練習專案，以葉序公式排列大量方塊並讓它們全部旋轉，並加入剔除（culling）以提升效能。它示範葉序排列在遊戲引擎中大量實例化時的做法。相較於基礎範例，重點是在即時引擎中處理上萬個物件。",
+   "variations": [
+    {
+     "name": "大量實例化",
+     "how": "以 Entity 與系統（System）取代逐一建立 GameObject",
+     "effect": "上萬個方塊仍能即時旋轉"
+    },
+    {
+     "name": "加上逐元素動畫",
+     "how": "讓每個方塊依序號加上旋轉相位差",
+     "effect": "整體螺旋出現波動般的動態效果"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "C#",
+    "即時",
+    "效能"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://github.com/avvie/ECS-Phyllotaxis",
+   "image": {
+    "file": "img/cases/B04-54.jpg",
+    "w": 900,
+    "h": 512,
+    "source": "GitHub（avvie/ECS-Phyllotaxis）README",
+    "author": "avvie",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/avvie/ECS-Phyllotaxis",
+    "note": "Unity 中以葉序排列的大量方塊截圖"
+   }
+  },
+  {
    "id": "B05-01",
    "algo": "B05",
    "title": "Substrate",
@@ -12716,6 +14814,187 @@ window.CATALOG = {
     "Processing"
    ],
    "url": "https://vimeo.com/208903786"
+  },
+  {
+   "id": "B05-51",
+   "algo": "B05",
+   "title": "Substrate",
+   "creator": "Jared Tarbell",
+   "year": "2003",
+   "category": "drawing",
+   "categories_extra": [
+    "urban-landscape",
+    "2d-pattern"
+   ],
+   "scale": "群體／都市",
+   "summary": "Jared Tarbell 以 Processing 創作的經典作品：裂紋像晶體一樣在計算「基底」上直線前進，碰到其他裂紋或邊界就停下，並從既有裂紋上以垂直方向分岔出新裂紋，簡單規則長出像城市街廓的結構，沿裂紋再加上類似水彩的「沙畫」上色。作者頁面也展示了允許裂紋彎曲的非線性版本。",
+   "variations": [
+    {
+     "name": "沙畫上色",
+     "how": "每條裂紋一側沿垂直方向隨機取樣，以極低透明度畫點",
+     "effect": "街廓內出現水彩般的漸層色塊"
+    },
+    {
+     "name": "曲線裂紋",
+     "how": "讓裂紋前進方向每步加上微小角度變化",
+     "effect": "結構更不規則，獨立區塊會以複雜方式互相合併"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "生成藝術",
+    "經典作品"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "image": {
+    "file": "img/cases/B05-51.jpg",
+    "w": 780,
+    "h": 580,
+    "source": "complexification.net",
+    "author": "Jared Tarbell",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.complexification.net/gallery/machines/substrate/",
+    "note": "Substrate 作品頁主圖，城市街廓般的裂紋與沙畫上色"
+   }
+  },
+  {
+   "id": "B05-52",
+   "algo": "B05",
+   "title": "Substrate（p5.js 移植版）",
+   "creator": "Tom White（dribnet）",
+   "year": "2021",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "群體／都市",
+   "summary": "Tom White 把 Tarbell 的 Processing 原始碼移植到 p5.js，並刻意盡量少改原程式，repo 中同時保留原始 .pde 檔以便對照。滑鼠按下即重新開始生長。適合用來對照 Processing 與 p5.js 的語法差異，以及把本圖鑑的 C# 版本移植到網頁。",
+   "variations": [
+    {
+     "name": "原版與移植並排對照",
+     "how": "逐函式比對 substrate.pde 與 substrate.js",
+     "effect": "理解從 Java 語法轉到 JavaScript 的最小改動"
+    },
+    {
+     "name": "更換色盤",
+     "how": "原作色盤取自 Pollock 畫作，改換成自訂調色盤圖片",
+     "effect": "同樣的結構呈現完全不同的氛圍"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "移植",
+    "開源"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://github.com/dribnet/substrate",
+   "image": {
+    "file": "img/cases/B05-52.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "GitHub Pages（dribnet/substrate）",
+    "author": "Tom White",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://dribnet.github.io/substrate/",
+    "note": "p5.js 移植版的預覽圖"
+   }
+  },
+  {
+   "id": "B05-53",
+   "algo": "B05",
+   "title": "substrate CLI（繪圖機用 SVG 產生器）",
+   "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+   "year": "2019",
+   "category": "fabrication",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "群體／都市",
+   "summary": "為 CityLAB Berlin 撰寫的命令列工具，以 Tarbell 的 Substrate 演算法產生 SVG，可指定模擬時間、紙張寬高與最大裂紋數，輸出給繪圖機（plotter）畫出。相較於原作的像素渲染，它只保留裂紋的向量線，直接作為製造輸出。",
+   "variations": [
+    {
+     "name": "以紙張尺寸設定畫布",
+     "how": "用 --width 841 --height 1189（A0 公釐）設定畫布",
+     "effect": "輸出尺寸與實體紙張一致，可直接上繪圖機"
+    },
+    {
+     "name": "限制裂紋數與時間",
+     "how": "調整 --maxcracks 與 --duration",
+     "effect": "控制線條密度與繪圖時間"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "Node.js",
+    "SVG",
+    "繪圖機"
+   ],
+   "tools": [
+    "Node.js"
+   ],
+   "url": "https://github.com/technologiestiftung/substrate",
+   "image": {
+    "file": "img/cases/B05-53.jpg",
+    "w": 502,
+    "h": 502,
+    "source": "GitHub（technologiestiftung/substrate）README",
+    "author": "Fabian Morón Zirfas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/technologiestiftung/substrate",
+    "note": "CLI 輸出的 Substrate 向量線稿"
+   }
+  },
+  {
+   "id": "B05-54",
+   "algo": "B05",
+   "title": "Substrate iPad 移植版",
+   "creator": "Jon Cooper",
+   "year": "2011",
+   "category": "drawing",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "Jon Cooper 把 Tarbell 的 Substrate 移植到 iPad，作為學習 iOS 開發與 OpenGL 的練習。由於 iOS 沒有直接的 2D 點陣繪圖，作者自己寫了繪製層：先渲染到貼圖再貼到四邊形上，並實作反鋸齒線條與顏色混合，裂紋由另一條執行緒寫入貼圖。以 MIT 授權釋出。",
+   "variations": [
+    {
+     "name": "渲染到貼圖",
+     "how": "裂紋與沙畫點先累積寫入一張貼圖，每幀只把貼圖畫到螢幕",
+     "effect": "在行動裝置上也能保留累積繪圖的效果"
+    },
+    {
+     "name": "計算與繪製分離",
+     "how": "以獨立執行緒更新裂紋，主執行緒只負責顯示",
+     "effect": "生長持續進行而畫面保持流暢"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "Objective-C",
+    "OpenGL",
+    "iOS",
+    "移植"
+   ],
+   "tools": [
+    "Objective-C",
+    "OpenGL"
+   ],
+   "url": "https://github.com/joncooper/Substrate"
   },
   {
    "id": "C01-01",
@@ -13318,6 +15597,265 @@ window.CATALOG = {
    "url": "https://www.redblobgames.com/x/1905-reaction-diffusion"
   },
   {
+   "id": "C01-51",
+   "algo": "C01",
+   "title": "Coding Challenge #13：Reaction Diffusion Algorithm in p5.js",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "以 p5.js 逐像素實作 Gray-Scott 反應擴散：兩個二維陣列存 A、B 濃度，用 3×3 卷積核算拉普拉斯，再把結果寫回畫布像素。邏輯和 Grasshopper C# 基礎範例相同，但輸出直接是即時動畫的像素，而不是網格點或曲面，適合先看懂 feed／kill 參數怎麼改變圖樣。",
+   "variations": [
+    {
+     "name": "雙緩衝交換",
+     "how": "把基礎範例的更新改成 grid／next 兩個陣列，每幀算完後交換參照，不在同一個陣列上就地寫入",
+     "effect": "避免更新順序造成的方向性偏差，圖樣更對稱"
+    },
+    {
+     "name": "直接寫像素",
+     "how": "不輸出點或網格，改為把 A−B 映射成灰階後寫入點陣圖（GH 裡可用 Bitmap 或 Mesh 頂點色）",
+     "effect": "解析度可以拉高，觀察斑點、條紋的生成過程"
+    },
+    {
+     "name": "改變初始種子",
+     "how": "把中央一小塊 B=1 的初始條件改成數個隨機方塊或文字形狀",
+     "effect": "圖樣從多個起點向外長，彼此相遇後形成邊界"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "JavaScript",
+    "Gray-Scott",
+    "教學影片",
+    "動畫"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+   "image": {
+    "file": "img/cases/C01-51.jpg",
+    "w": 600,
+    "h": 600,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+    "note": "挑戰頁預覽圖：紫黃相間的反應擴散迷宮紋"
+   }
+  },
+  {
+   "id": "C01-52",
+   "algo": "C01",
+   "title": "Reaction-Diffusion Playground 反應擴散遊樂場",
+   "creator": "Jason Webb",
+   "year": "2020",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "瀏覽器上的互動式反應擴散模擬：用 three.js 的 data texture 當格點，GLSL 片段著色器以 ping-pong 方式每幀迭代多次，再由另一個著色器把濃度映射成顏色。提供 f、k、dA、dB 參數、筆刷、預設樣式與可空間變化的參數地圖，比 Grasshopper 的 CPU 迴圈快上數個量級。",
+   "variations": [
+    {
+     "name": "GPU ping-pong",
+     "how": "把基礎範例的雙重 for 迴圈搬進片段著色器，兩張 render target 輪流讀寫，一幀迭代數十次",
+     "effect": "可即時跑到螢幕解析度，互動時幾乎無延遲"
+    },
+    {
+     "name": "參數隨空間變化",
+     "how": "f、k 不再是常數，而是讀一張灰階圖或依座標內插取得",
+     "effect": "同一畫面中由斑點漸變為迷宮紋，可當立面材質漸層的草圖"
+    },
+    {
+     "name": "外部圖像當種子",
+     "how": "把圖片或文字的亮度寫入初始 B 濃度",
+     "effect": "反應擴散沿著既有圖形生長，形成有字形或輪廓的紋理"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "three.js",
+    "GLSL",
+    "WebGL",
+    "互動",
+    "Gray-Scott"
+   ],
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "url": "https://github.com/jasonwebb/reaction-diffusion-playground",
+   "image": {
+    "file": "img/cases/C01-52.jpg",
+    "w": 900,
+    "h": 439,
+    "source": "GitHub jasonwebb/reaction-diffusion-playground",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/reaction-diffusion-playground",
+    "note": "README 中的 12 張模擬截圖拼貼"
+   }
+  },
+  {
+   "id": "C01-53",
+   "algo": "C01",
+   "title": "Gray-Scott Reaction Diffusion in TouchDesigner（Part 1）",
+   "creator": "Lake Heckaman",
+   "year": "2024",
+   "category": "performance",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "TouchDesigner 教學影片：用 GLSL 著色器在 GPU 上模擬 Gray-Scott 系統，說明數學基礎、著色器實作、無縫拼接（tiling），以及如何用任意色盤替模擬上色。和 Grasshopper 的離線計算不同，這是即時視覺表演的做法，模擬結果可直接接到其他影像節點或互動輸入。",
+   "variations": [
+    {
+     "name": "Feedback 迴圈",
+     "how": "把基礎範例的「迭代 N 次後輸出」改成每幀讀上一幀結果再算一次（TD 的 Feedback TOP，GH 可用計時器或 Anemone 迴圈）",
+     "effect": "圖樣持續演化，可做成現場投影"
+    },
+    {
+     "name": "無縫拼接",
+     "how": "取鄰格時座標取餘數（環狀邊界），不讓邊緣固定為 0",
+     "effect": "輸出紋理左右上下可以無縫重複鋪貼"
+    },
+    {
+     "name": "色盤映射",
+     "how": "把 B 濃度當索引去查一條漸層色帶，而非直接輸出灰階",
+     "effect": "同一個模擬可快速換成不同配色氛圍"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "即時影像",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+   "image": {
+    "file": "img/cases/C01-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "Lake Heckaman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+    "note": "教學影片縮圖：TouchDesigner 中的 Gray-Scott 斑塊"
+   }
+  },
+  {
+   "id": "C01-54",
+   "algo": "C01",
+   "title": "Reaction diffusion simulation（WebGL Gray-Scott 實驗）",
+   "creator": "Pablo Márquez Neila（pmneila）",
+   "year": "2012",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "早期的網頁版 Gray-Scott 模擬，用 three.js 建立兩張紋理互相渲染，GLSL 著色器計算擴散與反應，並以五段顏色漸層顯示。提供 Solitons、Worms、Mazes、Holes、Chaos、Moving spots、Waves 等預設參數，可用滑鼠直接在畫面上畫入 B 物質。原始碼以 BSD-3-Clause 公開，是很多後續網頁 RD 作品的參考。",
+   "variations": [
+    {
+     "name": "預設參數組",
+     "how": "把基礎範例的 feed／kill 做成下拉選單，對應 Pearson 分類中的幾組值",
+     "effect": "一鍵切換孤立子、蠕蟲、迷宮等不同形態，方便比較"
+    },
+    {
+     "name": "滑鼠筆刷",
+     "how": "在每一步更新前，把游標附近半徑內的 B 設為 1",
+     "effect": "使用者可以即時「播種」，看圖樣從筆跡長出"
+    },
+    {
+     "name": "多段色帶",
+     "how": "B 濃度分成五個門檻，各段之間線性插值顏色",
+     "effect": "同一張濃度圖呈現出等高線般的色階"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "three.js",
+    "GLSL",
+    "WebGL",
+    "互動",
+    "開源"
+   ],
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "url": "https://pmneila.github.io/jsexp/grayscott/"
+  },
+  {
+   "id": "C01-55",
+   "algo": "C01",
+   "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+   "creator": "Robert Munafo",
+   "year": "2009",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "把 Gray-Scott 模型在 k–F 參數平面上逐格計算，做成可點選的參數地圖，每一格連到該組參數的圖片、動畫與說明，並延伸 Pearson 的圖樣分類與命名。作者也記錄了多核心與 GPU 的加速實作方法。對 Grasshopper 使用者而言，它是挑選 feed／kill 數值的視覺索引。",
+   "variations": [
+    {
+     "name": "參數掃描",
+     "how": "把基礎範例包在兩層迴圈外，F 與 k 各取一段範圍，每組參數跑固定步數後縮圖排成矩陣",
+     "effect": "一次看出哪些參數區產生斑點、條紋或混沌"
+    },
+    {
+     "name": "空間漸變參數",
+     "how": "讓 F 沿 x 軸、k 沿 y 軸線性變化，只跑一次模擬",
+     "effect": "單張圖就呈現完整的形態光譜"
+    },
+    {
+     "name": "多執行緒",
+     "how": "把格點分成多個橫條，用 Parallel.For 分別更新",
+     "effect": "大尺寸格點的計算時間大幅縮短"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "C",
+    "OpenGL",
+    "參數空間",
+    "視覺化"
+   ],
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "url": "https://www.mrob.com/pub/comp/xmorphia/",
+   "image": {
+    "file": "img/cases/C01-55.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "MROB（mrob.com）",
+    "author": "Robert Munafo",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.mrob.com/pub/comp/xmorphia/",
+    "note": "Gray-Scott 模型 k–F 參數平面的圖樣地圖"
+   }
+  },
+  {
    "id": "C02-01",
    "algo": "C02",
    "title": "Cambridge North 車站 Rule 30 穿孔鋁板立面",
@@ -13893,6 +16431,271 @@ window.CATALOG = {
    "url": "https://link.springer.com/article/10.1007/s00004-022-00602-2"
   },
   {
+   "id": "C02-51",
+   "algo": "C02",
+   "title": "Coding Challenge 85：The Game of Life",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "用 p5.js 從零寫出 Conway 生命遊戲：建立二維陣列、隨機初始化、計算八鄰格存活數，並依規則產生下一代，同時說明邊界處理。和 Grasshopper C# 範例同一套規則，但以畫布方格即時播放世代變化。",
+   "variations": [
+    {
+     "name": "環狀邊界",
+     "how": "計算鄰居時用 (i + x + cols) % cols 取餘數，讓左右上下相接",
+     "effect": "滑翔機可從一邊出去、另一邊回來，不會在邊緣卡死"
+    },
+    {
+     "name": "新陣列取代就地更新",
+     "how": "每一代都寫入新陣列，算完再整批替換",
+     "effect": "所有細胞同時更新，結果才符合規則定義"
+    },
+    {
+     "name": "年齡上色",
+     "how": "除了 0／1 再多存一個存活代數，依代數決定顏色或高度",
+     "effect": "穩定結構與新生區域一眼可分"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "JavaScript",
+    "細胞自動機",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+   "image": {
+    "file": "img/cases/C02-51.jpg",
+    "w": 900,
+    "h": 498,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+    "note": "挑戰頁預覽圖：生命遊戲方格"
+   }
+  },
+  {
+   "id": "C02-52",
+   "algo": "C02",
+   "title": "A Processing implementation of Game of Life（Processing 官方範例）",
+   "creator": "Joan Soler-Adillon",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "Processing 官方範例庫「Cellular Automata」類別中的生命遊戲，可用空白鍵暫停、在暫停時用滑鼠點選切換細胞，按 R 隨機重設、按 C 清空。重點是把規則做成可以手動介入的互動畫面，而不只是自動跑。",
+   "variations": [
+    {
+     "name": "暫停與手繪",
+     "how": "加一個 bool 暫停開關；暫停時把游標所在格反轉狀態（GH 可用 Point 輸入或 Human UI 取代）",
+     "effect": "可以手動擺出滑翔機、振盪器等特定圖形再觀察"
+    },
+    {
+     "name": "計時器控制世代",
+     "how": "不是每幀都更新，而是累積到固定毫秒數才算下一代",
+     "effect": "繪圖流暢度和演化速度可以分開調整"
+    },
+    {
+     "name": "重設與清空",
+     "how": "把初始化寫成獨立方法，以按鍵或布林輸入觸發",
+     "effect": "方便反覆實驗不同的初始密度"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Java",
+    "細胞自動機",
+    "互動"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://processing.org/examples/gameoflife.html",
+   "image": {
+    "file": "img/cases/C02-52.jpg",
+    "w": 800,
+    "h": 450,
+    "source": "Processing.org",
+    "author": "Joan Soler-Adillon",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://processing.org/examples/gameoflife.html",
+    "note": "Processing 官方範例的生命遊戲畫面"
+   }
+  },
+  {
+   "id": "C02-53",
+   "algo": "C02",
+   "title": "The Nature of Code 第 7 章：Cellular Automata",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "《The Nature of Code》2024 年版（p5.js）的細胞自動機章節，從 Wolfram 一維基本 CA（Rule 30、90、110 等）講到二維生命遊戲，並示範穩定、振盪、移動的典型圖形與物件導向的細胞寫法。比 Grasshopper 基礎範例多了規則分類與變形的系統整理。",
+   "variations": [
+    {
+     "name": "一維規則疊層",
+     "how": "把二維格點改成一列 bool，用 rule 數字的位元查表產生下一列，並把每一代往下排",
+     "effect": "得到 Rule 30、Rule 90 等三角形與謝爾賓斯基圖樣"
+    },
+    {
+     "name": "細胞物件化",
+     "how": "每個細胞寫成類別，記錄目前與前一個狀態",
+     "effect": "可以依「剛誕生」「剛死亡」分別上色，看出變化前緣"
+    },
+    {
+     "name": "連續或機率規則",
+     "how": "把 0／1 換成 0–1 的浮點數，或讓規則以一定機率成立",
+     "effect": "形態變得柔和或帶雜訊，脫離純格子感"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "細胞自動機",
+    "Wolfram CA",
+    "線上教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/cellular-automata/",
+   "image": {
+    "file": "img/cases/C02-53.jpg",
+    "w": 900,
+    "h": 298,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/cellular-automata/",
+    "note": "書中 Figure 7.30：會移動的圖形（滑翔機、輕型太空船）"
+   }
+  },
+  {
+   "id": "C02-54",
+   "algo": "C02",
+   "title": "Creating Generative Visuals with Complex Systems（TouchDesigner Summit 2019 工作坊）",
+   "creator": "Simon Alexander-Adams",
+   "year": "2019",
+   "category": "performance",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "物件",
+   "summary": "2019 年 TouchDesigner Summit 工作坊，以 GLSL 從零建構一維與二維細胞自動機，並示範衰減細胞（generations 變體）、在同一系統中使用多組規則，以及把 CA 圖樣拿去驅動粒子、變形幾何，搭配聲音或 Kinect、Leap Motion 互動。工作坊也涵蓋反應擴散，範例檔（CA_Explorer.tox、Wolfram.tox）以 MIT 授權公開在 GitHub。",
+   "variations": [
+    {
+     "name": "Generations 衰減",
+     "how": "死亡的細胞不直接歸 0，而是在數代內逐步遞減一個狀態值",
+     "effect": "活躍區域後方拖出漸淡的尾跡，畫面更有動態層次"
+    },
+    {
+     "name": "多規則混合",
+     "how": "依空間遮罩或時間切換不同的誕生／存活條件（B/S 規則）",
+     "effect": "同一畫面出現不同質感的區塊"
+    },
+    {
+     "name": "CA 當驅動訊號",
+     "how": "把細胞狀態圖當作粒子發射位置或頂點位移貼圖",
+     "effect": "CA 不只是方格圖，而變成立體形體或粒子動畫的控制層"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "細胞自動機",
+    "即時影像",
+    "工作坊"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+   "image": {
+    "file": "img/cases/C02-54.jpg",
+    "w": 900,
+    "h": 250,
+    "source": "simonaa.media",
+    "author": "Simon Alexander-Adams",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+    "note": "工作坊頁面橫幅：生成圖樣"
+   }
+  },
+  {
+   "id": "C02-55",
+   "algo": "C02",
+   "title": "Coding Challenge 179：Elementary Cellular Automata（Wolfram CA）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "以 p5.js 實作 Wolfram 的一維基本細胞自動機：一列細胞依左右與自身三格的狀態查 8 位元規則表，逐代往下堆疊成二維圖樣。是二維生命遊戲的「降維版」，也是 Rule 30 等立面圖樣背後的程式寫法。",
+   "variations": [
+    {
+     "name": "規則編號輸入",
+     "how": "把規則寫成 0–255 的整數，用 (rule >> index) & 1 取出對應位元",
+     "effect": "一個滑桿就能瀏覽全部 256 條規則"
+    },
+    {
+     "name": "捲動堆疊",
+     "how": "每代畫一列，畫到底部後整張往上捲",
+     "effect": "得到無限延伸的圖樣帶，可當長條立面或織帶"
+    },
+    {
+     "name": "隨機或單點起始",
+     "how": "第一代改成只有中央一格為 1，或隨機分布",
+     "effect": "對稱三角形與不規則紋理兩種結果差異明顯"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "細胞自動機",
+    "Wolfram CA",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+   "image": {
+    "file": "img/cases/C02-55.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+    "note": "挑戰頁預覽圖：一維 CA 世代疊層圖樣"
+   }
+  },
+  {
    "id": "C03-01",
    "algo": "C03",
    "title": "Flow Fields（生成藝術教學文章）",
@@ -14350,6 +17153,271 @@ window.CATALOG = {
    "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056"
   },
   {
+   "id": "C03-51",
+   "algo": "C03",
+   "title": "Coding Challenge #24：Perlin Noise Flow Field",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "用 p5.js 以 Perlin noise 產生隨時間變化的向量格，讓大量粒子依所在格的向量加速前進，並以半透明線條累積軌跡。與 Grasshopper 範例的逐條追蹤流線不同，這裡是很多粒子同時被場推動，畫面由累積的筆觸構成。",
+   "variations": [
+    {
+     "name": "粒子累積筆觸",
+     "how": "不再一次算完整條流線，而是維持一組粒子，每步只前進一小段並畫出前後兩點的線段（低不透明度）",
+     "effect": "重疊越多處越深，形成絲綢般的密度變化"
+    },
+    {
+     "name": "場隨時間變化",
+     "how": "向量角度改用 noise(x, y, z) 並讓 z 隨時間增加",
+     "effect": "流場緩慢扭動，軌跡呈現動態漩渦"
+    },
+    {
+     "name": "邊界環繞",
+     "how": "粒子超出畫面時從對側回來，並同步重設前一點避免畫出長直線",
+     "effect": "粒子數量守恆，畫面均勻被填滿"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Perlin noise",
+    "粒子",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+   "image": {
+    "file": "img/cases/C03-51.jpg",
+    "w": 900,
+    "h": 508,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+    "note": "挑戰頁預覽圖：流場粒子累積的半透明線條"
+   }
+  },
+  {
+   "id": "C03-52",
+   "algo": "C03",
+   "title": "The Nature of Code 第 5 章：Autonomous Agents（Flow Fields 小節）",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "《The Nature of Code》2024 年版把流場放在「自主代理人」脈絡中：流場是一張向量格，每個 vehicle 查詢所在格的向量當作「期望速度」，再以轉向力（desired − velocity，限制最大力）逐步修正方向。和直接沿向量積分的流線相比，多了速度與轉向的慣性。",
+   "variations": [
+    {
+     "name": "轉向力取代直接跟隨",
+     "how": "流線追蹤時不直接把位置加上場向量，而是 steer = desired − velocity，限制長度後加到速度",
+     "effect": "路徑有慣性、轉彎較圓滑，不會瞬間折角"
+    },
+    {
+     "name": "多種場來源",
+     "how": "把場換成全部向右、隨機方向、Perlin noise 三種版本比較",
+     "effect": "清楚看到場的結構如何決定軌跡"
+    },
+    {
+     "name": "由影像產生場",
+     "how": "以圖片亮度梯度或自訂函數計算每格角度",
+     "effect": "軌跡沿著影像輪廓或指定圖形流動"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "自主代理人",
+    "線上教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "image": {
+    "file": "img/cases/C03-52.jpg",
+    "w": 900,
+    "h": 270,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/autonomous-agents/",
+    "note": "書中 Figure 5.16：以 Perlin noise 計算的流場向量格"
+   }
+  },
+  {
+   "id": "C03-53",
+   "algo": "C03",
+   "title": "Getting Creative with Perlin Noise Fields",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "作者用幾個 Processing 類別快速迭代 Perlin noise 力場中粒子的畫法：從白底低透明度黑色粒子開始，陸續嘗試黑白反轉、手選色盤分層、1% 透明度、方形筆觸端點、黃金比例配色、改畫弧線，以及依粒子壽命改變飽和度與線寬，逐步衍生出大量不同風格；程式與圖檔公開在 GitHub。重點在「同一演算法的設計變化」。",
+   "variations": [
+    {
+     "name": "分層疊色",
+     "how": "同一流場分多批粒子繪製，每批換一個由暗到亮的顏色（或用黃金比例在 HSB 色相環上取色）",
+     "effect": "畫面產生深度感，色彩不需手動逐一挑選"
+    },
+    {
+     "name": "筆觸形式",
+     "how": "改變線寬、透明度（約 1%）與線端樣式（圓頭改方頭），或把線段換成弧線",
+     "effect": "同一組軌跡呈現炭筆、絲線或碎片等不同質感"
+    },
+    {
+     "name": "依壽命變化",
+     "how": "粒子帶一個壽命值，隨壽命遞減調整線寬、飽和度或透明度",
+     "effect": "軌跡像彗星般由粗到細、由濃到淡"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Perlin noise",
+    "生成藝術"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+   "image": {
+    "file": "img/cases/C03-53.jpg",
+    "w": 800,
+    "h": 800,
+    "source": "Sighack",
+    "author": "Manohar Vanga",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+    "note": "文章範例圖：彩色 Perlin noise 流場筆觸"
+   }
+  },
+  {
+   "id": "C03-54",
+   "algo": "C03",
+   "title": "Particle system with 2D vector field in TouchDesigner",
+   "creator": "exsstas",
+   "year": "2020",
+   "category": "performance",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "TouchDesigner 教學影片：把「建立向量場並用它驅動粒子」這個生成藝術常見手法搬進 TouchDesigner，主要工作由兩個 GLSL 節點完成，程式碼簡短並逐行講解，適合 GLSL 初學者。專案檔（2D vector fields - full.toe）公開在作者的 GitHub；2021 年另有進階續集。",
+   "variations": [
+    {
+     "name": "場存成紋理",
+     "how": "把基礎範例的向量函數預先算成一張 RG 貼圖（R=x、G=y），查詢時取樣貼圖",
+     "effect": "場可以用任何影像處理手法修改（模糊、疊加、手繪）"
+    },
+    {
+     "name": "粒子位置存成紋理",
+     "how": "每個像素代表一顆粒子的位置，每幀用著色器讀場並加上位移",
+     "effect": "數十萬粒子也能即時運算"
+    },
+    {
+     "name": "即時輸入改變場",
+     "how": "把攝影機、聲音或滑鼠轉成貼圖後疊加到向量場",
+     "effect": "觀眾動作可即時擾動流動方向"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "粒子",
+    "即時影像",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+   "image": {
+    "file": "img/cases/C03-54.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "exsstas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+    "note": "教學影片縮圖：TouchDesigner 2D 向量場粒子"
+   }
+  },
+  {
+   "id": "C03-55",
+   "algo": "C03",
+   "title": "GLSL Particle Simulations in TouchDesigner Tutorial",
+   "creator": "Dean Cheesman",
+   "year": "2024",
+   "category": "performance",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "物件",
+   "summary": "TouchDesigner 教學影片：以 GLSL 搭配 Feedback 迴圈建立 GPU 粒子系統，章節包含 Flow Field 設定、Curl Noise、以速度控制深度、高度衰減、上色、打光、旋轉縮放與壽命重映射，最後以 Instancing 渲染成立體粒子。把平面流場延伸到三維、並加入渲染設計。",
+   "variations": [
+    {
+     "name": "Curl noise 取代一般 noise",
+     "how": "向量不是直接由 noise 值轉角度，而是取 noise 場的旋度（curl）",
+     "effect": "流場無散度，粒子不會聚成點或散開，看起來像流體"
+    },
+    {
+     "name": "速度映射到深度與顏色",
+     "how": "用粒子當下速度大小控制 z 位移、顏色或尺寸",
+     "effect": "靜態的流場圖變成有層次的立體雕塑感"
+    },
+    {
+     "name": "壽命重生",
+     "how": "每顆粒子有壽命，歸零時在隨機位置重生，並依壽命調整透明度",
+     "effect": "畫面持續更新，不會全部聚集在匯流處"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "curl noise",
+    "粒子",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+   "image": {
+    "file": "img/cases/C03-55.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "Dean Cheesman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+    "note": "教學影片縮圖：GLSL 粒子流場"
+   }
+  },
+  {
    "id": "C04-01",
    "algo": "C04",
    "title": "An Image Synthesizer（Perlin noise 原始論文）",
@@ -14750,6 +17818,316 @@ window.CATALOG = {
     "論文"
    ],
    "url": "https://ace.ewapub.com/article/view/14225.pdf"
+  },
+  {
+   "id": "C04-51",
+   "algo": "C04",
+   "title": "Coding Challenge 11：3D Terrain Generation with Perlin Noise in Processing",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "地景",
+   "summary": "用 Processing 建立三角網格（TRIANGLE_STRIP），以二維 Perlin noise 決定每個頂點高度，並讓 noise 取樣座標隨時間平移，做出像飛越山脈般的無限地形動畫。和 Grasshopper 範例的靜態高度場相比，重點在「移動 noise 取樣窗」產生連續動態。",
+   "variations": [
+    {
+     "name": "取樣窗平移",
+     "how": "每幀把 noise 的 y 起點加上一個小值（flying），其餘不變",
+     "effect": "地形看起來往前捲動，像在飛行"
+    },
+    {
+     "name": "調整取樣間距",
+     "how": "改變 xoff、yoff 每格遞增量",
+     "effect": "遞增量小得到緩丘，大則得到尖銳崎嶇的山"
+    },
+    {
+     "name": "以高度上色",
+     "how": "依頂點高度套用水、草、岩、雪的色帶",
+     "effect": "純網格變成可讀的地形圖"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Perlin noise",
+    "地形",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise",
+   "image": {
+    "file": "img/cases/C04-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise",
+    "note": "挑戰頁預覽圖：Perlin noise 三角網格地形"
+   }
+  },
+  {
+   "id": "C04-52",
+   "algo": "C04",
+   "title": "Coding Challenge #136：Polar Perlin Noise Loops",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "兩部分的挑戰：先用極座標繞圓在 noise 空間中取樣，讓不規則圓形的起點與終點相接不留接縫；再用同樣原理讓粒子隨機移動但在固定幀數後回到原位，做成完美循環的 GIF。提供 p5.js 與 Processing 版本。",
+   "variations": [
+    {
+     "name": "沿圓周取樣",
+     "how": "半徑擾動不用 noise(angle)，而是 noise(cos(a)·r, sin(a)·r)",
+     "effect": "封閉曲線首尾平滑相接，沒有斷點"
+    },
+    {
+     "name": "時間也走圓",
+     "how": "把時間參數也換成在 noise 空間中繞一圈（多一個維度）",
+     "effect": "動畫完美循環，可輸出無縫 GIF"
+    },
+    {
+     "name": "取樣半徑當粗糙度",
+     "how": "增大 noise 空間中的圓半徑",
+     "effect": "形狀由圓潤變得皺摺豐富"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "Perlin noise",
+    "循環動畫",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
+   "image": {
+    "file": "img/cases/C04-52.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube／The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
+    "note": "影片縮圖：以極座標 noise 繪製的封閉形狀"
+   }
+  },
+  {
+   "id": "C04-53",
+   "algo": "C04",
+   "title": "Noise loop／noise propagation（Processing 循環動畫教學）",
+   "creator": "Étienne Jacob（bleuje）",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "以循環 GIF 作品聞名的 Étienne Jacob 的教學：先用「在 2D noise 中繞圓」得到平滑的隨機週期函數，再用 4D OpenSimplex noise 的另外兩個維度讓週期函數隨空間位置緩慢變化，加上徑向偏移，讓大量小點產生像波浪傳遞般的完美循環動畫。",
+   "variations": [
+    {
+     "name": "4D noise",
+     "how": "noise 取樣座標改為 (圓周 x, 圓周 y, 位置 x·scl, 位置 y·scl)",
+     "effect": "每個點的運動都循環，但彼此在空間中平滑相異"
+    },
+    {
+     "name": "徑向延遲",
+     "how": "每個點的時間參數減去與中心距離乘上係數",
+     "effect": "運動由中心向外一圈圈傳播"
+    },
+    {
+     "name": "改用 OpenSimplex",
+     "how": "把內建 Perlin noise 換成 OpenSimplex 實作",
+     "effect": "較少方向性格線瑕疵，質感不同"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "OpenSimplex noise",
+    "循環動畫"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://bleuje.com/tutorial3/",
+   "image": {
+    "file": "img/cases/C04-53.jpg",
+    "w": 500,
+    "h": 500,
+    "source": "bleuje.com",
+    "author": "Étienne Jacob",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://bleuje.com/tutorial3/",
+    "note": "教學成品 GIF 第一格：noise 傳播的點陣循環動畫"
+   }
+  },
+  {
+   "id": "C04-54",
+   "algo": "C04",
+   "title": "Looping Noise Part 1: Ending at the Beginning（TouchDesigner）",
+   "creator": "Simon Alexander-Adams",
+   "year": "2019",
+   "category": "performance",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "入門級 TouchDesigner 教學，說明如何讓 noise 在時間上首尾相接以製作循環動畫，並在 TouchDesigner 中重現 Étienne Jacob 部落格文章裡的 Processing 草圖。示範同一個 noise 技巧如何從程式碼環境移植到節點式的即時影像環境。",
+   "variations": [
+    {
+     "name": "節點化的 noise 取樣",
+     "how": "把程式裡的 noise 呼叫改成 Noise CHOP／TOP，以圓形路徑的座標作為輸入",
+     "effect": "不用寫程式就能調整循環 noise"
+    },
+    {
+     "name": "循環週期參數化",
+     "how": "把一圈的幀數做成可調參數，與輸出影格數綁定",
+     "effect": "輸出長度改變時仍保持無縫"
+    },
+    {
+     "name": "移植到 Grasshopper",
+     "how": "以 Series 產生角度，cos／sin 得到座標後餵給 noise 元件，再驅動點位移",
+     "effect": "在 GH 中也能做出可循環的參數動畫"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "Perlin noise",
+    "循環動畫",
+    "教學"
+   ],
+   "tools": [
+    "TouchDesigner"
+   ],
+   "url": "https://www.simonaa.media/tutorials/looping-noise-part-1",
+   "image": {
+    "file": "img/cases/C04-54.jpg",
+    "w": 900,
+    "h": 250,
+    "source": "simonaa.media",
+    "author": "Simon Alexander-Adams",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.simonaa.media/tutorials/looping-noise-part-1",
+    "note": "教學頁 GIF 第一格：循環 noise 點雲"
+   }
+  },
+  {
+   "id": "C04-55",
+   "algo": "C04",
+   "title": "The Book of Shaders 第 11 章：Noise",
+   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "GLSL 片段著色器入門書的雜訊章節：從 value noise 開始，說明其塊狀感的來源，再介紹 Ken Perlin 的梯度雜訊（gradient noise）與 simplex noise，每個概念都附可即時編修的著色器範例。和 Grasshopper 中逐點呼叫 noise 不同，這裡每個像素平行計算。",
+   "variations": [
+    {
+     "name": "Value 改 Gradient",
+     "how": "格點上不存隨機數值，而是隨機梯度向量，內插的是點積",
+     "effect": "消除方塊狀瑕疵，得到更自然的起伏"
+    },
+    {
+     "name": "平滑內插函數",
+     "how": "把線性內插換成 smoothstep 或五次曲線",
+     "effect": "格線邊界的折痕消失"
+    },
+    {
+     "name": "Noise 驅動圖樣",
+     "how": "用 noise 值扭曲線條、同心圓或木紋函數的輸入",
+     "effect": "得到木紋、大理石、水波等材質"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "shader",
+    "Perlin noise",
+    "simplex noise",
+    "線上教科書"
+   ],
+   "tools": [
+    "GLSL"
+   ],
+   "url": "https://thebookofshaders.com/11/"
+  },
+  {
+   "id": "C04-56",
+   "algo": "C04",
+   "title": "Domain Warping 領域扭曲",
+   "creator": "Inigo Quilez",
+   "year": "2002",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "把 fBM（多層不同頻率 noise 疊加）的輸入座標再用另一組 fBM 扭曲，形成 f(p + fbm(p + fbm(p))) 的巢狀結構，得到類似大理石、煙霧、流體的有機紋理，並用中間變數上色。文章附 GLSL 程式與 Shadertoy 即時範例，是 noise 在 shader 藝術中最常見的進階用法之一。",
+   "variations": [
+    {
+     "name": "fBM 疊層",
+     "how": "把單一 noise 改成 4–8 個八度相加，頻率倍增、振幅減半",
+     "effect": "同時具有大起伏與細節"
+    },
+    {
+     "name": "一層或兩層扭曲",
+     "how": "先算 q = (fbm(p), fbm(p+偏移))，再算 fbm(p + 4q)；可再多套一層",
+     "effect": "每多一層，紋理越捲曲、越像流體"
+    },
+    {
+     "name": "以中間值上色",
+     "how": "把 q、r 等中間向量的長度或分量拿來混合顏色",
+     "effect": "色彩隨扭曲結構分布，層次比單純灰階豐富"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "Shadertoy",
+    "fBM",
+    "shader"
+   ],
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "url": "https://iquilezles.org/articles/warp/",
+   "image": {
+    "file": "img/cases/C04-56.jpg",
+    "w": 900,
+    "h": 352,
+    "source": "iquilezles.org",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://iquilezles.org/articles/warp/",
+    "note": "文章首圖：f(p)=fbm(p+fbm(p+fbm(p))) 的領域扭曲紋理"
+   }
   },
   {
    "id": "C05-01",
@@ -15274,6 +18652,264 @@ window.CATALOG = {
    "url": "https://www.monolith.zone/"
   },
   {
+   "id": "C05-51",
+   "algo": "C05",
+   "title": "Coding Challenge #28：Metaballs",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "以 Processing 對每個像素計算多顆移動圓的距離倒數總和，得到會互相融合的「變形球」純量場並依數值上色。它示範的是等值線要擷取的那個純量場本身；後續 C5 Marching Squares 挑戰再把同類場轉成輪廓線。",
+   "variations": [
+    {
+     "name": "場函數 Σ r/d",
+     "how": "把基礎範例的場函數改成多個移動中心的 r／距離 總和",
+     "effect": "等值線會像水滴般融合與分離"
+    },
+    {
+     "name": "逐像素上色",
+     "how": "不擷取輪廓，直接把場值映射成亮度或色相",
+     "effect": "看出整個場的分布，便於決定等值門檻"
+    },
+    {
+     "name": "中心點運動",
+     "how": "每顆球有速度並在邊界反彈，每幀重算場",
+     "effect": "得到持續變形的有機形體動畫"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "metaballs",
+    "純量場",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/28-metaballs",
+   "image": {
+    "file": "img/cases/C05-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/28-metaballs",
+    "note": "挑戰頁預覽圖：metaball 純量場上色"
+   }
+  },
+  {
+   "id": "C05-52",
+   "algo": "C05",
+   "title": "Metaballs and Marching Squares",
+   "creator": "Jamie Wong",
+   "year": "2014",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "互動式文章，在 HTML canvas 上逐步說明 metaball 的場函數、marching squares 的 16 種角點情況對應表，以及用線性內插讓輪廓頂點落在正確位置，每一步都有可操作的 JavaScript 示範。是 Grasshopper C# 範例背後演算法的圖解版。",
+   "variations": [
+    {
+     "name": "線性內插頂點",
+     "how": "邊上的頂點不放在邊中點，而是依兩端場值與門檻比例內插",
+     "effect": "輪廓由鋸齒狀變成平滑曲線"
+    },
+    {
+     "name": "只算邊界附近",
+     "how": "先找出跨越門檻的格子，只在該區域細分計算",
+     "effect": "大格點時效能明顯提升"
+    },
+    {
+     "name": "調整網格解析度",
+     "how": "改變取樣格大小並比較輪廓品質",
+     "effect": "直觀理解解析度與精度、速度的取捨"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "Canvas",
+    "metaballs",
+    "互動文章"
+   ],
+   "tools": [
+    "JavaScript",
+    "HTML Canvas"
+   ],
+   "url": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+   "image": {
+    "file": "img/cases/C05-52.jpg",
+    "w": 700,
+    "h": 200,
+    "source": "jamie-wong.com",
+    "author": "Jamie Wong",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+    "note": "文章圖：兩顆 metaball 逐步融合的過程"
+   }
+  },
+  {
+   "id": "C05-53",
+   "algo": "C05",
+   "title": "Polygonising a scalar field（Marching Cubes 參考實作）",
+   "creator": "Paul Bourke（表格來自 Cory Gene Bloyd）",
+   "year": "1994",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "物件",
+   "summary": "把 marching squares 延伸到三維：對每個立方體的 8 個角點判斷內外，查 256 種情況的邊表與三角形表，在跨越等值的邊上內插頂點並輸出三角面。這份網頁附短小的 C 程式與查表，被後來無數 creative coding 與遊戲的 marching cubes 實作沿用。",
+   "variations": [
+    {
+     "name": "2D 到 3D",
+     "how": "把 cornerValues 從 4 個角點改為 8 個，case 索引由 4 位元變 8 位元，查 edgeTable／triTable",
+     "effect": "從等值線變成等值面網格"
+    },
+    {
+     "name": "頂點法向量",
+     "how": "以場的梯度（中央差分）作為頂點法向量",
+     "effect": "著色平滑，不會看到網格面折"
+    },
+    {
+     "name": "讀入體積資料",
+     "how": "場值改為讀取醫學影像切片或模擬結果的 3D 陣列",
+     "effect": "可重建器官、土壤或結構應力的等值面"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "C",
+    "marching cubes",
+    "等值面",
+    "參考實作"
+   ],
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "url": "https://paulbourke.net/geometry/polygonise/",
+   "image": {
+    "file": "img/cases/C05-53.jpg",
+    "w": 415,
+    "h": 214,
+    "source": "paulbourke.net",
+    "author": "Paul Bourke",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/geometry/polygonise/",
+    "note": "立方體頂點與邊的編號圖（查表用）"
+   }
+  },
+  {
+   "id": "C05-54",
+   "algo": "C05",
+   "title": "ofxMetaballs：openFrameworks 變形球外掛",
+   "creator": "Kyle McDonald",
+   "year": "2012",
+   "category": "modeling",
+   "categories_extra": [
+    "fabrication"
+   ],
+   "scale": "物件",
+   "summary": "openFrameworks 的 addon，提供 marching cubes（MC）與 marching tetrahedrons（MT）兩種三維等值面擷取實作，附以 noise 為場的範例。README 說明兩者差異：MT 產生的網格一定可 3D 列印，MC 較快但不一定是流形。適合比較兩種擷取法在可製造性上的取捨。",
+   "variations": [
+    {
+     "name": "改用四面體切分",
+     "how": "每個立方體再切成 6 個四面體，對每個四面體做 marching",
+     "effect": "沒有 MC 的歧義情況，網格保證封閉可列印"
+    },
+    {
+     "name": "noise 當場",
+     "how": "場函數用 3D noise 取代 metaball 距離函數",
+     "effect": "得到像洞穴或珊瑚的有機體積"
+    },
+    {
+     "name": "場值正規化",
+     "how": "輸入前先把場值縮放到 0–1（MC 內部為 −1 到 1）",
+     "effect": "同一組資料可在兩種方法間切換而不需改門檻"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "marching cubes",
+    "3D 列印"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/kylemcdonald/ofxMetaballs"
+  },
+  {
+   "id": "C05-55",
+   "algo": "C05",
+   "title": "Smooth Voxel Terrain（Part 2）：Marching Cubes 與 Surface Nets",
+   "creator": "Mikola Lysenko（0 FPS）",
+   "year": "2012",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "地景",
+   "summary": "比較三種從體素純量場擷取網格的方法：marching cubes、marching tetrahedra 與 surface nets，說明 marching cubes 的歷史、查表結構與實作難處，並提供可在瀏覽器執行的 JavaScript 示範。適合了解 marching 系列之外的等值面替代做法。",
+   "variations": [
+    {
+     "name": "Surface Nets",
+     "how": "不在每條邊放頂點，而是每個跨越門檻的格子放一個頂點（取邊交點平均），再連接相鄰格子的頂點",
+     "effect": "網格頂點數較少、四邊形為主、表面較平順"
+    },
+    {
+     "name": "Minecraft 式體素",
+     "how": "只輸出場值大於門檻的方塊面",
+     "effect": "得到方塊風格地形，可與平滑版本對照"
+    },
+    {
+     "name": "三線性內插場",
+     "how": "粗格點上的場值用三線性內插取得中間值",
+     "effect": "解析度與平滑度可分開控制"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "WebGL",
+    "marching cubes",
+    "surface nets",
+    "體素"
+   ],
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "url": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+   "image": {
+    "file": "img/cases/C05-55.jpg",
+    "w": 501,
+    "h": 236,
+    "source": "0fps.net",
+    "author": "Mikola Lysenko",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+    "note": "文章預覽圖：marching cubes 的立方體情況"
+   }
+  },
+  {
    "id": "D01-01",
    "algo": "D01",
    "title": "Stanley and Stella in: Breaking the Ice",
@@ -15796,6 +19432,264 @@ window.CATALOG = {
    ],
    "tools": [],
    "url": "https://www.kokkugia.com/RMIT-Mace"
+  },
+  {
+   "id": "D01-51",
+   "algo": "D01",
+   "title": "Coding Challenge #124：Flocking Simulation（群聚模擬）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "以 p5.js 從零實作 Craig Reynolds 的 boids，依序加入對齊（alignment）、聚合（cohesion）、分離（separation）三條規則，並用滑桿即時調整三股力的權重。與 Grasshopper C# 範例相比，它是在瀏覽器裡逐格即時繪製的 2D 動畫，重點在觀察參數改變時群體行為的即時變化。",
+   "variations": [
+    {
+     "name": "權重滑桿即時調參",
+     "how": "把 alignment／cohesion／separation 三個權重改成 GH Number Slider，並在每次迭代讀取",
+     "effect": "可以即時看到群體從鬆散游走切換成緊密團塊或分散漂流"
+    },
+    {
+     "name": "邊界環繞（wrap-around）",
+     "how": "個體超出畫布時從對邊重新進入，取代反彈或刪除",
+     "effect": "群體可無限持續運動，不會在邊界堆積"
+    },
+    {
+     "name": "軌跡累積成圖",
+     "how": "不清除背景，把每一步的位置連成 Polyline 保留下來",
+     "effect": "得到流線般的群聚軌跡圖，可作為平面圖紋或表皮紋理"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "群聚",
+    "boids",
+    "動畫",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/124-flocking-simulation",
+   "image": {
+    "file": "img/cases/D01-51.jpg",
+    "w": 900,
+    "h": 501,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/124-flocking-simulation",
+    "note": "Flocking Simulation 挑戰頁的預覽圖，漸層背景上的 boids 群聚點團"
+   }
+  },
+  {
+   "id": "D01-52",
+   "algo": "D01",
+   "title": "Flocking（Processing 官方範例）",
+   "creator": "Daniel Shiffman",
+   "year": "2007",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "Processing 官方範例（Topics › Simulate），以 PVector 與 ArrayList 實作 Reynolds 的 boids，每個個體依避碰、對齊、聚合三條規則自行轉向，點擊滑鼠可加入新個體。程式分成 Boid 與 Flock 兩個類別，是對照 GH C# 範例類別設計最精簡的版本。",
+   "variations": [
+    {
+     "name": "互動加入個體",
+     "how": "在 GH 中以點擊或新增點來即時增加 boid，而非固定初始數量",
+     "effect": "觀察新個體如何被既有群體吸收"
+    },
+    {
+     "name": "箭頭形狀顯示方向",
+     "how": "用速度向量的方向角，把每個個體畫成三角形而非點",
+     "effect": "能直接讀出群體的流向與轉向"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "群聚",
+    "boids",
+    "官方範例",
+    "入門"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://processing.org/examples/flocking.html",
+   "image": {
+    "file": "img/cases/D01-52.jpg",
+    "w": 800,
+    "h": 450,
+    "source": "Processing.org",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://processing.org/examples/flocking.html",
+    "note": "Processing Flocking 範例執行畫面，深色背景上的三角形 boids"
+   }
+  },
+  {
+   "id": "D01-53",
+   "algo": "D01",
+   "title": "three.js webgl gpgpu birds（GPU 鳥群）",
+   "creator": "Joshua Koo（zz85）／three.js",
+   "year": "2013",
+   "category": "art-installation",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "three.js 官方範例，把每隻鳥的位置與速度存成浮點紋理，用 GLSL shader 在 GPU 上平行計算群聚規則，可在瀏覽器即時模擬大量 3D 鳥群，滑鼠則扮演讓鳥群閃避的「掠食者」。與 GH C# 範例的 CPU 迴圈不同，關鍵在「以紋理當資料結構、以 shader 當更新函式」的 GPGPU 思路。",
+   "variations": [
+    {
+     "name": "掠食者迴避",
+     "how": "加入一個跟著游標（或 GH 中的吸引點）移動的點，距離內的個體加上反向排斥力",
+     "effect": "鳥群出現被撕開再癒合的動態破口"
+    },
+    {
+     "name": "GPU 平行化",
+     "how": "把個體狀態改存成紋理／陣列，用 shader 同時更新所有個體",
+     "effect": "個體數可從數百提升到數萬，形成雲狀的大尺度群體"
+    },
+    {
+     "name": "拍翅動畫",
+     "how": "依速度大小驅動每個個體網格頂點的上下擺動",
+     "effect": "讓抽象的點群變成可讀的鳥群影像"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "three.js",
+    "GLSL",
+    "WebGL",
+    "GPGPU",
+    "群聚",
+    "3D"
+   ],
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "url": "https://threejs.org/examples/webgl_gpgpu_birds.html",
+   "image": {
+    "file": "img/cases/D01-53.jpg",
+    "w": 400,
+    "h": 250,
+    "source": "three.js examples",
+    "author": "Joshua Koo（zz85）／three.js",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://threejs.org/examples/webgl_gpgpu_birds.html",
+    "note": "three.js 官方範例截圖，白色背景上的 GPU 鳥群"
+   }
+  },
+  {
+   "id": "D01-54",
+   "algo": "D01",
+   "title": "TouchDesigner Boids Flocking Tutorial",
+   "creator": "David Braun",
+   "year": "2021",
+   "category": "performance",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "群體／都市",
+   "summary": "在 TouchDesigner 中以 GLSL compute shader 實作 boids，並用「分箱」（binning）把空間切成格子、只搜尋鄰近格內的個體，大幅降低鄰居搜尋成本。專案檔公開於作者的 TouchDesigner_Shared GitHub 儲存庫，適合用於即時視覺演出。",
+   "variations": [
+    {
+     "name": "空間分箱加速鄰居搜尋",
+     "how": "把 GH 範例中兩兩比較全部個體的做法，改成先依格子索引分組、只比較同格與相鄰格",
+     "effect": "個體數增加時仍能維持即時互動"
+    },
+    {
+     "name": "接上音訊或感測器",
+     "how": "把群聚權重或速度上限綁到外部輸入（音量、感測器數值）",
+     "effect": "群體行為隨聲音或觀眾動作即時改變，可用於演出與裝置"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "compute shader",
+    "群聚",
+    "即時視覺"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=f2yOYmOgZEA",
+   "image": {
+    "file": "img/cases/D01-54.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "David Braun",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=f2yOYmOgZEA",
+    "note": "TouchDesigner Boids Flocking Tutorial 影片縮圖"
+   }
+  },
+  {
+   "id": "D01-55",
+   "algo": "D01",
+   "title": "3D Flocking with POPs",
+   "creator": "Dean Cheesman（dcheesman）",
+   "year": "2025",
+   "category": "performance",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "群體／都市",
+   "summary": "利用 TouchDesigner 新推出的 POPs 運算子建構 3D boids，作者表示過去在 TouchDesigner 做群聚並不直觀，POPs 讓它容易許多。與 GH C# 範例的程式碼寫法相比，這是以節點圖表達同一套規則的做法，接近 Grasshopper 本身的視覺化程式思維。",
+   "variations": [
+    {
+     "name": "從 2D 延伸到 3D",
+     "how": "把位置與速度向量從 XY 平面改成完整的 3D 向量，邊界改用立方體或球體",
+     "effect": "得到立體的魚群、鳥群團塊，可作為空間裝置的動態量體"
+    },
+    {
+     "name": "節點化規則",
+     "how": "把三條規則拆成獨立元件（或 GH Cluster），各自輸出力向量再加總",
+     "effect": "更容易替換、關閉或新增規則進行實驗"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "POPs",
+    "群聚",
+    "3D",
+    "節點式程式"
+   ],
+   "tools": [
+    "TouchDesigner"
+   ],
+   "url": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049",
+   "image": {
+    "file": "img/cases/D01-55.jpg",
+    "w": 900,
+    "h": 473,
+    "source": "Derivative（TouchDesigner 社群）",
+    "author": "Dean Cheesman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049",
+    "note": "3D Flocking with POPs 教學封面，含 TouchDesigner 群聚畫面"
+   }
   },
   {
    "id": "D02-01",
@@ -16346,6 +20240,265 @@ window.CATALOG = {
    "url": "https://github.com/Bleuje/interactive-physarum"
   },
   {
+   "id": "D02-51",
+   "algo": "D02",
+   "title": "physarum",
+   "creator": "Sage Jenson",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "art-installation"
+   ],
+   "scale": "地景",
+   "summary": "依據 Jeff Jones（2010）的 Physarum 傳輸網路模型，以 openFrameworks 的 C++ 與 GLSL 在 GPU 上即時模擬大量粒子：每個粒子有前、左前、右前三個感測器，朝軌跡濃度最高處轉向並沉積軌跡，軌跡圖每步做 3×3 平均擴散與乘法衰減。作者的圖解文章讓這個模型在 creative coding 社群廣為流傳，並示範感測角度、距離等參數對網路形態的巨大影響。",
+   "variations": [
+    {
+     "name": "感測角／轉向角掃描",
+     "how": "系統性地改變 sensor angle、sensor distance、rotation angle 三個參數並並排輸出",
+     "effect": "從細密網格、粗大管路到點狀聚集，得到一整張形態圖譜"
+    },
+    {
+     "name": "多物種競爭",
+     "how": "加入多組粒子，各自只追蹤自己的軌跡並迴避他者軌跡",
+     "effect": "不同顏色的網路互相排擠，形成領域邊界"
+    },
+    {
+     "name": "GPU 化",
+     "how": "把粒子與軌跡圖改成紋理，以 shader 平行更新",
+     "effect": "粒子數大幅增加，網路細節更連續"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "GLSL",
+    "黏菌",
+    "physarum",
+    "GPU"
+   ],
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "url": "https://sagejenson.com/physarum",
+   "image": {
+    "file": "img/cases/D02-51.jpg",
+    "w": 400,
+    "h": 268,
+    "source": "Sage Jenson（Cargo 網站）",
+    "author": "Sage Jenson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sagejenson.com/physarum",
+    "note": "physarum 文章首圖，黑白格狀黏菌網路"
+   }
+  },
+  {
+   "id": "D02-52",
+   "algo": "D02",
+   "title": "Coding Adventure: Ant and Slime Simulations",
+   "creator": "Sebastian Lague",
+   "year": "2021",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "以 Unity compute shader 實作 Jeff Jones 的黏菌模型（並與螞蟻費洛蒙模擬對照），影片逐步示範感測、轉向、沉積、擴散衰減的每個步驟，專案原始碼以 GPL-3.0 公開於 GitHub。多物種設定與色彩映射讓結果更具視覺張力。",
+   "variations": [
+    {
+     "name": "多物種色彩",
+     "how": "為每個物種指定獨立的軌跡通道與顏色，感測時吸引同類、排斥異類",
+     "effect": "產生彼此交織或互相劃界的彩色網路"
+    },
+    {
+     "name": "初始分布改變",
+     "how": "粒子從圓心向外、圓周向內或隨機分布出發",
+     "effect": "得到放射狀、環狀或均勻的不同網路起始形態"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "compute shader",
+    "HLSL",
+    "黏菌",
+    "physarum"
+   ],
+   "tools": [
+    "Unity",
+    "HLSL"
+   ],
+   "url": "https://github.com/SebLague/Slime-Simulation",
+   "image": {
+    "file": "img/cases/D02-52.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "Sebastian Lague",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=X-iSQQgOd1A",
+    "note": "Coding Adventure: Ant and Slime Simulations 影片縮圖，青綠色放射狀黏菌圖樣"
+   }
+  },
+  {
+   "id": "D02-53",
+   "algo": "D02",
+   "title": "p5.js Coding Tutorial | Slime Molds (Physarum)",
+   "creator": "Patt Vira",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "以 p5.js 在 CPU 上實作 Jeff Jones 的黏菌演算法，並附教學影片逐步講解；草圖也收錄於 p5.js 官方網站的社群作品區。粒子數較少但程式精簡，最適合作為 GH C# 範例的對照入門版本。",
+   "variations": [
+    {
+     "name": "用二維陣列當軌跡圖",
+     "how": "在 GH 中以二維 double 陣列或 Mesh 頂點顏色作為軌跡圖，每步做 3×3 平均與乘法衰減",
+     "effect": "不需 GPU 也能看到網路逐步收斂"
+    },
+    {
+     "name": "降低粒子數以看清個體",
+     "how": "只放數百個粒子並畫出其感測點",
+     "effect": "適合教學時說明「感測—轉向—前進—沉積」的迴圈"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "黏菌",
+    "physarum",
+    "教學影片",
+    "入門"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
+   "image": {
+    "file": "img/cases/D02-53.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "Patt Vira",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
+    "note": "p5.js Slime Molds 教學影片縮圖，含黑白黏菌網路"
+   }
+  },
+  {
+   "id": "D02-54",
+   "algo": "D02",
+   "title": "interactive-physarum／Algorithms for making interesting organic simulations",
+   "creator": "Etienne Jacob（bleuje）",
+   "year": "2024",
+   "category": "art-installation",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "地景",
+   "summary": "作者以 openFrameworks 與 compute shader 延伸 Physarum 模型，受 Sage Jenson《36 Points》啟發，並以遊戲手把即時操控，作為藝術裝置使用。搭配的長文（bleuje.com）逐步圖解原始演算法與各種變形。",
+   "variations": [
+    {
+     "name": "參數隨濃度變化",
+     "how": "讓 sensor distance、移動步長等不再是常數，而是所在位置軌跡濃度的函數",
+     "effect": "出現更有機、多尺度的紋理，而非單一尺度的網路"
+    },
+    {
+     "name": "參數組合切換",
+     "how": "預存多組參數，執行中平滑內插切換",
+     "effect": "圖樣在不同形態間流動變化，適合現場互動"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "GLSL",
+    "compute shader",
+    "黏菌",
+    "互動裝置"
+   ],
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "image": {
+    "file": "img/cases/D02-54.jpg",
+    "w": 900,
+    "h": 518,
+    "source": "bleuje.com",
+    "author": "Etienne Jacob",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://bleuje.com/physarum-explanation",
+    "note": "文章縮圖，左為單一代理感測示意，右為橘色有機網路模擬"
+   }
+  },
+  {
+   "id": "D02-55",
+   "algo": "D02",
+   "title": "Artist in Residency: Sage Jenson — 3D Physarum 形體",
+   "creator": "Sage Jenson（Nervous System 駐村）",
+   "year": "2022",
+   "category": "fabrication",
+   "categories_extra": [
+    "3d-architecture",
+    "modeling"
+   ],
+   "scale": "構件",
+   "summary": "Sage Jenson 在 Nervous System 駐村期間，把先前的 Houdini 草稿改寫成引導式的 3D 粒子—網格混合模擬（3D Physarum），產生網狀柱體（candlestick）等形體並以青銅鑄造實體化。這是把黏菌演算法從 2D 圖像推向 3D 可製造量體的案例，與建築構件尺度最接近。",
+   "variations": [
+    {
+     "name": "2D 軌跡圖改為 3D 體素",
+     "how": "軌跡圖改成三維格點，粒子以 3D 方向感測與轉向",
+     "effect": "得到立體的管狀網路量體"
+    },
+    {
+     "name": "引導場",
+     "how": "加入目標形狀或邊界作為額外吸引／限制",
+     "effect": "網路長成指定的柱體或容器外形，便於後續製造"
+    },
+    {
+     "name": "體素轉網格製造",
+     "how": "以 marching cubes 等方法把軌跡濃度場轉成封閉網格",
+     "effect": "可直接 3D 列印或翻模鑄造"
+    }
+   ],
+   "difficulty": 5,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "黏菌",
+    "physarum",
+    "3D",
+    "數位製造"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog?p=9137",
+   "image": {
+    "file": "img/cases/D02-55.jpg",
+    "w": 675,
+    "h": 900,
+    "source": "Nervous System blog",
+    "author": "Sage Jenson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog?p=9137",
+    "note": "駐村文章首圖，置於草地上的 3D physarum 網狀形體實體"
+   }
+  },
+  {
    "id": "D03-01",
    "algo": "D03",
    "title": "社會力模型（Social Force Model）",
@@ -16802,6 +20955,247 @@ window.CATALOG = {
     "C++"
    ],
    "url": ""
+  },
+  {
+   "id": "D03-51",
+   "algo": "D03",
+   "title": "Steering Behaviors For Autonomous Characters",
+   "creator": "Craig Reynolds",
+   "year": "1999",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "群體／都市",
+   "summary": "Reynolds 在 GDC 1999 發表的論文線上版，定義 seek／flee、pursue／evade、arrival、wander、path following、wall following、collision avoidance、flow field following 等轉向行為，網站另附 Java 動畫圖示，後來成為遊戲與 creative coding 中人流、角色移動的共同基礎。與 GH C# 範例相比，這是把「人流」拆解成可組合轉向力模組的原始來源。",
+   "variations": [
+    {
+     "name": "路徑跟隨",
+     "how": "預測個體未來位置，投影到路徑中心線，若偏離半徑外就朝投影點前方 seek",
+     "effect": "人流沿走廊或動線流動，而非直線衝向目標"
+    },
+    {
+     "name": "碰撞迴避",
+     "how": "預測兩兩個體未來最接近點，若會相撞就提早側向閃避",
+     "effect": "對向人流會自然錯身，減少擠成一團"
+    },
+    {
+     "name": "牆面跟隨",
+     "how": "以建築平面邊界曲線做為牆，計算個體到牆的預測距離並施加法向排斥",
+     "effect": "模擬沿牆行走、轉角繞行等空間行為"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "steering behaviors",
+    "人流",
+    "自主代理",
+    "經典論文",
+    "Java"
+   ],
+   "tools": [
+    "Java"
+   ],
+   "url": "https://www.red3d.com/cwr/steer/gdc99/",
+   "image": {
+    "file": "img/cases/D03-51.jpg",
+    "w": 436,
+    "h": 292,
+    "source": "red3d.com",
+    "author": "Craig Reynolds",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.red3d.com/cwr/steer/gdc99/",
+    "note": "論文 Figure 9：路徑跟隨（path following）示意圖"
+   }
+  },
+  {
+   "id": "D03-52",
+   "algo": "D03",
+   "title": "5.7 Path Following（Nature of Code 影片）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2021",
+   "category": "drawing",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "Nature of Code 第 5 章的影片教學，以 p5.js 實作 Reynolds 的路徑跟隨：用純量投影（scalar projection）找出未來位置在路徑上的最近點，偏離時才轉向。這正是把 GH 中的動線曲線當作行人導引的核心計算。",
+   "variations": [
+    {
+     "name": "多段折線路徑",
+     "how": "把單一線段換成 GH Polyline，逐段計算投影並取最近者",
+     "effect": "行人可沿轉折的走廊或街道前進"
+    },
+    {
+     "name": "路徑半徑即走廊寬度",
+     "how": "讓路徑半徑對應實際走廊寬度，並與分離力一起作用",
+     "effect": "可觀察寬窄走廊造成的人流密度差異"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "路徑跟隨",
+    "steering behaviors",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following",
+   "image": {
+    "file": "img/cases/D03-52.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube",
+    "author": "Daniel Shiffman（The Coding Train）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=rlZYT-uvmGQ",
+    "note": "5.7 Path Following 影片縮圖，代理沿河道狀路徑移動"
+   }
+  },
+  {
+   "id": "D03-53",
+   "algo": "D03",
+   "title": "The Nature of Code 第 5 章：Autonomous Agents",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "Nature of Code（2024 年 No Starch 出版，全文在網站上以 Creative Commons 公開）第 5 章，以 p5.js 講解轉向代理、flow field、path following 與 flocking 等群體行為，並討論演算法效率（空間分格）。可視為把 GH C# 人流範例拆成一個個可單獨練習的積木。",
+   "variations": [
+    {
+     "name": "流場導引",
+     "how": "把 GH 中的向量場（例如由出口距離計算的梯度）當作每個格子的期望速度",
+     "effect": "整群行人被場引導流向出口，類似疏散模擬"
+    },
+    {
+     "name": "分離 + 路徑跟隨組合",
+     "how": "對每個代理把 separation 與 path following 兩股力依權重相加",
+     "effect": "得到既沿動線又彼此保持距離的較真實人流"
+    },
+    {
+     "name": "空間分格加速",
+     "how": "用 bin-lattice 空間分割只檢查鄰近格的代理",
+     "effect": "數千人規模仍可即時模擬"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "自主代理",
+    "steering behaviors",
+    "人流",
+    "教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "image": {
+    "file": "img/cases/D03-53.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/autonomous-agents/",
+    "note": "第 5 章章首圖，魚群照片"
+   }
+  },
+  {
+   "id": "D03-54",
+   "algo": "D03",
+   "title": "Simple Crowd Simulation（Houdini 人群模擬）",
+   "creator": "bubble pins",
+   "year": "2020",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "群體／都市",
+   "summary": "SideFX 官網收錄的 Houdini 18 入門教學，以 Crowds 工具架建立代理並模擬大量行走角色。與 GH C# 範例的抽象點粒子不同，Houdini 的 crowd 系統把轉向行為接到帶骨架動畫的角色上，適合做街道、廣場的人流視覺化。",
+   "variations": [
+    {
+     "name": "以密度圖分布人群",
+     "how": "用影像或 Mesh 頂點權重控制初始人數密度，而非均勻隨機撒點",
+     "effect": "廣場、入口等處出現符合設計意圖的人潮熱區"
+    },
+    {
+     "name": "狀態切換",
+     "how": "為代理定義站立、行走、奔跑等狀態，依周邊密度或距離目標切換",
+     "effect": "人流在擁擠處放慢、空曠處加速，更接近真實"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "人群模擬",
+    "crowd",
+    "3D"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/",
+   "image": {
+    "file": "img/cases/D03-54.jpg",
+    "w": 900,
+    "h": 505,
+    "source": "SideFX",
+    "author": "bubble pins",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/",
+    "note": "教學封面，Houdini 人群模擬中大量行走角色"
+   }
+  },
+  {
+   "id": "D03-55",
+   "algo": "D03",
+   "title": "People in a Crowd",
+   "creator": "Sonia Martin",
+   "year": "2014",
+   "category": "drawing",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "OpenProcessing 上的 Processing 作品，以向量、物件與陣列模擬人群穿越場地並嘗試閃避放置的障礙物。作者自述行人仍會互相碰撞、路徑被推偏，正好示範只有排斥力而缺乏目標導向與預測迴避時的人流問題（程式需貼回 Processing 執行）。",
+   "variations": [
+    {
+     "name": "加入目標吸引力",
+     "how": "為每位行人加上朝對側出口的 seek 力，與障礙排斥相加",
+     "effect": "行人繞過障礙後會回到原本方向，而非被推離"
+    },
+    {
+     "name": "預測式迴避",
+     "how": "改用未來位置判斷是否相撞，提早側向轉向",
+     "effect": "減少個體彼此碰撞、路徑較平順"
+    }
+   ],
+   "difficulty": 1,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "OpenProcessing",
+    "人流",
+    "障礙迴避"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://openprocessing.org/sketch/139678/"
   },
   {
    "id": "E01-01",
@@ -17323,6 +21717,220 @@ window.CATALOG = {
    "url": ""
   },
   {
+   "id": "E01-51",
+   "algo": "E01",
+   "title": "Packing The Torus（Houdini 曲面圓填充）",
+   "creator": "Manuel Casasola Merkle（Entagma）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "立面／表皮",
+   "summary": "Entagma 在 Houdini 裡用模擬的方式，把半徑各不相同的粒子緊密排在甜甜圈（torus）曲面上：粒子彼此推開，同時藉由符號距離場（SDF）與其梯度被投影回曲面。和 Grasshopper C# 基礎範例在平面圓形邊界內互推不同，這裡的「邊界」換成任意 3D 曲面，而且整個鬆弛過程本身就是可以輸出的動畫。",
+   "variations": [
+    {
+     "name": "平面邊界改成曲面投影",
+     "how": "每輪推開之後，不再做「超出邊界圓就拉回」，改成把圓心用 Surface.ClosestPoint（或 Mesh.ClosestPoint）拉回目標曲面，並以曲面法向量決定圓的平面。",
+     "effect": "圓填充可以包覆穹頂、雙曲面等自由曲面，直接成為開孔立面或表皮面板的配置。"
+    },
+    {
+     "name": "半徑依曲率或吸引點變化",
+     "how": "把 minRadius～maxRadius 的隨機半徑改成依曲面曲率或到吸引點的距離做 remap。",
+     "effect": "曲率大或靠近焦點的地方圓較小，形成有方向性的疏密漸層。"
+    },
+    {
+     "name": "輸出每一輪的狀態",
+     "how": "把每次迭代的圓心清單存成 DataTree 的一個分支，用 Slider 選擇顯示第幾輪。",
+     "effect": "可以做成從擁擠重疊到均勻鋪滿的過程動畫，方便教學說明收斂。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "曲面",
+    "模擬",
+    "動畫"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/packing-the-torus/",
+   "image": {
+    "file": "img/cases/E01-51.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（Entagma）",
+    "author": "Manuel Casasola Merkle",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=OkiwsuFo_gA",
+    "note": "影片縮圖：甜甜圈曲面上大小不一的粒子緊密排列"
+   }
+  },
+  {
+   "id": "E01-52",
+   "algo": "E01",
+   "title": "Circle packing with compute shaders（TouchDesigner）",
+   "creator": "noones_img（Derivative 社群轉載）",
+   "year": "2021",
+   "category": "performance",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "這是 TouchDesigner 社群的教學，用 GLSL compute shader 在 GPU 上實作圓填充，讓大量圓能即時生成、推擠並用於視覺表演。基礎範例用 C# 雙層迴圈兩兩比對（N²），這裡則把每個圓的碰撞檢查平行分給 GPU 執行緒，換取即時互動的效能。",
+   "variations": [
+    {
+     "name": "平行化的兩兩比對",
+     "how": "把「先累積位移、再一次套用」的兩階段迴圈改成 Parallel.For（每個圓一個工作），各自只寫入自己的位移陣列欄位。",
+     "effect": "在 Grasshopper 裡也能體會 GPU 版「每個圓獨立計算」的思路，圓數變多時明顯加速。"
+    },
+    {
+     "name": "由影像控制生成區域",
+     "how": "在隨機放置圓心時，先取樣一張影像的亮度，亮度低於門檻的位置才接受。",
+     "effect": "圓只長在影像的暗部，排出文字、標誌或平面圖的輪廓。"
+    },
+    {
+     "name": "即時參數驅動",
+     "how": "把 maxRadius 或 boundaryRadius 接到 Timer 或音訊振幅之類隨時間變化的輸入，每次更新都從上一輪結果繼續推。",
+     "effect": "圖樣會隨節奏呼吸、重新排列，適合展場投影。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "GPU",
+    "即時互動"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+   "image": {
+    "file": "img/cases/E01-52.jpg",
+    "w": 900,
+    "h": 473,
+    "source": "Derivative（TouchDesigner 社群）",
+    "author": "noones_img",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+    "note": "文章預覽圖：GPU 即時生成的圓填充"
+   }
+  },
+  {
+   "id": "E01-53",
+   "algo": "E01",
+   "title": "A Recursive Circle Packing Algorithm for Organic Growth Patterns",
+   "creator": "Ahmad Moussa（Gorilla Sun）",
+   "year": "2023",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Ahmad Moussa 以 p5.js 寫的圓填充變體：新圓不是隨機散落，而是從一個起始節點開始，在已有圓的旁邊找空位放置，成為它的子節點；放不下時就遞迴往子節點、孫節點找空間，長成樹狀分枝的圓群（靈感來自 Happy Coding 的 Bonsai Tree 範例）。與基礎範例「一次撒滿再互推」不同，它是逐一放置、不重疊的生長式填充。",
+   "variations": [
+    {
+     "name": "互推改成貼邊生長",
+     "how": "不再一次產生全部圓，而是每次挑一個已放置的圓，在其外側距離 r1+r2 的位置試放新圓，只要不與任何圓重疊就收下並記錄父子關係。",
+     "effect": "得到由核心向外延伸的有機分枝圖樣，而非均勻鋪滿。"
+    },
+    {
+     "name": "遞迴往外尋找空位",
+     "how": "放置失敗時，改從該圓的子節點中隨機挑一個再試，直到末端節點。",
+     "effect": "生長集中在外緣，形狀像珊瑚或菌落。"
+    },
+    {
+     "name": "父子連線",
+     "how": "除了輸出圓，也把每對父子圓心連成 Line。",
+     "effect": "同時得到一張樹狀網絡，可轉成結構分枝或路徑系統。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "遞迴",
+    "生長",
+    "生成藝術"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+   "image": {
+    "file": "img/cases/E01-53.jpg",
+    "w": 900,
+    "h": 707,
+    "source": "Gorilla Sun",
+    "author": "Ahmad Moussa",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+    "note": "文章預覽圖：遞迴生長的彩色圓群"
+   }
+  },
+  {
+   "id": "E01-54",
+   "algo": "E01",
+   "title": "circlepack-cpp：openFrameworks 圓填充編輯器",
+   "creator": "Joseff（jn3008）",
+   "year": "2023",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "以 openFrameworks（C++）寫的互動應用，使用者編輯一張三角化的圖（刪點、翻邊、加點），程式依 Collins 與 Stephenson 的方法算出每個頂點對應圓的半徑，讓相鄰的圓剛好相切。和基礎範例「隨機圓互推到不重疊」不同，這是由拓樸（誰和誰相鄰）決定幾何的「相切型」圓填充，可固定邊界圓半徑或邊界角度和。",
+   "variations": [
+    {
+     "name": "由網格拓樸決定相切",
+     "how": "先把一張三角網格的每個頂點當作一個圓，對每個內部頂點反覆調整半徑，使它與所有鄰居圓相切時角度總和為 2π。",
+     "effect": "得到 CP mesh 式的相切圓陣列，可直接對應到立面開孔或節點配置。"
+    },
+    {
+     "name": "固定邊界條件",
+     "how": "邊界頂點的半徑固定為設定值（或讓邊界圓都貼齊外框），只迭代內部頂點。",
+     "effect": "同一張網格可以產生不同的外輪廓與漸變大小。"
+    },
+    {
+     "name": "互動編輯網格",
+     "how": "把三角網格作為 Grasshopper 輸入，讓設計者在 Rhino 中移動、刪除頂點後重新計算。",
+     "effect": "設計者用拓樸控制圖樣，而不是用亂數種子碰運氣。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "互動",
+    "拓樸"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/jn3008/circlepack-cpp",
+   "image": {
+    "file": "img/cases/E01-54.jpg",
+    "w": 900,
+    "h": 350,
+    "source": "GitHub jn3008/circlepack-cpp",
+    "author": "Joseff（jn3008）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jn3008/circlepack-cpp",
+    "note": "README 示範圖：三角網與對應的相切圓填充"
+   }
+  },
+  {
    "id": "E02-01",
    "algo": "E02",
    "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
@@ -17744,6 +22352,271 @@ window.CATALOG = {
     "Grasshopper"
    ],
    "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463"
+  },
+  {
+   "id": "E02-51",
+   "algo": "E02",
+   "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Manohar Vanga 先用 Processing 實作 Bridson 演算法，再把 Poisson 點用在照片上，做出點描、油畫、炭筆、Voronoi 馬賽克、交叉排線、點彩等八種風格。基礎範例只輸出點與對照用的純隨機點，這裡則示範同一組藍噪點如何透過「點的大小、顏色、筆觸方向」變成完全不同的畫面。",
+   "variations": [
+    {
+     "name": "點大小對應影像灰階",
+     "how": "為每個 Poisson 點取樣影像亮度，把圓半徑設為亮度的反比。",
+     "effect": "得到點描（stippling）效果，也可轉成立面穿孔板的孔徑分布。"
+    },
+    {
+     "name": "由大到小多層取樣",
+     "how": "以遞減的 minDistance 重複執行取樣，大間距層先畫、小間距層後畫。",
+     "effect": "先有大色塊再有細節，類似油畫層層上色。"
+    },
+    {
+     "name": "點轉成 Voronoi 馬賽克",
+     "how": "把輸出點送進 Voronoi 元件，並以細胞中心的影像顏色填色。",
+     "effect": "得到均勻但不規則的馬賽克磚拼貼。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "影像處理",
+    "點描",
+    "生成藝術"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+   "image": {
+    "file": "img/cases/E02-51.jpg",
+    "w": 500,
+    "h": 500,
+    "source": "Sighack",
+    "author": "Manohar Vanga",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+    "note": "文章預覽圖：以 Poisson 點做成的點描肖像"
+   }
+  },
+  {
+   "id": "E02-52",
+   "algo": "E02",
+   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
+   "creator": "Marcel Ruegenberg",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "物件",
+   "summary": "把 Poisson 圓盤取樣包成 openFrameworks 外掛，README 以兩張 Delaunay 三角網做對照：用 ofRandom 純隨機點會出現細長三角形，改用 Poisson 點則得到大小接近、形狀勻稱的三角形。這正好延伸基礎範例的「Poisson 點 vs 純隨機點」對照，把差異放到網格品質上來看。",
+   "variations": [
+    {
+     "name": "輸出點接 Delaunay",
+     "how": "把 poissonPoints 與 randomPoints 分別送入 Delaunay Mesh 元件並排顯示。",
+     "effect": "直接看到藍噪點產生較均勻的三角網，適合作為面板分割或結構網格。"
+    },
+    {
+     "name": "量化網格品質",
+     "how": "計算每個三角形的最小內角，統計兩種點集的平均值與最小值。",
+     "effect": "用數字說明 Poisson 取樣為何能避免細長三角形。"
+    },
+    {
+     "name": "在曲面 UV 上取樣",
+     "how": "把 width/height 改成曲面的 UV 範圍，取樣後用 Surface.PointAt 映射到 3D。",
+     "effect": "在自由曲面上得到分布均勻的點，可作為開孔或節點位置（注意 UV 變形需修正）。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "Delaunay",
+    "開源"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+   "image": {
+    "file": "img/cases/E02-52.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "GitHub mruegenberg/ofxPoissonDiskSampling",
+    "author": "Marcel Ruegenberg",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+    "note": "README 示範圖：Poisson 點的 Delaunay 三角網"
+   }
+  },
+  {
+   "id": "E02-53",
+   "algo": "E02",
+   "title": "poisson-disk-sampling（JavaScript 任意維度與變密度）",
+   "creator": "Kevin Chapelier",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Kevin Chapelier 維護的 JavaScript 函式庫（MIT 授權），以 Bridson 演算法支援任意維度取樣，並可傳入距離函式讓最小間距隨位置變化；線上示範用影像亮度控制點的疏密。基礎範例只有固定的 minDistance，這個函式庫示範了變密度與高維度兩種延伸。",
+   "variations": [
+    {
+     "name": "變距離取樣",
+     "how": "把固定 minDistance 改成 minDistance(x,y) 函式，例如依影像亮度在 minDist～maxDist 之間插值；網格邊長改用最小值 minDist/√2，檢查鄰格範圍則依最大值加大。",
+     "effect": "點在暗部密、亮部疏，形成漸層網點。"
+    },
+    {
+     "name": "推廣到 3D",
+     "how": "把網格改成 int[,,]，候選點改在球殼（r～2r）內取樣，並檢查 5×5×5 鄰格。",
+     "effect": "在體積內得到均勻散布的點，可作為 3D Voronoi 或空間桁架的節點。"
+    },
+    {
+     "name": "逐步產生動畫",
+     "how": "每次只從活躍名單取一個點處理，把目前結果輸出後再繼續下一步。",
+     "effect": "可以看到點從種子向外擴散填滿的過程。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "開源",
+    "變密度",
+    "3D"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/kchapelier/poisson-disk-sampling",
+   "image": {
+    "file": "img/cases/E02-53.jpg",
+    "w": 500,
+    "h": 200,
+    "source": "GitHub kchapelier/poisson-disk-sampling",
+    "author": "Kevin Chapelier",
+    "license": "MIT",
+    "license_url": "https://github.com/kchapelier/poisson-disk-sampling",
+    "page": "https://github.com/kchapelier/poisson-disk-sampling",
+    "note": "README 示範圖：Poisson 取樣點分布"
+   }
+  },
+  {
+   "id": "E02-54",
+   "algo": "E02",
+   "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
+   "creator": "Nikolai Janakiev",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "以 Processing 實作 Bridson 論文的 Poisson 圓盤取樣（MIT 授權），同時提供 2D 與 3D 版本，並把「活躍點」與「已確定的點」用不同方式畫出來做成動畫。基礎範例只輸出最終點位，這個作品把演算法的生長過程本身變成可觀看的視覺。",
+   "variations": [
+    {
+     "name": "顯示活躍名單",
+     "how": "另外輸出目前 active list 裡的點（用不同顏色），並以 Slider 控制已執行的步數。",
+     "effect": "清楚看出取樣前緣如何向外推進，適合講解演算法。"
+    },
+    {
+     "name": "3D 空間取樣",
+     "how": "把平面網格改成立體網格，候選點改在 3D 球殼內取樣。",
+     "effect": "在體積內撒出均勻點雲，可接 3D Voronoi 做多孔構造。"
+    },
+    {
+     "name": "點轉成實體",
+     "how": "把每個點替換成直徑略小於 minDistance 的球或柱。",
+     "effect": "得到不互相碰撞、分布均勻的構件陣列。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "動畫",
+    "3D",
+    "開源"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://github.com/njanakiev/poisson-disk-sampling",
+   "image": {
+    "file": "img/cases/E02-54.jpg",
+    "w": 600,
+    "h": 600,
+    "source": "GitHub njanakiev/poisson-disk-sampling",
+    "author": "Nikolai Janakiev",
+    "license": "MIT",
+    "license_url": "https://github.com/njanakiev/poisson-disk-sampling",
+    "page": "https://github.com/njanakiev/poisson-disk-sampling",
+    "note": "README 2D 動畫的最後一格：完成的 Poisson 點分布"
+   }
+  },
+  {
+   "id": "E02-55",
+   "algo": "E02",
+   "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
+   "creator": "Sebastian Lague",
+   "year": "2018",
+   "category": "urban-landscape",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "地景",
+   "summary": "Sebastian Lague 在 Unity（C#）中依 Bridson 論文實作 Poisson 圓盤取樣，目的是在遊戲場景裡擺放物件，使物件彼此保持最小距離又不顯得規則。和 Grasshopper C# 基礎範例語言相同，但應用從「畫點」轉成「放置場景物件」，很適合對照到地景配置。",
+   "variations": [
+    {
+     "name": "點轉成植栽配置",
+     "how": "在每個 Poisson 點放置樹木或灌木的 Block，並依種類設定不同的 minDistance。",
+     "effect": "得到自然、不排排站的植栽分布。"
+    },
+    {
+     "name": "限制在指定區域內",
+     "how": "候選點除了要在矩形內，還要通過 Curve.Contains 檢查，只在基地邊界曲線內部收下。",
+     "effect": "點只落在基地、草坪或廣場範圍內。"
+    },
+    {
+     "name": "多種物件分層取樣",
+     "how": "先用較大的 minDistance 放大樹，再以較小的間距放小樹，並同時檢查與前一層的距離。",
+     "effect": "形成大、中、小物件交錯的層次。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "C#",
+    "遊戲",
+    "程序化生成"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+   "image": {
+    "file": "img/cases/E02-55.jpg",
+    "w": 480,
+    "h": 360,
+    "source": "YouTube（Sebastian Lague）",
+    "author": "Sebastian Lague",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+    "note": "影片縮圖：Poisson disc sampling 標題與取樣點"
+   }
   },
   {
    "id": "E03-01",
@@ -18287,6 +23160,273 @@ window.CATALOG = {
    "url": "https://gispoint.de/fileadmin/user_upload/paper_gis_open/DLA_2022/537724058.pdf"
   },
   {
+   "id": "E03-51",
+   "algo": "E03",
+   "title": "Coding Challenge 181：Weighted Voronoi Stippling",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "Daniel Shiffman 用 p5.js 搭配 d3-delaunay 套件，從 Delaunay 三角化與 Voronoi 圖講起，逐步實作 Lloyd 鬆弛，再把重心改成「以影像暗度加權的重心」，做出點描肖像。基礎範例的 Lloyd 用的是細胞的幾何面積重心，這裡則把影像當成密度場，讓點聚集到暗部。",
+   "variations": [
+    {
+     "name": "加權重心",
+     "how": "計算細胞重心時，對細胞內的取樣點以影像暗度（1 − 亮度）加權平均，而非用鞋帶公式算幾何重心。",
+     "effect": "點往暗部聚集，數次迭代後形成點描影像。"
+    },
+    {
+     "name": "點大小隨暗度變化",
+     "how": "最後輸出時，依點所在位置的暗度設定圓半徑。",
+     "effect": "加強明暗對比，也能對應成穿孔板的孔徑。"
+    },
+    {
+     "name": "迭代中逐步移動",
+     "how": "每次只把點往重心移動一部分（例如 10%）而非直接跳到重心。",
+     "effect": "動畫更平滑，並可在任何時刻停下取得中間狀態。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "d3.js",
+    "點描",
+    "影像處理"
+   ],
+   "tools": [
+    "p5.js",
+    "d3.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/181-image-stippling",
+   "image": {
+    "file": "img/cases/E03-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/181-image-stippling",
+    "note": "頁面預覽圖：加權 Voronoi 點描肖像"
+   }
+  },
+  {
+   "id": "E03-52",
+   "algo": "E03",
+   "title": "Voronoi edges（精確 Voronoi 邊界著色器）",
+   "creator": "Inigo Quilez",
+   "year": "2012",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "立面／表皮",
+   "summary": "Inigo Quilez 的文章與 Shadertoy 範例，用 GLSL 片段著色器逐像素計算 Voronoi：一般 F2−F1 近似會讓細胞邊線粗細不均，他改用第二輪搜尋算出到細胞邊界的真正距離，得到線寬一致、等距線正確的程序化 Voronoi 紋理。與基礎範例用半平面切出多邊形不同，這裡從「每個像素找最近點」的角度計算，而且完全在 GPU 上即時執行。",
+   "variations": [
+    {
+     "name": "逐點查詢距離場",
+     "how": "對一組取樣點（例如表面上的格點）計算到最近與次近 site 的距離，並求到兩者垂直平分線的距離。",
+     "effect": "得到可用於厚度、顏色或凹凸的距離場，而不只是細胞外框。"
+    },
+    {
+     "name": "等寬邊框",
+     "how": "以「到邊界距離 < 固定值」判定是否為邊框，取代 Polyline 偏移。",
+     "effect": "所有細胞框的寬度一致，適合轉成雷射切割的格柵。"
+    },
+    {
+     "name": "網格加速",
+     "how": "把 site 放在規則格子裡（每格一點並加隨機偏移），查詢時只看鄰近 3×3 格。",
+     "effect": "點數很多時也能快速計算，延伸至無限平鋪的紋理。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "Shadertoy",
+    "著色器",
+    "程序化紋理"
+   ],
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "url": "https://iquilezles.org/articles/voronoilines/",
+   "image": {
+    "file": "img/cases/E03-52.jpg",
+    "w": 400,
+    "h": 343,
+    "source": "Inigo Quilez 個人網站",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://iquilezles.org/articles/voronoilines/",
+    "note": "文章插圖：以著色器算出的 Voronoi 細胞與邊界"
+   }
+  },
+  {
+   "id": "E03-53",
+   "algo": "E03",
+   "title": "The Book of Shaders 第 12 章：Cellular Noise",
+   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "立面／表皮",
+   "summary": "The Book of Shaders 的細胞雜訊章節，從 Steven Worley 的 cellular texture 講起，用 GLSL 在網格中每格放一點、只檢查鄰近 9 格，最後導出 Voronoi 演算法並延伸到 Gustavson 的優化與 Quilez 的精確邊界。書中可直接在網頁上修改並即時預覽。與基礎範例的多邊形 Voronoi 相比，它把 Voronoi 當成連續的「距離場」來上色。",
+   "variations": [
+    {
+     "name": "顯示最近距離場",
+     "how": "對平面上的格點計算到最近 site 的距離，並以灰階或色帶上色。",
+     "effect": "看到每顆細胞由中心向外漸變的圖樣，類似細胞或龜裂地面。"
+    },
+    {
+     "name": "以 site 編號上色",
+     "how": "記錄每個取樣點最近的 site 是哪一個，依編號給顏色。",
+     "effect": "得到色塊拼貼，可對應材料分區。"
+    },
+    {
+     "name": "site 隨時間移動",
+     "how": "讓 site 依正弦函數或 Lloyd 迭代緩慢移動，每幀重新計算。",
+     "effect": "細胞會流動、呼吸，適合動態立面或投影。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "著色器",
+    "雜訊",
+    "教學"
+   ],
+   "tools": [
+    "GLSL"
+   ],
+   "url": "https://thebookofshaders.com/12/",
+   "image": {
+    "file": "img/cases/E03-53.jpg",
+    "w": 480,
+    "h": 183,
+    "source": "The Book of Shaders",
+    "author": "Patricio Gonzalez Vivo、Jen Lowe",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thebookofshaders.com/12/",
+    "note": "章節插圖（GIF 第一格）：著色器產生的 Voronoi 細胞與距離場"
+   }
+  },
+  {
+   "id": "E03-54",
+   "algo": "E03",
+   "title": "ofxVoronoi（openFrameworks Voronoi 與 Lloyd 鬆弛外掛）",
+   "creator": "Matthias Esterl、Todd Vanderlin 等",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "openFrameworks 的 Voronoi 外掛，使用 Voro++ 中改寫的 Fortune 掃描線演算法產生 2D Voronoi 圖；2015 年加入 relax() 方法，可反覆執行 Lloyd 鬆弛，讓細胞變得均勻，README 也提到可用於點描效果。基礎範例用 O(n²) 半平面切割自行計算，這裡則示範採用較快的掃描線演算法，並把鬆弛包成一行呼叫。",
+   "variations": [
+    {
+     "name": "只做少數次鬆弛",
+     "how": "把 iterations 設為 1～3，並依次輸出各次的結果。",
+     "effect": "細胞保有一些大小差異卻不再極端，介於隨機與蜂巢之間。"
+    },
+    {
+     "name": "圓形邊界",
+     "how": "把起始的矩形改成近似圓的多邊形（例如 64 邊形）作為每個細胞的初始範圍。",
+     "effect": "得到圓盤內的 Voronoi，可做圓形天花或廣場鋪面。"
+    },
+    {
+     "name": "換成更快的 Voronoi",
+     "how": "點數超過數百時，把自製半平面切割改成呼叫 Grasshopper 內建 Voronoi，只保留 Lloyd 迴圈。",
+     "effect": "可以處理上千個細胞並保持互動速度。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "開源",
+    "Lloyd 鬆弛"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/madc/ofxVoronoi",
+   "image": {
+    "file": "img/cases/E03-54.jpg",
+    "w": 900,
+    "h": 715,
+    "source": "GitHub madc/ofxVoronoi",
+    "author": "Matthias Esterl 等",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/madc/ofxVoronoi",
+    "note": "README 截圖：圓形範圍內的 Voronoi 圖"
+   }
+  },
+  {
+   "id": "E03-55",
+   "algo": "E03",
+   "title": "Lloyd’s Relaxation（d3.js 互動示範）",
+   "creator": "Jason Davies",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Jason Davies 用 d3.js 在畫布上即時展示 Lloyd 鬆弛：1000 個點一開始擠在滑鼠點擊處，每一步計算 Voronoi 後把點移到細胞重心，直到總位移小於門檻才停；每次點擊會換一組色調重新開始。基礎範例從均勻隨機分布出發，這裡刻意從「全部擠在一點」開始，讓擴散與收斂過程更戲劇化。",
+   "variations": [
+    {
+     "name": "從單點出發",
+     "how": "起始點不在整個矩形內隨機撒，而是全部放在同一點附近（加上極小亂數）。",
+     "effect": "可以看到細胞從中心爆開、逐漸鋪滿畫面的過程。"
+    },
+    {
+     "name": "以位移量判斷收斂",
+     "how": "每輪計算所有點移動距離的總和，小於門檻就停止，並輸出實際迭代次數。",
+     "effect": "不必猜 iterations，得到可比較的收斂速度。"
+    },
+    {
+     "name": "依距離上色",
+     "how": "以細胞到起始點的距離決定填色明暗。",
+     "effect": "畫面出現同心放射的色彩層次，突顯生長方向。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "d3.js",
+    "JavaScript",
+    "互動",
+    "動畫"
+   ],
+   "tools": [
+    "d3.js"
+   ],
+   "url": "https://www.jasondavies.com/lloyd/",
+   "image": {
+    "file": "img/cases/E03-55.jpg",
+    "w": 460,
+    "h": 400,
+    "source": "Jason Davies 個人網站",
+    "author": "Jason Davies",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.jasondavies.com/lloyd/",
+    "note": "作品縮圖：Lloyd 鬆弛後由中心擴散的 Voronoi 細胞"
+   }
+  },
+  {
    "id": "E04-01",
    "algo": "E04",
    "title": "慕尼黑奧林匹克體育場索網屋頂",
@@ -18822,6 +23962,277 @@ window.CATALOG = {
    ],
    "tools": [],
    "url": ""
+  },
+  {
+   "id": "E04-51",
+   "algo": "E04",
+   "title": "Coding Challenge 177：Soft Body Physics",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2023",
+   "category": "drawing",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "Daniel Shiffman 用 p5.js 搭配 toxiclibs.js 的 Verlet 物理，把一個卡通角色的輪廓拆成粒子，再以外圈彈簧加上內部交叉彈簧撐住形狀，做出可以被滑鼠拖動、Q 彈晃動的軟體角色。基礎範例是固定角點、以重力找出懸垂形，這裡則是自由的彈簧網，重點在形狀的保持與互動。",
+   "variations": [
+    {
+     "name": "加入內部對角彈簧",
+     "how": "除了相鄰質點的彈簧，額外在網格對角線與跨越多格的點之間加上 Spring。",
+     "effect": "網格抵抗剪切與塌陷，形狀更能維持，像有骨架的軟體。"
+    },
+    {
+     "name": "拖曳一個質點",
+     "how": "把某個質點設為固定，位置由 Rhino 中可移動的點參數決定，每次更新都從上一個狀態繼續模擬。",
+     "effect": "可以互動地拉扯網面，觀察整體如何重新平衡。"
+    },
+    {
+     "name": "改用 Verlet 積分",
+     "how": "不存速度，改以 p_new = p + (p − p_prev)·damping + F·dt² 更新位置。",
+     "effect": "程式更精簡且數值較穩定，與 toxiclibs、Kangaroo 的做法一致。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "toxiclibs.js",
+    "物理模擬",
+    "互動"
+   ],
+   "tools": [
+    "p5.js",
+    "toxiclibs.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/177-soft-body-character",
+   "image": {
+    "file": "img/cases/E04-51.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/177-soft-body-character",
+    "note": "頁面預覽圖：彈簧骨架與軟體角色"
+   }
+  },
+  {
+   "id": "E04-52",
+   "algo": "E04",
+   "title": "The Nature of Code 第 6 章：Physics Libraries",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": [
+    "modeling"
+   ],
+   "scale": "物件",
+   "summary": "The Nature of Code（2024 年 JavaScript 版）第 6 章介紹 Matter.js 與 toxiclibs.js 兩種物理函式庫，後半段以 Verlet 物理實作彈簧、弦、布料網格與軟體角色，並說明 Euler 與 Verlet 積分的差異。基礎範例自行寫出質點與彈簧 class，本章則展示同樣的概念如何交給現成物理引擎，並比較不同積分方法的穩定性。",
+   "variations": [
+    {
+     "name": "由一條弦開始",
+     "how": "先只做一排質點（string），兩端固定，看它在重力下形成懸鏈線，再擴充到二維網格（blanket）。",
+     "effect": "從懸鏈線一路推到懸垂曲面，觀念循序漸進。"
+    },
+    {
+     "name": "加上吸引／排斥行為",
+     "how": "對所有質點加上指向吸引點的力，或質點之間的短距離排斥力。",
+     "effect": "網面會被局部拉起或撐開，可得到非純重力的形態。"
+    },
+    {
+     "name": "比較 Euler 與 Verlet",
+     "how": "同一組參數分別用兩種積分方法跑，記錄最大速度曲線。",
+     "effect": "看出 Verlet 在較大時間步長下仍然穩定，理解數值爆炸的原因。"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "toxiclibs.js",
+    "Matter.js",
+    "教學"
+   ],
+   "tools": [
+    "p5.js",
+    "toxiclibs.js",
+    "Matter.js"
+   ],
+   "url": "https://natureofcode.com/physics-libraries/",
+   "image": {
+    "file": "img/cases/E04-52.jpg",
+    "w": 900,
+    "h": 438,
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/physics-libraries/",
+    "note": "書中圖 6.13：弦、布、骨架、軟體角色四種彈簧結構設計"
+   }
+  },
+  {
+   "id": "E04-53",
+   "algo": "E04",
+   "title": "three.js webgpu - compute cloth",
+   "creator": "holtsetio（three.js 官方範例）",
+   "year": "2025",
+   "category": "modeling",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "three.js 的官方範例，以 WebGPU compute shader 執行 Verlet 布料模擬：由彈簧相連的頂點網格組成布料，在 GPU 上即時計算。與基礎範例在 CPU 上逐一計算彈簧力不同，它把彈簧力與頂點力分成兩個 compute pass 平行計算，再以即時算繪的布料材質呈現。",
+   "variations": [
+    {
+     "name": "拆成兩個計算階段",
+     "how": "先迴圈所有 Spring 算出力並存入 springForce 陣列，再迴圈所有質點彙總與自己相連的彈簧力，避免多執行緒同時寫入。",
+     "effect": "邏輯與 GPU 版一致，也方便改成 Parallel.For 加速。"
+    },
+    {
+     "name": "固定邊改成固定一整排",
+     "how": "把固定條件從四個角點改成最上面一整排質點。",
+     "effect": "得到像布簾、旗幟的懸掛形，而非四點支撐的殼。"
+    },
+    {
+     "name": "加入球體碰撞",
+     "how": "每步之後檢查質點是否進入球體內，若是則把它推回球面。",
+     "effect": "網面會包覆障礙物，可做充氣膜或覆蓋地形的形態研究。"
+    }
+   ],
+   "difficulty": 4,
+   "tags": [
+    "creative coding",
+    "three.js",
+    "WebGPU",
+    "GPU",
+    "布料模擬"
+   ],
+   "tools": [
+    "three.js",
+    "WebGPU"
+   ],
+   "url": "https://threejs.org/examples/webgpu_compute_cloth.html",
+   "image": {
+    "file": "img/cases/E04-53.jpg",
+    "w": 400,
+    "h": 250,
+    "source": "three.js 官方範例",
+    "author": "holtsetio／three.js authors",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://threejs.org/examples/webgpu_compute_cloth.html",
+    "note": "範例截圖：飄動的 Verlet 布料"
+   }
+  },
+  {
+   "id": "E04-54",
+   "algo": "E04",
+   "title": "MSAPhysics（openFrameworks／Cinder 粒子彈簧物理庫）",
+   "creator": "Memo Akten",
+   "year": "2008",
+   "category": "art-installation",
+   "categories_extra": [
+    "performance"
+   ],
+   "scale": "物件",
+   "summary": "Memo Akten 開發的開源 C++ 物理函式庫，供 openFrameworks 與 Cinder 使用，以粒子與約束為基礎，提供彈簧、吸引子與碰撞；API 刻意仿照 Processing 的 Traer.physics，方便移植。與基礎範例只有彈簧加重力相比，它把吸引子與碰撞也納入同一個粒子系統，常用於即時互動與視覺作品。",
+   "variations": [
+    {
+     "name": "加入吸引子",
+     "how": "在 Particle 以外新增 Attractor class，對每個質點施加與距離平方成反比的力。",
+     "effect": "網面被局部拉起或凹陷，形成多峰的膜形。"
+    },
+    {
+     "name": "質點間碰撞",
+     "how": "每一步檢查質點之間的距離，小於兩倍半徑就互相推開（與 E01 圓填充相同的規則）。",
+     "effect": "網面不會自我穿透，適合模擬堆疊與皺褶。"
+    },
+    {
+     "name": "2D／3D 共用程式",
+     "how": "把 Particle 的位置型別抽象化（例如只用 X、Y 或 X、Y、Z），讓同一套彈簧程式跑在平面或空間。",
+     "effect": "一套程式同時做平面網格張拉與立體找形。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "Cinder",
+    "C++",
+    "物理模擬",
+    "開源"
+   ],
+   "tools": [
+    "openFrameworks",
+    "Cinder"
+   ],
+   "url": "https://www.memo.tv/msaphysics",
+   "image": {
+    "file": "img/cases/E04-54.jpg",
+    "w": 900,
+    "h": 568,
+    "source": "Memo Akten 個人網站",
+    "author": "Memo Akten",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.memo.tv/msaphysics",
+    "note": "作品圖：以彈簧相連的 3D 粒子網絡"
+   }
+  },
+  {
+   "id": "E04-55",
+   "algo": "E04",
+   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
+   "creator": "Moritz Schwind（Entagma）",
+   "year": "2018",
+   "category": "modeling",
+   "categories_extra": [
+    "3d-architecture"
+   ],
+   "scale": "構件",
+   "summary": "Entagma 的五集快速入門，介紹 Houdini 17 新推出的 Vellum：以 XPBD（擴展式位置基礎動力學）穩定且快速地模擬布料、線材與軟體，內容包含撕裂布料與軟體的基本設定，並附場景檔。基礎範例以彈簧力、速度、阻尼逐步積分，Vellum 則直接以位置約束迭代修正，較不容易數值爆炸。",
+   "variations": [
+    {
+     "name": "力改成位置約束",
+     "how": "不計算彈簧力，而是每步直接把每條彈簧兩端點沿連線各移動一半誤差（目前長度－原長），重複數次。",
+     "effect": "即使 stiffness 很大也不會爆炸，收斂更穩定。"
+    },
+    {
+     "name": "加入壓力約束",
+     "how": "對封閉網格計算體積，體積小於目標值時沿頂點法向量往外推。",
+     "effect": "得到充氣膜或氣球般的形態，可研究充氣結構。"
+    },
+    {
+     "name": "彈簧斷裂",
+     "how": "當彈簧伸長超過原長的某個倍數時，把它從清單中移除。",
+     "effect": "網面會撕裂開孔，可做破壞或開口的形態實驗。"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "Vellum",
+    "XPBD",
+    "布料模擬"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/houdini-17-is-here-a-quickstart-to-vellum/",
+   "image": {
+    "file": "img/cases/E04-55.jpg",
+    "w": 640,
+    "h": 360,
+    "source": "Vimeo（Entagma）",
+    "author": "Moritz Schwind",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://vimeo.com/294379827",
+    "note": "影片縮圖：Vellum 軟體模擬"
+   }
   },
   {
    "id": "F01-01",

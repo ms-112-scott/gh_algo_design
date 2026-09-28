@@ -3,343 +3,563 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GH 演算法設計圖鑑｜建築參數化設計的 Grasshopper 生成式演算法收集</title>
-<meta name="description" content="為教學用途建立的 Grasshopper 生成式演算法收集網頁：六大家族、基礎範例、變形與真實應用案例，供學習建築參數化建模使用。">
+<title>GH 演算法設計圖鑑｜Grasshopper 生成式演算法收集</title>
+<meta name="description" content="為教學用途建立的 Grasshopper 生成式演算法收集網頁：六大家族、基礎範例、變形、建築與 creative coding 應用案例。">
+<link rel="icon" href="assets/gia-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   色彩規劃「製圖桌」
+   紙（背景）＋墨（文字）＋暗色生成磚（演算法畫面）＋六家族色
+   ============================================================ */
 :root{
-  --paper:#F5F2EC; --surface:#FFFFFF; --ink:#17171C; --ink-2:#45434C; --mute:#67635B; --line:#E6E1D7; --tile:#15151B;
-  --A:#E4572E; --B:#3FA34D; --C:#2F6FE4; --D:#9152E0; --E:#F2A007; --F:#14A38F;
-  --ease-out:cubic-bezier(.2,.8,.2,1); --t-med:280ms; --t-slow:560ms;
+  --paper:#F5F2EC; --surface:#FFFFFF; --ink:#17171C; --ink-2:#45434C; --mute:#67635B; --line:#E6E1D7;
+  --tile:#15151B; --tile-2:#1E1E26;
+  --A:#E4572E; --A-deep:#B8391A; --A-tint:#FBE6DF;
+  --B:#3FA34D; --B-deep:#2A7A36; --B-tint:#E2F2E4;
+  --C:#2F6FE4; --C-deep:#1F50B0; --C-tint:#E1EAFB;
+  --D:#9152E0; --D-deep:#6D35B3; --D-tint:#EEE3FB;
+  --E:#F2A007; --E-deep:#A86A00; --E-tint:#FDF0D5;
+  --F:#14A38F; --F-deep:#0B7768; --F-tint:#D9F2EE;
+  --fam:var(--A); --fam-deep:var(--A-deep); --fam-tint:var(--A-tint);
+  --r:18px; --r-sm:12px;
+  --ease-out:cubic-bezier(.2,.8,.2,1); --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --t-fast:160ms; --t-med:280ms; --t-slow:520ms;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.7;font-size:16px}
-a{color:inherit}
+html,body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.55;font-size:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
 :focus-visible{outline:3px solid var(--C);outline-offset:2px;border-radius:8px}
 svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
 
-/* top */
-.top{position:sticky;top:0;z-index:10;background:rgba(245,242,236,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color var(--t-med)}
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:20;background:rgba(245,242,236,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:12px 24px;display:flex;gap:16px;align-items:center;border-bottom:1px solid transparent;transition:border-color var(--t-med)}
 .top.scrolled{border-color:var(--line)}
-.top .wrap{display:flex;align-items:center;gap:16px;height:68px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;white-space:nowrap}
-.brand img{height:22px;width:auto;display:block}
-.brand .sepbar{width:1px;height:22px;background:var(--line)}
-.sitenav{margin-left:auto;display:flex;gap:4px}
-.sitenav a{display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700;white-space:nowrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;white-space:nowrap}
+.brand .logo{width:36px;height:36px;border-radius:50%;background:var(--ink);display:grid;place-items:center;color:#fff}
+.search{flex:1;display:flex;align-items:center;gap:8px;background:#ECE8E0;border-radius:999px;padding:0 16px;height:46px;max-width:760px;transition:background var(--t-fast),box-shadow var(--t-fast)}
+.search:focus-within{background:#fff;box-shadow:0 0 0 3px rgba(47,111,228,.25)}
+.search{overflow:hidden}
+.search input{border:0;background:none;flex:1;font:inherit;outline:none;height:100%;min-width:0;width:100%;text-overflow:ellipsis}
+.sample-flag{font-size:12px;background:var(--ink);color:#fff;border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+
+/* 站內導覽 */
+.sitenav{display:flex;align-items:center;gap:4px;flex:none}
+.sitenav a{display:inline-flex;align-items:center;height:40px;padding:0 12px;border-radius:999px;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700;white-space:nowrap}
 .sitenav a:hover{background:#ECE8E0}
 .sitenav a[aria-current=page]{background:var(--ink);color:#fff}
+.brand img{height:22px;width:auto;display:block}
+.brand .sepbar{width:1px;height:22px;background:var(--line)}
+@media (max-width:860px){.sitenav a.opt{display:none}}
+@media (max-width:600px){.brand img,.brand .sepbar{display:none}.sitenav a{padding:0 10px}}
 
-/* hero */
-.hero{padding:56px 0 40px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink-2);background:#fff;border-radius:999px;padding:6px 14px;box-shadow:0 0 0 1px var(--line)}
-.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.12;margin:18px 0 16px;font-weight:900;letter-spacing:-.01em}
-.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,rgba(228,87,46,.28) 62%)}
-.hero p.lead{font-size:18px;color:var(--ink-2);margin:0 0 26px;max-width:36em}
-.cta{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;font-weight:700;text-decoration:none;transition:transform 160ms var(--ease-out),box-shadow 160ms}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -12px rgba(0,0,0,.4)}
-.btn.primary{background:var(--ink);color:#fff}
-.btn.ghost{background:#fff;box-shadow:0 0 0 1px var(--line)}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:30px}
-.stat{background:#fff;border-radius:16px;padding:14px 16px}
-.stat b{display:block;font:900 28px "JetBrains Mono",monospace;line-height:1.1}
-.stat small{color:var(--mute);font-size:13px}
-.mosaic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:120px;gap:10px}
-.mosaic figure{margin:0;border-radius:18px;overflow:hidden;background:var(--tile);position:relative}
-.mosaic figure:nth-child(1){grid-row:span 2}
-.mosaic figure:nth-child(5){grid-column:span 2}
-.mosaic canvas,.mosaic img{width:100%;height:100%;display:block;object-fit:cover}
-.mosaic figcaption{position:absolute;left:8px;bottom:8px;font:700 11px "JetBrains Mono",monospace;color:#fff;background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px}
 
-/* sections */
-section.s{padding:56px 0;border-top:1px solid var(--line)}
-section.s h2{font-size:28px;margin:0 0 8px;font-weight:900;display:flex;align-items:center;gap:10px}
-section.s h2 .num{font:700 13px "JetBrains Mono",monospace;color:var(--mute);border:1.5px solid var(--line);border-radius:6px;padding:2px 7px}
-section.s .intro{color:var(--ink-2);max-width:44em;margin:0 0 26px}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.card{background:#fff;border-radius:20px;padding:22px}
-.card h3{margin:10px 0 6px;font-size:18px}
-.card p{margin:0;color:var(--ink-2);font-size:15px}
-.ico{width:48px;height:48px;border-radius:14px;background:var(--paper);display:grid;place-items:center}
-.ico svg.i{width:26px;height:26px}
-.steps .card{position:relative}
-.steps .n{position:absolute;right:18px;top:16px;font:900 32px "JetBrains Mono",monospace;color:#EAE5DB}
-
-.fams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.fam{background:#fff;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
-.fam .band{height:92px;background:var(--tile);position:relative}
-.fam .band canvas{width:100%;height:100%;display:block}
-.fam .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px}
-.fam .what{font-size:13px;color:var(--mute)}
-.fam .list{display:flex;flex-wrap:wrap;gap:6px}
-
-/* 標籤（與圖鑑頁相同語法） */
-.tg{display:inline-flex;align-items:center;gap:5px;height:26px;font-size:12px;font-weight:700;white-space:nowrap;line-height:1;vertical-align:middle;min-width:0;max-width:100%}
-.tg svg.i{width:14px;height:14px}
-.tg .nm{overflow:hidden;text-overflow:ellipsis;min-width:0}
-.tg-fam{background:var(--fc);color:#fff;border-radius:5px;padding:0 9px 0 0;overflow:hidden}
-.tg-fam .L{background:rgba(0,0,0,.2);align-self:stretch;width:24px;display:grid;place-items:center;font:900 13px "JetBrains Mono",monospace}
-.tg-algo{border-radius:999px;border:1.5px solid var(--fc);background:#fff;color:var(--ink);padding:0 10px 0 0;overflow:hidden}
-.tg-algo .id{background:var(--fc);color:#fff;align-self:stretch;padding:0 7px 0 9px;display:grid;place-items:center;font:700 11px "JetBrains Mono",monospace}
-.tg-var{border-radius:999px;border:1.5px dashed var(--fc);background:var(--ft);color:var(--fd);padding:0 10px 0 7px}
-.tg-var .pid{font:700 10px "JetBrains Mono",monospace;opacity:.75}
-.tg-cat{border-radius:999px;background:#E6E1D7;color:var(--ink);padding:0 10px 0 8px}
-.tg-attr{border-radius:4px;border:1.5px solid #B9B3A7;color:var(--ink-2);padding:0 8px 0 6px;background:#fff;font-weight:500}
-.tg-kw{color:var(--mute);font-weight:500}
-.tg-kw::before{content:"#";opacity:.55;margin-right:1px}
-.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;height:28px;padding:0 10px 0 8px;font-size:12px;font-weight:700}
-.badge svg.i{width:16px;height:16px}
-.badge.t-algo{background:var(--ink);color:#fff}
-.badge.t-var{background:#fff;border:1.5px dashed var(--ink)}
-.badge.t-case{background:#fff;box-shadow:inset 0 0 0 1.5px #D6D0C4}
-.dots{display:inline-flex;gap:3px}.dots i{width:8px;height:8px;border-radius:50%;background:#D8D2C6}.dots i.on{background:var(--ink)}
-
-.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.lg{background:#fff;border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;align-items:center}
-.lg p{margin:0;font-size:14px;color:var(--ink-2)}
-.lg p b{display:block;color:var(--ink)}
-.lg-h{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--mute);letter-spacing:.12em;margin:10px 0 0}
-
-table.t{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:18px;overflow:hidden;font-size:15px}
-table.t th,table.t td{padding:13px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-table.t tr:last-child td{border-bottom:0}
-table.t th{font-size:12px;color:var(--mute);font-weight:700;letter-spacing:.06em;background:#FBFAF7}
-table.t td:first-child{white-space:nowrap;font-weight:700}
-
-.course{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;align-items:start}
-.course .logo-card{background:#fff;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px}
-.course .logo-card img{width:100%;max-width:300px;height:auto}
-.kv{display:grid;grid-template-columns:88px minmax(0,1fr);gap:8px 14px;font-size:15px;margin:0}
+/* ---------- 首頁補充 ---------- */
+.brand .gia{width:38px;height:38px;display:block}
+.brand .bt{display:flex;flex-direction:column;line-height:1.15}
+.brand .bt small{font-size:11px;font-weight:500;color:var(--mute);letter-spacing:.04em}
+.iconbtn{display:inline-grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 1px var(--line);flex:none;transition:transform var(--t-fast) var(--ease-spring)}
+.iconbtn:hover{transform:scale(1.06)}
+.feedbar{display:flex;align-items:center;gap:10px;padding:2px 24px 0;font-size:13px;color:var(--mute)}
+#empty{padding:60px 24px;text-align:center;color:var(--mute)}
+#sentinel{height:1px}
+.cc-tag{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px 0 7px;border-radius:999px;background:#17171C;color:#fff;font:700 11px "JetBrains Mono",monospace;letter-spacing:.02em}
+.cc-tag svg.i{width:14px;height:14px}
+.kicker .cc-tag,.lg .cc-tag{position:static}
+.media .cc-tag + img + .demo-tag,.media .cc-tag ~ .demo-tag{top:40px}
+.ctrl-note{font-size:12px;color:rgba(255,255,255,.7)}
+.flow.gen .pict svg.big{width:40px;height:40px;stroke:var(--fam-deep,var(--ink));stroke-width:1.7}
+.flow.gen .step b{font-size:13px;line-height:1.35;min-height:2.7em}
+.steps-full{margin-top:10px;font-size:14px;color:var(--ink-2)}
+.steps-full summary{cursor:pointer;font-weight:700;color:var(--mute);font-size:13px;padding:6px 0;min-height:32px}
+.steps-full ol{margin:6px 0 0;padding-left:22px}
+.steps-full li{margin:4px 0}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.pcard{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border-radius:14px;padding:12px 14px}
+.pcard .pi{width:36px;height:36px;border-radius:10px;background:#fff;display:grid;place-items:center;color:var(--fam-deep,var(--ink));flex:none}
+.pcard code{font:700 13px "JetBrains Mono","Noto Sans TC","Microsoft JhengHei",monospace}
+.pcard p{margin:2px 0 0;font-size:14px;color:var(--ink-2)}
+.tipbox{display:flex;gap:12px;align-items:flex-start;margin-top:16px;background:#FFF8E6;border-radius:14px;padding:14px 16px}
+.tipbox svg.i{color:#A86A00;margin-top:2px}
+.tipbox p{margin:2px 0 0;font-size:14px;color:var(--ink-2)}
+.refs{margin:0;padding-left:20px;font-size:14px}
+.refs li{margin:6px 0}
+.refs span{color:var(--mute);margin-left:8px;font-size:13px}
+.subh{font-size:16px;margin:22px 0 10px;display:flex;gap:8px;align-items:center}
+.subh small{color:var(--mute);font-weight:400;font-size:12px}
+/* 關於（資訊按鈕） */
+.info-hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;padding:34px 34px 26px;background:var(--paper)}
+.info-hero img{width:96px;height:96px}
+.info-hero h2{font-size:30px;margin:0 0 6px;font-weight:900;line-height:1.2}
+.info-hero p{margin:0;color:var(--ink-2)}
+.istats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.istats .stat{background:var(--paper);border-radius:14px;padding:12px 14px}
+.istats .stat b{display:block;font:900 24px "JetBrains Mono",monospace}
+.istats .stat small{color:var(--mute);font-size:12px}
+.isteps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.isteps > div{background:var(--paper);border-radius:16px;padding:16px 18px}
+.isteps b{display:flex;align-items:center;gap:8px;font-size:16px;margin-bottom:4px}
+.isteps p{margin:0;font-size:14px;color:var(--ink-2)}
+.ifams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ifam{background:var(--paper);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.ifam .list{display:flex;flex-wrap:wrap;gap:4px}
+.linkchip{border:0;background:none;padding:4px 2px;min-height:34px;display:inline-flex;align-items:center;max-width:100%}
+.linkchip:hover .tg{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink)}
+.itable{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--paper);border-radius:14px;overflow:hidden}
+.itable th,.itable td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.itable tr:last-child td{border-bottom:0}
+.itable th{font-size:12px;color:var(--mute)}
+.itable td:first-child{font-weight:700;white-space:nowrap}
+.course{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px}
+.course .card{background:var(--paper);border-radius:16px;padding:18px 20px}
+.kv{display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px 12px;margin:0;font-size:14px}
 .kv dt{color:var(--mute)}
-.kv dd{margin:0;font-weight:500}
-.flowline{display:flex;flex-direction:column;gap:0}
-.fl{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;padding:0 0 18px;position:relative}
-.fl::before{content:"";position:absolute;left:21px;top:44px;bottom:0;width:2px;background:var(--line)}
-.fl:last-child::before{display:none}
-.fl .dot{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 1px var(--line)}
-.fl h4{margin:8px 0 2px;font-size:16px}
-.fl p{margin:0;color:var(--ink-2);font-size:14px}
-
-.note{background:#fff;border-radius:18px;padding:20px 22px;font-size:14px;color:var(--ink-2)}
-.note ul{margin:6px 0 0;padding-left:20px}
-footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
-footer .wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-footer img{height:20px;width:auto}
-
-/* 進場 */
-.rv{opacity:0;transform:translateY(16px)}
-.rv.in{opacity:1;transform:none;transition:opacity var(--t-slow) var(--ease-out),transform var(--t-slow) var(--ease-out);transition-delay:calc(var(--d,0) * 70ms)}
-
-@media (max-width:900px){
-  .hero,.course{grid-template-columns:minmax(0,1fr)}
-  .grid3,.fams{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .legend{grid-template-columns:minmax(0,1fr)}
+.kv dd{margin:0}
+.goals{display:flex;flex-direction:column;gap:12px}
+.goals div{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;align-items:start}
+.goals .gi{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.goals b{font-size:15px}
+.goals p{margin:0;font-size:14px;color:var(--ink-2)}
+.notes{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2)}
+.notes li{margin:6px 0}
+.btn-reset{margin-top:12px;border:1.5px solid #D6D0C4;background:#fff;border-radius:999px;height:40px;padding:0 16px;font-weight:700;font-size:13px}
+.btn-reset:hover{border-color:var(--ink)}
+@media (max-width:860px){
+  .istats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .isteps,.ifams,.course{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:600px){
-  .wrap{padding:0 16px}
-  .brand img,.brand .sepbar,.sitenav a.opt{display:none}
-  .grid3,.fams{grid-template-columns:minmax(0,1fr)}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .lg{grid-template-columns:minmax(0,1fr)}
-  table.t td:first-child{white-space:normal}
-  table.t th,table.t td{padding:10px 12px}
+  .info-hero{grid-template-columns:minmax(0,1fr);padding:24px 20px}
+  .info-hero img{width:64px;height:64px}
+  .istats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .itable td:first-child{white-space:normal}
+  .brand .bt small{display:none}
+  .feedbar{padding:2px 12px 0}
 }
-@media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none} .rv.in{transition:none} .btn{transition:none} }
+
+/* ---------- chips row ---------- */
+.chiprow{display:flex;flex-direction:column;gap:2px;padding:8px 24px 4px}
+.chipline{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 2px}
+.chipline::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;gap:6px;border:0;background:#ECE8E0;border-radius:999px;padding:0 14px;height:40px;white-space:nowrap;font-weight:500;font-size:14px;
+  transition:background var(--t-fast),color var(--t-fast),transform var(--t-fast) var(--ease-spring)}
+.chip:hover{background:#E2DDD3}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff}
+.chip .dot{width:10px;height:10px;border-radius:50%}
+.chiprow .sep{width:1px;background:var(--line);margin:6px 4px;flex:none}
+
+/* ---------- masonry ---------- */
+.feed{padding:12px 20px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));grid-auto-rows:4px;column-gap:16px}
+.pin{grid-row-end:span 60;align-self:start;margin-bottom:16px;cursor:pointer;border:0;background:none;padding:0;text-align:left;
+  opacity:0;transform:translateY(18px) scale(.97)}
+.pin.in{animation:pinIn var(--t-slow) var(--ease-out) forwards;animation-delay:calc(var(--i,0) * 45ms)}
+@keyframes pinIn{to{opacity:1;transform:none}}
+.pin .media{position:relative;border-radius:var(--r);overflow:hidden;background:var(--tile);isolation:isolate;
+  transition:transform var(--t-med) var(--ease-out),box-shadow var(--t-med)}
+.pin:hover .media,.pin:focus-visible .media{transform:translateY(-4px);box-shadow:0 14px 30px -12px rgba(0,0,0,.35)}
+.pin .media img,.pin .media canvas{display:block;width:100%;height:auto;transition:transform var(--t-slow) var(--ease-out)}
+.pin:hover .media img{transform:scale(1.04)}
+.pin .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.0) 45%,rgba(0,0,0,.55));opacity:0;transition:opacity var(--t-med)}
+.pin:hover .scrim{opacity:1}
+.pin .open{position:absolute;right:10px;bottom:10px;background:#fff;color:var(--ink);border-radius:999px;height:36px;padding:0 14px;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+  opacity:0;transform:translateY(6px);transition:opacity var(--t-med),transform var(--t-med) var(--ease-out)}
+.pin:hover .open{opacity:1;transform:none}
+.badge{position:absolute;left:10px;top:10px;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.94);color:var(--ink);border-radius:999px;height:28px;padding:0 10px 0 8px;font-size:12px;font-weight:700}
+.badge svg.i{width:16px;height:16px}
+.badge.dark{background:rgba(21,21,27,.8);color:#fff}
+.demo-tag{position:absolute;right:10px;top:10px;font-size:11px;color:#fff;background:rgba(0,0,0,.45);border-radius:6px;padding:2px 7px}
+.pin .cap{padding:8px 4px 0}
+.pin .cap b{display:block;font-size:14px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pin .cap .sub{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);margin-top:3px}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:7px;height:7px;border-radius:50%;background:#D8D2C6}
+.dots i.on{background:var(--fam)}
+.seed .media{background:var(--fam-tint);padding:22px 18px 18px;color:var(--fam-deep)}
+.seed .media h4{margin:26px 0 10px;font-size:21px;line-height:1.3;font-weight:900}
+.seed .combo{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.seed .combo{color:var(--fam-deep);max-width:100%}
+.seed .combo .tg-algo{white-space:normal;height:auto;min-height:26px;line-height:1.25}
+.seed .combo .tg-algo .nm{padding:4px 0}
+
+/* ============================================================
+   標籤系統：形狀決定「是哪一類」，顏色只用在身分鏈（家族→演算法→變形）
+   身分鏈 ① 家族   方塊　　　實心家族色，方角
+          ② 演算法 分段膠囊 實心 ID 塊＋白底名稱
+          ③ 變形   虛線膠囊 淡底＋分岔圖示＋母演算法 ID
+   描述　 ④ 卡片類型 只出現在圖片左上，黑／白圓章
+          ⑤ 應用類型 灰底圓膠囊＋線性圖示
+          ⑥ 屬性（邏輯、資料結構、尺度、工具）方角細框
+          ⑦ 關鍵字 無框，# 前綴
+   ============================================================ */
+.tg{display:inline-flex;align-items:center;gap:5px;height:26px;font-size:12px;font-weight:700;white-space:nowrap;line-height:1;vertical-align:middle;flex:0 1 auto;min-width:0;max-width:100%}
+.tg .nm{overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1.5}
+.tg svg.i{width:14px;height:14px}
+.tg-fam{background:var(--fc);color:#fff;border-radius:5px;padding:0 9px 0 0;overflow:hidden}
+.tg-fam .L{background:rgba(0,0,0,.2);align-self:stretch;width:24px;display:grid;place-items:center;font:900 13px "JetBrains Mono",monospace}
+.tg-fam.short{padding:0}
+.tg-algo{border-radius:999px;border:1.5px solid var(--fc);background:#fff;color:var(--ink);padding:0 10px 0 0;overflow:hidden}
+.tg-algo .id{background:var(--fc);color:#fff;align-self:stretch;padding:0 7px 0 9px;display:grid;place-items:center;font:700 11px "JetBrains Mono",monospace}
+.tg-algo.short{padding:0}
+.tg-algo.short .id{padding:0 9px}
+.tg-var{border-radius:999px;border:1.5px dashed var(--fc);background:var(--ft);color:var(--fd);padding:0 10px 0 7px}
+.tg-var .pid{font:700 10px "JetBrains Mono",monospace;opacity:.75}
+.tg-var .nm{max-width:9em}
+.cap .tg-var .nm{max-width:6em}
+.tg-cat{border-radius:999px;background:#E6E1D7;color:var(--ink);padding:0 10px 0 8px}
+.tg-attr{border-radius:4px;border:1.5px solid #B9B3A7;color:var(--ink-2);padding:0 8px 0 6px;background:#fff;font-weight:500}
+.tg-kw{color:var(--mute);font-weight:500;padding:0 1px;height:22px}
+.tg-kw::before{content:"#";opacity:.55;margin-right:1px}
+.chain{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;min-width:0;max-width:100%}
+.chain .chev{color:#B9B3A7;font-size:14px;font-weight:700}
+.taglines{display:flex;flex-direction:column;gap:8px}
+.tagline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tagline > .lbl{font-size:11px;color:var(--mute);width:48px;flex:none}
+/* ④ 卡片類型章 */
+.badge.t-algo{background:var(--ink);color:#fff}
+.badge.t-var{background:#fff;color:var(--ink);border:1.5px dashed var(--ink)}
+.badge.t-case{background:#fff;color:var(--ink)}
+.badge.inline.t-case{box-shadow:inset 0 0 0 1.5px #D6D0C4}
+.badge.t-seed{background:var(--ink);color:#fff}
+.badge.inline{position:static;display:inline-flex}
+/* 篩選列群組 */
+.fgroup{display:flex;align-items:center;gap:4px;flex:none}
+.fgroup > .glabel{font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.08em;margin:0 4px 0 2px}
+.fchip{border:0;background:none;padding:0 2px;height:44px;display:inline-flex;align-items:center;border-radius:10px;transition:transform var(--t-fast) var(--ease-spring)}
+.fchip:active{transform:scale(.94)}
+/* 篩選鈕：未選＝白底；選取＝整顆黑底白字（家族字母、演算法編號保留家族色） */
+.fchip .tg,.fchip .badge{height:32px;font-size:13px;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast)}
+.fchip .badge{position:static;background:#fff;color:var(--ink);border:1.5px solid #D6D0C4;box-shadow:none}
+.fchip .badge.t-var{border-style:dashed}
+.fchip .tg-attr{border-radius:999px;border-color:#D6D0C4;padding:0 12px 0 10px}
+.fchip .tg-cat{background:#fff;border:1.5px solid #D6D0C4}
+.fchip .tg-fam{background:#fff;color:var(--fd);border:1.5px solid var(--fc)}
+.fchip .tg-fam .L{background:var(--fc);color:#fff}
+.fchip:hover .tg,.fchip:hover .badge{border-color:var(--ink)}
+.tg-diff{gap:6px}
+.tg-diff .dots i.on{background:currentColor}
+.fchip[aria-pressed=true] .tg-diff .dots i{background:rgba(255,255,255,.3)}
+.fchip[aria-pressed=true] .tg-diff .dots i.on{background:#fff}
+.fchip[aria-pressed=true] .tg,.fchip[aria-pressed=true] .badge{background:var(--ink);color:#fff;border-color:var(--ink)}
+.fchip[aria-pressed=true] .tg-algo .id,.fchip[aria-pressed=true] .tg-fam .L{background:var(--fc);color:#fff}
+.fchip[disabled]{opacity:.35;cursor:not-allowed}
+/* 圖例 */
+.legend-btn{display:inline-flex;align-items:center;gap:6px;border:0;background:#fff;border-radius:999px;height:40px;padding:0 14px;font-weight:700;font-size:13px;box-shadow:0 0 0 1px var(--line);white-space:nowrap}
+.legend{position:fixed;top:70px;right:20px;z-index:30;width:440px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow:auto;background:#fff;border-radius:20px;box-shadow:0 18px 50px -12px rgba(0,0,0,.35);padding:20px;
+  opacity:0;transform:translateY(-8px) scale(.98);pointer-events:none;transition:opacity var(--t-med),transform var(--t-med) var(--ease-out)}
+.legend.on{opacity:1;transform:none;pointer-events:auto}
+.legend h4{margin:0 0 4px;font-size:16px}
+.legend .lg-sec{font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.1em;margin:14px 0 4px}
+.legend .lg{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.legend .lg p{margin:0;color:var(--ink-2)}
+.legend .lg p b{display:block;color:var(--ink)}
+.cap .chain{margin-top:6px}
+.cap .row2{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px}
+
+/* ---------- modal / closeup ---------- */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(18,18,22,.62);overflow:auto;padding:28px 88px 60px;
+  opacity:0;pointer-events:none;transition:opacity var(--t-med)}
+.modal.on{opacity:1;pointer-events:auto}
+.sheet{max-width:1180px;margin:0 auto;background:var(--surface);border-radius:28px;overflow:hidden;
+  transform:translateY(24px) scale(.98);transition:transform var(--t-slow) var(--ease-out)}
+.modal.on .sheet{transform:none}
+.close{position:fixed;top:28px;right:20px;width:48px;height:48px;border-radius:50%;border:0;background:#fff;display:grid;place-items:center;z-index:41;
+  box-shadow:0 4px 14px rgba(0,0,0,.2);transition:transform var(--t-fast) var(--ease-spring)}
+.close:hover{transform:rotate(90deg)}
+.closeup{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+.closeup .right,.sec{min-width:0}
+.closeup h2{overflow-wrap:anywhere}
+.vchip > div{min-width:0;flex:1}
+.fact{min-width:0}
+.fact .tg{white-space:normal;height:auto;min-height:26px;padding-top:4px;padding-bottom:4px;line-height:1.3}
+.sheet{overflow:hidden}
+.closeup .left{background:var(--tile);position:relative;min-height:520px;display:flex;flex-direction:column;justify-content:center}
+.closeup .left canvas,.closeup .left img{width:100%;height:auto;display:block}
+.closeup .left .credit{padding:12px 16px 14px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.72);background:var(--tile-2)}
+.closeup .left .credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.ctrl{display:flex;flex-direction:column;gap:12px;padding:16px 20px 22px;background:var(--tile-2);color:#fff}
+.ctrl .row{display:flex;align-items:center;gap:12px}
+.ctrl label{display:flex;align-items:center;gap:8px;font-size:13px;width:118px;color:rgba(255,255,255,.8)}
+.ctrl input[type=range]{flex:1;accent-color:var(--fam)}
+.ctrl output{width:44px;text-align:right;font-size:13px}
+.ctrl .btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:var(--fam);color:#fff;height:40px;padding:0 16px;font-weight:700;font-size:14px}
+.closeup .right{padding:34px 34px 30px}
+.kicker{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;font-weight:700;color:var(--fam-deep)}
+.closeup h2{font-size:36px;line-height:1.15;margin:8px 0 6px;font-weight:900}
+.closeup .en{color:var(--mute);font-size:15px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0}
+.fact{background:var(--paper);border-radius:var(--r-sm);padding:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.fact .ico{width:38px;height:38px;border-radius:10px;background:var(--fam-tint);color:var(--fam-deep);display:grid;place-items:center}
+.fact small{color:var(--mute);font-size:12px}
+.fact b{font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{background:var(--paper);border-radius:999px;padding:4px 12px;font-size:13px}
+.oneliner{font-size:17px;margin:16px 0 0;color:var(--ink-2)}
+
+.sec{padding:30px 34px;border-top:1px solid var(--line)}
+.sec h3{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:20px;font-weight:900}
+.sec h3 small{font-weight:400;color:var(--mute);font-size:13px}
+
+/* 怎麼運作：圖示流程 */
+.flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:14px 14px 10px;margin:0 -14px}
+.step{flex:1 0 128px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;opacity:0;transform:translateY(10px)}
+.in .step{animation:pinIn var(--t-slow) var(--ease-out) forwards;animation-delay:calc(var(--i) * 140ms)}
+.step .pict{width:112px;height:112px;border-radius:24px;background:var(--paper);display:grid;place-items:center;position:relative;transition:background var(--t-med),transform var(--t-med) var(--ease-spring)}
+.step:hover .pict{background:var(--fam-tint);transform:translateY(-3px)}
+.step .pict svg{width:84px;height:84px}
+.step .n{position:absolute;left:-6px;top:-6px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+.step b{font-size:15px}
+.arrow{flex:0 0 34px;display:grid;place-items:center;color:#C9C2B4;opacity:0}
+.in .arrow{animation:pinIn var(--t-med) var(--ease-out) forwards;animation-delay:calc(var(--i) * 140ms + 70ms)}
+.p-ink{stroke:var(--ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.p-fam{stroke:var(--fam);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.p-fill{fill:var(--fam)}
+.p-tile{fill:#fff;stroke:var(--ink);stroke-width:2.5}
+.p-txt{font:700 18px "JetBrains Mono",monospace;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes walk{0%{transform:translate(0,0) rotate(0)}40%{transform:translate(14px,-14px) rotate(0)}60%{transform:translate(14px,-14px) rotate(-35deg)}100%{transform:translate(0,0) rotate(0)}}
+@keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+.step:hover .spin{animation:spin 1.6s linear infinite;transform-origin:42px 42px}
+.step:hover .bob{animation:bob .9s ease-in-out infinite}
+.step:hover .walk{animation:walk 1.6s var(--ease-out) infinite;transform-origin:30px 58px}
+.step:hover .drawme{stroke-dasharray:var(--len);animation:draw 1.2s var(--ease-out) infinite}
+
+/* 符號表 */
+.glyphs{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.glyph .sr{white-space:nowrap}
+.flow.compact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:22px;overflow:visible;padding:12px 0 4px;margin:0}
+.flow.compact .arrow{display:none}
+.flow.compact .step .pict{width:96px;height:96px;border-radius:20px}
+.flow.compact .step .pict svg{width:72px;height:72px}
+.mini-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900;margin:26px 0 12px}
+.mini-h small{font-weight:400;color:var(--mute);font-size:12px}
+.glyph{background:var(--paper);border-radius:var(--r-sm);padding:10px;display:flex;align-items:center;gap:10px}
+.glyph .k{width:38px;height:38px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 18px "JetBrains Mono",monospace}
+.glyph svg{width:40px;height:40px}
+
+/* 參數小圖列 */
+.params{display:flex;flex-direction:column;gap:18px}
+.prow{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}
+.prow .pl{display:flex;align-items:center;gap:8px;font-weight:700}
+.prow .pl code{font:500 12px "JetBrains Mono",monospace;color:var(--mute);display:block}
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.strip figure{margin:0;background:var(--tile);border-radius:12px;overflow:hidden;position:relative}
+.strip canvas{width:100%;display:block}
+.strip figcaption{position:absolute;left:6px;bottom:5px;font:700 11px "JetBrains Mono",monospace;color:#fff;background:rgba(0,0,0,.45);padding:1px 6px;border-radius:5px}
+.strip .scale-arrow{grid-column:1/-1;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--fam-tint),var(--fam))}
+
+/* C# 積木 */
+.blocks{display:flex;gap:10px;flex-wrap:wrap}
+.block{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:14px;padding:8px 14px 8px 8px;background:#fff}
+.block .bi{width:40px;height:40px;border-radius:10px;background:var(--paper);display:grid;place-items:center}
+.block .bi svg{width:30px;height:30px}
+.block code{font:700 13px "JetBrains Mono","Noto Sans TC","Microsoft JhengHei",monospace}
+.block small{display:block;color:var(--mute);font-size:12px}
+
+.subfeed{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));grid-auto-rows:4px;column-gap:14px}
+
+/* case closeup */
+.vchips{display:flex;flex-direction:column;gap:8px}
+.vchip{border:0;background:var(--paper);border-radius:14px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;transition:background var(--t-fast)}
+.vchip:hover{background:var(--fam-tint)}
+.vchip .vi{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;color:var(--fam-deep);flex:none}
+.vchip .more{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t-med) var(--ease-out)}
+.vchip[aria-expanded=true] .more{grid-template-rows:1fr}
+.vchip .more > div{overflow:hidden;font-size:14px;color:var(--ink-2)}
+.vchip .more p{margin:6px 0 0}
+.srcbtn{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 18px;border-radius:999px;background:var(--ink);color:#fff;text-decoration:none;font-weight:700;margin-top:18px}
+.legend-note{font-size:12px;color:var(--mute);margin-top:6px}
+
+@media (max-width:860px){
+  .closeup{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .closeup .left{min-height:0}
+  .prow{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(3,1fr)}
+  .closeup .right,.sec{padding:24px 20px}
+  .top{padding:10px 14px}.brand span{display:none}
+}
+@media (max-width:600px){
+  .modal{padding:72px 10px 40px}
+  .legend-btn{width:44px;height:44px;padding:0;justify-content:center;flex:none}.legend-btn .lbtxt{display:none}
+  .search{min-width:0}
+  .legend{top:64px;right:12px}
+  .modal.on::before{content:"";position:fixed;left:0;right:0;top:0;height:64px;background:rgba(18,18,22,.94);z-index:1}
+  .close{top:8px;right:10px;z-index:2}
+  .flow.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .feed,.subfeed{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;padding-left:10px;padding-right:10px}
+  .pin .cap b{font-size:13px}.sample-flag{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
+  .pin,.step,.arrow{opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <!-- 通用圖示（Lucide 風格，24 格線） -->
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-algo" viewBox="0 0 24 24"><path d="M12 21V11M12 11 7 6M12 11l5-5M7 6V3M17 6V3M12 16l-4-3M12 16l4-3"/></symbol>
   <symbol id="i-var" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6M18 15V9"/><path d="m15 6 3-3 3 3"/></symbol>
   <symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
   <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 22V12"/><path d="M12 12C12 7 8 4 3 4c0 5 4 8 9 8z"/><path d="M12 14c0-4 3-7 9-7 0 4-3 7-9 7z"/></symbol>
-  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
-  <symbol id="i-open" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
-  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
-  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
-  <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol>
-  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
-  <symbol id="c-3d-architecture" viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></symbol>
+  <!-- 邏輯 -->
   <symbol id="i-logic-rewrite" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1.5"/><rect x="10.5" y="10.5" width="3" height="3"/></symbol>
-</defs></svg>
+  <symbol id="i-logic-formula" viewBox="0 0 24 24"><path d="M9 4c-2 0-3 1-3 3v10c0 2-1 3-3 3M3 11h7M14 9l6 8M20 9l-6 8"/></symbol>
+  <symbol id="i-logic-iterate" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-logic-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m20 20-5.5-5.5M10 7v6M7 10h6"/></symbol>
+  <symbol id="i-logic-transform" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 14h7v7h-7z"/><path d="M14 6h4a2 2 0 0 1 2 2v3M10 18H6a2 2 0 0 1-2-2v-3"/></symbol>
+  <!-- 資料結構 -->
+  <symbol id="i-ds-symbol" viewBox="0 0 24 24"><rect x="2" y="7" width="6" height="10" rx="1.5"/><rect x="9" y="7" width="6" height="10" rx="1.5"/><rect x="16" y="7" width="6" height="10" rx="1.5"/></symbol>
+  <!-- 應用類型 -->
+  <symbol id="c-2d-pattern" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/><path d="M3 7.5a4.5 4.5 0 0 0 4.5-4.5M16.5 21a4.5 4.5 0 0 1 4.5-4.5"/></symbol>
+  <symbol id="c-3d-architecture" viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></symbol>
+  <symbol id="c-modeling" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></symbol>
+  <symbol id="c-drawing" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/><circle cx="11" cy="11" r="2"/></symbol>
+  <symbol id="c-urban-landscape" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V11h4v10M11 21V5h5v16"/><circle cx="19" cy="15" r="2.5"/><path d="M19 17.5V21"/></symbol>
+  <symbol id="c-fabrication" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="6" rx="1"/><path d="M12 9v4M10 13h4l-2 3z"/><path d="M5 21h14M7 21v-3h10v3"/></symbol>
+  <symbol id="c-performance" viewBox="0 0 24 24"><path d="M3 19h18"/><path d="M5 19c0-6 3-11 7-11s7 5 7 11"/><path d="M12 8V4M8 12l-2-2M16 12l2-2"/></symbol>
+  <symbol id="c-art-installation" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="m6 6 2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/></symbol>
+  <!-- 改哪裡 -->
+  <symbol id="w-rule" viewBox="0 0 24 24"><rect x="2" y="8" width="7" height="8" rx="1.5"/><path d="M11 12h4M13 10l2 2-2 2"/><rect x="17" y="5" width="5" height="5" rx="1"/><rect x="17" y="14" width="5" height="5" rx="1"/></symbol>
+  <symbol id="w-state" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></symbol>
+  <symbol id="w-input" viewBox="0 0 24 24"><path d="M3 12h11M10 8l4 4-4 4"/><rect x="15" y="4" width="6" height="16" rx="2"/></symbol>
+  <symbol id="w-output" viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="16" rx="2"/><path d="M10 12h11M17 8l4 4-4 4"/></symbol>
+  <symbol id="w-geom" viewBox="0 0 24 24"><path d="M3 17c4-8 14-8 18 0"/><path d="M3 17h18"/><path d="M8 13v4M12 11v6M16 13v4"/></symbol>
+  <symbol id="w-hybrid" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></symbol>
+  <symbol id="w-anim" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></symbol>
+  <symbol id="w-constraint" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 2.5"/><path d="M12 20V11M12 14l-3-3M12 12l3-3"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><rect x="9" y="9" width="6" height="6" rx="1"/></symbol>
+  <symbol id="i-force" viewBox="0 0 24 24"><circle cx="6" cy="12" r="3"/><path d="M9 12h11M16 8l4 4-4 4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+  <symbol id="i-ds-particle" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2"/><circle cx="17" cy="6" r="2"/><circle cx="12" cy="13" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="17" r="2"/></symbol>
+  <symbol id="i-ds-graph" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7 6h10M6 8l5 8.5M18 8l-5 8.5"/></symbol>
+  <symbol id="i-slider" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+ </defs>
+</svg>
+<header class="top" id="top">
+  <a class="brand" href="./" style="text-decoration:none;color:inherit" aria-label="GH 演算法設計圖鑑 首頁">
+    <img class="gia" src="assets/gia-logo.svg" alt="陽明交通大學建築研究所 GIA" width="38" height="38">
+    <span class="bt"><span>GH 演算法設計圖鑑</span><small>NYCU GIA・Grasshopper 生成式演算法</small></span></a>
+  <label class="search"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+    <input id="q" type="search" placeholder="搜尋演算法、案例、p5.js、Voronoi、樹狀柱…" aria-label="搜尋"></label>
+  <button class="legend-btn" id="legendBtn" aria-expanded="false" aria-controls="legend" aria-label="標籤說明"><svg class="i" aria-hidden="true"><use href="#i-tag"/></svg><span class="lbtxt">標籤說明</span></button>
+  <button class="iconbtn" id="infoBtn" aria-label="關於這個圖鑑與課程背景" title="關於"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg></button>
+</header>
+<aside class="legend" id="legend" aria-label="標籤說明"></aside>
+<nav class="chiprow" id="chips" aria-label="篩選"></nav>
+<div class="feedbar"><span id="count"></span></div>
+<main class="feed" id="feed" aria-live="polite"></main>
+<div id="empty" hidden>沒有符合條件的卡片，試著減少篩選條件。</div>
+<div id="sentinel"></div>
 
-<header class="top" id="top"><div class="wrap">
-  <a class="brand" href="index.html"><img src="assets/nycu-logo.png" alt="國立陽明交通大學" width="640" height="143"><span class="sepbar"></span><span>GH 演算法設計圖鑑</span></a>
-  <nav class="sitenav" aria-label="站內導覽"><a href="index.html" aria-current="page">關於</a><a href="atlas.html">圖鑑</a><a class="opt" href="catalog.html">文字索引</a></nav>
-</div></header>
-
-<main>
-<div class="wrap">
-  <div class="hero">
-    <div>
-      <span class="eyebrow rv"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg>為教學用途建立的演算法收集網頁</span>
-      <h1 class="rv" style="--d:1">用 Grasshopper 學<br><em>生成式演算法</em>的建築圖鑑</h1>
-      <p class="lead rv" style="--d:2">這裡把建築參數化設計常用的生成式演算法分成六大家族，每個演算法都附一支 Grasshopper C# 基礎範例，外加改法（變形）、真實應用案例與延伸專案題目，讓學習者從「看懂」一路走到「改成自己的東西」。</p>
-      <div class="cta rv" style="--d:3">
-        <a class="btn primary" href="atlas.html"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg>進入圖鑑</a>
-        <a class="btn ghost" href="catalog.html"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>文字索引</a>
-      </div>
-      <div class="stats" id="stats"></div>
-    </div>
-    <div class="mosaic rv" style="--d:2" id="mosaic" aria-hidden="true"></div>
-  </div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="詳細資訊">
+  <button class="close" id="close" aria-label="關閉"><svg class="i"><use href="#i-x"/></svg></button>
+  <div class="sheet" id="sheet"></div>
 </div>
 
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">01</span>怎麼使用</h2>
-  <p class="intro rv">先用眼睛逛，再點進去看細節。圖鑑頁以圖片為主，文字都收在點開之後。</p>
-  <div class="grid3 steps">
-    <div class="card rv" style="--d:0"><span class="n">1</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></div><h3>逛圖</h3><p>瀑布流裡混著演算法、變形、案例與專案。看到喜歡的形，就是起點。</p></div>
-    <div class="card rv" style="--d:1"><span class="n">2</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-code"/></svg></div><h3>看懂怎麼運作</h3><p>每個演算法用圖示拆解步驟，並可拉滑桿即時看參數怎麼改變形。</p></div>
-    <div class="card rv" style="--d:2"><span class="n">3</span><div class="ico"><svg class="i" aria-hidden="true"><use href="#i-var"/></svg></div><h3>改成自己的</h3><p>從變形食譜挑一個改法，或參考案例與專案種子，組合出自己的演算法應用。</p></div>
+<template id="infoTpl">
+  <div class="info-hero">
+    <img src="assets/gia-logo.svg" alt="陽明交通大學建築研究所 GIA" width="96" height="96">
+    <div><h2>GH 演算法設計圖鑑</h2>
+      <p>為教學用途建立的演算法收集網頁，用來學習建築參數化建模與 Grasshopper 生成式演算法。每個演算法都有一支 Grasshopper C# 基礎範例，外加變形、建築與 creative coding 應用案例、延伸專案題目。</p></div>
   </div>
-</div></section>
-
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">02</span>六大家族</h2>
-  <p class="intro rv">家族看的是「長出來像什麼」；同一個家族裡會混用不同的演算法邏輯。演算法編號＝家族字母＋兩位數（例：A01）。</p>
-  <div class="fams" id="fams"></div>
-</div></section>
-
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">03</span>五種演算法邏輯</h2>
-  <p class="intro rv">看到一個演算法，先問兩件事：在變的東西是什麼（決定資料結構）、它靠哪種邏輯算出來（決定程式骨架）。</p>
-  <table class="t rv">
-    <thead><tr><th>邏輯</th><th>怎麼算</th><th>什麼時候停</th><th>例子</th></tr></thead>
-    <tbody>
-      <tr><td>直接公式</td><td>給座標或編號，直接算出結果，不需要上一步</td><td>沒有迭代</td><td>Phyllotaxis、Noise、TPMS、Truchet</td></tr>
-      <tr><td>改寫／遞迴</td><td>規則把東西展開成更細的東西</td><td>展開到第幾代，或太小就停</td><td>L-System、Koch、Hilbert、Shape Grammar</td></tr>
-      <tr><td>迭代模擬</td><td>每一步依上一步的狀態更新</td><td>收斂到平衡，或開放地一直長</td><td>Circle Packing、Differential Growth、Boids</td></tr>
-      <tr><td>搜尋／求解</td><td>在很多可能的解裡，找合法或最好的那個</td><td>找到解，或達到評分門檻</td><td>WFC、基因演算法、Dijkstra、Poisson Disk</td></tr>
-      <tr><td>幾何轉換</td><td>對輸入掃一遍，轉成另一種幾何</td><td>掃完就停</td><td>Voronoi、Marching Squares</td></tr>
-    </tbody>
-  </table>
-</div></section>
-
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">04</span>標籤怎麼看</h2>
-  <p class="intro rv">形狀代表「哪一類」；只有身分鏈（家族 › 演算法 › 變形）使用家族色。</p>
-  <div class="legend rv" id="legend"></div>
-</div></section>
-
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">05</span>課程背景</h2>
-  <p class="intro rv">這個圖鑑最初為國立陽明交通大學的「演算法設計」課程整理，現在以通用形式公開，任何想用 Grasshopper 學習生成式設計的人都可以使用。</p>
-  <div class="course">
-    <div class="logo-card rv">
-      <img src="assets/nycu-logo.png" alt="國立陽明交通大學 NYCU" width="640" height="143">
-      <dl class="kv">
-        <dt>學校</dt><dd>國立陽明交通大學</dd>
+  <section class="sec"><div class="istats" id="iStats"></div></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-eye"/></svg>怎麼使用</h3>
+    <div class="isteps">
+      <div><b><svg class="i"><use href="#i-eye"/></svg>1　逛圖</b><p>瀑布流裡混著演算法、變形、案例與專案。看到喜歡的形，就是起點。</p></div>
+      <div><b><svg class="i"><use href="#i-code"/></svg>2　看懂怎麼運作</b><p>點開演算法，用圖示拆解步驟、看關鍵參數與用到的 C# 觀念。</p></div>
+      <div><b><svg class="i"><use href="#i-var"/></svg>3　改成自己的</b><p>從變形挑一個改法，或參考案例與專案種子，組合出自己的演算法應用。</p></div>
+    </div></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-grid"/></svg>六大家族 <small>家族看「長出來像什麼」；編號＝家族字母＋兩位數</small></h3><div class="ifams" id="iFams"></div></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-logic-iterate"/></svg>五種演算法邏輯 <small>看到一個演算法，先問：在變的是什麼、靠哪種邏輯算出來</small></h3>
+    <table class="itable"><thead><tr><th>邏輯</th><th>怎麼算</th><th>什麼時候停</th></tr></thead><tbody>
+      <tr><td>直接公式</td><td>給座標或編號，直接算出結果</td><td>沒有迭代</td></tr>
+      <tr><td>改寫／遞迴</td><td>規則把東西展開成更細的東西</td><td>展開到第幾代，或太小就停</td></tr>
+      <tr><td>迭代模擬</td><td>每一步依上一步的狀態更新</td><td>收斂到平衡，或開放地一直長</td></tr>
+      <tr><td>搜尋／求解</td><td>在很多可能的解裡，找合法或最好的那個</td><td>找到解，或達到評分門檻</td></tr>
+      <tr><td>幾何轉換</td><td>對輸入掃一遍，轉成另一種幾何</td><td>掃完就停</td></tr>
+    </tbody></table></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-book"/></svg>課程背景</h3>
+    <div class="course">
+      <div class="card"><dl class="kv">
+        <dt>學校</dt><dd>國立陽明交通大學 建築研究所（NYCU GIA）</dd>
         <dt>課程</dt><dd>演算法設計</dd>
         <dt>學期</dt><dd>115 學年度第 1 學期（115-1）</dd>
         <dt>對象</dt><dd>具 Python 或 JavaScript 基礎的建築、設計背景研究生</dd>
         <dt>工具</dt><dd>Rhino 8、Grasshopper、C# Script 元件、RhinoCommon</dd>
-      </dl>
-    </div>
-    <div class="flowline">
-      <div class="fl rv" style="--d:0"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-code"/></svg></span><div><h4>寫得出來</h4><p>在 Grasshopper 裡用 C# 寫元件：型別、值型別與參考型別、資料流與 DataTree。</p></div></div>
-      <div class="fl rv" style="--d:1"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg></span><div><h4>認得出來</h4><p>認識六大家族的生成式演算法，能從一張圖判斷它的家族、邏輯與資料結構。</p></div></div>
-      <div class="fl rv" style="--d:2"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-logic-rewrite"/></svg></span><div><h4>拆得開來</h4><p>先用 pseudocode 拆解狀態、規則與迴圈，再實作成 C#，理解演算法的思考方式。</p></div></div>
-      <div class="fl rv" style="--d:3"><span class="dot"><svg class="i" aria-hidden="true"><use href="#i-seed"/></svg></span><div><h4>長成自己的</h4><p>挑選一到兩個演算法深入研究、自己做變化，完成一件建築或設計的演算法應用專案。</p></div></div>
-    </div>
-  </div>
-</div></section>
-
-<section class="s"><div class="wrap">
-  <h2 class="rv"><span class="num">06</span>資料來源與使用說明</h2>
-  <div class="note rv">
-    <ul>
-      <li>案例資料由研究整理而成，每個案例盡量附上原始出處連結；少數出處尚待查證，頁面上會標示「出處待查證」。</li>
-      <li>案例圖片的著作權屬於原作者，本站僅作非商業的教學引用並標示來源；如有疑慮請來信，我們會立即移除。</li>
-      <li>標示「示意」的圖，是用本站程式依演算法概念重畫的示意圖，不是原作品。</li>
-      <li>國立陽明交通大學標誌取自 Wikimedia Commons，僅用於標示課程所屬單位。</li>
-    </ul>
-  </div>
-</div></section>
-</main>
-
-<footer><div class="wrap">
-  <img src="assets/nycu-logo.png" alt="" width="640" height="143">
-  <span>GH 演算法設計圖鑑・國立陽明交通大學「演算法設計」課程教學用途</span>
-  <span style="margin-left:auto"><a href="atlas.html">圖鑑</a>・<a href="catalog.html">文字索引</a></span>
-</div></footer>
+      </dl></div>
+      <div class="card goals">
+        <div><span class="gi"><svg class="i"><use href="#i-code"/></svg></span><span><b>寫得出來</b><p>在 Grasshopper 裡用 C# 寫元件：型別、值型別與參考型別、資料流與 DataTree。</p></span></div>
+        <div><span class="gi"><svg class="i"><use href="#i-grid"/></svg></span><span><b>認得出來</b><p>認識六大家族的生成式演算法，從一張圖判斷它的家族、邏輯與資料結構。</p></span></div>
+        <div><span class="gi"><svg class="i"><use href="#i-logic-rewrite"/></svg></span><span><b>拆得開來</b><p>先用 pseudocode 拆解狀態、規則與迴圈，再實作成 C#。</p></span></div>
+        <div><span class="gi"><svg class="i"><use href="#i-seed"/></svg></span><span><b>長成自己的</b><p>挑選一到兩個演算法深入研究、自己做變化，完成一件演算法應用專案。</p></span></div>
+      </div>
+    </div></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-eye"/></svg>你的瀏覽偏好 <small>依你點過的卡片與篩選調整排序；只存在這台瀏覽器，不會上傳</small></h3>
+    <div id="iPrefs"></div><button class="btn-reset" id="iReset">清除瀏覽偏好</button></section>
+  <section class="sec"><h3><svg class="i"><use href="#i-info"/></svg>資料來源與使用說明</h3>
+    <ul class="notes">
+      <li>案例盡量附原始出處；少數出處尚待查證，頁面會標示「出處待查證」。</li>
+      <li>案例圖片優先使用 Wikimedia Commons 自由授權照片與 CC BY 開放論文圖；其他官網、論文或作品頁圖片的著作權屬原作者，僅作非商業教學引用並標示來源，如有疑慮請聯絡我們移除。</li>
+      <li>標示「示意」的圖，是本站以網頁版程式依演算法概念重畫，不是原作品。</li>
+      <li>陽明交通大學建築研究所標誌取自研究所官方網站，僅用於標示課程所屬單位。</li>
+    </ul></section>
+</template>
 
 <script src="data.js"></script>
-<script>
-const CAT = window.CATALOG;
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const ico = id => `<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`;
-const FAMC = {A:["#E4572E","#FBE6DF","#B8391A"],B:["#3FA34D","#E2F2E4","#2A7A36"],C:["#2F6FE4","#E1EAFB","#1F50B0"],
-              D:["#9152E0","#EEE3FB","#6D35B3"],E:["#F2A007","#FDF0D5","#A86A00"],F:["#14A38F","#D9F2EE","#0B7768"]};
-const fv = f => `--fc:${FAMC[f][0]};--ft:${FAMC[f][1]};--fd:${FAMC[f][2]}`;
-const tFam = f => `<span class="tg tg-fam" style="${fv(f)}"><span class="L">${f}</span>${esc(CAT.families[f])}</span>`;
-const tAlgo = a => `<span class="tg tg-algo" style="${fv(a.family)}" title="${esc(a.name_en)}"><span class="id">${a.id}</span><span class="nm">${esc(a.name_zh)}</span></span>`;
-
-// 統計
-const nV = CAT.algorithms.reduce((s,a) => s + (a.variations||[]).length, 0), nS = CAT.algorithms.reduce((s,a) => s + (a.project_seeds||[]).length, 0);
-document.getElementById("stats").innerHTML = [[CAT.algorithms.length,"演算法"],[CAT.cases.length,"應用案例"],[nV,"變形食譜"],[nS,"專案種子"]]
-  .map(([n,t],i) => `<div class="stat rv" style="--d:${i+3}"><b>${n}</b><small>${t}</small></div>`).join("");
-
-// 家族卡
-const WHAT = {A:"字串、形狀",B:"曲線上的點、分枝",C:"網格上的數值",D:"會移動的個體",E:"互相推擠的物件",F:"拼貼、解答"};
-document.getElementById("fams").innerHTML = Object.keys(CAT.families).map((f,i) => `
-  <article class="fam rv" style="--d:${i}">
-    <div class="band"><canvas data-fam="${f}"></canvas></div>
-    <div class="body">${tFam(f)}<div class="what">在變的東西：${WHAT[f]}</div>
-      <div class="list">${CAT.algorithms.filter(a => a.family === f).map(tAlgo).join("")}</div></div>
-  </article>`).join("");
-
-// 標籤圖例
-const dots = n => `<span class="dots">${[1,2,3,4,5].map(k => `<i class="${k<=n?"on":""}"></i>`).join("")}</span>`;
-const A01 = CAT.algorithms.find(a => a.id === "A01");
-document.getElementById("legend").innerHTML = `
-  <div class="lg-h">身分鏈：屬於誰</div>
-  <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。六大家族 A–F。</p></div>
-  <div class="lg"><span>${tAlgo(A01)}</span><p><b>② 演算法</b>分段膠囊。編號對應一支基礎範例程式。</p></div>
-  <div class="lg"><span><span class="tg tg-var" style="${fv("A")}">${ico("i-var")}<span class="pid">A01·V01</span>隨機</span></span><p><b>③ 變形</b>虛線膠囊。從演算法改出來的版本。</p></div>
-  <div class="lg-h">描述：是什麼、用在哪</div>
-  <div class="lg"><span><span class="badge t-case">${ico("i-case")}案例</span></span><p><b>④ 卡片類型</b>圖片左上的圓章。</p></div>
-  <div class="lg"><span><span class="tg tg-cat">${ico("c-3d-architecture")}3D 建築／空間</span></span><p><b>⑤ 應用類型</b>案例用在哪個領域。</p></div>
-  <div class="lg"><span><span class="tg tg-attr">${ico("i-logic-rewrite")}改寫／遞迴</span></span><p><b>⑥ 屬性</b>邏輯、資料結構、尺度、工具。</p></div>
-  <div class="lg"><span><span class="tg tg-kw">遞迴</span></span><p><b>⑦ 關鍵字</b>用來搜尋。</p></div>
-  <div class="lg"><span>${dots(3)}</span><p><b>難度</b>1 入門 → 5 研究級。</p></div>`;
-
-// 家族底紋與拼貼：每個家族一種簡單生成圖
-function rng(seed){ let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
-function draw(cv, f, seed = 1){
-  const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
-  cv.width = W*dpr; cv.height = H*dpr; const g = cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0);
-  g.fillStyle = "#15151B"; g.fillRect(0,0,W,H); g.strokeStyle = FAMC[f][0]; g.fillStyle = FAMC[f][0]; g.lineWidth = 1.2; g.lineCap = "round";
-  const r = rng(seed * 97 + f.charCodeAt(0));
-  if(f === "A"){ // 分枝
-    const br = (x,y,a,l,d) => { if(d === 0) return; const x2 = x + Math.cos(a)*l, y2 = y + Math.sin(a)*l; g.globalAlpha = .5 + d*.08; g.beginPath(); g.moveTo(x,y); g.lineTo(x2,y2); g.stroke(); br(x2,y2,a-.42,l*.72,d-1); br(x2,y2,a+.42,l*.72,d-1); };
-    for(let k = 0; k < Math.ceil(W/120); k++) br(60 + k*120, H, -Math.PI/2 + (r()-.5)*.2, H*.3, 7);
-  } else if(f === "B"){ // 葉序
-    const cx = W*.5, cy = H*.5, s = Math.min(W,H)/34; for(let i = 0; i < 600; i++){ const a = i*2.39996, rr = s*Math.sqrt(i); const x = cx + rr*Math.cos(a), y = cy + rr*Math.sin(a); if(x<0||y<0||x>W||y>H) continue; g.globalAlpha = .9; g.beginPath(); g.arc(x,y,1.2 + i/600*2,0,7); g.fill(); }
-  } else if(f === "C"){ // 流線
-    for(let k = 0; k < 60; k++){ let x = r()*W, y = r()*H; g.globalAlpha = .7; g.beginPath(); g.moveTo(x,y); for(let i = 0; i < 60; i++){ const a = Math.sin(x*.012)*1.6 + Math.cos(y*.017)*1.4; x += Math.cos(a)*3; y += Math.sin(a)*3; g.lineTo(x,y); } g.stroke(); }
-  } else if(f === "D"){ // 群聚
-    for(let k = 0; k < 90; k++){ const x = r()*W, y = r()*H, a = Math.sin(x*.01 + y*.008)*1.2 - .4; g.globalAlpha = .9; g.beginPath(); g.moveTo(x,y); g.lineTo(x - Math.cos(a)*10, y - Math.sin(a)*10); g.stroke(); g.beginPath(); g.arc(x,y,1.8,0,7); g.fill(); }
-  } else if(f === "E"){ // 圓填充
-    const cs = []; for(let t = 0; t < 1500 && cs.length < 160; t++){ const x = r()*W, y = r()*H; let R = 26; for(const c of cs){ R = Math.min(R, Math.hypot(c[0]-x,c[1]-y) - c[2] - 2); } if(R > 3){ cs.push([x,y,R]); g.globalAlpha = .85; g.beginPath(); g.arc(x,y,R,0,7); g.stroke(); } }
-  } else { // Truchet
-    const s = 22; for(let i = 0; i*s < W + s; i++) for(let j = 0; j*s < H + s; j++){ const x = i*s, y = j*s; g.globalAlpha = .85; g.beginPath(); if(r() < .5){ g.arc(x,y,s/2,0,Math.PI/2); g.moveTo(x+s,y+s/2); g.arc(x+s,y+s,s/2,-Math.PI/2,-Math.PI,true); } else { g.arc(x+s,y,s/2,Math.PI/2,Math.PI); g.moveTo(x+s/2,y+s); g.arc(x,y+s,s/2,0,-Math.PI/2,true); } g.stroke(); }
-  }
-  g.globalAlpha = 1;
-}
-const mosaic = [["A","A01 L-System"],["C","C03 向量場"],["E","E01 圓填充"],["B","B04 葉序"],["F","F01 Truchet"],["D","D01 Boids"]];
-document.getElementById("mosaic").innerHTML = mosaic.map(([f,t]) => `<figure><canvas data-fam="${f}"></canvas><figcaption>${t}</figcaption></figure>`).join("");
-const paint = () => document.querySelectorAll("canvas[data-fam]").forEach((c,i) => draw(c, c.dataset.fam, i+1));
-requestAnimationFrame(paint); addEventListener("resize", () => { clearTimeout(paint.t); paint.t = setTimeout(paint, 150); });
-
-// 進場
-const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold:.12});
-document.querySelectorAll(".rv").forEach(el => io.observe(el));
-addEventListener("scroll", () => document.getElementById("top").classList.toggle("scrolled", scrollY > 4), {passive:true});
-</script>
+<script src="assets/lsystem.js"></script>
+<script src="assets/gen.js"></script>
+<script src="assets/art/A01.js"></script>
+<script src="assets/art/A02.js"></script>
+<script src="assets/art/A03.js"></script>
+<script src="assets/art/A04.js"></script>
+<script src="assets/art/A05.js"></script>
+<script src="assets/art/A06.js"></script>
+<script src="assets/art/B01.js"></script>
+<script src="assets/art/B02.js"></script>
+<script src="assets/art/B03.js"></script>
+<script src="assets/art/B04.js"></script>
+<script src="assets/art/B05.js"></script>
+<script src="assets/art/C01.js"></script>
+<script src="assets/art/C02.js"></script>
+<script src="assets/art/C03.js"></script>
+<script src="assets/art/C04.js"></script>
+<script src="assets/art/C05.js"></script>
+<script src="assets/art/D01.js"></script>
+<script src="assets/art/D02.js"></script>
+<script src="assets/art/D03.js"></script>
+<script src="assets/art/E01.js"></script>
+<script src="assets/art/E02.js"></script>
+<script src="assets/art/E03.js"></script>
+<script src="assets/art/E04.js"></script>
+<script src="assets/art/F01.js"></script>
+<script src="assets/art/F02.js"></script>
+<script src="assets/art/F03.js"></script>
+<script src="assets/art/F04.js"></script>
+<script src="assets/art/F05.js"></script>
+<script src="assets/art/F06.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>

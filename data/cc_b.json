@@ -1,0 +1,867 @@
+{
+  "agent": "b",
+  "algorithms": [],
+  "cases": [
+    {
+      "id": "B01-51",
+      "algo": "B01",
+      "title": "Differential Line（差異線）",
+      "creator": "Anders Hoff（Inconvergent）",
+      "year": "2015",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Anders Hoff 以一條由節點串成的閉合線為起點，隨機在相鄰節點之間插入新節點，讓每個節點在「靠近鄰居、遠離其他節點」之間反覆調整位置，長出類似紅高麗菜切面、腸道般的皺褶。原始碼以 Python 撰寫並公開於 GitHub（MIT 授權）。和 Grasshopper C# 基礎範例相比，它更強調大量節點下的長時間生長與黑白細線的繪圖質感。",
+      "variations": [
+        {
+          "name": "隨機插入點 vs. 均勻插入",
+          "how": "把每回合固定在最長邊插點，改成依機率隨機挑選相鄰節點對插入新節點",
+          "effect": "生長不對稱，皺褶疏密不均，更接近自然組織"
+        },
+        {
+          "name": "累積軌跡繪圖",
+          "how": "每一回合不清除畫面，而以極淡的線把當前曲線疊加繪製",
+          "effect": "得到有年輪般層次的灰階圖，記錄整個生長過程"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "生成藝術",
+        "開源"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://inconvergent.net/generative/differential-line/"
+    },
+    {
+      "id": "B01-52",
+      "algo": "B01",
+      "title": "2D Differential Growth Experiments（2D 差異生長實驗）",
+      "creator": "Jason Webb",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "Jason Webb 以 JavaScript 在瀏覽器中實作一系列差異生長實驗，節點遵守吸引、對齊、排斥與超距分裂等規則，可從圓形、SVG 圖形或文字開始長出皺褶曲線。作者明確以數位製造為目標，輸出以向量線與 SVG 匯出為主。相較於基礎範例，它多了邊界約束、SVG 輸入與互動參數面板。",
+      "variations": [
+        {
+          "name": "SVG 形狀作為邊界",
+          "how": "把外框曲線當作不可穿越的邊界，節點越界時推回內部",
+          "effect": "皺褶被限制在指定輪廓裡，適合做成填滿圖樣或雷射切割圖"
+        },
+        {
+          "name": "以文字或圖形作為起始路徑",
+          "how": "把初始的圓換成字型或 SVG 路徑的取樣點",
+          "effect": "從可辨識的形狀逐漸長成有機紋理"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "SVG",
+        "數位製造",
+        "互動"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/jasonwebb/2d-differential-growth-experiments"
+    },
+    {
+      "id": "B01-53",
+      "algo": "B01",
+      "title": "Floraform",
+      "creator": "Nervous System",
+      "year": "2015",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture",
+        "modeling"
+      ],
+      "scale": "物件",
+      "summary": "Nervous System 從雞冠花出發，建立一套「薄殼彈性曲面的差異生長」模擬：三角網格以 half-edge 結構表示，每步計算頂點受力並依生長速率擴張邊長，邊緣長得快就產生皺摺。成果以 3D 列印製成雕塑與首飾，工作室表示所用軟體皆為自行撰寫。它把基礎範例的 2D 曲線生長擴展為 3D 曲面生長。",
+      "variations": [
+        {
+          "name": "由線到面",
+          "how": "把節點串成的曲線換成三角網格，邊長超過門檻就細分三角形，並加入彎曲剛性",
+          "effect": "得到會起伏、捲曲的 3D 皺摺曲面"
+        },
+        {
+          "name": "空間分布的生長速率",
+          "how": "讓生長速率隨與邊緣距離變化，邊緣長得比中心快",
+          "effect": "形成花瓣或雞冠花般的波浪狀邊緣"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "creative coding",
+        "3D 列印",
+        "網格",
+        "模擬",
+        "自製軟體"
+      ],
+      "tools": [
+        "自製模擬軟體"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform/"
+    },
+    {
+      "id": "B01-54",
+      "algo": "B01",
+      "title": "Differential line growth with Processing（Processing 差異線生長教學）",
+      "creator": "Alberto Giachino（CodePlastic）",
+      "year": "2017",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "CodePlastic 的教學文章以 Processing 實作差異線生長，作者指出其行為與鳥群（flocking）相似，因此直接以 Daniel Shiffman 的 Flocking 範例為基礎，把分離與凝聚力改寫成節點規則。文章提供完整程式碼並示範如何改變參數與生長方式。和基礎範例相比，它用 Boids 的轉向力框架來組織程式。",
+      "variations": [
+        {
+          "name": "以雜訊調變節點參數",
+          "how": "新增節點時用 noise(i) 乘上 maxForce 等參數，讓每個節點的力不同",
+          "effect": "曲線各段的皺褶尺度不同，更有變化"
+        },
+        {
+          "name": "調整分離／凝聚比例",
+          "how": "改變 separationCohesionRation 參數",
+          "effect": "比例高時線條鬆散，比例低時皺褶緊密"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "教學",
+        "Boids"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "http://www.codeplastic.com/2017/07/22/differential-line-growth-with-processing/"
+    },
+    {
+      "id": "B01-55",
+      "algo": "B01",
+      "title": "Differential Line Growth（Houdini 差異線生長）",
+      "creator": "Moritz Schwind（Entagma）",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "Entagma 的 Houdini 教學以 Point Relax SOP 為核心做出簡化版差異線生長，並用雜訊場傳遞數值來控制各處的生長量。把一個幾何體接進 Relax SOP 的第二個輸入，就能讓曲線貼著曲面生長。相較於基礎範例手寫受力迴圈，它用 Houdini 的現成節點組合出相同行為並直接算圖。",
+      "variations": [
+        {
+          "name": "雜訊場控制生長",
+          "how": "以 3D noise 產生每點的生長權重，只在權重高的區段插入新點",
+          "effect": "局部密集生長，形成疏密對比"
+        },
+        {
+          "name": "在曲面上生長",
+          "how": "把目標曲面當作鬆弛運算的約束，點每回合投影回曲面",
+          "effect": "皺褶曲線包覆在任意 3D 形體表面"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "教學",
+        "3D"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "http://www.entagma.com/differential-line-growth/"
+    },
+    {
+      "id": "B02-51",
+      "algo": "B02",
+      "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "The Coding Train 的程式挑戰影片，以 p5.js 從零寫出擴散限制聚集：隨機漫步的粒子碰到已固定的團簇就黏上去，逐漸長成布朗樹。影片同時提供 p5.js 與 Processing 程式碼。適合作為把 Grasshopper C# 範例移植到網頁的入門對照。",
+      "variations": [
+        {
+          "name": "粒子逐漸變小",
+          "how": "每黏上一個粒子，就把下一個漫步者的半徑乘上一個略小於 1 的係數",
+          "effect": "越外圍的枝越細，形成由粗到細的樹狀層次"
+        },
+        {
+          "name": "依生成順序上色",
+          "how": "以粒子加入團簇的順序對應色相",
+          "effect": "可以直接看出團簇由內往外的生長歷程"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Processing",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation"
+    },
+    {
+      "id": "B02-52",
+      "algo": "B02",
+      "title": "Coding Challenge #127：Brownian Tree Snowflake（布朗樹雪花）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2018",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "這一集把 DLA 限制在一個 30° 的楔形區域中生長：粒子從外側沿水平方向往中心漂移，黏住後再把這一片鏡射、旋轉 6 次，組成六重對稱的雪花。它示範了「只算一小塊，再用對稱性複製」的做法。",
+      "variations": [
+        {
+          "name": "楔形區域＋鏡射",
+          "how": "粒子只在 0°–30° 的扇形內漫步並黏附，繪圖時做鏡射與 6 次旋轉",
+          "effect": "計算量大減，並得到六重對稱的雪花"
+        },
+        {
+          "name": "改變對稱次數",
+          "how": "把 6 次旋轉改成 4、5 或 8 次，楔形角度同步調整",
+          "effect": "得到不同對稱性的晶體或花窗圖樣"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "對稱",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake"
+    },
+    {
+      "id": "B02-53",
+      "algo": "B02",
+      "title": "2D Diffusion-Limited Aggregation Experiments（2D DLA 實驗）",
+      "creator": "Jason Webb",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "scale": "物件",
+      "summary": "Jason Webb 以 JavaScript 做的一系列 DLA 實驗，採用「非網格（off-lattice）」的粒子方式而非像素格點，以便輸出適合數位製造的向量 SVG。實驗包含方向偏移、不同粒子大小與形狀、以 SVG 圖形作為種子或障礙等。相較於基礎範例，它著重可調參數與向量輸出。",
+      "variations": [
+        {
+          "name": "方向偏移（directional bias）",
+          "how": "漫步者每步的隨機位移加上一個固定方向分量",
+          "effect": "團簇朝單一方向生長，像閃電或冰晶"
+        },
+        {
+          "name": "SVG 形狀作為種子",
+          "how": "把 SVG 路徑取樣成固定粒子，當作初始團簇",
+          "effect": "枝狀結構沿著指定輪廓長出來"
+        },
+        {
+          "name": "線段渲染",
+          "how": "以父子粒子之間的連線取代圓點繪製",
+          "effect": "得到可直接繪圖機輸出的線稿"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "SVG",
+        "數位製造"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments"
+    },
+    {
+      "id": "B02-54",
+      "algo": "B02",
+      "title": "dlaf：Diffusion-limited aggregation, fast",
+      "creator": "Michael Fogleman",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "Michael Fogleman 以 C++ 與 Boost 空間索引寫成的高速 DLA 程式，支援 2D 與 3D，單核心約 35 秒可算出一百萬個粒子；README 中展示了一千萬粒子的 3D 光線追蹤成果。程式輸出每個粒子的 id、父節點與座標，並提供黏附距離、黏性（Stickiness）等參數。和基礎範例相比，它示範空間索引如何把 DLA 推到百萬級規模。",
+      "variations": [
+        {
+          "name": "空間索引加速",
+          "how": "以 R-tree 等空間索引查詢最近的固定粒子，取代逐一比對",
+          "effect": "粒子數可從數千提高到數百萬"
+        },
+        {
+          "name": "調整黏性機率",
+          "how": "粒子碰觸時只以 Stickiness 機率黏住，否則繼續漫步",
+          "effect": "枝幹變粗、分枝變少，形體更緊實"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "C++",
+        "3D",
+        "高效能",
+        "開源"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": "https://github.com/fogleman/dlaf"
+    },
+    {
+      "id": "B02-55",
+      "algo": "B02",
+      "title": "VEX in Houdini：Diffusion Limited Aggregation",
+      "creator": "Entagma",
+      "year": "2017",
+      "category": "modeling",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "scale": "物件",
+      "summary": "Entagma 的影片教學先講解 DLA 理論，再用 Houdini 的 VEX 實作基本演算法、調整模擬形態，最後分別以 Mantra 與 Redshift 算圖，並提供專案檔下載。相較於基礎範例，它把 DLA 放進 3D 視覺特效流程，從模擬直接接到高品質渲染。",
+      "variations": [
+        {
+          "name": "3D 空間的 DLA",
+          "how": "漫步粒子在 3D 空間移動，並以點雲查詢最近的已固定點",
+          "effect": "長出珊瑚狀的立體枝狀結構"
+        },
+        {
+          "name": "塑形模擬範圍",
+          "how": "讓漫步者只在指定形體內生成或受力場偏移",
+          "effect": "枝狀結構被引導成特定外形"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "VEX",
+        "3D",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://vimeo.com/218372128"
+    },
+    {
+      "id": "B03-51",
+      "algo": "B03",
+      "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "The Coding Train 依 Runions 等人的空間殖民演算法，在畫面上散布「葉子」吸引點，樹枝節點朝影響範圍內的吸引點平均方向長出新枝，吸引點被觸及後就移除。影片提供 p5.js 與 Processing 程式碼。適合對照 Grasshopper C# 版本的吸引距離與消除距離參數。",
+      "variations": [
+        {
+          "name": "吸引點分布改變樹形",
+          "how": "把吸引點從矩形隨機分布改成圓形或特定輪廓內",
+          "effect": "樹冠自然長成吸引點所定義的外形"
+        },
+        {
+          "name": "3D 版本",
+          "how": "吸引點改在 3D 空間中分布並以 3D 向量運算",
+          "effect": "得到立體的樹冠枝幹"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Processing",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization"
+    },
+    {
+      "id": "B03-52",
+      "algo": "B03",
+      "title": "2D Space Colonization Experiments（2D 空間殖民實驗）",
+      "creator": "Jason Webb",
+      "year": "2019",
+      "category": "drawing",
+      "categories_extra": [
+        "fabrication",
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "Jason Webb 以 JavaScript 實作空間殖民演算法的開放（open）與封閉（closed）葉脈兩種模式，並加入依末端累加的葉脈加粗（auxin flux canalization）、SVG 邊界與障礙物等功能。目標同樣是可輸出向量的數位製造用圖樣。相較於基礎範例，它多了封閉迴圈葉脈與粗細層級。",
+      "variations": [
+        {
+          "name": "封閉葉脈",
+          "how": "吸引點改與相對鄰域（relative neighborhood）內所有葉脈段關聯，直到全部抵達才移除",
+          "effect": "葉脈彼此接合成網狀迴圈"
+        },
+        {
+          "name": "葉脈加粗",
+          "how": "從末端往根部回溯，把子段粗細累加到父段",
+          "effect": "主脈粗、細脈細，接近真實葉脈層級"
+        },
+        {
+          "name": "邊界與障礙",
+          "how": "以 SVG 輪廓限制生長範圍，並設定不可穿越的障礙形狀",
+          "effect": "葉脈繞過孔洞，填滿指定輪廓"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "SVG",
+        "葉脈",
+        "數位製造"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/jasonwebb/2d-space-colonization-experiments"
+    },
+    {
+      "id": "B03-53",
+      "algo": "B03",
+      "title": "Hyphae Lamps（Hyphae 燈具）",
+      "creator": "Nervous System",
+      "year": "2011",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "Nervous System 以葉脈形成為靈感設計的生成式燈具，每盞燈從基礎體積與一組根點出發，在充滿 auxin 吸引點的環境中反覆生長出分枝網路，再以選擇性雷射燒結 3D 列印製作。設計軟體是工作室以 C++ 與 CGAL 自行開發。部落格記錄了他們如何改成以機率讓流量大的葉脈優先生長，並以隱函數曲面產生網格。",
+      "variations": [
+        {
+          "name": "機率式生長",
+          "how": "葉脈不是全部同時沿平均方向生長，而是依流向它的吸引點數量決定生長機率",
+          "effect": "先出現主脈再長出次脈，層級更清楚"
+        },
+        {
+          "name": "封閉網格與隱函數曲面",
+          "how": "以 3D Delaunay 決定鄰域形成封閉網格，再用隱函數把骨架轉成實體",
+          "effect": "結構連續、強度足以 3D 列印"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "creative coding",
+        "C++",
+        "CGAL",
+        "3D 列印",
+        "產品設計"
+      ],
+      "tools": [
+        "C++",
+        "CGAL"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/"
+    },
+    {
+      "id": "B03-54",
+      "algo": "B03",
+      "title": "ofxSpaceColonization",
+      "creator": "Davide Prati（edap）",
+      "year": "2017",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "openFrameworks 的附加套件，實作 Runions、Lane 與 Prusinkiewicz 的論文〈Modeling Trees with a Space Colonization Algorithm〉，只要 build()、grow()、draw() 三步即可在 3D 中長出樹。可設定最大／最小吸引距離等選項，並能以包絡體（envelope）決定樹冠外形。相較於基礎範例，它著重即時 3D 繪製與可重用的 C++ 套件介面。",
+      "variations": [
+        {
+          "name": "自訂包絡體",
+          "how": "搭配 ofxEnvelope，把吸引點散布在自訂的樹冠曲面內",
+          "effect": "控制樹冠輪廓，例如球形或柱形"
+        },
+        {
+          "name": "調整吸引距離",
+          "how": "修改 maxDist／minDist 參數",
+          "effect": "分枝密度與枝距跟著改變"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "C++",
+        "3D",
+        "即時"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/edap/ofxSpaceColonization"
+    },
+    {
+      "id": "B03-55",
+      "algo": "B03",
+      "title": "Dendrite",
+      "creator": "mattatz",
+      "year": "2018",
+      "category": "art-installation",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "物件",
+      "summary": "mattatz 在 Unity 中以 GPU 運算實作空間殖民演算法，以輸入的點作為種子長出樹枝狀（dendrite）圖樣，並提供以 GPU marching cubes 把枝條轉成體積的渲染方式；SkinnedDendrite 還能讓分枝附著在動畫角色的蒙皮網格上。相較於基礎範例，它把演算法搬到 GPU 上以支援即時大量運算。",
+      "variations": [
+        {
+          "name": "GPU 平行運算",
+          "how": "以 Compute Shader 平行計算每個吸引點的最近節點",
+          "effect": "可即時處理大量吸引點與節點"
+        },
+        {
+          "name": "附著在動畫網格上",
+          "how": "從 SkinnedMeshRenderer 取樣體積點作為吸引點",
+          "effect": "樹枝結構跟著角色動作一起變形"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "Unity",
+        "GPU",
+        "即時"
+      ],
+      "tools": [
+        "Unity"
+      ],
+      "url": "https://github.com/mattatz/Dendrite"
+    },
+    {
+      "id": "B04-51",
+      "algo": "B04",
+      "title": "Coding Challenge #30：Phyllotaxis（葉序）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "物件",
+      "summary": "The Coding Train 以 p5.js 實作 Vogel 葉序模型：第 n 個點的角度為 n × 137.5°、半徑為 c√n，逐幀加一個點就畫出向日葵般的螺旋。是 Grasshopper C# 葉序範例最直接的網頁對照。",
+      "variations": [
+        {
+          "name": "微調發散角",
+          "how": "把 137.5° 改成 137.3° 或 137.6°",
+          "effect": "螺旋臂變成明顯的直線放射或斷裂，說明黃金角的關鍵性"
+        },
+        {
+          "name": "依序號上色",
+          "how": "以 n 或與中心的距離對應色相",
+          "effect": "更容易看出斐波那契螺旋線（parastichy）"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "黃金角",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/30-phyllotaxis"
+    },
+    {
+      "id": "B04-52",
+      "algo": "B04",
+      "title": "ofxPhyllotaxis",
+      "creator": "Davide Prati（edap）",
+      "year": "2017",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "openFrameworks 附加套件，只提供三個靜態方法：simple（平面圓盤）、conical（沿 y 軸推出的圓錐）與 apple（包成蘋果般的球面），傳入序號、發散角與間距就回傳位置，可用來排列任何 2D 或 3D 物件。相較於基礎範例只在平面上放點，它把葉序當成可套用在 3D 場景的排列工具。",
+      "variations": [
+        {
+          "name": "圓錐葉序",
+          "how": "每個點的 y 值依序號遞增（extrude 參數）",
+          "effect": "排列成松果或多肉植物般的錐形"
+        },
+        {
+          "name": "球面葉序（apple）",
+          "how": "依總數 total 把點映射到封閉的球狀曲面",
+          "effect": "物件均勻包覆整個球面"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "C++",
+        "3D"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/edap/ofxPhyllotaxis"
+    },
+    {
+      "id": "B04-53",
+      "algo": "B04",
+      "title": "TD Essentials：Create a Swept Phyllotaxis Operator in Houdini",
+      "creator": "Manuel（Entagma）",
+      "year": "2021",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "scale": "物件",
+      "summary": "Entagma 的教學以 VEX 在 Houdini 中建立葉序運算子，但不只做平面圓盤模型，而是讓葉序分布在一條輪廓旋轉而成的曲面（surface of revolution）上。成果可作為可重複使用的 Houdini 工具。相較於基礎範例，它處理了曲面上面積不均時如何保持密鋪。",
+      "variations": [
+        {
+          "name": "沿旋轉曲面分布",
+          "how": "以輪廓曲線的弧長或面積累積來決定每個點的高度，再乘上黃金角旋轉",
+          "effect": "點在鳳梨、松果般的曲面上仍保持均勻密度"
+        },
+        {
+          "name": "封裝成運算子",
+          "how": "把 VEX 程式與參數包成 HDA",
+          "effect": "可在不同專案重複套用並即時調參"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "VEX",
+        "教學",
+        "影片"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/"
+    },
+    {
+      "id": "B04-54",
+      "algo": "B04",
+      "title": "ECS-Phyllotaxis（Unity ECS 葉序方塊）",
+      "creator": "avvie",
+      "year": "2018",
+      "category": "performance",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "物件",
+      "summary": "一個學習 Unity ECS（Entity Component System）的練習專案，以葉序公式排列大量方塊並讓它們全部旋轉，並加入剔除（culling）以提升效能。它示範葉序排列在遊戲引擎中大量實例化時的做法。相較於基礎範例，重點是在即時引擎中處理上萬個物件。",
+      "variations": [
+        {
+          "name": "大量實例化",
+          "how": "以 Entity 與系統（System）取代逐一建立 GameObject",
+          "effect": "上萬個方塊仍能即時旋轉"
+        },
+        {
+          "name": "加上逐元素動畫",
+          "how": "讓每個方塊依序號加上旋轉相位差",
+          "effect": "整體螺旋出現波動般的動態效果"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Unity",
+        "C#",
+        "即時",
+        "效能"
+      ],
+      "tools": [
+        "Unity"
+      ],
+      "url": "https://github.com/avvie/ECS-Phyllotaxis"
+    },
+    {
+      "id": "B05-51",
+      "algo": "B05",
+      "title": "Substrate",
+      "creator": "Jared Tarbell",
+      "year": "2003",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape",
+        "2d-pattern"
+      ],
+      "scale": "群體／都市",
+      "summary": "Jared Tarbell 以 Processing 創作的經典作品：裂紋像晶體一樣在計算「基底」上直線前進，碰到其他裂紋或邊界就停下，並從既有裂紋上以垂直方向分岔出新裂紋，簡單規則長出像城市街廓的結構，沿裂紋再加上類似水彩的「沙畫」上色。作者頁面也展示了允許裂紋彎曲的非線性版本。",
+      "variations": [
+        {
+          "name": "沙畫上色",
+          "how": "每條裂紋一側沿垂直方向隨機取樣，以極低透明度畫點",
+          "effect": "街廓內出現水彩般的漸層色塊"
+        },
+        {
+          "name": "曲線裂紋",
+          "how": "讓裂紋前進方向每步加上微小角度變化",
+          "effect": "結構更不規則，獨立區塊會以複雜方式互相合併"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "生成藝術",
+        "經典作品"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "http://www.complexification.net/gallery/machines/substrate/"
+    },
+    {
+      "id": "B05-52",
+      "algo": "B05",
+      "title": "Substrate（p5.js 移植版）",
+      "creator": "Tom White（dribnet）",
+      "year": "2021",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "scale": "群體／都市",
+      "summary": "Tom White 把 Tarbell 的 Processing 原始碼移植到 p5.js，並刻意盡量少改原程式，repo 中同時保留原始 .pde 檔以便對照。滑鼠按下即重新開始生長。適合用來對照 Processing 與 p5.js 的語法差異，以及把本圖鑑的 C# 版本移植到網頁。",
+      "variations": [
+        {
+          "name": "原版與移植並排對照",
+          "how": "逐函式比對 substrate.pde 與 substrate.js",
+          "effect": "理解從 Java 語法轉到 JavaScript 的最小改動"
+        },
+        {
+          "name": "更換色盤",
+          "how": "原作色盤取自 Pollock 畫作，改換成自訂調色盤圖片",
+          "effect": "同樣的結構呈現完全不同的氛圍"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "移植",
+        "開源"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/dribnet/substrate"
+    },
+    {
+      "id": "B05-53",
+      "algo": "B05",
+      "title": "substrate CLI（繪圖機用 SVG 產生器）",
+      "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+      "year": "2019",
+      "category": "fabrication",
+      "categories_extra": [
+        "drawing"
+      ],
+      "scale": "群體／都市",
+      "summary": "為 CityLAB Berlin 撰寫的命令列工具，以 Tarbell 的 Substrate 演算法產生 SVG，可指定模擬時間、紙張寬高與最大裂紋數，輸出給繪圖機（plotter）畫出。相較於原作的像素渲染，它只保留裂紋的向量線，直接作為製造輸出。",
+      "variations": [
+        {
+          "name": "以紙張尺寸設定畫布",
+          "how": "用 --width 841 --height 1189（A0 公釐）設定畫布",
+          "effect": "輸出尺寸與實體紙張一致，可直接上繪圖機"
+        },
+        {
+          "name": "限制裂紋數與時間",
+          "how": "調整 --maxcracks 與 --duration",
+          "effect": "控制線條密度與繪圖時間"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "Node.js",
+        "SVG",
+        "繪圖機"
+      ],
+      "tools": [
+        "Node.js"
+      ],
+      "url": "https://github.com/technologiestiftung/substrate"
+    },
+    {
+      "id": "B05-54",
+      "algo": "B05",
+      "title": "Substrate iPad 移植版",
+      "creator": "Jon Cooper",
+      "year": "2011",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "scale": "群體／都市",
+      "summary": "Jon Cooper 把 Tarbell 的 Substrate 移植到 iPad，作為學習 iOS 開發與 OpenGL 的練習。由於 iOS 沒有直接的 2D 點陣繪圖，作者自己寫了繪製層：先渲染到貼圖再貼到四邊形上，並實作反鋸齒線條與顏色混合，裂紋由另一條執行緒寫入貼圖。以 MIT 授權釋出。",
+      "variations": [
+        {
+          "name": "渲染到貼圖",
+          "how": "裂紋與沙畫點先累積寫入一張貼圖，每幀只把貼圖畫到螢幕",
+          "effect": "在行動裝置上也能保留累積繪圖的效果"
+        },
+        {
+          "name": "計算與繪製分離",
+          "how": "以獨立執行緒更新裂紋，主執行緒只負責顯示",
+          "effect": "生長持續進行而畫面保持流暢"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "Objective-C",
+        "OpenGL",
+        "iOS",
+        "移植"
+      ],
+      "tools": [
+        "Objective-C",
+        "OpenGL"
+      ],
+      "url": "https://github.com/joncooper/Substrate"
+    }
+  ]
+}

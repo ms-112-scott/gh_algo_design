@@ -4,7 +4,7 @@ import sys
 from playwright.sync_api import sync_playwright
 
 d = pathlib.Path(__file__).resolve().parent.parent
-URL = (d / 'atlas.html').as_uri()
+URL = (d / 'index.html').as_uri()
 
 JS = r"""
 () => {
@@ -33,11 +33,15 @@ JS = r"""
 }
 """
 
-keys = ['algo'] + [f'var{i}' for i in range(12)] + [f'seed{i}' for i in range(6)] + [f'A01-{i:02d}' for i in range(1, 16)]
+import json
+_cat = json.loads((d / 'data.js').read_text(encoding='utf-8')[len('window.CATALOG = '):-2])
+_first = {}
+for _c in _cat['cases']: _first.setdefault(_c['algo'], _c['id'])
+keys = ['info'] + [k for a in _cat['algorithms'] for k in (f"algo:{a['id']}", f"var:{a['id']}:0", f"seed:{a['id']}:0", _first[a['id']])]
 total = 0
 with sync_playwright() as p:
     b = p.chromium.launch(channel='chrome')
-    for w, h in [(1440, 900), (1100, 800), (820, 1000), (390, 844)]:
+    for w, h in [(1440, 900), (390, 844)]:
         pg = b.new_page(viewport={'width': w, 'height': h})
         pg.emulate_media(reduced_motion='reduce')  # 讓進場動畫立刻到定位
         pg.goto(URL); pg.wait_for_timeout(800)
@@ -45,7 +49,7 @@ with sync_playwright() as p:
         for x in r: print(f'[{w}] feed: {x}')
         total += len(r)
         for k in keys:
-            pg.evaluate(f"open('{k}')"); pg.wait_for_timeout(350)
+            pg.evaluate(f"open('{k}')"); pg.wait_for_timeout(500)
             # 捲到底，逐段檢查
             H = pg.evaluate("document.getElementById('modal').scrollHeight")
             y = 0

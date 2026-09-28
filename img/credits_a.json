@@ -1,0 +1,146 @@
+{
+ "A01-51": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
+  "note": "Coding Challenge #16 影片縮圖"
+ },
+ "A01-52": {
+  "source": "GitHub edap/ofxLSystem",
+  "author": "Davide Prati",
+  "license": "MIT",
+  "license_url": "https://github.com/edap/ofxLSystem",
+  "page": "https://github.com/edap/ofxLSystem",
+  "note": "README 示範圖：以 ofxLSystem 生成的 3D 森林"
+ },
+ "A01-53": {
+  "source": "GitHub nylki/lindenmayer",
+  "author": "Tom Brewe",
+  "license": "MIT",
+  "license_url": "https://github.com/nylki/lindenmayer",
+  "page": "https://github.com/nylki/lindenmayer",
+  "note": "README 範例結果：以 L-System 函式庫畫出的 Koch 雪花"
+ },
+ "A01-55": {
+  "source": "The Nature of Code",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://natureofcode.com/fractals/",
+  "note": "第 8 章 Figure 8.17：依產生規則逐代長出的分形樹"
+ },
+ "A02-51": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+  "note": "Coding Challenge #129 影片縮圖"
+ },
+ "A02-52": {
+  "source": "The Nature of Code",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://natureofcode.com/fractals/#the-koch-curve",
+  "note": "第 8 章 Figure 8.12：Koch 曲線的逐代演變"
+ },
+ "A02-53": {
+  "source": "YouTube（3Blue1Brown）",
+  "author": "Grant Sanderson",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.youtube.com/watch?v=gB9n2gHsHN4",
+  "note": "影片「Fractals are typically not self-similar」縮圖"
+ },
+ "A03-51": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+  "note": "Coding in the Cabana 3 影片縮圖"
+ },
+ "A03-52": {
+  "source": "YouTube（3Blue1Brown）",
+  "author": "Grant Sanderson",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.youtube.com/watch?v=3s7h2MHQtxc",
+  "note": "影片「Hilbert's Curve: Is infinite math useful?」縮圖"
+ },
+ "A03-54": {
+  "source": "corte.si",
+  "author": "Aldo Cortesi",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://corte.si/posts/code/hilbert/portrait/",
+  "note": "文中「Hilbert on Hilbert」：3D Hilbert 走訪 RGB 色彩，鋪在 2D Hilbert 曲線上"
+ },
+ "A04-51": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/77-recursion",
+  "note": "Coding Challenge #77 影片縮圖"
+ },
+ "A04-52": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/98-quadtree",
+  "note": "Coding Challenge #98 影片縮圖"
+ },
+ "A04-53": {
+  "source": "tylerxhobbs.com",
+  "author": "Tyler Hobbs",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+  "note": "文中插圖：隨機取點的三角形遞迴分割"
+ },
+ "A05-53": {
+  "source": "GitHub mxgmn/MarkovJunior",
+  "author": "Maxim Gumin",
+  "license": "MIT",
+  "license_url": "https://github.com/mxgmn/MarkovJunior",
+  "page": "https://github.com/mxgmn/MarkovJunior",
+  "note": "README 動圖（取一格）：ModernHouse 範例與其規則樹"
+ },
+ "A05-54": {
+  "source": "GitHub stefalie/shapeml",
+  "author": "Stefan Lienhard",
+  "license": "GPL-3.0",
+  "license_url": "https://github.com/stefalie/shapeml",
+  "page": "https://github.com/stefalie/shapeml",
+  "note": "README showcase：以 ShapeML 文法生成的地形、樹木、城堡、建築等模型"
+ },
+ "A06-51": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+  "note": "Coding Challenge 171 縮圖"
+ },
+ "A06-54": {
+  "source": "GitHub chloesun/wfc_houdini",
+  "author": "Chloe Sun",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/chloesun/wfc_houdini",
+  "note": "README 動圖最後一格：Houdini 中以 WFC 生成的 3D 管線"
+ },
+ "A06-55": {
+  "source": "robertheaton.com",
+  "author": "Robert Heaton",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+  "note": "文章預覽圖：終端機中以 L／C／S 字元生成的陸地、海岸、海洋"
+ }
+}

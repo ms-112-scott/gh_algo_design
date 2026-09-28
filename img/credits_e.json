@@ -1,0 +1,154 @@
+{
+  "E01-51": {
+    "source": "YouTube（Entagma）",
+    "author": "Manuel Casasola Merkle",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=OkiwsuFo_gA",
+    "note": "影片縮圖：甜甜圈曲面上大小不一的粒子緊密排列"
+  },
+  "E01-52": {
+    "source": "Derivative（TouchDesigner 社群）",
+    "author": "noones_img",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+    "note": "文章預覽圖：GPU 即時生成的圓填充"
+  },
+  "E01-53": {
+    "source": "Gorilla Sun",
+    "author": "Ahmad Moussa",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+    "note": "文章預覽圖：遞迴生長的彩色圓群"
+  },
+  "E01-54": {
+    "source": "GitHub jn3008/circlepack-cpp",
+    "author": "Joseff（jn3008）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jn3008/circlepack-cpp",
+    "note": "README 示範圖：三角網與對應的相切圓填充"
+  },
+  "E02-51": {
+    "source": "Sighack",
+    "author": "Manohar Vanga",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+    "note": "文章預覽圖：以 Poisson 點做成的點描肖像"
+  },
+  "E02-52": {
+    "source": "GitHub mruegenberg/ofxPoissonDiskSampling",
+    "author": "Marcel Ruegenberg",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+    "note": "README 示範圖：Poisson 點的 Delaunay 三角網"
+  },
+  "E02-53": {
+    "source": "GitHub kchapelier/poisson-disk-sampling",
+    "author": "Kevin Chapelier",
+    "license": "MIT",
+    "license_url": "https://github.com/kchapelier/poisson-disk-sampling",
+    "page": "https://github.com/kchapelier/poisson-disk-sampling",
+    "note": "README 示範圖：Poisson 取樣點分布"
+  },
+  "E02-54": {
+    "source": "GitHub njanakiev/poisson-disk-sampling",
+    "author": "Nikolai Janakiev",
+    "license": "MIT",
+    "license_url": "https://github.com/njanakiev/poisson-disk-sampling",
+    "page": "https://github.com/njanakiev/poisson-disk-sampling",
+    "note": "README 2D 動畫的最後一格：完成的 Poisson 點分布"
+  },
+  "E02-55": {
+    "source": "YouTube（Sebastian Lague）",
+    "author": "Sebastian Lague",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+    "note": "影片縮圖：Poisson disc sampling 標題與取樣點"
+  },
+  "E03-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/181-image-stippling",
+    "note": "頁面預覽圖：加權 Voronoi 點描肖像"
+  },
+  "E03-52": {
+    "source": "Inigo Quilez 個人網站",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://iquilezles.org/articles/voronoilines/",
+    "note": "文章插圖：以著色器算出的 Voronoi 細胞與邊界"
+  },
+  "E03-53": {
+    "source": "The Book of Shaders",
+    "author": "Patricio Gonzalez Vivo、Jen Lowe",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thebookofshaders.com/12/",
+    "note": "章節插圖（GIF 第一格）：著色器產生的 Voronoi 細胞與距離場"
+  },
+  "E03-54": {
+    "source": "GitHub madc/ofxVoronoi",
+    "author": "Matthias Esterl 等",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/madc/ofxVoronoi",
+    "note": "README 截圖：圓形範圍內的 Voronoi 圖"
+  },
+  "E03-55": {
+    "source": "Jason Davies 個人網站",
+    "author": "Jason Davies",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.jasondavies.com/lloyd/",
+    "note": "作品縮圖：Lloyd 鬆弛後由中心擴散的 Voronoi 細胞"
+  },
+  "E04-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/177-soft-body-character",
+    "note": "頁面預覽圖：彈簧骨架與軟體角色"
+  },
+  "E04-52": {
+    "source": "The Nature of Code",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://natureofcode.com/physics-libraries/",
+    "note": "書中圖 6.13：弦、布、骨架、軟體角色四種彈簧結構設計"
+  },
+  "E04-53": {
+    "source": "three.js 官方範例",
+    "author": "holtsetio／three.js authors",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://threejs.org/examples/webgpu_compute_cloth.html",
+    "note": "範例截圖：飄動的 Verlet 布料"
+  },
+  "E04-54": {
+    "source": "Memo Akten 個人網站",
+    "author": "Memo Akten",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.memo.tv/msaphysics",
+    "note": "作品圖：以彈簧相連的 3D 粒子網絡"
+  },
+  "E04-55": {
+    "source": "Vimeo（Entagma）",
+    "author": "Moritz Schwind",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://vimeo.com/294379827",
+    "note": "影片縮圖：Vellum 軟體模擬"
+  }
+}

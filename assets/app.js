@@ -1,0 +1,429 @@
+/* ================================================================
+   GH 演算法設計圖鑑｜主程式
+   依賴：data.js（window.CATALOG）、assets/lsystem.js（A01 引擎）、assets/gen.js（其他演算法）
+   ================================================================ */
+const CAT = window.CATALOG;
+const ALGOS = CAT.algorithms;
+const ALG = Object.fromEntries(ALGOS.map(a => [a.id, a]));
+const CASES = CAT.cases;
+const CASES_OF = id => CASES.filter(c => c.algo === id);
+const isCC = c => (c.tags || []).some(t => /creative coding/i.test(t));
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ico = (id, cls = "i") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const dots = n => `<span class="dots" aria-label="難度 ${n}／5">${[1,2,3,4,5].map(k => `<i class="${k <= n ? "on" : ""}"></i>`).join("")}</span>`;
+const LOGIC_ICON = {"直接公式":"i-logic-formula","改寫／遞迴":"i-logic-rewrite","迭代模擬":"i-logic-iterate","搜尋／求解":"i-logic-search","幾何轉換":"i-logic-transform"};
+const DS_ICON = {"符號":"i-ds-symbol","網格":"i-grid","粒子":"i-ds-particle","圖（點＋連線）":"i-ds-graph","幾何":"c-modeling"};
+const SCALE_ICON = {"物件":"c-modeling","構件":"c-fabrication","立面／表皮":"c-2d-pattern","建築":"c-3d-architecture","群體／都市":"c-urban-landscape","地景":"c-urban-landscape"};
+const imgTag = (c, lazy) => `<img src="${esc(c.image.file)}" alt="${esc(c.title)}" width="${c.image.w}" height="${c.image.h}"${lazy ? ' loading="lazy"' : ""}>`;
+const credit = im => [im.note, [im.source, im.author].filter(Boolean).join("／"), im.license].filter(Boolean).map(esc).join("｜");
+
+/* ================================================================
+   1. 標籤產生器（全站只用這幾個函式產生標籤，確保同類同形）
+   ================================================================ */
+const FAMC = {A:["#E4572E","#FBE6DF","#B8391A"],B:["#3FA34D","#E2F2E4","#2A7A36"],C:["#2F6FE4","#E1EAFB","#1F50B0"],
+              D:["#9152E0","#EEE3FB","#6D35B3"],E:["#F2A007","#FDF0D5","#A86A00"],F:["#14A38F","#D9F2EE","#0B7768"]};
+const fv = f => `--fc:${FAMC[f][0]};--ft:${FAMC[f][1]};--fd:${FAMC[f][2]};--fam:${FAMC[f][0]};--fam-deep:${FAMC[f][2]};--fam-tint:${FAMC[f][1]}`;
+const tFam = (f, short) => `<span class="tg tg-fam${short ? " short" : ""}" style="${fv(f)}" title="家族 ${f}｜${esc(CAT.families[f])}"><span class="L">${f}</span>${short ? "" : esc(CAT.families[f])}</span>`;
+const tAlgo = (id, short) => { const a = ALG[id] || {family:id[0], name_zh:""}; return `<span class="tg tg-algo${short ? " short" : ""}" style="${fv(a.family)}" title="演算法 ${id}｜${esc(a.name_zh)}"><span class="id">${id}</span>${short ? "" : `<span class="nm">${esc(a.name_zh)}</span>`}</span>`; };
+const vcode = i => "V" + String(i + 1).padStart(2, "0");
+const vshort = t => String(t).replace(/L-System/gi, "").replace(/[（(].*$/, "").split(/[：:]/)[0].trim() || t;
+const tVar = (i, pid, full) => { const v = ALG[pid].variations[i]; return `<span class="tg tg-var" style="${fv(pid[0])}" title="${pid} 的變形 ${vcode(i)}｜${esc(v.title)}">${ico("i-var")}<span class="pid">${pid}·${vcode(i)}</span><span class="nm">${esc(full ? v.title : vshort(v.title))}</span></span>`; };
+const tCat = c => `<span class="tg tg-cat" title="應用類型">${ico("c-"+c)}<span class="nm">${esc(CAT.categories[c])}</span></span>`;
+const tAttr = (icon, text, title = "屬性") => `<span class="tg tg-attr" title="${title}">${ico(icon)}<span class="nm">${esc(text)}</span></span>`;
+const tKw = t => `<span class="tg tg-kw">${esc(t)}</span>`;
+const chain = (...parts) => `<span class="chain">${parts.join('<span class="chev" aria-hidden="true">›</span>')}</span>`;
+const TYPE = {algo:["t-algo","i-algo","演算法"], var:["t-var","i-var","變形"], case:["t-case","i-case","案例"], seed:["t-seed","i-seed","專案種子"]};
+const badge = (type, inline) => { const [c,i,t] = TYPE[type]; return `<span class="badge ${c}${inline ? " inline" : ""}">${ico(i)}${t}</span>`; };
+const ccBadge = `<span class="cc-tag">${ico("i-code")}creative coding</span>`;
+
+function whatIcon(w = ""){
+  if(/混合|搜尋/.test(w)) return "w-hybrid";
+  if(/約束|邊界/.test(w)) return "w-constraint";
+  if(/動畫|迴圈/.test(w)) return "w-anim";
+  if(/輸入/.test(w)) return "w-input";
+  if(/輸出/.test(w)) return "w-output";
+  if(/幾何|維度|曲面|3D/.test(w)) return "w-geom";
+  if(/狀態/.test(w)) return "w-state";
+  return "w-rule";
+}
+const shortWhat = w => "改" + String(w).split(/[（(／、，]/)[0].replace(/^改/,"");
+
+/* ================================================================
+   1b. 瀏覽偏好記憶（只存在這台瀏覽器的 localStorage）
+   點開卡片、按篩選鈕都會累加；排序時點越多的家族／演算法／應用類型越容易排前面
+   ================================================================ */
+const PREF_KEY = "ghAlgoAtlas.prefs.v1";
+const prefs = (() => { try { return JSON.parse(localStorage.getItem(PREF_KEY)) || {}; } catch(e){ return {}; } })();
+["fam","algo","cat","type","src","diff"].forEach(k => prefs[k] = prefs[k] || {});
+function bump(kind, key, n = 1){
+  if(!key) return; prefs[kind][key] = (prefs[kind][key] || 0) + n;
+  try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch(e){}
+}
+function bumpPin(p){ bump("algo", p.algo, 2); bump("fam", p.fam); bump("type", p.type); if(p.type === "case"){ bump("cat", p.cat?.[0]); bump("src", p.cc ? "cc" : "arch"); } }
+const pw = (kind, key) => prefs[kind][key] || 0;
+// 加權隨機排序（Efraimidis–Spirakis）：權重越大越可能排前面，但每次重新整理都不一樣
+const wkey = w => Math.pow(Math.random(), 1 / Math.max(.05, w));
+const wshuffle = (arr, wf) => arr.map(x => [wkey(wf(x)), x]).sort((a,b) => b[0] - a[0]).map(x => x[1]);
+
+/* ================================================================
+   2. 圖：A01 用 L-System 引擎；其他演算法用 gen.js
+   每個 canvas 先用 aspect-ratio 佔好位置，進入畫面才排隊繪製
+   ================================================================ */
+const RATIOS = [1, .8, 1.15, .9, 1.25, .85];
+function visual(algoId, kind, n){
+  // 回傳 {ratio, draw(cv), grow(cv)}
+  // 變形與無照片案例：有獨立畫法（assets/art/<演算法>.js）就用它
+  const caseId = `${algoId}-${String(n).padStart(2,"0")}`, art = kind === "var" ? ART.var[algoId]?.[n] : kind === "case" ? ART.case[caseId] : null;
+  if(art){
+    const color = FAMC[ALG[algoId].family][0], ratio = art.ratio || RATIOS[(n + algoId.charCodeAt(1)) % RATIOS.length], key = kind === "var" ? `${algoId}:V${n}` : caseId;
+    let seed = 0; const d = cv => artDraw(cv, key, art, color, ratio, seed);
+    return {ratio, draw: d, grow: null, big: d, reseed: cv => { seed++; d(cv); }};
+  }
+  if(algoId === "A01"){
+    const key = kind === "algo" ? "hero" : kind === "var" ? VAR_PRESET[n % 12] : (CASE_PRESET[caseId] || "bush");
+    const p = {...P[key], fam:"A"};
+    return {ratio: p.ratio ?? 1, draw: cv => render(cv, p), grow: cv => grow(cv, p, 900), big: cv => grow(cv, p, 1400)};
+  }
+  const a = ALG[algoId], color = FAMC[a.family][0];
+  const v = kind === "algo" ? 0 : kind === "var" ? n + 1 : 20 + n, ratio = kind === "algo" ? 1.2 : RATIOS[(n + algoId.charCodeAt(1)) % RATIOS.length];
+  return {ratio, draw: cv => genDraw(cv, algoId, v, a.family, color, ratio), grow: null, big: cv => genDraw(cv, algoId, v, a.family, color, ratio)};
+}
+const queue = []; let pumping = false;
+function pump(){
+  if(pumping) return; pumping = true;
+  const step = () => { const t0 = performance.now(); while(queue.length && performance.now() - t0 < 24){ const f = queue.shift(); f(); } if(queue.length) requestAnimationFrame(step); else pumping = false; };
+  requestAnimationFrame(step);
+}
+const lazyCv = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ lazyCv.unobserve(e.target); queue.push(e.target._draw); pump(); } }), {rootMargin:"500px"});
+
+/* ================================================================
+   3. Pin（瀑布流卡片）：圖片左上＝卡片類型；標題下＝身分鏈
+   ================================================================ */
+const num = id => +id.split("-")[1];
+function pinAlgo(a){
+  return {type:"algo", key:`algo:${a.id}`, algo:a.id, fam:a.family, diff:a.difficulty, search:[a.id,a.name_zh,a.name_en,a.one_liner,...(a.tags||[])].join(" "), vis:visual(a.id,"algo",0), html:`
+    <div class="media">${badge("algo")}<canvas></canvas><div class="scrim"></div><span class="open">${ico("i-open")}開啟</span></div>
+    <div class="cap"><b>${esc(a.name_zh)}</b><div class="sub">${esc(a.name_en)}</div><div class="row2">${chain(tFam(a.family,true), tAlgo(a.id))}${dots(a.difficulty)}</div></div>`};
+}
+function pinVar(a, i){
+  const v = a.variations[i];
+  return {type:"var", key:`var:${a.id}:${i}`, algo:a.id, fam:a.family, diff:v.level, search:[a.id,a.name_zh,v.title,v.result,v.how].join(" "), vis:visual(a.id,"var",i), html:`
+    <div class="media">${badge("var")}<canvas></canvas><div class="scrim"></div><span class="open">${ico("i-open")}看改法</span></div>
+    <div class="cap"><b>${esc(v.title)}</b><div class="row2">${chain(tFam(a.family,true), tAlgo(a.id,true), tVar(i,a.id))}${dots(v.level)}</div></div>`};
+}
+function pinCase(c){
+  const a = ALG[c.algo], img = !!c.image, cc = isCC(c);
+  return {type:"case", key:c.id, algo:c.algo, fam:a.family, diff:c.difficulty, cat:[c.category, ...(c.categories_extra||[])], cc, search:[c.id,c.title,c.creator,c.summary,a.name_zh,...(c.tags||[]),...(c.tools||[])].join(" "), vis: img ? null : visual(c.algo,"case",num(c.id)), html:`
+    <div class="media">${badge("case")}${cc ? ccBadge : ""}
+      ${img ? imgTag(c, true) : `<canvas></canvas><span class="demo-tag">示意</span>`}
+      <div class="scrim"></div><span class="open">${ico("i-open")}開啟</span></div>
+    <div class="cap"><b>${esc(c.title)}</b><div class="sub">${esc(String(c.creator||"").split(/[，,（(]/)[0])}${c.year ? "・"+esc(c.year) : ""}</div>
+      <div class="row2">${chain(tFam(a.family,true), tAlgo(c.algo,true))}${tCat(c.category)}</div></div>`};
+}
+function pinSeed(a, i){
+  const p = a.project_seeds[i];
+  return {type:"seed", key:`seed:${a.id}:${i}`, algo:a.id, fam:a.family, diff:p.difficulty, search:[a.id,a.name_zh,p.title,p.brief].join(" "), html:`
+    <div class="media" style="${fv(a.family)}">${badge("seed", true)}
+      <h4>${esc(p.title)}</h4>
+      <div class="combo chain">${[a.id, ...(p.combine_with||[])].filter(id => ALG[id]).map(id => tAlgo(id)).join('<b>＋</b>')}</div>
+      <div style="margin-top:14px">${dots(p.difficulty)}</div></div>`};
+}
+// 版面：每個演算法一條佇列（演算法→案例→變形交錯，每 3 輪插一個專案），再輪流取，讓整面牆各家族交錯
+// 每次載入都重新加權洗牌：演算法的先後、佇列內案例與變形的先後都會變
+let ALL_PINS = null;
+function allPins(){
+  if(ALL_PINS) return ALL_PINS;
+  const itemW = p => 1 + pw("type", p.type)*.3 + (p.cat ? pw("cat", p.cat[0])*.6 : 0) + (p.type === "case" ? pw("src", p.cc ? "cc" : "arch")*.4 : 0);
+  const order = wshuffle(ALGOS, a => 1 + pw("algo", a.id)*.8 + pw("fam", a.family)*.4);
+  const Qs = order.map(a => {
+    const V = wshuffle(a.variations.map((_,i) => pinVar(a,i)), itemW), C = wshuffle(CASES_OF(a.id).map(pinCase), itemW), S = wshuffle((a.project_seeds||[]).map((_,i) => pinSeed(a,i)), itemW), q = [pinAlgo(a)];
+    let k = 0; while(V.length || C.length || S.length){ if(C.length) q.push(C.shift()); if(V.length) q.push(V.shift()); if(C.length) q.push(C.shift()); if(++k % 3 === 0 && S.length) q.push(S.shift()); }
+    return q;
+  });
+  // 輪流取：偏好越高的演算法每一輪可多出 1–2 張卡，讓它的案例與變形也往前
+  const per = order.map(a => 1 + Math.min(2, Math.floor((pw("algo", a.id)*.8 + pw("fam", a.family)*.4) / 4)));
+  const pos = Qs.map(() => 0); ALL_PINS = []; let left = true;
+  while(left){ left = false; Qs.forEach((q,k) => { for(let t = 0; t < per[k] && pos[k] < q.length; t++){ ALL_PINS.push(q[pos[k]++]); } if(pos[k] < q.length) left = true; }); }
+  return ALL_PINS;
+}
+
+/* ================================================================
+   4. 篩選
+   ================================================================ */
+const state = {type:"all", fam:new Set(), algo:new Set(), diff:new Set(), cat:null, src:"all", q:""};
+// 三層：① 卡片／來源／應用類型　② 家族　③ 演算法（只列選取家族底下的）
+function renderChips(){
+  const g = (label, inner) => `<div class="fgroup" role="group" aria-label="${label}"><span class="glabel">${label}</span>${inner}</div>`;
+  const line = (label, ...groups) => `<div class="chipline" role="group" aria-label="${label}">${groups.join('<span class="sep"></span>')}</div>`;
+  const algos = ALGOS.filter(a => !state.fam.size || state.fam.has(a.family));
+  document.getElementById("chips").innerHTML =
+    line("卡片、來源與應用類型",
+      g("卡片", `<button class="fchip" data-type="all" aria-pressed="${state.type==="all"}"><span class="tg tg-attr">全部</span></button>` +
+        ["algo","var","case","seed"].map(k => `<button class="fchip" data-type="${k}" aria-pressed="${state.type===k}">${badge(k, true)}</button>`).join("")),
+      g("來源", [["all","全部"],["arch","建築與研究"],["cc","Creative Coding"]].map(([k,t]) => `<button class="fchip" data-src="${k}" aria-pressed="${state.src===k}"><span class="tg tg-attr">${k === "cc" ? ico("i-code") : ""}${t}</span></button>`).join("")),
+      g("應用類型", Object.keys(CAT.categories).map(c => `<button class="fchip" data-cat="${c}" aria-pressed="${state.cat===c}">${tCat(c)}</button>`).join(""))) +
+    line("家族與難度", g("家族", `<button class="fchip" data-fam="" aria-pressed="${!state.fam.size}"><span class="tg tg-attr">全部</span></button>` + Object.keys(CAT.families).map(k => `<button class="fchip" data-fam="${k}" aria-pressed="${state.fam.has(k)}">${tFam(k)}</button>`).join("")),
+      g("難度", `<button class="fchip" data-diff="" aria-pressed="${!state.diff.size}"><span class="tg tg-attr">全部</span></button>` + [1,2,3,4,5].map(d => `<button class="fchip" data-diff="${d}" aria-pressed="${state.diff.has(d)}"><span class="tg tg-attr tg-diff">${dots(d)}${CAT.difficulty[d]}</span></button>`).join(""))) +
+    line("演算法", g("演算法", `<button class="fchip" data-algo="" aria-pressed="${!state.algo.size}"><span class="tg tg-attr">全部</span></button>` + algos.map(a => `<button class="fchip" data-algo="${a.id}" aria-pressed="${state.algo.has(a.id)}">${tAlgo(a.id)}</button>`).join("")));
+  const on = (sel, fn) => document.querySelectorAll(`#chips ${sel}`).forEach(b => b.onclick = () => { fn(b); renderChips(); renderFeed(); });
+  on("[data-type]", b => { state.type = b.dataset.type; bump("type", state.type); if(state.type !== "case"){ state.cat = null; state.src = "all"; } });
+  on("[data-src]", b => { state.src = b.dataset.src; bump("src", state.src === "all" ? "" : state.src); if(state.src !== "all") state.type = "case"; });
+  on("[data-fam]", b => { const f = b.dataset.fam; if(!f){ state.fam.clear(); state.algo.clear(); return; } state.fam.has(f) ? state.fam.delete(f) : (state.fam.add(f), bump("fam", f)); [...state.algo].forEach(id => { if(state.fam.size && !state.fam.has(id[0])) state.algo.delete(id); }); });
+  on("[data-diff]", b => { const d = +b.dataset.diff; if(!d){ state.diff.clear(); return; } state.diff.has(d) ? state.diff.delete(d) : (state.diff.add(d), bump("diff", String(d))); });
+  on("[data-algo]", b => { const id = b.dataset.algo; if(!id){ state.algo.clear(); return; } state.algo.has(id) ? state.algo.delete(id) : (state.algo.add(id), bump("algo", id)); });
+  on("[data-cat]", b => { state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat; if(state.cat) bump("cat", state.cat); state.type = state.cat ? "case" : "all"; });
+}
+function filtered(){
+  const q = state.q;
+  return allPins().filter(p =>
+    (state.type === "all" || p.type === state.type) &&
+    (!state.fam.size || state.fam.has(p.fam)) &&
+    (!state.algo.size || state.algo.has(p.algo)) &&
+    (!state.diff.size || state.diff.has(p.diff)) &&
+    (!state.cat || (p.cat || []).includes(state.cat)) &&
+    (state.src === "all" || (p.type === "case" && (state.src === "cc" ? p.cc : !p.cc))) &&
+    (!q || p.search.toLowerCase().includes(q)));
+}
+
+/* ================================================================
+   5. 瀑布流：grid + row span；無限捲動；進場動畫
+   ================================================================ */
+const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {rootMargin:"60px"});
+function span(el){ const h = el.getBoundingClientRect().height; el.style.gridRowEnd = "span " + Math.ceil((h + 16) / 4); }
+function makePin(p, i){
+  const el = document.createElement("button");
+  el.className = "pin" + (p.type === "seed" ? " seed" : ""); el.style.setProperty("--i", i % 12);
+  el.innerHTML = p.html; el.dataset.key = p.key; el.setAttribute("aria-label", el.querySelector("b,h4")?.textContent || "");
+  const cv = el.querySelector("canvas");
+  if(cv && p.vis){ cv.style.aspectRatio = `1 / ${p.vis.ratio}`; cv._draw = () => { p.vis.draw(cv); span(el); }; lazyCv.observe(cv); if(p.vis.grow) el.addEventListener("mouseenter", () => p.vis.grow(cv)); }
+  el.querySelector("img")?.addEventListener("load", () => span(el));
+  el.onclick = () => { bumpPin(p); open(p.key); };
+  return el;
+}
+function mountPins(container, pins, batch = 0){
+  container.innerHTML = ""; container._pins = pins; container._n = 0;
+  const more = () => {
+    const end = batch ? Math.min(pins.length, container._n + batch) : pins.length;
+    for(let i = container._n; i < end; i++){ const el = makePin(pins[i], i - container._n); container.appendChild(el); requestAnimationFrame(() => span(el)); io.observe(el); }
+    container._n = end;
+  };
+  more(); container._more = more;
+}
+const feed = document.getElementById("feed"), sentinel = document.getElementById("sentinel");
+new IntersectionObserver(es => { if(es[0].isIntersecting && feed._more && feed._n < feed._pins.length) feed._more(); }, {rootMargin:"1200px"}).observe(sentinel);
+function renderFeed(){
+  const pins = filtered();
+  document.getElementById("count").textContent = `${pins.length} 張卡片`;
+  mountPins(feed, pins, 40);
+  document.getElementById("empty").hidden = pins.length > 0;
+}
+addEventListener("resize", () => { clearTimeout(renderFeed.t); renderFeed.t = setTimeout(() => document.querySelectorAll(".pin").forEach(span), 120); });
+addEventListener("scroll", () => document.getElementById("top").classList.toggle("scrolled", scrollY > 4), {passive:true});
+document.getElementById("q").oninput = e => { state.q = e.target.value.trim().toLowerCase(); clearTimeout(renderFeed.q); renderFeed.q = setTimeout(renderFeed, 180); };
+
+/* ================================================================
+   6. 詳細頁
+   ================================================================ */
+const modal = document.getElementById("modal"), sheet = document.getElementById("sheet");
+function open(key){
+  const go = () => {
+    const [kind, id, n] = key.includes(":") ? key.split(":") : ["case", key];
+    if(key === "info") sheet.innerHTML = document.getElementById("infoTpl").innerHTML;
+    else if(kind === "algo") sheet.innerHTML = algoDetail(ALG[id]);
+    else if(kind === "var") sheet.innerHTML = varDetail(ALG[id], +n);
+    else if(kind === "seed") sheet.innerHTML = seedDetail(ALG[id], +n);
+    else { const c = CASES.find(c => c.id === key); if(!c) return; sheet.innerHTML = caseDetail(c); }
+    sheet.style.cssText = fv((ALG[id] || ALG[(key.match(/^[A-F]\d\d/)||["A01"])[0]] || {family:"A"}).family);
+    modal.classList.add("on"); modal.scrollTop = 0; document.body.style.overflow = "hidden";
+    wireDetail(key);
+    history.replaceState(null, "", "#" + key);
+  };
+  document.startViewTransition && !reduced ? document.startViewTransition(go) : go();
+}
+function close(){ modal.classList.remove("on"); document.body.style.overflow = ""; history.replaceState(null, "", location.pathname); }
+document.getElementById("close").onclick = close;
+modal.onclick = e => { if(e.target === modal) close(); };
+addEventListener("keydown", e => { if(e.key === "Escape") close(); });
+document.getElementById("infoBtn").onclick = () => open("info");
+
+const factDiff = d => `<div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${d}/5</div><small>難度</small><b>${dots(d)} ${CAT.difficulty[d]}</b></div>`;
+
+/* ---- 演算法詳細頁 ---- */
+function algoDetail(a){
+  const rich = a.id === "A01", cs = CASES_OF(a.id);
+  return `
+  <div class="closeup">
+    <div class="left"><canvas id="big"></canvas>
+      <div class="ctrl">${rich ? `
+        <div class="row"><label>${ico("i-logic-iterate")}世代</label><input type="range" id="g" min="1" max="6" value="4"><output id="go">4</output></div>
+        <div class="row"><label>${ico("w-state")}轉角</label><input type="range" id="an" min="5" max="90" value="22"><output id="ao">22°</output></div>
+        <div class="row"><label>${ico("w-geom")}縮放</label><input type="range" id="sc" min="50" max="100" value="100"><output id="so">1.00</output></div>
+        <div class="row"><button class="btn" id="replay">${ico("i-play")}重播生長</button></div>` : `
+        <div class="row"><button class="btn" id="reseed">${ico("i-dice")}換一組亂數</button><span class="ctrl-note">網頁版簡化實作，參數與範例程式相同邏輯</span></div>`}
+      </div>
+    </div>
+    <div class="right in">
+      <div class="kicker">${badge("algo", true)} ${chain(tFam(a.family), tAlgo(a.id))}</div>
+      <h2>${esc(a.name_zh)}</h2><div class="en">${esc(a.name_en)}</div>
+      <p class="oneliner">${esc(a.one_liner)}</p>
+      <div class="facts">
+        <div class="fact"><div class="ico">${ico(LOGIC_ICON[a.logic?.[0]] || "i-algo")}</div><small>邏輯</small>${(a.logic||[]).map(l => tAttr(LOGIC_ICON[l] || "i-algo", l, "邏輯")).join("")}</div>
+        <div class="fact"><div class="ico">${ico(DS_ICON[a.data_structure?.[0]] || "i-ds-symbol")}</div><small>資料結構</small>${(a.data_structure||[]).map(d => tAttr(DS_ICON[d] || "i-ds-symbol", d, "資料結構")).join("")}</div>
+        ${factDiff(a.difficulty)}
+      </div>
+      <div class="mini-h">${ico("i-logic-iterate")}怎麼運作 <small>${rich ? "滑過每一格看動作" : "每一格是一個步驟"}</small></div>
+      ${rich ? flowLSystem(true) : flowGeneric(a)}
+      <div class="taglines" style="margin-top:22px">
+        <div class="tagline"><span class="lbl">屬性</span>${tAttr("i-algo", a.loc + " 行 C#", "規模")}${tAttr("c-modeling", a.file || "", "範例檔")}</div>
+        <div class="tagline"><span class="lbl">關鍵字</span>${(a.tags||[]).map(tKw).join("")}</div>
+      </div>
+    </div>
+  </div>
+  ${rich ? `
+  <section class="sec reveal"><h3>${ico("i-ds-symbol")}符號表 <small>字串裡每個字元，畫筆怎麼動</small></h3><div class="glyphs">${glyphs()}</div></section>
+  <section class="sec reveal"><h3>${ico("w-state")}參數怎麼影響形 <small>同一條規則，只改一個數字</small></h3><div class="params" id="params"></div></section>` : `
+  <section class="sec reveal"><h3>${ico("w-state")}關鍵參數 <small>改這些數字，形就會變</small></h3><div class="pcards">${(a.key_params||[]).map(p => `<div class="pcard"><div class="pi">${ico("i-slider")}</div><div><code>${esc(p.name)}</code><p>${esc(p.effect)}</p></div></div>`).join("")}</div></section>`}
+  <section class="sec reveal"><h3>${ico("i-code")}用到的 C# 積木</h3><div class="blocks">${rich ? blocks() : (a.csharp_concepts||[]).map(k => `<div class="block"><div class="bi">${ico("i-code")}</div><div><code>${esc(k)}</code></div></div>`).join("")}</div>
+    ${a.teaching_note ? `<div class="tipbox">${ico("i-bulb")}<div><b>學習建議</b><p>${esc(a.teaching_note)}</p></div></div>` : ""}</section>
+  <section class="sec"><h3>${ico("i-var")}變形 <small>${a.variations.length} 種</small></h3><div class="subfeed" id="subVar"></div></section>
+  <section class="sec"><h3>${ico("i-case")}應用案例 <small>${cs.length} 個</small></h3><div class="subfeed" id="subCase"></div></section>
+  <section class="sec"><h3>${ico("i-seed")}延伸專案種子</h3><div class="subfeed" id="subSeed"></div></section>
+  ${(a.references||[]).length ? `<section class="sec"><h3>${ico("i-book")}延伸閱讀</h3><ul class="refs">${a.references.map(r => `<li>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}${r.author ? `<span>${esc(r.author)}</span>` : ""}${r.year ? `<span>${esc(r.year)}</span>` : ""}</li>`).join("")}</ul></section>` : ""}`;
+}
+// 一般演算法的圖示流程：依步驟內容挑圖示，只留短標題；完整句子收在下方
+const STEP_ICON = [
+  [/隨機|亂數|random/i, "i-dice"], [/停止|收斂|直到|結束|門檻/, "i-stop"], [/鄰居|最近|距離|附近|範圍內/, "i-ds-graph"],
+  [/網格|格子|陣列|grid|像素/i, "i-grid"], [/力|速度|加速|推|移動/, "i-force"], [/規則|改寫|替換|文法/, "w-rule"],
+  [/遞迴|分割|切|細分/, "i-logic-rewrite"], [/重複|每一代|每一步|迭代|迴圈|反覆/, "i-logic-iterate"],
+  [/加入|新增|插入|長出|生成|放置/, "i-plus"], [/輸出|畫|繪|連成|Mesh|曲線|線段|多邊形/, "w-output"], [/輸入|讀|給定|設定|建立|初始/, "w-input"],
+];
+const stepIcon = t => (STEP_ICON.find(([re]) => re.test(t)) || [0, "i-algo"])[1];
+const stepLabel = t => { const s = String(t).split(/[，。；：、（(]/)[0].trim(); return s.length > 13 ? s.slice(0, 12) + "…" : s; };
+function flowGeneric(a){
+  const S = a.how_it_works || [];
+  return `<div class="flow compact gen">${S.map((t,i) => `<div class="step" style="--i:${i}" title="${esc(t)}"><div class="pict"><span class="n">${i+1}</span>${ico(stepIcon(t), "i big")}</div><b>${esc(stepLabel(t))}</b></div>`).join("")}</div>
+    <details class="steps-full"><summary>看完整步驟說明</summary><ol>${S.map(t => `<li>${esc(t)}</li>`).join("")}</ol></details>`;
+}
+function wireDetail(key){
+  const so = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); so.unobserve(e.target); } }), {root:modal, threshold:.15});
+  sheet.querySelectorAll(".sec").forEach(s => so.observe(s));
+  sheet.querySelectorAll(".vchip").forEach(b => b.onclick = () => b.setAttribute("aria-expanded", b.getAttribute("aria-expanded") !== "true"));
+  if(key === "info"){ wireInfo(); return; }
+  const [kind, id, n] = key.includes(":") ? key.split(":") : ["case", key];
+  const cv = document.getElementById("big");
+  if(kind === "algo"){
+    const a = ALG[id];
+    if(id === "A01"){
+      const p = {...P.hero, fam:"A"}, g = document.getElementById("g"), an = document.getElementById("an"), sc = document.getElementById("sc");
+      const ov = () => ({gens:+g.value, angle:+an.value, scale:sc.value/100});
+      const upd = anim => { document.getElementById("go").textContent = g.value; document.getElementById("ao").textContent = an.value+"°"; document.getElementById("so").textContent = (sc.value/100).toFixed(2); anim ? grow(cv,p,1600,ov()) : render(cv,p,1,ov()); };
+      [g,an,sc].forEach(x => x.oninput = () => upd(false));
+      document.getElementById("replay").onclick = () => upd(true);
+      requestAnimationFrame(() => upd(true));
+      paramStrips();
+    } else {
+      let seed = 0; const draw = () => genDraw(cv, id, seed, a.family, FAMC[a.family][0], 1);
+      requestAnimationFrame(draw); document.getElementById("reseed").onclick = () => { seed = seed ? seed + 1 : 100; draw(); };
+    }
+    mountPins(document.getElementById("subVar"), a.variations.map((_,i) => pinVar(a,i)));
+    mountPins(document.getElementById("subCase"), CASES_OF(id).map(pinCase));
+    mountPins(document.getElementById("subSeed"), (a.project_seeds||[]).map((_,i) => pinSeed(a,i)));
+    return;
+  }
+  const algoId = kind === "case" ? key.slice(0,3) : id, a = ALG[algoId];
+  if(cv){ const vis = kind === "var" ? visual(algoId,"var",+n) : visual(algoId,"case",num(key)); requestAnimationFrame(() => vis.big(cv)); document.getElementById("replay")?.addEventListener("click", () => (vis.reseed || vis.big)(cv)); }
+  const more = document.getElementById("subMore");
+  if(more) mountPins(more, [pinAlgo(a), ...a.variations.map((_,i) => pinVar(a,i)).filter(p => p.key !== key).slice(0,5), ...CASES_OF(algoId).map(pinCase).filter(p => p.key !== key).slice(0,6)]);
+}
+
+/* ---- 變形詳細頁 ---- */
+function varDetail(a, i){
+  const v = a.variations[i];
+  return `<div class="closeup">
+    <div class="left"><canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button></div></div></div>
+    <div class="right">
+      <div class="kicker">${badge("var", true)} ${chain(tFam(a.family,true), tAlgo(a.id), tVar(i,a.id))}</div>
+      <h2>${esc(v.title)}</h2>
+      <div class="facts">
+        <div class="fact"><div class="ico">${ico(whatIcon(v.what_changes))}</div><small>改哪裡</small>${tAttr(whatIcon(v.what_changes), shortWhat(v.what_changes), "改哪裡")}</div>
+        <div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${v.level}/5</div><small>難度</small><b>${dots(v.level)}</b></div>
+        <div class="fact"><div class="ico">${ico("i-case")}</div><small>得到</small><b style="font-size:13px;font-weight:500">${esc(v.result)}</b></div>
+      </div>
+      <div class="vchips"><button class="vchip" aria-expanded="true"><span class="vi">${ico("w-rule")}</span><div><b>怎麼改</b><div class="more"><div><p>${esc(v.how)}</p></div></div></div></button></div>
+    </div></div>
+  <section class="sec"><h3>${ico("i-var")}更多</h3><div class="subfeed" id="subMore"></div></section>`;
+}
+/* ---- 案例詳細頁 ---- */
+function caseDetail(c){
+  const a = ALG[c.algo], img = !!c.image;
+  return `<div class="closeup">
+    <div class="left">${img ? `${imgTag(c)}<div class="credit">${c.image.page ? `<a href="${esc(c.image.page)}" target="_blank" rel="noopener">${credit(c.image)}</a>` : credit(c.image)}</div>`
+      : `<canvas id="big"></canvas><div class="ctrl"><div class="row"><button class="btn" id="replay">${ico("i-play")}重畫</button><span class="ctrl-note">示意圖：以 ${a.id} 的網頁版程式重現概念，非原作</span></div></div>`}</div>
+    <div class="right">
+      <div class="kicker">${badge("case", true)} ${chain(tFam(a.family,true), tAlgo(a.id))} ${tCat(c.category)}${isCC(c) ? ccBadge : ""}</div>
+      <h2 style="font-size:28px">${esc(c.title)}</h2><div class="en">${esc(c.creator)}${c.year ? "・"+esc(c.year) : ""}</div>
+      <div class="facts">
+        <div class="fact"><div class="ico">${ico(SCALE_ICON[c.scale] || "c-3d-architecture")}</div><small>尺度</small>${c.scale ? tAttr(SCALE_ICON[c.scale] || "c-3d-architecture", c.scale, "尺度") : "—"}</div>
+        <div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${c.difficulty}/5</div><small>難度</small><b>${dots(c.difficulty)}</b></div>
+        <div class="fact"><div class="ico">${ico("i-algo")}</div><small>演算法</small>${tAlgo(a.id)}</div>
+      </div>
+      <p class="oneliner" style="font-size:15px">${esc(c.summary)}</p>
+      <h3 class="subh">${ico("i-var")}這個案例怎麼改 ${a.id} <small>點開看改法</small></h3>
+      <div class="vchips">${(c.variations||[]).map(v => `<button class="vchip" aria-expanded="false"><span class="vi">${ico(whatIcon(v.how))}</span><div><b>${esc(v.name)}</b><div style="font-size:13px;color:var(--mute)">${esc(v.effect)}</div><div class="more"><div><p>${esc(v.how)}</p></div></div></div></button>`).join("")}</div>
+      <div class="taglines" style="margin-top:16px">
+        ${(c.tools||[]).length ? `<div class="tagline"><span class="lbl">工具</span>${c.tools.map(t => tAttr("c-modeling", t, "工具")).join("")}</div>` : ""}
+        <div class="tagline"><span class="lbl">關鍵字</span>${(c.tags||[]).map(tKw).join("")}</div>
+      </div>
+      ${c.url ? `<a class="srcbtn" href="${esc(c.url)}" target="_blank" rel="noopener">${ico("i-open")}原始出處</a>` : `<p class="legend-note">出處待查證</p>`}
+    </div></div>
+  <section class="sec"><h3>${ico("i-case")}更多類似</h3><div class="subfeed" id="subMore"></div></section>`;
+}
+function seedDetail(a, i){
+  const p = a.project_seeds[i];
+  return `<div class="closeup"><div class="left" style="background:var(--fam-tint);display:grid;place-items:center;min-height:380px"><svg viewBox="0 0 24 24" style="width:140px;height:140px;stroke:var(--fam-deep);fill:none;stroke-width:1.2"><use href="#i-seed"/></svg></div>
+    <div class="right"><div class="kicker">${badge("seed", true)} ${chain(tFam(a.family,true), tAlgo(a.id))}</div><h2 style="font-size:28px">${esc(p.title)}</h2>
+    <div class="facts"><div class="fact"><div class="ico" style="font:900 15px 'JetBrains Mono'">${p.difficulty}/5</div><small>難度</small><b>${dots(p.difficulty)}</b></div>
+    <div class="fact" style="grid-column:span 2"><div class="ico">${ico("w-hybrid")}</div><small>搭配</small><div class="chain">${[a.id, ...(p.combine_with||[])].filter(id => ALG[id]).map(id => tAlgo(id)).join("<b>＋</b>")}</div></div></div>
+    <p class="oneliner">${esc(p.brief)}</p></div></div>
+  <section class="sec"><h3>${ico("i-var")}可以從這些變形出發</h3><div class="subfeed" id="subMore"></div></section>`;
+}
+
+/* ================================================================
+   7. 標籤說明（圖例）與「關於」
+   ================================================================ */
+document.getElementById("legend").innerHTML = `
+  <h4>標籤怎麼看</h4><div style="font-size:13px;color:var(--mute)">形狀代表「哪一類」；只有身分鏈用家族色。</div>
+  <div class="lg-sec">身分鏈：這張卡屬於誰（家族 › 演算法 › 變形）</div>
+  <div class="lg"><span>${tFam("A")}</span><p><b>① 家族</b>實心方塊。依「長出來像什麼」分成六大家族 A–F。</p></div>
+  <div class="lg"><span>${tAlgo("A01")}</span><p><b>② 演算法</b>分段膠囊。前段是編號，對應一支 Grasshopper C# 基礎範例（.cs）。</p></div>
+  <div class="lg"><span>${tVar(0,"A01")}</span><p><b>③ 變形</b>虛線膠囊。從某個演算法改出來的版本，編號＝母演算法·V序號。</p></div>
+  <div class="lg-sec">描述：這張卡是什麼、用在哪、有什麼特性</div>
+  <div class="lg"><span>${badge("case", true)}</span><p><b>④ 卡片類型</b>圓章，只出現在圖片左上：演算法（黑）／變形（虛線）／案例（白）／專案種子（黑）。</p></div>
+  <div class="lg"><span>${ccBadge}</span><p><b>來源</b>creative coding 案例（p5.js、Processing 等）在圖片右上多一個標記。</p></div>
+  <div class="lg"><span>${tCat("3d-architecture")}</span><p><b>⑤ 應用類型</b>灰底膠囊＋圖示。案例用在哪個領域（8 類）。</p></div>
+  <div class="lg"><span>${tAttr("i-logic-rewrite","改寫／遞迴")}</span><p><b>⑥ 屬性</b>方角細框。邏輯、資料結構、尺度、工具、改哪裡。</p></div>
+  <div class="lg"><span>${tKw("遞迴")}</span><p><b>⑦ 關鍵字</b>沒有框，# 開頭，用來搜尋。</p></div>
+  <div class="lg"><span>${dots(3)}</span><p><b>難度</b>5 點，實心越多越難。</p></div>`;
+const lb = document.getElementById("legendBtn"), lg = document.getElementById("legend");
+lb.onclick = e => { e.stopPropagation(); const on = !lg.classList.contains("on"); lg.classList.toggle("on", on); lb.setAttribute("aria-expanded", on); };
+document.addEventListener("click", e => { if(!lg.contains(e.target)){ lg.classList.remove("on"); lb.setAttribute("aria-expanded", false); } });
+
+function wireInfo(){
+  const nV = ALGOS.reduce((s,a) => s + a.variations.length, 0), nS = ALGOS.reduce((s,a) => s + (a.project_seeds||[]).length, 0), nCC = CASES.filter(isCC).length;
+  sheet.querySelector("#iStats").innerHTML = [[ALGOS.length,"演算法"],[CASES.length,"應用案例"],[nCC,"creative coding 案例"],[nV,"變形食譜"],[nS,"專案種子"]].map(([n,t]) => `<div class="stat"><b>${n}</b><small>${t}</small></div>`).join("");
+  sheet.querySelector("#iFams").innerHTML = Object.keys(CAT.families).map(f => `<div class="ifam">${tFam(f)}<div class="list">${ALGOS.filter(a => a.family === f).map(a => `<button class="linkchip" data-open="algo:${a.id}">${tAlgo(a.id)}</button>`).join("")}</div></div>`).join("");
+  sheet.querySelectorAll("[data-open]").forEach(b => b.onclick = () => open(b.dataset.open));
+  const top = (k, name) => Object.entries(prefs[k]).sort((a,b) => b[1] - a[1]).slice(0, 3).map(([key]) => name(key)).join("");
+  const pr = sheet.querySelector("#iPrefs");
+  const show = () => { const t = top("algo", id => ALG[id] ? tAlgo(id) : "") + top("fam", f => CAT.families[f] ? tFam(f) : "") + top("cat", c => CAT.categories[c] ? tCat(c) : "");
+    pr.innerHTML = t ? `<div class="tagline">${t}</div>` : `<p class="legend-note">還沒有瀏覽紀錄。</p>`; };
+  show();
+  sheet.querySelector("#iReset").onclick = () => { ["fam","algo","cat","type","src","diff"].forEach(k => prefs[k] = {}); try { localStorage.removeItem(PREF_KEY); } catch(e){} show(); };
+}
+
+/* ================================================================
+   8. 啟動
+   ================================================================ */
+renderChips(); renderFeed();
+if(location.hash.length > 1) setTimeout(() => open(decodeURIComponent(location.hash.slice(1))), 60);

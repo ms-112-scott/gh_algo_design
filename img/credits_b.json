@@ -1,0 +1,178 @@
+{
+  "B01-51": {
+    "source": "inconvergent.net",
+    "author": "Anders Hoff",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://inconvergent.net/generative/differential-line/",
+    "note": "差異線生長後形成的密集皺褶黑白線圖"
+  },
+  "B01-52": {
+    "source": "GitHub Pages（jasonwebb）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://jasonwebb.github.io/2d-differential-growth-experiments/",
+    "note": "專案社群預覽圖，差異生長曲線"
+  },
+  "B01-53": {
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/sets/floraform/",
+    "note": "Floraform 差異生長曲面測試圖"
+  },
+  "B01-54": {
+    "source": "CodePlastic",
+    "author": "Alberto Giachino",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.codeplastic.com/2017/07/22/differential-line-growth-with-processing/",
+    "note": "Processing 差異線生長的迷宮狀曲線"
+  },
+  "B01-55": {
+    "source": "Entagma",
+    "author": "Moritz Schwind",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.entagma.com/differential-line-growth/",
+    "note": "Houdini 差異線生長算圖"
+  },
+  "B02-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+    "note": "Coding Challenge #34 影片縮圖，DLA 團簇"
+  },
+  "B02-52": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+    "note": "Coding Challenge #127 影片縮圖，布朗樹雪花"
+  },
+  "B02-53": {
+    "source": "GitHub（jasonwebb/2d-diffusion-limited-aggregation-experiments）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+    "note": "README 中「方向偏移」實驗的預覽圖"
+  },
+  "B02-54": {
+    "source": "GitHub（fogleman/dlaf）README",
+    "author": "Michael Fogleman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/fogleman/dlaf",
+    "note": "一千萬粒子 3D DLA 光線追蹤算圖"
+  },
+  "B02-55": {
+    "source": "Vimeo（Entagma）",
+    "author": "Entagma",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://vimeo.com/218372128",
+    "note": "Houdini VEX DLA 教學影片縮圖"
+  },
+  "B03-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+    "note": "Coding Challenge #17 影片縮圖，空間殖民樹"
+  },
+  "B03-52": {
+    "source": "GitHub（jasonwebb/2d-space-colonization-experiments）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+    "note": "圓形範圍內的空間殖民葉脈圖"
+  },
+  "B03-53": {
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+    "note": "Hyphae 燈具內部分枝結構照片"
+  },
+  "B03-54": {
+    "source": "GitHub（edap/ofxSpaceColonization）README",
+    "author": "Davide Prati",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/edap/ofxSpaceColonization",
+    "note": "README 封面圖，openFrameworks 生成的 3D 樹"
+  },
+  "B03-55": {
+    "source": "GitHub（mattatz/Dendrite）README",
+    "author": "mattatz",
+    "license": "MIT（圖在 repo 中）",
+    "license_url": "https://github.com/mattatz/Dendrite/blob/master/LICENSE",
+    "page": "https://github.com/mattatz/Dendrite",
+    "note": "DendriteSphere 動畫的第一格，球體上的分枝"
+  },
+  "B04-51": {
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+    "note": "Coding Challenge #30 影片縮圖，葉序螺旋"
+  },
+  "B04-52": {
+    "source": "GitHub（edap/ofxPhyllotaxis）README",
+    "author": "Davide Prati",
+    "license": "MIT（圖在 repo 中）",
+    "license_url": "https://github.com/edap/ofxPhyllotaxis",
+    "page": "https://github.com/edap/ofxPhyllotaxis",
+    "note": "README 中 apple 方法的 3D 葉序排列圖"
+  },
+  "B04-53": {
+    "source": "YouTube（Entagma）",
+    "author": "Entagma",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=yGwhnt7mZ50",
+    "note": "Houdini 旋轉曲面葉序教學影片縮圖"
+  },
+  "B04-54": {
+    "source": "GitHub（avvie/ECS-Phyllotaxis）README",
+    "author": "avvie",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/avvie/ECS-Phyllotaxis",
+    "note": "Unity 中以葉序排列的大量方塊截圖"
+  },
+  "B05-51": {
+    "source": "complexification.net",
+    "author": "Jared Tarbell",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.complexification.net/gallery/machines/substrate/",
+    "note": "Substrate 作品頁主圖，城市街廓般的裂紋與沙畫上色"
+  },
+  "B05-52": {
+    "source": "GitHub Pages（dribnet/substrate）",
+    "author": "Tom White",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://dribnet.github.io/substrate/",
+    "note": "p5.js 移植版的預覽圖"
+  },
+  "B05-53": {
+    "source": "GitHub（technologiestiftung/substrate）README",
+    "author": "Fabian Morón Zirfas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/technologiestiftung/substrate",
+    "note": "CLI 輸出的 Substrate 向量線稿"
+  }
+}
