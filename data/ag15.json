@@ -642,42 +642,6 @@
       "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137"
     },
     {
-      "id": "D02-05",
-      "algo": "D02",
-      "title": "GAN-Physarum: La Dérive Numérique",
-      "creator": "ecoLogicStudio（Claudia Pasquero, Marco Poletto）",
-      "year": "2022",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "群體／都市",
-      "summary": "於龐畢度中心 Réseaux-Mondes 展出。團隊以 GAN 學習黏菌的生長圖樣，再套用到巴黎街道，讀取城市的生物資源並生成分散式的藍綠步道網絡，把黏菌當作非人類的都市規劃協作者。",
-      "variations": [
-        {
-          "name": "綠地影像驅動",
-          "how": "以綠覆率影像作為額外感測場，感測值 = 痕跡 + 權重 × 綠覆亮度。",
-          "effect": "網絡沿綠地與公園串連，形成生態廊道草案。"
-        },
-        {
-          "name": "既有街道遮罩",
-          "how": "把街道中心線柵格化成允許通行格，其餘設為 blocked。",
-          "effect": "網絡只在街道上選路，得到可實施的步行路徑優先順序。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "影像輸入",
-        "網格擴散",
-        "最佳化"
-      ],
-      "tools": [
-        "GAN",
-        "生物實驗"
-      ],
-      "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique"
-    },
-    {
       "id": "D02-06",
       "algo": "D02",
       "title": "bioTallinn 與 Paljassaare 半島黏菌規劃",

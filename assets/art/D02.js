@@ -424,27 +424,6 @@ ART.case["D02-04"] = function(g, W, H, r, c){
 };
 ART.case["D02-04"].ratio = 1.3;
 
-// D02-05 GAN-Physarum 巴黎：塞納河、放射狀大道與環城道路上的藍綠步道網絡
-ART.case["D02-05"] = function(g, W, H, r, c){
-  const n = 100, m = Math.round(n*H/W), cx = .5, cy = .5;
-  const seine = [[0,.42],[.2,.5],[.36,.62],[.5,.6],[.62,.5],[.78,.56],[1,.7]];
-  const et = [.3, .35], av = [...Array(12)].map((_, k) => k/12*TAU + .1);
-  const drawStreets = (o, sx, sy, lw) => { o.lineWidth = lw; o.beginPath(); o.ellipse(cx*sx, cy*sy, .44*sx, .4*sy, 0, 0, TAU); o.stroke();
-    av.forEach(a => { o.beginPath(); o.moveTo(et[0]*sx, et[1]*sy); o.lineTo((et[0] + Math.cos(a))*sx, (et[1] + Math.sin(a))*sy); o.stroke(); });
-    [[.1,.8,.9,.25],[.2,.1,.7,.95],[.05,.2,.95,.75],[.5,.05,.55,.95]].forEach(([a,b,c2,d]) => { o.beginPath(); o.moveTo(a*sx, b*sy); o.lineTo(c2*sx, d*sy); o.stroke(); }); };
-  const st = raster(n, m, o => { o.strokeStyle = "#000"; drawStreets(o, n, m, 2.2); });
-  const river = raster(n, m, o => { o.strokeStyle = "#000"; o.lineWidth = 3.5; o.beginPath(); seine.forEach(([x,y], i) => i ? o.lineTo(x*n, y*m) : o.moveTo(x*n, y*m)); o.stroke(); });
-  const blk = new Uint8Array(n*m), bias = new Float32Array(n*m); for(let k = 0; k < n*m; k++){ blk[k] = river[k] > .5 ? 1 : 0; bias[k] = st[k]*2; }
-  const parks = spread(r, 7, 10, 10, n-20, m-20, 18);
-  const s = sim({n, m, A: 2400, it: 50, wrap: false, blk, bias, sd: 3.5, dec: .86, food: parks.map(p => [p[0], p[1], 5])}, r), T = s.T[0], mx = s.mx[0];
-  const [R,G,B] = U.rgb(ACC);
-  g.strokeStyle = U.rgba(c, .5); drawStreets(g, W, H, 1);
-  g.strokeStyle = "rgba(90,130,220,.55)"; g.lineWidth = 7; g.lineCap = "round"; g.beginPath(); seine.forEach(([x,y], i) => i ? g.lineTo(x*W, y*H) : g.moveTo(x*W, y*H)); g.stroke();
-  paint(g, n, m, (i,j) => { const t = Math.min(1, Math.pow(T[j*n+i]/mx, .9)); return t < .1 ? null : [R*.6 + 100*t, G*.8 + 60*t, B*.7 + 60*t, t*255]; }, 0, 0, W, H);
-  parks.forEach(([x,y]) => { g.fillStyle = "rgba(90,200,120,.35)"; g.beginPath(); g.arc(x*W/n, y*H/m, 7, 0, TAU); g.fill(); g.fillStyle = "#7FE0A0"; g.beginPath(); g.arc(x*W/n, y*H/m, 2.2, 0, TAU); g.fill(); });
-  g.fillStyle = "#fff"; g.beginPath(); g.arc(et[0]*W, et[1]*H, 3, 0, TAU); g.fill();
-};
-ART.case["D02-05"].ratio = .9;
 
 // D02-06 bioTallinn 半島：海面水平線、半島地形等高線、網絡連接汙水處理節點
 ART.case["D02-06"] = function(g, W, H, r, c){

@@ -1,1 +1,20 @@
-[]
+[
+ {
+  "run": "removed",
+  "unit": "REMOVE:A06-12",
+  "algo": "A06",
+  "kind": "RES",
+  "title": "以 WFC 與 CNN 模擬都市空間",
+  "url_norm": "doi:10.5555/3465085.3465103",
+  "reason": "神經網路相關，超出教學難度"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D02-05",
+  "algo": "D02",
+  "kind": "RES",
+  "title": "GAN-Physarum: La Dérive Numérique",
+  "url_norm": "ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
+  "reason": "神經網路相關，超出教學難度"
+ }
+]

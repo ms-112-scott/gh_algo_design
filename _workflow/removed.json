@@ -1,0 +1,18 @@
+[
+ {
+  "id": "A06-12",
+  "algo": "A06",
+  "title": "以 WFC 與 CNN 模擬都市空間",
+  "url": "https://dl.acm.org/doi/abs/10.5555/3465085.3465103",
+  "reason": "神經網路相關，超出教學難度",
+  "at": "2026-09-28T23:48+08:00"
+ },
+ {
+  "id": "D02-05",
+  "algo": "D02",
+  "title": "GAN-Physarum: La Dérive Numérique",
+  "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
+  "reason": "神經網路相關，超出教學難度",
+  "at": "2026-09-28T23:48+08:00"
+ }
+]

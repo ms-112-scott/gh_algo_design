@@ -560,23 +560,6 @@ ART.case["A06-11"] = function(g, W, H, r, c){
 };
 ART.case["A06-11"].ratio = 1.2;
 
-// A06-12 WFC 路網＋CNN 配置機能：鳥瞰街廓與角落的卷積層示意
-ART.case["A06-12"] = function(g, W, H, r, c){
-  const n = 9, m = Math.round(n*H/W), s = Math.min(W/n, H/m), ox = (W - n*s)/2, oy = (H - m*s)/2;
-  const R = pipeSolve({n, m, r, weight: byDeg([.6,.05,1,1.3,1.4], 1.6)}), nz = U.vnoise((r()*1e9)|0);
-  const fcol = [U.rgba(c, .75), "#E9E4D8", "#6E9A64", "#D98E6B"];
-  for(let j = 0; j < m; j++) for(let i = 0; i < n; i++){ const x = ox + i*s, y = oy + j*s;
-    [[0,0],[1,0],[0,1],[1,1]].forEach(([a, b]) => { const v = nz((i*2+a)*.5, (j*2+b)*.5), k = Math.min(3, (v*4)|0), px = x + a*s*.55 + s*.08, py = y + b*s*.55 + s*.08, w = s*.34;
-      g.fillStyle = fcol[k]; g.globalAlpha = .85; g.fillRect(px, py, w, w); g.globalAlpha = 1;
-      if(k === 2){ g.fillStyle = "rgba(20,50,20,.6)"; for(let q = 0; q < 3; q++){ g.beginPath(); g.arc(px + w*(.25 + .25*q), py + w*(.3 + .3*(q%2)), w*.1, 0, TAU); g.fill(); } } }); }
-  g.lineCap = "square"; g.strokeStyle = "#44444F"; g.lineWidth = s*.2; pipeLines(g, R, ox, oy, s);
-  g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1; g.setLineDash([3, 3]); pipeLines(g, R, ox, oy, s); g.setLineDash([]);
-  // CNN 卷積層
-  const bx = W*.66, by = H*.8; g.fillStyle = "rgba(15,15,20,.88)"; g.fillRect(bx - 6, by - 8, W*.34, H*.2);
-  [1, .75, .55, .4].forEach((k, q) => { const x = bx + q*W*.07, h = H*.14*k, y = by + (H*.14 - h)/2; g.fillStyle = U.rgba(c, .3 + q*.15); g.strokeStyle = "#fff"; g.lineWidth = 1;
-    U.poly(g, [[x, y + 4], [x + 8, y], [x + 8, y + h - 4], [x, y + h]], true); g.fill(); g.stroke(); });
-};
-ART.case["A06-12"].ratio = 1;
 
 // A06-13 鄉村住宅配置：等高線地形、彎曲道路、沿路的住宅／庭院／農地
 ART.case["A06-13"] = function(g, W, H, r, c){

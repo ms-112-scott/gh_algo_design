@@ -11056,39 +11056,6 @@ window.CATALOG = {
    "url": "https://github.com/qin2500/HWFC_floor_plan_generation"
   },
   {
-   "id": "A06-12",
-   "algo": "A06",
-   "title": "以 WFC 與 CNN 模擬都市空間",
-   "creator": "Cardiff University 研究團隊（SimAUD 2020）",
-   "year": "2020",
-   "category": "urban-landscape",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "群體／都市",
-   "summary": "提出都市空間合成管線：由 WFC 生成道路網、街廓形態，再搭配卷積神經網路配置建築機能，最後由設計者評估結果。",
-   "variations": [
-    {
-     "name": "道路 tile",
-     "how": "把水管 tile 直接重新詮釋為道路（直路、彎路、T 字路口、十字路口），空白 tile 當街廓。",
-     "effect": "基礎範例幾乎不改就能生成街道網"
-    },
-    {
-     "name": "街廓再分割",
-     "how": "WFC 生成道路後，把相連的空白格合併成街廓，再交給 A04 遞迴分割切地塊。",
-     "effect": "從路網到地塊的兩階段都市生成"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "約束滿足",
-    "拼貼",
-    "多元件"
-   ],
-   "tools": [],
-   "url": "https://dl.acm.org/doi/abs/10.5555/3465085.3465103"
-  },
-  {
    "id": "A06-13",
    "algo": "A06",
    "title": "以 WFC 生成與評估鄉村住宅配置",
@@ -19863,42 +19830,6 @@ window.CATALOG = {
     "脫蠟鑄造"
    ],
    "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137"
-  },
-  {
-   "id": "D02-05",
-   "algo": "D02",
-   "title": "GAN-Physarum: La Dérive Numérique",
-   "creator": "ecoLogicStudio（Claudia Pasquero, Marco Poletto）",
-   "year": "2022",
-   "category": "urban-landscape",
-   "categories_extra": [
-    "art-installation"
-   ],
-   "scale": "群體／都市",
-   "summary": "於龐畢度中心 Réseaux-Mondes 展出。團隊以 GAN 學習黏菌的生長圖樣，再套用到巴黎街道，讀取城市的生物資源並生成分散式的藍綠步道網絡，把黏菌當作非人類的都市規劃協作者。",
-   "variations": [
-    {
-     "name": "綠地影像驅動",
-     "how": "以綠覆率影像作為額外感測場，感測值 = 痕跡 + 權重 × 綠覆亮度。",
-     "effect": "網絡沿綠地與公園串連，形成生態廊道草案。"
-    },
-    {
-     "name": "既有街道遮罩",
-     "how": "把街道中心線柵格化成允許通行格，其餘設為 blocked。",
-     "effect": "網絡只在街道上選路，得到可實施的步行路徑優先順序。"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "影像輸入",
-    "網格擴散",
-    "最佳化"
-   ],
-   "tools": [
-    "GAN",
-    "生物實驗"
-   ],
-   "url": "https://www.ecologicstudio.com/projects/gan-physarum-la-derive-numerique"
   },
   {
    "id": "D02-06",
