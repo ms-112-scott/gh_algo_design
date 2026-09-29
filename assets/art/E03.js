@@ -214,7 +214,7 @@ ART.var["E03"][9] = function(g, W, H, r, c){
 };
 // V11 細胞長高成 3D 量體：依到吸引點距離擠出高度的蜂巢城市量體（留出街道縫隙）
 ART.var["E03"][10] = function(g, W, H, r, c){
-  const K = 24, { S, P } = lloyd(r, K, 0, 0, 1, 1, 3), s = Math.min(W, H) * .6, cx = W * .5, cy = H * .18;
+  const K = 24, { S, P } = lloyd(r, K, 0, 0, 1, 1, 3), s = Math.min(W, H) * .52, cx = W * .5, cy = H * .64;
   const at = [.5 + (r() - .5) * .3, .5 + (r() - .5) * .3];
   const gp = [[0, 0], [1, 0], [1, 1], [0, 1]].map(p => iso(p[0] - .5, p[1] - .5, 0, cx, cy, s));
   path(g, gp, true); g.fillStyle = "rgba(255,255,255,.03)"; g.fill(); g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = .6; g.stroke();

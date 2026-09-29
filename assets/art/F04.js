@@ -245,15 +245,15 @@ ART.var["F04"][11] = function(g, W, H, r, c, U){
   fronts.slice(0, 4).forEach((F, k) => { if(F.length < 2) return; g.strokeStyle = k ? U.rgba(c, .55 - k*.12) : "#fff"; g.lineWidth = k ? 1 : 1.6; g.beginPath();
     F.forEach((i, t) => { const p = pts[i]; if(!t) g.moveTo(X(p.f1), Y(p.f2)); else { g.lineTo(X(p.f1), Y(pts[F[t-1]].f2)); g.lineTo(X(p.f1), Y(p.f2)); } }); g.stroke(); });
   // 擁擠距離：第 1 前緣中間一點，左右鄰居圍出的長方形
-  const F0 = fronts[0]; let mi = 0, best = -1;   // 取擁擠距離最大的中間點
-  for(let t = 1; t < F0.length - 1; t++){ const d = pts[F0[t+1]].f1 - pts[F0[t-1]].f1 + pts[F0[t-1]].f2 - pts[F0[t+1]].f2; if(d > best){ best = d; mi = t; } }
-  if(F0.length > 2){ const a = pts[F0[mi-1]], b = pts[F0[mi+1]]; g.setLineDash([3, 2]); g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = 1;
+  const F0 = fronts[0], mid = F0[F0.length >> 1]; let mi = 0, best = -1;   // 取前緣中段擁擠距離最大的點
+  for(let t = Math.min(2, F0.length - 2); t < F0.length - 2; t++){ const d = pts[F0[t+1]].f1 - pts[F0[t-1]].f1 + pts[F0[t-1]].f2 - pts[F0[t+1]].f2; if(d > best){ best = d; mi = t; } }
+  if(mi > 0){ const a = pts[F0[mi-1]], b = pts[F0[mi+1]]; g.setLineDash([3, 2]); g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = 1;
     g.strokeRect(X(a.f1), Y(a.f2), X(b.f1) - X(a.f1), Y(b.f2) - Y(a.f2)); g.setLineDash([]); }
   // 點：依前緣層級上色
   pts.forEach(p => { const k = p.rank; g.fillStyle = k === 0 ? "#fff" : k < 4 ? U.rgba(c, .95 - k*.2) : "rgba(255,255,255,.18)";
     g.beginPath(); g.arc(X(p.f1), Y(p.f2), k === 0 ? 3.2 : 2.3, 0, U.TAU); g.fill(); });
   // 右側：前緣上三個方案回看點陣配置
-  const pick = [F0[0], F0[mi], F0[F0.length - 1]], bx = W*.72, bw = W*.23, bh = (y1 - y0 - 2*H*.04)/3;
+  const pick = [F0[0], mid, F0[F0.length - 1]], bx = W*.72, bw = W*.23, bh = (y1 - y0 - 2*H*.04)/3;
   pick.forEach((i, k) => { const by = y0 + k*(bh + H*.04), p = pts[i];
     g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = .8; g.beginPath(); g.moveTo(X(p.f1) + 4, Y(p.f2)); g.lineTo(bx, by + bh/2); g.stroke();
     g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(bx, by, bw, bh); g.strokeStyle = U.rgba(c, .8); g.lineWidth = 1; g.strokeRect(bx, by, bw, bh);

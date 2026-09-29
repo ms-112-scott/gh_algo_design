@@ -320,22 +320,61 @@ ART.case["F06-07"] = function(g, W, H, r, c, U){
   const tip = pts[pts.length-1]; g.fillStyle = "#fff"; g.fillRect(tip[0]-2,tip[1]-2,4,4);
 };
 ART.case["F06-07"].ratio = .78;
-// F06-08 Alice Aycock 的公共藝術《Strange Attractor》：天空地平線前的粗環帶量體，地面小人標尺度
+// F06-08 Alice Aycock 的公共藝術《Strange Attractor》：航廈大廳室內透視──玻璃帷幕、天花梁、地面上的人標尺度，
+// 挑空中以鋼索吊著一條沿 Lorenz 軌跡掃出、邊走邊扭轉的白色金屬帶（正面白、背面帶家族色），依深度由遠到近排序繪製
 ART.case["F06-08"] = function(g, W, H, r, c, U){
-  const sky = g.createLinearGradient(0,0,0,H*.72); sky.addColorStop(0,"#232838"); sky.addColorStop(1,"#171A22");
-  g.fillStyle = sky; g.fillRect(0,0,W,H*.72); g.fillStyle = "#14151B"; g.fillRect(0,H*.72,W,H*.28);
-  g.strokeStyle = "rgba(255,255,255,.15)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0,H*.72); g.lineTo(W,H*.72); g.stroke();
-  const traj = lorenzTraj(2200,.012,'rk4').map(iso3), P = fitPts(traj, W*.62, H*.5, 0);
-  const ox = (W-W*.62)/2, oy = H*.06, pts = P.map(p => [p[0]+ox,p[1]+oy]);
-  g.lineCap = "round"; g.lineJoin = "round";
-  for(let i = 1; i < pts.length; i++){ g.strokeStyle = U.rgba(c,.9); g.lineWidth = 5+3*Math.sin(i*.01);
-    g.beginPath(); g.moveTo(pts[i-1][0],pts[i-1][1]); g.lineTo(pts[i][0],pts[i][1]); g.stroke(); }
-  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1.4; g.beginPath();
-  pts.forEach((p,i) => i ? g.lineTo(p[0]-2,p[1]-2) : g.moveTo(p[0]-2,p[1]-2)); g.stroke();
-  const gy = H*.72; g.fillStyle = "rgba(235,235,240,.75)"; g.fillRect(W*.12,gy-H*.05,H*.014,H*.05);
-  g.beginPath(); g.arc(W*.12+H*.007,gy-H*.05-H*.012,H*.012,0,U.TAU); g.fill();
+  const ey = -6, ez = 1.7, f = W*.6, hy = H*.64, cam = p => { const d = p[1] - ey; return [W/2 + p[0]/d*f, hy - (p[2] - ez)/d*f]; };
+  const X0 = -8, X1 = 8, Y1 = 15, Z1 = 8;
+  // 背面玻璃帷幕（暮色）與豎框
+  const bl = cam([X0, Y1, Z1]), br = cam([X1, Y1, 0]);
+  const sky = g.createLinearGradient(0, bl[1], 0, br[1]); sky.addColorStop(0, "#34405f"); sky.addColorStop(.7, "#2a2f45"); sky.addColorStop(1, "#1d2030");
+  g.fillStyle = sky; g.fillRect(bl[0], bl[1], br[0] - bl[0], br[1] - bl[1]);
+  g.strokeStyle = "rgba(200,210,235,.22)"; g.lineWidth = 1;
+  for(let x = X0; x <= X1 + .01; x += 1){ const a = cam([x, Y1, 0]), b = cam([x, Y1, Z1]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  for(const z of [2.8, 5.6]){ const a = cam([X0, Y1, z]), b = cam([X1, Y1, z]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  // 地板、天花、兩側牆（梯形）
+  const quad = (pts, fill) => { U.poly(g, pts.map(cam), true); g.fillStyle = fill; g.fill(); };
+  quad([[X0, -3, 0], [X1, -3, 0], [X1, Y1, 0], [X0, Y1, 0]], "#16171d");
+  quad([[X0, -3, Z1], [X1, -3, Z1], [X1, Y1, Z1], [X0, Y1, Z1]], "#202129");
+  quad([[X0, -3, 0], [X0, Y1, 0], [X0, Y1, Z1], [X0, -3, Z1]], "#1b1c23");
+  quad([[X1, -3, 0], [X1, Y1, 0], [X1, Y1, Z1], [X1, -3, Z1]], "#191a21");
+  g.strokeStyle = "rgba(255,255,255,.06)"; g.lineWidth = 1;
+  for(let x = X0; x <= X1; x += 1.4){ const a = cam([x, -3, 0]), b = cam([x, Y1, 0]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  g.strokeStyle = "rgba(255,255,255,.14)"; g.lineWidth = 1.6;
+  for(let y = -1; y <= Y1; y += 2){ const a = cam([X0, y, Z1]), b = cam([X1, y, Z1]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  // 地面的光反射
+  const gl = cam([0, 9, 0]), rg = g.createRadialGradient(gl[0], gl[1], 0, gl[0], gl[1], W*.4);
+  rg.addColorStop(0, "rgba(255,255,255,.08)"); rg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = rg; g.fillRect(0, hy, W, H - hy);
+  // 雕塑：Lorenz 軌跡（RK4）→ 世界座標，沿切線掃出扭轉的帶
+  const T = lorenzTraj(2250, .008, 'rk4').slice(1550).filter((_, i) => i % 2 === 0);   // 這段會繞過左右兩翼
+  const Pw = T.map(([x, y, z]) => [x*.15, 2.6 + y*.1, 1.8 + z*.14]), N = Pw.length, up = [0, 0, 1];
+  const nrm = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0]/l, v[1]/l, v[2]/l]; };
+  const crs = (a, b) => [a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]];
+  const hw = .3, side = [], L = nrm([-.4, -.7, .6]);
+  for(let i = 0; i < N; i++){ const t = nrm([0,1,2].map(k => Pw[Math.min(N-1, i+1)][k] - Pw[Math.max(0, i-1)][k])), n1 = nrm(crs(t, up)), n2 = crs(t, n1), th = i*.09;
+    side.push({t, w:[0,1,2].map(k => (n1[k]*Math.cos(th) + n2[k]*Math.sin(th))*hw)}); }
+  const segs = [];
+  for(let i = 0; i < N - 1; i++){ const A = Pw[i], B = Pw[i+1], wa = side[i].w, wb = side[i+1].w;
+    const q = [[A[0]-wa[0], A[1]-wa[1], A[2]-wa[2]], [A[0]+wa[0], A[1]+wa[1], A[2]+wa[2]], [B[0]+wb[0], B[1]+wb[1], B[2]+wb[2]], [B[0]-wb[0], B[1]-wb[1], B[2]-wb[2]]];
+    const nn = nrm(crs(side[i].t, wa)), mid = [(A[0]+B[0])/2, (A[1]+B[1])/2, (A[2]+B[2])/2], vw = nrm([-mid[0], ey - mid[1], ez - mid[2]]);
+    segs.push({q, d:mid[1], nn, front:(nn[0]*vw[0] + nn[1]*vw[1] + nn[2]*vw[2]) > 0}); }
+  // 吊索（先畫，雕塑會蓋住下端）
+  g.strokeStyle = "rgba(255,255,255,.28)"; g.lineWidth = .7;
+  [.08, .3, .52, .74, .93].forEach(u => { const p = Pw[Math.floor(u*(N-1))], a = cam(p), b = cam([p[0], p[1], Z1]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+  // 地面影子
+  g.fillStyle = "rgba(0,0,0,.28)"; segs.forEach(s2 => { if(s2.d % 1 > .5) return; U.poly(g, s2.q.map(p => cam([p[0], p[1], 0])), true); g.fill(); });
+  segs.sort((a, b) => b.d - a.d).forEach(s2 => { const l = Math.abs(s2.nn[0]*L[0] + s2.nn[1]*L[1] + s2.nn[2]*L[2]);
+    U.poly(g, s2.q.map(cam), true);
+    if(s2.front){ const v = Math.round(150 + 105*l); g.fillStyle = `rgb(${v},${v},${Math.min(255, v + 6)})`; }
+    else { const C = U.rgb(c), k = .45 + .45*l; g.fillStyle = `rgb(${Math.round((C[0]*.6 + 102)*k + 40)},${Math.round((C[1]*.6 + 102)*k + 40)},${Math.round((C[2]*.6 + 102)*k + 40)})`; }
+    g.fill(); g.strokeStyle = g.fillStyle; g.lineWidth = .5; g.stroke(); });
+  // 人（尺度）
+  [[-3.6, 1.5, 1], [-2.8, 2.6, .92], [3.1, 1, 1.02], [4.6, 6.5, .95], [1.4, 9, 1], [-5, 8, .9], [5.8, 2.4, .97]].forEach(([x, y, k]) => {
+    const a = cam([x, y, 0]), b = cam([x, y, 1.75*k]), h = a[1] - b[1], w = h*.24;
+    g.fillStyle = "rgba(8,8,12,.92)"; g.fillRect(a[0] - w/2, b[1] + h*.2, w, h*.8);
+    g.beginPath(); g.arc(a[0], b[1] + h*.1, h*.1, 0, U.TAU); g.fill(); });
 };
-ART.case["F06-08"].ratio = 1.35;
+ART.case["F06-08"].ratio = .9;
 // F06-09 vpype-fractal 筆繪機外掛：三色多筆疊繪（XZ 投影，模擬多次分色繪製），右上角筆架標記
 ART.case["F06-09"] = function(g, W, H, r, c, U){
   const steps = 1600, dt = .013; let x = .12, y = 0, z = 0; const raw = new Array(steps);

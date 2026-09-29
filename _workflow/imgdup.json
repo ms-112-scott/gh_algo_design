@@ -1,8 +1,260 @@
 {
- "generated": "2026-09-29T09:32+08:00",
+ "generated": "2026-09-29T09:45+08:00",
  "algos": {
+  "A01": {
+   "cards": 32,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "A02": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "A03": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "A04": {
+   "cards": 30,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "A05": {
+   "cards": 33,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "A06": {
+   "cards": 32,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B01": {
+   "cards": 30,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B02": {
+   "cards": 34,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B03": {
+   "cards": 32,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B04": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B05": {
+   "cards": 28,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "B06": {
+   "cards": 22,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "C01": {
+   "cards": 34,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "C02": {
+   "cards": 34,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "C03": {
+   "cards": 30,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "C04": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "C05": {
+   "cards": 32,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "D01": {
+   "cards": 32,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "D02": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "D03": {
+   "cards": 30,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E01": {
+   "cards": 31,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E02": {
+   "cards": 28,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E03": {
+   "cards": 33,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E04": {
+   "cards": 35,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E05": {
+   "cards": 25,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "E06": {
+   "cards": 23,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
   "F01": {
    "cards": 28,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F02": {
+   "cards": 26,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F03": {
+   "cards": 25,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F04": {
+   "cards": 24,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F05": {
+   "cards": 23,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F06": {
+   "cards": 22,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F07": {
+   "cards": 24,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "F08": {
+   "cards": 22,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "G01": {
+   "cards": 24,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "G02": {
+   "cards": 23,
+   "fallback": [],
+   "like_algo": [],
+   "near_dup": [],
+   "errors": []
+  },
+  "G03": {
+   "cards": 20,
    "fallback": [],
    "like_algo": [],
    "near_dup": [],
@@ -11,7 +263,7 @@
  },
  "photo_dup": [],
  "summary": {
-  "cards": 28,
+  "cards": 1056,
   "fallback": 0,
   "like_algo": 0,
   "near_dup": 0,
