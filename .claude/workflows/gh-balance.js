@@ -1,6 +1,6 @@
 export const meta = {
   name: 'gh-balance',
-  description: 'GH 演算法設計圖鑑：案例分成「數位研究／藝術設計」並調成 1:1（以 p5.js／Processing 等藝術作品替換較弱的研究案例，總數不增加）→ 每個案例找真實圖片（藝術案例用作品本身的演算法生成畫面，不用影片縮圖）→ 後段家族卡片圖重畫。可續跑。args: {run: "RYYYYMMDD-HHMM", only?: ["classify","review","merge","images","art","finish"], dry?: true, conc?: 12, img_per?: 18, rev_per?: 4, models?: {...}|false}',
+  description: 'GH 演算法設計圖鑑：案例分成「數位研究／藝術設計」並調成 1:1（以 p5.js／Processing 等藝術作品替換較弱的研究案例，總數不增加）→ 每個案例找真實圖片（藝術案例用作品本身的演算法生成畫面，不用影片縮圖）→ 後段家族卡片圖重畫。可續跑。同時最多 Opus 10 個＋Sonnet 20 個。args: {run: "RYYYYMMDD-HHMM", only?: ["classify","review","merge","images","art","finish"], dry?: true, opus_conc?: 10, sonnet_conc?: 20, img_per?: 18, rev_per?: 4, models?: {...}|false}',
   phases: ['準備', '分類與替換', '審查', '合併', '找圖', '卡片圖', '收尾'],
 }
 
@@ -11,7 +11,8 @@ export const meta = {
      run：台北時間的執行編號（腳本裡不能取得時間，由呼叫者提供）。
      同一個 run 可以重複執行來續跑：已完成的單元（輸出檔已存在）會自動略過。
      only：只跑某幾段，例如 ["images","art","finish"]；「準備」一定會跑。
-     dry：只 commit 不推送。conc：同時執行的 agent 數（預設 12，最多 16）。
+     dry：只 commit 不推送。opus_conc／sonnet_conc：各模型同時執行的 agent 數（預設也是上限：Opus 10、Sonnet 20）；
+     conc：models 給 false（不指定模型）時共用的同時上限（預設 12，最多 30）。
      img_per：每個找圖 agent 負責的案例數（預設 18）。rev_per：每個審查 agent 負責的演算法數（預設 4）。
      models：覆寫模型分配，例如 {"img": "opus"}；給 false 則全部沿用工作階段的模型。
    - 要在「自己的電腦」執行：找圖需要下載各網站的圖片（雲端工作階段只能連 GitHub）。
@@ -33,7 +34,9 @@ if (typeof RUN !== 'string' || !/^R\d{8}-\d{4}$/.test(RUN)) {
 const DRY = A.dry === true
 const STEPS = ['classify', 'review', 'merge', 'images', 'art', 'finish']
 const ONLY = new Set(Array.isArray(A.only) && A.only.length ? A.only.filter(s => STEPS.includes(s)) : STEPS)
-const CONC = Math.max(1, Math.min(16, Number.isInteger(A.conc) ? A.conc : 12))
+const CONC = Math.max(1, Math.min(30, Number.isInteger(A.conc) ? A.conc : 12))
+const OPUS_CONC = Math.max(1, Math.min(10, Number.isInteger(A.opus_conc) ? A.opus_conc : 10))
+const SONNET_CONC = Math.max(1, Math.min(20, Number.isInteger(A.sonnet_conc) ? A.sonnet_conc : 20))
 const IMG_PER = Math.max(6, Math.min(30, Number.isInteger(A.img_per) ? A.img_per : 18))
 const REV_PER = Math.max(1, Math.min(8, Number.isInteger(A.rev_per) ? A.rev_per : 4))
 const MAX_AGENTS = Number.isInteger(A.max_agents) ? A.max_agents : 130
@@ -51,7 +54,8 @@ function opt(role, o) {
 const usage = { opus: 0, sonnet: 0, other: 0 }
 
 // ---------------- 同時執行上限（號誌）與總數上限
-//   主名額 CONC 個；分類階段先行的變形圖另有小名額（ART_CONC），兩者合計不超過 16
+//   依模型分開計：Opus 同時最多 OPUS_CONC 個、Sonnet 最多 SONNET_CONC 個；models 給 false 時共用 CONC 個。
+//   分類階段先行的變形圖另外限制同時 4 個（EARLY），避免占滿 Opus 名額、拖慢之後的審查。
 let used = 0
 function pool(n) {
   let active = 0
@@ -61,25 +65,26 @@ function pool(n) {
     give() { const w = waiters.shift(); if (w) w(); else active -= 1 },   // 直接把名額交給下一個等待者
   }
 }
-const MAIN = pool(CONC)
-const SIDE = CONC >= 16 ? MAIN : pool(Math.min(4, 16 - CONC))
-async function spawn(prompt, opts, lane) {
+const LANES = { opus: pool(OPUS_CONC), sonnet: pool(SONNET_CONC), other: pool(CONC) }
+const EARLY = pool(4)
+async function spawn(prompt, opts, extra) {
   if (used >= MAX_AGENTS) {
     log(`已達 ${MAX_AGENTS} 個 agent 上限，略過 ${opts && opts.label}`)
     return null
   }
   used += 1
   const m = opts && opts.model
-  usage[m === 'opus' || m === 'sonnet' ? m : 'other'] += 1
-  const L = lane || MAIN
-  await L.take()
+  const key = m === 'opus' || m === 'sonnet' ? m : 'other'
+  usage[key] += 1
+  const gates = extra ? [extra, LANES[key]] : [LANES[key]]   // 先拿額外名額再拿模型名額，等待時不占模型名額
+  for (const g of gates) await g.take()
   try {
     return await agent(prompt, opts)
   } catch (e) {
     log(`${opts && opts.label} 失敗：${e && e.message ? e.message : e}`)
     return null
   } finally {
-    L.give()
+    for (const g of gates) g.give()
   }
 }
 const all = (items, fn) => Promise.all((items || []).map(fn)).then(r => r.filter(Boolean))
@@ -174,7 +179,7 @@ function artPrompt(u, early) {
   ].filter(Boolean).join('\n')
 }
 const earlyArt = ONLY.has('art')
-  ? all(prep.var_units, u => spawn(artPrompt(u, true), opt('art_hard', { label: `變形圖 ${u.algo}`, schema: S_ART }), SIDE))
+  ? all(prep.var_units, u => spawn(artPrompt(u, true), opt('art_hard', { label: `變形圖 ${u.algo}`, schema: S_ART }), EARLY))
   : Promise.resolve([])
 
 // ================================================================ 2. 分類與替換
