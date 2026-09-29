@@ -1,0 +1,432 @@
+{
+  "run": "R20260929-1158",
+  "check": {
+    "ok": 37,
+    "fail": 0,
+    "fail_files": []
+  },
+  "status": {
+    "pass": 36,
+    "reviewed_fail": 1
+  },
+  "results": [
+    {
+      "id": "A01",
+      "target": "comp_codes/A/A01_LSystem.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 227,
+      "blocker": 0,
+      "major": 0,
+      "minor": 5,
+      "summary": "改寫（Dictionary 同時替換、50 萬字上限）與 Stack<Pen> 分岔畫筆都正確，struct 副本與 ] 還原步長無誤，編譯 OK、介面與 key_params 一致；只剩 Print 代數錯、分岔上限位置與提醒、規則解析健壯性等 minor。"
+    },
+    {
+      "id": "A02",
+      "target": "comp_codes/A/A02_Koch.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 147,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪兩個 major 都已解決（sides 上限 24＋點數上限 20 萬自動降層並 Print 提示、沒接時 sides/size/depth 套用檔頭例值畫出雪花），四個 minor 也都修了；重新追 depth=1 得 13 點六芒星、尖點落在外接圓上（朝外）、各邊界輸入點數公式吻合且首尾閉合，編譯 OK 0 警告，只剩註解與提示用字的小建議。"
+    },
+    {
+      "id": "A03",
+      "target": "comp_codes/A/A03_Hilbert.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 109,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（沒接 size／order 時沒有套預設值）已修好，起始向量對調後重新手算 order 1 的 ㄇ 字走法與 order 2 的 16 點，每步都相鄰且四段頭尾相接，編譯 OK、警告 0，只剩 3 個註解措辭類 minor，通過。"
+    },
+    {
+      "id": "A04",
+      "target": "comp_codes/A/A04_RecursiveSubdivision.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 178,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（minSize 被夾到短邊一半）已刪除並驗證修正（minSize 18／20 → 2 塊、25／30 → 1 塊、60×6 → 11 塊，預設 stopChance=0.1、seed=1 → 28 塊與檔頭相符），編譯與格式檢查 OK、遞迴一定結束且有 MaxBlocks／MaxDepth 保底；只剩 MaxDepth 截斷時 Print 沒提醒等小修。"
+    },
+    {
+      "id": "A05",
+      "target": "comp_codes/A/A05_ShapeGrammar.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 191,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 blocker（新 A 架錯位置）與 major（沒套用預設值）都已修正：用預設值模擬 6 代得到 127 個形狀、對稱於 x＝10 的畢氏樹，角度 30／70／1／89 度時，第二個 A 的底邊終點都正好落在頂邊右端；cs_check OK，只剩 3 個 minor。審查結果寫在 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_A05.json。"
+    },
+    {
+      "id": "A06",
+      "target": "comp_codes/A/A06_WFC.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 278,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（MakeTileSet 改用 tileCodes 字串逐一轉成 PipeTile、tileNumbers 對應陣列索引）與三個 minor 都已修好，WFC 核心正確、會結束、編譯 OK，只剩「只留直管」註解與實際結果（全空白）不符等小問題。"
+    },
+    {
+      "id": "B01",
+      "target": "comp_codes/B/B01_DifferentialGrowth.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 233,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "上一輪 3 個 major 與 2 個 minor 都已修好；忠實模擬預設值時全程 0 處自我交叉，最後長成平滑的珊瑚指狀，編譯、介面與結構都正確，只剩 4 個 minor（檔頭步數描述、用詞、編號、repelRadius 沒有上限），這一輪通過。審查結果寫在 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_B01.json。"
+    },
+    {
+      "id": "B02",
+      "target": "comp_codes/B/B02_DLA.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 249,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "上一輪的 major 已修好（stepSize=3、10、100 都能長滿 300 顆），其餘 minor 大多已處理，cs_check 通過（警告 0），預設值很快；只剩 stickDistance／stepSize 比值很大時仍會提前停在大約一半，以及幾個註解和一致性的小問題。"
+    },
+    {
+      "id": "B03",
+      "target": "comp_codes/B/B03_SpaceColonization.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 225,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（枝端卡住、重複長節點）已解決：現在會先查重，有枝端被拉卻長不出來時停止，預設值模擬沒有重複節點，約 51–57 步停止；cs_check 通過，只剩 3 個 minor，本輪通過。"
+    },
+    {
+      "id": "B04",
+      "target": "comp_codes/B/B04_Phyllotaxis.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 95,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（count 沒接只畫 1 個點）已改為套用 DefaultCount = 500，四條 minor 也全部修正；PointAt 的 n × 黃金角、spacing × √n 與 0.1→0.5 倍漸大圓正確、編譯 OK、介面與 key_params 一致，只剩措辭與常數一致性的小問題，通過。"
+    },
+    {
+      "id": "B05",
+      "target": "comp_codes/B/B05_Substrate.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 231,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "上一輪的 major（子裂紋出生時 MarkCell 造成兄弟互撞、分岔鏈斷掉）已確實移除，三個 minor 也都修好；重新模擬 100 個種子全部長滿 150 條、平均畫出 147 條、最多約 1800 輪，編譯 OK，僅剩斜向穿越角格等 minor（CSR 檔：G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_B05.json）。"
+    },
+    {
+      "id": "B06",
+      "target": "comp_codes/B/B06_DiscreteAggregation.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 349,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（maxParts、maxTries、boundSize 沒有上限）和 4 個 minor 都已修正；用預設值追過翻轉、PlaneToPlane 對齊、RTree 碰撞、前緣放回與停止條件都正確，cs_check OK，349 行；只剩停止原因判斷與單行多句等 minor。審查結果已寫入 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_B06.json。"
+    },
+    {
+      "id": "C01",
+      "target": "comp_codes/C/C01_ReactionDiffusion.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 215,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（makeMesh 沒接線時沒有 Mesh）已用 SourceCount 判斷修好，seedSize 20、maxB 灰階正規化、上限提醒和註解也都改了；用 numpy 按同一套公式實跑，3000 步後布滿網格的對稱迷宮花紋（68% 格子 B>0.1），和檔頭描述一致，編譯 OK，只剩 3 個 minor。"
+    },
+    {
+      "id": "C02",
+      "target": "comp_codes/C/C02_GameOfLife3D.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 172,
+      "blocker": 0,
+      "major": 0,
+      "minor": 2,
+      "summary": "上一輪的 major（沒接的輸入沒有套用檔頭預設值）已經修正，B3/S23、雙緩衝和 % 環面鄰域重新追過仍然正確，編譯 OK，只剩 seed 預設值和上限提示兩個 minor，這一輪通過。"
+    },
+    {
+      "id": "C03",
+      "target": "comp_codes/C/C03_VectorField.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 203,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的 major（到達半徑小於預設步長造成抖動）已改為 arriveRadius = max(0.5, stepSize)，預設值模擬 64 條流線全部停在吸引點、沒有步數用完的抖動，其餘 minor 也都處理，只剩 swirlStrength 說明寫反等檔頭措辭小問題。"
+    },
+    {
+      "id": "C04",
+      "target": "comp_codes/C/C04_Noise.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 234,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "Perlin 查表、8 方向斜坡內積、6t⁵−15t⁴+10t³ 平滑混合、fBm 疊層除以總強度、0.37 偏移與四邊形網格都正確，索引不越界、有上限且預設值瞬間完成，只剩上限提醒、scale 單位說明、seed 0 重複與角落命名等 minor。"
+    },
+    {
+      "id": "C05",
+      "target": "comp_codes/C/C05_MarchingSquares.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 239,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪 2 個 major 都已修好：margin 改用 <= 0 防呆，預設畫面模擬結果是 76 段、沒有開口的單一封閉環；radii 改用 longest list 慣例。3 個 minor 也都已處理。重新檢查查表、鞍點、內插、上限和介面都正確，編譯檢查 OK（警告 0），只剩 3 個措辭與 Z 值的小建議，本輪通過。"
+    },
+    {
+      "id": "D01",
+      "target": "comp_codes/D/D01_Boids.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 261,
+      "blocker": 0,
+      "major": 0,
+      "minor": 1,
+      "summary": "上一輪的 major 已修正：沒接的輸入現在會換成檔頭例值，權重只在沒接線時換例值。三個 minor 也都已修正。用 .NET Random 等價移植，以 seed 0 模擬預設值，收攏成 19、18 隻兩群且方向一致，符合檔頭描述；編譯 OK，只剩一個可讀性 minor（_workflow/stage/R20260929-1158/CSR_D01.json）。"
+    },
+    {
+      "id": "D02",
+      "target": "comp_codes/D/D02_Physarum.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 256,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "第 2 輪審查通過：上一輪 2 個 major、3 個 minor 都已修好，檔案可以編譯；剩下 4 個 minor，最重要的是預設 seed 0 跑出來只有一條不分岔的線，和檔頭「你應該看到」寫的不符。審查結果已寫入 _workflow/stage/R20260929-1158/CSR_D02.json。"
+    },
+    {
+      "id": "D03",
+      "target": "comp_codes/D/D03_Pedestrian.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 298,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪兩個 major 都已修正：預設 steps 改成 400，抵達的人也視為離場、不再推人。照 .NET Random 移植模擬後，預設 30 人在 303 步全部抵達並提早結束，15 人從上方、15 人從下方繞過障礙，沒有人穿進障礙；換 5 組 seed、60 人或 100 人也都會全員抵達。編譯通過，警告 0，介面、結構與上限防呆都符合規格，只剩註解措辭類的 minor。"
+    },
+    {
+      "id": "E01",
+      "target": "comp_codes/E/E01_CirclePacking.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 181,
+      "blocker": 0,
+      "major": 0,
+      "minor": 1,
+      "summary": "上一輪的 major（maxRadius 沒接時被夾成 minRadius）已修正，4 個 minor 也都處理；演算法正確（兩兩各退一半、出界拉回、先累積再套用、收斂即停），上限與防呆齊全，編譯 OK，用 seed = 1 約 375 次收斂；只剩 seed 沒接（0）時不在 500 次內收斂、和「你應該看到」不符這個 minor，通過。"
+    },
+    {
+      "id": "E02",
+      "target": "comp_codes/E/E02_PoissonDisk.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 170,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "第 1 輪 3 個 major（沒接時套預設值、網格格數上限、triesPerPoint 上限）都已確實修正，Bridson 取樣正確且邊界索引不越界，只剩提醒文字與常數命名等 4 個 minor，通過。"
+    },
+    {
+      "id": "E03",
+      "target": "comp_codes/E/E03_VoronoiLloyd.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 211,
+      "blocker": 0,
+      "major": 0,
+      "minor": 1,
+      "summary": "上一輪的 major（iterations 0 被換成 8）和 4 個 minor 都已修正；重新完整檢查後，編譯與格式 OK，Python 模擬預設值的總面積都是 10000，Lloyd 鬆弛讓面積比從 19.0 降到 2.0，沒有新的 blocker 或 major，通過（審查檔：G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_E03.json）。"
+    },
+    {
+      "id": "E04",
+      "target": "comp_codes/E/E04_DynamicRelaxation.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 221,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "第 1 輪兩個 major 都已解決（新預設值經模擬確認，300 步形成中心下垂約 6.9 的吊床形；iterations 沒接時改用 300），演算法、介面、結構、編譯檢查都 OK，只剩 4 個 minor：預設值會印出「尚未收斂」、MaxStiffness 2000 在格數多時仍會爆炸、爆炸時步數與輸出的處理、兩處註解措辭。"
+    },
+    {
+      "id": "E05",
+      "target": "comp_codes/E/E05_GraphicStatics.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 193,
+      "blocker": 0,
+      "major": 0,
+      "minor": 5,
+      "summary": "作圖流程（試算極點→閉合線→K 點→由矢高反推極距→重畫索多邊形）正確：數值驗證右端誤差約 0、最大縱距等於 sag、K 點分出的反力和力矩平衡一致，編譯 OK；只剩 5 個 minor：檔頭「你應該看到」和例值寫錯、上限沒有 Print 提醒也沒有結尾摘要、拱模式的力圖可能和形狀圖重疊，還有兩處註解寫錯。審查結果已寫入 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_E05.json。"
+    },
+    {
+      "id": "E06",
+      "target": "comp_codes/E/E06_ForceDensityMethod.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 300,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "上一輪兩個 major 都已確實修正：load 改成看有沒有接線，接了 slider 的 0 會保留、只受預力；FindFixed 改成沿拓樸邊找裸邊，閉合網格會印出提醒後結束。另外補上 BFS 固定孤立節點、CG 分母防呆、MaxNodes 與檔頭說明。用預設 6×6 網格追過一次 FDM 核心，結果正確，編譯 OK，共 347 行，只剩註解與風格的 minor。"
+    },
+    {
+      "id": "F01",
+      "target": "comp_codes/F/F01_Truchet.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 141,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "演算法正確（實際追過兩種擲硬幣結果，四段弧都在格內、端點落在邊中點，相鄰格必相接），介面、段落結構與 pseudo_code 一致且編譯通過，只剩上限提醒、seed 預設說明與弧方向一致性等小問題；審查結果已寫入 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_F01.json。"
+    },
+    {
+      "id": "F02",
+      "target": "comp_codes/F/F02_IslamicPattern.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 224,
+      "blocker": 0,
+      "major": 0,
+      "minor": 5,
+      "summary": "4.8.8 底圖（逆時針八角形加轉 45° 小正方形、共用邊中點）、Hankin 邊中點斜射和 2D 行列式求交都正確，編譯 OK，預設值有畫面且很快；只剩 5 個 minor：45°／22.5° 共線時星線消失、90° 被重設、缺上限提醒和 RULE 段落標記等。"
+    },
+    {
+      "id": "F03",
+      "target": "comp_codes/F/F03_TPMS.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 268,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪 major（零面積三角形方向亂定）已修好，四個 minor 也都處理了。依目前程式模擬，退化面、非流形邊、方向衝突都是 0，編譯 OK、介面與結構正確；剩下 x／y／z＝0 三個面上的零寬度開放裂縫與空網格提示等 minor，可以在 PointOnEdge 加吸附改善。"
+    },
+    {
+      "id": "F04",
+      "target": "comp_codes/F/F04_GeneticAlgorithm.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 219,
+      "blocker": 0,
+      "major": 0,
+      "minor": 5,
+      "summary": "F04 通過第 1 輪審查（沒有 blocker 或 major），基因演算法各步驟都照 how_it_works 與 pseudo_code 實作，編譯 OK、迴圈會結束、索引安全、預設值瞬間算完。剩 5 個 minor：mutationRate 與 seed 沒套用檔頭預設值、碰到上限沒有 Print 提醒、收斂曲線少最後一代、「你應該看到」說得太滿；已寫入 G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_F04.json。"
+    },
+    {
+      "id": "F05",
+      "target": "comp_codes/F/F05_ShortestPath.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 267,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪 3 個 major 都已確實修正（預設障礙改放對角線上，追算預設值得 30×30 格、36 格被擋、路線 35 格長 87.88 明顯繞行；格數上限改用 double 判斷不再溢位；RelaxNeighbors 改用 GetLength(0) 與實際位移步長），Dijkstra 核心正確、編譯通過，只剩 3 個小瑕疵。"
+    },
+    {
+      "id": "F06",
+      "target": "comp_codes/F/F06_StrangeAttractor.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 131,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪的兩個 major 都已修正：steps 沒接時改用 3000，Clifford 也有自己的一組預設係數；四個 minor 也都處理了。重新模擬後，預設值畫出 x 範圍 −19.8～21.5、左右來回 20 次的 Lorenz 蝴蝶，Clifford 是清楚的捲曲點雲；編譯 0 警告、介面一致，只剩部分係數沒接時的預設與提醒等小改進。"
+    },
+    {
+      "id": "F07",
+      "target": "comp_codes/F/F07_SimulatedAnnealing.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 282,
+      "blocker": 0,
+      "major": 0,
+      "minor": 4,
+      "summary": "上一輪 2 個 major（預設 iterations 太少不收斂、沒接時只跑 1 步）與 5 個 minor 都已修正：預設 50000 步降到 T≈0.067，模擬 seed 1–5 皆在曲線中段走平到最佳成本 14，檔頭描述相符、cs_check OK，只剩挑格位迴圈、名稱解析與檔頭例值等 minor。"
+    },
+    {
+      "id": "F08",
+      "target": "comp_codes/F/F08_SpanningSteinerTree.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 279,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪兩個 major 都已修好：先用 CullDuplicates 去掉重複點，VectorAngle 回傳負值時跳過；pts 最多取 800 點並會提示。以 Python 移植實測，含重複點的結果與原本相同，relax=0 只留下度數 3 的 Steiner 點；各種邊界輸入都能得到正確的樹。剩下只有上限寫法與容許值說明這類小問題，通過（CSR：G:\\我的雲端硬碟\\02_碩班\\09_教學\\gh_algo_design\\_workflow\\stage\\R20260929-1158\\CSR_F08.json）。"
+    },
+    {
+      "id": "G01",
+      "target": "comp_codes/G/G01_IsovistField.cs",
+      "pass": false,
+      "fixes": 2,
+      "lines": 253,
+      "blocker": 0,
+      "major": 1,
+      "minor": 4,
+      "summary": "上一輪的 major（格點落在牆上）與 4 個 minor 都已修好，也用數值驗證過，編譯 OK；但 RaySegment 的 u 判斷沒有容差，rayCount 是 8 的倍數時，射線會從房間角落的共用頂點漏出去，造成 isovist 穿出牆外，周長、遮蔽邊長度出現假的極值並壓縮色階（major）。"
+    },
+    {
+      "id": "G02",
+      "target": "comp_codes/G/G02_SolarEnvelope.cs",
+      "pass": true,
+      "fixes": 1,
+      "lines": 250,
+      "blocker": 0,
+      "major": 0,
+      "minor": 3,
+      "summary": "上一輪 4 個 major（時刻取樣截斷與極小 hourStep 卡死、格點上限截斷基地、檔頭方向寫反、startHour／endHour 沒接沒畫面）與 4 個 minor 都已確實修正，編譯 OK、預設值實算南緣約 20、北緣約 3.3 與檔頭相符，只剩檔頭角落描述與投影後退化幾何的防呆等小問題，通過。"
+    },
+    {
+      "id": "G03",
+      "target": "comp_codes/G/G03_FlowAccumulationD8.cs",
+      "pass": true,
+      "fixes": 0,
+      "lines": 350,
+      "blocker": 0,
+      "major": 0,
+      "minor": 5,
+      "summary": "G03 的 Priority-Flood＋ε 填窪、D8 流向（對角 √2）、由高到低累積、Strahler 河序、河段切分、集水區標記都正確，迴圈必定結束，編譯通過（警告 0），預設值很快；只剩 basinCount／fillSinks 預設值與檔頭不符等 5 個 minor，通過。審查紀錄：_workflow/stage/R20260929-1158/CSR_G03.json"
+    }
+  ],
+  "model_usage": {
+    "opus": 68,
+    "sonnet": 70,
+    "other": 0
+  },
+  "manual": [
+    "G01_IsovistField.cs 尚未通過：RaySegment 的 u 判斷沒有容差，rayCount 為 8 的倍數時，射線會從房間角落的共用頂點漏出去，isovist 穿出牆外，導致周長／遮蔽邊長度出現假的極值並壓縮色階（1 個 major）；已修 2 輪，需要再一輪 Sonnet 修正＋Opus 複審才能過。",
+    "編譯檢查（cs_check.py --all）全數 37 個檔案 OK、0 個 FAIL，但這只是語法／編譯層級的靜態檢查。",
+    "所有 37 個 .cs 檔案都尚未在 Rhino／Grasshopper 中實際載入 C# Script 元件測試，需要人工在 Rhino 裡逐一開啟、接上預設輸入、確認畫面與 Print 訊息符合各檔頭描述後再正式收尾。",
+    "B04_Phyllotaxis.cs、C04_Noise.cs、F01_Truchet.cs 三個檔案在編譯檢查中有「沒有 2. INIT 或 3. LOOP 段落」提醒，屬於直接公式類可忽略的警告，非阻擋性問題。"
+  ]
+}
