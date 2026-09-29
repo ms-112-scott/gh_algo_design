@@ -1,0 +1,21 @@
+{"unit": "IMG:D02a", "algo": "D02",
+ "results": [
+   {"id": "D02-01", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Physarum_polycephalum_network.jpg", "page": "https://commons.wikimedia.org/wiki/File:Physarum_polycephalum_network.jpg", "note": "東京鐵路網實驗時序圖，黏菌從中心接種點依 0～26 小時逐步長出與實際鐵路網相近的連通路徑"},
+   {"id": "D02-02", "status": "none", "note": "論文頁（cognet.mit.edu／doi.org／direct.mit.edu）皆需訂閱或回應 403，查了 3 個來源都沒有可用的公開圖"},
+   {"id": "D02-03", "status": "new", "url": "https://payload.cargocollective.com/1/18/598881/13800048/web_670.jpg", "page": "https://cargocollective.com/sagejenson/physarum", "note": "physarum／36 Points 生成畫面，細密格線上交錯幾道粗直線匯聚於中央的黑白紋理，與 D02-51 的畫面不同"},
+   {"id": "D02-04", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2022/08/Image-3-825x825.jpeg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=9137", "note": "3D physarum 燭台鑄造前的樹脂列印雛形，白色蕾絲狀環形結構浮於黑底，與 D02-55 的成品實景照不同"},
+   {"id": "D02-06", "status": "none", "note": "ecoLogicStudio bioTallinn 專案頁為文字轉譯內容，多次嘗試都無法取得實際 img 網址，查了 3 次沒有結果"},
+   {"id": "D02-07", "status": "new", "url": "https://arxiv.org/html/0912.3967v1/figs/examples/d1082.jpg", "page": "https://arxiv.org/abs/0912.3967", "note": "英國形狀培養皿中黃色黏菌沿十大城市燕麥片位置生長出的原生質網路螢光影像，取自論文 Figure 3"},
+   {"id": "D02-08", "status": "new", "url": "https://news.ucsc.edu/wp-content/uploads/2020/03/cosmic-web-500-1.jpg", "page": "https://news.ucsc.edu/2020/03/cosmic-web/", "note": "以 Monte Carlo Physarum Machine 演算法描繪出的宇宙網濾狀結構，紫色細絲交織於黑底"},
+   {"id": "D02-10", "status": "new", "url": "https://user-images.githubusercontent.com/26778894/215981222-6fa4b334-45d2-498f-8c5a-c150137574ac.jpg", "page": "https://github.com/PolyPhyHub/PolyPhy", "note": "以美國人口密度資料為輸入，MCPM 演算法重建出近似美國州際公路網的發光網路，左側可見程式參數面板"},
+   {"id": "D02-11", "status": "none", "note": "food4rhino 頁面回應 403，GitHub repo 與 README 內只有 logo 與黏菌生物照片，沒有外掛運算結果的截圖，查了 3 次沒有結果"},
+   {"id": "D02-12", "status": "none", "note": "GitHub repo README 只有一個 YouTube 連結、沒有圖片，查了 3 次沒有結果"},
+   {"id": "D02-15", "status": "new", "url": "https://github.com/Bleuje/interactive-physarum/raw/main/doc/screenshot-nov-2024-PurpleFire-1.png", "page": "https://github.com/Bleuje/interactive-physarum", "note": "遊戲手把即時操控黏菌模擬的畫面，藍紫色放射網路上疊有控制面板文字，屬於互動裝置本身的即時介面"},
+   {"id": "D02-51", "status": "kept", "note": "已確認是 sagejenson.com/physarum 文章首圖，黑白格狀黏菌網路，非影片縮圖"},
+   {"id": "D02-52", "status": "replaced", "url": "https://raw.githubusercontent.com/SebLague/Images/master/Slime%202.PNG", "page": "https://github.com/SebLague/Slime-Simulation", "note": "原本是 Coding Adventure 影片標題卡（含大字標題），換成 repo 內建的黏菌模擬範例輸出畫面"},
+   {"id": "D02-53", "status": "removed", "note": "原圖為 Patt Vira 教學影片縮圖（含講者人像與課程字樣），查了她的 GitHub 與個人網站都沒有找到範例執行畫面，移除交給卡片圖步驟"},
+   {"id": "D02-54", "status": "kept", "note": "已確認是 bleuje.com 文章縮圖，左為感測機制示意、右為實際生成的有機網路渲染，屬作者自製說明圖非影片縮圖"},
+   {"id": "D02-55", "status": "kept", "note": "已確認是 Nervous System 部落格首圖，3D physarum 銅鑄燭台實體置於草地上的照片"},
+   {"id": "D02-56", "status": "kept", "note": "已確認是 Michael Fogleman 專案頁範例輸出圖，金黃網絡包覆暗紅色細胞狀斑點"},
+   {"id": "D02-57", "status": "kept", "note": "已確認是 nicoptere GitHub repo 範例輸出圖，黃綠色網格紋理呈現蜂窩狀有機圖樣"}
+ ]}

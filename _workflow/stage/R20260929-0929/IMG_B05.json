@@ -1,0 +1,19 @@
+{"unit": "IMG:B05", "algo": "B05",
+ "results": [
+   {"id": "B05-01", "status": "new", "url": "http://web.archive.org/web/20260813212246im_/http://complexification.net/gallery/machines/substrate/substrate3000.jpg", "page": "http://www.complexification.net/gallery/machines/substrate/", "note": "Substrate 密集生長後的另一張作品圖，裂紋交錯成類似都市紋理的樣貌"},
+   {"id": "B05-02", "status": "none", "note": "與 B05-53 同一個 GitHub 專案（technologiestiftung/substrate），README 只有一張示範圖且已給 B05-53 使用，找不到第二張不重複的真實畫面"},
+   {"id": "B05-03", "status": "new", "url": "https://networkedtechnologies.wordpress.com/wp-content/uploads/2012/01/image31.jpg", "page": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/", "note": "執行 Substrate 演算法 1.5 小時後，畫面已密集填滿類似都市格網的裂紋"},
+   {"id": "B05-04", "status": "none", "note": "CodePen 頁面有 Cloudflare 人機驗證擋下，WebFetch 與直接讀取都回傳 403／驗證頁，看不到實際預覽圖"},
+   {"id": "B05-05", "status": "none", "note": "查了論文原頁（已失效重導向）、作者 ETH 個人頁（多次重導向到系所首頁）都找不到論文圖，3 次搜尋內無結果"},
+   {"id": "B05-06", "status": "new", "url": "https://objf.ai/papers/Iben-GSC-2006-09/mudCurl.jpg", "page": "https://objf.ai/papers/Iben-GSC-2006-09/", "note": "模擬乾裂泥土表面（mud crack）的裂紋圖案演算法結果，呈現不規則多邊形裂塊"},
+   {"id": "B05-07", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Mud_cracks.jpg", "page": "https://commons.wikimedia.org/wiki/File:Mud_cracks.jpg", "note": "近拍乾裂泥土表面，多邊形裂塊與 T 字接頭清晰可見"},
+   {"id": "B05-08", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Southern_Song_Ge_Ware_Vase.jpg", "page": "https://commons.wikimedia.org/wiki/File:Southern_Song_Ge_Ware_Vase.jpg", "note": "南宋哥窯瓶，通體開片冰裂紋釉面清晰可見"},
+   {"id": "B05-09", "status": "none", "note": "查了 Blender Cell Fracture 官方文件（該頁無範例圖）與 Houdini Voronoi Fracture 文件（只有節點圖示，無效果圖），3 次搜尋內無結果"},
+   {"id": "B05-12", "status": "none", "note": "案例出處就是 Vimeo 影片，只能取得 Vimeo 縮圖，依規則一律不可使用縮圖，找不到其他畫面來源"},
+   {"id": "B05-54", "status": "none", "note": "GitHub repo 裡唯一可能的示範圖 pollockShimmering.gif 實際只是 250x10 的材質貼圖，不是畫面截圖，README 其餘圖檔都是 App 圖示／UI 元件"},
+   {"id": "B05-51", "status": "kept", "note": "已確認是 Tarbell 原作頁主圖，沙畫上色的裂紋城市紋理"},
+   {"id": "B05-52", "status": "kept", "note": "已確認是 p5.js 移植版的實際執行畫面，金黃色調沙畫效果與原作相符"},
+   {"id": "B05-53", "status": "kept", "note": "已確認是 CLI 輸出的向量線稿（黑白細線），符合繪圖機 SVG 輸出的說明"},
+   {"id": "B05-55", "status": "kept", "note": "已確認是 Python 重製版的執行畫面，裂紋沙畫上色風格與原作相符"},
+   {"id": "B05-56", "status": "kept", "note": "已確認是黑底發光互動版的實際畫面，聚集節點如夜間城市燈光，與說明相符"}
+ ]}

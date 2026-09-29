@@ -1,12 +1,4 @@
 {
-  "E01-51": {
-    "source": "YouTube（Entagma）",
-    "author": "Manuel Casasola Merkle",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=OkiwsuFo_gA",
-    "note": "影片縮圖：甜甜圈曲面上大小不一的粒子緊密排列"
-  },
   "E01-52": {
     "source": "Derivative（TouchDesigner 社群）",
     "author": "noones_img",
@@ -55,14 +47,6 @@
     "page": "https://github.com/njanakiev/poisson-disk-sampling",
     "note": "README 2D 動畫的最後一格：完成的 Poisson 點分布"
   },
-  "E02-55": {
-    "source": "YouTube（Sebastian Lague）",
-    "author": "Sebastian Lague",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
-    "note": "影片縮圖：Poisson disc sampling 標題與取樣點"
-  },
   "E03-51": {
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
@@ -102,22 +86,6 @@
     "license_url": "",
     "page": "https://www.jasondavies.com/lloyd/",
     "note": "作品縮圖：Lloyd 鬆弛後由中心擴散的 Voronoi 細胞"
-  },
-  "E04-51": {
-    "source": "The Coding Train",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://thecodingtrain.com/challenges/177-soft-body-character",
-    "note": "頁面預覽圖：彈簧骨架與軟體角色"
-  },
-  "E04-52": {
-    "source": "The Nature of Code",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://natureofcode.com/physics-libraries/",
-    "note": "書中圖 6.13：弦、布、骨架、軟體角色四種彈簧結構設計"
   },
   "E04-53": {
     "source": "three.js 官方範例",

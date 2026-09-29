@@ -1,0 +1,19 @@
+{"unit": "IMG:B04", "algo": "B04",
+ "results": [
+   {"id": "B04-01", "status": "new", "url": "https://static.designboom.com/wp-content/uploads/2017/01/john-edmark-designboom-1800.jpg", "page": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/", "note": "3D 列印葉序雕塑特寫，尖刺狀花瓣依黃金角螺旋排列"},
+   {"id": "B04-02", "status": "new", "url": "https://grimshaw.global/assets/uploads/03126-n14-a3-1.jpg", "page": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/", "note": "The Core 教育中心屋頂三角天窗與太陽能板，後方可見伊甸園地穹頂溫室"},
+   {"id": "B04-03", "status": "none", "note": "MIT 新聞頁只有通用向日葵花朵照片，非鏡場配置圖，查了 3 個來源都找不到實際研究成果圖"},
+   {"id": "B04-04", "status": "new", "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEixZOB0ilG0G5a2nrPAp34LLt-d6ac447OiNE1Q2qvQFOQlEqC8VuDqteZkdiyy9f7vgRL-n6L43pqbbQ4GarN590ge1SMjSS-aUPmrWxU67lzykrqNl-LkTngNH22dRhUbNSXloenZyCc/s1600/ErnestoBueno-PentaPhyllotaxis.jpg", "page": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html", "note": "Phyllotaxis Tower 白色量體渲染圖，葉狀量體繞核心旋轉生長"},
+   {"id": "B04-05", "status": "new", "url": "https://www.iaacblog.com/wp-content/uploads/2021/12/image-1-730x445.png", "page": "https://www.iaacblog.com/programs/phyllo-pavilion/", "note": "Phyllo Pavilion 效果圖，網狀編織涼亭立於棕櫚樹叢間"},
+   {"id": "B04-06", "status": "new", "url": "https://archive.dpa-etsam.com/uploads/projectImages/n37ahJAhvoc9QtkkcUeDNeZBJKIcXm5Xrpv8XOr4.jpeg", "page": "https://archive.dpa-etsam.com/projects/phyllotaxis", "note": "溫室內紅色網狀摺面依螺旋排列懸掛生長的裝置現場照"},
+   {"id": "B04-07", "status": "none", "note": "extremelearning.com.au 網站持續回傳 403，多種方式都無法取得球面點陣圖"},
+   {"id": "B04-08", "status": "none", "note": "p5.js 線上編輯器無法取得畫布截圖，且原頁僅有的示範圖已用於 B04-51，找不到不同畫面"},
+   {"id": "B04-09", "status": "none", "note": "查了 3 個管道都找不到 Voronoi Phyllotaxis 這個 p5.js 範例的實際執行畫面"},
+   {"id": "B04-13", "status": "none", "note": "exploratorium.edu 有機器人防護擋下請求，查了 3 個管道都拿不到展品照片"},
+   {"id": "B04-14", "status": "none", "note": "找到球面點陣示意圖網址但網站擋下下載請求（403），無法取得檔案"},
+   {"id": "B04-51", "status": "replaced", "url": "https://thecodingtrain.com/static/cfa4c44778204b91896e6044ea662e51/86724/phyllotaxis.png", "page": "https://thecodingtrain.com/challenges/30-phyllotaxis", "note": "原本是課程頁的影片縮圖說明，換成 Coding Challenge #30 葉序程式的實際執行畫面"},
+   {"id": "B04-53", "status": "removed", "note": "原圖為 Entagma YouTube 教學影片的標題卡（含 logo 與片名文字），查了 3 個管道都找不到旋轉曲面葉序成果的實際渲染圖，移除交給卡片圖畫示意圖"},
+   {"id": "B04-55", "status": "kept", "note": "已確認是 The Coding Train 大理石紋葉序挑戰的實際程式執行畫面"},
+   {"id": "B04-56", "status": "kept", "note": "已確認是 Paul Rickards 繪圖機作品實體照片，符合藝術案例規則"},
+   {"id": "B04-57", "status": "kept", "note": "已確認是 Sunflower Golden Angle 互動網頁本身的畫面，案例即為該介面工具"}
+ ]}

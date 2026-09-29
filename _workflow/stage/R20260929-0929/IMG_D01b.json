@@ -1,0 +1,4 @@
+{"unit": "IMG:D01b", "algo": "D01",
+ "results": [
+   {"id": "D01-60", "status": "kept", "note": "已確認是 GitHub gstarch/boids 專案本身的 p5.js 生成畫面，彩色半透明三角形依色相分群、黑底呈現數股群聚，符合摘要描述，非影片縮圖"}
+ ]}

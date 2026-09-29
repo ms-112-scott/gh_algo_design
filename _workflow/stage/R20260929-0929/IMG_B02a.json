@@ -1,0 +1,21 @@
+{"unit": "IMG:B02a", "algo": "B02",
+ "results": [
+   {"id": "B02-01", "status": "new", "url": "https://andylomas.com/images/aggregation_027.jpg", "page": "https://andylomas.com/aggregation_027.html", "note": "Aggregation 系列作品之一，數百萬顆粒子沉積在球形種子上長成的珊瑚狀灰階雕塑形態"},
+   {"id": "B02-02", "status": "new", "url": "https://raw.githubusercontent.com/jasonwebb/2d-diffusion-limited-aggregation-experiments/master/experiments/01-basic-dla/images/basic-dla-with-color.png", "page": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments", "note": "基礎 DLA 實驗加上顏色的執行畫面，米色圓點群集在藍色背景上長成分枝狀"},
+   {"id": "B02-03", "status": "new", "url": "https://thecodingtrain.com/static/b054c20d52a043c2aa7d425fd006f702/45b3a/dfa.jpg", "page": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/", "note": "p5.js 程式碼範例執行畫面，彩色圓點以中心白點為起點向外長成分枝狀 DLA 結構"},
+   {"id": "B02-04", "status": "none", "note": "UCL Discovery 論文頁回傳 403 無法讀取，找不到可用圖片"},
+   {"id": "B02-05", "status": "new", "url": "https://s3.amazonaws.com/production.scholastica/public/attachments/d7508912-dc20-46a6-9d3b-0b78b7df4ccf/large/figure_1._examples_of_structures_generated_with_(a)-(c)_the_sgm_and_(d)-(f)_dlg_for_different_values.png", "page": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation", "note": "比較隨機重力模型（SGM）與 DLA（DLG）在不同 γ 值下模擬出的都市群集形態，綠色為中心群集、藍色為其他已開發像素"},
+   {"id": "B02-06", "status": "new", "url": "https://raw.githubusercontent.com/MRAC-IAAC/Diffusion-Limited-Aggregation/master/doc/Presentation/03.jpg", "page": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation", "note": "研究簡報圖，比較不同邊界敏感度與吸引子強度下 DLA 生成的三種量體形態"},
+   {"id": "B02-07", "status": "new", "url": "https://paulbourke.net/fractals/dla/dla6.gif", "page": "https://paulbourke.net/fractals/dla/", "note": "圓形吸引子的 2D DLA 結果，依粒子加入順序以彩虹色標示生長順序"},
+   {"id": "B02-09", "status": "new", "url": "https://blenderartists.org/uploads/default/original/4X/1/3/c/13c7ac442f86d5fa7aa0e59ebe3ef7fd004f835c.jpeg", "page": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322", "note": "Blender Geometry Nodes 模擬出的 3D DLA 珊瑚狀灰階量體，俯視角度算圖"},
+   {"id": "B02-10", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/PlanePair2.jpg", "page": "https://en.wikipedia.org/wiki/Lichtenberg_figure", "note": "以電子束照射壓克力塊產生的立體 Lichtenberg 圖形（電樹枝），藍光呈現放電路徑"},
+   {"id": "B02-11", "status": "none", "note": "ResearchGate 頁面回傳 403 無法讀取，找不到可用圖片"},
+   {"id": "B02-12", "status": "none", "note": "Grasshopper3d 影片頁只有 89px 小縮圖與個人頭像，沒有可用的大圖或截圖"},
+   {"id": "B02-13", "status": "new", "url": "https://fusefactory.github.io/openfuse/images_posts/dla_cover.png", "page": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/", "note": "openFrameworks 實作的 DLA 模擬結果，灰白色分枝狀群集布滿整個黑色畫面"},
+   {"id": "B02-14", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/DLA_Cluster.JPG", "page": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation", "note": "銅電沉積實驗產生的樹枝狀結晶，金色分枝結構漂浮在藍色電解液中"},
+   {"id": "B02-51", "status": "kept", "note": "已確認是 p5.js 程式執行畫面：彩色圓點以中心白點向外長成分枝狀 DLA，非影片標題卡或講者人像"},
+   {"id": "B02-52", "status": "kept", "note": "已確認是 Brownian Tree Snowflake 程式執行畫面：六重對稱的藍色雪花狀 DLA 結構，非影片縮圖"},
+   {"id": "B02-53", "status": "kept", "note": "已確認是 2D DLA 實驗的向量算圖：灰色分枝狀群集佈滿畫面下半部，非介面截圖或影片縮圖"},
+   {"id": "B02-54", "status": "kept", "note": "已對照 fogleman/dlaf README 原圖確認一致：一千萬粒子 3D DLA 光線追蹤算圖，綠黃色珊瑚狀量體俯視角度"},
+   {"id": "B02-55", "status": "removed", "note": "原圖為 Vimeo 影片標題卡（左側有 Entagma 標誌與標題文字疊加），改用 oEmbed 縮圖仍是同一張標題卡，找不到乾淨的模擬畫面，故移除"}
+ ]}

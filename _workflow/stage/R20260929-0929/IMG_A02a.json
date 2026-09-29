@@ -1,0 +1,21 @@
+{"unit": "IMG:A02a", "algo": "A02",
+ "results": [
+   {"id": "A02-01", "status": "none", "note": "IEEE 論文頁需登入，查了 3 個管道都拿不到圖"},
+   {"id": "A02-02", "status": "none", "note": "MathWorks 文件頁的範例圖網址下載被伺服器擋下（403），查不到可用來源"},
+   {"id": "A02-03", "status": "none", "note": "IEEE 論文頁需登入，抓不到圖片"},
+   {"id": "A02-04", "status": "none", "note": "AIP 期刊頁需登入，抓不到圖片"},
+   {"id": "A02-05", "status": "none", "note": "Nature 開放取用論文頁被導向登入頁，PMC 也找不到對應文章頁"},
+   {"id": "A02-06", "status": "none", "note": "academia.edu 論文預覽頁被擋（403）"},
+   {"id": "A02-07", "status": "none", "note": "學位論文頁只有 PDF 全文連結，頁面本身沒有圖片"},
+   {"id": "A02-09", "status": "none", "note": "Springer 論文頁需登入，抓不到圖片"},
+   {"id": "A02-11", "status": "none", "note": "ScienceDirect 論文頁被擋（403），查不到開放圖片"},
+   {"id": "A02-10", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/9/95/Federation-square-sandstone-facade.jpg", "page": "https://commons.wikimedia.org/wiki/File:Federation-square-sandstone-facade.jpg", "note": "聯邦廣場砂岩立面近拍，三角形面板依 pinwheel 分形比例排列的紋理"},
+   {"id": "A02-12", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Britain-fractal-coastline-100km.png", "page": "https://commons.wikimedia.org/wiki/File:Britain-fractal-coastline-100km.png", "note": "以 100 公里量尺測量英國海岸線的示意圖，呼應 Mandelbrot 分形維度論文的核心概念"},
+   {"id": "A02-13", "status": "none", "note": "parametrichouse.com 頁面被擋（403），查不到圖片"},
+   {"id": "A02-14", "status": "none", "note": "論文頁只有頁首 logo，全文為 PDF，沒有可用的頁面圖片"},
+   {"id": "A02-15", "status": "none", "note": "arXiv 摘要頁沒有圖片，ar5iv 版面找得到圖說但抓不到實際圖片網址"},
+   {"id": "A02-54", "status": "new", "url": "GitHub secarri/KochSnowflake polyline_out.gif 最終畫格（本機處理後登記）", "page": "https://github.com/secarri/KochSnowflake", "note": "Houdini VEX 版 Koch 雪花演算法執行到第 4 階以上的成果動畫最終畫格，黑底白線"},
+   {"id": "A02-51", "status": "kept", "note": "官網範例圖確認是 Koch 雪花的實際生成畫面（非影片縮圖），已更新出處說明"},
+   {"id": "A02-52", "status": "kept", "note": "已確認是 The Nature of Code 書中 Koch 曲線逐代演變示意圖"},
+   {"id": "A02-53", "status": "kept", "note": "確認是影片中段講解畫面（Koch 曲線與 1.5 維分形維度），非純標題卡，已更新出處為官網課程頁"}
+ ]}

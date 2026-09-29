@@ -1,0 +1,8 @@
+{"unit": "IMG:G03", "algo": "G03",
+ "results": [
+   {"id": "G03-03", "status": "none", "note": "ScienceDirect 論文頁回傳 403 無法讀取；WebSearch 與 Parallel Search 額度已用盡，找不到其他頁面刊出的作品圖，交給卡片圖畫示意圖"},
+   {"id": "G03-05", "status": "none", "note": "arXiv 摘要頁未附圖，PDF 檔案過大無法直接讀取內容、也無 HTML 版本；WebSearch 與 Parallel Search 額度已用盡，找不到其他來源的圖，交給卡片圖畫示意圖"},
+   {"id": "G03-51", "status": "none", "note": "GitHub repo（mewo2/terrain）只有原始碼與純文字 README，沒有圖片；作者部落格舊文章網址已改版無法存取（404），WebSearch 與 Parallel Search 額度已用盡，找不到作品畫面，交給卡片圖畫示意圖"},
+   {"id": "G03-52", "status": "kept", "note": "以 WebFetch 確認 rlguy.com/map_generation 頁面清單包含 flowmap.jpg（流向圖），現有照片是藍綠色地形上疊黑色河網的畫面，內容與此描述相符，確認是作品本身生成畫面"},
+   {"id": "G03-54", "status": "kept", "note": "以 WebFetch 確認 GitHub README 兩張對比圖為「侵蝕前」與「侵蝕 7 萬次後」，現有照片是棕色山脈地形網格，符合侵蝕後地形的描述，確認是作品本身生成畫面"}
+ ]}

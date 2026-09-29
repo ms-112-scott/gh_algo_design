@@ -1,0 +1,14 @@
+{"unit": "IMG:A01", "algo": "A01",
+ "results": [
+   {"id": "A01-11", "status": "kept", "note": "Pen Plotter Kit 部落格文章的主圖，確認是該篇文章實際使用的圖片，為繪圖機風格的分形線稿"},
+   {"id": "A01-12", "status": "kept", "note": "已確認是 Lotta Stöver 作品官網上的裝置實景照，符合『從軟體長到實體空間』的描述"},
+   {"id": "A01-51", "status": "replaced", "url": "https://thecodingtrain.com/static/6ab3869f923396a3367b3cd5fe6c9b37/1624f/l-system-fractal-trees.png", "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees", "note": "原圖為 Coding Challenge #16 影片縮圖，換成頁面上該範例的實際程式執行畫面（白色 L-system 分形樹）"},
+   {"id": "A01-52", "status": "kept", "note": "已確認是 GitHub README 示範圖，ofxLSystem 生成的 3D 森林"},
+   {"id": "A01-53", "status": "kept", "note": "已確認是 GitHub README 範例結果，Koch 雪花線稿"},
+   {"id": "A01-55", "status": "kept", "note": "已確認是 The Nature of Code 第 8 章的圖，說明 L-system 逐代長出分形樹的規則"},
+   {"id": "A01-56", "status": "kept", "note": "已確認是 GitHub 專案畫面，L-system 規則疊加極坐標形狀的對稱花紋"},
+   {"id": "A01-57", "status": "kept", "note": "已確認是 Three.js 3D 開花樹花園的即時算圖畫面"},
+   {"id": "A01-58", "status": "kept", "note": "已確認是 donatello 直譯器生成的插畫風格花卉枝葉圖案"},
+   {"id": "A01-59", "status": "kept", "note": "已確認是 treegen 於 p5.js 畫布上以漸層色畫出的密集樹冠"},
+   {"id": "A01-60", "status": "kept", "note": "已確認是 Coding Challenge #185 的 L-system 龍形曲線上色版畫面"}
+ ]}

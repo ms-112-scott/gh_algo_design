@@ -1,0 +1,21 @@
+{"unit": "IMG:C04", "algo": "C04",
+ "results": [
+   {"id": "C04-01", "status": "none", "note": "ACM Digital Library 論文頁面回傳 403 無法查看內容，Ken Perlin 個人網站上也找不到這篇 1985 年論文本身的成果圖（找到的都是後期別的實驗畫面），查了 3 個來源都沒有作品圖"},
+   {"id": "C04-02", "status": "new", "url": "https://mrl.cs.nyu.edu/~perlin/noise/SmoothBall.jpg", "page": "https://mrl.cs.nyu.edu/~perlin/noise/", "note": "Smooth Ball 示範圖：2002 年改良版 noise 用五次平滑曲線消除方向性瑕疵後的球面貼圖結果"},
+   {"id": "C04-03", "status": "new", "url": "https://substackcdn.com/image/fetch/$s_!tUCY!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7c5e9013-bddf-4b5e-96a9-a85d8f0c5949_895x442.png", "page": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you", "note": "文章中展示 Minecraft 以疊層 noise 生成的招牌地形：懸空島與陡峭洞穴地貌"},
+   {"id": "C04-04", "status": "new", "url": "https://esimov.com/blog/wp-content/uploads/2014/10/mincraft-map.png", "page": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment", "note": "以 Perlin noise 生成類 Minecraft 地形並即時渲染的實驗畫面（含控制面板）"},
+   {"id": "C04-05", "status": "new", "url": "https://www.world-machine.com/content/featurepage/fractal_continent.jpg", "page": "https://www.world-machine.com/features.php", "note": "以疊層 Perlin noise 為基礎、經侵蝕模擬雕刻出的大陸級地形渲染畫面"},
+   {"id": "C04-06", "status": "none", "note": "World Machine 說明中心的 Advanced Perlin Noise 裝置頁只有參數文字說明，整頁沒有任何截圖或示意圖，查了 3 個來源都沒有作品圖"},
+   {"id": "C04-07", "status": "new", "url": "https://raw.githubusercontent.com/dandrino/terrain-erosion-3-ways/master/images/fbm_hillshaded.png", "page": "https://github.com/dandrino/terrain-erosion-3-ways", "note": "README 展示圖：典型 fBm（多層疊加 Perlin noise）地形的山體陰影著色結果"},
+   {"id": "C04-09", "status": "new", "url": "https://cdn.sanity.io/images/6e7gp05s/production/949141f74bc33950e06633feab3755cfd34b157e-2000x2000.jpg?w=3800&q=85&fit=clip&auto=format", "page": "https://www.tylerxhobbs.com/words/flow-fields", "note": "文章示範圖：以 Perlin noise 決定格網上每點角度後、大量曲線沿方向場流動形成的紋理"},
+   {"id": "C04-10", "status": "none", "note": "ACM 論文頁圖片功能需訂閱、PDF 內文圖無法直接取得網址，作者 Robert Bridson 個人網頁上的縮圖只有 128x128（太小，判定為圖示），查了 3 個來源都沒有夠大的作品圖"},
+   {"id": "C04-11", "status": "new", "url": "https://www.redblobgames.com/maps/terrain-from-noise/images/finaldemo-3d.png", "page": "https://www.redblobgames.com/maps/terrain-from-noise/", "note": "互動教學頁最終示範：以高度與濕度兩張 noise 疊加、加上生物群系與樹木分布的地圖渲染"},
+   {"id": "C04-12", "status": "none", "note": "論文平台頁面只有期刊卷期封面圖（與這篇 noise 文獻回顧內容無關），沒有論文本身的成果圖，查了 3 個來源都沒有作品圖"},
+   {"id": "C04-55", "status": "new", "url": "https://thebookofshaders.com/11/05.jpg", "page": "https://thebookofshaders.com/11/", "note": "章節手繪示意圖：以四個角落的梯度向量內插得到平滑曲面，說明 gradient noise 的原理"},
+   {"id": "C04-51", "status": "kept", "note": "已確認是 Coding Train 挑戰頁的三角網格地形範例執行畫面，非影片縮圖"},
+   {"id": "C04-52", "status": "replaced", "url": "https://thecodingtrain.com/static/9a7de971e35ed3d4646fee15a7a41a10/47930/polar-perlin-noise-loops.jpg", "page": "https://thecodingtrain.com/challenges/136-polar-noise-loops", "note": "原圖是有講者人像與標題卡的影片縮圖，換成挑戰頁上的 sketch 執行畫面：極座標 noise 繪出的封閉不規則曲線"},
+   {"id": "C04-53", "status": "kept", "note": "已確認是 bleuje 教學頁的成品執行畫面：noise 傳播形成的循環點陣圖案"},
+   {"id": "C04-54", "status": "kept", "note": "已確認是 TouchDesigner 教學頁的成品執行畫面：循環 noise 點雲流場"},
+   {"id": "C04-56", "status": "kept", "note": "已確認是 Inigo Quilez 文章首圖：domain warping 產生的大理石／煙霧狀紋理"},
+   {"id": "C04-57", "status": "kept", "note": "已確認是 Rainforest（2016）即時 raymarching shader 的渲染畫面"}
+ ]}

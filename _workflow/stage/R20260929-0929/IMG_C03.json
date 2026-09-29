@@ -1,0 +1,21 @@
+{"unit": "IMG:C03", "algo": "C03",
+ "results": [
+   {"id": "C03-01", "status": "new", "url": "https://cdn.sanity.io/images/6e7gp05s/production/4a5ade8ad624c193ed742aeaeff912ce40f5d9ab-6000x4500.jpg?w=3800&q=85&fit=clip&auto=format", "page": "https://www.tylerxhobbs.com/words/flow-fields", "note": "文章示範圖：細線沿角度場彎曲，由暖色過渡到冷色的 flow field 作品"},
+   {"id": "C03-02", "status": "new", "url": "https://res.cloudinary.com/art-blocks/image/fetch/f_auto,c_limit,w_3840,q_auto/https%3A%2F%2Fmedia-proxy.artblocks.io%2F1%2F0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270%2F78000617.png", "page": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs", "note": "Fidenza 系列其中一件作品：flow field 引導的帶狀曲線與方塊分布"},
+   {"id": "C03-03", "status": "none", "note": "官網 hint.fm 憑證失效無法讀取，Wayback Machine 不可存取，查了 3 個來源都沒找到可用的作品畫面"},
+   {"id": "C03-04", "status": "new", "url": "https://refikanadol.com/wp-content/uploads/2019/03/01.jpg", "page": "https://refikanadol.com/works/wind-of-boston-data-paintings/", "note": "裝置現場照：觀眾站在由風場資料生成的光點資料繪畫前"},
+   {"id": "C03-05", "status": "new", "url": "https://raw.githubusercontent.com/ladybug-tools/butterfly-plus/master/graphics.jpg", "page": "https://github.com/ladybug-tools/butterfly-plus", "note": "Rhino 視圖中的 CFD 結果：色階代表風速、箭頭代表風向的向量場"},
+   {"id": "C03-06", "status": "new", "url": "https://storage.ning.com/topology/rest/1.0/file/get/2804733275?profile=original", "page": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool", "note": "複數函數等高線圖：多個渦旋點產生的位勢流網格，是曲面生成的依據"},
+   {"id": "C03-07", "status": "none", "note": "Springer 論文頁為付費牆摘要頁，查了 3 個來源都沒有可用的作品圖"},
+   {"id": "C03-08", "status": "new", "url": "https://www.allnans.com/evenly_spaced_streamlines/even_stream_demo_05.png", "page": "https://www.allnans.com/evenly_spaced_streamlines/even_stream_demo.html", "note": "even_stream_texture 示範圖：等間距流線密集排列成如毛髮般的紋理"},
+   {"id": "C03-09", "status": "none", "note": "作者頁僅有 128x128 縮圖（太小），查了 3 個來源都沒有更大尺寸的論文圖"},
+   {"id": "C03-10", "status": "none", "note": "ZHA 官網改版後 Kartal-Pendik 案已無獨立頁面，只剩其他案子的圖，Wayback Machine 不可存取，找不到本案的圖"},
+   {"id": "C03-11", "status": "none", "note": "grasshopperdocs 元件頁只有網站 logo，查了 3 個來源都沒有元件執行畫面"},
+   {"id": "C03-12", "status": "none", "note": "唯一找到的圖是加了大標題與商店 logo 的產品封面圖（教學封面），不符規則，查了 3 個來源沒有其他畫面"},
+   {"id": "C03-13", "status": "new", "url": "https://global.discourse-cdn.com/mcneel/uploads/default/optimized/3X/b/9/b9d18a4d94f6576c4c5845e0661bba69e58593c8_2_690x359.png", "page": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056", "note": "討論串回覆截圖：Grasshopper 以 Anemone 迴圈讓點沿最近向量移動，畫出流線"},
+   {"id": "C03-51", "status": "kept", "note": "已確認是 Coding Train 挑戰頁預覽圖，流場粒子累積的半透明線條，非影片縮圖"},
+   {"id": "C03-52", "status": "kept", "note": "已確認是《The Nature of Code》書中插圖（Perlin noise 流場向量格），非影片縮圖"},
+   {"id": "C03-53", "status": "kept", "note": "已確認是 Sighack 文章的彩色 Perlin noise 流場筆觸範例圖，非影片縮圖"},
+   {"id": "C03-54", "status": "removed", "note": "原圖是 YouTube 影片標題卡（大標題文字＋TouchDesigner tutorial），作者 GitHub（TD-tutorials）只有 .toe 專案檔沒有截圖，查了 3 個來源都找不到作品畫面，移除照片"},
+   {"id": "C03-55", "status": "removed", "note": "原圖是 YouTube 影片標題卡（大標題文字＋作者人像），查了 3 個來源都找不到非縮圖的作品畫面，移除照片"}
+ ]}

@@ -1,0 +1,21 @@
+{"unit": "IMG:D01a", "algo": "D01",
+ "results": [
+   {"id": "D01-01", "status": "none", "note": "查了 Wikipedia、Craig Reynolds 官方 boids 頁面（有一張本片畫面 downflockquad.gif，但只有 160x120 太小）、Batman Returns 頁面，都沒有可用的清楚畫面"},
+   {"id": "D01-02", "status": "none", "note": "查了 Wikipedia Boids 頁、Batman Returns 頁、Reynolds 官方頁，只有電影海報與演員肖像，找不到蝙蝠群或企鵝群特效的實際畫面"},
+   {"id": "D01-03", "status": "none", "note": "Kokkugia 官網找到 Swarm Urbanism 對應縮圖，但檔案只有 200x134、太小無法使用，找不到大圖版本"},
+   {"id": "D01-06", "status": "none", "note": "Nature 論文頁需要登入無法查看圖片；Imperial Aerial Robotics Lab 頁面圖片下載被 CDN 擋下（403），查證的其他管道（Empa、Stuart-Smith 個人頁）都無法開啟"},
+   {"id": "D01-08", "status": "new", "url": "https://parametric-architecture.com/wp-content/uploads/2025/05/Ghost-Tectonics-Printing-tailored-fibre-composites-2-scaled.webp", "page": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/", "note": "Ghost Tectonics 展亭作品：代理人群互動生成的複雜分枝金屬曲面結構，展場中觀眾繞行觀賞"},
+   {"id": "D01-09", "status": "new", "url": "https://i0.wp.com/studiodrift.com/wp-content/uploads/2021/02/Franchise-FreedomF_NASA__%C2%A9OssipvanDuivenbode-scaled.jpg?resize=1700%2C1220&ssl=1", "page": "https://studiodrift.com/work/franchise-freedom/", "note": "Franchise Freedom：數百台發光無人機模擬椋鳥群飛，於甘迺迪太空中心火箭園區夜空中群聚成流動光點"},
+   {"id": "D01-10", "status": "new", "url": "https://cdn.prod.website-files.com/5afb536ac94885548e59fb3b/5afe3bf61ecd15013087b6fc_gossamer%20skins%200.png", "page": "https://www.alisaandrasek.com/projects/gossamer-skins", "note": "Gossamer Skins：高層立面系統渲染圖，藍色網狀構件依代理人留痕密度形成多孔隙紋理，平台可供人行走"},
+   {"id": "D01-11", "status": "new", "url": "http://www.complicitmatter.com/wp-content/uploads/2017/12/animation_reducedSmall-1.gif", "page": "http://www.complicitmatter.com/culebra/", "note": "Culebra 代理人軌跡示範：黑底上黃綠與紅色發光線條從左側分枝生長，呈現代理人群聚留下的曲線軌跡"},
+   {"id": "D01-12", "status": "none", "note": "food4rhino 頁面下載被擋（403），Archive.org 無法存取，查不到 Quelea 的示範截圖"},
+   {"id": "D01-51", "status": "kept", "note": "已確認是 The Coding Train Flocking Simulation 挑戰頁的生成畫面，漸層背景上的 boids 群聚點團，非影片縮圖"},
+   {"id": "D01-52", "status": "kept", "note": "已確認是 Processing 官方 Flocking 範例執行畫面，深色背景上的三角形 boids，符合作品本身生成畫面"},
+   {"id": "D01-53", "status": "kept", "note": "已確認是 three.js GPU boids 官方範例截圖，白色背景上的鳥群三角形，非影片縮圖或介面截圖"},
+   {"id": "D01-54", "status": "removed", "note": "原圖是 YouTube 影片標題卡（TouchDesigner Boids Tutorial 文字疊圖），查了 derivative.ca 教學頁與作者 GitHub repo 都找不到實際模擬畫面，改由卡片圖步驟畫示意圖"},
+   {"id": "D01-55", "status": "removed", "note": "原圖也是影片標題卡（FLOCKING WITH POPs 文字疊圖並含作者人像），derivative.ca 頁面上其餘圖片同樣是同一張標題卡的不同裁切，找不到乾淨的模擬畫面，改由卡片圖步驟畫示意圖"},
+   {"id": "D01-56", "status": "kept", "note": "已確認是 Brendan Dawes 限量筆繪作品實拍照，黑色曲線在米白手工紙上交織出鳥群軌跡，符合作品本身畫面"},
+   {"id": "D01-57", "status": "kept", "note": "已確認是 GitHub olafvisker/boids 專案展示圖，boid 依速度上色並保留殘影疊加成發光紋理，符合摘要描述"},
+   {"id": "D01-58", "status": "kept", "note": "已確認是 Swarm 裝置的作品畫面，攝影機影像顏色被 boids 群體筆刷暈染成有機肌理，右下角小圖為裝置前的即時影像來源，非講者人像"},
+   {"id": "D01-59", "status": "kept", "note": "已確認是 itch.io Boids 頁面的生成畫面，鳥形圖示在淺藍背景上聚散成群，符合作品本身描述"}
+ ]}

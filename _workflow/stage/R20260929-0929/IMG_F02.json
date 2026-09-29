@@ -1,0 +1,11 @@
+{"unit": "IMG:F02", "algo": "F02",
+ "results": [
+   {"id": "F02-01", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/6/62/OctagonalTesselations2.png", "page": "https://commons.wikimedia.org/wiki/File:OctagonalTesselations2.png", "note": "Hankin 1925 年發表的原始手繪分析圖，右下角是由接觸八角形推導出阿克巴陵墓前廳圖樣的構造過程"},
+   {"id": "F02-02", "status": "none", "note": "GI2005 論文頁只連到 ACM DL 付費全文，Kaplan 個人網站的著作列表與軟體頁都查不到這篇 2005 年論文的圖，3 次查證都沒有可用的作品畫面"},
+   {"id": "F02-05", "status": "new", "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Spandrel-large_scale_pattern.svg/3840px-Spandrel-large_scale_pattern.svg.png", "page": "https://commons.wikimedia.org/wiki/File:Spandrel-large_scale_pattern.svg", "note": "圖解 Darb-e Imam 聖祠券肩的大尺度 girih 構造，對應 Lu 與 Steinhardt 2007 年論文的分析（與 F02-04 的現場實拍照不同張）"},
+   {"id": "F02-09", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Institut_du_Monde_Arabe_-_Mousharabieh_Eiffel_%283388328705%29.jpg", "page": "https://commons.wikimedia.org/wiki/File:Institut_du_Monde_Arabe_-_Mousharabieh_Eiffel_(3388328705).jpg", "note": "透過南向機械光圈立面（moucharabieh）望向艾菲爾鐵塔，前景可見圓形穿孔金屬遮陽元件的紋理"},
+   {"id": "F02-10", "status": "none", "note": "Wikimedia Commons 沒有該分類、媒體搜尋查無結果，AHR／ArchDaily 專案頁也連不上，3 次以上查證都找不到遮陽單元近照"},
+   {"id": "F02-11", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/en/6/6f/InsideMIA.jpg", "page": "https://en.wikipedia.org/wiki/File:InsideMIA.jpg", "note": "杜哈伊斯蘭藝術博物館中庭仰視，多面金屬燈飾與星形穿孔光圈交織於天花與拱圈之間"},
+   {"id": "F02-12", "status": "new", "url": "https://arxiv.org/html/2301.01471v1/figs/teaser.png", "page": "https://arxiv.org/abs/2301.01471", "note": "論文封面圖：以圓堆積為骨架，混合不同尺寸與顏色的 rosette 星形拼成自由形伊斯蘭圖樣構圖"},
+   {"id": "F02-51", "status": "kept", "note": "已確認是 The Coding Train p5.js 實際執行畫面，橘色線條交織於深藍背景的伊斯蘭星形圖樣，非影片縮圖"}
+ ]}

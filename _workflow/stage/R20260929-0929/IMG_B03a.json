@@ -1,0 +1,21 @@
+{"unit": "IMG:B03a", "algo": "B03",
+ "results": [
+   {"id": "B03-01", "status": "none", "note": "論文頁與 algorithmicbotany.org 出版品清單皆只有小尺寸縮圖（<240px），查了 3 個來源都沒有夠大的作品圖"},
+   {"id": "B03-02", "status": "none", "note": "論文為 PDF，algorithmicbotany.org 出版品清單縮圖太小，找不到作者網站或研究室頁面的替代成果圖"},
+   {"id": "B03-03", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2011/07/Hyphae-Lamps.jpg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=1701", "note": "Hyphae Lamps 實體燈具，白色陶瓷上以空間殖民演算法生成的葉脈狀鏤空紋理"},
+   {"id": "B03-04", "status": "new", "url": "https://n-e-r-v-o-u-s.com/projects/images/62/68-venation-open-and-closed-patterns-unconstrained_1200.jpg", "page": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/", "note": "以空間殖民演算法生成的三種葉脈分布圖案比較（開放與封閉邊界條件）"},
+   {"id": "B03-05", "status": "new", "url": "https://github.com/jasonwebb/2d-space-colonization-experiments/raw/master/images/obstacles-screenshot.png", "page": "https://github.com/jasonwebb/2d-space-colonization-experiments", "note": "空間殖民演算法在楓葉形邊界內生長出的葉脈狀分枝網路"},
+   {"id": "B03-06", "status": "new", "url": "https://thecodingtrain.com/static/8a7318602fe783e5f9507d92b9bc19a1/a7c37/space.png", "page": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization", "note": "Coding Challenge #17 範例程式執行畫面，黑底白線的空間殖民樹狀分枝結果"},
+   {"id": "B03-07", "status": "none", "note": "論文只在 ResearchGate 上，頁面回應 403 無法存取，查了 3 個來源都找不到替代圖"},
+   {"id": "B03-08", "status": "new", "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhh7E6AUajtNoMBsKxJCeb-ctkAM83iAxA0NcSM_afTolBQ_Vi-jnUpG1dBpHQaKSXTtUQ7pqasXRr1Xf2m5e7PW-VnW6lowtIUsVQS80mQpMuZS30vkn-Obd9mHhbnRzXMlMSKphlr7tw/s1600/voxel-tree-roots.png", "page": "http://procworld.blogspot.com/2011/02/space-colonization.html", "note": "以空間殖民演算法生成的樹木渲染圖，同時展示樹冠與地下根系的分枝結構"},
+   {"id": "B03-09", "status": "none", "note": "GitHub repo 根目錄只有 logo.png，沒有其他成果截圖，查了 3 個來源都沒有替代圖"},
+   {"id": "B03-10", "status": "none", "note": "案例出處是 USPTO 專利 PDF，無法取得可用的圖片頁面"},
+   {"id": "B03-11", "status": "new", "url": "https://www.biorxiv.org/content/biorxiv/early/2026/03/03/2026.02.28.708633/F4.large.jpg", "page": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full", "note": "以空間殖民法生成的血管網格在立方組織支架內生長，並延伸至多層堆疊構造的模擬結果"},
+   {"id": "B03-12", "status": "none", "note": "GitHub repo（doc、Examples 資料夾）都沒有展示生成結果的圖片，查了 3 個來源都沒有替代圖"},
+   {"id": "B03-13", "status": "new", "url": "https://elfnor.com/images/sca_test3b_004.png", "page": "https://elfnor.com/sverchok-tree-generator.html", "note": "Sverchok 節點式空間殖民樹狀生成器產出的環狀分枝結構範例"},
+   {"id": "B03-14", "status": "none", "note": "entagma.com 教學頁只嵌入影片，抓不到頁面內的成果截圖，查了 3 個來源都沒有替代圖"},
+   {"id": "B03-51", "status": "kept", "note": "已確認是 Coding Challenge #17 範例程式的實際生成畫面"},
+   {"id": "B03-52", "status": "kept", "note": "已確認是 2D 空間殖民實驗的實際生成畫面"},
+   {"id": "B03-53", "status": "kept", "note": "已確認是 Hyphae 燈具實品的近拍生成紋理"},
+   {"id": "B03-55", "status": "removed", "note": "原圖與可取得的其他 GIF 截圖都含 Unity 編輯器選單列與面板，找不到純粹生成畫面，移除照片交給卡片圖步驟畫示意圖"}
+ ]}

@@ -1,0 +1,21 @@
+{"unit": "IMG:E01", "algo": "E01",
+ "results": [
+   {"id": "E01-01", "status": "new", "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/paper_docs/packing.gif", "page": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html", "note": "論文頁圖：圓形內切網格延伸出的曲面圓柱管束立面渲染圖，背景為城市天際線"},
+   {"id": "E01-02", "status": "new", "url": "https://www.arup.com/globalassets/images/projects/n/national-acquatic-centre-water-cube/national-aquatics-center-water-cube-facade-cben-mcmillan.webp", "page": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/", "note": "Arup 專案頁：水立方 ETFE 氣枕立面近拍，泡沫多面體圖樣清晰可見"},
+   {"id": "E01-03", "status": "new", "url": "https://parametrichouse.com/wp-content/uploads/2025/05/grasshopper-Circle-Pack-Facade-3.webp", "page": "https://parametrichouse.com/parametric/circle-pack-facade/", "note": "教學圖：自由形狀立面板以 Kangaroo circle packing 排出大小不一的圓形開孔"},
+   {"id": "E01-04", "status": "new", "url": "https://global.discourse-cdn.com/mcneel/uploads/default/original/3X/1/a/1a6474fa43529bc632b3278431a1644b5818ac5b.png", "page": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23", "note": "McNeel 論壇 Daniel Piker 貼文：Rhino 視窗截圖，方形邊界內排出大小不一、彼此相切的圓"},
+   {"id": "E01-06", "status": "new", "url": "https://cdn.sanity.io/images/6e7gp05s/production/87eccfb6f24d216e6549487448ad3619fcc5199b-4000x2250.jpg?w=3800&q=85&fit=clip&auto=format", "page": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing", "note": "Tyler Hobbs 網站：隨機試放法產生的多層彩色圓填充作品"},
+   {"id": "E01-07", "status": "new", "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/50-animated-circle-packing/images/cat.jpg", "page": "https://thecodingtrain.com/challenges/50-animated-circle-packing", "note": "Coding Train 官網範例圖：以影像決定圓的位置與顏色，圓填充拼出貓咪肖像"},
+   {"id": "E01-08", "status": "none", "note": "OpenProcessing 頁面與 Wayback 存檔皆回傳 403，抓不到縮圖網址，查了 4 個管道都沒有畫面"},
+   {"id": "E01-09", "status": "none", "note": "Bridges 論文摘要頁沒有圖片，只有 PDF 全文可下載，查不到可用的頁面示意圖"},
+   {"id": "E01-10", "status": "none", "note": "arXiv 摘要頁與 ar5iv／HTML 版本都沒有這篇論文的圖，只有 PDF"},
+   {"id": "E01-11", "status": "none", "note": "期刊頁（Taylor & Francis）回傳 403，查不到 graphical abstract 或示意圖"},
+   {"id": "E01-12", "status": "new", "url": "https://i0.wp.com/www.codeplastic.com/wp-content/uploads/2017/09/circle-packing.png", "page": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/", "note": "CodePlastic 文章圖：上千個大小不一的圓以互推力填滿有機輪廓，形成細密紋理構圖"},
+   {"id": "E01-13", "status": "new", "url": "http://algorithmicbotany.org/papers/img/ecosys.sig98.jpg", "page": "http://algorithmicbotany.org/papers/ecosys.sig98.html", "note": "論文列表頁縮圖：以圓的競爭模擬出的植株分布，畫面呈現草地與樹木的自然群落"},
+   {"id": "E01-51", "status": "removed", "note": "原圖是 Entagma 影片標題卡（左側 logo／作者／片名文字，右側畫面），屬於禁用的影片標題卡；查了同頁與影片本身都找不到不含文字疊層的作品渲染畫面，移除交由卡片圖畫示意圖"},
+   {"id": "E01-52", "status": "kept", "note": "已確認是 GPU compute shader 即時生成的圓填充畫面，非影片縮圖"},
+   {"id": "E01-53", "status": "kept", "note": "已確認是 p5.js 遞迴生長圓填充的實際生成畫面"},
+   {"id": "E01-54", "status": "kept", "note": "已確認是 README 示範圖：三角網與對應的相切圓填充演算法示意圖"},
+   {"id": "E01-55", "status": "kept", "note": "已確認是黑白密鋪圓填充的實際生成畫面"},
+   {"id": "E01-56", "status": "kept", "note": "已確認是 SDF 巢狀圓填充的實際生成畫面"}
+ ]}

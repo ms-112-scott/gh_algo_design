@@ -1,0 +1,24 @@
+{
+  "unit": "IMG:E03a",
+  "algo": "E03",
+  "results": [
+    {"id": "E03-01", "status": "new", "url": "https://www.arup.com/globalassets/images/projects/n/national-acquatic-centre-water-cube/national-aquatics-center-water-cube-facade-cben-mcmillan.webp", "page": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube", "note": "水立方 ETFE 氣枕立面近拍，呈現不規則多面體泡沫分割的鋼構框"},
+    {"id": "E03-02", "status": "new", "url": "https://studiotomassaraceno.org/files/18ITA_VeniceBiennale2019_Exhibition_01458-1024x561.jpg", "page": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/", "note": "威尼斯雙年展現場：多組 Weaire-Phelan 泡沫啟發的多面體叢集懸浮於潟湖上空"},
+    {"id": "E03-03", "status": "new", "url": "https://media.springernature.com/lw685/springer-static/image/art%3A10.1007%2Fs00004-020-00544-7/MediaObjects/4_2020_544_Fig1_HTML.jpg", "page": "https://link.springer.com/article/10.1007/s00004-020-00544-7", "note": "論文圖 1，標示為 Let's Join 展亭：木構五邊形面板組成的空間鑲嵌結構，內有真人比例"},
+    {"id": "E03-04", "status": "new", "url": "https://marc-newson.com/media/voronoi-shelf/Voronoi_03.jpg", "page": "https://marc-newson.com/voronoi-shelf/", "note": "CNC 石材銑削中的 Carrara 大理石塊，正被挖出 Voronoi 細胞格架"},
+    {"id": "E03-05", "status": "new", "url": "https://n-e-r-v-o-u-s.com/projects/images/179/01-radiolaria-by-nervous-system_3000.jpg", "page": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/", "note": "Radiolaria 系列蝕刻不鏽鋼配件穿戴於人體，細胞圖樣隨曲面漸變"},
+    {"id": "E03-06", "status": "new", "url": "https://cdn.prod.website-files.com/663de072aed25872de06c783/68fa9acaff7095c5cd8f56f6_6697decdda553e4958b6a71a_IMG_3778.jpeg", "page": "https://www.vertico.com/projects/voronoi-wall", "note": "3D 列印混凝土 Voronoi 綠牆實景，每塊構件形狀不同並種有植栽"},
+    {"id": "E03-08", "status": "none", "note": "ResearchGate 圖片頁回傳 403，Bing／DuckDuckGo／Marginalia 搜尋與 Semantic Scholar API 都找不到可開啟的替代來源，查了超過 3 次仍無合格圖片"},
+    {"id": "E03-09", "status": "none", "note": "UBC 論文頁本身沒有內嵌圖片，PDF 無法擷圖，Wikipedia、作者個人頁與多個搜尋引擎都找不到可用的點描結果圖"},
+    {"id": "E03-10", "status": "none", "note": "ACS Publications 頁回傳 403，Semantic Scholar 查無開放取用版本、PubMed 頁無法讀取，找不到合格替代圖"},
+    {"id": "E03-11", "status": "none", "note": "ScienceDirect 頁回傳 403，找不到作者或機構典藏的開放取用版本可看到圖表"},
+    {"id": "E03-12", "status": "new", "url": "https://arxiv.org/html/2204.10313v3/figures/cb_ours.png", "page": "https://arxiv.org/abs/2204.10313", "note": "可微分 Voronoi 細胞拓樸最佳化的懸臂梁結果，黑白細胞搭配紅點標示種子點"},
+    {"id": "E03-13", "status": "new", "url": "https://raw.githubusercontent.com/DanielAbalde/PowerDiagrams/master/Resources/Voronoi.gif", "page": "https://github.com/DanielAbalde/PowerDiagrams", "note": "PowerDiagrams 外掛示範：粉紅色加權 Voronoi／Power diagram 邊界疊加藍色 Delaunay 三角網"},
+    {"id": "E03-51", "status": "kept", "note": "已確認是 Coding Challenge 181 點描肖像成果圖（含放大細節框）"},
+    {"id": "E03-52", "status": "kept", "note": "已確認是 Inigo Quilez Voronoi edges 文章的著色器成果圖，橘底黑色細胞內有同心距離場圖樣"},
+    {"id": "E03-53", "status": "kept", "note": "已確認是 The Book of Shaders 第 12 章示意圖，黑底白線細胞邊界與同心距離場圖樣相符"},
+    {"id": "E03-55", "status": "kept", "note": "已確認是 Jason Davies Lloyd 鬆弛示範，金褐色背景由中心向外擴散的 Voronoi 細胞"},
+    {"id": "E03-56", "status": "kept", "note": "已確認是 Jason Webb 2D Voronoi Experiments 的葉序點陣示範，螺旋放射狀鑲嵌圖案"},
+    {"id": "E03-57", "status": "kept", "note": "重新從出處頁的 2024_moorevoronoi.gif 下載比對，畫面（黑底白線細胞、中心標記種子點）與既有圖一致，確認來源正確"}
+  ]
+}

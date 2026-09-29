@@ -1,0 +1,21 @@
+{"unit": "IMG:A03a", "algo": "A03",
+ "results": [
+   {"id": "A03-01", "status": "new", "url": "https://imgs.xkcd.com/comics/map_of_the_internet.jpg", "page": "https://xkcd.com/195/", "note": "手繪風格的 2006 年 IPv4 位址空間地圖，以碎形分區方式呈現各機構持有區塊"},
+   {"id": "A03-02", "status": "new", "url": "https://www.caida.org/archive/id-consumption/census-map/images/2013-hilbert-plot.png", "page": "https://www.caida.org/archive/id-consumption/census-map/", "note": "2013 年 IPv4 普查地圖，以 Hilbert 曲線排列位址空間並依使用狀態上色"},
+   {"id": "A03-03", "status": "none", "note": "Observable 筆記本頁面持續回傳 429（請求過多），查了 3 次都無法取得頁面圖片"},
+   {"id": "A03-04", "status": "new", "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data_files/figure-html/hilbert-3.png", "page": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html", "note": "ggip R 套件產生的 4 階 Hilbert 曲線（16x16 網格）示意圖"},
+   {"id": "A03-06", "status": "new", "url": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/H512a.JPG", "page": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/", "note": "Hilbert Cube 512 金屬雕塑戶外實景照，以 3D Hilbert 曲線構件堆疊成立方體"},
+   {"id": "A03-07", "status": "new", "url": "https://history.siggraph.org/wp-content/uploads/2017/07/2006_Sequin_HilbertCube.jpg", "page": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/", "note": "Hilbert Cube 立體雕塑作品，以 3D Hilbert 曲線結構焊接而成（SIGGRAPH 藝術展紀錄照）"},
+   {"id": "A03-08", "status": "none", "note": "部落格圖片主機（blogger.googleusercontent.com）連結已失效或被擋，查了 3 張候選圖都無法開啟"},
+   {"id": "A03-09", "status": "none", "note": "ResearchGate 頁面回傳 403 禁止存取，找不到論文圖"},
+   {"id": "A03-10", "status": "none", "note": "ScienceDirect 頁面回傳 403 禁止存取，找不到論文圖"},
+   {"id": "A03-11", "status": "none", "note": "ResearchGate 頁面回傳 403 禁止存取，找不到論文圖"},
+   {"id": "A03-12", "status": "new", "url": "https://ar5iv.labs.arxiv.org/html/2109.01769/assets/Figs/layer124_01.JPG", "page": "https://arxiv.org/abs/2109.01769", "note": "以空間填充曲線分解區域規劃列印路徑，Bunny 模型第 124 層實際列印成果俯視照"},
+   {"id": "A03-13", "status": "none", "note": "1994 年論文無網址可查，WebSearch 額度已用完，Parallel Search 也達速率限制，找不到圖"},
+   {"id": "A03-15", "status": "none", "note": "designcoding.net 頁面回傳 403 禁止存取，找不到圖"},
+   {"id": "A03-53", "status": "none", "note": "Jason Davies 的 D3.js 互動頁面為動態向量繪圖，頁面原始碼沒有靜態圖片可用，查了 3 個來源都沒有"},
+   {"id": "A03-51", "status": "replaced", "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/c3-hilbert-curve/images/hilbert.png", "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve", "note": "原圖來源不明確，換成 Coding Train 官方 GitHub 倉庫中此挑戰的範例執行畫面，Hilbert 曲線以四象限漸層著色呈現遞迴細分結構"},
+   {"id": "A03-52", "status": "removed", "note": "原圖為影片標題卡（∞→N 圖示），頁面上唯一圖片是 YouTube 縮圖，查證後找不到作品生成畫面，移除照片"},
+   {"id": "A03-54", "status": "kept", "note": "已確認是作品生成畫面：以 Hilbert 曲線走訪 RGB 色彩空間並投影為 2D 色塊肖像"},
+   {"id": "A03-55", "status": "kept", "note": "已確認是作品生成畫面：自適應 Hilbert 曲線繪製的連續單線肖像"}
+ ]}

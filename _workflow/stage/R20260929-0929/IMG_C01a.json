@@ -1,0 +1,21 @@
+{"unit": "IMG:C01a", "algo": "C01",
+ "results": [
+   {"id": "C01-01", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2023/10/IMGP2416-850x850.jpg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=9442", "note": "金銀兩款莫比烏斯環戒指，表面為反應擴散生成的蜿蜒紋路"},
+   {"id": "C01-02", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2011/04/reactionLamp.jpg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=1009", "note": "球形燈罩表面佈滿反應擴散生成的指紋狀蜿蜒紋路"},
+   {"id": "C01-03", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2018/11/cupColors.jpg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=8222", "note": "三種釉色瓷杯，杯身以反應擴散演算法生成蜿蜒凸紋"},
+   {"id": "C01-04", "status": "none", "note": "New Balance 商品頁擋爬蟲（403），查了官網、Nervous System 站內、搜尋引擎都沒找到能確認是反應擴散圖案的球鞋照片"},
+   {"id": "C01-05", "status": "new", "url": "https://karlsims.com/rd-map.png", "page": "https://karlsims.com/rd.html", "note": "反應擴散參數空間示意圖，同一張圖呈現細胞狀、蟲狀、斑點到雜訊等不同花紋"},
+   {"id": "C01-06", "status": "none", "note": "1993 年 Pearson 的 arXiv 論文頁只有站台圖示，正文圖表僅在 PDF 內，查了 3 個管道都沒有可公開取用的圖"},
+   {"id": "C01-07", "status": "new", "url": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/jaguar.jpg", "page": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html", "note": "反應擴散生成的美洲豹玫瑰斑紋理，貼附於馬形三維網格上"},
+   {"id": "C01-08", "status": "new", "url": "https://storage.ning.com/topology/rest/1.0/file/get/2654923084?profile=original", "page": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh", "note": "三角網格花瓶模型，表面佈滿反應擴散生成的蜿蜒迷宮狀紋理"},
+   {"id": "C01-10", "status": "none", "note": "ResearchGate 頁面擋爬蟲（403），查了 3 個管道都找不到開放取用的圖或替代來源"},
+   {"id": "C01-11", "status": "new", "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/57bf/9916983/7860f5a7254e/sciadv.ade4381-f1.jpg", "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9916983", "note": "論文圖一：反應擴散生成的多種圖樣、自然界對照範例，以及去均質化到三維列印充氣變形的設計流程"},
+   {"id": "C01-13", "status": "new", "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/c223/10558543/581610a6972f/41467_2023_41775_Fig3_HTML.jpg", "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/", "note": "論文圖三：以 Turing 圖樣演算法生成的散射面全像圖樣陣列，局部放大顯示晶格方向與異向性關係"},
+   {"id": "C01-14", "status": "none", "note": "GitHub 專案頁與作者頁只有一張連到 YouTube 示範影片的縮圖，不符合不用影片縮圖的規則，查了 3 個管道都沒有其他成果圖"},
+   {"id": "C01-15", "status": "none", "note": "Red Blob Games 是互動式 WebGL 頁面，頁面本身與搜尋都找不到靜態成果截圖"},
+   {"id": "C01-54", "status": "none", "note": "pmneila 的 WebGL Gray-Scott 展示是互動頁面，沒有 og:image 也找不到靜態截圖"},
+   {"id": "C01-51", "status": "kept", "note": "已確認是 p5.js 反應擴散挑戰的實際執行畫面，黃紫兩色蜿蜒迷宮紋路"},
+   {"id": "C01-52", "status": "kept", "note": "已確認是 Reaction-Diffusion Playground 工具產出的多種花紋拼貼，非影片縮圖"},
+   {"id": "C01-53", "status": "removed", "note": "原圖為 YouTube 影片標題卡（含黑邊與文字疊層），查了 3 個管道都找不到作者的靜態成果畫面，故移除"},
+   {"id": "C01-56", "status": "kept", "note": "已確認是 Jonathan McCabe 多尺度反應擴散作品的生成畫面"}
+ ]}

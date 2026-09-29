@@ -10790,7 +10790,7 @@ window.CATALOG = {
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
-    "note": "Coding Challenge #16 影片縮圖"
+    "note": "Coding Challenge #16 p5.js 範例程式的實際執行畫面：白色線條構成的 L-system 分形樹"
    }
   },
   {
@@ -11521,7 +11521,18 @@ window.CATALOG = {
     "遞迴"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Federation_Square"
+   "url": "https://en.wikipedia.org/wiki/Federation_Square",
+   "image": {
+    "file": "img/cases/A02-10.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Wikimedia Commons",
+    "author": "Seo75",
+    "license": "CC BY-SA 2.1 AU",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Federation-square-sandstone-facade.jpg",
+    "note": "聯邦廣場砂岩立面近拍，三角形面板依 pinwheel 分形比例排列的紋理"
+   }
   },
   {
    "id": "A02-11",
@@ -11593,7 +11604,18 @@ window.CATALOG = {
     "可重現種子"
    ],
    "tools": [],
-   "url": "https://www.science.org/doi/10.1126/science.156.3775.636"
+   "url": "https://www.science.org/doi/10.1126/science.156.3775.636",
+   "image": {
+    "file": "img/cases/A02-12.jpg",
+    "w": 304,
+    "h": 590,
+    "source": "Wikimedia Commons",
+    "author": "Avsa／Wapcaplet／Acadac",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Britain-fractal-coastline-100km.png",
+    "note": "以 100 公里量尺測量英國海岸線的示意圖，呼應 Mandelbrot 分形維度論文的核心概念"
+   }
   },
   {
    "id": "A02-13",
@@ -11745,7 +11767,7 @@ window.CATALOG = {
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
-    "note": "Coding Challenge #129 影片縮圖"
+    "note": "Coding Challenge #129 官網範例圖，遞迴 Koch 雪花的實際生成畫面（白線／珊瑚紅底）"
    }
   },
   {
@@ -11835,12 +11857,12 @@ window.CATALOG = {
     "file": "img/cases/A02-53.jpg",
     "w": 480,
     "h": 360,
-    "source": "YouTube（3Blue1Brown）",
+    "source": "3Blue1Brown",
     "author": "Grant Sanderson",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
-    "page": "https://www.youtube.com/watch?v=gB9n2gHsHN4",
-    "note": "影片「Fractals are typically not self-similar」縮圖"
+    "page": "https://www.3blue1brown.com/lessons/fractal-dimension",
+    "note": "影片「碎形通常不是自我相似」中段畫面，呈現 Koch 曲線與其估算出的 1.5 維分形維度"
    }
   },
   {
@@ -11878,7 +11900,18 @@ window.CATALOG = {
    "tools": [
     "Houdini"
    ],
-   "url": "https://github.com/secarri/KochSnowflake"
+   "url": "https://github.com/secarri/KochSnowflake",
+   "image": {
+    "file": "img/cases/A02-54.jpg",
+    "w": 900,
+    "h": 499,
+    "source": "GitHub（secarri/KochSnowflake）",
+    "author": "secarri",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/secarri/KochSnowflake",
+    "note": "Houdini VEX 版 Koch 雪花演算法執行到第 4 階以上的成果動畫最終畫格，黑底白線"
+   }
   },
   {
    "id": "A02-55",
@@ -11964,7 +11997,18 @@ window.CATALOG = {
     "空間填充"
    ],
    "tools": [],
-   "url": "https://www.explainxkcd.com/wiki/index.php/195:_Map_of_the_Internet"
+   "url": "https://www.explainxkcd.com/wiki/index.php/195:_Map_of_the_Internet",
+   "image": {
+    "file": "img/cases/A03-01.jpg",
+    "w": 619,
+    "h": 900,
+    "source": "xkcd",
+    "author": "Randall Munroe",
+    "license": "CC BY-NC 2.5",
+    "license_url": "",
+    "page": "https://xkcd.com/195/",
+    "note": "手繪風格的 2006 年 IPv4 位址空間地圖，以碎形分區方式呈現各機構持有區塊"
+   }
   },
   {
    "id": "A03-02",
@@ -11995,7 +12039,18 @@ window.CATALOG = {
     "影像輸入"
    ],
    "tools": [],
-   "url": "https://www.caida.org/archive/id-consumption/census-map/"
+   "url": "https://www.caida.org/archive/id-consumption/census-map/",
+   "image": {
+    "file": "img/cases/A03-02.jpg",
+    "w": 900,
+    "h": 751,
+    "source": "CAIDA",
+    "author": "CAIDA",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.caida.org/archive/id-consumption/census-map/",
+    "note": "2013 年 IPv4 普查地圖，以 Hilbert 曲線排列位址空間並依使用狀態上色"
+   }
   },
   {
    "id": "A03-03",
@@ -12063,7 +12118,18 @@ window.CATALOG = {
    "tools": [
     "R"
    ],
-   "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html"
+   "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html",
+   "image": {
+    "file": "img/cases/A03-04.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "ggip (David Hall)",
+    "author": "David Hall",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html",
+    "note": "ggip R 套件產生的 4 階 Hilbert 曲線（16x16 網格）示意圖"
+   }
   },
   {
    "id": "A03-06",
@@ -12105,7 +12171,18 @@ window.CATALOG = {
    "tools": [
     "3D 列印"
    ],
-   "url": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/"
+   "url": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/",
+   "image": {
+    "file": "img/cases/A03-06.jpg",
+    "w": 900,
+    "h": 708,
+    "source": "Carlo H. Séquin 個人網頁",
+    "author": "Carlo H. Séquin",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/",
+    "note": "Hilbert Cube 512 金屬雕塑戶外實景照，以 3D Hilbert 曲線構件堆疊成立方體"
+   }
   },
   {
    "id": "A03-07",
@@ -12139,7 +12216,18 @@ window.CATALOG = {
     "對稱"
    ],
    "tools": [],
-   "url": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/"
+   "url": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/",
+   "image": {
+    "file": "img/cases/A03-07.jpg",
+    "w": 900,
+    "h": 728,
+    "source": "ACM SIGGRAPH history",
+    "author": "Carlo H. Séquin",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/",
+    "note": "Hilbert Cube 立體雕塑作品，以 3D Hilbert 曲線結構焊接而成"
+   }
   },
   {
    "id": "A03-08",
@@ -12323,7 +12411,18 @@ window.CATALOG = {
    "tools": [
     "3D 列印"
    ],
-   "url": "https://arxiv.org/pdf/2109.01769"
+   "url": "https://arxiv.org/pdf/2109.01769",
+   "image": {
+    "file": "img/cases/A03-12.jpg",
+    "w": 900,
+    "h": 659,
+    "source": "arXiv (ar5iv HTML)",
+    "author": "SFCDecomp 論文作者群",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2109.01769",
+    "note": "以空間填充曲線分解區域規劃列印路徑，Bunny 模型第 124 層實際列印成果俯視照"
+   }
   },
   {
    "id": "A03-13",
@@ -12433,14 +12532,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
    "image": {
     "file": "img/cases/A03-51.jpg",
-    "w": 900,
-    "h": 496,
-    "source": "The Coding Train",
+    "w": 800,
+    "h": 797,
+    "source": "The Coding Train GitHub repo",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
-    "note": "Coding in the Cabana 3 影片縮圖"
+    "note": "Coding in the Cabana 3 範例執行畫面，Hilbert 曲線以四象限漸層著色，呈現遞迴細分結構"
    }
   },
   {
@@ -12477,18 +12576,7 @@ window.CATALOG = {
    "tools": [
     "Manim"
    ],
-   "url": "https://www.3blue1brown.com/lessons/hilbert-curve",
-   "image": {
-    "file": "img/cases/A03-52.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（3Blue1Brown）",
-    "author": "Grant Sanderson",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=3s7h2MHQtxc",
-    "note": "影片「Hilbert's Curve: Is infinite math useful?」縮圖"
-   }
+   "url": "https://www.3blue1brown.com/lessons/hilbert-curve"
   },
   {
    "id": "A03-53",
@@ -12715,7 +12803,18 @@ window.CATALOG = {
    "tools": [
     "Java"
    ],
-   "url": "https://michael-hansmeyer.com/subdivided-columns"
+   "url": "https://michael-hansmeyer.com/subdivided-columns",
+   "image": {
+    "file": "img/cases/A04-01.jpg",
+    "w": 900,
+    "h": 657,
+    "source": "Michael Hansmeyer 官網",
+    "author": "Michael Hansmeyer",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/subdivided-columns",
+    "note": "Subdivided Columns 演算法生成的柱體切片疊合圖，呈現反覆細分後的複雜紋理"
+   }
   },
   {
    "id": "A04-02",
@@ -12749,7 +12848,18 @@ window.CATALOG = {
     "分形"
    ],
    "tools": [],
-   "url": "https://michael-hansmeyer.com/platonic-solids"
+   "url": "https://michael-hansmeyer.com/platonic-solids",
+   "image": {
+    "file": "img/cases/A04-02.jpg",
+    "w": 900,
+    "h": 563,
+    "source": "Michael Hansmeyer 官網",
+    "author": "Michael Hansmeyer",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/platonic-solids",
+    "note": "由六面體反覆細分演算法生成的星狀複雜形體算圖"
+   }
   },
   {
    "id": "A04-03",
@@ -12785,7 +12895,18 @@ window.CATALOG = {
    "tools": [
     "3D 列印"
    ],
-   "url": "https://michael-hansmeyer.com/digital-grotesque-I"
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "image": {
+    "file": "img/cases/A04-03.jpg",
+    "w": 900,
+    "h": 563,
+    "source": "Michael Hansmeyer 官網",
+    "author": "Michael Hansmeyer, Benjamin Dillenburger",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/digital-grotesque-I",
+    "note": "Digital Grotesque I 洞窟內部，反覆分割演算法生成的 3D 列印砂岩紋理特寫"
+   }
   },
   {
    "id": "A04-04",
@@ -12821,7 +12942,18 @@ window.CATALOG = {
    "tools": [
     "3D 列印"
    ],
-   "url": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/"
+   "url": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/",
+   "image": {
+    "file": "img/cases/A04-04.jpg",
+    "w": 900,
+    "h": 325,
+    "source": "designboom",
+    "author": "Michael Hansmeyer, Benjamin Dillenburger",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/",
+    "note": "Digital Grotesque II 3D 列印洞窟展場實景，可見演算法生成的多孔複雜紋理"
+   }
   },
   {
    "id": "A04-05",
@@ -12857,7 +12989,18 @@ window.CATALOG = {
     "Processing",
     "p5.js"
    ],
-   "url": "https://github.com/PzanettiD/Mondrian-Generative-Art"
+   "url": "https://github.com/PzanettiD/Mondrian-Generative-Art",
+   "image": {
+    "file": "img/cases/A04-05.jpg",
+    "w": 436,
+    "h": 405,
+    "source": "GitHub README（PzanettiD）",
+    "author": "PzanettiD",
+    "license": "GPL-3.0（README 展示圖）",
+    "license_url": "",
+    "page": "https://github.com/PzanettiD/Mondrian-Generative-Art",
+    "note": "p5.js／Processing 產生的四象限隨機配色構圖，README 展示畫面（已裁去瀏覽器介面）"
+   }
   },
   {
    "id": "A04-06",
@@ -12890,7 +13033,18 @@ window.CATALOG = {
     "最佳化"
    ],
    "tools": [],
-   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6783-0_4"
+   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6783-0_4",
+   "image": {
+    "file": "img/cases/A04-06.jpg",
+    "w": 268,
+    "h": 268,
+    "source": "University of Maryland HCIL Treemap History",
+    "author": "HCIL (Ben Shneiderman 研究團隊)",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.cs.umd.edu/hcil/treemap-history/",
+    "note": "NBA 球隊／球員資料以 squarified treemap 排列，區塊接近正方形，即本演算法的代表輸出（已裁去應用程式選單與側欄）"
+   }
   },
   {
    "id": "A04-07",
@@ -12964,7 +13118,18 @@ window.CATALOG = {
    "tools": [
     "CityEngine"
    ],
-   "url": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/"
+   "url": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/",
+   "image": {
+    "file": "img/cases/A04-08.jpg",
+    "w": 900,
+    "h": 823,
+    "source": "SIGGRAPH History（論文預覽圖）",
+    "author": "Pascal Müller et al.",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/",
+    "note": "CGA shape 文法以 split 規則產生的高樓量體與立面細節算圖"
+   }
   },
   {
    "id": "A04-09",
@@ -13036,7 +13201,18 @@ window.CATALOG = {
    "tools": [
     "CityEngine"
    ],
-   "url": "https://twak.org/project/parcels/"
+   "url": "https://twak.org/project/parcels/",
+   "image": {
+    "file": "img/cases/A04-10.jpg",
+    "w": 475,
+    "h": 900,
+    "source": "twak.org 專案頁",
+    "author": "Carlos A. Vanegas et al.",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://twak.org/project/parcels/",
+    "note": "實際街廓地籍（左）與演算法遞迴分割結果（右）對照圖"
+   }
   },
   {
    "id": "A04-11",
@@ -13071,7 +13247,18 @@ window.CATALOG = {
    "tools": [
     "CityEngine"
    ],
-   "url": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm"
+   "url": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm",
+   "image": {
+    "file": "img/cases/A04-11.jpg",
+    "w": 900,
+    "h": 343,
+    "source": "Esri CityEngine 官方文件",
+    "author": "Esri",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm",
+    "note": "CityEngine 遞迴 OBB 分割演算法逐步套用在不規則街廓上的示意圖，展示以最小外接矩形長軸切開多邊形的過程"
+   }
   },
   {
    "id": "A04-12",
@@ -13113,7 +13300,18 @@ window.CATALOG = {
    "tools": [
     "Go"
    ],
-   "url": "https://github.com/fogleman/Quads"
+   "url": "https://github.com/fogleman/Quads",
+   "image": {
+    "file": "img/cases/A04-12.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "GitHub README（fogleman/Quads）",
+    "author": "Michael Fogleman",
+    "license": "MIT（README 展示圖）",
+    "license_url": "",
+    "page": "https://github.com/fogleman/Quads",
+    "note": "四分樹反覆分割產生的經典 Lenna 測試影像色塊化結果，可見分割線與誤差大處切得更細"
+   }
   },
   {
    "id": "A04-13",
@@ -13189,14 +13387,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/challenges/77-recursion",
    "image": {
     "file": "img/cases/A04-51.jpg",
-    "w": 900,
-    "h": 506,
+    "w": 800,
+    "h": 783,
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/77-recursion",
-    "note": "Coding Challenge #77 影片縮圖"
+    "note": "Coding Challenge #77 範例執行畫面：drawCircle 遞迴呼叫產生的圓形碎形圖案"
    }
   },
   {
@@ -13462,7 +13660,18 @@ window.CATALOG = {
     "手繪",
     "理論"
    ],
-   "url": "https://journals.sagepub.com/doi/10.1068/b050005"
+   "url": "https://journals.sagepub.com/doi/10.1068/b050005",
+   "image": {
+    "file": "img/cases/A05-02.jpg",
+    "w": 588,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "Ottavio Bertotti Scamozzi（1781年繪）",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Villa_Foscari_Malcontenta_(23549471).jpg",
+    "note": "Villa Malcontenta（Villa Foscari）平面圖，正是 Palladian Grammar 論文成功推導出的案例。"
+   }
   },
   {
    "id": "A05-04",
@@ -13503,7 +13712,18 @@ window.CATALOG = {
     "理論",
     "電腦程式"
    ],
-   "url": "https://journals.sagepub.com/doi/10.1068/b31124"
+   "url": "https://journals.sagepub.com/doi/10.1068/b31124",
+   "image": {
+    "file": "img/cases/A05-04.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Wikimedia Commons",
+    "author": "Torchondo",
+    "license": "CC BY 2.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Bairro_Malagueira_1_(Evora).jpg",
+    "note": "Siza 設計的 Malagueira 集合住宅實景：白牆連棟住宅立面與街道，即文法推導出的合院住宅單元重複排列。"
+   }
   },
   {
    "id": "A05-05",
@@ -13579,7 +13799,18 @@ window.CATALOG = {
     "CityEngine",
     "CGA"
    ],
-   "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm"
+   "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm",
+   "image": {
+    "file": "img/cases/A05-06.jpg",
+    "w": 300,
+    "h": 600,
+    "source": "Esri CityEngine 官方教學",
+    "author": "Esri",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm",
+    "note": "CityEngine 立面建模教學：以 CGA split 規則生成的巴洛克風格立面渲染圖，樓層、窗戶裝飾與拱門皆由規則自動產生。"
+   }
   },
   {
    "id": "A05-07",
@@ -13620,7 +13851,18 @@ window.CATALOG = {
    "tools": [
     "理論"
    ],
-   "url": "https://journals.sagepub.com/doi/10.1068/b040089"
+   "url": "https://journals.sagepub.com/doi/10.1068/b040089",
+   "image": {
+    "file": "img/cases/A05-07.jpg",
+    "w": 276,
+    "h": 227,
+    "source": "MIT 學生專案：Shape Grammars of Ice-ray Chinese Lattice Designs",
+    "author": "Haldane Liew",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://web.mit.edu/~haldane/www/icerays/type1/index.html",
+    "note": "依 Stiny 冰裂紋形狀文法規則生成的 Type I 雙邊對稱五邊形冰裂紋格柵圖樣。"
+   }
   },
   {
    "id": "A05-09",
@@ -13656,7 +13898,18 @@ window.CATALOG = {
    "tools": [
     "理論"
    ],
-   "url": "https://www.andrew.cmu.edu/user/ramesh/teaching/course/48-747/subFrames/readings/Stiny&MItchell-1980-EPB7_209-226.TheGrammarOfParadise..pdf"
+   "url": "https://www.andrew.cmu.edu/user/ramesh/teaching/course/48-747/subFrames/readings/Stiny&MItchell-1980-EPB7_209-226.TheGrammarOfParadise..pdf",
+   "image": {
+    "file": "img/cases/A05-09.jpg",
+    "w": 900,
+    "h": 695,
+    "source": "Wikimedia Commons",
+    "author": "Library of Congress（Photochrom Print Collection）",
+    "license": "公有領域（Public Domain）",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Agra,_Taj_Mahal_LCCN95505064.jpg",
+    "note": "泰姬瑪哈陵蒙兀兒四分花園（char-bagh）實景：十字水道將方形基地分成四象限，正是文法推導的目標平面。"
+   }
   },
   {
    "id": "A05-10",
@@ -13691,7 +13944,18 @@ window.CATALOG = {
    "tools": [
     "理論"
    ],
-   "url": "https://journals.sagepub.com/doi/10.1068/b140323"
+   "url": "https://journals.sagepub.com/doi/10.1068/b140323",
+   "image": {
+    "file": "img/cases/A05-10.jpg",
+    "w": 900,
+    "h": 677,
+    "source": "Wikimedia Commons",
+    "author": "Soule Photograph Company",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Kragsyde,_Manchester,_MA.jpg",
+    "note": "1880 年代美國 Queen Anne／Shingle Style 住宅實景（Kragsyde, 1883）：不規則量體與複雜屋頂組合，正是文法逐步生成的風格特徵。"
+   }
   },
   {
    "id": "A05-11",
@@ -13763,7 +14027,18 @@ window.CATALOG = {
     "eifForm",
     "Java"
    ],
-   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf"
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+   "image": {
+    "file": "img/cases/A05-12.jpg",
+    "w": 900,
+    "h": 442,
+    "source": "論文：eifForm: A Generative Structural Design System（2000 ACSA Technology Conference）",
+    "author": "Kristina Shea",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+    "note": "論文圖6：eifForm 以形狀退火生成的兩個桁架穹頂結構，桿件拓撲由規則增刪並經結構評估篩選。"
+   }
   },
   {
    "id": "A05-13",
@@ -13797,7 +14072,18 @@ window.CATALOG = {
    "tools": [
     "電腦程式"
    ],
-   "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704"
+   "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704",
+   "image": {
+    "file": "img/cases/A05-13.jpg",
+    "w": 700,
+    "h": 760,
+    "source": "論文：The structure of paintings: formal grammar and design（Environment and Planning B, 1986）",
+    "author": "Joan L. Kirsch、Russell A. Kirsch",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704",
+    "note": "論文圖3：以文法隨機套用17次規則生成的線性構圖（pseudo-Diebenkorn），是文法本身的合成測試輸出，非原畫。"
+   }
   },
   {
    "id": "A05-14",
@@ -13832,7 +14118,18 @@ window.CATALOG = {
     "理論",
     "電腦程式"
    ],
-   "url": "https://dspace.mit.edu/handle/1721.1/8631"
+   "url": "https://dspace.mit.edu/handle/1721.1/8631",
+   "image": {
+    "file": "img/cases/A05-14.jpg",
+    "w": 685,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "李誡（北宋）",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Yingzao_Fashi_1_desmear.JPG",
+    "note": "《營造法式》書頁：斗栱與昂的構造圖，正是該文法解讀並生成規則的材分制度對象。"
+   }
   },
   {
    "id": "A05-51",
@@ -13870,7 +14167,18 @@ window.CATALOG = {
    "tools": [
     "Context Free"
    ],
-   "url": "https://www.contextfreeart.org/"
+   "url": "https://www.contextfreeart.org/",
+   "image": {
+    "file": "img/cases/A05-51.jpg",
+    "w": 482,
+    "h": 482,
+    "source": "Context Free Art Gallery",
+    "author": "lagroue",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.contextfreeart.org/gallery/displayimage.php?pos=-51",
+    "note": "Context Free（CFDG）文法生成的抽象方格漸層圖樣，色塊隨遞迴層級呈現色相與亮度漸變。"
+   }
   },
   {
    "id": "A05-52",
@@ -13908,7 +14216,18 @@ window.CATALOG = {
    "tools": [
     "Structure Synth"
    ],
-   "url": "https://structuresynth.sourceforge.net/"
+   "url": "https://structuresynth.sourceforge.net/",
+   "image": {
+    "file": "img/cases/A05-52.jpg",
+    "w": 500,
+    "h": 471,
+    "source": "Structure Synth 官方網站",
+    "author": "Mikael Hvidtfeldt Christensen",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://structuresynth.sourceforge.net/",
+    "note": "Structure Synth 以 EisenScript 生成並算圖的立方體聚落結構，方塊陣列上長出不規則堆疊的量體。"
+   }
   },
   {
    "id": "A05-53",
@@ -14232,7 +14551,18 @@ window.CATALOG = {
    "tools": [
     "C#"
    ],
-   "url": "https://github.com/mxgmn/WaveFunctionCollapse"
+   "url": "https://github.com/mxgmn/WaveFunctionCollapse",
+   "image": {
+    "file": "img/cases/A06-01.jpg",
+    "w": 714,
+    "h": 900,
+    "source": "GitHub README (mxgmn/WaveFunctionCollapse)",
+    "author": "Maxim Gumin",
+    "license": "MIT",
+    "license_url": "",
+    "page": "https://github.com/mxgmn/WaveFunctionCollapse",
+    "note": "WFC overlapping model：多組小範例圖（左）對應各自生成的大張紋理（右），涵蓋城市、水草、迷宮、磚牆等風格"
+   }
   },
   {
    "id": "A06-02",
@@ -14269,7 +14599,18 @@ window.CATALOG = {
    "tools": [
     "C++"
    ],
-   "url": "https://paulmerrell.org/model-synthesis/"
+   "url": "https://paulmerrell.org/model-synthesis/",
+   "image": {
+    "file": "img/cases/A06-02.jpg",
+    "w": 900,
+    "h": 522,
+    "source": "paulmerrell.org",
+    "author": "Paul C. Merrell",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulmerrell.org/model-synthesis/",
+    "note": "Model Synthesis 由小型範例模組推導相鄰規則後生成的大型城市量體，含階梯、廊柱與屋頂組合"
+   }
   },
   {
    "id": "A06-03",
@@ -14312,7 +14653,18 @@ window.CATALOG = {
     "Unity",
     "C#"
    ],
-   "url": "https://www.youtube.com/watch?v=0bcZb-SsnrA"
+   "url": "https://www.youtube.com/watch?v=0bcZb-SsnrA",
+   "image": {
+    "file": "img/cases/A06-03.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "badnorth.com 官方網站",
+    "author": "Plausible Concept",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.badnorth.com/",
+    "note": "Bad North 用 3D WFC 拼出的小島地景：崖壁、階梯與房屋 tile 組成可行走的高低層次島嶼"
+   }
   },
   {
    "id": "A06-04",
@@ -14355,7 +14707,18 @@ window.CATALOG = {
    "tools": [
     "Unity"
    ],
-   "url": "https://www.gamedeveloper.com/game-platforms/how-townscaper-works-a-story-four-games-in-the-making"
+   "url": "https://www.gamedeveloper.com/game-platforms/how-townscaper-works-a-story-four-games-in-the-making",
+   "image": {
+    "file": "img/cases/A06-04.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Steam 商店頁截圖",
+    "author": "Oskar Stålberg",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://store.steampowered.com/app/1291340/Townscaper/",
+    "note": "Townscaper 由 WFC 與不規則四邊形網格生成的彩色小鎮，屋頂、拱門、樓梯模組貼合任意點擊出的地形"
+   }
   },
   {
    "id": "A06-05",
@@ -14398,7 +14761,18 @@ window.CATALOG = {
     "Unity",
     "C#"
    ],
-   "url": "https://marian42.de/article/wfc/"
+   "url": "https://marian42.de/article/wfc/",
+   "image": {
+    "file": "img/cases/A06-05.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "marian42.de 文章",
+    "author": "Marian Kleineberg",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://marian42.de/article/wfc/",
+    "note": "Infinite City 用帶回溯的 3D WFC 即時生成的白色建築群，走廊、欄杆與屋頂模組無縫延伸"
+   }
   },
   {
    "id": "A06-06",
@@ -14434,7 +14808,18 @@ window.CATALOG = {
    "tools": [
     "C#"
    ],
-   "url": "https://gdcvault.com/play/1026263/Math-for-Game-Developers-Tile"
+   "url": "https://gdcvault.com/play/1026263/Math-for-Game-Developers-Tile",
+   "image": {
+    "file": "img/cases/A06-06.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Steam 商店頁截圖",
+    "author": "Freehold Games",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://store.steampowered.com/app/333640/Caves_of_Qud/",
+    "note": "Caves of Qud「baroque ruins」場景：WFC 在多階段生成管線中補上的遺跡建築平面細節"
+   }
   },
   {
    "id": "A06-07",
@@ -14477,7 +14862,18 @@ window.CATALOG = {
     "Grasshopper",
     "C#"
    ],
-   "url": "https://monoceros.sub.digital/"
+   "url": "https://monoceros.sub.digital/",
+   "image": {
+    "file": "img/cases/A06-07.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "monoceros.tools 官方網站",
+    "author": "Ján Tóth、Ján Pernecký（Subdigital）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.monoceros.tools/",
+    "note": "Monoceros 用波函數塌縮組裝出的模組化聚落俯視渲染，牆體與量體模組依相鄰規則自動填滿"
+   }
   },
   {
    "id": "A06-09",
@@ -14581,7 +14977,18 @@ window.CATALOG = {
     "最佳化"
    ],
    "tools": [],
-   "url": "https://www.nature.com/articles/s41598-025-20398-8"
+   "url": "https://www.nature.com/articles/s41598-025-20398-8",
+   "image": {
+    "file": "img/cases/A06-14.jpg",
+    "w": 900,
+    "h": 593,
+    "source": "Nature Scientific Reports 論文圖 9",
+    "author": "論文作者群",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://www.nature.com/articles/s41598-025-20398-8",
+    "note": "掃描原木構件經 WFC 排列成椅具，並以 AR 疊圖輔助組裝定位的流程圖"
+   }
   },
   {
    "id": "A06-15",
@@ -14615,7 +15022,18 @@ window.CATALOG = {
     "物理模擬"
    ],
    "tools": [],
-   "url": "https://arxiv.org/pdf/2311.12272"
+   "url": "https://arxiv.org/pdf/2311.12272",
+   "image": {
+    "file": "img/cases/A06-15.jpg",
+    "w": 660,
+    "h": 618,
+    "source": "arXiv 論文 Fig. 6",
+    "author": "G. Magny-Fokam, D. Madisetti, J. El-Awady",
+    "license": "arXiv 預印本，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2311.12272",
+    "note": "WFC 生成材料晶粒方向圖樣的參數掃描網格，隨圖樣寬度與 tile 大小呈現不同紋理"
+   }
   },
   {
    "id": "A06-51",
@@ -15031,7 +15449,18 @@ window.CATALOG = {
    "tools": [
     "Python"
    ],
-   "url": "https://github.com/inconvergent/differential-line"
+   "url": "https://github.com/inconvergent/differential-line",
+   "image": {
+    "file": "img/cases/B01-01.jpg",
+    "w": 700,
+    "h": 695,
+    "source": "GitHub - inconvergent/differential-line",
+    "author": "Anders Hoff",
+    "license": "MIT（原始碼授權，圖片為執行結果展示）",
+    "license_url": "",
+    "page": "https://github.com/inconvergent/differential-line",
+    "note": "差異生長線段演算法執行結果，密集蜿蜒曲線填滿圓形範圍。"
+   }
   },
   {
    "id": "B01-02",
@@ -15111,7 +15540,18 @@ window.CATALOG = {
     "自製模擬軟體",
     "3D 列印"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=6721"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=6721",
+   "image": {
+    "file": "img/cases/B01-03.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Nervous System 部落格",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=6721",
+    "note": "Floraform 演算法生成的銀飾戒指與項墜，表面呈現差異生長的皺褶花瓣造型。"
+   }
   },
   {
    "id": "B01-06",
@@ -15193,7 +15633,18 @@ window.CATALOG = {
     "3D 列印砂模",
     "鋁鑄造"
    ],
-   "url": "https://papers.cumincad.org/data/works/att/acadia19_100.pdf"
+   "url": "https://papers.cumincad.org/data/works/att/acadia19_100.pdf",
+   "image": {
+    "file": "img/cases/B01-07.jpg",
+    "w": 900,
+    "h": 394,
+    "source": "ACADIA 2019 論文（Bespoke Cast Facade）",
+    "author": "Mania Aghaei Meibodi 等（ETH Zurich DBT）",
+    "license": "論文圖版，教學引用",
+    "license_url": "",
+    "page": "https://papers.cumincad.org/data/works/att/acadia19_100.pdf",
+    "note": "Deep Facade 立面完工後實景，差異生長演算法產生的鋁合金構件網絡，可見人手伸入構件間隙示意尺度。"
+   }
   },
   {
    "id": "B01-08",
@@ -15236,7 +15687,18 @@ window.CATALOG = {
     "Rhino",
     "大尺度積層製造"
    ],
-   "url": "https://link.springer.com/article/10.1007/s41693-025-00150-4"
+   "url": "https://link.springer.com/article/10.1007/s41693-025-00150-4",
+   "image": {
+    "file": "img/cases/B01-08.jpg",
+    "w": 685,
+    "h": 631,
+    "source": "Construction Robotics 期刊論文（A computational workflow for crafting large-scale coral inspired modules through additive manufacturing）",
+    "author": "Juan Francisco García Guillén 等",
+    "license": "論文圖版，教學引用",
+    "license_url": "",
+    "page": "https://link.springer.com/article/10.1007/s41693-025-00150-4",
+    "note": "積層製造珊瑚仿生模組（CPCM）裝設於木構涼亭的最終成果，近拍可見差異生長演算法產生的粉色珊瑚狀紋理。"
+   }
   },
   {
    "id": "B01-09",
@@ -15273,7 +15735,18 @@ window.CATALOG = {
     "自製模擬軟體",
     "GPU"
    ],
-   "url": "https://andylomas.com/cellularForms.html"
+   "url": "https://andylomas.com/cellularForms.html",
+   "image": {
+    "file": "img/cases/B01-09.jpg",
+    "w": 760,
+    "h": 744,
+    "source": "Andy Lomas 個人網站",
+    "author": "Andy Lomas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://andylomas.com/cellularForm18_0011_0023.html",
+    "note": "Cellular Forms 生長模擬所產生的球狀多細胞聚合體，表面滿布細胞分裂形成的皺褶。"
+   }
   },
   {
    "id": "B01-10",
@@ -15349,7 +15822,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://em-yu.github.io/media/papers/interactive-diff-growth.pdf"
+   "url": "https://em-yu.github.io/media/papers/interactive-diff-growth.pdf",
+   "image": {
+    "file": "img/cases/B01-12.jpg",
+    "w": 475,
+    "h": 308,
+    "source": "論文 Interactive Differential Growth Simulation for Design",
+    "author": "Emilie Yu",
+    "license": "論文圖版，教學引用",
+    "license_url": "",
+    "page": "https://em-yu.github.io/media/papers/interactive-diff-growth.pdf",
+    "note": "互動式差異生長模擬產生的皺褶曲面成果，紅色渲染呈現花瓣狀波浪邊緣。"
+   }
   },
   {
    "id": "B01-13",
@@ -15828,7 +16312,18 @@ window.CATALOG = {
    "tools": [
     "自製軟體"
    ],
-   "url": "https://andylomas.com/aggregation.html"
+   "url": "https://andylomas.com/aggregation.html",
+   "image": {
+    "file": "img/cases/B02-01.jpg",
+    "w": 768,
+    "h": 768,
+    "source": "Andy Lomas 個人網站",
+    "author": "Andy Lomas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://andylomas.com/aggregation_027.html",
+    "note": "Aggregation 系列作品之一，數百萬顆粒子沉積在球形種子上長成的珊瑚狀灰階雕塑形態"
+   }
   },
   {
    "id": "B02-02",
@@ -15869,7 +16364,18 @@ window.CATALOG = {
    "tools": [
     "JavaScript"
    ],
-   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments"
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "image": {
+    "file": "img/cases/B02-02.jpg",
+    "w": 900,
+    "h": 440,
+    "source": "GitHub README（jasonwebb/2d-diffusion-limited-aggregation-experiments）",
+    "author": "Jason Webb",
+    "license": "MIT（依專案授權）",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+    "note": "基礎 DLA 實驗加上顏色的執行畫面，米色圓點群集在藍色背景上長成分枝狀"
+   }
   },
   {
    "id": "B02-03",
@@ -15906,7 +16412,18 @@ window.CATALOG = {
     "p5.js",
     "Processing"
    ],
-   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/"
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/",
+   "image": {
+    "file": "img/cases/B02-03.jpg",
+    "w": 800,
+    "h": 802,
+    "source": "The Coding Train 官網",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/",
+    "note": "p5.js 程式碼範例執行畫面，彩色圓點以中心白點為起點向外長成分枝狀 DLA 結構"
+   }
   },
   {
    "id": "B02-04",
@@ -15976,7 +16493,18 @@ window.CATALOG = {
     "隨機"
    ],
    "tools": [],
-   "url": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation"
+   "url": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation",
+   "image": {
+    "file": "img/cases/B02-05.jpg",
+    "w": 880,
+    "h": 584,
+    "source": "Findings 期刊論文圖",
+    "author": "論文作者群",
+    "license": "CC BY 4.0（Findings 期刊預設授權）",
+    "license_url": "",
+    "page": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation",
+    "note": "比較隨機重力模型（SGM）與 DLA（DLG）在不同 γ 值下模擬出的都市群集形態，綠色為中心群集、藍色為其他已開發像素"
+   }
   },
   {
    "id": "B02-06",
@@ -16020,7 +16548,18 @@ window.CATALOG = {
     "Anemone",
     "Galapagos"
    ],
-   "url": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation"
+   "url": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation",
+   "image": {
+    "file": "img/cases/B02-06.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "GitHub README（MRAC-IAAC/Diffusion-Limited-Aggregation）簡報圖",
+    "author": "Abdullah Sheikh, Andreea Bunica, Anna Batalle Garcia（IaaC MRAC）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation",
+    "note": "研究簡報圖，比較不同邊界敏感度與吸引子強度下 DLA 生成的三種量體形態"
+   }
   },
   {
    "id": "B02-07",
@@ -16062,7 +16601,18 @@ window.CATALOG = {
    "tools": [
     "自製軟體"
    ],
-   "url": "https://paulbourke.net/fractals/dla/"
+   "url": "https://paulbourke.net/fractals/dla/",
+   "image": {
+    "file": "img/cases/B02-07.jpg",
+    "w": 750,
+    "h": 681,
+    "source": "Paul Bourke 個人網站",
+    "author": "Paul Bourke",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/fractals/dla/",
+    "note": "圓形吸引子的 2D DLA 結果，依粒子加入順序以彩虹色標示生長順序"
+   }
   },
   {
    "id": "B02-09",
@@ -16097,7 +16647,18 @@ window.CATALOG = {
    "tools": [
     "Blender"
    ],
-   "url": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322"
+   "url": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322",
+   "image": {
+    "file": "img/cases/B02-09.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Blender Artists 論壇貼文",
+    "author": "Blender Artists 使用者 sml",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322",
+    "note": "Blender Geometry Nodes 模擬出的 3D DLA 珊瑚狀灰階量體，俯視角度算圖"
+   }
   },
   {
    "id": "B02-10",
@@ -16131,7 +16692,18 @@ window.CATALOG = {
     "分形"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Lichtenberg_figure"
+   "url": "https://en.wikipedia.org/wiki/Lichtenberg_figure",
+   "image": {
+    "file": "img/cases/B02-10.jpg",
+    "w": 900,
+    "h": 818,
+    "source": "Wikimedia Commons",
+    "author": "Bert Hickman",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Lichtenberg_figure",
+    "note": "以電子束照射壓克力塊產生的立體 Lichtenberg 圖形（電樹枝），藍光呈現放電路徑"
+   }
   },
   {
    "id": "B02-11",
@@ -16233,7 +16805,18 @@ window.CATALOG = {
     "openFrameworks",
     "C++"
    ],
-   "url": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/"
+   "url": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/",
+   "image": {
+    "file": "img/cases/B02-13.jpg",
+    "w": 900,
+    "h": 540,
+    "source": "Fuse* Openfuse 部落格",
+    "author": "Fuse*",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/",
+    "note": "openFrameworks 實作的 DLA 模擬結果，灰白色分枝狀群集布滿整個黑色畫面"
+   }
   },
   {
    "id": "B02-14",
@@ -16266,7 +16849,18 @@ window.CATALOG = {
     "隨機"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation"
+   "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation",
+   "image": {
+    "file": "img/cases/B02-14.jpg",
+    "w": 900,
+    "h": 607,
+    "source": "Wikimedia Commons",
+    "author": "Philip Moriarty",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation",
+    "note": "銅電沉積實驗產生的樹枝狀結晶，金色分枝結構漂浮在藍色電解液中"
+   }
   },
   {
    "id": "B02-51",
@@ -16506,18 +17100,7 @@ window.CATALOG = {
    "tools": [
     "Houdini"
    ],
-   "url": "https://vimeo.com/218372128",
-   "image": {
-    "file": "img/cases/B02-55.jpg",
-    "w": 640,
-    "h": 360,
-    "source": "Vimeo（Entagma）",
-    "author": "Entagma",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://vimeo.com/218372128",
-    "note": "Houdini VEX DLA 教學影片縮圖"
-   }
+   "url": "https://vimeo.com/218372128"
   },
   {
    "id": "B02-56",
@@ -16694,7 +17277,18 @@ window.CATALOG = {
     "Cinder",
     "3D 列印（SLS 尼龍）"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1701"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1701",
+   "image": {
+    "file": "img/cases/B03-03.jpg",
+    "w": 900,
+    "h": 602,
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=1701",
+    "note": "Hyphae Lamps 實體燈具，白色陶瓷上以空間殖民演算法生成的葉脈狀鏤空紋理"
+   }
   },
   {
    "id": "B03-04",
@@ -16730,7 +17324,18 @@ window.CATALOG = {
     "C++",
     "自製程式"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/"
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/",
+   "image": {
+    "file": "img/cases/B03-04.jpg",
+    "w": 900,
+    "h": 307,
+    "source": "Nervous System",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/",
+    "note": "以空間殖民演算法生成的三種葉脈分布圖案比較（開放與封閉邊界條件）"
+   }
   },
   {
    "id": "B03-05",
@@ -16772,7 +17377,18 @@ window.CATALOG = {
     "JavaScript",
     "Canvas API"
    ],
-   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments"
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "image": {
+    "file": "img/cases/B03-05.jpg",
+    "w": 900,
+    "h": 439,
+    "source": "GitHub（jasonwebb/2d-space-colonization-experiments）",
+    "author": "Jason Webb",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+    "note": "空間殖民演算法在楓葉形邊界內生長出的葉脈狀分枝網路"
+   }
   },
   {
    "id": "B03-06",
@@ -16808,7 +17424,18 @@ window.CATALOG = {
     "p5.js",
     "Processing"
    ],
-   "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY"
+   "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY",
+   "image": {
+    "file": "img/cases/B03-06.jpg",
+    "w": 900,
+    "h": 513,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+    "note": "Coding Challenge #17 範例程式執行畫面，黑底白線的空間殖民樹狀分枝結果"
+   }
   },
   {
    "id": "B03-07",
@@ -16885,7 +17512,18 @@ window.CATALOG = {
     "C++",
     "自製程式"
    ],
-   "url": "http://procworld.blogspot.com/2011/02/space-colonization.html"
+   "url": "http://procworld.blogspot.com/2011/02/space-colonization.html",
+   "image": {
+    "file": "img/cases/B03-08.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Procedural World（部落格）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://procworld.blogspot.com/2011/02/space-colonization.html",
+    "note": "以空間殖民演算法生成的樹木渲染圖，同時展示樹冠與地下根系的分枝結構"
+   }
   },
   {
    "id": "B03-09",
@@ -17000,7 +17638,18 @@ window.CATALOG = {
    "tools": [
     "論文"
    ],
-   "url": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full"
+   "url": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full",
+   "image": {
+    "file": "img/cases/B03-11.jpg",
+    "w": 861,
+    "h": 900,
+    "source": "bioRxiv 預印本",
+    "author": "Andrew A. Guy 等（University of Cambridge）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full",
+    "note": "以空間殖民法生成的血管網格在立方組織支架內生長，並延伸至多層堆疊構造的模擬結果"
+   }
   },
   {
    "id": "B03-12",
@@ -17074,7 +17723,18 @@ window.CATALOG = {
     "Sverchok",
     "Python"
    ],
-   "url": "https://elfnor.com/sverchok-tree-generator.html"
+   "url": "https://elfnor.com/sverchok-tree-generator.html",
+   "image": {
+    "file": "img/cases/B03-13.jpg",
+    "w": 660,
+    "h": 480,
+    "source": "elfnor.com",
+    "author": "Elfnor",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://elfnor.com/sverchok-tree-generator.html",
+    "note": "Sverchok 節點式空間殖民樹狀生成器產出的環狀分枝結構範例"
+   }
   },
   {
    "id": "B03-14",
@@ -17352,18 +18012,7 @@ window.CATALOG = {
    "tools": [
     "Unity"
    ],
-   "url": "https://github.com/mattatz/Dendrite",
-   "image": {
-    "file": "img/cases/B03-55.jpg",
-    "w": 480,
-    "h": 312,
-    "source": "GitHub（mattatz/Dendrite）README",
-    "author": "mattatz",
-    "license": "MIT（圖在 repo 中）",
-    "license_url": "https://github.com/mattatz/Dendrite/blob/master/LICENSE",
-    "page": "https://github.com/mattatz/Dendrite",
-    "note": "DendriteSphere 動畫的第一格，球體上的分枝"
-   }
+   "url": "https://github.com/mattatz/Dendrite"
   },
   {
    "id": "B03-56",
@@ -17454,7 +18103,18 @@ window.CATALOG = {
    "tools": [
     "3D 列印"
    ],
-   "url": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/"
+   "url": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/",
+   "image": {
+    "file": "img/cases/B04-01.jpg",
+    "w": 900,
+    "h": 325,
+    "source": "designboom",
+    "author": "John Edmark",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/",
+    "note": "3D 列印葉序雕塑特寫，尖刺狀花瓣依黃金角螺旋排列"
+   }
   },
   {
    "id": "B04-02",
@@ -17493,7 +18153,18 @@ window.CATALOG = {
     "對稱"
    ],
    "tools": [],
-   "url": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/"
+   "url": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/",
+   "image": {
+    "file": "img/cases/B04-02.jpg",
+    "w": 700,
+    "h": 900,
+    "source": "Grimshaw Architects",
+    "author": "Grimshaw",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/",
+    "note": "The Core 教育中心屋頂三角天窗與太陽能板，後方可見伊甸園地穹頂溫室"
+   }
   },
   {
    "id": "B04-03",
@@ -17573,7 +18244,18 @@ window.CATALOG = {
     "RhinoScript",
     "Rhino"
    ],
-   "url": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html"
+   "url": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html",
+   "image": {
+    "file": "img/cases/B04-04.jpg",
+    "w": 800,
+    "h": 600,
+    "source": "Ernesto Bueno（部落格）",
+    "author": "Ernesto Bueno Wills",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html",
+    "note": "Phyllotaxis Tower 白色量體渲染圖，葉狀量體繞核心旋轉生長"
+   }
   },
   {
    "id": "B04-05",
@@ -17613,7 +18295,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.iaacblog.com/programs/phyllo-pavilion/"
+   "url": "https://www.iaacblog.com/programs/phyllo-pavilion/",
+   "image": {
+    "file": "img/cases/B04-05.jpg",
+    "w": 730,
+    "h": 445,
+    "source": "IAAC Blog",
+    "author": "Maryam Deshmukh、Sidhant Choudhary",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.iaacblog.com/programs/phyllo-pavilion/",
+    "note": "Phyllo Pavilion 效果圖，網狀編織涼亭立於棕櫚樹叢間"
+   }
   },
   {
    "id": "B04-06",
@@ -17651,7 +18344,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://archive.dpa-etsam.com/projects/phyllotaxis"
+   "url": "https://archive.dpa-etsam.com/projects/phyllotaxis",
+   "image": {
+    "file": "img/cases/B04-06.jpg",
+    "w": 774,
+    "h": 900,
+    "source": "DPA-ETSAM Archive",
+    "author": "Melanie Waidler",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://archive.dpa-etsam.com/projects/phyllotaxis",
+    "note": "溫室內紅色網狀摺面依螺旋排列懸掛生長的裝置現場照"
+   }
   },
   {
    "id": "B04-07",
@@ -17879,14 +18583,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/challenges/30-phyllotaxis",
    "image": {
     "file": "img/cases/B04-51.jpg",
-    "w": 900,
-    "h": 506,
+    "w": 744,
+    "h": 624,
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/30-phyllotaxis",
-    "note": "Coding Challenge #30 影片縮圖，葉序螺旋"
+    "note": "Coding Challenge #30 葉序程式執行畫面，彩色圓點依黃金角排列成螺旋"
    }
   },
   {
@@ -17973,18 +18677,7 @@ window.CATALOG = {
    "tools": [
     "Houdini"
    ],
-   "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/",
-   "image": {
-    "file": "img/cases/B04-53.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（Entagma）",
-    "author": "Entagma",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=yGwhnt7mZ50",
-    "note": "Houdini 旋轉曲面葉序教學影片縮圖"
-   }
+   "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/"
   },
   {
    "id": "B04-54",
@@ -18226,7 +18919,18 @@ window.CATALOG = {
    "tools": [
     "Processing"
    ],
-   "url": "http://www.complexification.net/gallery/machines/substrate/"
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "image": {
+    "file": "img/cases/B05-01.jpg",
+    "w": 780,
+    "h": 580,
+    "source": "complexification.net（Wayback Machine 存檔）",
+    "author": "Jared Tarbell",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.complexification.net/gallery/machines/substrate/",
+    "note": "Substrate 密集生長後的另一張作品圖，裂紋交錯成類似都市紋理的樣貌"
+   }
   },
   {
    "id": "B05-02",
@@ -18300,7 +19004,18 @@ window.CATALOG = {
    "tools": [
     "Processing"
    ],
-   "url": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/"
+   "url": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/",
+   "image": {
+    "file": "img/cases/B05-03.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "ARCH 430 Networked Technologies 課程部落格",
+    "author": "課程學習者（部落格未具名）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/",
+    "note": "執行 Substrate 演算法 1.5 小時後，畫面已密集填滿類似都市格網的裂紋"
+   }
   },
   {
    "id": "B05-04",
@@ -18409,7 +19124,18 @@ window.CATALOG = {
     "物理模擬"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/B05-06.jpg",
+    "w": 644,
+    "h": 484,
+    "source": "James O'Brien 研究室論文頁",
+    "author": "Hayley N. Iben, James F. O'Brien",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://objf.ai/papers/Iben-GSC-2006-09/",
+    "note": "模擬乾裂泥土表面（mud crack）的裂紋圖案演算法結果，呈現不規則多邊形裂塊"
+   }
   },
   {
    "id": "B05-07",
@@ -18447,7 +19173,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/B05-07.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Wikimedia Commons",
+    "author": "Muradeldar",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Mud_cracks.jpg",
+    "note": "近拍乾裂泥土表面，多邊形裂塊與 T 字接頭清晰可見"
+   }
   },
   {
    "id": "B05-08",
@@ -18480,7 +19217,18 @@ window.CATALOG = {
     "隨機"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/B05-08.jpg",
+    "w": 600,
+    "h": 900,
+    "source": "Wikimedia Commons（上海博物館藏品，攝影 Gary Lee Todd）",
+    "author": "Gary Lee Todd",
+    "license": "CC0 1.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Southern_Song_Ge_Ware_Vase.jpg",
+    "note": "南宋哥窯瓶，通體開片冰裂紋釉面清晰可見"
+   }
   },
   {
    "id": "B05-09",
@@ -18877,7 +19625,18 @@ window.CATALOG = {
     "Grasshopper",
     "Python"
    ],
-   "url": "https://github.com/ar0551/Wasp"
+   "url": "https://github.com/ar0551/Wasp",
+   "image": {
+    "file": "img/cases/B06-01.jpg",
+    "w": 900,
+    "h": 314,
+    "source": "academia.edu（論文圖）",
+    "author": "Andrea Rossi, Oliver Tessmann",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.academia.edu/35602092/Designing_with_Digital_Materials_A_Computational_Framework_for_Discrete_Assembly_Design",
+    "note": "Wasp 前身論文中的聚合生成畫面：5 種基本零件以隨機規則聚合成大量體塊組成的三維結構"
+   }
   },
   {
    "id": "B06-02",
@@ -18912,7 +19671,18 @@ window.CATALOG = {
     "模組化"
    ],
    "tools": [],
-   "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/"
+   "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+   "image": {
+    "file": "img/cases/B06-02.jpg",
+    "w": 900,
+    "h": 325,
+    "source": "designboom",
+    "author": "Gilles Retsin Architecture",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+    "note": "塔林建築雙年展展館實景，合板離散積木錯縫組成的懸挑構架"
+   }
   },
   {
    "id": "B06-03",
@@ -19312,7 +20082,18 @@ window.CATALOG = {
     "客製模擬軟體",
     "金屬 3D 列印"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9442"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9442",
+   "image": {
+    "file": "img/cases/C01-01.jpg",
+    "w": 850,
+    "h": 850,
+    "source": "Nervous System 官方網站",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=9442",
+    "note": "以反應擴散演算法生成蜿蜒紋路的金屬莫比烏斯環戒指，金色與銀色兩款"
+   }
   },
   {
    "id": "C01-02",
@@ -19356,7 +20137,18 @@ window.CATALOG = {
     "Processing",
     "SLS 3D 列印"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1009"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1009",
+   "image": {
+    "file": "img/cases/C01-02.jpg",
+    "w": 603,
+    "h": 900,
+    "source": "Nervous System 官方網站",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=1009",
+    "note": "球形燈罩表面佈滿反應擴散生成的指紋狀蜿蜒紋路，透光後呈現立體紋理"
+   }
   },
   {
    "id": "C01-03",
@@ -19400,7 +20192,18 @@ window.CATALOG = {
     "3D 列印",
     "注漿成型"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8222"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8222",
+   "image": {
+    "file": "img/cases/C01-03.jpg",
+    "w": 900,
+    "h": 308,
+    "source": "Nervous System 官方網站",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=8222",
+    "note": "三種釉色瓷杯，杯身以反應擴散演算法生成蜿蜒凸紋，手持展示尺寸"
+   }
   },
   {
    "id": "C01-04",
@@ -19474,7 +20277,18 @@ window.CATALOG = {
    "tools": [
     "網頁互動工具"
    ],
-   "url": "https://karlsims.com/rd.html"
+   "url": "https://karlsims.com/rd.html",
+   "image": {
+    "file": "img/cases/C01-05.jpg",
+    "w": 240,
+    "h": 240,
+    "source": "Karl Sims 個人網站",
+    "author": "Karl Sims",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://karlsims.com/rd.html",
+    "note": "反應擴散參數空間示意圖，同一張圖由左上到右下呈現細胞狀、蟲狀、斑點到雜訊等不同花紋"
+   }
   },
   {
    "id": "C01-06",
@@ -19558,7 +20372,18 @@ window.CATALOG = {
     "C",
     "電腦圖學"
    ],
-   "url": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html"
+   "url": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html",
+   "image": {
+    "file": "img/cases/C01-07.jpg",
+    "w": 512,
+    "h": 512,
+    "source": "Greg Turk 個人研究頁（Georgia Tech）",
+    "author": "Greg Turk",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html",
+    "note": "反應擴散生成的美洲豹玫瑰斑紋理，貼附於馬形三維網格上"
+   }
   },
   {
    "id": "C01-08",
@@ -19602,7 +20427,18 @@ window.CATALOG = {
     "Kangaroo",
     "C#"
    ],
-   "url": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh"
+   "url": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh",
+   "image": {
+    "file": "img/cases/C01-08.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "Grasshopper3D 論壇",
+    "author": "Laurent Delrieu",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh",
+    "note": "三角網格花瓶模型，表面佈滿反應擴散生成的蜿蜒迷宮狀紋理"
+   }
   },
   {
    "id": "C01-10",
@@ -19680,7 +20516,18 @@ window.CATALOG = {
     "有限元素分析",
     "DLP 3D 列印"
    ],
-   "url": "https://www.science.org/doi/10.1126/sciadv.ade4381"
+   "url": "https://www.science.org/doi/10.1126/sciadv.ade4381",
+   "image": {
+    "file": "img/cases/C01-11.jpg",
+    "w": 750,
+    "h": 884,
+    "source": "Science Advances（開放取用論文）",
+    "author": "Masato Tanaka 等",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9916983",
+    "note": "論文圖一：反應擴散生成的多種圖樣、自然界對照範例，以及去均質化到三維列印充氣變形的設計流程"
+   }
   },
   {
    "id": "C01-13",
@@ -19717,7 +20564,18 @@ window.CATALOG = {
     "數值模擬",
     "電磁模擬"
    ],
-   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/"
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/",
+   "image": {
+    "file": "img/cases/C01-13.jpg",
+    "w": 350,
+    "h": 900,
+    "source": "Nature Communications（開放取用論文）",
+    "author": "Thomas Fromenteze 等",
+    "license": "CC BY 4.0",
+    "license_url": "",
+    "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/",
+    "note": "論文圖三：以 Turing 圖樣演算法生成的散射面全像圖樣陣列，局部放大顯示晶格方向與異向性關係"
+   }
   },
   {
    "id": "C01-14",
@@ -19952,18 +20810,7 @@ window.CATALOG = {
     "TouchDesigner",
     "GLSL"
    ],
-   "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
-   "image": {
-    "file": "img/cases/C01-53.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "Lake Heckaman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
-    "note": "教學影片縮圖：TouchDesigner 中的 Gray-Scott 斑塊"
-   }
+   "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA"
   },
   {
    "id": "C01-54",
@@ -20208,7 +21055,18 @@ window.CATALOG = {
    "tools": [
     "Wolfram Language"
    ],
-   "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s"
+   "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s",
+   "image": {
+    "file": "img/cases/C02-01.jpg",
+    "w": 620,
+    "h": 628,
+    "source": "Stephen Wolfram Writings",
+    "author": "Cambridge North 車站（攝影者未署名）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s/",
+    "note": "劍橋北站外牆穿孔鋁板立面實景拼貼，可見 Rule 30 圖樣"
+   }
   },
   {
    "id": "C02-02",
@@ -20246,7 +21104,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf"
+   "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf",
+   "image": {
+    "file": "img/cases/C02-02.jpg",
+    "w": 799,
+    "h": 900,
+    "source": "Wolfram Science Conference 2006 簡報",
+    "author": "Robert J. Krawczyk",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf",
+    "note": "Metallic Lace 標題頁：12 種由細胞自動機衍生的裝飾圖樣"
+   }
   },
   {
    "id": "C02-03",
@@ -20284,7 +21153,18 @@ window.CATALOG = {
     "開放生長"
    ],
    "tools": [],
-   "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf"
+   "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf",
+   "image": {
+    "file": "img/cases/C02-03.jpg",
+    "w": 788,
+    "h": 390,
+    "source": "Generative Art 2002 論文",
+    "author": "Robert J. Krawczyk",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://generativeart.com/on/cic/papersGA2002/7.pdf",
+    "note": "論文圖 11／12：細胞自動機世代疊層轉譯成的建築量體模型"
+   }
   },
   {
    "id": "C02-04",
@@ -20361,7 +21241,18 @@ window.CATALOG = {
     "動畫"
    ],
    "tools": [],
-   "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf"
+   "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf",
+   "image": {
+    "file": "img/cases/C02-05.jpg",
+    "w": 851,
+    "h": 300,
+    "source": "CAADRIA／CumInCAD 論文 Automated Diagrams",
+    "author": "Christiane M. Herr、Joanna Karakiewicz",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf",
+    "note": "論文圖：CA 世代圖樣（左）轉譯成分層樓板與機能色塊的自動化圖解（右）"
+   }
   },
   {
    "id": "C02-06",
@@ -20399,7 +21290,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf"
+   "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf",
+   "image": {
+    "file": "img/cases/C02-06.jpg",
+    "w": 900,
+    "h": 299,
+    "source": "CAADRIA 2015 論文",
+    "author": "Christiane M. Herr、Ryan C. Ford",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf",
+    "note": "論文圖 1：以通用生命遊戲規則生成的初期細胞自動機造型探索，尚未加入建築規則"
+   }
   },
   {
    "id": "C02-07",
@@ -20558,7 +21460,18 @@ window.CATALOG = {
     "Grasshopper",
     "Rabbit"
    ],
-   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/"
+   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+   "image": {
+    "file": "img/cases/C02-10.jpg",
+    "w": 500,
+    "h": 375,
+    "source": "Morphocode",
+    "author": "Morphocode",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+    "note": "Rabbit 外掛以 Die Hard 初始盤面跑出的 3D 生命遊戲世代堆疊，格子隨世代往上生長"
+   }
   },
   {
    "id": "C02-11",
@@ -20600,7 +21513,18 @@ window.CATALOG = {
     "JavaScript",
     "three.js"
    ],
-   "url": "https://github.com/vnglst/stacked-game-of-life"
+   "url": "https://github.com/vnglst/stacked-game-of-life",
+   "image": {
+    "file": "img/cases/C02-11.jpg",
+    "w": 900,
+    "h": 638,
+    "source": "GitHub README",
+    "author": "vnglst",
+    "license": "MIT",
+    "license_url": "",
+    "page": "https://github.com/vnglst/stacked-game-of-life",
+    "note": "生命遊戲世代往下沉的 3D 堆疊視覺化，愈舊的世代顏色愈淡"
+   }
   },
   {
    "id": "C02-12",
@@ -20641,7 +21565,18 @@ window.CATALOG = {
    "tools": [
     "Python"
    ],
-   "url": "https://arxiv.org/abs/1812.05433"
+   "url": "https://arxiv.org/abs/1812.05433",
+   "image": {
+    "file": "img/cases/C02-12.jpg",
+    "w": 512,
+    "h": 512,
+    "source": "Bert Chan 個人網站",
+    "author": "Bert Wang-Chak Chan",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://chakazul.github.io/lenia.html",
+    "note": "Lenia 連續狀態細胞自動機演化出的多通道類生物圖樣，色彩對應不同通道的濃度場"
+   }
   },
   {
    "id": "C02-14",
@@ -20985,11 +21920,11 @@ window.CATALOG = {
     "file": "img/cases/C02-56.jpg",
     "w": 900,
     "h": 900,
-    "source": "Kate Vass Galerie（Artnome 文章轉載）",
+    "source": "Kate Vass Galerie",
     "author": "Alexander Reben",
-    "license": "畫廊網頁作品圖片，教學引用",
+    "license": "網頁預覽圖，教學引用",
     "license_url": "",
-    "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+    "page": "https://www.katevassgalerie.com/alexander-reben",
     "note": "生命遊戲以顏色記錄世代歷史後的畫面截圖"
    }
   },
@@ -21026,10 +21961,10 @@ window.CATALOG = {
     "h": 900,
     "source": "Kate Vass Galerie",
     "author": "Kjetil Golid",
-    "license": "畫廊網頁作品圖片，教學引用",
+    "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
-    "note": "一維細胞自動機逐列生成的斜向條紋圖樣"
+    "note": "一維細胞自動機逐列生成的斜向條紋作品畫面"
    }
   },
   {
@@ -21070,7 +22005,18 @@ window.CATALOG = {
     "Processing",
     "Clojure/Quil"
    ],
-   "url": "https://www.tylerxhobbs.com/words/flow-fields"
+   "url": "https://www.tylerxhobbs.com/words/flow-fields",
+   "image": {
+    "file": "img/cases/C03-01.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Tyler Hobbs 個人網站",
+    "author": "Tyler Hobbs",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.tylerxhobbs.com/words/flow-fields",
+    "note": "文章示範圖：細線沿角度場彎曲，由暖色過渡到冷色的 flow field 作品"
+   }
   },
   {
    "id": "C03-02",
@@ -21110,7 +22056,18 @@ window.CATALOG = {
     "JavaScript",
     "p5.js"
    ],
-   "url": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs"
+   "url": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs",
+   "image": {
+    "file": "img/cases/C03-02.jpg",
+    "w": 750,
+    "h": 900,
+    "source": "Art Blocks",
+    "author": "Tyler Hobbs",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs",
+    "note": "Fidenza 系列其中一件作品：flow field 引導的帶狀曲線與方塊分布"
+   }
   },
   {
    "id": "C03-03",
@@ -21183,7 +22140,18 @@ window.CATALOG = {
    "tools": [
     "客製軟體"
    ],
-   "url": "https://refikanadol.com/works/wind-of-boston-data-paintings/"
+   "url": "https://refikanadol.com/works/wind-of-boston-data-paintings/",
+   "image": {
+    "file": "img/cases/C03-04.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Refik Anadol Studio",
+    "author": "Refik Anadol Studio",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://refikanadol.com/works/wind-of-boston-data-paintings/",
+    "note": "裝置現場照：觀眾站在由風場資料生成的光點資料繪畫前"
+   }
   },
   {
    "id": "C03-05",
@@ -21223,7 +22191,18 @@ window.CATALOG = {
     "Butterfly",
     "OpenFOAM"
    ],
-   "url": "https://www.ladybug.tools/butterfly.html"
+   "url": "https://www.ladybug.tools/butterfly.html",
+   "image": {
+    "file": "img/cases/C03-05.jpg",
+    "w": 900,
+    "h": 373,
+    "source": "Ladybug Tools（butterfly-plus GitHub）",
+    "author": "Ladybug Tools",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/ladybug-tools/butterfly-plus",
+    "note": "Rhino 視圖中的 CFD 結果：色階代表風速、箭頭代表風向的向量場"
+   }
   },
   {
    "id": "C03-06",
@@ -21257,7 +22236,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool"
+   "url": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool",
+   "image": {
+    "file": "img/cases/C03-06.jpg",
+    "w": 500,
+    "h": 500,
+    "source": "Grasshopper3D 論壇部落格",
+    "author": "Daniel Piker",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool",
+    "note": "複數函數等高線圖：多個渦旋點產生的位勢流網格，是曲面生成的依據"
+   }
   },
   {
    "id": "C03-07",
@@ -21330,7 +22320,18 @@ window.CATALOG = {
    "tools": [
     "MATLAB"
    ],
-   "url": "https://github.com/keithfma/evenly_spaced_streamlines"
+   "url": "https://github.com/keithfma/evenly_spaced_streamlines",
+   "image": {
+    "file": "img/cases/C03-08.jpg",
+    "w": 462,
+    "h": 384,
+    "source": "evenly_spaced_streamlines 示範頁（allnans.com）",
+    "author": "keithfma",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.allnans.com/evenly_spaced_streamlines/even_stream_demo.html",
+    "note": "even_stream_texture 示範圖：等間距流線密集排列成如毛髮般的紋理"
+   }
   },
   {
    "id": "C03-09",
@@ -21500,7 +22501,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056"
+   "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056",
+   "image": {
+    "file": "img/cases/C03-13.jpg",
+    "w": 690,
+    "h": 359,
+    "source": "McNeel Forum",
+    "author": "jaymezd",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056",
+    "note": "討論串回覆截圖：Grasshopper 以 Anemone 迴圈讓點沿最近向量移動，畫出流線"
+   }
   },
   {
    "id": "C03-51",
@@ -21703,18 +22715,7 @@ window.CATALOG = {
     "TouchDesigner",
     "GLSL"
    ],
-   "url": "https://www.youtube.com/watch?v=Dke6OCePR6E",
-   "image": {
-    "file": "img/cases/C03-54.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "exsstas",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=Dke6OCePR6E",
-    "note": "教學影片縮圖：TouchDesigner 2D 向量場粒子"
-   }
+   "url": "https://www.youtube.com/watch?v=Dke6OCePR6E"
   },
   {
    "id": "C03-55",
@@ -21759,18 +22760,7 @@ window.CATALOG = {
     "TouchDesigner",
     "GLSL"
    ],
-   "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
-   "image": {
-    "file": "img/cases/C03-55.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "Dean Cheesman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
-    "note": "教學影片縮圖：GLSL 粒子流場"
-   }
+   "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM"
   },
   {
    "id": "C04-01",
@@ -21843,7 +22833,18 @@ window.CATALOG = {
    "tools": [
     "Java"
    ],
-   "url": "https://mrl.cs.nyu.edu/~perlin/noise"
+   "url": "https://mrl.cs.nyu.edu/~perlin/noise",
+   "image": {
+    "file": "img/cases/C04-02.jpg",
+    "w": 256,
+    "h": 255,
+    "source": "Ken Perlin 個人網站",
+    "author": "Ken Perlin",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://mrl.cs.nyu.edu/~perlin/noise/",
+    "note": "Smooth Ball 示範圖：2002 年改良版 noise 用五次平滑曲線消除方向性瑕疵後的球面貼圖結果"
+   }
   },
   {
    "id": "C04-03",
@@ -21882,7 +22883,18 @@ window.CATALOG = {
    "tools": [
     "Java"
    ],
-   "url": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you"
+   "url": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you",
+   "image": {
+    "file": "img/cases/C04-03.jpg",
+    "w": 895,
+    "h": 442,
+    "source": "Dawnosaur (Substack)",
+    "author": "Dawnosaur",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://dawnosaur.substack.com/p/how-minecraft-generates-worlds-you",
+    "note": "文章中展示 Minecraft 以疊層 noise 生成的招牌地形：懸空島與陡峭洞穴地貌"
+   }
   },
   {
    "id": "C04-04",
@@ -21915,7 +22927,18 @@ window.CATALOG = {
    "tools": [
     "JavaScript"
    ],
-   "url": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment"
+   "url": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment",
+   "image": {
+    "file": "img/cases/C04-04.jpg",
+    "w": 900,
+    "h": 579,
+    "source": "esimov.com",
+    "author": "Endre Simo",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://esimov.com/2014/10/perlin-noise-based-minecraft-rendering-experiment",
+    "note": "以 Perlin noise 生成類 Minecraft 地形並即時渲染的實驗畫面（含控制面板）"
+   }
   },
   {
    "id": "C04-05",
@@ -21954,7 +22977,18 @@ window.CATALOG = {
    "tools": [
     "World Machine"
    ],
-   "url": "https://www.world-machine.com/features.php"
+   "url": "https://www.world-machine.com/features.php",
+   "image": {
+    "file": "img/cases/C04-05.jpg",
+    "w": 900,
+    "h": 670,
+    "source": "World Machine Software",
+    "author": "World Machine Software",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.world-machine.com/features.php",
+    "note": "以疊層 Perlin noise 為基礎、經侵蝕模擬雕刻出的大陸級地形渲染畫面"
+   }
   },
   {
    "id": "C04-06",
@@ -22021,7 +23055,18 @@ window.CATALOG = {
    "tools": [
     "Python"
    ],
-   "url": "https://github.com/dandrino/terrain-erosion-3-ways"
+   "url": "https://github.com/dandrino/terrain-erosion-3-ways",
+   "image": {
+    "file": "img/cases/C04-07.jpg",
+    "w": 512,
+    "h": 512,
+    "source": "GitHub README",
+    "author": "dandrino",
+    "license": "MIT",
+    "license_url": "",
+    "page": "https://github.com/dandrino/terrain-erosion-3-ways",
+    "note": "README 展示圖：典型 fBm（多層疊加 Perlin noise）地形的山體陰影著色結果"
+   }
   },
   {
    "id": "C04-09",
@@ -22055,7 +23100,18 @@ window.CATALOG = {
    "tools": [
     "Processing"
    ],
-   "url": "https://www.tylerxhobbs.com/words/flow-fields"
+   "url": "https://www.tylerxhobbs.com/words/flow-fields",
+   "image": {
+    "file": "img/cases/C04-09.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "tylerxhobbs.com",
+    "author": "Tyler Hobbs",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.tylerxhobbs.com/words/flow-fields",
+    "note": "文章示範圖：以 Perlin noise 決定格網上每點角度後、大量曲線沿方向場流動形成的紋理"
+   }
   },
   {
    "id": "C04-10",
@@ -22122,7 +23178,18 @@ window.CATALOG = {
    "tools": [
     "JavaScript"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/C04-11.jpg",
+    "w": 600,
+    "h": 300,
+    "source": "Red Blob Games",
+    "author": "Amit Patel",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.redblobgames.com/maps/terrain-from-noise/",
+    "note": "互動教學頁最終示範：以高度與濕度兩張 noise 疊加、加上生物群系與樹木分布的地圖渲染"
+   }
   },
   {
    "id": "C04-12",
@@ -22255,14 +23322,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
    "image": {
     "file": "img/cases/C04-52.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube／The Coding Train",
+    "w": 400,
+    "h": 400,
+    "source": "The Coding Train",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
-    "note": "影片縮圖：以極座標 noise 繪製的封閉形狀"
+    "note": "在極座標下以 Perlin noise 繞圓取樣，畫出頭尾相接、不規則但平滑的封閉曲線"
    }
   },
   {
@@ -22414,7 +23481,18 @@ window.CATALOG = {
    "tools": [
     "GLSL"
    ],
-   "url": "https://thebookofshaders.com/11/"
+   "url": "https://thebookofshaders.com/11/",
+   "image": {
+    "file": "img/cases/C04-55.jpg",
+    "w": 900,
+    "h": 489,
+    "source": "The Book of Shaders",
+    "author": "Patricio Gonzalez Vivo、Jen Lowe",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thebookofshaders.com/11/",
+    "note": "章節手繪示意圖：以四個角落的梯度向量內插得到平滑曲面，說明 gradient noise 的原理"
+   }
   },
   {
    "id": "C04-56",
@@ -22561,7 +23639,18 @@ window.CATALOG = {
    "tools": [
     "C"
    ],
-   "url": "https://dl.acm.org/doi/10.1145/37402.37422"
+   "url": "https://dl.acm.org/doi/10.1145/37402.37422",
+   "image": {
+    "file": "img/cases/C05-01.jpg",
+    "w": 597,
+    "h": 668,
+    "source": "Wikimedia Commons",
+    "author": "未具名（CT/MRI 重建範例）",
+    "license": "GFDL/CC BY-SA（Wikimedia Commons 檔案頁標示）",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Marching_cubes",
+    "note": "以 150 張 MRI 切片用 marching cubes 重建出的人頭三角網格模型"
+   }
   },
   {
    "id": "C05-02",
@@ -22599,7 +23688,18 @@ window.CATALOG = {
     "吸引子控制"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Metaballs"
+   "url": "https://en.wikipedia.org/wiki/Metaballs",
+   "image": {
+    "file": "img/cases/C05-02.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "Radiodef",
+    "license": "CC BY-SA 3.0（Wikimedia Commons 檔案頁標示）",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Metaballs",
+    "note": "多顆 metaball 場相加後的等值面畫面，光點周圍場強度以等高線暈染呈現"
+   }
   },
   {
    "id": "C05-03",
@@ -22638,7 +23738,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Blob_architecture"
+   "url": "https://en.wikipedia.org/wiki/Blob_architecture",
+   "image": {
+    "file": "img/cases/C05-03.jpg",
+    "w": 516,
+    "h": 516,
+    "source": "Greg Lynn FORM",
+    "author": "Greg Lynn FORM",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://glform.com",
+    "note": "Korean Presbyterian Church of New York 建成作品室內木構屋頂實景"
+   }
   },
   {
    "id": "C05-04",
@@ -22680,7 +23791,18 @@ window.CATALOG = {
     "Kinect",
     "開源軟體"
    ],
-   "url": "https://datalab.ucdavis.edu/arsandbox/"
+   "url": "https://datalab.ucdavis.edu/arsandbox/",
+   "image": {
+    "file": "img/cases/C05-04.jpg",
+    "w": 609,
+    "h": 900,
+    "source": "UC Davis DataLab",
+    "author": "Oliver Kreylos / UC Davis",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://datalab.ucdavis.edu/arsandbox/",
+    "note": "AR Sandbox 實體沙盤，投影機把即時等高線與色帶投在沙面地形上"
+   }
   },
   {
    "id": "C05-05",
@@ -22720,7 +23842,18 @@ window.CATALOG = {
    "tools": [
     "GIS"
    ],
-   "url": "https://en.wikipedia.org/wiki/Marching_squares"
+   "url": "https://en.wikipedia.org/wiki/Marching_squares",
+   "image": {
+    "file": "img/cases/C05-05.jpg",
+    "w": 600,
+    "h": 600,
+    "source": "Wikimedia Commons（USGS）",
+    "author": "USGS",
+    "license": "公有領域（美國聯邦政府出版品）",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Contour_line",
+    "note": "美國佛蒙特州 Stowe 地形圖，等高線描繪出山丘與河谷"
+   }
   },
   {
    "id": "C05-06",
@@ -22761,7 +23894,18 @@ window.CATALOG = {
     "JavaScript",
     "D3"
    ],
-   "url": "https://github.com/d3/d3-contour"
+   "url": "https://github.com/d3/d3-contour",
+   "image": {
+    "file": "img/cases/C05-06.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "GitHub（d3/d3-contour）",
+    "author": "D3（Mike Bostock 與貢獻者）",
+    "license": "ISC License（repo 標示）",
+    "license_url": "",
+    "page": "https://github.com/d3/d3-contour",
+    "note": "d3-contour 對散點密度資料套用 Marching Squares 畫出的等值密度圖"
+   }
   },
   {
    "id": "C05-07",
@@ -22803,7 +23947,18 @@ window.CATALOG = {
     "p5.js",
     "Processing"
    ],
-   "url": "https://thecodingtrain.com/challenges/c5-marching-squares"
+   "url": "https://thecodingtrain.com/challenges/c5-marching-squares",
+   "image": {
+    "file": "img/cases/C05-07.jpg",
+    "w": 800,
+    "h": 783,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/c5-marching-squares",
+    "note": "教學頁範例執行畫面：Marching Squares 描出 metaballs 純量場的等值線輪廓"
+   }
   },
   {
    "id": "C05-08",
@@ -22888,7 +24043,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.grasshopper3d.com/group/millipede"
+   "url": "https://www.grasshopper3d.com/group/millipede",
+   "image": {
+    "file": "img/cases/C05-09.jpg",
+    "w": 900,
+    "h": 439,
+    "source": "Grasshopper3D（Millipede 社群頁）",
+    "author": "Panagiotis Michalatos",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.grasshopper3d.com/group/millipede",
+    "note": "Millipede 產生的自由曲面格網結構分析與變形示意渲染"
+   }
   },
   {
    "id": "C05-10",
@@ -22929,7 +24095,18 @@ window.CATALOG = {
     "Grasshopper",
     "Python"
    ],
-   "url": "https://dbt.arch.ethz.ch/project/axolotl/"
+   "url": "https://dbt.arch.ethz.ch/project/axolotl/",
+   "image": {
+    "file": "img/cases/C05-10.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "ETH Zurich DBT",
+    "author": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://dbt.arch.ethz.ch/project/axolotl/",
+    "note": "Axolotl 以 SDF 生成的晶格桁架結構渲染圖"
+   }
   },
   {
    "id": "C05-11",
@@ -22970,7 +24147,18 @@ window.CATALOG = {
     "GLSL",
     "Shadertoy"
    ],
-   "url": "https://iquilezles.org/articles/distfunctions/"
+   "url": "https://iquilezles.org/articles/distfunctions/",
+   "image": {
+    "file": "img/cases/C05-11.jpg",
+    "w": 480,
+    "h": 245,
+    "source": "iquilezles.org",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://iquilezles.org/articles/distfunctions/",
+    "note": "SDF 基本形之間布林運算（聯集／差集／交集）結果渲染"
+   }
   },
   {
    "id": "C05-12",
@@ -23516,7 +24704,18 @@ window.CATALOG = {
     "物理模擬"
    ],
    "tools": [],
-   "url": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/"
+   "url": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/",
+   "image": {
+    "file": "img/cases/D01-08.jpg",
+    "w": 900,
+    "h": 514,
+    "source": "Parametric Architecture",
+    "author": "Roland Snooks／RMIT Tectonic Formation Lab",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://parametric-architecture.com/ghost-tectonics-by-roland-snooks/",
+    "note": "Ghost Tectonics 展亭作品：代理人群互動生成的複雜分枝金屬曲面結構，展場中觀眾繞行觀賞"
+   }
   },
   {
    "id": "D01-09",
@@ -23557,7 +24756,18 @@ window.CATALOG = {
    "tools": [
     "Intel Shooting Star 無人機"
    ],
-   "url": "https://studiodrift.com/work/franchise-freedom/"
+   "url": "https://studiodrift.com/work/franchise-freedom/",
+   "image": {
+    "file": "img/cases/D01-09.jpg",
+    "w": 900,
+    "h": 646,
+    "source": "Studio Drift 官網",
+    "author": "Ossip van Duivenbode（攝影）／Studio Drift",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://studiodrift.com/work/franchise-freedom/",
+    "note": "Franchise Freedom：數百台發光無人機模擬椋鳥群飛，於甘迺迪太空中心火箭園區夜空中群聚成流動光點"
+   }
   },
   {
    "id": "D01-10",
@@ -23599,7 +24809,18 @@ window.CATALOG = {
    "tools": [
     "機器人 3D 列印"
    ],
-   "url": "https://www.alisaandrasek.com/projects/gossamer-skins"
+   "url": "https://www.alisaandrasek.com/projects/gossamer-skins",
+   "image": {
+    "file": "img/cases/D01-10.jpg",
+    "w": 414,
+    "h": 900,
+    "source": "Alisa Andrasek 官網",
+    "author": "Alisa Andrasek",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.alisaandrasek.com/projects/gossamer-skins",
+    "note": "Gossamer Skins：高層立面系統渲染圖，藍色網狀構件依代理人留痕密度形成多孔隙紋理，平台可供人行走"
+   }
   },
   {
    "id": "D01-11",
@@ -23642,7 +24863,18 @@ window.CATALOG = {
     "C#",
     "Java"
    ],
-   "url": "https://github.com/elQuixote/Culebra"
+   "url": "https://github.com/elQuixote/Culebra",
+   "image": {
+    "file": "img/cases/D01-11.jpg",
+    "w": 678,
+    "h": 326,
+    "source": "complicitMatter（Culebra 官網）",
+    "author": "Luis Quinones",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.complicitmatter.com/culebra/",
+    "note": "Culebra 代理人軌跡示範：黑底上黃綠與紅色發光線條從左側分枝生長，呈現代理人群聚留下的曲線軌跡"
+   }
   },
   {
    "id": "D01-12",
@@ -23879,18 +25111,7 @@ window.CATALOG = {
     "TouchDesigner",
     "GLSL"
    ],
-   "url": "https://www.youtube.com/watch?v=f2yOYmOgZEA",
-   "image": {
-    "file": "img/cases/D01-54.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "David Braun",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=f2yOYmOgZEA",
-    "note": "TouchDesigner Boids Flocking Tutorial 影片縮圖"
-   }
+   "url": "https://www.youtube.com/watch?v=f2yOYmOgZEA"
   },
   {
    "id": "D01-55",
@@ -23929,18 +25150,7 @@ window.CATALOG = {
    "tools": [
     "TouchDesigner"
    ],
-   "url": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049",
-   "image": {
-    "file": "img/cases/D01-55.jpg",
-    "w": 900,
-    "h": 473,
-    "source": "Derivative（TouchDesigner 社群）",
-    "author": "Dean Cheesman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049",
-    "note": "3D Flocking with POPs 教學封面，含 TouchDesigner 群聚畫面"
-   }
+   "url": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049"
   },
   {
    "id": "D01-56",
@@ -24228,7 +25438,18 @@ window.CATALOG = {
     "生物實驗",
     "數學模型"
    ],
-   "url": "https://www.science.org/doi/10.1126/science.1177894"
+   "url": "https://www.science.org/doi/10.1126/science.1177894",
+   "image": {
+    "file": "img/cases/D02-01.jpg",
+    "w": 900,
+    "h": 682,
+    "source": "Wikimedia Commons",
+    "author": "Tim Tim（改繪自 Toshiyuki Nakagaki 研究團隊原始圖）",
+    "license": "CC BY-SA 4.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Physarum_polycephalum_network.jpg",
+    "note": "黏菌接種於東京位置後，依 0～26 小時時序在燕油片代表的城市點間長出與實際鐵路網相近的連通網路"
+   }
   },
   {
    "id": "D02-02",
@@ -24306,7 +25527,18 @@ window.CATALOG = {
    "tools": [
     "GPU shader"
    ],
-   "url": "https://cargocollective.com/sagejenson/physarum"
+   "url": "https://cargocollective.com/sagejenson/physarum",
+   "image": {
+    "file": "img/cases/D02-03.jpg",
+    "w": 670,
+    "h": 671,
+    "source": "Sage Jenson 作品集網站（Cargo）",
+    "author": "Sage Jenson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://cargocollective.com/sagejenson/physarum",
+    "note": "physarum／36 Points 生成畫面，細密格線上交錯幾道粗直線匯聚於中央的黑白紋理"
+   }
   },
   {
    "id": "D02-04",
@@ -24349,7 +25581,18 @@ window.CATALOG = {
     "Formlabs",
     "脫蠟鑄造"
    ],
-   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137"
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137",
+   "image": {
+    "file": "img/cases/D02-04.jpg",
+    "w": 825,
+    "h": 825,
+    "source": "Nervous System blog",
+    "author": "Sage Jenson × Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=9137",
+    "note": "3D physarum 燭台鑄造前的樹脂列印雛形，白色蕾絲狀環形結構浮於黑底"
+   }
   },
   {
    "id": "D02-06",
@@ -24422,7 +25665,18 @@ window.CATALOG = {
     "生物實驗",
     "多代理人模型"
    ],
-   "url": "https://arxiv.org/abs/0912.3967"
+   "url": "https://arxiv.org/abs/0912.3967",
+   "image": {
+    "file": "img/cases/D02-07.jpg",
+    "w": 500,
+    "h": 495,
+    "source": "arXiv 論文圖",
+    "author": "Andrew Adamatzky, Jeff Jones",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/0912.3967",
+    "note": "英國形狀培養皿中黃色黏菌沿十大城市燕麥片位置生長出的原生質網路螢光影像"
+   }
   },
   {
    "id": "D02-08",
@@ -24459,7 +25713,18 @@ window.CATALOG = {
     "GPU",
     "Python"
    ],
-   "url": "https://news.ucsc.edu/2020/03/cosmic-web/"
+   "url": "https://news.ucsc.edu/2020/03/cosmic-web/",
+   "image": {
+    "file": "img/cases/D02-08.jpg",
+    "w": 500,
+    "h": 313,
+    "source": "UC Santa Cruz News",
+    "author": "Joseph N. Burchett, Oskar Elek 等（UC Santa Cruz）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://news.ucsc.edu/2020/03/cosmic-web/",
+    "note": "以 Monte Carlo Physarum Machine 演算法描繪出的宇宙網濾狀結構，紫色細絲交織於黑底"
+   }
   },
   {
    "id": "D02-10",
@@ -24495,7 +25760,18 @@ window.CATALOG = {
     "Python",
     "3D 列印"
    ],
-   "url": "https://dl.acm.org/doi/10.1145/3623263.3629159"
+   "url": "https://dl.acm.org/doi/10.1145/3623263.3629159",
+   "image": {
+    "file": "img/cases/D02-10.jpg",
+    "w": 900,
+    "h": 607,
+    "source": "PolyPhyHub GitHub repo",
+    "author": "PolyPhy 專案團隊",
+    "license": "MIT License（GitHub repo）",
+    "license_url": "",
+    "page": "https://github.com/PolyPhyHub/PolyPhy",
+    "note": "以美國人口密度資料為輸入，MCPM 演算法重建出近似美國州際公路網的發光網路"
+   }
   },
   {
    "id": "D02-11",
@@ -24605,7 +25881,18 @@ window.CATALOG = {
    "tools": [
     "openFrameworks"
    ],
-   "url": "https://github.com/Bleuje/interactive-physarum"
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "image": {
+    "file": "img/cases/D02-15.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Bleuje（Etienne Jacob）GitHub repo",
+    "author": "Etienne Jacob（bleuje）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/Bleuje/interactive-physarum",
+    "note": "遊戲手把即時操控黏菌模擬的畫面，左上角保留控制面板文字，呈現互動裝置的即時介面"
+   }
   },
   {
    "id": "D02-51",
@@ -24704,14 +25991,14 @@ window.CATALOG = {
    "url": "https://github.com/SebLague/Slime-Simulation",
    "image": {
     "file": "img/cases/D02-52.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
+    "w": 900,
+    "h": 506,
+    "source": "SebLague/Images GitHub repo",
     "author": "Sebastian Lague",
-    "license": "網頁預覽圖，教學引用",
+    "license": "GPL-3.0（GitHub repo）",
     "license_url": "",
-    "page": "https://www.youtube.com/watch?v=X-iSQQgOd1A",
-    "note": "Coding Adventure: Ant and Slime Simulations 影片縮圖，青綠色放射狀黏菌圖樣"
+    "page": "https://github.com/SebLague/Slime-Simulation",
+    "note": "Unity compute shader 執行的黏菌模擬範例輸出，藍綠色網絡中夾雜螢光綠迴圈路徑"
    }
   },
   {
@@ -24751,18 +26038,7 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
-   "image": {
-    "file": "img/cases/D02-53.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "Patt Vira",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
-    "note": "p5.js Slime Molds 教學影片縮圖，含黑白黏菌網路"
-   }
+   "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg"
   },
   {
    "id": "D02-54",
@@ -25186,7 +26462,18 @@ window.CATALOG = {
    "tools": [
     "DepthmapX"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/D03-04.jpg",
+    "w": 803,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "Tony Rotondas",
+    "license": "Public Domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Space_syntax_-_Global_Integration_-_Brasilia.svg",
+    "note": "巴西利亞街道網絡的空間整合度軸線圖，以顏色深淺表示整合度高低。"
+   }
   },
   {
    "id": "D03-05",
@@ -25257,7 +26544,18 @@ window.CATALOG = {
     "影像追蹤",
     "數學模型"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/D03-06.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Wikimedia Commons",
+    "author": "見檔案頁授權標示",
+    "license": "CC BY-SA",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Jamaraat_Bridge",
+    "note": "麥加賈馬拉特橋改建後的空拍全景，可見多層動線與大量朝聖人潮。"
+   }
   },
   {
    "id": "D03-07",
@@ -25292,7 +26590,18 @@ window.CATALOG = {
    "tools": [
     "MassMotion"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/D03-07.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Oasys（Arup）官方網站",
+    "author": "Oasys / Arup",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.oasys-software.com/products/massmotion/",
+    "note": "MassMotion 軟體以彩色人形代理人視覺化車站內人流的 3D 模擬畫面。"
+   }
   },
   {
    "id": "D03-08",
@@ -25373,7 +26682,18 @@ window.CATALOG = {
    "tools": [
     "動線分析"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/D03-09.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Wikimedia Commons",
+    "author": "見檔案頁授權標示",
+    "license": "CC BY-SA",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/Arnhem_Centraal_railway_station",
+    "note": "Arnhem Centraal 車站內部連續扭轉大廳，動線分析直接塑造出的無明確樓層分界空間。"
+   }
   },
   {
    "id": "D03-10",
@@ -25610,14 +26930,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following",
    "image": {
     "file": "img/cases/D03-52.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube",
-    "author": "Daniel Shiffman（The Coding Train）",
+    "w": 800,
+    "h": 443,
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
-    "page": "https://www.youtube.com/watch?v=rlZYT-uvmGQ",
-    "note": "5.7 Path Following 影片縮圖，代理沿河道狀路徑移動"
+    "page": "https://thecodingtrain.com/noc/5-autonomous-agents/7-path-following",
+    "note": "p5.js 路徑跟隨範例執行畫面：三角形代理人沿著斜向路徑帶移動，並標示最近點與預測目標點"
    }
   },
   {
@@ -25665,14 +26985,14 @@ window.CATALOG = {
    "url": "https://natureofcode.com/autonomous-agents/",
    "image": {
     "file": "img/cases/D03-53.jpg",
-    "w": 900,
-    "h": 506,
-    "source": "The Nature of Code",
+    "w": 800,
+    "h": 447,
+    "source": "The Coding Train",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
-    "page": "https://natureofcode.com/autonomous-agents/",
-    "note": "第 5 章章首圖，魚群照片"
+    "page": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/2-seeking-a-target",
+    "note": "Seek 轉向行為範例執行畫面：三角形代理人朝紫色目標點轉向前進。"
    }
   },
   {
@@ -25804,7 +27124,18 @@ window.CATALOG = {
     "研究原型",
     "數值最佳化"
    ],
-   "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html"
+   "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html",
+   "image": {
+    "file": "img/cases/E01-01.jpg",
+    "w": 250,
+    "h": 139,
+    "source": "TU Wien Geometry Group（Pottmann 論文頁）",
+    "author": "Alexander Schiftner et al.",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html",
+    "note": "圓形內切網格延伸出的曲面圓柱管束立面渲染圖，背景為城市天際線"
+   }
   },
   {
    "id": "E01-02",
@@ -25843,7 +27174,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/"
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/",
+   "image": {
+    "file": "img/cases/E01-02.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Arup 專案頁",
+    "author": "Ben McMillan（攝影）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/",
+    "note": "水立方 ETFE 氣枕立面近拍，泡沫多面體圖樣清晰可見"
+   }
   },
   {
    "id": "E01-03",
@@ -25884,7 +27226,18 @@ window.CATALOG = {
     "Grasshopper",
     "Kangaroo"
    ],
-   "url": "https://parametrichouse.com/parametric/circle-pack-facade/"
+   "url": "https://parametrichouse.com/parametric/circle-pack-facade/",
+   "image": {
+    "file": "img/cases/E01-03.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "Parametric House 教學",
+    "author": "Parametric House",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://parametrichouse.com/parametric/circle-pack-facade/",
+    "note": "自由形狀立面板以 Kangaroo circle packing 排出大小不一的圓形開孔"
+   }
   },
   {
    "id": "E01-04",
@@ -25927,7 +27280,18 @@ window.CATALOG = {
     "Kangaroo",
     "Plankton"
    ],
-   "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23"
+   "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23",
+   "image": {
+    "file": "img/cases/E01-04.jpg",
+    "w": 795,
+    "h": 756,
+    "source": "McNeel 論壇貼文",
+    "author": "Daniel Piker",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23",
+    "note": "Rhino 視窗截圖：Kangaroo 在方形邊界內排出大小不一、彼此相切的圓"
+   }
   },
   {
    "id": "E01-06",
@@ -25969,7 +27333,18 @@ window.CATALOG = {
     "Processing",
     "Quil／Clojure"
    ],
-   "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing"
+   "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing",
+   "image": {
+    "file": "img/cases/E01-06.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Tyler Hobbs 個人網站",
+    "author": "Tyler Hobbs",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing",
+    "note": "隨機試放法產生的多層彩色圓填充作品"
+   }
   },
   {
    "id": "E01-07",
@@ -26011,7 +27386,18 @@ window.CATALOG = {
     "p5.js",
     "Processing"
    ],
-   "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE"
+   "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE",
+   "image": {
+    "file": "img/cases/E01-07.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "The Coding Train 官網範例圖",
+    "author": "Daniel Shiffman",
+    "license": "MIT（Coding Train 範例）",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/50-animated-circle-packing",
+    "note": "以影像決定圓的位置與顏色，圓填充拼出貓咪肖像"
+   }
   },
   {
    "id": "E01-08",
@@ -26182,7 +27568,18 @@ window.CATALOG = {
    "tools": [
     "Processing"
    ],
-   "url": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/"
+   "url": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/",
+   "image": {
+    "file": "img/cases/E01-12.jpg",
+    "w": 900,
+    "h": 514,
+    "source": "CodePlastic",
+    "author": "CodePlastic",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/",
+    "note": "上千個大小不一的圓以互推力填滿有機輪廓，形成細密紋理構圖"
+   }
   },
   {
    "id": "E01-13",
@@ -26221,7 +27618,18 @@ window.CATALOG = {
     "多元件"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/E01-13.jpg",
+    "w": 120,
+    "h": 158,
+    "source": "Algorithmic Botany（論文列表頁）",
+    "author": "Oliver Deussen et al.",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://algorithmicbotany.org/papers/ecosys.sig98.html",
+    "note": "論文渲染成果：以圓的競爭模擬出的植株分布，畫面呈現草地與樹木的自然群落"
+   }
   },
   {
    "id": "E01-51",
@@ -26265,18 +27673,7 @@ window.CATALOG = {
    "tools": [
     "Houdini"
    ],
-   "url": "https://entagma.com/packing-the-torus/",
-   "image": {
-    "file": "img/cases/E01-51.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（Entagma）",
-    "author": "Manuel Casasola Merkle",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=OkiwsuFo_gA",
-    "note": "影片縮圖：甜甜圈曲面上大小不一的粒子緊密排列"
-   }
+   "url": "https://entagma.com/packing-the-torus/"
   },
   {
    "id": "E01-52",
@@ -26650,7 +28047,18 @@ window.CATALOG = {
     "Processing",
     "Inkscape"
    ],
-   "url": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/"
+   "url": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/",
+   "image": {
+    "file": "img/cases/E02-03.jpg",
+    "w": 750,
+    "h": 678,
+    "source": "Evil Mad Scientist Laboratories",
+    "author": "Windell Oskay 等",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/",
+    "note": "StippleGen 輸出：加權 Voronoi 點描的取樣點串成單一 TSP 連續路徑，呈現葉片狀輪廓"
+   }
   },
   {
    "id": "E02-04",
@@ -26686,7 +28094,18 @@ window.CATALOG = {
    "tools": [
     "C++"
    ],
-   "url": "http://www.cemyuksel.com/research/sampleelimination/"
+   "url": "http://www.cemyuksel.com/research/sampleelimination/",
+   "image": {
+    "file": "img/cases/E02-04.jpg",
+    "w": 512,
+    "h": 384,
+    "source": "Cem Yuksel（Sample Elimination 專案頁）",
+    "author": "Cem Yuksel",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://www.cemyuksel.com/research/sampleelimination/",
+    "note": "論文示範圖：以取樣消去法在兔子模型上均勻放置頭髮"
+   }
   },
   {
    "id": "E02-05",
@@ -26722,7 +28141,18 @@ window.CATALOG = {
     "D3.js",
     "JavaScript"
    ],
-   "url": "https://bost.ocks.org/mike/algorithms/"
+   "url": "https://bost.ocks.org/mike/algorithms/",
+   "image": {
+    "file": "img/cases/E02-05.jpg",
+    "w": 900,
+    "h": 338,
+    "source": "Mike Bostock（Visualizing Algorithms）",
+    "author": "Mike Bostock",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://bost.ocks.org/mike/algorithms/",
+    "note": "《星夜》以 Poisson-disc 取樣重繪，保留細節、呈現馬賽克質感的比較圖"
+   }
   },
   {
    "id": "E02-06",
@@ -26793,7 +28223,18 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling"
+   "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling",
+   "image": {
+    "file": "img/cases/E02-07.jpg",
+    "w": 800,
+    "h": 800,
+    "source": "The Coding Train（p5.js 執行畫面）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling",
+    "note": "Coding Challenge #33 的 p5.js 執行結果：多彩 Poisson 取樣點"
+   }
   },
   {
    "id": "E02-08",
@@ -26829,7 +28270,18 @@ window.CATALOG = {
     "JavaScript",
     "WebGL"
    ],
-   "url": "https://www.redblobgames.com/maps/mapgen4/"
+   "url": "https://www.redblobgames.com/maps/mapgen4/",
+   "image": {
+    "file": "img/cases/E02-08.jpg",
+    "w": 900,
+    "h": 900,
+    "source": "Red Blob Games（mapgen4 部落格截圖）",
+    "author": "Amit J. Patel",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.redblobgames.com/maps/mapgen4/",
+    "note": "mapgen4 產生的手繪風程序化地形地圖成果畫面"
+   }
   },
   {
    "id": "E02-09",
@@ -26935,7 +28387,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463"
+   "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463",
+   "image": {
+    "file": "img/cases/E02-12.jpg",
+    "w": 900,
+    "h": 528,
+    "source": "McNeel 論壇（Laurent Delrieu 回覆）",
+    "author": "Laurent Delrieu",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463",
+    "note": "Grasshopper 定義：以 Populate Geometry 產生放射狀纖維線條組成文字（討論串示範圖）"
+   }
   },
   {
    "id": "E02-51",
@@ -27140,18 +28603,7 @@ window.CATALOG = {
    "tools": [
     "Unity"
    ],
-   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
-   "image": {
-    "file": "img/cases/E02-55.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（Sebastian Lague）",
-    "author": "Sebastian Lague",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
-    "note": "影片縮圖：Poisson disc sampling 標題與取樣點"
-   }
+   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o"
   },
   {
    "id": "E02-56",
@@ -27298,7 +28750,18 @@ window.CATALOG = {
     "MicroStation",
     "Bentley Structural"
    ],
-   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube"
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube",
+   "image": {
+    "file": "img/cases/E03-01.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Arup 官方專案頁",
+    "author": "Ben McMillan（Arup）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube",
+    "note": "水立方 ETFE 氣枕立面近拍，呈現不規則多面體泡沫分割的鋼構框"
+   }
   },
   {
    "id": "E03-02",
@@ -27331,7 +28794,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/"
+   "url": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/",
+   "image": {
+    "file": "img/cases/E03-02.jpg",
+    "w": 900,
+    "h": 493,
+    "source": "Studio Tomás Saraceno 官方網站",
+    "author": "Tomás Saraceno",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/",
+    "note": "威尼斯雙年展現場：多組 Weaire-Phelan 泡沫啟發的多面體叢集懸浮於潟湖上空"
+   }
   },
   {
    "id": "E03-03",
@@ -27364,7 +28838,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": "https://link.springer.com/article/10.1007/s00004-020-00544-7"
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00544-7",
+   "image": {
+    "file": "img/cases/E03-03.jpg",
+    "w": 685,
+    "h": 335,
+    "source": "Nexus Network Journal 論文 Fig.1",
+    "author": "論文作者群",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://link.springer.com/article/10.1007/s00004-020-00544-7",
+    "note": "論文圖 1，標示為 Let's Join 展亭：木構五邊形面板組成的空間鑲嵌結構，內有真人比例"
+   }
   },
   {
    "id": "E03-04",
@@ -27404,7 +28889,18 @@ window.CATALOG = {
    "tools": [
     "CNC"
    ],
-   "url": "https://marc-newson.com/voronoi-shelf/"
+   "url": "https://marc-newson.com/voronoi-shelf/",
+   "image": {
+    "file": "img/cases/E03-04.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Marc Newson 官方網站",
+    "author": "Marc Newson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://marc-newson.com/voronoi-shelf/",
+    "note": "CNC 石材銑削中的 Carrara 大理石塊，正被挖出 Voronoi 細胞格架"
+   }
   },
   {
    "id": "E03-05",
@@ -27442,7 +28938,18 @@ window.CATALOG = {
     "隨機"
    ],
    "tools": [],
-   "url": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/"
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/",
+   "image": {
+    "file": "img/cases/E03-05.jpg",
+    "w": 900,
+    "h": 686,
+    "source": "Nervous System 官方網站",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/",
+    "note": "Radiolaria 系列蝕刻不鏽鋼配件穿戴於人體，細胞圖樣隨曲面漸變"
+   }
   },
   {
    "id": "E03-06",
@@ -27478,7 +28985,18 @@ window.CATALOG = {
     "Grasshopper",
     "3D 混凝土列印"
    ],
-   "url": "https://www.vertico.com/projects/voronoi-wall"
+   "url": "https://www.vertico.com/projects/voronoi-wall",
+   "image": {
+    "file": "img/cases/E03-06.jpg",
+    "w": 591,
+    "h": 396,
+    "source": "Vertico 官方專案頁",
+    "author": "Vertico／Saxion／De Witte van der Heijden",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.vertico.com/projects/voronoi-wall",
+    "note": "3D 列印混凝土 Voronoi 綠牆實景，每塊構件形狀不同並種有植栽"
+   }
   },
   {
    "id": "E03-08",
@@ -27660,7 +29178,18 @@ window.CATALOG = {
     "收斂"
    ],
    "tools": [],
-   "url": "https://arxiv.org/pdf/2204.10313"
+   "url": "https://arxiv.org/pdf/2204.10313",
+   "image": {
+    "file": "img/cases/E03-12.jpg",
+    "w": 512,
+    "h": 256,
+    "source": "arXiv 論文 HTML 版圖 8",
+    "author": "論文作者群",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2204.10313",
+    "note": "可微分 Voronoi 細胞拓樸最佳化的懸臂梁結果，黑白細胞搭配紅點標示種子點"
+   }
   },
   {
    "id": "E03-13",
@@ -27696,7 +29225,18 @@ window.CATALOG = {
     "Grasshopper",
     "C#"
    ],
-   "url": "https://github.com/DanielAbalde/PowerDiagrams"
+   "url": "https://github.com/DanielAbalde/PowerDiagrams",
+   "image": {
+    "file": "img/cases/E03-13.jpg",
+    "w": 888,
+    "h": 888,
+    "source": "GitHub README 示範圖",
+    "author": "Daniel Abalde",
+    "license": "MIT",
+    "license_url": "",
+    "page": "https://github.com/DanielAbalde/PowerDiagrams",
+    "note": "PowerDiagrams 外掛示範：粉紅色加權 Voronoi／Power diagram 邊界疊加藍色 Delaunay 三角網"
+   }
   },
   {
    "id": "E03-51",
@@ -28698,7 +30238,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/E04-12.jpg",
+    "w": 900,
+    "h": 610,
+    "source": "Wikimedia Commons（Christopher Michel）",
+    "author": "Christopher Michel",
+    "license": "CC BY 2.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Echelman_every_beating_second_(5604492296).jpg",
+    "note": "Janet Echelman《Every Beating Second》：懸掛於舊金山機場航廈天花板的大型彩色漁網雕塑"
+   }
   },
   {
    "id": "E04-13",
@@ -28833,14 +30384,14 @@ window.CATALOG = {
    "url": "https://thecodingtrain.com/challenges/177-soft-body-character",
    "image": {
     "file": "img/cases/E04-51.jpg",
-    "w": 900,
-    "h": 506,
+    "w": 800,
+    "h": 447,
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
     "license": "網頁預覽圖，教學引用",
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/177-soft-body-character",
-    "note": "頁面預覽圖：彈簧骨架與軟體角色"
+    "note": "Soft Body Character 範例的質點與彈簧拓撲：六邊形輪廓加上內部交叉彈簧，尚未套色"
    }
   },
   {
@@ -28886,18 +30437,7 @@ window.CATALOG = {
     "toxiclibs.js",
     "Matter.js"
    ],
-   "url": "https://natureofcode.com/physics-libraries/",
-   "image": {
-    "file": "img/cases/E04-52.jpg",
-    "w": 900,
-    "h": 438,
-    "source": "The Nature of Code",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://natureofcode.com/physics-libraries/",
-    "note": "書中圖 6.13：弦、布、骨架、軟體角色四種彈簧結構設計"
-   }
+   "url": "https://natureofcode.com/physics-libraries/"
   },
   {
    "id": "E04-53",
@@ -29552,7 +31092,18 @@ window.CATALOG = {
    "tools": [
     "GeoGebra"
    ],
-   "url": "https://www.engineeringskills.com/posts/parametric-graphic-statics-with-geogebra"
+   "url": "https://www.engineeringskills.com/posts/parametric-graphic-statics-with-geogebra",
+   "image": {
+    "file": "img/cases/E05-53.jpg",
+    "w": 700,
+    "h": 298,
+    "source": "EngineeringSkills.com",
+    "author": "Prof Edmond Saliklis",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://engineeringskills.com/posts/members/parametric-graphic-statics-with-geogebra",
+    "note": "GeoGebra 動態幾何視窗中用平行線工具建立參數化網格點（A1、A2、B1、C1、D1），對應圖解靜力學作圖步驟"
+   }
   },
   {
    "id": "E05-54",
@@ -29631,7 +31182,18 @@ window.CATALOG = {
     "早期電腦找形",
     "實體模型"
    ],
-   "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method"
+   "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method",
+   "image": {
+    "file": "img/cases/E06-01.jpg",
+    "w": 900,
+    "h": 438,
+    "source": "Wikimedia Commons",
+    "author": "Sandro Halank",
+    "license": "CC BY-SA 4.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:2022-08-21_Olympiapark_M%C3%BCnchen_by_Sandro_Halank%E2%80%93025.jpg",
+    "note": "慕尼黑奧林匹克體育場鳥瞰，力密度法求解出的帳篷式索網屋頂清楚可見"
+   }
   },
   {
    "id": "E06-02",
@@ -29713,7 +31275,18 @@ window.CATALOG = {
     "COMPAS",
     "Rhino"
    ],
-   "url": "https://github.com/blockresearchgroup/compas_fd"
+   "url": "https://github.com/blockresearchgroup/compas_fd",
+   "image": {
+    "file": "img/cases/E06-03.jpg",
+    "w": 900,
+    "h": 563,
+    "source": "GitHub blockresearchgroup/compas_fd",
+    "author": "Tom Van Mele / Block Research Group",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/blockresearchgroup/compas_fd",
+    "note": "COMPAS FD 套件 README 圖：力密度法求解的馬鞍形索網，紅線為力密度較高的主索，綠色箭頭表示反力方向"
+   }
   },
   {
    "id": "E06-04",
@@ -29996,7 +31569,18 @@ window.CATALOG = {
     "Processing",
     "Java"
    ],
-   "url": "https://github.com/alexHaridis/ForceDensityAPI"
+   "url": "https://github.com/alexHaridis/ForceDensityAPI",
+   "image": {
+    "file": "img/cases/E06-52.jpg",
+    "w": 900,
+    "h": 447,
+    "source": "GitHub alexHaridis/ForceDensityAPI",
+    "author": "Alexandros Haridis",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/alexHaridis/ForceDensityAPI",
+    "note": "ForceDensityAPI 執行畫面：Processing 互動程式求出的格殼曲面，橘色為求解後的殼形，左側為外力控制面板"
+   }
   },
   {
    "id": "E06-53",
@@ -30087,7 +31671,18 @@ window.CATALOG = {
    "tools": [
     "手繪／紙本"
    ],
-   "url": "https://en.wikipedia.org/wiki/Truchet_tile"
+   "url": "https://en.wikipedia.org/wiki/Truchet_tile",
+   "image": {
+    "file": "img/cases/F01-01.jpg",
+    "w": 500,
+    "h": 500,
+    "source": "Wikimedia Commons",
+    "author": "Life of Riley（依 P.gibellini 早期版本重繪）",
+    "license": "Public Domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Truchet_base_tiling.svg",
+    "note": "隨機翻轉對角三角形磁磚拼成的重現1704年Truchet原始概念示意圖"
+   }
   },
   {
    "id": "F01-02",
@@ -30161,7 +31756,18 @@ window.CATALOG = {
    "tools": [
     "Wolfram Language"
    ],
-   "url": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/"
+   "url": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/",
+   "image": {
+    "file": "img/cases/F01-03.jpg",
+    "w": 419,
+    "h": 419,
+    "source": "Christopher Carlson 個人網站",
+    "author": "Christopher Carlson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/",
+    "note": "多尺度Truchet磁磚生成的黑白連續紋樣，作品首圖"
+   }
   },
   {
    "id": "F01-04",
@@ -30201,7 +31807,18 @@ window.CATALOG = {
    "tools": [
     "BASIC"
    ],
-   "url": "https://10print.org/"
+   "url": "https://10print.org/",
+   "image": {
+    "file": "img/cases/F01-04.jpg",
+    "w": 396,
+    "h": 353,
+    "source": "10print.org",
+    "author": "Nick Montfort 等（10 PRINT 書籍網站）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://10print.org/",
+    "note": "10 PRINT 對角線Truchet迷宮紋，藍白配色官網首圖"
+   }
   },
   {
    "id": "F01-06",
@@ -30239,7 +31856,18 @@ window.CATALOG = {
     "吸引子控制"
    ],
    "tools": [],
-   "url": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/"
+   "url": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/",
+   "image": {
+    "file": "img/cases/F01-06.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Steelcase 官網",
+    "author": "Steelcase",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/",
+    "note": "六片方形吸音磚拼成連續彎曲路徑的Truchet牆面模組"
+   }
   },
   {
    "id": "F01-07",
@@ -30347,7 +31975,18 @@ window.CATALOG = {
    "tools": [
     "C#"
    ],
-   "url": "https://github.com/mostlynobody/truchet"
+   "url": "https://github.com/mostlynobody/truchet",
+   "image": {
+    "file": "img/cases/F01-11.jpg",
+    "w": 900,
+    "h": 610,
+    "source": "GitHub",
+    "author": "mostlynobody",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/mostlynobody/truchet",
+    "note": "C#命令列工具以Perlin noise產生的多尺度Truchet黑白圖樣範例輸出"
+   }
   },
   {
    "id": "F01-13",
@@ -30654,7 +32293,18 @@ window.CATALOG = {
    "tools": [
     "手繪／紙本"
    ],
-   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns"
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "image": {
+    "file": "img/cases/F02-01.jpg",
+    "w": 630,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "Ernest Hanbury Hankin",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:OctagonalTesselations2.png",
+    "note": "Hankin 1925 年發表的原始手繪分析圖：泰姬瑪哈陵鋪面、阿爾罕布拉宮獅子中庭，以及右下角由接觸八角形推導出阿克巴陵墓前廳圖樣的構造過程"
+   }
   },
   {
    "id": "F02-02",
@@ -30819,7 +32469,18 @@ window.CATALOG = {
     "拼貼"
    ],
    "tools": [],
-   "url": "https://www.science.org/doi/10.1126/science.1135491"
+   "url": "https://www.science.org/doi/10.1126/science.1135491",
+   "image": {
+    "file": "img/cases/F02-05.jpg",
+    "w": 900,
+    "h": 807,
+    "source": "Wikimedia Commons",
+    "author": "İnfoCan",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Spandrel-large_scale_pattern.svg",
+    "note": "圖解 Darb-e Imam 聖祠券肩的大尺度 girih 構造：藍色十邊形與紅色蝴蝶結磁磚組成準週期鋪面，黃色虛線標示重複單元，對應 Lu 與 Steinhardt 2007 年論文的分析"
+   }
   },
   {
    "id": "F02-06",
@@ -30994,7 +32655,18 @@ window.CATALOG = {
     "吸引子控制"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Arab_World_Institute"
+   "url": "https://en.wikipedia.org/wiki/Arab_World_Institute",
+   "image": {
+    "file": "img/cases/F02-09.jpg",
+    "w": 900,
+    "h": 598,
+    "source": "Wikimedia Commons",
+    "author": "Serge Melki",
+    "license": "CC BY 2.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Institut_du_Monde_Arabe_-_Mousharabieh_Eiffel_(3388328705).jpg",
+    "note": "透過南向機械光圈立面（moucharabieh）望向艾菲爾鐵塔，前景可見圓形穿孔金屬遮陽元件的紋理"
+   }
   },
   {
    "id": "F02-10",
@@ -31062,7 +32734,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Museum_of_Islamic_Art,_Doha"
+   "url": "https://en.wikipedia.org/wiki/Museum_of_Islamic_Art,_Doha",
+   "image": {
+    "file": "img/cases/F02-11.jpg",
+    "w": 900,
+    "h": 599,
+    "source": "Wikimedia Commons（en.wikipedia 上傳）",
+    "author": "Jan Golinski",
+    "license": "CC BY 2.0",
+    "license_url": "",
+    "page": "https://en.wikipedia.org/wiki/File:InsideMIA.jpg",
+    "note": "杜哈伊斯蘭藝術博物館中庭仰視，多面金屬燈飾與星形穿孔光圈交織於天花與拱圈之間"
+   }
   },
   {
    "id": "F02-12",
@@ -31096,7 +32779,18 @@ window.CATALOG = {
     "最佳化"
    ],
    "tools": [],
-   "url": "https://arxiv.org/abs/2301.01471"
+   "url": "https://arxiv.org/abs/2301.01471",
+   "image": {
+    "file": "img/cases/F02-12.jpg",
+    "w": 900,
+    "h": 540,
+    "source": "arXiv 論文封面圖",
+    "author": "Rebecca Lin、Craig S. Kaplan",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2301.01471",
+    "note": "論文封面圖：以圓堆積為骨架，混合不同尺寸與顏色的 rosette 星形拼成自由形伊斯蘭圖樣構圖"
+   }
   },
   {
    "id": "F02-51",
@@ -31183,7 +32877,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": "https://schoengeometry.com/e-tpms.html"
+   "url": "https://schoengeometry.com/e-tpms.html",
+   "image": {
+    "file": "img/cases/F03-01.jpg",
+    "w": 720,
+    "h": 720,
+    "source": "Schoen Geometry（Alan H. Schoen 個人網站）",
+    "author": "Alan H. Schoen",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://schoengeometry.com/e-tpms.html",
+    "note": "1968 年最早以多片塑膠嵌片組成、逼近 Gyroid 曲面的實體模型"
+   }
   },
   {
    "id": "F03-02",
@@ -31462,7 +33167,18 @@ window.CATALOG = {
     "Grasshopper",
     "Python"
    ],
-   "url": "https://github.com/GuoyingDong/Axolotl"
+   "url": "https://github.com/GuoyingDong/Axolotl",
+   "image": {
+    "file": "img/cases/F03-08.jpg",
+    "w": 900,
+    "h": 896,
+    "source": "Axolotl GitHub README",
+    "author": "Guoying Dong（ETH Zurich DBT）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/GuoyingDong/Axolotl",
+    "note": "Axolotl 產生的 TPMS 晶格範例算圖"
+   }
   },
   {
    "id": "F03-09",
@@ -31595,7 +33311,18 @@ window.CATALOG = {
    "tools": [
     "積層製造"
    ],
-   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549"
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549",
+   "image": {
+    "file": "img/cases/F03-13.jpg",
+    "w": 796,
+    "h": 489,
+    "source": "PMC（Materials 期刊論文圖 1）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549",
+    "note": "TPMS 支架設計流程：單一晶胞曲面（a）、拓樸最佳化後的厚度分布／應力（d–e，紅色為加厚區）、組成完整支架陣列（c、f）"
+   }
   },
   {
    "id": "F03-51",
@@ -31802,7 +33529,18 @@ window.CATALOG = {
     "Project Refinery",
     "MOGA"
    ],
-   "url": "https://www.research.autodesk.com/projects/autodesk-mars"
+   "url": "https://www.research.autodesk.com/projects/autodesk-mars",
+   "image": {
+    "file": "img/cases/F04-01.jpg",
+    "w": 900,
+    "h": 346,
+    "source": "Project Discover 論文（The Living, Autodesk Research）",
+    "author": "Danil Nagy 等，The Living（Autodesk Research）",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://www.research.autodesk.com/app/uploads/2023/03/project-discover-an-application.pdf_recXlggwMF7WwIj7i.pdf",
+    "note": "MaRS 辦公室生成式設計流程圖：從鄰里種子點、劃分區域、自動塞入空間，到依團隊偏好指派顏色分區"
+   }
   },
   {
    "id": "F04-02",
@@ -31943,7 +33681,18 @@ window.CATALOG = {
     "Grasshopper",
     "Octopus"
    ],
-   "url": "https://grasshopperdocs.com/addons/octopus.html"
+   "url": "https://grasshopperdocs.com/addons/octopus.html",
+   "image": {
+    "file": "img/cases/F04-05.jpg",
+    "w": 816,
+    "h": 707,
+    "source": "Grasshopper3D 論壇 Octopus 社群",
+    "author": "Octopus 使用者社群",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.grasshopper3d.com/group/octopus",
+    "note": "Octopus 多目標演化最佳化的結果視覺化，三軸座標中散佈演化出的候選解與其對應的曲面造型"
+   }
   },
   {
    "id": "F04-06",
@@ -31979,7 +33728,18 @@ window.CATALOG = {
     "Grasshopper",
     "Wallacei"
    ],
-   "url": "https://www.wallacei.com/research"
+   "url": "https://www.wallacei.com/research",
+   "image": {
+    "file": "img/cases/F04-06.jpg",
+    "w": 900,
+    "h": 677,
+    "source": "wallacei.com 研究頁",
+    "author": "CAADRIA 研究團隊（收錄於 Wallacei 研究頁）",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.wallacei.com/research",
+    "note": "以規則式程序建模生成的都市量體配置研究，探討形態變化的多目標演化結果"
+   }
   },
   {
    "id": "F04-08",
@@ -32017,7 +33777,18 @@ window.CATALOG = {
     "Karamba3D",
     "Octopus"
    ],
-   "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/"
+   "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/",
+   "image": {
+    "file": "img/cases/F04-08.jpg",
+    "w": 816,
+    "h": 496,
+    "source": "albertopugnale.com",
+    "author": "Alberto Pugnale",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/",
+    "note": "殼體造型的 Pareto 前緣示意圖，四個角落殼體對應前緣上不同取捨的最佳化結果"
+   }
   },
   {
    "id": "F04-10",
@@ -32356,7 +34127,18 @@ window.CATALOG = {
     "Grasshopper",
     "LunchBox"
    ],
-   "url": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/"
+   "url": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/",
+   "image": {
+    "file": "img/cases/F05-03.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "Proving Ground",
+    "author": "Proving Ground",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/",
+    "note": "Rhino／Grasshopper 畫面：LunchBox 產生的三角網格曲面上，ShortestWalk 元件算出兩點間最短路徑（洋紅色線）"
+   }
   },
   {
    "id": "F05-04",
@@ -32539,7 +34321,18 @@ window.CATALOG = {
    "tools": [
     "Pathfinder"
    ],
-   "url": "https://www.thunderheadeng.com/pathfinder"
+   "url": "https://www.thunderheadeng.com/pathfinder",
+   "image": {
+    "file": "img/cases/F05-09.jpg",
+    "w": 900,
+    "h": 532,
+    "source": "Thunderhead Engineering",
+    "author": "Thunderhead Engineering",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.thunderheadeng.com/pathfinder",
+    "note": "Pathfinder 模擬畫面：多層樓梯與平台上人群移動的即時密度熱區圖（藍到紅代表密度由低到高）"
+   }
   },
   {
    "id": "F05-10",
@@ -32704,7 +34497,18 @@ window.CATALOG = {
    "tools": [
     "C"
    ],
-   "url": "https://paulbourke.net/fractals/clifford/"
+   "url": "https://paulbourke.net/fractals/clifford/",
+   "image": {
+    "file": "img/cases/F06-01.jpg",
+    "w": 633,
+    "h": 900,
+    "source": "Paul Bourke 個人網站",
+    "author": "Paul Bourke",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/fractals/clifford/",
+    "note": "Clifford 吸子以密度直方圖上色，呈現橘紫漸層的蝴蝶狀曲面"
+   }
   },
   {
    "id": "F06-02",
@@ -32738,7 +34542,18 @@ window.CATALOG = {
    "tools": [
     "C"
    ],
-   "url": "https://paulbourke.net/fractals/peterdejong/"
+   "url": "https://paulbourke.net/fractals/peterdejong/",
+   "image": {
+    "file": "img/cases/F06-02.jpg",
+    "w": 626,
+    "h": 900,
+    "source": "Paul Bourke 個人網站",
+    "author": "Paul Bourke",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://paulbourke.net/fractals/peterdejong/",
+    "note": "Peter de Jong 吸子以密度直方圖上色，呈現粉紫色的環狀曲面"
+   }
   },
   {
    "id": "F06-04",
@@ -32775,7 +34590,18 @@ window.CATALOG = {
     "自製程式",
     "手工鉤織"
    ],
-   "url": "https://www.math.auckland.ac.nz/~hinke/crochet/"
+   "url": "https://www.math.auckland.ac.nz/~hinke/crochet/",
+   "image": {
+    "file": "img/cases/F06-04.jpg",
+    "w": 414,
+    "h": 500,
+    "source": "Hinke Osinga 與 Bernd Krauskopf 個人網頁",
+    "author": "Hinke M. Osinga、Bernd Krauskopf",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.math.auckland.ac.nz/~hinke/crochet/",
+    "note": "以藍白毛線鉤織出的 Lorenz 穩定流形曲面，實體照片"
+   }
   },
   {
    "id": "F06-05",
@@ -32812,7 +34638,18 @@ window.CATALOG = {
     "BASIC",
     "自製程式"
    ],
-   "url": "https://sprott.physics.wisc.edu/sa.htm"
+   "url": "https://sprott.physics.wisc.edu/sa.htm",
+   "image": {
+    "file": "img/cases/F06-05.jpg",
+    "w": 640,
+    "h": 480,
+    "source": "Julien C. Sprott 個人網站書籍附圖",
+    "author": "Julien C. Sprott",
+    "license": "網頁聲明可個人使用、非商業轉載需標示出處",
+    "license_url": "",
+    "page": "https://sprott.physics.wisc.edu/fractals/bookfigs/",
+    "note": "書中一張彩色立體吸子圖版，多層同心環狀曲面疊加"
+   }
   },
   {
    "id": "F06-06",
@@ -32885,7 +34722,18 @@ window.CATALOG = {
     "Processing",
     "p5.js"
    ],
-   "url": "https://thecodingtrain.com/challenges/12-lorenz-attractor"
+   "url": "https://thecodingtrain.com/challenges/12-lorenz-attractor",
+   "image": {
+    "file": "img/cases/F06-07.jpg",
+    "w": 794,
+    "h": 582,
+    "source": "The Coding Train 教學頁",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/12-lorenz-attractor",
+    "note": "Processing 逐步推進 Lorenz 方程畫出的彩色漸層蝴蝶軌跡"
+   }
   },
   {
    "id": "F06-08",
@@ -32957,7 +34805,18 @@ window.CATALOG = {
     "WebGL",
     "TypeScript"
    ],
-   "url": "https://github.com/piellardj/strange-attractors-webgl"
+   "url": "https://github.com/piellardj/strange-attractors-webgl",
+   "image": {
+    "file": "img/cases/F06-10.jpg",
+    "w": 592,
+    "h": 496,
+    "source": "GitHub repo README 展示圖",
+    "author": "piellardj",
+    "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+    "license_url": "",
+    "page": "https://github.com/piellardj/strange-attractors-webgl",
+    "note": "WebGL 即時繪製的 de Jong 吸子灰階密度圖，附公式與係數"
+   }
   },
   {
    "id": "F06-51",
@@ -33896,7 +35755,18 @@ window.CATALOG = {
     "圖"
    ],
    "tools": [],
-   "url": "https://arxiv.org/abs/2509.21931"
+   "url": "https://arxiv.org/abs/2509.21931",
+   "image": {
+    "file": "img/cases/F08-05.jpg",
+    "w": 484,
+    "h": 482,
+    "source": "arXiv 論文 HTML 版",
+    "author": "Marc Barthelemy, Geoff Boeing",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/html/2509.21931v1",
+    "note": "論文圖 3：以最小生成樹為骨幹的都市街道網路模型，格狀街廓群以直線生成樹邊相連"
+   }
   },
   {
    "id": "F08-06",
@@ -34373,18 +36243,7 @@ window.CATALOG = {
     "JavaScript",
     "HTML5 Canvas"
    ],
-   "url": "https://ncase.me/sight-and-light/",
-   "image": {
-    "file": "img/cases/G01-52.jpg",
-    "w": 522,
-    "h": 358,
-    "source": "ncase.me",
-    "author": "Nicky Case",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://ncase.me/sight-and-light/",
-    "note": "Sight & Light 教學頁的 og:image，2D 光影可視多邊形"
-   }
+   "url": "https://ncase.me/sight-and-light/"
   },
   {
    "id": "G01-53",
@@ -34421,7 +36280,18 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d"
+   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d",
+   "image": {
+    "file": "img/cases/G01-53.jpg",
+    "w": 800,
+    "h": 793,
+    "source": "The Coding Train 官方網站",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://thecodingtrain.com/challenges/145-ray-casting-2d",
+    "note": "2D 射線投射 p5.js 範例執行畫面，牆面線段與光點向外發散的射線"
+   }
   },
   {
    "id": "G01-54",

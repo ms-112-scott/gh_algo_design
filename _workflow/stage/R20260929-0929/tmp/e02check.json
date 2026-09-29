@@ -1,0 +1,52 @@
+[
+ {
+  "id": "E02-56",
+  "title": "Recursive Scatter：影像位移驅動的 Poisson 點 Voronoi 花紋",
+  "creator": "benjamin-white（GitHub）",
+  "year": "",
+  "url": "https://github.com/benjamin-white/recursive-scatter",
+  "source": "art",
+  "category": "2d-pattern",
+  "summary": "以 kchapelier 的 poisson-disk-sampling 函式庫搭配影像位移圖控制取樣密度，再用 d3-delaunay 把點連成 Voronoi 圖，只畫胞元邊界，得到中心密、邊緣疏、放射狀的花紋。基礎範例的 minDistance 是固定值，這件作品示範 V01 變密度取樣：位移圖決定每個區域的取樣密度，產生類似花朵或年輪的圖案。"
+ },
+ {
+  "id": "E02-57",
+  "title": "ImageTriangulation：藍噪點三角化重繪名畫",
+  "creator": "pxv8270（GitHub）",
+  "year": "",
+  "url": "https://github.com/pxv8270/ImageTriangulation",
+  "source": "art",
+  "category": "2d-pattern",
+  "summary": "Python 腳本以「加權藍噪聲取樣」（依影像邊緣調整密度的 Poisson 式取樣）在畫作上撒點，再用 Delaunay 三角化、每個三角形填入平均色重繪影像，把梵谷《星夜》等名畫轉成低多邊形幾何畫風。基礎範例只輸出點本身，這件作品示範把取樣點接上三角網並著色的完整流程，對應 V06 變形（Poisson 點→Voronoi／Delaunay）。"
+ },
+ {
+  "id": "E02-51",
+  "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
+  "creator": "Manohar Vanga（Sighack）",
+  "year": "2018",
+  "url": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+  "source": "art",
+  "category": "drawing",
+  "summary": "Manohar Vanga 先用 Processing 實作 Bridson 演算法，再把 Poisson 點用在照片上，做出點描、油畫、炭筆、Voronoi 馬賽克、交叉排線、點彩等八種風格。基礎範例只輸出點與對照用的純隨機點，這裡則示範同一組藍噪點如何透過「點的大小、顏色、筆觸方向」變成完全不同的畫面。"
+ },
+ {
+  "id": "E02-54",
+  "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
+  "creator": "Nikolai Janakiev",
+  "year": "2017",
+  "url": "https://github.com/njanakiev/poisson-disk-sampling",
+  "source": "art",
+  "category": "drawing",
+  "summary": "以 Processing 實作 Bridson 論文的 Poisson 圓盤取樣（MIT 授權），同時提供 2D 與 3D 版本，並把「活躍點」與「已確定的點」用不同方式畫出來做成動畫。基礎範例只輸出最終點位，這個作品把演算法的生長過程本身變成可觀看的視覺。"
+ },
+ {
+  "id": "E02-55",
+  "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
+  "creator": "Sebastian Lague",
+  "year": "2018",
+  "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+  "source": "research",
+  "category": "urban-landscape",
+  "summary": "Sebastian Lague 在 Unity（C#）中依 Bridson 論文實作 Poisson 圓盤取樣，目的是在遊戲場景裡擺放物件，使物件彼此保持最小距離又不顯得規則。和 Grasshopper C# 基礎範例語言相同，但應用從「畫點」轉成「放置場景物件」，很適合對照到地景配置。"
+ }
+]

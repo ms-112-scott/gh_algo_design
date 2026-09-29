@@ -1,0 +1,21 @@
+{"unit": "IMG:A05a", "algo": "A05",
+ "results": [
+   {"id": "A05-01", "status": "none", "note": "Stiny 與 Gips 1972 年論文（IFIP Congress）年代久遠，查了 Semantic Scholar 頁面與網路搜尋都沒有找到可公開取用、附圖的版本。"},
+   {"id": "A05-02", "status": "new", "url": "https://commons.wikimedia.org/wiki/File:Villa_Foscari_Malcontenta_(23549471).jpg", "page": "https://commons.wikimedia.org/wiki/File:Villa_Foscari_Malcontenta_(23549471).jpg", "note": "Villa Malcontenta（Villa Foscari）平面圖，正是 Palladian Grammar 論文成功推導出的案例（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-04", "status": "new", "url": "https://commons.wikimedia.org/wiki/File:Bairro_Malagueira_1_(Evora).jpg", "page": "https://commons.wikimedia.org/wiki/File:Bairro_Malagueira_1_(Evora).jpg", "note": "Siza 設計的 Malagueira 集合住宅實景（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-05", "status": "none", "note": "CGA Shape／Pompeii 重建論文（ACM 2006）查了 ACM 頁面、ETH 研究室頁面、作者網站與 Esri 官網都連不上或找不到論文本身的成果圖，作罷。"},
+   {"id": "A05-06", "status": "new", "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm", "page": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm", "note": "CityEngine 立面建模教學渲染圖（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-07", "status": "new", "url": "https://web.mit.edu/~haldane/www/icerays/type1/index.html", "page": "https://web.mit.edu/~haldane/www/icerays/type1/index.html", "note": "依冰裂紋文法生成的窗格圖樣（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-09", "status": "new", "url": "https://commons.wikimedia.org/wiki/File:Agra,_Taj_Mahal_LCCN95505064.jpg", "page": "https://commons.wikimedia.org/wiki/File:Agra,_Taj_Mahal_LCCN95505064.jpg", "note": "泰姬瑪哈陵蒙兀兒四分花園實景（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-10", "status": "new", "url": "https://commons.wikimedia.org/wiki/File:Kragsyde,_Manchester,_MA.jpg", "page": "https://commons.wikimedia.org/wiki/File:Kragsyde,_Manchester,_MA.jpg", "note": "Queen Anne 風格住宅實景 Kragsyde（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-11", "status": "none", "note": "Larry Sass 構築文法論文（ResearchGate）與 MIT DDF 研究室網站都連不上或找不到相關專案圖，作罷。"},
+   {"id": "A05-12", "status": "new", "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf", "page": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf", "note": "從論文內文截取 Fig.6：eifForm 生成的兩個桁架穹頂結構圖。"},
+   {"id": "A05-13", "status": "new", "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704", "page": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704", "note": "從論文內文截取 Fig.3：文法隨機生成 17 步的 pseudo-Diebenkorn 線性構圖。"},
+   {"id": "A05-14", "status": "new", "url": "https://commons.wikimedia.org/wiki/File:Yingzao_Fashi_1_desmear.JPG", "page": "https://commons.wikimedia.org/wiki/File:Yingzao_Fashi_1_desmear.JPG", "note": "《營造法式》斗栱構造書頁（沿用先前中斷執行已登記的圖）。"},
+   {"id": "A05-51", "status": "new", "url": "https://www.contextfreeart.org/gallery/uploads//24/87/lagroue//full_1122368472.png", "page": "https://www.contextfreeart.org/gallery/displayimage.php?pos=-51", "note": "Context Free Art 藝廊作品：CFDG 文法生成的抽象方格漸層圖樣。"},
+   {"id": "A05-52", "status": "new", "url": "https://structuresynth.sourceforge.net/images/box1.jpg", "page": "https://structuresynth.sourceforge.net/", "note": "Structure Synth 官網範例：EisenScript 生成並算圖的立方體聚落結構。"},
+   {"id": "A05-53", "status": "kept", "note": "已確認是 MarkovJunior ModernHouse 範例的實際生成畫面（含 WFC Partition 過程圖）。"},
+   {"id": "A05-55", "status": "none", "note": "CGAjs 是瀏覽器互動 3D 畫布展示，官網、GitHub README 與網路搜尋都找不到靜態截圖可用。"},
+   {"id": "A05-56", "status": "kept", "note": "已確認是 The Coding Train 碎形樹範例的實際 p5.js 執行畫面。"},
+   {"id": "A05-57", "status": "kept", "note": "已確認是 Substitution System 專案的實際生成畫面（格子替換與像素風格輸出對照）。"}
+ ]}

@@ -1,0 +1,11 @@
+{"unit": "IMG:E04", "algo": "E04",
+ "results": [
+  {"id": "E04-09", "status": "none", "note": "food4rhino 頁面回傳 403、GitHub 上的 Kangaroo 舊 repo 已 404、Daniel Piker 部落格與 grasshopper3d.com 社團相簿都找不到可驗證來源的找形截圖（唯一候選圖經檢查後發現是 AI 生成圖，已排除），查了超過 3 個管道仍無結果"},
+  {"id": "E04-10", "status": "none", "note": "Barnes 1999 論文在 SAGE 期刊付費牆後，Wikipedia「Dynamic relaxation」條目與相關部落格都沒有可用圖片，查了多個管道仍找不到公開圖"},
+  {"id": "E04-12", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Echelman_every_beating_second_%285604492296%29.jpg", "page": "https://commons.wikimedia.org/wiki/File:Echelman_every_beating_second_(5604492296).jpg", "note": "Janet Echelman《Every Beating Second》：懸掛於舊金山機場航廈天花板上空的大型彩色漁網雕塑實景"},
+  {"id": "E04-13", "status": "kept", "note": "已確認是 Aerotrope（Anish Kapoor 官方合作方）作品頁的空拍實景照，單一薄膜充氣成型的甜甜圈形音樂廳，非影片縮圖"},
+  {"id": "E04-51", "status": "replaced", "url": "https://thecodingtrain.com/static/8dfd209e48a7f4565831953c034755f8/5451c/img1.png", "page": "https://thecodingtrain.com/challenges/177-soft-body-character", "note": "原圖是把 Shiffman 頭像合成到骨架示意圖上，屬於講者人像；換成同一頁的程式截圖，顯示 Soft Body Character 六邊形輪廓與內部交叉彈簧的質點拓撲"},
+  {"id": "E04-52", "status": "removed", "note": "原圖是手繪示意圖（string／blanket／skeleton／cuddly friend 四格漫畫風插圖），並非程式執行畫面；Nature of Code 網頁圖片皆為佔位 SVG、互動範例是 p5.js editor 內嵌無法取得純畫面截圖，GitHub 範例庫章節編號也對不上，找不到合格替代圖"},
+  {"id": "E04-53", "status": "kept", "note": "已確認是 three.js 官方範例頁的實際執行截圖，灰紫背景前飄動的白色 Verlet 布料"},
+  {"id": "E04-56", "status": "kept", "note": "已確認是程式實際執行畫面：黑底上貼了手繪貓咪圖案材質、隨風力模擬起伏的旗幟"}
+ ]}

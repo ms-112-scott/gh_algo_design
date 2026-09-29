@@ -1,0 +1,10 @@
+{
+  "unit": "IMG:G02",
+  "algo": "G02",
+  "results": [
+    {"id": "G02-04", "status": "none", "note": "2001 年 Solar Energy 期刊論文（Capeluto、Shaviv），出版社頁面（ScienceDirect／Technion Cris）與相關檢索（Google Scholar、ResearchGate、Academia.edu）都查了，只找到同作者其他篇論文的 PDF 全文，沒有可獨立下載的圖片檔，論文本身也在付費牆後（Unpaywall 查證 DOI 10.1016/j.autcon 系列同批論文為 closed access 的模式相同）"},
+    {"id": "G02-05", "status": "none", "note": "2016 年會議論文（De Luca，CAADence in Architecture），Academia.edu 頁面回傳 403、ResearchGate 搜尋也被擋，找到 BME repozitorium 的 PDF 全文連結但頁面本身回傳 403 無法確認圖片，查不到可獨立下載的作品畫面"},
+    {"id": "G02-06", "status": "none", "note": "2021 年 Automation in Construction 期刊論文（De Luca、Dogan、Sepúlveda），ScienceDirect 頁面回傳 403，Unpaywall 查證該篇為付費牆（closed access）沒有開放全文，Google Scholar 找到的都是引用此文的其他論文，沒有這篇本身的圖片"},
+    {"id": "G02-54", "status": "none", "note": "suncalc.org 是用 canvas 即時繪出太陽路徑，頁面沒有任何 <img> 實體圖檔可下載；GitHub repo（mourner/suncalc）README 也只有徽章圖示，沒有畫面截圖或示範圖"}
+  ]
+}

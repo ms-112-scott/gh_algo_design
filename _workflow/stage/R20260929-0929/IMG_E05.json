@@ -1,0 +1,8 @@
+{"unit": "IMG:E05", "algo": "E05",
+ "results": [
+   {"id": "E05-02", "status": "none", "note": "原文為 IASS 2012 期刊論文（ingentaconnect 付費牆），Google Scholar 找到 uclouvain.be 的開放版本連結但該網域連線被拒，查了 3 個以上來源都無法取得作品圖"},
+   {"id": "E05-06", "status": "none", "note": "SAGE 期刊頁與 PDF 皆回傳 403，Unpaywall 查到開放版本存放於 infoscience.epfl.ch 但該站對本工具的請求回傳 405，查了 3 個以上來源都無法取得作品圖"},
+   {"id": "E05-07", "status": "none", "note": "SAGE 期刊頁（journals.sagepub.com）回傳 403，Unpaywall 查無開放取用版本，找不到 CEM 作者網站或 ETH 研究室的成果圖"},
+   {"id": "E05-53", "status": "new", "url": "https://engineeringskills.com/images/posts/parametric-graphic-statics-with-geogebra/img9.jpg", "page": "https://engineeringskills.com/posts/members/parametric-graphic-statics-with-geogebra", "note": "GeoGebra 動態幾何視窗中用平行線工具建立參數化網格點（A1、A2、B1、C1、D1），對應圖解靜力學作圖步驟"},
+   {"id": "E05-54", "status": "none", "note": "GitHub repo（README、根目錄、Reference 資料夾）都沒有截圖或 demo 圖片，也沒有部署的線上頁面連結，查不到作品畫面"}
+ ]}

@@ -1,0 +1,11 @@
+{"unit": "IMG:E06", "algo": "E06",
+ "results": [
+   {"id": "E06-01", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/2022-08-21_Olympiapark_M%C3%BCnchen_by_Sandro_Halank%E2%80%93025.jpg", "page": "https://commons.wikimedia.org/wiki/File:2022-08-21_Olympiapark_M%C3%BCnchen_by_Sandro_Halank%E2%80%93025.jpg", "note": "慕尼黑奧林匹克體育場鳥瞰，力密度法求解出的帳篷式索網屋頂清楚可見"},
+   {"id": "E06-02", "status": "none", "note": "查了 BRG／ETH 網站（改版為前端渲染，抓不到內容）、Wikimedia Commons（NEST／Empa 分類皆無）、Wikipedia（無條目）、ScienceDirect 論文頁（403）都找不到 HiLo 施工或索網模板實景圖，WebSearch 額度已用盡"},
+   {"id": "E06-03", "status": "new", "url": "https://raw.githubusercontent.com/blockresearchgroup/compas_fd/main/compas_fd.png", "page": "https://github.com/blockresearchgroup/compas_fd", "note": "COMPAS FD 套件 README 圖：力密度法求解的馬鞍形索網，紅線為力密度較高的主索，綠色箭頭表示反力方向"},
+   {"id": "E06-04", "status": "none", "note": "ScienceDirect 論文頁回傳 403，Semantic Scholar API 429，找不到公開的張拉整體找形圖，WebSearch 額度已用盡"},
+   {"id": "E06-05", "status": "none", "note": "GitHub adam-t-burke/Ariadne 的 README 與 Resources 資料夾只有元件圖示（32px png），文件站也只有 logo，沒有求解結果的示範畫面"},
+   {"id": "E06-06", "status": "none", "note": "Food4Rhino 元件頁回傳 403（多次嘗試），作者帳號無對應 GitHub 專案可查，WebSearch 額度已用盡，找不到可用畫面"},
+   {"id": "E06-08", "status": "none", "note": "Academia.edu 論文頁回傳 403，WebSearch 額度已用盡，找不到公開的索網求解圖"},
+   {"id": "E06-52", "status": "new", "url": "https://github.com/alexHaridis/ForceDensityAPI/assets/9630033/25b83ad2-8995-415a-bba7-bf96d069c54f", "page": "https://github.com/alexHaridis/ForceDensityAPI", "note": "ForceDensityAPI 執行畫面：Processing 互動程式求出的格殼曲面，橘色為求解後的殼形，左側為外力控制面板"}
+ ]}

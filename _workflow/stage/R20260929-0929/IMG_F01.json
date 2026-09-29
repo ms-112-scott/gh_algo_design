@@ -1,0 +1,17 @@
+{"unit": "IMG:F01", "algo": "F01",
+ "results": [
+   {"id": "F01-01", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Truchet_base_tiling.svg/500px-Truchet_base_tiling.svg.png", "page": "https://commons.wikimedia.org/wiki/File:Truchet_base_tiling.svg", "note": "隨機翻轉對角三角形磁磚拼成的重現1704年Truchet原始概念示意圖"},
+   {"id": "F01-02", "status": "none", "note": "JSTOR頁面無法載入預覽圖，論文本身也查不到可用圖片"},
+   {"id": "F01-03", "status": "new", "url": "https://christophercarlson.com/wp-content/uploads/2018/03/mstp.png", "page": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/", "note": "多尺度Truchet磁磚生成的黑白連續紋樣，作品首圖"},
+   {"id": "F01-04", "status": "new", "url": "https://10print.org/10print.gif", "page": "https://10print.org/", "note": "10 PRINT對角線Truchet迷宮紋，藍白配色官網首圖"},
+   {"id": "F01-06", "status": "new", "url": "https://steelcase-res.cloudinary.com/image/upload/c_fill,q_auto,f_auto,h_656,w_1166/v1586159422/www.steelcase.com/eu-en/2020/04/06/20-0136409.jpg", "page": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/", "note": "六片方形吸音磚拼成連續彎曲路徑的Truchet牆面模組"},
+   {"id": "F01-07", "status": "none", "note": "Sage期刊頁面回傳403無法讀取，查不到開放取用的圖"},
+   {"id": "F01-10", "status": "none", "note": "grasshopper3d.com影片頁本文與Parametric House頁面都查不到實際輸出圖，只有縮圖與頭像"},
+   {"id": "F01-11", "status": "new", "url": "https://user-images.githubusercontent.com/32034333/81904386-8160fd80-95c3-11ea-9840-5bce8c946883.png", "page": "https://github.com/mostlynobody/truchet", "note": "C#命令列工具以Perlin noise產生的多尺度Truchet黑白圖樣範例輸出"},
+   {"id": "F01-13", "status": "none", "note": "HLF部落格文章提到的賀卡圖片只掛在googleusercontent且抓不到完整網址，不可猜測網址，查了3個來源都沒有可靠的作品圖"},
+   {"id": "F01-51", "status": "kept", "note": "已確認是Truchet Images以照片亮度驅動弧線密度的半色調肖像生成畫面"},
+   {"id": "F01-52", "status": "kept", "note": "已確認是GenTruchet多尺度貝茲曲線磁磚生成的黑白連續圖樣"},
+   {"id": "F01-53", "status": "kept", "note": "重新比對GitHub README的download.png，確認與現有圖片相同，是TruchetArt專案本身的輸出畫面"},
+   {"id": "F01-54", "status": "kept", "note": "已比對原始部落格圖片，內容為程式輸出的半色調人像，僅含極小視窗標題列，非介面截圖"},
+   {"id": "F01-55", "status": "kept", "note": "已確認是Truchet Pattern Explorer三角磚型示範圖"}
+ ]}

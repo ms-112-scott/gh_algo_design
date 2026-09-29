@@ -1,0 +1,14 @@
+{"unit": "IMG:F03", "algo": "F03",
+ "results": [
+   {"id": "F03-01", "status": "new", "url": "https://schoengeometry.com/e77-tpms-media/best%20G%20photo.jpg", "page": "https://schoengeometry.com/e-tpms.html", "note": "1968 年最早以多片塑膠嵌片組成、逼近 Gyroid 曲面的實體模型"},
+   {"id": "F03-05", "status": "none", "note": "查了 ScienceDirect 原文頁、linkinghub 轉址、Semantic Scholar 都被擋（403／付費牆），找不到可用的作品圖"},
+   {"id": "F03-07", "status": "none", "note": "Wikipedia Gyroid 頁沒有內嵌蝴蝶鱗片照片，PNAS 原始論文頁與 doi.org 轉址都被擋，Wikimedia Commons 也沒有專門顯示 Gyroid 光子晶體結構的圖，查了 4 個來源仍找不到"},
+   {"id": "F03-08", "status": "new", "url": "https://raw.githubusercontent.com/GuoyingDong/Axolotl/master/pix/lattice.png", "page": "https://github.com/GuoyingDong/Axolotl", "note": "Axolotl 產生的 TPMS 晶格範例算圖"},
+   {"id": "F03-12", "status": "none", "note": "Nature Communications 原文頁需要登入轉址，doi.org 轉址回原頁一樣被擋，Europe PMC 搜尋也被擋（403），查了 3 次都找不到可用的圖"},
+   {"id": "F03-13", "status": "new", "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/b083/9605549/7f7919baf2d9/materials-15-07084-g001.jpg", "page": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549", "note": "TPMS 支架設計流程：單一晶胞曲面（a）、拓樸最佳化後的厚度分布／應力（d–e，紅色為加厚區）、組成完整支架陣列（c、f）"},
+   {"id": "F03-02", "status": "kept", "note": "已確認是 Bathsheba Grossman 鋼材 3D 列印的 Gyroid 數學雕塑照片，非影片縮圖"},
+   {"id": "F03-09", "status": "kept", "note": "已確認是 Digital Grotesque I 全尺度砂印洞窟裝置現場照片，非影片標題卡"},
+   {"id": "F03-51", "status": "kept", "note": "已確認是 Corollaria Gyroid 作品本身的近拍照片"},
+   {"id": "F03-52", "status": "kept", "note": "已確認是 Porifera 系列陶瓷首飾的作品照片"},
+   {"id": "F03-53", "status": "kept", "note": "已確認是 Puzzle Cell Complex 拼裝雕塑現場照片"}
+ ]}

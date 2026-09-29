@@ -1,0 +1,17 @@
+{
+ "unit": "IMG:F06",
+ "algo": "F06",
+ "results": [
+  {"id": "F06-01", "status": "new", "url": "https://paulbourke.net/fractals/clifford/2.jpg", "page": "https://paulbourke.net/fractals/clifford/", "note": "Clifford 吸子密度直方圖，橘紫漸層蝴蝶狀曲面"},
+  {"id": "F06-02", "status": "new", "url": "https://paulbourke.net/fractals/peterdejong/6.jpg", "page": "https://paulbourke.net/fractals/peterdejong/", "note": "Peter de Jong 吸子密度直方圖，粉紫色環狀曲面"},
+  {"id": "F06-04", "status": "new", "url": "https://www.math.auckland.ac.nz/~hinke/crochet/pix/lor_w.jpg", "page": "https://www.math.auckland.ac.nz/~hinke/crochet/", "note": "藍白毛線鉤織的 Lorenz 穩定流形曲面實體照片"},
+  {"id": "F06-05", "status": "new", "url": "https://sprott.physics.wisc.edu/fractals/bookfigs/PLATE01.GIF", "page": "https://sprott.physics.wisc.edu/fractals/bookfigs/", "note": "書中彩色立體吸子圖版，多層同心環狀曲面疊加"},
+  {"id": "F06-06", "status": "none", "note": "GrasshopperDocs 外掛頁與個別元件頁、food4rhino 頁都查了，找不到吸子元件輸出畫面的圖片"},
+  {"id": "F06-07", "status": "new", "url": "https://thecodingtrain.com/static/d0000223b6637a71912a9c40207aeb2f/43b3d/lorenz-attractor.png", "page": "https://thecodingtrain.com/challenges/12-lorenz-attractor", "note": "Processing 逐步推進 Lorenz 方程畫出的彩色漸層蝴蝶軌跡"},
+  {"id": "F06-08", "status": "none", "note": "查了維基百科 Alice Aycock 條目、Wikimedia Commons 分類、藝術家官網，都找不到 Strange Attractor（堪薩斯市機場）這件雕塑的實際照片"},
+  {"id": "F06-10", "status": "new", "url": "https://raw.githubusercontent.com/piellardj/strange-attractors-webgl/master/src/readme/illustration.jpg", "page": "https://github.com/piellardj/strange-attractors-webgl", "note": "WebGL 即時繪製的 de Jong 吸子灰階密度圖，附公式與係數"},
+  {"id": "F06-51", "status": "kept", "note": "已確認是 Clifford 吸子密度圖生成畫面，圓形構圖"},
+  {"id": "F06-52", "status": "kept", "note": "已確認是 Lorenz 吸子即時繪製的彩色軌跡畫面"},
+  {"id": "F06-53", "status": "kept", "note": "已確認是多組吸子並排的相空間軌跡展示畫面"}
+ ]
+}

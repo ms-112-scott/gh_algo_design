@@ -1,0 +1,21 @@
+{"unit": "IMG:A06a", "algo": "A06",
+ "results": [
+   {"id": "A06-01", "status": "new", "url": "https://raw.githubusercontent.com/mxgmn/WaveFunctionCollapse/master/images/wfc.png", "page": "https://github.com/mxgmn/WaveFunctionCollapse", "note": "WFC overlapping model：多組小範例圖對應各自生成的大張紋理總覽圖"},
+   {"id": "A06-02", "status": "new", "url": "https://paulmerrell.org/wp-content/uploads/2021/07/city_simple9f.jpg", "page": "https://paulmerrell.org/model-synthesis/", "note": "Model Synthesis 由範例模組推導規則後生成的大型城市量體渲染圖"},
+   {"id": "A06-03", "status": "new", "url": "https://images.squarespace-cdn.com/content/v1/5989aae359cc68f043b479aa/1512135630332-7ASUZR7RDXJ42GE28SJV/summer1.jpg", "page": "https://www.badnorth.com/", "note": "Bad North 官網截圖：3D WFC 拼出的小島地景，含崖壁、房屋與登陸船隻"},
+   {"id": "A06-04", "status": "new", "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1291340/ss_989ff1808d9416c7b22da3e16ee54874697b1cea.1920x1080.jpg", "page": "https://store.steampowered.com/app/1291340/Townscaper/", "note": "Townscaper Steam 截圖：不規則四邊形網格上用 WFC 生成的彩色小鎮"},
+   {"id": "A06-05", "status": "new", "url": "https://marian42.de/article/wfc/wfc_1280.jpg", "page": "https://marian42.de/article/wfc/", "note": "Infinite City 文章截圖：帶回溯的 3D WFC 即時生成的白色建築群走廊"},
+   {"id": "A06-06", "status": "new", "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/333640/ss_fc17afe945a7d81473c1b2d728aa513ff2011fc2.1920x1080.jpg", "page": "https://store.steampowered.com/app/333640/Caves_of_Qud/", "note": "Caves of Qud「baroque ruins」場景截圖：WFC 補上的遺跡建築平面細節"},
+   {"id": "A06-07", "status": "new", "url": "https://www.monoceros.tools/images/hero/h06.jpg", "page": "https://www.monoceros.tools/", "note": "Monoceros 官網首圖：用波函數塌縮組裝的模組化聚落俯視渲染"},
+   {"id": "A06-09", "status": "none", "note": "academia.edu 論文頁回傳 403 無法讀取內文圖，WebSearch／Parallel Search 額度已用盡，查了 3 個管道都沒有可用的作品圖"},
+   {"id": "A06-11", "status": "none", "note": "GitHub repo（qin2500/HWFC_floor_plan_generation）README 與檔案樹裡都沒有任何截圖或 demo 圖，作者也沒有個人網站，查了 3 個管道都沒有作品圖"},
+   {"id": "A06-14", "status": "new", "url": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41598-025-20398-8/MediaObjects/41598_2025_20398_Fig9_HTML.png", "page": "https://www.nature.com/articles/s41598-025-20398-8", "note": "Nature 論文 Fig.9：掃描原木經 WFC 排列成椅具，並以 AR 疊圖輔助組裝"},
+   {"id": "A06-15", "status": "new", "url": "https://arxiv.org/html/2311.12272v1/GridOFiKarthResulta.PNG", "page": "https://arxiv.org/abs/2311.12272", "note": "arXiv 論文 Fig.6：WFC 生成材料晶粒方向圖樣的參數掃描網格"},
+   {"id": "A06-52", "status": "none", "note": "GitHub README 無圖，作者官網 kchapelier.com 已停用，互動 demo 頁是純 canvas 無法取得靜態圖，本機無瀏覽器擴充可截圖，查了 3 個管道都沒有作品圖"},
+   {"id": "A06-53", "status": "none", "note": "oskarstalberg.com 首頁與 Tumblr 都沒有 Wave demo 的靜態截圖，WebSearch 額度已用盡，查了 3 個管道都沒有作品圖"},
+   {"id": "A06-51", "status": "kept", "note": "已確認是 Coding Challenge 171 電路板 tile 組生成畫面，非影片縮圖"},
+   {"id": "A06-54", "status": "kept", "note": "已確認是 wfc_houdini 3D 管線 tile 生成的渲染畫面"},
+   {"id": "A06-55", "status": "kept", "note": "已確認是文章實際的終端機輸出畫面（L/C/S 地形字元），非介面截圖"},
+   {"id": "A06-56", "status": "kept", "note": "已確認是 Coding Challenge 186 overlapping model 生成的像素紋理畫面"},
+   {"id": "A06-57", "status": "kept", "note": "已確認是 Processing 重疊模型生成的黑白迷宮紋理畫面"}
+ ]}

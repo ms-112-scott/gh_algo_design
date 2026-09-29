@@ -1,0 +1,33 @@
+{
+  "unit": "IMG:B06",
+  "algo": "B06",
+  "results": [
+    {
+      "id": "B06-01",
+      "status": "new",
+      "url": "https://figures.academia-assets.com/55469313/figure_001.jpg?response-content-disposition=attachment%3B+filename%3Dfigure-1-dimensional-stochastic-aggregation-of-basic-modules",
+      "page": "https://www.academia.edu/35602092/Designing_with_Digital_Materials_A_Computational_Framework_for_Discrete_Assembly_Design",
+      "note": "在 Andrea Rossi 論文作者頁上找到同一開發者較早論文（Wasp 前身，CAADRIA 2017）裡的圖 1：5 種基本零件以隨機規則聚合成的三維結構生成畫面"
+    },
+    {
+      "id": "B06-02",
+      "status": "new",
+      "note": "沿用前次已登記的圖片：塔林建築雙年展展館實景"
+    },
+    {
+      "id": "B06-05",
+      "status": "none",
+      "note": "再次查證：論文出處 academia.edu 頁面仍回傳 403，頁面本身也未附圖片頁連結；改查 TU Darmstadt tuprints（被 Anubis 防護擋下）、CumInCAD（搜尋機制無法比對到此篇 IASS 2017 論文）、Semantic Scholar API（429 頻率限制）皆無法取得，找不到可用的作品圖"
+    },
+    {
+      "id": "B06-06",
+      "status": "none",
+      "note": "再次查證：論文出處 academia.edu 頁面仍回傳 403，且未附任何圖片頁連結；同性質的姊妹論文（Geometry as Assembly）雖有機械手臂圖，但作品不同不可混用；CumInCAD、tuprints、Semantic Scholar 皆連不到或搜尋不到，找不到本篇的作品圖"
+    },
+    {
+      "id": "B06-07",
+      "status": "none",
+      "note": "再次查證：TU Darmstadt DDU 新聞頁確認有機械手臂組裝的圖片輪播，但輪播圖由 JavaScript 動態載入，WebFetch 抓不到實際網址；CumInCAD 搜尋不到 CAADRIA 2020 這篇論文的頁面，找不到可用的作品圖"
+    }
+  ]
+}

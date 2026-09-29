@@ -1,0 +1,20 @@
+{"unit": "IMG:B01", "algo": "B01",
+ "results": [
+   {"id": "B01-01", "status": "new", "url": "https://raw.githubusercontent.com/inconvergent/differential-line/master/img/img.jpg", "page": "https://github.com/inconvergent/differential-line", "note": "差異生長線段演算法執行結果，密集蜿蜒曲線填滿圓形範圍。"},
+   {"id": "B01-02", "status": "none", "note": "頁面 https://inconvergent.net/generative/differential-mesh-3d/ 對 WebFetch 回傳 403，多次嘗試（原始網址、去斜線、Wayback、GitHub 搜尋、Parallel Search 皆失敗或被限流）都找不到可用圖片。"},
+   {"id": "B01-03", "status": "new", "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2015/06/floraformJewelrySilver4.jpg", "page": "https://n-e-r-v-o-u-s.com/blog/?p=6721", "note": "Floraform 演算法生成的銀飾戒指與項墜，表面呈現差異生長的皺褶花瓣造型。"},
+   {"id": "B01-06", "status": "none", "note": "論文 PDF（dgp.toronto.edu/~karan/pdf/mazes.pdf）超過 WebFetch 10MB 限制無法讀取；Semantic Scholar 搜尋頁為空、ACM DL 回傳 403、Parallel Search 被限流，查了多個來源都沒有可用圖片。"},
+   {"id": "B01-07", "status": "new", "url": "（來自論文 PDF 內嵌圖片，已裁切登記，無外部直連網址）", "page": "https://papers.cumincad.org/data/works/att/acadia19_100.pdf", "note": "Deep Facade 立面完工後實景，差異生長演算法產生的鋁合金構件網絡，可見人手伸入構件間隙示意尺度。"},
+   {"id": "B01-08", "status": "new", "url": "https://media.springernature.com/lw685/springer-static/image/art%3A10.1007%2Fs41693-025-00150-4/MediaObjects/41693_2025_150_Fig12_HTML.jpg", "page": "https://link.springer.com/article/10.1007/s41693-025-00150-4", "note": "積層製造珊瑚仿生模組（CPCM）裝設於木構涼亭的最終成果，近拍可見差異生長演算法產生的粉色珊瑚狀紋理。"},
+   {"id": "B01-09", "status": "new", "url": "https://andylomas.com/images/cellularForm18_0011_0023.jpg", "page": "https://andylomas.com/cellularForm18_0011_0023.html", "note": "Cellular Forms 生長模擬所產生的球狀多細胞聚合體，表面滿布細胞分裂形成的皺褶。"},
+   {"id": "B01-10", "status": "none", "note": "案例出處僅為 YouTube 影片，頁面 meta 資訊抓不到（YouTube 為 JS 動態頁面），且依規則不可用影片縮圖，找不到其他可用的作品成果圖。"},
+   {"id": "B01-12", "status": "new", "url": "（來自論文 PDF 內嵌圖片，已裁切登記，無外部直連網址）", "page": "https://em-yu.github.io/media/papers/interactive-diff-growth.pdf", "note": "互動式差異生長模擬產生的皺褶曲面成果，紅色渲染呈現花瓣狀波浪邊緣。"},
+   {"id": "B01-51", "status": "kept", "note": "已確認是 Anders Hoff Differential Line 作品本身的演算法生成畫面（黑色線條放射狀填滿圓形）。"},
+   {"id": "B01-52", "status": "kept", "note": "已確認是 GitHub README 展示的多個差異生長實驗結果縮圖拼貼，非影片縮圖。"},
+   {"id": "B01-53", "status": "kept", "note": "已確認是 Floraform 3D 列印雕塑作品實照，皺褶造型網狀結構。"},
+   {"id": "B01-54", "status": "kept", "note": "已確認是 Processing 差異生長線稿實際輸出畫面（黑白蜿蜒曲線）。"},
+   {"id": "B01-55", "status": "kept", "note": "已確認是 Entagma Houdini 差異生長線條渲染的銅色雕塑成果畫面。"},
+   {"id": "B01-56", "status": "kept", "note": "已確認是 Mikola Lysenko 差異生長網格渲染成果（彩色球狀皺褶表面）。"},
+   {"id": "B01-57", "status": "kept", "note": "已確認是即時 WebGL 差異生長著色器的迷宮紋理渲染成果。"},
+   {"id": "B01-58", "status": "kept", "note": "已確認是 raymarching 差異生長成果畫面，左上角參數面板為作品本身的除錯介面，非無關截圖。"}
+ ]}

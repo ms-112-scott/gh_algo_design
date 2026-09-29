@@ -1,0 +1,24 @@
+{
+  "unit": "IMG:A04",
+  "algo": "A04",
+  "results": [
+    {"id": "A04-01", "status": "new", "url": "https://michael-hansmeyer.com/subdivided-columns", "page": "https://michael-hansmeyer.com/subdivided-columns", "note": "Subdivided Columns 演算法生成的柱體切片疊合圖，呈現反覆細分後的複雜紋理"},
+    {"id": "A04-02", "status": "new", "url": "https://michael-hansmeyer.com/platonic-solids", "page": "https://michael-hansmeyer.com/platonic-solids", "note": "由六面體反覆細分演算法生成的星狀複雜形體算圖"},
+    {"id": "A04-03", "status": "new", "url": "https://michael-hansmeyer.com/digital-grotesque-I", "page": "https://michael-hansmeyer.com/digital-grotesque-I", "note": "Digital Grotesque I 洞窟內部，反覆分割演算法生成的 3D 列印砂岩紋理特寫"},
+    {"id": "A04-04", "status": "new", "url": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/", "page": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/", "note": "Digital Grotesque II 3D 列印洞窟展場實景，可見演算法生成的多孔複雜紋理"},
+    {"id": "A04-05", "status": "new", "url": "https://github.com/PzanettiD/Mondrian-Generative-Art", "page": "https://github.com/PzanettiD/Mondrian-Generative-Art", "note": "p5.js／Processing 產生的四象限隨機配色構圖，README 展示畫面（已裁去瀏覽器介面）"},
+    {"id": "A04-06", "status": "new", "url": "http://www.cs.umd.edu/hcil/treemap-history/tm2.gif", "page": "http://www.cs.umd.edu/hcil/treemap-history/", "note": "NBA 球隊／球員資料以 squarified treemap 排列，區塊接近正方形，即本演算法的代表輸出（已裁去應用程式選單與側欄）"},
+    {"id": "A04-07", "status": "none", "note": "查了 ResearchGate（被擋 403）、Semantic Scholar、作者網站，都沒有找到這篇論文的成果圖"},
+    {"id": "A04-08", "status": "new", "url": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/", "page": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/", "note": "CGA shape 文法以 split 規則產生的高樓量體與立面細節算圖"},
+    {"id": "A04-09", "status": "none", "note": "ACM DL 論文頁回傳 403，作者於 ETH 的個人網站（多次轉址）也沒有這篇論文的成果圖，找不到可用圖片"},
+    {"id": "A04-10", "status": "new", "url": "https://twak.org/project/parcels/", "page": "https://twak.org/project/parcels/", "note": "實際街廓地籍（左）與演算法遞迴分割結果（右）對照圖"},
+    {"id": "A04-11", "status": "new", "url": "https://doc.arcgis.com/en/cityengine/latest/help/GUID-8D38D3E9-7E12-4C30-9D4C-AF5CD6B719DA-web.png", "page": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm", "note": "CityEngine 遞迴 OBB 分割演算法逐步套用在不規則街廓上的示意圖，展示以最小外接矩形長軸切開多邊形的過程"},
+    {"id": "A04-12", "status": "new", "url": "https://github.com/fogleman/Quads", "page": "https://github.com/fogleman/Quads", "note": "四分樹反覆分割產生的經典 Lenna 測試影像色塊化結果，可見分割線與誤差大處切得更細"},
+    {"id": "A04-13", "status": "none", "note": "Weaverbird 官網只有小型操作圖示（皆小於 30×30）與產品 Logo，Grasshopper 論壇與搜尋引擎也找不到達最小尺寸需求的細分效果範例圖"},
+    {"id": "A04-54", "status": "none", "note": "SideFX 官方文件頁沒有附圖，GitHub 範例庫雖有 lot_subdivision 資料夾但只有壓縮檔、找不到對應的 ArtStation 展示圖網址"},
+    {"id": "A04-51", "status": "kept", "note": "已確認是 Coding Challenge #77 的範例執行畫面：遞迴呼叫產生的圓形碎形圖案，非影片標題卡"},
+    {"id": "A04-52", "status": "kept", "note": "圖片是 Quadtree 範例的實際執行畫面（點集分布與四分樹範圍查詢的綠框），非影片縮圖，可以保留"},
+    {"id": "A04-53", "status": "kept", "note": "已確認是 Tyler Hobbs 文章中三角形遞迴分割的插圖，畫面即為演算法輸出本身"},
+    {"id": "A04-55", "status": "kept", "note": "已確認是部落格文章展示的 Mondrian 式矩形遞迴分割生成畫面"}
+  ]
+}

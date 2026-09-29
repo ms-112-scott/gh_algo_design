@@ -1,0 +1,21 @@
+{"unit": "IMG:C02a", "algo": "C02",
+ "results": [
+   {"id": "C02-01", "status": "new", "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s/", "page": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s/", "note": "劍橋北站外牆穿孔鋁板立面實景拼貼，可見 Rule 30 圖樣"},
+   {"id": "C02-02", "status": "new", "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf", "page": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf", "note": "Metallic Lace 標題頁：12 種由細胞自動機衍生的裝飾圖樣"},
+   {"id": "C02-03", "status": "new", "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf", "page": "https://generativeart.com/on/cic/papersGA2002/7.pdf", "note": "論文圖 11／12：細胞自動機世代疊層轉譯成的建築量體模型"},
+   {"id": "C02-04", "status": "none", "note": "ScienceDirect 論文頁與作者 TU Delft 頁面皆連不到（403／連不到），查了 3 次都沒有可用的成果圖"},
+   {"id": "C02-05", "status": "new", "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf", "page": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf", "note": "論文圖：CA 世代圖樣（左）轉譯成分層樓板與機能色塊的自動化圖解（右）"},
+   {"id": "C02-06", "status": "new", "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf", "page": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf", "note": "論文圖 1：以通用生命遊戲規則生成的初期細胞自動機造型探索，尚未加入建築規則"},
+   {"id": "C02-07", "status": "none", "note": "generativeart.com 論文頁一律回傳 403，搜尋引擎與網頁快取也連不到，查了 3 次都沒有可用的圖"},
+   {"id": "C02-08", "status": "none", "note": "Kickstarter 頁面回傳 403，找不到其他網站有圍巾實品照片，查了 3 次都沒有"},
+   {"id": "C02-09", "status": "none", "note": "1993 年期刊論文（SAGE）無開放圖片，作者頁與搜尋都連不到，查了 3 次都沒有"},
+   {"id": "C02-10", "status": "new", "url": "http://morphocode.com/wp-content/uploads/2010/02/DieHard-LifeCA-3d1.JPG", "page": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/", "note": "Rabbit 外掛以 Die Hard 初始盤面跑出的 3D 生命遊戲世代堆疊，格子隨世代往上生長"},
+   {"id": "C02-11", "status": "new", "url": "https://github.com/user-attachments/assets/13fd4fc1-75ee-4825-b09d-f9513d33feeb", "page": "https://github.com/vnglst/stacked-game-of-life", "note": "生命遊戲世代往下沉的 3D 堆疊視覺化，愈舊的世代顏色愈淡"},
+   {"id": "C02-12", "status": "new", "url": "https://chakazul.github.io/rainbow.png", "page": "https://chakazul.github.io/lenia.html", "note": "Lenia 連續狀態細胞自動機演化出的多通道類生物圖樣，色彩對應不同通道的濃度場"},
+   {"id": "C02-14", "status": "none", "note": "書中無公開全文圖片，作者已過世且找不到授權清楚的模型照片，查了 3 次都沒有"},
+   {"id": "C02-51", "status": "kept", "note": "已確認是 Coding Train 挑戰頁的生命遊戲執行畫面（紫底綠方格），非影片標題卡"},
+   {"id": "C02-52", "status": "kept", "note": "已確認是 Processing 官方範例的生命遊戲執行畫面（黑底綠格網），非影片縮圖"},
+   {"id": "C02-53", "status": "kept", "note": "已確認是書中圖 7.30：glider 與 lightweight spaceship 的手繪格線圖，非影片縮圖"},
+   {"id": "C02-54", "status": "kept", "note": "已確認是工作坊頁面的細胞自動機生成畫面（黑紫橘漸層紋理），非講者人像或影片縮圖"},
+   {"id": "C02-55", "status": "kept", "note": "已確認是 Coding Train 挑戰頁的一維細胞自動機世代疊層畫面（彩色三角圖樣），非影片標題卡"}
+ ]}

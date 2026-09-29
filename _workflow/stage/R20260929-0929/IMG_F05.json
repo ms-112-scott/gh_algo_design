@@ -1,0 +1,13 @@
+{"unit": "IMG:F05", "algo": "F05",
+ "results": [
+   {"id": "F05-01", "status": "none", "note": "SpiderWeb（grasshopperdocs.com）頁面只有標誌與圖示，查了 Grasshopper 論壇、Bing／DuckDuckGo 都沒找到作者或外掛本身的執行畫面"},
+   {"id": "F05-02", "status": "none", "note": "ShortestWalk 出處頁 food4rhino 一直回傳 403 無法讀取，其他管道也沒查到元件執行畫面"},
+   {"id": "F05-03", "status": "new", "url": "https://provingground.io/wp-content/uploads/2025/05/LunchBox_ShortestWalk_Reduced.gif", "page": "https://provingground.io/2025/05/06/weekly-workflow-map-the-shortest-walk-between-points-with-lunchbox/", "note": "Rhino／Grasshopper 畫面：LunchBox 產生的三角網格曲面上，ShortestWalk 元件算出兩點間最短路徑（洋紅色線）"},
+   {"id": "F05-04", "status": "none", "note": "cityform.mit.edu 專案頁沒有圖片，原始碼在 Bitbucket（JS 頁面讀不到內容），Google 論壇也沒找到分析地圖截圖"},
+   {"id": "F05-05", "status": "none", "note": "Urbano 論文頁在 ResearchGate 回傳 403，food4rhino 頁也回傳 403，查不到成果截圖"},
+   {"id": "F05-07", "status": "none", "note": "cityseer 官網與 GitHub（benchmark-urbanism/cityseer-api）都只有標誌，範例頁面沒有嵌入實際分析地圖圖片"},
+   {"id": "F05-09", "status": "new", "url": "https://media.thunderheadeng.net/cdn-cgi/image/scq=60,format=auto/www/images/path-scrn-refuge-floor-density-cropped.png", "page": "https://www.thunderheadeng.com/pathfinder", "note": "Pathfinder 模擬畫面：多層樓梯與平台上人群移動的即時密度熱區圖（藍到紅代表密度由低到高）"},
+   {"id": "F05-10", "status": "none", "note": "GitHub josephrewald/pipe-route-solver 檔案結構檢查過，只有程式碼與文件，沒有任何圖片"},
+   {"id": "F05-11", "status": "none", "note": "Grasshopper 論壇討論串裡唯一的附圖只是提問者貼的直線連接示意圖（非最短路或物理模擬結果），不符合作品本身畫面的要求，查不到更適合的圖"},
+   {"id": "F05-51", "status": "kept", "note": "已確認是 The Coding Train A* 挑戰的 p5.js 執行畫面（障礙格、展開／待評估格與回溯路徑），符合作品本身演算法生成畫面"}
+ ]}

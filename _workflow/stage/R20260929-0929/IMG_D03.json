@@ -1,0 +1,18 @@
+{"unit": "IMG:D03", "algo": "D03",
+ "results": [
+   {"id": "D03-01", "status": "none", "note": "查了 3 個來源（Wikipedia Social force model／Crowd simulation／Lane formation）都沒有這篇 1995 年論文本身的圖，只有無關的一般群眾模擬示意圖，不收。"},
+   {"id": "D03-02", "status": "none", "note": "查了 Wikipedia Crowd crush 等頁面，沒有找到這篇 2000 年恐慌模擬論文本身的圖或示意圖。"},
+   {"id": "D03-03", "status": "none", "note": "查了 Wikipedia Desire path 等頁面，只有真實草地捷徑照片，不是這篇步道演化論文本身的圖，不收。"},
+   {"id": "D03-04", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Space_syntax_-_Global_Integration_-_Brasilia.svg/960px-Space_syntax_-_Global_Integration_-_Brasilia.svg.png", "page": "https://commons.wikimedia.org/wiki/File:Space_syntax_-_Global_Integration_-_Brasilia.svg", "note": "巴西利亞街道網絡的空間整合度軸線圖，以顏色深淺表示整合度高低。"},
+   {"id": "D03-05", "status": "none", "note": "查了 Wikipedia Trafalgar Square 與其 Commons 分類，沒有找到北側步行化改造（World Squares for All）前後對照的圖，不收。"},
+   {"id": "D03-06", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Jamaraat_Bridge_2.jpg", "page": "https://en.wikipedia.org/wiki/Jamaraat_Bridge", "note": "麥加賈馬拉特橋改建後的空拍全景，可見多層動線與大量朝聖人潮。"},
+   {"id": "D03-07", "status": "new", "url": "https://www.oasys-software.com/wp-content/uploads/2026/04/Picture10.png", "page": "https://www.oasys-software.com/products/massmotion/", "note": "MassMotion 軟體以彩色人形代理人視覺化車站內人流的 3D 模擬畫面。"},
+   {"id": "D03-09", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/Station_Arnhem_centraal_inside.JPG", "page": "https://en.wikipedia.org/wiki/Arnhem_Centraal_railway_station", "note": "Arnhem Centraal 車站內部連續扭轉大廳，動線分析直接塑造出的無明確樓層分界空間。"},
+   {"id": "D03-10", "status": "none", "note": "查了 Grasshopper3d 與 Food4Rhino（403 無法讀取）等來源，沒有找到 Quelea 外掛本身可用的示範畫面，不收。"},
+   {"id": "D03-11", "status": "none", "note": "查了幾個可能網址都是 404，找不到 DecodingSpaces Toolbox 官方頁面上的分析畫面，不收。"},
+   {"id": "D03-12", "status": "none", "note": "查了 PNAS 論文頁（403）與相關頁面，沒有找到這篇 2011 年視覺啟發式模型論文本身的圖，不收。"},
+   {"id": "D03-13", "status": "none", "note": "查了 GitHub README 與可能的官網（域名不存在），PEDSIM 沒有公開的示範畫面可用，不收。"},
+   {"id": "D03-52", "status": "kept", "note": "已確認是 The Coding Train 路徑跟隨範例的實際執行畫面（三角形代理人沿路徑帶移動），非影片縮圖，合格。"},
+   {"id": "D03-53", "status": "replaced", "url": "https://thecodingtrain.com/static/f44eff6ff3c2df912309ec36ef953c1d/2aa1d/seek.jpg", "page": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/2-seeking-a-target", "note": "原圖是無關的魚群照片，換成 Nature of Code／The Coding Train 網站上 Seek 轉向行為範例的實際執行畫面。"},
+   {"id": "D03-55", "status": "none", "note": "OpenProcessing 作品頁（sketch/139678）對 WebFetch 與瀏覽器擴充功能都回應 403／無法連線，無法親眼確認畫面，不收，交給卡片圖畫示意圖。"}
+ ]}

@@ -1,0 +1,19 @@
+{"unit": "IMG:C05", "algo": "C05",
+ "results": [
+   {"id": "C05-01", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Marchingcubes-head.png", "page": "https://en.wikipedia.org/wiki/Marching_cubes", "note": "以 150 張 MRI 切片用 marching cubes 重建出的人頭三角網格模型"},
+   {"id": "C05-02", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Metaballs_Visual.jpg", "page": "https://en.wikipedia.org/wiki/Metaballs", "note": "多顆 metaball 場相加後的等值面畫面，光點周圍場強度以等高線暈染呈現"},
+   {"id": "C05-03", "status": "new", "url": "https://glform.com/wp-content/uploads/2012/02/kpcny111-516x516.jpg", "page": "https://glform.com", "note": "Korean Presbyterian Church of New York 建成作品室內木構屋頂實景"},
+   {"id": "C05-04", "status": "new", "url": "https://datalab.ucdavis.edu/wp-content/uploads/2024/05/AR-Sandbox-DataLab-1500x1015-1-693x1024.jpg", "page": "https://datalab.ucdavis.edu/arsandbox/", "note": "AR Sandbox 實體沙盤，投影機把即時等高線與色帶投在沙面地形上"},
+   {"id": "C05-05", "status": "new", "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Topographic_map_example.png", "page": "https://en.wikipedia.org/wiki/Contour_line", "note": "美國佛蒙特州 Stowe 地形圖，等高線描繪出山丘與河谷"},
+   {"id": "C05-06", "status": "new", "url": "https://raw.githubusercontent.com/d3/d3-contour/main/img/diamonds.png", "page": "https://github.com/d3/d3-contour", "note": "d3-contour 對散點密度資料套用 Marching Squares 畫出的等值密度圖"},
+   {"id": "C05-07", "status": "new", "url": "https://thecodingtrain.com/static/61455a77555b94913d96d7659907fa7e/36579/metaballs.png", "page": "https://thecodingtrain.com/challenges/c5-marching-squares", "note": "教學頁範例執行畫面：Marching Squares 描出 metaballs 純量場的等值線輪廓"},
+   {"id": "C05-08", "status": "none", "note": "查了 GitHub README、food4rhino（403）、Grasshopper3D／discourse.mcneel.com 論壇都沒有作品展示圖"},
+   {"id": "C05-09", "status": "new", "url": "http://storage.ning.com/topology/rest/1.0/file/get/2653178248?profile=original", "page": "https://www.grasshopper3d.com/group/millipede", "note": "Millipede 產生的自由曲面格網結構分析與變形示意渲染"},
+   {"id": "C05-10", "status": "new", "url": "https://dbt.arch.ethz.ch/wp-content/uploads/2018/05/AXOLOTL_LatticeTruss-1280x720.png", "page": "https://dbt.arch.ethz.ch/project/axolotl/", "note": "Axolotl 以 SDF 生成的晶格桁架結構渲染圖"},
+   {"id": "C05-11", "status": "new", "url": "https://iquilezles.org/articles/distfunctions/gfx47.png", "page": "https://iquilezles.org/articles/distfunctions/", "note": "SDF 基本形之間布林運算（聯集／差集／交集）結果渲染"},
+   {"id": "C05-12", "status": "none", "note": "GitHub repo 與 README 內文字提到的圖片網址（i.boring.host）經查為無法解析的假網址，其餘資料夾都沒有截圖，查不到作品畫面"},
+   {"id": "C05-13", "status": "none", "note": "monolith.zone 團隊頁、gallery、examples、press 頁面圖片皆由 Squarespace JS 延遲載入，抓不到實際渲染圖網址"},
+   {"id": "C05-54", "status": "none", "note": "ofxMetaballs GitHub repo 內（含 example 資料夾）都沒有任何圖片檔，查不到示範畫面"},
+   {"id": "C05-51", "status": "kept", "note": "已確認是 Coding Challenge #28 的純量場上色畫面，非影片縮圖"},
+   {"id": "C05-52", "status": "kept", "note": "已確認是文章內兩顆 metaball 逐步融合的步驟示意圖，非影片縮圖"}
+ ]}

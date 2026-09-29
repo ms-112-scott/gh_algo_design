@@ -1,0 +1,19 @@
+{"unit": "IMG:E02", "algo": "E02",
+ "results": [
+   {"id": "E02-01", "status": "none", "note": "Bridson SIGGRAPH07 PDF 內圖為內嵌點陣、無法取得外部網址，找不到可用的頁面圖"},
+   {"id": "E02-02", "status": "none", "note": "Secord 的論文頁為 ACM 付費牆，查了作者頁與維基百科都沒有對應的作品畫面"},
+   {"id": "E02-03", "status": "new", "url": "_shots/cand/E02-03.jpg", "page": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/", "note": "StippleGen 輸出：加權 Voronoi 點描的取樣點串成單一 TSP 連續路徑，呈現葉片狀輪廓"},
+   {"id": "E02-04", "status": "new", "url": "_shots/cand/E02-04.jpg", "page": "http://www.cemyuksel.com/research/sampleelimination/", "note": "論文示範圖：以取樣消去法在兔子模型上均勻放置頭髮"},
+   {"id": "E02-05", "status": "new", "url": "_shots/cand/E02-05.jpg", "page": "https://bost.ocks.org/mike/algorithms/", "note": "《星夜》以 Poisson-disc 取樣重繪，保留細節、呈現馬賽克質感的比較圖"},
+   {"id": "E02-06", "status": "none", "note": "Jason Davies 的互動視覺化為即時畫布繪製，頁面上查不到靜態畫面的圖片網址"},
+   {"id": "E02-07", "status": "new", "url": "_shots/cand/E02-07.jpg", "page": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling", "note": "Coding Challenge #33 的 p5.js 執行結果：多彩 Poisson 取樣點"},
+   {"id": "E02-08", "status": "new", "url": "_shots/cand/E02-08.jpg", "page": "https://www.redblobgames.com/maps/mapgen4/", "note": "mapgen4 產生的手繪風程序化地形地圖成果畫面"},
+   {"id": "E02-09", "status": "none", "note": "Red Blob Games 的比較頁為即時畫布繪製，查了官網與作者部落格都沒有對應的靜態比較圖"},
+   {"id": "E02-10", "status": "none", "note": "Blender 說明文件頁面查不到可擷取的圖片網址（頁面內容過長被截斷，取不到圖）"},
+   {"id": "E02-12", "status": "new", "url": "_shots/cand/E02-12.jpg", "page": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463", "note": "Grasshopper 定義：以 Populate Geometry 產生放射狀纖維線條組成文字（討論串示範圖）"},
+   {"id": "E02-51", "status": "kept", "note": "已確認是 Poisson 點描成的肖像，屬於作品本身生成畫面"},
+   {"id": "E02-54", "status": "kept", "note": "已確認是 Poisson 取樣點分布的示範畫面"},
+   {"id": "E02-55", "status": "removed", "note": "原圖為 YouTube 影片標題卡（僅有文字與示意圖案），查了 GitHub 原始碼庫與部落格都沒有作品實際畫面，移除交由卡片圖畫示意"},
+   {"id": "E02-56", "status": "kept", "note": "已確認是位移圖驅動的 Poisson 點 Voronoi 放射花紋，屬於作品本身生成畫面"},
+   {"id": "E02-57", "status": "kept", "note": "已確認是《星夜》藍噪點三角化重繪的低多邊形畫面"}
+ ]}

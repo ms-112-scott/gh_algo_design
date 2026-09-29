@@ -1,0 +1,14 @@
+{"unit": "IMG:G01", "algo": "G01",
+ "results": [
+   {"id": "G01-01", "status": "none", "note": "econpapers 摘要頁只有網站標誌圖，連到 SAGE 全文頁；UCL 等來源皆回傳 403，查了 3 個來源都沒有作品圖"},
+   {"id": "G01-02", "status": "none", "note": "UCL Discovery 頁面（含 eprint 網址）與 ResearchGate 皆回傳 403 無法讀取，查了 3 個來源都沒有作品圖"},
+   {"id": "G01-04", "status": "none", "note": "ScienceDirect 論文頁回傳 403，查不到公開的 graphical abstract 或圖表圖片"},
+   {"id": "G01-06", "status": "none", "note": "SAGE journals 論文頁回傳 403，查不到公開圖片"},
+   {"id": "G01-07", "status": "none", "note": "SYNTACTIC 專案頁（Google Sites）確認有 Isovist Bubble 展示圖，但頁面轉譯出的圖片網址網域無法連線（直接測試回傳 400），無法取得真實可用網址，不可用猜測網址替代"},
+   {"id": "G01-53", "status": "new", "url": "https://thecodingtrain.com/static/8baeaa3c3084445402ff4b137a095de1/3c5dc/raycasting_145.png", "page": "https://thecodingtrain.com/challenges/145-ray-casting-2d", "note": "2D 射線投射 p5.js 範例執行畫面，牆面線段與光點向外發散的射線"},
+   {"id": "G01-52", "status": "removed", "note": "原圖是 Sight & Light 頁面的角色插畫（og 用的 foreground/background 合成圖），只有遊戲角色本身，不是可視域／光影演算法的實際畫面；頁面示範全靠即時 canvas 互動，找不到靜態的作品畫面，故移除"},
+   {"id": "G01-54", "status": "kept", "note": "Houdini 視窗截圖，顯示以擠出量體呈現 isovist 相關量測的 3D 場，符合作品本身生成畫面"},
+   {"id": "G01-56", "status": "kept", "note": "Isovist Sandbox 網站截圖，清楚顯示障礙物與觀察點的可視域三角扇形，工具本身即是介面，符合規則"},
+   {"id": "G01-57", "status": "kept", "note": "2D 射線投射（左）與偽 3D 走廊渲染（右）對照畫面，符合案例描述"},
+   {"id": "G01-58", "status": "kept", "note": "終端機 ASCII 偽 3D 迷宮走廊渲染，附小地圖，符合案例描述"}
+ ]}

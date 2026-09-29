@@ -1,0 +1,10 @@
+{"unit": "IMG:F08", "algo": "F08",
+ "results": [
+   {"id": "F08-02", "status": "none", "note": "論文原頁 academia.edu 需登入無法讀取，Food4Rhino 外掛頁與 Grasshopper3D 討論群組都拒絕存取或只有頭像／教學影片縮圖，查了 3 個來源都沒有作品本身的網格分割／展開畫面"},
+   {"id": "F08-03", "status": "none", "note": "期刊原頁（Taylor & Francis）與 DOI 轉址都拒絕存取，ResearchGate 頁面也拒絕存取，查了 3 個來源都沒有可用的圖或圖形摘要"},
+   {"id": "F08-05", "status": "new", "url": "https://arxiv.org/html/2509.21931v1/figures/fig_mst_05.png", "page": "https://arxiv.org/html/2509.21931v1", "note": "論文圖 3：以最小生成樹為骨幹的都市街道網路模型，格狀街廓群以直線生成樹邊相連"},
+   {"id": "F08-51", "status": "none", "note": "Jamis Buck 原文與同系列的演算法總覽文章都只有互動式 JavaScript 展示（canvas 動畫），沒有靜態的迷宮成果圖片，查了 3 個來源都沒有可用畫面"},
+   {"id": "F08-52", "status": "none", "note": "Mike Bostock 原頁的迷宮／生成樹段落全部用 D3 動畫與 bl.ocks.org 互動連結呈現，頁面原始碼裡沒有靜態圖片檔案，查了幾個來源都沒有可用畫面"},
+   {"id": "F08-53", "status": "none", "note": "這支影片不在 The Coding Train 官網的範例索引裡，YouTube 頁面本身抓不到說明文字與連結，也找不到對應的 GitHub 或 OpenProcessing 範例執行畫面，查了 3 個來源都沒有找到"},
+   {"id": "F08-54", "status": "kept", "note": "已確認是 Sergen Eren 文章裡 wire_loop 動畫的一格（展開生成樹），是作品本身的生成畫面，不是介面截圖或影片縮圖"}
+ ]}

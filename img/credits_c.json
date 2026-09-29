@@ -15,14 +15,6 @@
     "page": "https://github.com/jasonwebb/reaction-diffusion-playground",
     "note": "README 中的 12 張模擬截圖拼貼"
   },
-  "C01-53": {
-    "source": "YouTube",
-    "author": "Lake Heckaman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
-    "note": "教學影片縮圖：TouchDesigner 中的 Gray-Scott 斑塊"
-  },
   "C02-51": {
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
@@ -87,22 +79,6 @@
     "page": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
     "note": "文章範例圖：彩色 Perlin noise 流場筆觸"
   },
-  "C03-54": {
-    "source": "YouTube",
-    "author": "exsstas",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=Dke6OCePR6E",
-    "note": "教學影片縮圖：TouchDesigner 2D 向量場粒子"
-  },
-  "C03-55": {
-    "source": "YouTube",
-    "author": "Dean Cheesman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
-    "note": "教學影片縮圖：GLSL 粒子流場"
-  },
   "C04-51": {
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
@@ -110,14 +86,6 @@
     "license_url": "",
     "page": "https://thecodingtrain.com/challenges/11-3d-terrain-generation-with-perlin-noise",
     "note": "挑戰頁預覽圖：Perlin noise 三角網格地形"
-  },
-  "C04-52": {
-    "source": "YouTube／The Coding Train",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://thecodingtrain.com/challenges/136-polar-noise-loops",
-    "note": "影片縮圖：以極座標 noise 繪製的封閉形狀"
   },
   "C04-53": {
     "source": "bleuje.com",

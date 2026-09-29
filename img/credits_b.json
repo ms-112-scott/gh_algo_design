@@ -71,14 +71,6 @@
     "page": "https://github.com/fogleman/dlaf",
     "note": "一千萬粒子 3D DLA 光線追蹤算圖"
   },
-  "B02-55": {
-    "source": "Vimeo（Entagma）",
-    "author": "Entagma",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://vimeo.com/218372128",
-    "note": "Houdini VEX DLA 教學影片縮圖"
-  },
   "B03-51": {
     "source": "The Coding Train",
     "author": "Daniel Shiffman",
@@ -111,22 +103,6 @@
     "page": "https://github.com/edap/ofxSpaceColonization",
     "note": "README 封面圖，openFrameworks 生成的 3D 樹"
   },
-  "B03-55": {
-    "source": "GitHub（mattatz/Dendrite）README",
-    "author": "mattatz",
-    "license": "MIT（圖在 repo 中）",
-    "license_url": "https://github.com/mattatz/Dendrite/blob/master/LICENSE",
-    "page": "https://github.com/mattatz/Dendrite",
-    "note": "DendriteSphere 動畫的第一格，球體上的分枝"
-  },
-  "B04-51": {
-    "source": "The Coding Train",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://thecodingtrain.com/challenges/30-phyllotaxis",
-    "note": "Coding Challenge #30 影片縮圖，葉序螺旋"
-  },
   "B04-52": {
     "source": "GitHub（edap/ofxPhyllotaxis）README",
     "author": "Davide Prati",
@@ -134,14 +110,6 @@
     "license_url": "https://github.com/edap/ofxPhyllotaxis",
     "page": "https://github.com/edap/ofxPhyllotaxis",
     "note": "README 中 apple 方法的 3D 葉序排列圖"
-  },
-  "B04-53": {
-    "source": "YouTube（Entagma）",
-    "author": "Entagma",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=yGwhnt7mZ50",
-    "note": "Houdini 旋轉曲面葉序教學影片縮圖"
   },
   "B04-54": {
     "source": "GitHub（avvie/ECS-Phyllotaxis）README",

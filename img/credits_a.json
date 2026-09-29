@@ -1,12 +1,4 @@
 {
- "A01-51": {
-  "source": "The Coding Train",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
-  "note": "Coding Challenge #16 影片縮圖"
- },
  "A01-52": {
   "source": "GitHub edap/ofxLSystem",
   "author": "Davide Prati",
@@ -31,14 +23,6 @@
   "page": "https://natureofcode.com/fractals/",
   "note": "第 8 章 Figure 8.17：依產生規則逐代長出的分形樹"
  },
- "A02-51": {
-  "source": "The Coding Train",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
-  "note": "Coding Challenge #129 影片縮圖"
- },
  "A02-52": {
   "source": "The Nature of Code",
   "author": "Daniel Shiffman",
@@ -47,30 +31,6 @@
   "page": "https://natureofcode.com/fractals/#the-koch-curve",
   "note": "第 8 章 Figure 8.12：Koch 曲線的逐代演變"
  },
- "A02-53": {
-  "source": "YouTube（3Blue1Brown）",
-  "author": "Grant Sanderson",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://www.youtube.com/watch?v=gB9n2gHsHN4",
-  "note": "影片「Fractals are typically not self-similar」縮圖"
- },
- "A03-51": {
-  "source": "The Coding Train",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
-  "note": "Coding in the Cabana 3 影片縮圖"
- },
- "A03-52": {
-  "source": "YouTube（3Blue1Brown）",
-  "author": "Grant Sanderson",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://www.youtube.com/watch?v=3s7h2MHQtxc",
-  "note": "影片「Hilbert's Curve: Is infinite math useful?」縮圖"
- },
  "A03-54": {
   "source": "corte.si",
   "author": "Aldo Cortesi",
@@ -78,14 +38,6 @@
   "license_url": "",
   "page": "https://corte.si/posts/code/hilbert/portrait/",
   "note": "文中「Hilbert on Hilbert」：3D Hilbert 走訪 RGB 色彩，鋪在 2D Hilbert 曲線上"
- },
- "A04-51": {
-  "source": "The Coding Train",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://thecodingtrain.com/challenges/77-recursion",
-  "note": "Coding Challenge #77 影片縮圖"
  },
  "A04-52": {
   "source": "The Coding Train",

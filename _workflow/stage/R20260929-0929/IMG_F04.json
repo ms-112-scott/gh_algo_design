@@ -1,0 +1,14 @@
+{"unit": "IMG:F04", "algo": "F04",
+ "results": [
+  {"id": "F04-01", "status": "new", "url": "https://www.research.autodesk.com/app/uploads/2023/03/project-discover-an-application.pdf_recXlggwMF7WwIj7i.pdf", "page": "https://www.research.autodesk.com/app/uploads/2023/03/project-discover-an-application.pdf_recXlggwMF7WwIj7i.pdf", "note": "取自 Project Discover 論文 Figure 1：MaRS 辦公室生成式設計流程圖，從鄰里種子、劃分區域、自動塞入空間到依團隊偏好指派顏色分區"},
+  {"id": "F04-02", "status": "none", "note": "Autodesk University 文章頁與 research.autodesk.com 出版品列表都拒絕存取或查無對應圖片，查了 3 次都沒找到作品圖"},
+  {"id": "F04-03", "status": "none", "note": "AA School 頁面持續 429 無法讀取，Wikipedia 上只有 John Frazer 人像照，查了 3 次都沒找到作品或模型的圖"},
+  {"id": "F04-04", "status": "none", "note": "grasshopperdocs 頁只有 YouTube 縮圖、CMU 講義頁無圖、ResearchGate 論文頁被拒絕存取，查了 3 次都沒找到合格的圖"},
+  {"id": "F04-05", "status": "new", "url": "http://storage.ning.com/topology/rest/1.0/file/get/2811285161?profile=RESIZE_1024x1024", "page": "https://www.grasshopper3d.com/group/octopus", "note": "Octopus 多目標演化最佳化的結果視覺化，三軸座標中散佈演化出的候選解與其對應的曲面造型"},
+  {"id": "F04-06", "status": "new", "url": "https://static.wixstatic.com/media/ac0b35_1a92ab2f8bbc43059c069ef3f6dbf915~mv2.jpg", "page": "https://www.wallacei.com/research", "note": "以規則式程序建模生成的都市量體配置研究，探討形態變化的多目標演化結果"},
+  {"id": "F04-08", "status": "new", "url": "https://www.albertopugnale.com/ap_files/2013/03/karamba-octopus.jpg", "page": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/", "note": "殼體造型的 Pareto 前緣示意圖，四個角落殼體對應前緣上不同取捨的最佳化結果"},
+  {"id": "F04-11", "status": "kept", "note": "已確認是 Evolved Virtual Creatures 的模擬畫面，兩隻積木生物在方塊前競爭"},
+  {"id": "F04-12", "status": "kept", "note": "已確認是 Genetic Images 展場現場照片，觀眾前的螢幕牆顯示演化中的抽象影像"},
+  {"id": "F04-51", "status": "kept", "note": "已確認是 Smart Rockets 範例的實際執行畫面"},
+  {"id": "F04-52", "status": "kept", "note": "已確認是 Electric Sheep 分形火焰的實際算繪畫面"}
+ ]}

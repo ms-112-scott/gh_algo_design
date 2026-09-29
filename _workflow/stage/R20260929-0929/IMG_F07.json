@@ -1,0 +1,14 @@
+{"unit": "IMG:F07", "algo": "F07",
+ "results": [
+  {"id": "F07-01", "status": "none", "note": "只有 CAADRIA 2020 論文 PDF（CumInCAD／OpenAlex），頁面與作者、機構網站都查不到可用的成果圖，改用示意圖"},
+  {"id": "F07-02", "status": "none", "note": "1993 年 Environment and Planning B 論文，SAGE 頁面查不到圖片（403）、也找不到公開全文或作者頁面的圖，改用示意圖"},
+  {"id": "F07-04", "status": "none", "note": "eifForm 系統無獨立成果頁，ACSA PDF 內圖為嵌入影像、作者 Kristina Shea 的機構頁（ETH pd|z）也找不到相關圖，改用示意圖"},
+  {"id": "F07-51", "status": "kept", "note": "已確認是文章 og:image：美國城市地圖上的退火巡迴路線與降溫曲線"},
+  {"id": "F07-52", "status": "kept", "note": "已確認是專案動畫最後一格：以退火路徑走完整張像素畫"},
+  {"id": "F07-53", "status": "kept", "note": "已確認是以模擬退火排出的節點連線圖"},
+  {"id": "F07-54", "status": "kept", "note": "已確認是 von Neumann 肖像的最終單線路徑畫面"},
+  {"id": "F07-55", "status": "kept", "note": "已確認是 README 首圖：以三角形重建的人像照片"},
+  {"id": "F07-56", "status": "kept", "note": "已確認是 Data Morph 三聯圖：資料點從起始圖案經隨機散佈變形到目標圖案"},
+  {"id": "F07-57", "status": "kept", "note": "已確認是法國城市地圖上尚未收斂的退火巡迴路徑"},
+  {"id": "F07-58", "status": "kept", "note": "已確認是以半透明三角形疊出的蒙娜麗莎重建畫面"}
+ ]}
