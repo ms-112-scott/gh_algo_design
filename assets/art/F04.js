@@ -225,22 +225,47 @@ ART.var["F04"][10] = function(g, W, H, r, c, U){
   g.fillStyle = "#fff"; g.beginPath(); g.arc(gbest[0],gbest[1],4,0,U.TAU); g.fill();
 };
 
-/* V12 非支配排序多目標（NSGA-II／Pareto 前緣）：散佈圖，多層前緣，第一前緣連成曲線 */
+/* V12 非支配排序多目標（NSGA-II／Pareto 前緣）：目標空間散佈圖（兩個目標都取越小越好）。
+   真的做一次非支配排序：第 1 前緣白色連成階梯線，第 2、3… 前緣顏色漸淡；虛線框是某點的擁擠距離（左右鄰居圍出的長方形）；
+   右側三個小框是前緣兩端與中間方案的點陣配置（最分散／折衷／最貼邊） */
 ART.var["F04"][11] = function(g, W, H, r, c, U){
-  const pad = W*.08, x0 = pad, x1 = W-pad, y0 = H*.1, fronts = 4, bandH = (H*.82)/fronts*.78, gap = (H*.82)/fronts*.22;
-  for(let f = 0; f < fronts; f++){ const by = y0+f*(bandH+gap);
-    g.fillStyle = U.rgba(c, .3-f*.06); g.fillRect(x0,by,x1-x0,bandH);
-    const per = 11-f;
-    for(let i = 0; i < per; i++){ const t = i/(per-1), px = x0+(x1-x0)*t, py = by+bandH*(.2+r()*.6);
-      g.fillStyle = f === 0 ? "#fff" : U.rgba(c, .75-f*.14);
-      g.beginPath(); g.arc(px,py, f===0?3.2:2.2, 0, U.TAU); g.fill();
-    }
-    if(f === 0){ g.strokeStyle = "#fff"; g.lineWidth = 1.2; g.beginPath();
-      for(let i = 0; i < per; i++){ const t = i/(per-1), px = x0+(x1-x0)*t, py = by+bandH*(1-t*.7-.15); i?g.lineTo(px,py):g.moveTo(px,py); }
-      g.stroke();
-    }
-  }
+  const x0 = W*.12, x1 = W*.64, y0 = H*.08, y1 = H*.88, N = 64, pts = [];
+  for(let i = 0; i < N; i++){ const a = r(), b = .05 + .55*Math.pow(1 - a, 2) + Math.pow(r(), 1.8)*.4; pts.push({f1:a, f2:b}); }
+  // 快速非支配排序
+  const dom = (p, q) => p.f1 <= q.f1 && p.f2 <= q.f2 && (p.f1 < q.f1 || p.f2 < q.f2);
+  const cnt = pts.map(p => pts.filter(q => dom(q, p)).length), fronts = []; let left = pts.map((p, i) => i), done = new Set();
+  while(left.length){ const F = left.filter(i => pts.filter((q, j) => !done.has(j) && dom(q, pts[i])).length === 0);
+    F.forEach(i => { pts[i].rank = fronts.length; done.add(i); }); fronts.push(F.sort((i, j) => pts[i].f1 - pts[j].f1)); left = left.filter(i => !done.has(i)); }
+  const X = v => x0 + v*(x1 - x0), Y = v => y1 - v*(y1 - y0);
+  // 軸與格線
+  g.strokeStyle = "rgba(255,255,255,.07)"; g.lineWidth = 1;
+  for(let k = 1; k < 5; k++){ g.beginPath(); g.moveTo(X(k/5), y0); g.lineTo(X(k/5), y1); g.moveTo(x0, Y(k/5)); g.lineTo(x1, Y(k/5)); g.stroke(); }
+  g.strokeStyle = "rgba(255,255,255,.6)"; g.lineWidth = 1.3; g.beginPath(); g.moveTo(x0, y0 - 4); g.lineTo(x0, y1); g.lineTo(x1 + 4, y1); g.stroke();
+  // 各層前緣的階梯線
+  fronts.slice(0, 4).forEach((F, k) => { if(F.length < 2) return; g.strokeStyle = k ? U.rgba(c, .55 - k*.12) : "#fff"; g.lineWidth = k ? 1 : 1.6; g.beginPath();
+    F.forEach((i, t) => { const p = pts[i]; if(!t) g.moveTo(X(p.f1), Y(p.f2)); else { g.lineTo(X(p.f1), Y(pts[F[t-1]].f2)); g.lineTo(X(p.f1), Y(p.f2)); } }); g.stroke(); });
+  // 擁擠距離：第 1 前緣中間一點，左右鄰居圍出的長方形
+  const F0 = fronts[0]; let mi = 0, best = -1;   // 取擁擠距離最大的中間點
+  for(let t = 1; t < F0.length - 1; t++){ const d = pts[F0[t+1]].f1 - pts[F0[t-1]].f1 + pts[F0[t-1]].f2 - pts[F0[t+1]].f2; if(d > best){ best = d; mi = t; } }
+  if(F0.length > 2){ const a = pts[F0[mi-1]], b = pts[F0[mi+1]]; g.setLineDash([3, 2]); g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = 1;
+    g.strokeRect(X(a.f1), Y(a.f2), X(b.f1) - X(a.f1), Y(b.f2) - Y(a.f2)); g.setLineDash([]); }
+  // 點：依前緣層級上色
+  pts.forEach(p => { const k = p.rank; g.fillStyle = k === 0 ? "#fff" : k < 4 ? U.rgba(c, .95 - k*.2) : "rgba(255,255,255,.18)";
+    g.beginPath(); g.arc(X(p.f1), Y(p.f2), k === 0 ? 3.2 : 2.3, 0, U.TAU); g.fill(); });
+  // 右側：前緣上三個方案回看點陣配置
+  const pick = [F0[0], F0[mi], F0[F0.length - 1]], bx = W*.72, bw = W*.23, bh = (y1 - y0 - 2*H*.04)/3;
+  pick.forEach((i, k) => { const by = y0 + k*(bh + H*.04), p = pts[i];
+    g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = .8; g.beginPath(); g.moveTo(X(p.f1) + 4, Y(p.f2)); g.lineTo(bx, by + bh/2); g.stroke();
+    g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(bx, by, bw, bh); g.strokeStyle = U.rgba(c, .8); g.lineWidth = 1; g.strokeRect(bx, by, bw, bh);
+    const ix = bx + bw*.1, iy = by + bh*.12, iw = bw*.8, ih = bh*.76; g.strokeStyle = "rgba(255,255,255,.45)"; g.strokeRect(ix, iy, iw, ih);
+    const e = k/2;   // 0 最分散、1 最貼邊
+    for(let q = 0; q < 12; q++){ let u, v; const gx = (q % 4 + .5)/4, gy = (((q/4)|0) + .5)/3;
+      if(r() < e){ const t = r()*4, s = t % 1; [u, v] = t < 1 ? [s, 0] : t < 2 ? [1, s] : t < 3 ? [s, 1] : [0, s]; u = .04 + u*.92; v = .06 + v*.88; }
+      else { u = gx + (r() - .5)*.12; v = gy + (r() - .5)*.14; }
+      g.fillStyle = U.rgba(c, .95); g.beginPath(); g.arc(ix + u*iw, iy + v*ih, 1.9, 0, U.TAU); g.fill(); }
+    g.fillStyle = "#fff"; g.beginPath(); g.arc(X(p.f1), Y(p.f2), 4.2, 0, U.TAU); g.fill(); g.strokeStyle = U.rgba(c, 1); g.lineWidth = 1.4; g.stroke(); });
 };
+ART.var["F04"][11].ratio = 1;
 
 /* ---------- 沒有照片的案例（依 summary／category 取景） ---------- */
 
@@ -321,23 +346,46 @@ ART.case["F04-04"] = function(g, W, H, r, c, U){
   }
 };
 
-/* F04-05 Octopus 多目標演化最佳化：目標空間中的解答曲面網格，第一前緣加亮 */
+/* F04-05 Octopus 多目標演化最佳化：仿 Octopus 的三目標空間（牆角視角，三個目標都取越小越好）。
+   每個解是一個小方塊：越早的世代越灰越淡、落在離原點遠處；非支配解（Pareto 前緣）是靠近牆角的白色方塊面；
+   其中一個被點選的解畫出到三個座標面的投影虛線，觀察三個目標之間的取捨 */
 ART.case["F04-05"] = function(g, W, H, r, c, U){
-  const cols = 14, rows = 10, ox = W*.06, oy = H*.12, sx = W*.9, sy = H*.66;
-  function surf(u,v){ const f3 = 1-Math.pow((1-u)*(1-v),1.3);
-    return [ox+u*sx, oy+(1-v)*sy*.15+f3*sy*.85-v*sy*.1];
-  }
-  for(let j = 0; j < rows-1; j++) for(let i = 0; i < cols-1; i++){
-    const a = surf(i/(cols-1),j/(rows-1)), b = surf((i+1)/(cols-1),j/(rows-1)), cc = surf((i+1)/(cols-1),(j+1)/(rows-1)), d = surf(i/(cols-1),(j+1)/(rows-1));
-    const t = 1-(i/(cols-1)+j/(rows-1))/2;
-    g.fillStyle = U.rgba(c, .18+t*.5);
-    U.poly(g,[a,b,cc,d],true); g.fill();
-  }
-  g.strokeStyle = "#fff"; g.lineWidth = 1.6; g.beginPath();
-  for(let i = 0; i < cols; i++){ const [x,y] = surf(i/(cols-1), 0); i ? g.lineTo(x,y) : g.moveTo(x,y); } g.stroke();
-  for(let i = 0; i < 18; i++){ const u = r(), v = r()*.3, [x,y] = surf(u,v);
-    g.fillStyle = "rgba(255,255,255,.6)"; g.beginPath(); g.arc(x,y,1.8,0,U.TAU); g.fill(); }
+  const L = W*.46, ox = W*.5, oy = H*.47, cs = Math.cos(Math.PI/6);
+  const P = (x, y, z) => [ox + (x - y)*cs*L, oy + (x + y)*.5*L - z*L];
+  // 三個座標面的格線（地板、左牆、右牆）
+  g.lineWidth = .7;
+  for(let k = 0; k <= 5; k++){ const t = k/5; g.strokeStyle = k === 0 ? "rgba(255,255,255,.55)" : "rgba(255,255,255,.1)";
+    [[[t,0,0],[t,1,0]], [[0,t,0],[1,t,0]], [[0,t,0],[0,t,1]], [[0,0,t],[0,1,t]], [[t,0,0],[t,0,1]], [[0,0,t],[1,0,t]]].forEach(([a, b]) => {
+      const A = P(...a), B = P(...b); g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); }); }
+  g.fillStyle = "rgba(255,255,255,.03)"; U.poly(g, [P(0,0,0), P(1,0,0), P(1,1,0), P(0,1,0)], true); g.fill();
+  // 三個目標軸（由牆角往外，數值越大越差）
+  [[1.12,0,0], [0,1.12,0], [0,0,1.12]].forEach(v => { const A = P(0,0,0), B = P(...v); g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1.3;
+    g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); g.fillStyle = "#fff"; g.beginPath(); g.arc(B[0], B[1], 2, 0, U.TAU); g.fill(); });
+  // 解：G 個世代，每代 16 個；越後面的世代越靠近原點
+  const G = 7, S = [];
+  for(let gen = 0; gen < G; gen++) for(let i = 0; i < 16; i++){
+    let d = [Math.abs(r() + r() - 1) + .08, Math.abs(r() + r() - 1) + .08, Math.abs(r() + r() - 1) + .08]; const l = Math.hypot(...d); d = d.map(v => v/l);
+    const rad = .42 + (G - 1 - gen)*.085 + r()*.14; S.push({p:d.map(v => Math.min(.98, v*rad)), gen}); }
+  const dom = (a, b) => a.p.every((v, k) => v <= b.p[k]) && a.p.some((v, k) => v < b.p[k]);
+  S.forEach(s => { s.front = !S.some(t => t !== s && dom(t, s)); });
+  // 由遠到近畫方塊（觀看方向約為 (1,1,1)，x+y+z 越小越遠、越先畫）
+  const cube = (p, sz, top, lf, rt) => { const [x, y, z] = p, h = sz/2;
+    const q = (dx, dy, dz) => P(x + dx*h, y + dy*h, z + dz*h);
+    U.poly(g, [q(-1,-1,1), q(1,-1,1), q(1,1,1), q(-1,1,1)], true); g.fillStyle = top; g.fill();
+    U.poly(g, [q(-1,1,1), q(1,1,1), q(1,1,-1), q(-1,1,-1)], true); g.fillStyle = lf; g.fill();
+    U.poly(g, [q(1,-1,1), q(1,1,1), q(1,1,-1), q(1,-1,-1)], true); g.fillStyle = rt; g.fill(); };
+  S.slice().sort((a, b) => (a.p[0] + a.p[1] + a.p[2]) - (b.p[0] + b.p[1] + b.p[2])).forEach(s => {
+    if(s.front) cube(s.p, .05, "#ffffff", "rgba(210,225,230,1)", U.rgba(c, 1));
+    else { const t = s.gen/(G - 1), al = .18 + .5*t; cube(s.p, .035, U.rgba(c, al), `rgba(0,0,0,${al*.6})`, `rgba(120,120,135,${al})`); } });
+  // 點選一個前緣解：到三個座標面的投影
+  const fr = S.filter(s => s.front).sort((a, b) => Math.abs(a.p[0] - a.p[1]) + Math.abs(a.p[1] - a.p[2]) - Math.abs(b.p[0] - b.p[1]) - Math.abs(b.p[1] - b.p[2]));
+  if(fr.length){ const [x, y, z] = fr[0].p, A = P(x, y, z);
+    g.setLineDash([3, 2]); g.strokeStyle = "rgba(255,255,255,.8)"; g.lineWidth = 1;
+    [[x, y, 0], [0, y, z], [x, 0, z]].forEach(b => { const B = P(...b); g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke();
+      g.fillStyle = "#fff"; g.fillRect(B[0] - 1.5, B[1] - 1.5, 3, 3); });
+    g.setLineDash([]); g.strokeStyle = U.rgba(c, 1); g.lineWidth = 1.6; g.beginPath(); g.arc(A[0], A[1], 7, 0, U.TAU); g.stroke(); }
 };
+ART.case["F04-05"].ratio = 1.05;
 
 /* F04-06 Wallacei 都市形態研究：鳥瞰等角都市街廓場，依群集著色 */
 ART.case["F04-06"] = function(g, W, H, r, c, U){

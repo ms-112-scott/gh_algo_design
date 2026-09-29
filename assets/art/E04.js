@@ -528,4 +528,72 @@ ART.case["E04-12"] = function(g, W, H, r, c, U){
   g.fillStyle = "#fff"; anc.forEach(s => { const q = prj(P[id(R, s)]); g.beginPath(); g.arc(q[0], q[1], 2.4, 0, TAU); g.fill(); });
 };
 ART.case["E04-12"].ratio = 1.25;
+
+// E04-09 Kangaroo Physics 早期示範的示意：Rhino 透視視窗（灰階漸層底、工作平面格線、紅綠軸），
+// 四個錨點各用一條彈簧（鋸齒線）吊住一片質點網的四角，網在重力下垂成兜狀；虛線是幾個質點在求解過程中上下擺盪的軌跡
+ART.case["E04-09"] = function(g, W, H, r, c, U){
+  const C = U.rgb(c), n = 8, {P, E} = net(n, n, 1, 1), N0 = P.length, sp = [];
+  P.forEach(p => { p[2] = .62; });
+  const corner = [0, n-1, n*n-1, n*(n-1)], dir = [[-1,-1], [1,-1], [1,1], [-1,1]];
+  corner.forEach((k, a) => { P.push([dir[a][0]*.68, dir[a][1]*.68, 1.2]); sp.push(E.length); E.push([N0 + a, k]); });
+  const pin = P.map((_, i) => i >= N0 ? 1 : 0), isSp = E.map((_, e) => sp.includes(e));
+  const L0 = E.map(([a, b], e) => len(sub(P[b], P[a]))*(isSp[e] ? .5 : 1));
+  const track = [(n>>1)*n + (n>>1), (n>>1)*n + 1, 2*n + (n>>1)], trail = track.map(() => []);
+  relax(P, E, pin, {L0, it:400, damp:.97, ke:e => isSp[e] ? .35 : 2.4, load:(i) => i < N0 ? [0,0,-.0026] : [0,0,0],
+    post:(Q, V, s) => { if(s % 3 === 0 && s < 240) track.forEach((k, t) => trail[t].push(Q[k].slice())); }});
+  // 視窗外框：上方工具列、左側工具列、下方狀態列
+  g.fillStyle = "#24242c"; g.fillRect(0, 0, W, H);
+  const tb = H*.075, lb = W*.06, vx0 = lb + 2, vy0 = tb + 2, vx1 = W - 3, vy1 = H - H*.07;
+  const ico = ["#c9c9d1", "#8fa3c9", "#c9c9d1", "#d7a64a", "#c9c9d1", "#7fb07f", "#c9c9d1", "#b98ad0", "#c9c9d1", "#c9c9d1"];
+  ico.forEach((col, k) => { g.fillStyle = col; g.globalAlpha = .55; g.fillRect(lb + 4 + k*(tb*.95), tb*.22, tb*.62, tb*.56); });
+  for(let k = 0; k < 9; k++){ g.fillStyle = ico[(k*3) % ico.length]; g.fillRect(lb*.2, vy0 + 4 + k*(lb*.95), lb*.6, lb*.6); }
+  g.globalAlpha = 1;
+  g.fillStyle = "#1b1b21"; g.fillRect(0, vy1 + 2, W, H - vy1 - 2);
+  for(let k = 0; k < 6; k++){ g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1; g.strokeRect(W*.05 + k*W*.13, vy1 + (H - vy1)*.35, 5, 5); g.fillStyle = "rgba(255,255,255,.18)"; g.fillRect(W*.05 + k*W*.13 + 8, vy1 + (H - vy1)*.42, W*.07, 2); }
+  // 透視視窗：灰階漸層底
+  const bg = g.createLinearGradient(0, vy0, 0, vy1); bg.addColorStop(0, "#9a9ca3"); bg.addColorStop(1, "#5c5e66");
+  g.fillStyle = bg; g.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
+  g.save(); g.beginPath(); g.rect(vx0, vy0, vx1 - vx0, vy1 - vy0); g.clip();
+  const prj = cam((vx0 + vx1)/2, vy0 + (vy1 - vy0)*.8, (vx1 - vx0)*.36, .3, .5, 1.05);
+  // 工作平面格線
+  for(let k = -10; k <= 10; k++){ const t = k/10*1.2, major = k % 5 === 0;
+    g.strokeStyle = major ? "rgba(60,62,70,.55)" : "rgba(80,82,90,.35)"; g.lineWidth = major ? 1 : .7;
+    let a = prj([t, -1.2, 0]), b = prj([t, 1.2, 0]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    a = prj([-1.2, t, 0]); b = prj([1.2, t, 0]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  const o = prj([0, 0, 0]), ex = prj([1.2, 0, 0]), ey = prj([0, 1.2, 0]);
+  g.lineWidth = 1.4; g.strokeStyle = "#b3322c"; g.beginPath(); g.moveTo(o[0], o[1]); g.lineTo(ex[0], ex[1]); g.stroke();
+  g.strokeStyle = "#2f8f3a"; g.beginPath(); g.moveTo(o[0], o[1]); g.lineTo(ey[0], ey[1]); g.stroke();
+  // 網在地面的投影（淡影）
+  g.fillStyle = "rgba(40,40,48,.18)";
+  const ring = []; for(let i = 0; i < n; i++) ring.push(i); for(let j = 1; j < n; j++) ring.push(j*n + n-1); for(let i = n-2; i >= 0; i--) ring.push((n-1)*n + i); for(let j = n-2; j > 0; j--) ring.push(j*n);
+  U.poly(g, ring.map(k => prj([P[k][0], P[k][1], 0])), true); g.fill();
+  // 錨點的垂直參考線
+  g.setLineDash([2, 3]); g.strokeStyle = "rgba(40,40,48,.45)"; g.lineWidth = .8;
+  for(let a = 0; a < 4; a++){ const t = prj(P[N0 + a]), b = prj([P[N0 + a][0], P[N0 + a][1], 0]); g.beginPath(); g.moveTo(t[0], t[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  g.setLineDash([]);
+  // 求解過程的擺盪軌跡
+  g.strokeStyle = css(mix(C, WHITE, .2), .85); g.lineWidth = 1; g.setLineDash([2, 2]);
+  trail.forEach(tr => { U.poly(g, tr.map(p => prj(p))); g.stroke(); }); g.setLineDash([]);
+  // 質點網（線框）：由遠到近
+  E.map((e, k) => k).filter(k => !isSp[k]).sort((a, b) => prj.depth(P[E[b][0]]) - prj.depth(P[E[a][0]])).forEach(k => {
+    const A = prj(P[E[k][0]]), B = prj(P[E[k][1]]); g.strokeStyle = "#202027"; g.lineWidth = 1.1; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); });
+  // 吊住四角的彈簧：鋸齒線
+  sp.forEach(e => { const A = prj(P[E[e][0]]), B = prj(P[E[e][1]]), dx = B[0] - A[0], dy = B[1] - A[1], l = Math.hypot(dx, dy) || 1, nx = -dy/l, ny = dx/l, turns = 9, w = W*.013;
+    g.strokeStyle = css(mix(C, DARK, .15)); g.lineWidth = 1.2; g.beginPath(); g.moveTo(A[0], A[1]);
+    for(let t = 1; t < turns*2; t++){ const u = .1 + .8*t/(turns*2), s2 = t % 2 ? 1 : -1; g.lineTo(A[0] + dx*u + nx*w*s2, A[1] + dy*u + ny*w*s2); }
+    g.lineTo(B[0], B[1]); g.stroke(); });
+  // 質點（Rhino 點的小方塊）與錨點（選取中的黃色）
+  P.forEach((p, i) => { const q = prj(p); if(i < N0){ g.fillStyle = "#15151a"; g.fillRect(q[0] - 1.6, q[1] - 1.6, 3.2, 3.2); }
+    else { g.fillStyle = css(mix(C, WHITE, .35)); g.fillRect(q[0] - 3, q[1] - 3, 6, 6); g.strokeStyle = "#15151a"; g.lineWidth = 1; g.strokeRect(q[0] - 3, q[1] - 3, 6, 6); } });
+  // 視窗左下角的座標軸圖示
+  const ax = vx0 + W*.06, ay = vy1 - H*.07, axl = W*.045;
+  [["#c0392b", [1, 0, 0]], ["#2e9a3e", [0, 1, 0]], ["#2f5fc4", [0, 0, 1]]].forEach(([col, v]) => { const a = prj([0, 0, 0]), b = prj(v);
+    const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; g.strokeStyle = col; g.lineWidth = 1.6; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + dx/l*axl, ay + dy/l*axl); g.stroke(); });
+  g.restore();
+  // 視窗名稱頁籤（不寫字，只畫出頁籤形狀）
+  g.fillStyle = "rgba(255,255,255,.28)"; g.fillRect(vx0 + 4, vy0 + 4, W*.2, H*.045);
+  g.fillStyle = "rgba(20,20,26,.6)"; g.fillRect(vx0 + 8, vy0 + 4 + H*.018, W*.12, 2);
+  g.strokeStyle = "rgba(255,255,255,.5)"; g.lineWidth = 1; g.strokeRect(vx0 + .5, vy0 + .5, vx1 - vx0 - 1, vy1 - vy0 - 1);
+};
+ART.case["E04-09"].ratio = .85;
 })();

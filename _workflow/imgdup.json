@@ -1,37 +1,8 @@
 {
- "generated": "2026-09-29T09:20+08:00",
+ "generated": "2026-09-29T09:32+08:00",
  "algos": {
-  "E04": {
-   "cards": 35,
-   "fallback": [
-    "E04-09"
-   ],
-   "like_algo": [],
-   "near_dup": [
-    [
-     "E04·V02",
-     "E04·V12",
-     4
-    ]
-   ],
-   "errors": []
-  },
-  "E06": {
-   "cards": 23,
-   "fallback": [],
-   "like_algo": [],
-   "near_dup": [],
-   "errors": []
-  },
-  "F08": {
-   "cards": 22,
-   "fallback": [],
-   "like_algo": [],
-   "near_dup": [],
-   "errors": []
-  },
-  "G01": {
-   "cards": 24,
+  "F01": {
+   "cards": 28,
    "fallback": [],
    "like_algo": [],
    "near_dup": [],
@@ -40,10 +11,10 @@
  },
  "photo_dup": [],
  "summary": {
-  "cards": 104,
-  "fallback": 1,
+  "cards": 28,
+  "fallback": 0,
   "like_algo": 0,
-  "near_dup": 1,
+  "near_dup": 0,
   "errors": 0,
   "photo_dup": 0
  }
