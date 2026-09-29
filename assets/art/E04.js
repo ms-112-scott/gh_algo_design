@@ -96,28 +96,45 @@ ART.var["E04"][0] = function(g, W, H, r, c, U){
 };
 ART.var["E04"][0].ratio = .85;
 
-// V02 對角彈簧與三角網：同樣只吊住上緣兩角受重力；左＝只有經緯彈簧（魚網般剪力變形），右＝加對角彈簧（形狀穩定）
+// V02 對角彈簧與三角網：懸臂剪力測試──網的左緣整排釘在牆上、只受重力。
+// 虛線＝只有經緯彈簧：四邊形可自由變成平行四邊形，整片網繞牆邊垂下（魚網般剪力變形）；
+// 實心三角網＝每格加兩條對角彈簧：抗剪，懸臂幾乎維持原形，只有彈簧彈性造成的小撓度
 ART.var["E04"][1] = function(g, W, H, r, c, U){
-  const n = 9;
-  const run = diag => { const {P, E, Q} = net(n, n, 1, 1);
+  const n = 9, m = 5, sx = 1.25, sy = sx*(m-1)/(n-1);
+  // 魚網是機構（可自由剪動），重力下會一路轉到貼牆；取它剪動到約 55° 時的畫面
+  const run = diag => { const {P, E, Q} = net(n, m, sx, sy), mid = ((m-1)/2)*n; let snap = null;
+    P.forEach(p => { p[0] += sx/2; });   // 牆在 x = 0
     if(diag) Q.forEach(q => { E.push([q[0], q[2]]); E.push([q[1], q[3]]); });
-    relax(P, E, P.map((_, i) => i === 0 || i === n-1 ? 1 : 0), {it:600, k:.4, load:() => [0,.0022,0]});
-    return {P, E, Q}; };
+    relax(P, E, P.map((_, k) => k % n === 0 ? 1 : 0), {it:diag ? 600 : 900, k:diag ? 14 : 4, damp:.93, load:() => [0,.0016,0], post:Q2 => {
+      if(!diag && !snap && Math.atan2(Q2[mid + n-1][1] - Q2[mid][1], Q2[mid + n-1][0] - Q2[mid][0]) > .95) snap = Q2.map(p => p.slice()); }});
+    return {P:snap || P, E, Q}; };
   const A = run(false), B = run(true);
-  let y1 = -.5; [A, B].forEach(o => o.P.forEach(p => { y1 = Math.max(y1, p[1]); }));
-  const pw = W*.45, top = H*.14, sc = Math.min(pw*.9, H*.78/(y1 + .5));
-  [[A, W*.26, false], [B, W*.74, true]].forEach(([o, cx, diag]) => {
-    g.fillStyle = diag ? "rgba(255,255,255,.07)" : "rgba(0,0,0,.35)"; g.fillRect(cx - pw/2, H*.05, pw, H*.9);
-    const q = p => [cx + p[0]*sc, top + (p[1] + .5)*sc];
-    if(diag) o.Q.forEach((f, k) => { [[f[0], f[1], f[2]], [f[0], f[2], f[3]]].forEach((t, h) => {
-      U.poly(g, t.map(i => q(o.P[i])), true); g.fillStyle = U.rgba(c, (k + h) % 2 ? .6 : .3); g.fill(); }); });
-    g.strokeStyle = diag ? "#fff" : c; g.globalAlpha = diag ? .55 : .95; g.lineWidth = diag ? .8 : 1.4;
-    g.beginPath(); o.E.forEach(([a, b]) => { const p1 = q(o.P[a]), p2 = q(o.P[b]); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); }); g.stroke();
-    g.globalAlpha = 1; g.fillStyle = "#fff";
-    [0, n-1].forEach(i => { const p = q(o.P[i]); g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0] - 5, p[1] - 8); g.lineTo(p[0] + 5, p[1] - 8); g.closePath(); g.fill(); });
-  });
+  const wx = W*.15, top = H*.1, s = W*.56, q = p => [wx + p[0]*s, top + (p[1] + sy/2)*s];
+  // 牆：斜線剖面
+  g.fillStyle = "#2f2f3a"; g.fillRect(wx - W*.1, 0, W*.1, H);
+  g.save(); g.beginPath(); g.rect(wx - W*.1, 0, W*.1, H); g.clip();
+  g.strokeStyle = "rgba(255,255,255,.22)"; g.lineWidth = 1; g.beginPath();
+  for(let y = -W*.1; y < H + W*.1; y += 7){ g.moveTo(wx - W*.1, y + W*.1); g.lineTo(wx, y); } g.stroke(); g.restore();
+  g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(wx, 0); g.lineTo(wx, H); g.stroke();
+  // 原本的位置（細框）
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.setLineDash([2, 3]); g.lineWidth = 1;
+  const o0 = q([0, -sy/2, 0]), o1 = q([sx, sy/2, 0]); g.strokeRect(o0[0], o0[1], o1[0] - o0[0], o1[1] - o0[1]); g.setLineDash([]);
+  // 加對角彈簧：三角網懸臂
+  B.Q.forEach((f, k) => { [[f[0], f[1], f[2]], [f[0], f[2], f[3]]].forEach((t, h) => {
+    U.poly(g, t.map(i => q(B.P[i])), true); g.fillStyle = U.rgba(c, (k + h) % 2 ? .7 : .42); g.fill(); }); });
+  g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = .8; g.beginPath();
+  B.E.forEach(([a, b]) => { const p1 = q(B.P[a]), p2 = q(B.P[b]); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); }); g.stroke();
+  // 只有經緯彈簧：剪動垂下的魚網（第二色虛線，疊在上面）
+  g.strokeStyle = css(BLUE, .95); g.lineWidth = 1.2; g.setLineDash([3.5, 2.5]); g.beginPath();
+  A.E.forEach(([a, b]) => { const p1 = q(A.P[a]), p2 = q(A.P[b]); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); }); g.stroke(); g.setLineDash([]);
+  g.fillStyle = css(mix(BLUE, WHITE, .4)); A.P.forEach((p, k) => { if(k % n){ const t = q(p); g.fillRect(t[0] - 1.4, t[1] - 1.4, 2.8, 2.8); } });
+  // 牆上的固定點
+  g.fillStyle = "#fff"; for(let j = 0; j < m; j++){ const t = q(B.P[j*n]); g.beginPath(); g.arc(t[0], t[1], 2.8, 0, TAU); g.fill(); }
+  // 重力箭頭
+  const ax = W*.9, ay = H*.62; g.strokeStyle = "rgba(255,255,255,.6)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax, ay + H*.12); g.stroke();
+  U.poly(g, [[ax - 4, ay + H*.12 - 5], [ax + 4, ay + H*.12 - 5], [ax, ay + H*.12 + 2]], true); g.fillStyle = "rgba(255,255,255,.6)"; g.fill();
 };
-ART.var["E04"][1].ratio = .8;
+ART.var["E04"][1].ratio = 1.1;
 
 // V03 從任意 Mesh 找形：L 形＋圓洞的平面，裸邊頂點固定 → 長成對應的受壓殼；地面上是原本的平面輪廓
 ART.var["E04"][2] = function(g, W, H, r, c, U){
