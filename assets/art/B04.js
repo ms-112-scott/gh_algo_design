@@ -264,6 +264,41 @@ ART.var["B04"] = [
   },
 ];
 
+// V13 對數螺線掃掠成殼（Raup 貝殼）：截面沿 3D 對數螺線纏繞，形成鸚鵡螺般的平旋殼
+ART.var["B04"][12] = function(g, W, H, r, c){
+  const mixc = (h1, h2, t) => { const a = U.rgb(h1), b2 = U.rgb(h2); return `rgb(${a.map((v,i) => Math.round(v + (b2[i]-v)*t)).join(",")})`; };
+  const cx = W/2, cy = H*.55, tilt = .55 + r()*.12;
+  const EXP = 1.7 + r()*1.3, Dw = 1.05 + r()*.35, turns = 2.3 + r()*.9, segN = 14;
+  const b = Math.log(EXP)/TAU, N = Math.round(turns*30);
+  const rings = []; let maxD = 0;
+  for(let k = 0; k <= N; k++){
+    const th = k/N*turns*TAU, rr = Math.exp(b*th), dx0 = Math.cos(th), dy0 = Math.sin(th);
+    const ccx = Dw*rr*dx0, ccy = Dw*rr*dy0;
+    const pts3 = []; for(let s = 0; s <= segN; s++){ const ph = s/segN*TAU;
+      pts3.push([ccx + rr*Math.cos(ph)*dx0, ccy + rr*Math.cos(ph)*dy0, rr*Math.sin(ph)]); }
+    pts3.forEach(p => { maxD = Math.max(maxD, Math.hypot(p[0], p[1], p[2])); });
+    rings.push(pts3);
+  }
+  const scale = Math.min(W, H)*.42/maxD;
+  const proj = (x, y, z) => { const y2 = y*Math.cos(tilt) - z*Math.sin(tilt), z2 = y*Math.sin(tilt) + z*Math.cos(tilt); return [cx + x*scale, cy - y2*scale, z2]; };
+  g.fillStyle = "rgba(0,0,0,.3)"; g.beginPath(); g.ellipse(cx, cy + maxD*scale*.62, maxD*scale*.72, maxD*scale*.16, 0, 0, TAU); g.fill();
+  const drawn = rings.map((pts3, k) => { const pts = pts3.map(p => proj(p[0], p[1], p[2])); const depth = pts.reduce((s, p) => s+p[2], 0)/pts.length; return {pts, depth, k}; });
+  drawn.sort((a, b2) => a.depth - b2.depth);
+  drawn.forEach(({pts, k}) => {
+    const t = k/N, xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const grad = g.createLinearGradient(Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys));
+    const base = mixc(c, "#ffffff", .08 + .3*t);
+    grad.addColorStop(0, mixc(base, "#ffffff", .55));
+    grad.addColorStop(.55, base);
+    grad.addColorStop(1, mixc(base, "#000000", .55));
+    U.poly(g, pts.map(p => [p[0], p[1]]), true); g.fillStyle = grad; g.fill();
+    if(k % 4 === 0){ g.strokeStyle = "rgba(0,0,0,.18)"; g.lineWidth = .6; g.stroke(); }
+  });
+  const mouth = drawn.find(d => d.k === N);
+  if(mouth){ U.poly(g, mouth.pts.map(p => [p[0], p[1]]), true); g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.4; g.stroke(); }
+};
+ART.var["B04"][12].ratio = 1.05;
+
 // ---------- 無照片案例 ----------
 // B04-01 Blooms 頻閃：底片條上的連續影格，每格雕塑轉 137.5°、閃光燈標記節拍
 ART.case["B04-01"] = function(g, W, H, r, c){

@@ -248,6 +248,35 @@ ART.var["E01"] = [
   },
 ];
 
+// V13 泡泡圖配置：鄰接圖彈簧（力導向）－ 圓依房間面積定半徑，鄰接彈簧拉近、其餘互推
+ART.var["E01"][12] = function(g, W, H, r, c){
+  const m = Math.min(W, H), N = 11, areas = [...Array(N)].map(() => 16 + r()*54);
+  const rad = areas.map(a => Math.sqrt(a/Math.PI)*m*.017), radMax = Math.max(...rad);
+  const P = areas.map((a,i) => ({x: W*.15+r()*W*.7, y: H*.15+r()*H*.6, r: rad[i]}));
+  const edges = []; for(let i=1;i<N;i++) edges.push([i, (r()*i)|0]);
+  for(let e=0;e<4;e++){ const a=(r()*N)|0, b2=(r()*N)|0; if(a!==b2 && !edges.some(([x,y]) => (x===a&&y===b2)||(x===b2&&y===a))) edges.push([a,b2]); }
+  for(let it=0; it<140; it++){ const temp = 3*(1-it/140), disp = P.map(() => [0,0]);
+    for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){ const a=P[i], b2=P[j], dx=a.x-b2.x, dy=a.y-b2.y, d=Math.hypot(dx,dy)||.01, gap=d-(a.r+b2.r);
+      if(gap<0){ const f=-gap*.55; disp[i][0]+=dx/d*f; disp[i][1]+=dy/d*f; disp[j][0]-=dx/d*f; disp[j][1]-=dy/d*f; } }
+    edges.forEach(([i,j]) => { const a=P[i], b2=P[j], dx=b2.x-a.x, dy=b2.y-a.y, d=Math.hypot(dx,dy)||.01, gap=d-(a.r+b2.r);
+      if(gap>0){ const f=gap*.09; disp[i][0]+=dx/d*f; disp[i][1]+=dy/d*f; disp[j][0]-=dx/d*f; disp[j][1]-=dy/d*f; } });
+    P.forEach((p,i) => { const dl=Math.hypot(disp[i][0],disp[i][1])||1, cl=Math.min(dl,temp+2);
+      p.x += disp[i][0]/dl*cl; p.y += disp[i][1]/dl*cl;
+      p.x = Math.max(p.r+4, Math.min(W-p.r-4, p.x)); p.y = Math.max(p.r+4, Math.min(H*.86-p.r-4, p.y)); });
+  }
+  g.lineWidth = 1.4; let touched = 0;
+  edges.forEach(([i,j]) => { const a=P[i], b2=P[j], d=Math.hypot(a.x-b2.x,a.y-b2.y), gap=d-(a.r+b2.r), ok = gap < 1.6;
+    if(ok) touched++;
+    g.strokeStyle = ok ? U.rgba(c,.75) : "rgba(230,90,80,.7)"; g.setLineDash(ok ? [] : [4,3]);
+    g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b2.x,b2.y); g.stroke(); });
+  g.setLineDash([]);
+  P.forEach(p => { circ(g,p.x,p.y,p.r); g.fillStyle = U.rgba(c, .16 + .55*(p.r/radMax)); g.fill(); g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.2; g.stroke(); });
+  const bx = W*.06, by = H*.93, bw = W*.5, bh = 6;
+  g.fillStyle = "rgba(255,255,255,.15)"; g.fillRect(bx,by,bw,bh);
+  g.fillStyle = ACC; g.fillRect(bx,by,bw*touched/edges.length,bh);
+};
+ART.var["E01"][12].ratio = 1.05;
+
 // =================== 無照片案例 ===================
 // E01-01 CP mesh：自由曲面上的三角網格，每個三角面畫內切圓，下方有支柱
 ART.case["E01-01"] = function(g, W, H, r, c){

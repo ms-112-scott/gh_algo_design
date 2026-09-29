@@ -333,6 +333,45 @@ ART.var["A06"] = [
   }, {ratio: .8}),
 ];
 
+// V13 一維 Markov 鏈序列（n-gram 範例驅動）：範例立面節奏 → 學到的轉移機率 → 沿曲牆生成新序列
+ART.var["A06"][12] = Object.assign(function(g, W, H, r, c){
+  const ex = ["W","W","D","W","W","G","W","W","D","W","W"]; // 範例：W 牆 D 窗 G 門
+  const order = 2, cols = {W: shade(c, .55), D: "#BFD8E8", G: "#E9C46A"};
+  // 建立 0～order 階轉移表（供 backoff）
+  const tabs = [0, 1, 2].map(k => { const t = {};
+    for(let i = 0; i + k < ex.length; i++){ const pfx = k ? ex.slice(i, i+k).join("") : ""; const ch = ex[i+k]; (t[pfx] = t[pfx] || {})[ch] = (t[pfx][ch] || 0) + 1; }
+    return t; });
+  const pick = o => { const ks = Object.keys(o); let tot = 0; ks.forEach(k => tot += o[k]); let x = r()*tot; for(const k of ks){ x -= o[k]; if(x <= 0) return k; } return ks[ks.length-1]; };
+  const N = 44, seq = ex.slice(0, order).slice();
+  for(let i = order; i < N; i++){ let opt = null;
+    for(let k = order; k >= 0 && !opt; k--){ const pfx = k ? seq.slice(i-k, i).join("") : ""; opt = tabs[k][pfx]; }
+    seq.push(pick(opt));
+  }
+  // 範例輸入小條（左上）
+  const es = W*.024, ex0 = W*.05, ey0 = H*.08;
+  ex.forEach((ch, i) => { g.fillStyle = cols[ch]; g.fillRect(ex0 + i*es, ey0, es - 1.4, es*1.6); });
+  g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1; g.strokeRect(ex0 - 2, ey0 - 2, ex.length*es + 2, es*1.6 + 4);
+  // 箭頭：範例 → 生成
+  g.strokeStyle = "#fff"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(ex0, ey0 + es*2.2); g.lineTo(ex0, ey0 + es*3.2); g.lineTo(ex0 + es*4, ey0 + es*3.2); g.stroke();
+  g.fillStyle = "#fff"; U.poly(g, [[ex0 + es*4, ey0 + es*3.2 - 4], [ex0 + es*4, ey0 + es*3.2 + 4], [ex0 + es*4 + 6, ey0 + es*3.2]], true); g.fill();
+  // 生成的長序列：沿一條輕微起伏的外牆曲線分佈（模擬 Curve.DivideByCount）
+  const baseY = H*.62, amp = H*.09, ph = r()*TAU, mx = W*.06, mw = (W - 2*mx)/N;
+  const curve = t => baseY + Math.sin(t*Math.PI*1.6 + ph)*amp;
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1; g.beginPath();
+  for(let i = 0; i <= 200; i++){ const t = i/200, x = mx + t*(W - 2*mx), y = curve(t); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
+  seq.forEach((ch, i) => {
+    const t = (i + .5)/N, x = mx + t*(W - 2*mx), y = curve(t), t2 = (i + 1.5)/N, dy = curve(t2) - y, a = Math.atan2(dy, mw);
+    g.save(); g.translate(x, y); g.rotate(a);
+    if(ch === "W"){ g.fillStyle = cols.W; g.fillRect(-mw*.46, -H*.11, mw*.92, H*.16); g.strokeStyle = "rgba(0,0,0,.3)"; g.lineWidth = 1; g.strokeRect(-mw*.46, -H*.11, mw*.92, H*.16); }
+    else if(ch === "D"){ g.fillStyle = shade(c, .5); g.fillRect(-mw*.46, -H*.11, mw*.92, H*.16); g.fillStyle = cols.D; g.fillRect(-mw*.36, -H*.08, mw*.72, H*.1);
+      g.strokeStyle = "rgba(255,255,255,.6)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, -H*.08); g.lineTo(0, H*.02); g.moveTo(-mw*.36, -H*.03); g.lineTo(mw*.36, -H*.03); g.stroke(); }
+    else { g.fillStyle = shade(c, .5); g.fillRect(-mw*.46, -H*.11, mw*.92, H*.16); g.fillStyle = cols.G; g.beginPath(); g.moveTo(-mw*.3, H*.05); g.lineTo(-mw*.3, -H*.02); g.arc(0, -H*.02, mw*.3, Math.PI, 0); g.lineTo(mw*.3, H*.05); g.closePath(); g.fill();
+      g.strokeStyle = "rgba(0,0,0,.4)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, H*.05); g.lineTo(0, -H*.02); g.stroke(); }
+    g.restore();
+    if(i % 4 === 0){ g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y - H*.13); g.lineTo(x, y - H*.16); g.stroke(); }
+  });
+}, {ratio: 1.3});
+
 /* ================= 沒有照片的案例 ================= */
 // A06-01 原始實作：knots 風格的像素輸出＋角落小範例（輸入圖）
 ART.case["A06-01"] = function(g, W, H, r, c){

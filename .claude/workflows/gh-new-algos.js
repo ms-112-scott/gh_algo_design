@@ -50,11 +50,11 @@ const DIRECTIONS = [
   { key: 'x1_AF', title: 'A 規則與語法、F 圖樣與最佳化 家族內的新演算法',
     hints: 'IFS 迭代函數系統／Barnsley 蕨、Mandelbrot／Julia 逃逸時間分形、Penrose 或其他非週期替換鋪磚（含 2023 年 hat 單形磚）、de Bruijn 五格線法準晶、細分曲面（Catmull-Clark、Loop）、一維基本細胞自動機（Wolfram 規則）、圖文法、CGA split grammar、模擬退火、拓撲最佳化（BESO／SIMP）、粒子群最佳化 PSO、多目標最佳化（NSGA-II／Pareto）、旅行推銷員問題與單線畫、最小生成樹／Steiner 樹、空間配置／鄰接最佳化、Escher／Heesch 鑲嵌、凱爾特結、疊紋、Kolam' },
   { key: 'x2_BC', title: 'B 生長、C 場與擴散 家族內的新演算法',
-    hints: 'Eden 生長、介電崩潰模型／Laplacian 生長、貝殼生長（Raup 模型）、雪花結晶（Reiter 模型）、細胞形態生長（Andy Lomas Cellular Forms）、菌絲生長、累積生長、侵入滲流；波動方程與干涉、熱傳導／Laplace 求解、Stable Fluids 或格子波茲曼（LBM）風場、SDF 與 Marching Cubes 3D 等值面、curl noise、Fast Marching／測地距離場、循環細胞自動機／Brian\'s Brain／Lenia、domain warping、Gierer–Meinhardt 等其他圖靈斑紋模型' },
+    hints: 'Eden 生長、介電崩潰模型／Laplacian 生長、貝殼生長（Raup 模型）、雪花結晶（Reiter 模型）、細胞形態生長（Andy Lomas Cellular Forms）、菌絲生長、累積生長、侵入滲流；波動方程與干涉、熱傳導／Laplace 求解、Stable Fluids 風場、SDF 與 Marching Cubes 3D 等值面、curl noise、Fast Marching／測地距離場、循環細胞自動機／Brian\'s Brain／Lenia、domain warping、Gierer–Meinhardt 等其他圖靈斑紋模型' },
   { key: 'x3_DE', title: 'D 代理人、E 排列與鬆弛 家族內的新演算法（粒子群最佳化 PSO 由 x1 負責，不要列）',
     hints: '蟻群演算法／費洛蒙 stigmergy、白蟻築巢式代理人建造、捕食者–獵物、Lévy flight 與隨機行走、Nagel–Schreckenberg 交通細胞自動機、代理人建構的構造（Roland Snooks 等）、機器人群體建造；力導向圖佈局（泡泡圖轉平面）、矩形／裝箱排列、3D 球體堆積、Delaunay 三角化與網格重新鋪面、平面化（PQ 網格）最佳化、剛性摺紙模擬、張拉整體／力密度法（FDM）找形、編織與針織鬆弛、測地線圓頂' },
   { key: 'x4_family', title: '既有家族以外的全新家族（每個家族評估定義、與既有家族的界線、3–5 個候選、建議）',
-    hints: '幾何處理／網格（細分、平滑、重新鋪面、測地線、可展面攤平、共形映射）；空間分析／圖論（isovist、visibility graph、space syntax、網路中心性、最小生成樹）；機器學習／資料驅動（k-means、SOM、PCA、感知器與小型神經網路、神經細胞自動機；GAN／擴散模型只當參考）；物理與動力（布料、剛體、質點彈簧，注意與 E04、D 家族重疊）；機率與隨機過程（Markov 鏈、Monte Carlo、Metropolis）' },
+    hints: '幾何處理／網格（細分、平滑、重新鋪面、測地線、可展面攤平、共形映射）；空間分析／圖論（isovist、visibility graph、space syntax、網路中心性、最小生成樹）；資料驅動（k-means、PCA；神經網路相關與格子波茲曼 LBM 不收）；物理與動力（布料、剛體、質點彈簧，注意與 E04、D 家族重疊）；機率與隨機過程（Markov 鏈、Monte Carlo、Metropolis）' },
   { key: 'x5_audit', title: '外部對照稽核：拿權威教材、課程大綱、Grasshopper 外掛分類對照既有演算法，找出常被教但圖鑑還沒有的',
     hints: 'The Nature of Code（2024 版各章）、Generative Design（Generative Gestaltung）章節、Food4Rhino 外掛（Kangaroo、Anemone、Rabbit、Culebra、Wallacei、Octopus、Millipede、DeCodingSpaces、Space Syntax 相關、Ladybug）、至少 2 個大學計算設計課程大綱（ETH、MIT、AA、Harvard GSD、TU Delft、Stuttgart ICD…）、Algorithms-Aided Design（Tedeschi）、Form+Code、Paul Bourke 網站' },
 ]

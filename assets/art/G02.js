@@ -231,54 +231,93 @@ ART.var["G02"][2] = function(g, W, H, r, c){
     g.strokeStyle = k === 2 ? c : `rgba(255,220,150,${.25 + k*.06})`; g.lineWidth = k === 2 ? 1.6 : 1; g.stroke(); });
 };
 
-// V04 分段遮陰線高度：不同段落的遮陰線用不同高度（線粗與刻度表示），平面圖
+// V04 分段遮陰線高度：三條南北剖面上下疊放，各切過一段遮陰線（停車場／一樓窗台／二樓窗台）。
+// 左南右北；遮陰線抬到窗台高度，那一段的包絡斜面就整段往上平移（虛線是地面遮陰線的對照）
 ART.var["G02"][3] = function(g, W, H, r, c){
-  const nx = 40, ny = 24, gap = 2 + r()*2, maxH = 9;
   const suns = sunSet(30 + r()*12, 355, 9, 15, 6);
-  const segH = [0, 1 + r()*2, 3 + r()*2];
-  const bx = [-6, nx*.32, nx*.68, nx + 6];
-  const fences = [{ a: [bx[0], ny + gap], b: [bx[1], ny + gap], h: segH[0] },
-                   { a: [bx[1], ny + gap], b: [bx[2], ny + gap], h: segH[1] },
-                   { a: [bx[2], ny + gap], b: [bx[3], ny + gap], h: segH[2] }];
-  const h = []; for(let i = 0; i <= nx; i++){ h[i] = [];
-    for(let j = 0; j <= ny; j++){ let best = maxH;
-      for(const s of suns){ let Dm = Infinity, Hm = 0;
-        for(const f of fences){ const D = rayHit2(i, j, s.dx, s.dy, f.a, f.b); if(D < Dm){ Dm = D; Hm = f.h; } }
-        if(Dm < Infinity) best = Math.min(best, Hm + Dm*s.tanAlt); }
-      h[i][j] = Math.max(0, best); } }
-  U.field(g, W, H, nx + 1, ny + 1, (i, j) => h[i][j]/maxH, c, .9);
-  const sx = W/(nx + 12), sy = H/(ny + gap + 6), ox = sx*6, oy = sy*3;
-  fences.forEach(f => { const lw = 1.5 + f.h*1.8;
-    g.strokeStyle = "#fff"; g.lineWidth = lw; g.beginPath(); g.moveTo(ox + f.a[0]*sx, oy + f.a[1]*sy); g.lineTo(ox + f.b[0]*sx, oy + f.b[1]*sy); g.stroke();
-    const midx = ox + (f.a[0]+f.b[0])/2*sx, midy = oy + (f.a[1]+f.b[1])/2*sy;
-    for(let t = 0; t < 1 + f.h; t++){ g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1; g.beginPath(); g.moveTo(midx, midy - t*3); g.lineTo(midx, midy - t*3 - 2); g.stroke(); } });
+  // 剖面方向（南北）的等效斜率：h = fenceH + y × min(tanAlt / 影子北向分量)
+  let k = Infinity; suns.forEach(s => { if(s.dy > .15) k = Math.min(k, s.tanAlt/s.dy); }); if(!isFinite(k)) k = .6;
+  const maxH = 11, site = 17, street = 3 + r()*1.5, total = site + street + 7;
+  const segH = [0, 1.1 + r()*.5, 3.6 + r()*.8];     // 三段遮陰線高度（公尺）
+  const bandH = H/3, mL = W*.05, sx = (W - mL*2)/total;
+  const zTop = Math.min(maxH, segH[2] + (site + street)*k) + 1.5;   // 三條剖面共用的垂直比例，讓斜面填滿帶狀
+  for(let b = 0; b < 3; b++){
+    const y0 = bandH*(b + 1) - bandH*.1, sz = bandH*.8/zTop, X = x => mL + x*sx, Y = z => y0 - z*sz;
+    const fx = site + street, fh = segH[b];
+    // 帶狀底色：越下面（遮陰線越高）底色越亮一點，三條剖面一眼分得開
+    g.fillStyle = `rgba(255,255,255,${.015 + b*.02})`; g.fillRect(0, bandH*b + 2, W, bandH - 4);
+    // 地面線
+    g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, y0); g.lineTo(W, y0); g.stroke();
+    // 包絡剖面：從遮陰線頂端往南（左）以等效斜率升高，封頂 maxH
+    const top = x => Math.min(maxH, fh + (fx - x)*k);
+    const pts = [[X(0), Y(0)]]; for(let i = 0; i <= 24; i++){ const x = site*i/24; pts.push([X(x), Y(top(x))]); } pts.push([X(site), Y(0)]);
+    poly(g, pts, true); g.fillStyle = rgba(c, .3 + b*.12); g.fill();
+    g.strokeStyle = c; g.lineWidth = 1.8; poly(g, pts.slice(1, -1)); g.stroke();
+    // 對照：遮陰線在地面時的包絡（虛線）
+    if(b){ g.setLineDash([3, 3]); g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 1;
+      g.beginPath(); for(let i = 0; i <= 24; i++){ const x = site*i/24, z = Math.min(maxH, (fx - x)*k); i ? g.lineTo(X(x), Y(z)) : g.moveTo(X(x), Y(z)); } g.stroke(); g.setLineDash([]); }
+    // 北側鄰地：第 0 條是停車場（車輛剖面），另兩條是住宅，窗台高度＝遮陰線高度
+    if(b === 0){ g.fillStyle = "rgba(200,200,210,.55)";
+      for(let n = 0; n < 2; n++){ const cx0 = X(fx + 1 + n*3); g.fillRect(cx0, Y(1.3), sx*2.4, 1.3*sz*.55); g.fillRect(cx0 + sx*.5, Y(1.3) - 1.3*sz*.35, sx*1.3, 1.3*sz*.35); } }
+    else { const bh = Math.min(zTop - .3, fh + 2.4 + b*.9);
+      g.fillStyle = "rgba(30,30,38,.95)"; g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1;
+      g.fillRect(X(fx), Y(bh), sx*6.5, bh*sz); g.strokeRect(X(fx), Y(bh), sx*6.5, bh*sz);
+      g.fillStyle = "rgba(255,236,170,.85)"; g.fillRect(X(fx) + 1, Y(fh + 1.5), sx*1.2, 1.5*sz); }
+    // 遮陰線：白色短橫＋立桿
+    g.strokeStyle = "#fff"; g.lineWidth = 2.4; g.beginPath(); g.moveTo(X(fx) - sx*.8, Y(fh)); g.lineTo(X(fx) + sx*.8, Y(fh)); g.stroke();
+    g.lineWidth = 1; g.beginPath(); g.moveTo(X(fx), Y(0)); g.lineTo(X(fx), Y(fh)); g.stroke();
+    // 這一刻的太陽光線：擦過遮陰線、沿斜面往左上
+    const gr = g.createLinearGradient(X(0), Y(fh + fx*k), X(fx), Y(fh)); gr.addColorStop(0, "rgba(255,236,170,0)"); gr.addColorStop(1, "rgba(255,236,170,.9)");
+    g.strokeStyle = gr; g.lineWidth = 1.1; g.beginPath(); g.moveTo(X(fx), Y(fh)); g.lineTo(X(fx - (zTop - fh)/k), Y(zTop)); g.stroke();
+    // 高度刻度：遮陰線越高、刻度越多
+    g.fillStyle = "rgba(255,255,255,.6)"; for(let t = 0; t <= b; t++) g.fillRect(W - mL*.9, y0 - 4 - t*5, mL*.5, 2);
+  }
 };
 
-// V05 坡地與地形上的太陽包絡：等角視圖，地面沿北向抬升，包絡疊在起伏地形上
+// V05 坡地與地形上的太陽包絡：地形圖式平面（上北）。整片是朝北下降的坡地（暈渲＋等高線），
+// 不規則基地內以色階畫「包絡離地高度」；北側遮陰線落在較低的地面，包絡被壓低，白色等值線跟著地形歪斜
 ART.var["G02"][4] = function(g, W, H, r, c){
-  const nx = 14, ny = 14, gap = .6 + r()*.8, maxH = 5.5;
-  const suns = sunSet(36 + r()*10, 355, 9, 15, 6);
-  const fences = [[[-4, ny + gap], [nx + 4, ny + gap]]];
-  const slope = 3 + r()*2, vn = U.vnoise((r()*1e6)|0);
-  const terr = []; for(let i = 0; i <= nx; i++){ terr[i] = []; for(let j = 0; j <= ny; j++) terr[i][j] = j/ny*slope + vn(i*.4, j*.4)*.7; }
-  const hEnv = envField(nx, ny, fences, suns, 0, maxH, 0);
-  const h = []; for(let i = 0; i <= nx; i++){ h[i] = []; for(let j = 0; j <= ny; j++) h[i][j] = terr[i][j] + hEnv[i][j]; }
-  const pts = []; for(let i = 0; i <= nx; i++) for(let j = 0; j <= ny; j++) pts.push(iso0(i, j, terr[i][j]), iso0(i, j, h[i][j]));
-  const fr = autoFit(pts, W, H, .82, .64, .6);
-  const P = (x, y, z) => { const q = iso0(x, y, z); return [fr.ox + q[0]*fr.k, fr.oy + q[1]*fr.k]; };
-  const cells = []; for(let i = 0; i < nx; i++) for(let j = 0; j < ny; j++) cells.push([i, j]);
-  cells.sort((A, B) => (B[1] - B[0]) - (A[1] - A[0]));
-  for(const [i, j] of cells){ // 地形面：綠棕色
-    poly(g, [P(i, j, terr[i][j]), P(i+1, j, terr[i+1][j]), P(i+1, j+1, terr[i+1][j+1]), P(i, j+1, terr[i][j+1])], true);
-    g.fillStyle = "rgba(90,84,58,.65)"; g.fill(); g.strokeStyle = "rgba(150,140,100,.35)"; g.lineWidth = .5; g.stroke(); }
-  // 四個轉角的支柱：連接地形與包絡面，強調兩者之間的體量
-  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = .8; g.setLineDash([2, 2]);
-  [[0,0],[nx,0],[nx,ny],[0,ny]].forEach(([i, j]) => { g.beginPath(); g.moveTo(...P(i, j, terr[i][j])); g.lineTo(...P(i, j, h[i][j])); g.stroke(); });
-  g.setLineDash([]);
-  let hmax = 0; for(let i = 0; i <= nx; i++) for(let j = 0; j <= ny; j++) hmax = Math.max(hmax, h[i][j]);
-  for(const [i, j] of cells){ const a = h[i][j], b = h[i+1][j], cc = h[i+1][j+1], d = h[i][j+1], t = (a+b+cc+d)/4/(hmax||1);
-    poly(g, [P(i, j, a), P(i+1, j, b), P(i+1, j+1, cc), P(i, j+1, d)], true);
-    g.fillStyle = rgba(c, .18 + t*.55); g.fill(); g.strokeStyle = rgba(c, .85); g.lineWidth = .6; g.stroke(); }
+  const n = 46, m = 40, vn = U.vnoise((r()*1e6)|0), slope = .16 + r()*.05, maxH = 8;
+  const suns = sunSet(34 + r()*10, 355, 9, 15, 6);
+  // 平面座標：x 往東 0..n、y 往北 0..m；地面高程 z：往北（及往東）下降，加一點起伏
+  const zg = (x, y) => (m - y)*slope + (n - x)*slope*.35 + vn(x*.09, y*.09)*2.4;
+  const yF = m*.8;                                    // 北側遮陰線（鄰地界線）
+  const site = [[n*.14, m*.1], [n*.8, m*.16], [n*.86, m*.64], [n*.5, m*.72], [n*.1, m*.56]];
+  const inSite = (x, y) => { let s = false; for(let i = 0, j = site.length - 1; i < site.length; j = i++){ const a = site[i], b = site[j];
+    if((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0])*(y - a[1])/(b[1] - a[1]) + a[0]) s = !s; } return s; };
+  // 允許高度（離地）：zf + D·tanα − zp，取所有時刻的最小值（zf 是影子方向碰到遮陰線那一點的地面高程）
+  const env = (x, y) => { let best = Infinity;
+    for(const s of suns){ if(s.dy <= .05) continue; const D = (yF - y)/s.dy, xf = x + D*s.dx;
+      best = Math.min(best, zg(xf, yF) + D*s.tanAlt - zg(x, y)); }
+    return Math.max(0, Math.min(maxH, best)); };
+  const sx = W/n, sy = H/m, X = x => x*sx, Y = y => H - y*sy;
+  // 1) 地形暈渲（光源西北）：低處偏暗、高處偏亮
+  const off = document.createElement("canvas"); off.width = n; off.height = m; const og = off.getContext("2d"), img = og.createImageData(n, m);
+  for(let j = 0; j < m; j++) for(let i = 0; i < n; i++){ const x = i + .5, y = m - j - .5, k = (j*n + i)*4;
+    const dzx = zg(x + .5, y) - zg(x - .5, y), dzy = zg(x, y + .5) - zg(x, y - .5);
+    const sh = Math.max(0, Math.min(1, .55 + (-dzx*.7 + dzy*.7)*.9)), el = zg(x, y)/(m*slope + n*slope*.35 + 2.4);
+    const L = .25 + el*.5 + sh*.25; img.data[k] = 70*L + 20; img.data[k+1] = 78*L + 18; img.data[k+2] = 52*L + 16; img.data[k+3] = 255; }
+  og.putImageData(img, 0, 0); g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, W, H);
+  // 2) 地形等高線（淡）
+  const zs = []; for(let j = 0; j <= m; j++){ zs[j] = []; for(let i = 0; i <= n; i++) zs[j][i] = zg(i, m - j); }
+  g.strokeStyle = "rgba(230,215,170,.3)"; g.lineWidth = .8;
+  for(let lv = 1; lv < 16; lv++){ const iso = lv*1.1; g.beginPath();
+    U.contour(n + 1, m + 1, (i, j) => zs[j][i], iso).forEach(([a, b]) => { g.moveTo(a[0]*sx, a[1]*sy); g.lineTo(b[0]*sx, b[1]*sy); }); g.stroke(); }
+  // 3) 基地內：包絡離地高度色階（離屏畫好再裁進基地輪廓）
+  g.save(); poly(g, site.map(p => [X(p[0]), Y(p[1])]), true); g.clip();
+  U.field(g, W, H, n + 1, m + 1, (i, j) => .25 + env(i, m - j)/maxH*.8, c, 1);
+  const ev = []; for(let j = 0; j <= m; j++){ ev[j] = []; for(let i = 0; i <= n; i++) ev[j][i] = zg(i, m - j) + env(i, m - j); }
+  g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = 1;   // 包絡「絕對高程」等值線：被坡地拉斜
+  for(let lv = 2; lv < 20; lv++){ g.beginPath(); U.contour(n + 1, m + 1, (i, j) => ev[j][i], lv*1.2).forEach(([a, b]) => { g.moveTo(a[0]*sx, a[1]*sy); g.lineTo(b[0]*sx, b[1]*sy); }); g.stroke(); }
+  g.restore();
+  g.strokeStyle = "#fff"; g.lineWidth = 1.6; poly(g, site.map(p => [X(p[0]), Y(p[1])]), true); g.stroke();
+  // 4) 北側遮陰線與鄰房（坡下）
+  g.strokeStyle = "#fff"; g.lineWidth = 2.2; g.beginPath(); g.moveTo(0, Y(yF)); g.lineTo(W, Y(yF)); g.stroke();
+  g.fillStyle = "rgba(24,24,30,.9)"; g.strokeStyle = rgba(c, .8); g.lineWidth = 1;
+  [[n*.12, 4], [n*.46, 5.5], [n*.78, 4.5]].forEach(([x0, w]) => { g.fillRect(X(x0), Y(yF + 5.5), w*sx, 4*sy); g.strokeRect(X(x0), Y(yF + 5.5), w*sx, 4*sy); });
+  // 5) 坡向箭頭（往下坡）
+  g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1.2; const ax = W*.9, ay = H*.94;
+  g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + 6, ay - 16); g.moveTo(ax + 6, ay - 16); g.lineTo(ax - 1, ay - 12); g.moveTo(ax + 6, ay - 16); g.lineTo(ax + 10, ay - 9); g.stroke();
 };
 
 // V06 反向體素削減：離散體素、允許懸挑與內部孔洞（不是單純由地面往上長的高度場）
@@ -356,26 +395,35 @@ ART.var["G02"][7] = function(g, W, H, r, c){
   }
 };
 
-// V09 逐時削切動畫：三個並排的縮小量體，隨太陽時刻增加逐步被削出斜面
+// V09 逐時削切動畫：底片式 2 × 3 格，每一格是 Timer 多跑一步後的平面高度圖（亮＝高）。
+// 第一格是未削的滿格方盒，之後每加入一個太陽向量就從東北角的鄰地方向多削一刀；格內白線是這一刻的影子方向
 ART.var["G02"][8] = function(g, W, H, r, c){
-  const nx = 10, ny = 8, gap = 2, maxH = 9, lat = 30 + r()*12;
-  const allSuns = sunSet(lat, 355, 9, 15, 7);
-  const stages = [allSuns.slice(0, 2), allSuns.slice(0, 4), allSuns];
-  const fences = [[[-3, ny + gap], [nx + 3, ny + gap]]];
-  const cellW = W/stages.length;
-  stages.forEach((suns, si) => {
-    const h = suns.length ? envField(nx, ny, fences, suns, 0, maxH, 0) : [...Array(nx+1)].map(() => Array(ny+1).fill(maxH));
-    const pts = []; for(let i = 0; i <= nx; i++) for(let j = 0; j <= ny; j++) pts.push(iso0(i, j, 0), iso0(i, j, h[i][j]));
-    const fr = autoFit(pts, cellW, H, .78, .58, .58);
-    const P = (x, y, z) => { const q = iso0(x, y, z); return [si*cellW + fr.ox + q[0]*fr.k, fr.oy + q[1]*fr.k]; };
-    const cells = []; for(let i = 0; i < nx; i++) for(let j = 0; j < ny; j++) cells.push([i, j]);
-    cells.sort((A, B) => (B[1] - B[0]) - (A[1] - A[0]));
-    const op = .35 + si*.25;
-    for(const [i, j] of cells){ const a = h[i][j], b = h[i+1][j], cc = h[i+1][j+1], d = h[i][j+1];
-      poly(g, [P(i, j, a), P(i+1, j, b), P(i+1, j+1, cc), P(i, j+1, d)], true);
-      g.fillStyle = rgba(c, op); g.fill(); g.strokeStyle = rgba(c, .8); g.lineWidth = .5; g.stroke(); }
-    if(si < stages.length - 1){ g.strokeStyle = "rgba(255,255,255,.1)"; g.beginPath(); g.moveTo((si+1)*cellW, H*.1); g.lineTo((si+1)*cellW, H*.9); g.stroke(); }
-  });
+  const nx = 22, ny = 16, gap = 2 + r(), maxH = 9, lat = 30 + r()*12;
+  const allSuns = sunSet(lat, 355, 8.5, 15.5, 5);
+  // 鄰地只在北側偏東與東側（L 形遮陰線），削切會斜向推進，每一步的差別看得出來
+  const fences = [[[nx*.3, ny + gap], [nx + 8, ny + gap]], [[nx + gap, ny*.2], [nx + gap, ny + gap]]];
+  const cols = 3, rows = 2, pad = W*.035, fw = (W - pad*(cols + 1))/cols, bandH = H/rows, fh = bandH*.62;
+  // 底片條
+  g.fillStyle = "rgba(8,8,11,.9)"; g.fillRect(0, 0, W, H);
+  for(let row = 0; row < rows; row++){ const by = row*bandH;
+    g.fillStyle = "rgba(255,255,255,.1)";
+    for(let x = pad*.4; x < W; x += W/16){ g.fillRect(x, by + bandH*.06, W/40, bandH*.07); g.fillRect(x, by + bandH*.87, W/40, bandH*.07); } }
+  for(let f = 0; f < cols*rows; f++){
+    const col = f % cols, row = (f/cols)|0, x0 = pad + col*(fw + pad), y0 = row*bandH + (bandH - fh)/2;
+    const suns = allSuns.slice(0, f);
+    const h = f ? envField(nx, ny, fences, suns, 0, maxH, 0) : null;
+    g.save(); g.translate(x0, y0);
+    U.field(g, fw, fh, nx + 1, ny + 1, (i, j) => .12 + (f ? h[i][ny - j] : maxH)/maxH*.82, c, 1.15);
+    // 這一刻新加入的影子方向：從基地中心往鄰地的白線
+    const s = allSuns[f - 1];
+    if(s){ const cx = fw*.5, cy = fh*.55, L = Math.min(fw, fh)*.42;
+      g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + s.dx*L, cy - s.dy*L); g.stroke();
+      g.fillStyle = "#FFECAA"; g.beginPath(); g.arc(cx - s.dx*L*.9, cy + s.dy*L*.9, 2.6, 0, TAU); g.fill(); }
+    g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1; g.strokeRect(0, 0, fw, fh);
+    // 右上角的步數刻度（第 f 步畫 f 格）
+    g.fillStyle = "rgba(255,255,255,.75)"; for(let t = 0; t < f; t++) g.fillRect(fw - 5 - t*4, 3, 2.4, 5);
+    g.restore();
+  }
 };
 
 // V10 Monte Carlo 日照時數估計：南側量體（依包絡算出的高度）固定，北側鄰地灑點依受光時數上色

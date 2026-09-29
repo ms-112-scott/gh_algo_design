@@ -15163,7 +15163,18 @@ window.CATALOG = {
     "開放生長"
    ],
    "tools": [],
-   "url": "https://arxiv.org/pdf/2504.18040"
+   "url": "https://arxiv.org/pdf/2504.18040",
+   "image": {
+    "file": "img/cases/B01-13.jpg",
+    "w": 563,
+    "h": 480,
+    "source": "arXiv：Liu & Tang, Cabbage: A Differential Growth Framework for Open Surfaces (2025) 圖 1",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://arxiv.org/abs/2504.18040",
+    "note": "論文圖 1：以 Cabbage 差異生長框架生成、像羽衣甘藍的開放曲面網格模型"
+   }
   },
   {
    "id": "B01-51",
@@ -18390,7 +18401,18 @@ window.CATALOG = {
    "tools": [
     "Common-hood（遊戲模擬）"
    ],
-   "url": "https://www.plethora-project.com/combinatorial-nest"
+   "url": "https://www.plethora-project.com/combinatorial-nest",
+   "image": {
+    "file": "img/cases/B06-03.jpg",
+    "w": 900,
+    "h": 462,
+    "source": "Plethora Project（Jose Sanchez）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.plethora-project.com/combinatorial-nest",
+    "note": "Combo-Nest 展館示意：A 字形標準單元組合生長的量體"
+   }
   },
   {
    "id": "B06-04",
@@ -18581,7 +18603,18 @@ window.CATALOG = {
    "tools": [
     "Minecraft"
    ],
-   "url": "https://minecraft.wiki/w/Jigsaw_Block"
+   "url": "https://minecraft.wiki/w/Jigsaw_Block",
+   "image": {
+    "file": "img/cases/B06-51.jpg",
+    "w": 900,
+    "h": 588,
+    "source": "Minecraft Wiki",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://minecraft.wiki/w/Jigsaw_Block",
+    "note": "掠奪者前哨站外圍結構的模板：框內的拼圖方塊就是片段之間的連接點"
+   }
   },
   {
    "id": "B06-52",
@@ -24434,7 +24467,18 @@ window.CATALOG = {
    "tools": [
     "Pathfinder"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/D03-08.jpg",
+    "w": 900,
+    "h": 470,
+    "source": "Thunderhead Engineering：Pathfinder 產品頁",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.thunderheadeng.com/pathfinder",
+    "note": "Pathfinder 疏散模擬畫面：車站大廳樓梯與電扶梯上的人流"
+   }
   },
   {
    "id": "D03-09",
@@ -27117,7 +27161,18 @@ window.CATALOG = {
     "實體模型",
     "早期電腦找形"
    ],
-   "url": "https://www.sbp.de/en/project/roof-for-munich-olympic-stadium-1972/"
+   "url": "https://www.sbp.de/en/project/roof-for-munich-olympic-stadium-1972/",
+   "image": {
+    "file": "img/cases/E04-01.jpg",
+    "w": 900,
+    "h": 601,
+    "source": "Wikimedia Commons（Usien）",
+    "author": "",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Olympic_Stadium_Munich_Dachbegehung.JPG",
+    "note": "奧林匹克體育場索網屋頂的屋頂步道：桅杆、鋼索與透明屋面板"
+   }
   },
   {
    "id": "E04-02",
@@ -27159,7 +27214,18 @@ window.CATALOG = {
     "懸垂鏈模型",
     "攝影測量"
    ],
-   "url": "https://mannheim-multihalle.de/en/architecture/"
+   "url": "https://mannheim-multihalle.de/en/architecture/",
+   "image": {
+    "file": "img/cases/E04-02.jpg",
+    "w": 675,
+    "h": 900,
+    "source": "Wikimedia Commons（Immanuel Giel）",
+    "author": "",
+    "license": "公有領域（作者釋出）",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Herzogenriedpark_Mannheim_Multihalle_Deckenkonstruktion.jpg",
+    "note": "曼海姆 Multihalle 室內仰視：自由曲面的木格殼屋頂"
+   }
   },
   {
    "id": "E04-03",
@@ -27199,7 +27265,18 @@ window.CATALOG = {
     "懸垂模型",
     "攝影"
    ],
-   "url": "https://dataphys.org/list/gaudis-hanging-chain-models/"
+   "url": "https://dataphys.org/list/gaudis-hanging-chain-models/",
+   "image": {
+    "file": "img/cases/E04-03.jpg",
+    "w": 676,
+    "h": 900,
+    "source": "Wikimedia Commons（作者不詳）",
+    "author": "",
+    "license": "公有領域（Public Domain Mark 1.0）",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqueta_polifunicular.jpg",
+    "note": "Gaudí 為古埃爾紡織村教堂製作的倒吊多重懸垂模型原始照片"
+   }
   },
   {
    "id": "E04-04",
@@ -27240,7 +27317,18 @@ window.CATALOG = {
     "懸吊布模型",
     "石膏模型"
    ],
-   "url": "https://en.wikipedia.org/wiki/Heinz_Isler"
+   "url": "https://en.wikipedia.org/wiki/Heinz_Isler",
+   "image": {
+    "file": "img/cases/E04-04.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Wikimedia Commons（Chriusha／Christian Kleis）",
+    "author": "",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Deitingen_Sued_Raststaette,_Schalendach_01_09.jpg",
+    "note": "Deitingen 南服務區：Heinz Isler 設計的三點支撐混凝土薄殼（1968）"
+   }
   },
   {
    "id": "E04-05",
@@ -27283,7 +27371,18 @@ window.CATALOG = {
     "Rhino",
     "CNC"
    ],
-   "url": "https://www.dezeen.com/2016/05/31/armadillo-vault-block-research-group-eth-zurich-beyond-the-bending-limestone-structure-without-glue-venice-architecture-biennale-2016/"
+   "url": "https://www.dezeen.com/2016/05/31/armadillo-vault-block-research-group-eth-zurich-beyond-the-bending-limestone-structure-without-glue-venice-architecture-biennale-2016/",
+   "image": {
+    "file": "img/cases/E04-05.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Flickr（Jean-Pierre Dalbéra）",
+    "author": "",
+    "license": "CC BY 2.0",
+    "license_url": "",
+    "page": "https://www.flickr.com/photos/dalbera/30245801805",
+    "note": "2016 威尼斯建築雙年展的 Armadillo Vault：石灰岩板拼成的無砂漿拱殼"
+   }
   },
   {
    "id": "E04-06",
@@ -27320,7 +27419,18 @@ window.CATALOG = {
     "COMPAS",
     "Rhino"
    ],
-   "url": "https://www.empa.ch/web/nest/hilo"
+   "url": "https://www.empa.ch/web/nest/hilo",
+   "image": {
+    "file": "img/cases/E04-06.jpg",
+    "w": 783,
+    "h": 587,
+    "source": "ETH Zurich 新聞（攝影：Roman Keller）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://ethz.ch/en/news-and-events/eth-news/news/2021/10/light-construction-efficient-operation.html",
+    "note": "NEST 大樓頂層的 HiLo 單元：頂端為雙曲率混凝土夾層殼屋頂"
+   }
   },
   {
    "id": "E04-07",
@@ -27361,7 +27471,18 @@ window.CATALOG = {
     "COMPAS",
     "3D 混凝土列印"
    ],
-   "url": "https://www.zaha-hadid.com/design/striatus/"
+   "url": "https://www.zaha-hadid.com/design/striatus/",
+   "image": {
+    "file": "img/cases/E04-07.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Zaha Hadid Architects 作品頁（攝影：Studio Naaro）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.zha.com/design/striatus/",
+    "note": "Striatus 3D 列印混凝土拱橋於威尼斯 Giardini della Marinaressa"
+   }
   },
   {
    "id": "E04-08",
@@ -27397,7 +27518,18 @@ window.CATALOG = {
     "RhinoVAULT",
     "Rhino"
    ],
-   "url": "https://web.mit.edu/masonry/thrustNetwork/"
+   "url": "https://web.mit.edu/masonry/thrustNetwork/",
+   "image": {
+    "file": "img/cases/E04-08.jpg",
+    "w": 600,
+    "h": 368,
+    "source": "MIT Masonry Research（Philippe Block、John Ochsendorf）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://web.mit.edu/masonry/thrustNetwork/",
+    "note": "Thrust Network Analysis 的形圖 Γ 與力圖 Γ* 的對偶（互易）關係"
+   }
   },
   {
    "id": "E04-09",
@@ -27439,7 +27571,18 @@ window.CATALOG = {
     "Grasshopper",
     "Kangaroo2"
    ],
-   "url": "https://www.food4rhino.com/en/app/kangaroo-physics"
+   "url": "https://www.food4rhino.com/en/app/kangaroo-physics",
+   "image": {
+    "file": "img/cases/E04-09.jpg",
+    "w": 640,
+    "h": 480,
+    "source": "Vimeo（Daniel Piker）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://vimeo.com/8706003",
+    "note": "Project Kangaroo 早期示範影片縮圖：Rhino 視窗中以彈簧懸吊的質點"
+   }
   },
   {
    "id": "E04-10",
@@ -27510,7 +27653,18 @@ window.CATALOG = {
     "COMPAS",
     "電腦針織"
    ],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/E04-11.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "Zaha Hadid Architects 作品頁（攝影：Juan Pablo Allegre）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.zha.com/design/knitcandela/",
+    "note": "KnitCandela 俯視：針織模板上塗覆混凝土的薄殼，內側可見彩色針織布"
+   }
   },
   {
    "id": "E04-12",
@@ -27580,7 +27734,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/E04-13.jpg",
+    "w": 652,
+    "h": 489,
+    "source": "Aerotrope 作品頁（©Anish Kapoor／Lucerne Festival）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.aerotrope.com/what-we-do/art/ark-nova.html",
+    "note": "Ark Nova 在日本松島充氣完成的空拍：單一薄膜鼓成的甜甜圈形音樂廳"
+   }
   },
   {
    "id": "E04-14",
@@ -27612,7 +27777,18 @@ window.CATALOG = {
     "3D"
    ],
    "tools": [],
-   "url": ""
+   "url": "",
+   "image": {
+    "file": "img/cases/E04-14.jpg",
+    "w": 675,
+    "h": 900,
+    "source": "Wikimedia Commons（Oosoom）",
+    "author": "",
+    "license": "CC BY-SA 3.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Saville_Building_roof_interior_long.jpg",
+    "note": "Savill Building 室內：落葉松木格殼屋頂與波浪形屋緣"
+   }
   },
   {
    "id": "E04-51",
@@ -28008,7 +28184,18 @@ window.CATALOG = {
     "圖解靜力學",
     "互動參數模型"
    ],
-   "url": "https://link.springer.com/article/10.1007/s00004-006-0015-9"
+   "url": "https://link.springer.com/article/10.1007/s00004-006-0015-9",
+   "image": {
+    "file": "img/cases/E05-03.jpg",
+    "w": 900,
+    "h": 683,
+    "source": "Block, DeJong, Ochsendorf, Nexus Network Journal（Springer）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://link.springer.com/article/10.1007/s00004-006-0015-9",
+    "note": "論文圖 3：任意拱的推力線與其倒置的懸鏈，並附 Bow 記號、力多邊形與單一拱石的力平衡"
+   }
   },
   {
    "id": "E05-04",
@@ -28044,7 +28231,18 @@ window.CATALOG = {
    "tools": [
     "互動參數模型"
    ],
-   "url": "https://web.mit.edu/masonry/papers/block_cibl_ochs_CAS.pdf"
+   "url": "https://web.mit.edu/masonry/papers/block_cibl_ochs_CAS.pdf",
+   "image": {
+    "file": "img/cases/E05-04.jpg",
+    "w": 900,
+    "h": 661,
+    "source": "Block, Ciblac, Ochsendorf, Computers & Structures（MIT Masonry Research Group）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://web.mit.edu/masonry/papers/block_cibl_ochs_CAS.pdf",
+    "note": "論文圖 8：分析哥德式肋拱的互動介面，含剖面、平面、各條帶的推力線與力多邊形"
+   }
   },
   {
    "id": "E05-05",
@@ -28078,7 +28276,18 @@ window.CATALOG = {
     "交互力圖"
    ],
    "tools": [],
-   "url": "https://link.springer.com/article/10.1007/s00158-013-1002-x"
+   "url": "https://link.springer.com/article/10.1007/s00158-013-1002-x",
+   "image": {
+    "file": "img/cases/E05-05.jpg",
+    "w": 610,
+    "h": 576,
+    "source": "Beghini 等, Structural and Multidisciplinary Optimization（Springer）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://link.springer.com/article/10.1007/s00158-013-1002-x",
+    "note": "論文圖 8：懸臂拓樸最佳化結果（a）轉成桁架（b），以及其形態圖與對應力圖（c–f）"
+   }
   },
   {
    "id": "E05-06",
@@ -28186,7 +28395,18 @@ window.CATALOG = {
     "Rhino",
     "Grasshopper"
    ],
-   "url": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf"
+   "url": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf",
+   "image": {
+    "file": "img/cases/E05-08.jpg",
+    "w": 625,
+    "h": 631,
+    "source": "Akbarzadeh 等, IASS 2017（UPenn Polyhedral Structures Lab）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf",
+    "note": "論文圖 1：在德黑蘭 Sa'dabad 林間實際搭建完成的預鑄混凝土多面體框架"
+   }
   },
   {
    "id": "E05-09",
@@ -28257,7 +28477,18 @@ window.CATALOG = {
    "tools": [
     "Java"
    ],
-   "url": "http://acg.media.mit.edu/people/simong/statics/data/"
+   "url": "http://acg.media.mit.edu/people/simong/statics/data/",
+   "image": {
+    "file": "img/cases/E05-51.jpg",
+    "w": 240,
+    "h": 196,
+    "source": "Active Statics（Simon Greenwold, MIT）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "http://acg.media.mit.edu/people/simong/statics/data/hangingCable.html",
+    "note": "Active Statics 懸索／拱範例的形態圖：紅色桿件粗細表示壓力大小，綠箭頭為支承反力"
+   }
   },
   {
    "id": "E05-52",
@@ -28294,7 +28525,18 @@ window.CATALOG = {
    "tools": [
     "JavaScript（網頁互動）"
    ],
-   "url": "https://psl.design.upenn.edu/i3dgs/"
+   "url": "https://psl.design.upenn.edu/i3dgs/",
+   "image": {
+    "file": "img/cases/E05-52.jpg",
+    "w": 900,
+    "h": 468,
+    "source": "UPenn Polyhedral Structures Lab（i3DGS）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/PolyhedralStructuresLaboratory/i3dgs",
+    "note": "i3DGS 範例畫面：左為受兩個載重的三維形態圖，右為對應的綠色多面體力圖"
+   }
   },
   {
    "id": "E05-53",
@@ -28593,7 +28835,18 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.food4rhino.com/en/app/force-density-method"
+   "url": "https://www.food4rhino.com/en/app/force-density-method",
+   "image": {
+    "file": "img/cases/E06-06.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "YouTube：Oliviero Cabitza",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.youtube.com/watch?v=kA2PUHG1ljk",
+    "note": "Food4Rhino 元件頁所附示範影片「Force Density Method - Grasshopper Component」的縮圖：Grasshopper 中的 FDM 元件與力密度滑桿"
+   }
   },
   {
    "id": "E06-07",
@@ -28629,7 +28882,18 @@ window.CATALOG = {
     "Grasshopper",
     "Julia"
    ],
-   "url": "https://github.com/keithjlee/FDMremote"
+   "url": "https://github.com/keithjlee/FDMremote",
+   "image": {
+    "file": "img/cases/E06-07.jpg",
+    "w": 770,
+    "h": 252,
+    "source": "GitHub：keithjlee/FDMremote",
+    "author": "",
+    "license": "MIT",
+    "license_url": "",
+    "page": "https://github.com/keithjlee/FDMremote",
+    "note": "README 最佳化示範動畫（optim_lowertol）最後一格：找形後的索網、力密度梯度與損失收斂曲線"
+   }
   },
   {
    "id": "E06-08",
@@ -28791,7 +29055,18 @@ window.CATALOG = {
     "Jupyter Notebook",
     "NetworkX"
    ],
-   "url": "https://github.com/sevamoo/Force_Density_Method"
+   "url": "https://github.com/sevamoo/Force_Density_Method",
+   "image": {
+    "file": "img/cases/E06-53.jpg",
+    "w": 900,
+    "h": 897,
+    "source": "GitHub：sevamoo/Force_Density_Method",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://github.com/sevamoo/Force_Density_Method",
+    "note": "README 範例圖：固定點位於圓形邊界的屋頂，不同力密度分布求得的多組平衡形平面圖"
+   }
   },
   {
    "id": "F01-01",
@@ -29388,7 +29663,18 @@ window.CATALOG = {
     "對稱"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Alhambra"
+   "url": "https://en.wikipedia.org/wiki/Alhambra",
+   "image": {
+    "file": "img/cases/F02-03.jpg",
+    "w": 712,
+    "h": 900,
+    "source": "Wikimedia Commons (Sibenka)",
+    "author": "",
+    "license": "CC BY-SA 4.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Mosaic15_alhambra.jpg",
+    "note": "西班牙格拉納達 Alhambra 宮殿牆裙的 zellij 幾何馬賽克磁磚"
+   }
   },
   {
    "id": "F02-04",
@@ -29421,7 +29707,18 @@ window.CATALOG = {
     "遞迴"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Darb-e_Imam"
+   "url": "https://en.wikipedia.org/wiki/Darb-e_Imam",
+   "image": {
+    "file": "img/cases/F02-04.jpg",
+    "w": 646,
+    "h": 431,
+    "source": "Wikimedia Commons",
+    "author": "",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Darb-i_Imam_shrine_spandrel.JPG",
+    "note": "伊朗 Isfahan Darb-e Imam 聖祠券肩的 girih 磁磚幾何圖樣"
+   }
   },
   {
    "id": "F02-05",
@@ -29488,7 +29785,18 @@ window.CATALOG = {
    "tools": [
     "手繪／紙本"
    ],
-   "url": "https://en.wikipedia.org/wiki/Topkapı_Scroll"
+   "url": "https://en.wikipedia.org/wiki/Topkapı_Scroll",
+   "image": {
+    "file": "img/cases/F02-06.jpg",
+    "w": 524,
+    "h": 900,
+    "source": "Wikimedia Commons",
+    "author": "",
+    "license": "公有領域",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Topkapi_Scroll_p294.JPG",
+    "note": "Topkapı 卷軸中一頁 muqarnas 幾何圖樣手繪稿"
+   }
   },
   {
    "id": "F02-07",
@@ -29520,7 +29828,18 @@ window.CATALOG = {
     "對稱"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns"
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "image": {
+    "file": "img/cases/F02-07.jpg",
+    "w": 507,
+    "h": 900,
+    "source": "Wikimedia Commons (Abira Dutta)",
+    "author": "",
+    "license": "CC BY-SA 4.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Lattice_screen_of_Akbar%27s_tomb.jpg",
+    "note": "印度 Sikandra Akbar 陵墓的石雕格柵（jali）幾何圖樣"
+   }
   },
   {
    "id": "F02-08",
@@ -29559,7 +29878,18 @@ window.CATALOG = {
     "對稱"
    ],
    "tools": [],
-   "url": "https://en.wikipedia.org/wiki/Louvre_Abu_Dhabi"
+   "url": "https://en.wikipedia.org/wiki/Louvre_Abu_Dhabi",
+   "image": {
+    "file": "img/cases/F02-08.jpg",
+    "w": 900,
+    "h": 888,
+    "source": "Wikimedia Commons (Boubloub)",
+    "author": "",
+    "license": "CC BY-SA 4.0",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:LouvreAD_tree.jpg",
+    "note": "阿布達比羅浮宮多層星形穿孔穹頂，光線灑落形成光之雨"
+   }
   },
   {
    "id": "F02-09",
@@ -29805,7 +30135,18 @@ window.CATALOG = {
     "Surface Evolver",
     "金屬 3D 列印"
    ],
-   "url": "https://www.bathsheba.com/math/gyroid/"
+   "url": "https://www.bathsheba.com/math/gyroid/",
+   "image": {
+    "file": "img/cases/F03-02.jpg",
+    "w": 350,
+    "h": 350,
+    "source": "Bathsheba Grossman",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.bathsheba.com/math/gyroid/",
+    "note": "鋼材 3D 列印的 Gyroid 數學雕塑"
+   }
   },
   {
    "id": "F03-03",
@@ -29845,7 +30186,18 @@ window.CATALOG = {
     "PrusaSlicer",
     "FDM 3D 列印"
    ],
-   "url": "https://help.prusa3d.com/article/infill-patterns_177130"
+   "url": "https://help.prusa3d.com/article/infill-patterns_177130",
+   "image": {
+    "file": "img/cases/F03-03.jpg",
+    "w": 900,
+    "h": 675,
+    "source": "Prusa Knowledge Base",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://help.prusa3d.com/article/infill-patterns_177130",
+    "note": "3D 列印實測與切片預覽的 Gyroid 填充樣式"
+   }
   },
   {
    "id": "F03-04",
@@ -29966,7 +30318,18 @@ window.CATALOG = {
     "3D 列印",
     "分子模擬"
    ],
-   "url": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106"
+   "url": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106",
+   "image": {
+    "file": "img/cases/F03-06.jpg",
+    "w": 900,
+    "h": 600,
+    "source": "MIT News（照片：Melanie Gonick/MIT）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106",
+    "note": "放大版 3D 列印 Gyroid 模型，用於材料力學測試"
+   }
   },
   {
    "id": "F03-07",
@@ -30083,7 +30446,18 @@ window.CATALOG = {
    "tools": [
     "砂印（binder jetting）"
    ],
-   "url": "https://michael-hansmeyer.com/digital-grotesque-I"
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "image": {
+    "file": "img/cases/F03-09.jpg",
+    "w": 900,
+    "h": 563,
+    "source": "Michael Hansmeyer（攝影：Demetris Shammas、Achilleas Xydis）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://michael-hansmeyer.com/digital-grotesque-I",
+    "note": "Digital Grotesque I 全尺度砂印洞窟裝置"
+   }
   },
   {
    "id": "F03-10",
@@ -30125,7 +30499,18 @@ window.CATALOG = {
     "砂印（binder jetting）",
     "混凝土"
    ],
-   "url": "https://dbt.arch.ethz.ch/project/smart-slab/"
+   "url": "https://dbt.arch.ethz.ch/project/smart-slab/",
+   "image": {
+    "file": "img/cases/F03-10.jpg",
+    "w": 900,
+    "h": 506,
+    "source": "ETH Zurich DBT Group",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://dbt.arch.ethz.ch/project/smart-slab/",
+    "note": "Smart Slab 3D 砂印模板澆置的肋梁樓板底面"
+   }
   },
   {
    "id": "F03-11",
@@ -30600,7 +30985,18 @@ window.CATALOG = {
    "tools": [
     "演化演算法"
    ],
-   "url": "https://www.jpl.nasa.gov/nmp/st5/TECHNOLOGY/antenna.html"
+   "url": "https://www.jpl.nasa.gov/nmp/st5/TECHNOLOGY/antenna.html",
+   "image": {
+    "file": "img/cases/F04-10.jpg",
+    "w": 435,
+    "h": 558,
+    "source": "Wikimedia Commons",
+    "author": "",
+    "license": "公有領域（NASA 作品）",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:St_5-xband-antenna.jpg",
+    "note": "NASA ST5 任務演化天線實體照片，附比例尺"
+   }
   },
   {
    "id": "F04-11",
@@ -30635,7 +31031,18 @@ window.CATALOG = {
    "tools": [
     "自製程式"
    ],
-   "url": "https://www.karlsims.com/evolved-virtual-creatures.html"
+   "url": "https://www.karlsims.com/evolved-virtual-creatures.html",
+   "image": {
+    "file": "img/cases/F04-11.jpg",
+    "w": 640,
+    "h": 480,
+    "source": "karlsims.com",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.karlsims.com/evolved-virtual-creatures.html",
+    "note": "Evolved Virtual Creatures 中兩隻演化生物競爭綠色方塊的模擬畫面"
+   }
   },
   {
    "id": "F04-12",
@@ -30669,7 +31076,18 @@ window.CATALOG = {
    "tools": [
     "自製程式"
    ],
-   "url": "https://karlsims.com/"
+   "url": "https://karlsims.com/",
+   "image": {
+    "file": "img/cases/F04-12.jpg",
+    "w": 600,
+    "h": 223,
+    "source": "karlsims.com",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.karlsims.com/genetic-images.html",
+    "note": "Genetic Images 互動展示現場，觀眾前的螢幕牆顯示演化中的抽象影像"
+   }
   },
   {
    "id": "F05-01",
@@ -30874,7 +31292,18 @@ window.CATALOG = {
    "tools": [
     "depthmapX"
    ],
-   "url": "https://github.com/SpaceGroupUCL/depthmapX"
+   "url": "https://github.com/SpaceGroupUCL/depthmapX",
+   "image": {
+    "file": "img/cases/F05-06.jpg",
+    "w": 900,
+    "h": 594,
+    "source": "depthmapX GitHub Pages（SpaceGroupUCL / varoudis）",
+    "author": "",
+    "license": "GPL-3.0（軟體授權；畫面截圖教學引用）",
+    "license_url": "",
+    "page": "https://spacegroupucl.github.io/depthmapX/",
+    "note": "depthmapX 官方文件頁展示的可視圖分析畫面：以 visibility graph 計算的 integration／connectivity 色階圖，紅色為核心、藍色為邊緣"
+   }
   },
   {
    "id": "F05-07",
@@ -31775,7 +32204,18 @@ window.CATALOG = {
    "tools": [
     "Go"
    ],
-   "url": "https://www.michaelfogleman.com/projects/traveling-pixel/"
+   "url": "https://www.michaelfogleman.com/projects/traveling-pixel/",
+   "image": {
+    "file": "img/cases/F07-52.jpg",
+    "w": 720,
+    "h": 840,
+    "source": "Michael Fogleman｜Traveling Pixel",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.michaelfogleman.com/projects/traveling-pixel/",
+    "note": "專案頁動畫 GIF 的最後一格：以退火求得的單一路徑走完整張像素畫"
+   }
   },
   {
    "id": "F07-53",
@@ -31863,7 +32303,18 @@ window.CATALOG = {
     "NumPy",
     "Matplotlib"
    ],
-   "url": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing"
+   "url": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing",
+   "image": {
+    "file": "img/cases/F07-54.jpg",
+    "w": 500,
+    "h": 500,
+    "source": "Matthew McGonagle｜Travelling Salesman Art With Simulated Annealing",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing",
+    "note": "部落格文中的 von Neumann 肖像最終路徑：一條封閉曲線畫出整張臉"
+   }
   },
   {
    "id": "F07-55",
@@ -32083,7 +32534,18 @@ window.CATALOG = {
     "Grasshopper",
     "VB.NET"
    ],
-   "url": "https://www.designcoding.net/minimum-spanning-tree/"
+   "url": "https://www.designcoding.net/minimum-spanning-tree/",
+   "image": {
+    "file": "img/cases/F08-04.jpg",
+    "w": 500,
+    "h": 522,
+    "source": "designcoding｜Minimum Spanning Tree",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.designcoding.net/minimum-spanning-tree/",
+    "note": "作者頁面的最小生成樹動畫主圖：虛線為候選曲線網路，粗管為留下的生成樹"
+   }
   },
   {
    "id": "F08-05",
@@ -32155,7 +32617,18 @@ window.CATALOG = {
     "Grasshopper",
     "LeafVein"
    ],
-   "url": "https://www.food4rhino.com/en/app/leafvein"
+   "url": "https://www.food4rhino.com/en/app/leafvein",
+   "image": {
+    "file": "img/cases/F08-06.jpg",
+    "w": 900,
+    "h": 832,
+    "source": "Food4Rhino｜LeafVein",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.food4rhino.com/en/app/leafvein",
+    "note": "外掛頁面的圖分析示意：最小成本生成樹、匹配、二分、連通與割、拓撲排序等結果"
+   }
   },
   {
    "id": "F08-51",
@@ -32313,7 +32786,18 @@ window.CATALOG = {
     "Houdini",
     "VEX"
    ],
-   "url": "https://sergeneren.com/2018/09/24/spanning-trees/"
+   "url": "https://sergeneren.com/2018/09/24/spanning-trees/",
+   "image": {
+    "file": "img/cases/F08-54.jpg",
+    "w": 423,
+    "h": 482,
+    "source": "Sergen Eren｜Spanning Trees",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://sergeneren.com/2018/09/24/spanning-trees/",
+    "note": "文章中的 wire_loop 動畫一格：在球面網格的連接關係上長出的生成樹被攤開"
+   }
   },
   {
    "id": "G01-01",
@@ -32863,7 +33347,18 @@ window.CATALOG = {
     "日照權"
    ],
    "tools": [],
-   "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf"
+   "url": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf",
+   "image": {
+    "file": "img/cases/G02-02.jpg",
+    "w": 541,
+    "h": 406,
+    "source": "ACADIA 2003 論文 SolCAD（Juyal, Kensek, Knowles）",
+    "author": "",
+    "license": "論文圖，教學引用",
+    "license_url": "",
+    "page": "https://papers.cumincad.org/data/works/att/acadia03_052.content.pdf",
+    "note": "SolCAD 在不規則多邊形基地上產生的太陽包絡線框圖（論文第一張圖）"
+   }
   },
   {
    "id": "G02-03",
@@ -32900,7 +33395,18 @@ window.CATALOG = {
     "Grasshopper",
     "Ladybug"
    ],
-   "url": "https://www.grasshopper3d.com/group/ladybug/forum/topics/new-solar-envelope-component-now-available"
+   "url": "https://www.grasshopper3d.com/group/ladybug/forum/topics/new-solar-envelope-component-now-available",
+   "image": {
+    "file": "img/cases/G02-03.jpg",
+    "w": 900,
+    "h": 398,
+    "source": "Grasshopper 論壇 Ladybug 群組（Boris Plotnikov）",
+    "author": "",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "page": "https://www.grasshopper3d.com/group/ladybug/forum/topics/new-solar-envelope-component-now-available",
+    "note": "SolarEnvelopeAdvanced 元件輸出：左為日照收集包絡、右為日照權包絡"
+   }
   },
   {
    "id": "G02-04",

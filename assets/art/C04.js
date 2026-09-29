@@ -244,6 +244,52 @@ ART.var["C04"] = [
   },
 ];
 
+// V13 Diamond-square 中點位移地形：遞迴中點位移生成碎形山地，取代 Perlin 取樣
+ART.var["C04"][12] = function(g, W, H, r, c, U){
+  const k0 = 6, size = (1<<k0)+1, h = new Float32Array(size*size), IDX = (x,y) => y*size+x;
+  h[IDX(0,0)] = r()*2-1; h[IDX(size-1,0)] = r()*2-1; h[IDX(0,size-1)] = r()*2-1; h[IDX(size-1,size-1)] = r()*2-1;
+  const roughness = .35 + r()*.5;
+  let step = size-1, amp = 1;
+  while(step > 1){
+    const half = step/2;
+    for(let y = half; y < size; y += step) for(let x = half; x < size; x += step){
+      const avg = (h[IDX(x-half,y-half)] + h[IDX(Math.min(size-1,x+half),y-half)] + h[IDX(x-half,Math.min(size-1,y+half))] + h[IDX(Math.min(size-1,x+half),Math.min(size-1,y+half))])/4;
+      h[IDX(x,y)] = avg + (r()*2-1)*amp;
+    }
+    for(let y = 0; y < size; y += half){
+      for(let x = (y/half)%2===0 ? half : 0; x < size; x += step){
+        let sum = 0, cnt = 0;
+        if(x-half >= 0){ sum += h[IDX(x-half,y)]; cnt++; }
+        if(x+half < size){ sum += h[IDX(x+half,y)]; cnt++; }
+        if(y-half >= 0){ sum += h[IDX(x,y-half)]; cnt++; }
+        if(y+half < size){ sum += h[IDX(x,y+half)]; cnt++; }
+        h[IDX(x,y)] = sum/cnt + (r()*2-1)*amp;
+      }
+    }
+    amp *= Math.pow(2, -roughness); step = half;
+  }
+  let lo = 1e9, hi = -1e9; for(let i=0;i<h.length;i++){ if(h[i]<lo) lo=h[i]; if(h[i]>hi) hi=h[i]; }
+  const hn = new Float32Array(size*size); for(let i=0;i<h.length;i++) hn[i] = (h[i]-lo)/((hi-lo)||1);
+  const C = U.rgb(c);
+  pix(g, 0, 0, W, H, size, size, (i,j) => { const v = hn[j*size+i], l = shade(hn, size, size, i, j, 7); return mixc(mixc(DARK, C, stretch(v,.15,.85)), WHITE, Math.max(0, l-.82)*1.6); });
+  // 疊上主要細分層級的方格線，露出中點位移特有的方塊折痕
+  g.strokeStyle = "rgba(255,255,255,.14)"; g.lineWidth = 1;
+  for(let lvl = size-1; lvl >= 8; lvl = lvl/2){ for(let x = 0; x <= size-1; x += lvl){ const px = x*W/(size-1); g.beginPath(); g.moveTo(px,0); g.lineTo(px,H); g.stroke(); }
+    for(let y = 0; y <= size-1; y += lvl){ const py = y*H/(size-1); g.beginPath(); g.moveTo(0,py); g.lineTo(W,py); g.stroke(); } }
+  // 左上角：diamond–square 單步示意（四角 → 中心 diamond → 邊中點 square）
+  const bx = W*.06, by = H*.06, bs = Math.min(W,H)*.22;
+  g.fillStyle = "rgba(18,18,23,.85)"; g.fillRect(bx-6, by-6, bs+12, bs+12);
+  const corners = [[bx,by],[bx+bs,by],[bx+bs,by+bs],[bx,by+bs]], mid = [bx+bs/2, by+bs/2];
+  const edges2 = [[bx+bs/2,by],[bx+bs,by+bs/2],[bx+bs/2,by+bs],[bx,by+bs/2]];
+  g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1; g.strokeRect(bx,by,bs,bs);
+  g.setLineDash([2,2]); g.strokeStyle = ACC; g.lineWidth = 1;
+  corners.forEach(p => { g.beginPath(); g.moveTo(p[0],p[1]); g.lineTo(mid[0],mid[1]); g.stroke(); });
+  g.setLineDash([]);
+  g.strokeStyle = "rgba(255,255,255,.55)"; edges2.forEach((p,i) => { const a = corners[i], b2 = corners[(i+1)%4]; g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(p[0],p[1]); g.stroke(); g.beginPath(); g.moveTo(b2[0],b2[1]); g.lineTo(p[0],p[1]); g.stroke(); });
+  g.fillStyle = "#fff"; corners.concat([mid]).forEach(p => { g.beginPath(); g.arc(p[0],p[1],2.4,0,TAU); g.fill(); });
+  g.fillStyle = ACC; edges2.forEach(p => { g.beginPath(); g.arc(p[0],p[1],2.2,0,TAU); g.fill(); });
+};
+
 /* ================= 沒有照片的案例 ================= */
 // C04-01 Perlin 1985：solid texture 大理石花瓶與木紋球
 ART.case["C04-01"] = function(g, W, H, r, c, U){

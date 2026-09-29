@@ -115,25 +115,36 @@ const PAL = ["#F2A007", "#2F6FE4", "#28C76F", "#E4572E", "#9B5DE5", "#00BBF9"];
 // =================== 變形 ===================
 ART.var["F08"] = ART.var["F08"] || [];
 
-// V01 Prim：從根點往外長，邊依加入順序上色，根點有同心圈標記＋底部生長時間軸
+// V01 Prim：從左側根點往外長，每個點的勢力範圍（Voronoi 格）依加入順序分期上色——
+// 越早接上的越亮，形成一圈圈向外推進的「分期施工圖」，樹本身疊在最上層
 ART.var["F08"][0] = function(g, W, H, r, c, U){
-  const n = 22, pad = Math.min(W,H)*.1, P = [];
-  for(let i = 0; i < n; i++) P.push([pad + r()*(W-2*pad), pad + r()*(H-2*pad)]);
+  const n = 26, pad = Math.min(W,H)*.07, P = [[W*.12, H*(.35+r()*.3)]];
+  for(let i = 1; i < n; i++) P.push([pad + r()*(W-2*pad), pad + r()*(H-2*pad)]);
   const root = 0, inTree = new Array(n).fill(false); inTree[root] = true;
   const best = P.map(p => Math.hypot(p[0]-P[root][0], p[1]-P[root][1])), from = new Array(n).fill(root);
-  const order = [root], edges = [];
+  const rank = new Array(n).fill(0), edges = [];
   for(let k = 1; k < n; k++){
     let bi = -1, bd = Infinity;
     for(let i = 0; i < n; i++) if(!inTree[i] && best[i] < bd){ bd = best[i]; bi = i; }
-    inTree[bi] = true; edges.push([from[bi], bi]); order.push(bi);
+    inTree[bi] = true; edges.push([from[bi], bi]); rank[bi] = k/(n-1);
     for(let i = 0; i < n; i++) if(!inTree[i]){ const d = Math.hypot(P[i][0]-P[bi][0], P[i][1]-P[bi][1]); if(d < best[i]){ best[i] = d; from[i] = bi; } }
   }
-  g.strokeStyle = "rgba(255,255,255,.06)"; for(let k = 1; k < 5; k++){ g.beginPath(); g.arc(P[root][0], P[root][1], Math.min(W,H)*.09*k, 0, U.TAU); g.stroke(); }
-  edges.forEach(([a,b],idx) => { const t = idx/((edges.length-1)||1); g.strokeStyle = U.rgba(c, .35+.6*t); g.lineWidth = 1.2+t*2.2; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); });
-  order.forEach((idx,k) => { const t = k/((order.length-1)||1); g.fillStyle = k === 0 ? "#fff" : U.rgba(c, .5+.5*t); g.beginPath(); g.arc(P[idx][0], P[idx][1], k===0?5:2.6, 0, U.TAU); g.fill(); if(k===0){ g.strokeStyle="#fff"; g.lineWidth=1.4; g.stroke(); } });
-  const bw = W*.5, bx = (W-bw)/2, by = H-14;
-  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1; g.beginPath(); g.moveTo(bx,by); g.lineTo(bx+bw,by); g.stroke();
-  order.forEach((idx,k) => { const t = k/((order.length-1)||1); g.fillStyle = U.rgba(c, .4+.6*t); g.beginPath(); g.arc(bx+bw*t, by, 2, 0, U.TAU); g.fill(); });
+  // 分期色塊：每個小格歸給最近的點，亮度＝該點加入的先後；期別交界畫細線
+  const cs = Math.max(4, Math.round(Math.min(W,H)/48)), nx = Math.ceil(W/cs), ny = Math.ceil(H/cs), PH = 5, own = new Int16Array(nx*ny);
+  for(let yy = 0; yy < ny; yy++) for(let xx = 0; xx < nx; xx++){ const x = (xx+.5)*cs, y = (yy+.5)*cs; let bi = 0, bd = Infinity;
+    for(let i = 0; i < n; i++){ const d = (P[i][0]-x)**2 + (P[i][1]-y)**2; if(d < bd){ bd = d; bi = i; } }
+    own[yy*nx+xx] = bi; const t = rank[bi];
+    g.fillStyle = U.rgba(c, .06 + .5*Math.pow(1-t, 1.3)); g.fillRect(xx*cs, yy*cs, cs, cs); }
+  const ph = i => Math.min(PH-1, Math.floor(rank[i]*PH));
+  g.fillStyle = "rgba(255,255,255,.55)";
+  for(let yy = 0; yy < ny; yy++) for(let xx = 0; xx < nx; xx++){ const a = ph(own[yy*nx+xx]);
+    if(xx < nx-1 && ph(own[yy*nx+xx+1]) !== a) g.fillRect((xx+1)*cs-.5, yy*cs, 1, cs);
+    if(yy < ny-1 && ph(own[(yy+1)*nx+xx]) !== a) g.fillRect(xx*cs, (yy+1)*cs-.5, cs, 1); }
+  g.lineCap = "round";
+  edges.forEach(([a,b]) => { g.strokeStyle = "rgba(18,18,23,.85)"; g.lineWidth = 3.4; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke();
+    g.strokeStyle = "#fff"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); });
+  P.forEach((p,i) => { g.fillStyle = i ? "#fff" : c; g.beginPath(); g.arc(p[0], p[1], i ? 2.4 : 5.5, 0, U.TAU); g.fill(); });
+  g.strokeStyle = "#fff"; g.lineWidth = 1.6; g.beginPath(); g.arc(P[root][0], P[root][1], 8, 0, U.TAU); g.stroke();
 };
 
 // V02 只用近鄰候選邊（模擬 Delaunay 網）：密集點下先畫稀疏候選網，再疊上 MST
@@ -189,27 +200,32 @@ ART.var["F08"][3] = function(g, W, H, r, c, U){
   g.beginPath(); g.arc(att[0],att[1],3,0,U.TAU); g.fillStyle = "#fff"; g.fill();
 };
 
-// V05 接上既有道路：既有路網先預先合併，新點以最短支路接上（虛線是接駁支路，實線是點與點之間的樹）
+// V05 接上既有道路：基地鳥瞰——左側與下方是既有道路（寬灰帶，在並查集中預先合併成同一群），
+// 右上是新建築量體；Kruskal 只補出「量體之間的連接路」（主色）與「接到道路的最短支路」（白色虛線）
 ART.var["F08"][4] = function(g, W, H, r, c, U){
-  const road1 = [[0,H*.3],[W*.35,H*.28],[W*.6,H*.42],[W,H*.38]], road2 = [[W*.15,0],[W*.22,H*.55],[W*.1,H]], roads = [road1, road2];
-  const n = 16, pad = Math.min(W,H)*.08, P = [];
-  for(let i = 0; i < n; i++) P.push([pad + r()*(W-2*pad), pad + r()*(H-2*pad)]);
-  const closestOnPoly = (pts,x,y) => { let bd = 1e9, bp = null;
-    for(let i = 0; i < pts.length-1; i++){ const a=pts[i], b=pts[i+1], dx=b[0]-a[0], dy=b[1]-a[1], L=dx*dx+dy*dy||1, t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/L)), px=a[0]+dx*t, py=a[1]+dy*t, d=Math.hypot(px-x,py-y); if(d<bd){bd=d;bp=[px,py];} } return [bp,bd]; };
-  const roadPt = P.map(p => { let bd = 1e9, bp = null; roads.forEach(rd => { const [q,d] = closestOnPoly(rd,p[0],p[1]); if(d<bd){bd=d;bp=q;} }); return [bp,bd]; });
-  const ROAD = n, E = [];
-  for(let i = 0; i < n; i++) for(let j = i+1; j < n; j++) E.push([i,j,Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1])]);
-  for(let i = 0; i < n; i++) E.push([i, ROAD, roadPt[i][1]]);
+  const rw = Math.min(W,H)*.1, vx = W*.2, hy = H*.74;              // 既有道路：一條直向、一條橫向
+  const roads = [[[vx, -10],[vx, H+10]], [[vx, hy],[W+10, hy]]];
+  g.fillStyle = "rgba(255,255,255,.035)"; g.fillRect(vx+rw/2, 0, W, hy-rw/2);   // 待開發基地
+  roads.forEach(([a,b]) => { g.strokeStyle = "rgba(190,190,205,.42)"; g.lineWidth = rw; g.lineCap = "butt"; g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke();
+    g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1; g.setLineDash([6,5]); g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); g.setLineDash([]); });
+  // 新建築量體：在道路圍出的基地裡隨機放置、不互相重疊
+  const B = [], x0 = vx+rw*.9, x1 = W-rw*.4, y0 = rw*.4, y1 = hy-rw*.9;
+  for(let t = 0; t < 400 && B.length < 11; t++){ const w = (x1-x0)*(.1+r()*.1), h = (y1-y0)*(.09+r()*.1), x = x0+r()*(x1-x0-w), y = y0+r()*(y1-y0-h);
+    if(B.every(b => x > b.x+b.w+6 || x+w < b.x-6 || y > b.y+b.h+6 || y+h < b.y-6)) B.push({x, y, w, h}); }
+  const P = B.map(b => [b.x+b.w/2, b.y+b.h/2]), n = P.length, ROAD = n;
+  const roadPt = P.map(([x,y]) => { const dv = x-vx, dh = hy-y; return dv < dh ? [[vx+rw/2, y], dv-rw/2] : [[x, hy-rw/2], dh-rw/2]; });
+  const E = allEdges(P); for(let i = 0; i < n; i++) E.push([i, ROAD, roadPt[i][1]*1.15]);
   const uf = UF(n+1); E.sort((a,b) => a[2]-b[2]); const edges = [];
   for(const [a,b] of E) if(uf.uni(a,b)) edges.push([a,b]);
-  g.strokeStyle = "rgba(255,255,255,.5)"; g.lineWidth = 4; g.lineCap = "round"; g.lineJoin = "round";
-  roads.forEach(rd => { g.beginPath(); rd.forEach((p,i) => i ? g.lineTo(p[0],p[1]) : g.moveTo(p[0],p[1])); g.stroke(); });
+  g.lineCap = "round";
   edges.forEach(([a,b]) => {
-    if(a === ROAD || b === ROAD){ const bi = a === ROAD ? b : a, rp = roadPt[bi][0];
-      g.strokeStyle = U.rgba(c, .8); g.lineWidth = 1.4; g.setLineDash([2,2]); g.beginPath(); g.moveTo(P[bi][0],P[bi][1]); g.lineTo(rp[0],rp[1]); g.stroke(); g.setLineDash([]);
-    } else { g.strokeStyle = U.rgba(c, .95); g.lineWidth = 2; g.lineCap = "round"; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); }
+    if(a === ROAD || b === ROAD){ const i = a === ROAD ? b : a, q = roadPt[i][0];
+      g.strokeStyle = "#fff"; g.lineWidth = 2.2; g.setLineDash([3,3]); g.beginPath(); g.moveTo(P[i][0],P[i][1]); g.lineTo(q[0],q[1]); g.stroke(); g.setLineDash([]);
+      g.fillStyle = "#fff"; g.fillRect(q[0]-3, q[1]-3, 6, 6);
+    } else { g.strokeStyle = U.rgba(c, .9); g.lineWidth = 4; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); }
   });
-  P.forEach(p => { g.fillStyle = "#fff"; g.beginPath(); g.arc(p[0], p[1], 2.8, 0, U.TAU); g.fill(); });
+  B.forEach((b,i) => { g.fillStyle = U.rgba(c, .3+.35*((i*5)%B.length)/B.length); g.fillRect(b.x, b.y, b.w, b.h);
+    g.strokeStyle = U.rgba(c, 1); g.lineWidth = 1.2; g.strokeRect(b.x+.5, b.y+.5, b.w-1, b.h-1); });
 };
 
 // V06 度數上限：Kruskal 加邊前檢查兩端度數，超過上限就跳過；節點周圍的小圓弧刻度＝目前度數
@@ -295,14 +311,28 @@ ART.var["F08"][8] = function(g, W, H, r, c, U){
   const cnt = new Array(N.length).fill(0), leafSet = new Set(Array.from({length: nsup}, (_,i) => i+1));
   const countBelow = (node, parent) => { let sN = leafSet.has(node) ? 1 : 0; adj[node].forEach(nb => { if(nb !== parent && alive[nb]) sN += countBelow(nb, node); }); cnt[node] = sN; return sN; };
   countBelow(0, -1);
-  const proj = cam3(.6, .45, Math.min(W,H)*.3, W*.5, H*.6, 6), S = N.map(proj);
-  g.strokeStyle = "rgba(255,255,255,.06)"; for(let i = -2; i <= 2; i++){ const a = proj([i,-2,-1.2]), b = proj([i,2,-1.2]); g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); }
-  const drawn = new Set();
-  for(let i = 0; i < N.length; i++) if(alive[i]) adj[i].forEach(j => { if(!alive[j]) return; const key = Math.min(i,j)+','+Math.max(i,j); if(drawn.has(key)) return; drawn.add(key);
-    const w = 1.2 + Math.min(cnt[i], cnt[j])*1.5; g.strokeStyle = U.rgba(c, .9); g.lineWidth = w; g.lineCap = "round"; g.beginPath(); g.moveTo(S[i][0],S[i][1]); g.lineTo(S[j][0],S[j][1]); g.stroke(); });
-  for(let i = 1; i <= nsup; i++){ const [x,y] = S[i]; g.fillStyle = "#fff"; g.fillRect(x-3.4, y-3.4, 6.8, 6.8); }
-  for(let s = P3.length; s < N.length; s++) if(alive[s]){ g.fillStyle = c; g.beginPath(); g.arc(S[s][0], S[s][1], 3, 0, U.TAU); g.fill(); }
-  g.fillStyle = "#fff"; g.beginPath(); g.arc(S[0][0], S[0][1], 5, 0, U.TAU); g.fill(); g.strokeStyle = U.rgba(c, .9); g.lineWidth = 1.4; g.stroke();
+  // 室內一點透視（視點在樓板與屋頂之間）：上方是從下往上看的屋頂板（左亮右暗），下方是地坪，樹狀柱在兩者之間分岔
+  const D = 4.2, sc = Math.min(W,H)*.36, pcx = W*.5, pcy = H*.5;
+  const proj = p => { const f = D/(D + p[1]); return [pcx + p[0]*sc*f, pcy - (p[2]-.05)*sc*f*.95, -p[1]]; }, S = N.map(proj);
+  const slab = (z, col0, col1) => { const q = [[-1.6,-1.6,z],[1.6,-1.6,z],[1.6,1.6,z],[-1.6,1.6,z]].map(proj);
+    const xs = q.map(p => p[0]), gr = g.createLinearGradient(Math.min(...xs), 0, Math.max(...xs), 0); gr.addColorStop(0, col0); gr.addColorStop(1, col1);
+    g.fillStyle = gr; U.poly(g, q, true); g.fill(); g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.stroke(); return q; };
+  slab(-1.2, "rgba(255,255,255,.05)", "rgba(255,255,255,.16)");
+  const roof = slab(1.3, "rgba(235,235,245,.62)", "rgba(235,235,245,.1)");
+  g.strokeStyle = "rgba(20,20,26,.35)"; g.lineWidth = 1;                          // 屋頂板底面的格梁
+  for(let k = 1; k < 4; k++){ const t = k/4, a = [roof[0][0]+(roof[1][0]-roof[0][0])*t, roof[0][1]+(roof[1][1]-roof[0][1])*t], b = [roof[3][0]+(roof[2][0]-roof[3][0])*t, roof[3][1]+(roof[2][1]-roof[3][1])*t];
+    g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); }
+  const drawn = new Set(), segs = [];
+  for(let i = 0; i < N.length; i++) if(alive[i]) adj[i].forEach(j => { if(!alive[j]) return; const key = Math.min(i,j)+','+Math.max(i,j); if(drawn.has(key)) return; drawn.add(key); segs.push([i,j]); });
+  segs.sort((a,b) => (S[a[0]][2]+S[a[1]][2]) - (S[b[0]][2]+S[b[1]][2]));
+  g.lineCap = "round";
+  segs.forEach(([i,j]) => { const w = 2 + Math.min(cnt[i], cnt[j])*2.3;
+    g.strokeStyle = "rgba(15,15,20,.9)"; g.lineWidth = w+2; g.beginPath(); g.moveTo(S[i][0],S[i][1]); g.lineTo(S[j][0],S[j][1]); g.stroke();
+    g.strokeStyle = U.rgba(c, 1); g.lineWidth = w; g.beginPath(); g.moveTo(S[i][0],S[i][1]); g.lineTo(S[j][0],S[j][1]); g.stroke();
+    g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = Math.max(1, w*.25); g.beginPath(); g.moveTo(S[i][0]-w*.2,S[i][1]); g.lineTo(S[j][0]-w*.2,S[j][1]); g.stroke(); });
+  for(let i = 1; i <= nsup; i++){ const [x,y] = S[i]; g.fillStyle = "#fff"; g.fillRect(x-4, y-2, 8, 4); }
+  for(let s = P3.length; s < N.length; s++) if(alive[s]){ g.fillStyle = "#fff"; g.beginPath(); g.arc(S[s][0], S[s][1], 2.6, 0, U.TAU); g.fill(); }
+  const [bx, by] = S[0]; g.fillStyle = "rgba(255,255,255,.85)"; g.beginPath(); g.ellipse(bx, by, 12, 4, 0, 0, U.TAU); g.fill();
 };
 
 // V10 曲面上的測地生成樹：正弦起伏曲面（等高網格暗示彎曲），邊沿曲面取樣呈現自然弧度
@@ -349,21 +379,35 @@ ART.var["F08"][10] = function(g, W, H, r, c, U){
 };
 
 // V12 Kruskal 逐邊動畫：目前各連通元件依代表上色，虛線白框是正在檢查的邊，紅色叉是被拒絕的成環邊
+// 改成 2×2 的逐格快照：同一組點在四個時間點（處理了少量、一半、大半、全部的邊）的並查集狀態，
+// 每個點外圍的色暈就是它所屬的集合，色塊由許多小片逐步合併成單一顏色
 ART.var["F08"][11] = function(g, W, H, r, c, U){
-  const n = 20, pad = Math.min(W,H)*.1, P = [];
-  for(let i = 0; i < n; i++) P.push([pad + r()*(W-2*pad), pad + r()*(H-2*pad)]);
+  const n = 16, P = [];
+  for(let i = 0; i < n; i++) P.push([.08 + r()*.84, .08 + r()*.84]);
   const E = allEdges(P).sort((a,b) => a[2]-b[2]);
-  const uf = UF(n), done = []; let stop = Math.floor(E.length*.42), rejected = null, testing = null;
-  for(let k = 0; k < E.length; k++){ const [a,b] = E[k];
-    if(k === stop){ testing = [a,b]; break; }
-    if(uf.uni(a,b)) done.push([a,b]); else if(!rejected) rejected = [a,b];
-  }
-  const compCol = {}, colOf = i => { const rt = uf.find(i); if(!(rt in compCol)) compCol[rt] = PAL[Object.keys(compCol).length % PAL.length]; return compCol[rt]; };
-  done.forEach(([a,b]) => { g.strokeStyle = U.rgba(colOf(a), .9); g.lineWidth = 2; g.lineCap = "round"; g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); });
-  P.forEach((p,i) => { g.fillStyle = colOf(i); g.beginPath(); g.arc(p[0], p[1], 3.2, 0, U.TAU); g.fill(); g.strokeStyle = "#fff"; g.lineWidth = .8; g.stroke(); });
-  if(rejected){ const [a,b] = rejected; g.strokeStyle = "rgba(230,70,70,.85)"; g.lineWidth = 1.6; g.setLineDash([2,2]); g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); g.setLineDash([]);
-    const mx = (P[a][0]+P[b][0])/2, my = (P[a][1]+P[b][1])/2; g.strokeStyle = "rgba(230,70,70,.9)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(mx-4,my-4); g.lineTo(mx+4,my+4); g.moveTo(mx-4,my+4); g.lineTo(mx+4,my-4); g.stroke(); }
-  if(testing){ const [a,b] = testing; g.strokeStyle = "#fff"; g.lineWidth = 2.2; g.setLineDash([5,3]); g.beginPath(); g.moveTo(P[a][0],P[a][1]); g.lineTo(P[b][0],P[b][1]); g.stroke(); g.setLineDash([]); }
+  const gap = Math.min(W,H)*.04, pw = (W-gap*3)/2, phh = (H-gap*3)/2;
+  const stops = [.03, .08, .16, 1];
+  stops.forEach((frac, fi) => {
+    const ox = gap + (fi%2)*(pw+gap), oy = gap + ((fi/2)|0)*(phh+gap), X = p => [ox + p[0]*pw, oy + p[1]*phh];
+    const uf = UF(n), done = [], stop = Math.max(1, Math.floor(E.length*frac)); let rejected = null, testing = null;
+    for(let k = 0; k < E.length && done.length < n-1; k++){ const [a,b] = E[k];
+      if(k === stop && fi < 3){ testing = [a,b]; break; }
+      if(uf.uni(a,b)) done.push([a,b]); else if(!rejected && fi === 2) rejected = [a,b]; }
+    const compCol = {}, colOf = i => { const rt = uf.find(i); if(!(rt in compCol)) compCol[rt] = PAL[Object.keys(compCol).length % PAL.length]; return compCol[rt]; };
+    g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(ox, oy, pw, phh);
+    g.save(); g.beginPath(); g.rect(ox, oy, pw, phh); g.clip();
+    const rad = Math.min(pw, phh)*.13;
+    P.forEach((p,i) => { const [x,y] = X(p); g.fillStyle = U.rgba(colOf(i), .3); g.beginPath(); g.arc(x, y, rad, 0, U.TAU); g.fill(); });
+    g.lineCap = "round";
+    done.forEach(([a,b]) => { const A = X(P[a]), B = X(P[b]); g.strokeStyle = colOf(a); g.lineWidth = 2.4; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); });
+    if(rejected){ const A = X(P[rejected[0]]), B = X(P[rejected[1]]), mx = (A[0]+B[0])/2, my = (A[1]+B[1])/2;
+      g.strokeStyle = "rgba(230,70,70,.9)"; g.lineWidth = 1.4; g.setLineDash([2,2]); g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); g.setLineDash([]);
+      g.beginPath(); g.moveTo(mx-3,my-3); g.lineTo(mx+3,my+3); g.moveTo(mx-3,my+3); g.lineTo(mx+3,my-3); g.stroke(); }
+    if(testing){ const A = X(P[testing[0]]), B = X(P[testing[1]]); g.strokeStyle = "#fff"; g.lineWidth = 1.6; g.setLineDash([4,3]); g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); g.setLineDash([]); }
+    P.forEach((p,i) => { const [x,y] = X(p); g.fillStyle = colOf(i); g.beginPath(); g.arc(x, y, 2.6, 0, U.TAU); g.fill(); g.strokeStyle = "#fff"; g.lineWidth = .8; g.stroke(); });
+    g.restore();
+    for(let k = 0; k <= fi; k++){ g.fillStyle = "rgba(255,255,255,.7)"; g.fillRect(ox + 5 + k*6, oy + 5, 4, 4); }   // 第幾格的刻度
+  });
 };
 
 // =================== 無照片案例 ===================

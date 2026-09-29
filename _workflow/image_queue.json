@@ -1,18 +1,5 @@
 [
  {
-  "case_id": "B06-51",
-  "url": "https://minecraft.wiki/images/Jigsaw_Block_%28S%29_JE3_BE2.png",
-  "page": "https://minecraft.wiki/w/Jigsaw_Block",
-  "source": "Minecraft Wiki",
-  "author": "Mojang Studios",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "note": "拼圖方塊本身的方塊圖示（遊戲材質）",
-  "queued_run": "R20260929-0146",
-  "last_error": "cannot identify image file 'C:\\\\Users\\\\GAI\\\\AppData\\\\Local\\\\Temp\\\\tmpy4iwhqu0\\\\img.bin'",
-  "tries": 2
- },
- {
   "case_id": "E05-02",
   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Salginatobel_Bridge_mg_4060.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Salginatobel_Bridge_mg_4060.jpg",
@@ -23,32 +10,6 @@
   "note": "Maillart 設計的 Salginatobel 三鉸拱橋（整合時請再確認授權與作者）",
   "queued_run": "R20260929-0146",
   "last_error": "curl: (56) schannel: failed to read data from server: SEC_E_DECRYPT_FAILURE (0x80090330) - 無法解密指定的資料。",
-  "tries": 2
- },
- {
-  "case_id": "E06-06",
-  "url": "http://static.food4rhino.com/cdn/farfuture/wit66pyl8FzoCWJxiYyLXG8Y27BerhphifGV-tSAKQw/mtime:1680615280/sites/default/files/public/styles/thumbnail/public/users-files/ocabitza/app/risorsa1.png?itok=mkKAu5JZ",
-  "page": "https://www.food4rhino.com/en/app/force-density-method",
-  "source": "Food4Rhino",
-  "author": "ocabitza",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "note": "Food4Rhino 外掛頁的 og:image 縮圖（元件示意圖，內容未逐一確認，下載後請人工檢查）；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線",
-  "queued_run": "R20260929-0146",
-  "last_error": "圖片太小 (100, 100)，可能是 logo 或佔位圖",
-  "tries": 2
- },
- {
-  "case_id": "F08-04",
-  "url": "https://www.designcoding.net/decoder/wp-content/uploads/2024/02/Minimum-Spanning-Tree-animation-square.gif",
-  "page": "https://www.designcoding.net/minimum-spanning-tree/",
-  "source": "designcoding",
-  "author": "Tuğrul Yazar",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "note": "以 MultiPipe 呈現的最小生成樹動畫主圖",
-  "queued_run": "R20260929-0146",
-  "last_error": "cannot identify image file 'C:\\\\Users\\\\GAI\\\\AppData\\\\Local\\\\Temp\\\\tmpy4iwhqu0\\\\img.bin'",
   "tries": 2
  }
 ]

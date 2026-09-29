@@ -489,22 +489,38 @@ ART.var["F07"][11] = function(g, W, H, r, c, U){
 };
 
 /* ================= 沒有照片的案例 ================= */
-// F07-01 Architectural Layout Design SA：基地上以退火移動建築量體，右上角日照弧線，淡線是搬移軌跡
+// F07-01 Architectural Layout Design SA：等角鳥瞰的住宅基地——建築量體依退火定案的位置擠出成盒子
+// （頂面亮、兩側面分深淺），地面上的虛線是從隨機起點搬到定案位置的軌跡，陰影朝向代表日照評估，下緣是基地前的道路
 ART.case["F07-01"] = function(g, W, H, r, c, U){
-  const pad = Math.min(W,H)*.08, sw = W-pad*2, sh = H-pad*2;
-  const objs = [...Array(6)].map(() => ({w: sw*(.14+r()*.08), h: sh*(.1+r()*.08)}));
-  const {init, best} = placeAnneal(r, objs, {w:sw,h:sh}, {steps:1600, T0:sw*.2});
-  g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1.4; g.setLineDash([4,3]); g.strokeRect(pad,pad,sw,sh); g.setLineDash([]);
-  const scx = W-pad*1.4, scy = pad*1.2;
-  g.strokeStyle = U.rgba(GOLD,.6); g.lineWidth = 1; g.beginPath(); g.arc(scx,scy,pad*.7,Math.PI*.15,Math.PI*.85); g.stroke();
-  g.fillStyle = GOLD; g.beginPath(); g.arc(scx-pad*.65,scy+pad*.05,3,0,U.TAU); g.fill();
-  g.save(); g.translate(pad,pad);
-  g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1;
-  init.forEach((o,i) => { const b = best[i]; g.beginPath(); g.moveTo(o.x,o.y); g.lineTo(b.x,b.y); g.stroke(); });
-  best.forEach((o,i) => { g.save(); g.translate(o.x,o.y); g.rotate(o.a);
-    g.fillStyle = U.rgba(c, .2+.5*(i/best.length)); g.fillRect(-o.w/2,-o.h/2,o.w,o.h);
-    g.strokeStyle = U.rgba(c,.95); g.lineWidth = 1.3; g.strokeRect(-o.w/2,-o.h/2,o.w,o.h); g.restore(); });
-  g.restore();
+  const S = 100, objs = [...Array(7)].map(() => ({w: S*(.13+r()*.1), h: S*(.1+r()*.08)}));
+  const {init, best} = placeAnneal(r, objs, {w:S, h:S}, {steps:1600, T0:S*.2});
+  const hts = best.map(() => S*(.07+r()*.2));
+  const k = Math.min(W/(S*1.85), H/(S*1.45)), ox = W*.5, oy = H*.26;
+  const iso = (x,y,z) => [ox + (x - y)*.866*k, oy + (x + y)*.5*k - z*k];
+  const quad = (pts, fill, stroke) => { U.poly(g, pts, true); g.fillStyle = fill; g.fill(); if(stroke){ g.strokeStyle = stroke; g.lineWidth = .8; g.stroke(); } };
+  // 道路（基地左下緣外側）與基地地面
+  quad([iso(-6,S+4,0), iso(S+6,S+4,0), iso(S+6,S+16,0), iso(-6,S+16,0)], "rgba(190,190,205,.28)");
+  g.strokeStyle = "rgba(255,255,255,.5)"; g.setLineDash([4,4]); g.lineWidth = 1; U.poly(g, [iso(-6,S+10,0), iso(S+6,S+10,0)]); g.stroke(); g.setLineDash([]);
+  quad([iso(0,0,0), iso(S,0,0), iso(S,S,0), iso(0,S,0)], "rgba(255,255,255,.07)", "rgba(255,255,255,.4)");
+  const dims = o => (Math.round(o.a/(Math.PI/2))%2) ? [o.h,o.w] : [o.w,o.h];
+  // 搬移軌跡
+  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.setLineDash([2,3]);
+  init.forEach((o,i) => { const a = iso(o.x,o.y,0), b = iso(best[i].x,best[i].y,0); g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke();
+    g.fillStyle = "rgba(255,255,255,.5)"; g.fillRect(a[0]-1.5, a[1]-1.5, 3, 3); });
+  g.setLineDash([]);
+  // 陰影：太陽在右上（平面 −y 方向），影子往 +y 拖長
+  best.forEach((o,i) => { const [w,h] = dims(o), s = hts[i]*.9;
+    quad([iso(o.x-w/2,o.y-h/2,0), iso(o.x+w/2,o.y-h/2,0), iso(o.x+w/2,o.y+h/2+s,0), iso(o.x-w/2,o.y+h/2+s,0)], "rgba(0,0,0,.32)"); });
+  // 量體：依深度（x+y）由遠到近畫
+  best.map((o,i) => i).sort((i,j) => (best[i].x+best[i].y) - (best[j].x+best[j].y)).forEach(i => {
+    const o = best[i], [w,h] = dims(o), x0 = o.x-w/2, x1 = o.x+w/2, y0 = o.y-h/2, y1 = o.y+h/2, z = hts[i];
+    quad([iso(x0,y1,0), iso(x1,y1,0), iso(x1,y1,z), iso(x0,y1,z)], U.rgba(c,.55), "rgba(15,15,20,.6)");
+    quad([iso(x1,y0,0), iso(x1,y1,0), iso(x1,y1,z), iso(x1,y0,z)], U.rgba(c,.28), "rgba(15,15,20,.6)");
+    quad([iso(x0,y0,z), iso(x1,y0,z), iso(x1,y1,z), iso(x0,y1,z)], U.rgba(c,.92), "rgba(255,255,255,.7)");
+  });
+  const sx = W*.88, sy = H*.1; g.fillStyle = GOLD; g.beginPath(); g.arc(sx, sy, 4, 0, U.TAU); g.fill();
+  g.strokeStyle = U.rgba(GOLD,.7); g.lineWidth = 1;
+  for(let a = 0; a < 8; a++){ const t = a/8*U.TAU; g.beginPath(); g.moveTo(sx+Math.cos(t)*6, sy+Math.sin(t)*6); g.lineTo(sx+Math.cos(t)*9, sy+Math.sin(t)*9); g.stroke(); }
 };
 ART.case["F07-01"].ratio = 1.1;
 // F07-02 Shape Annealing（Cagan）：五個逐步演化的形狀縮圖，箭頭串接，最後一個是被接受的設計
@@ -532,24 +548,48 @@ ART.case["F07-02"] = function(g, W, H, r, c, U){
   });
 };
 ART.case["F07-02"].ratio = .6;
-// F07-03 Geodesic dome（測地線圓頂）：半球網格的等角線框，深度越遠線條越淡，地面加一圈橢圓
+// F07-03 形狀退火圓頂家族：不同目標（最大體積、最小表面、構件種類最少）得到的三個測地圓頂——
+// 扁圓頂、半球、高尖頂；三角面片依左上光源上明暗，前排放大的是目前選中的解，
+// 上方三個圓是各自的測地分割圖樣（俯視平面）
 ART.case["F07-03"] = function(g, W, H, r, c, U){
-  const rings = 7, seg = 14, R = Math.min(W,H)*.34, rotY = .6, rotX = .15, pts = [];
-  for(let i = 0; i <= rings; i++){ const phi = (i/rings)*(Math.PI/2), row = [];
-    for(let j = 0; j < seg; j++){ const th = j/seg*U.TAU;
-      const x = R*Math.cos(phi)*Math.cos(th), z = R*Math.cos(phi)*Math.sin(th), y = R*Math.sin(phi);
-      row.push(proj3(x,y,z,W,H,1,rotY,rotX)); }
-    pts.push(row); }
-  const lines = [];
-  for(let i = 0; i < rings; i++) for(let j = 0; j < seg; j++){ const a = pts[i][j], b = pts[i][(j+1)%seg], cN = pts[i+1][j];
-    lines.push([a,b]); lines.push([a,cN]); }
-  pts[rings].forEach((p,j) => lines.push([p, pts[rings][(j+1)%seg]]));
-  lines.sort((l1,l2) => (l1[0][2]+l1[1][2]) - (l2[0][2]+l2[1][2]));
-  lines.forEach(([a,b]) => { const depth = (a[2]+b[2])/(2*R), t = Math.max(0, Math.min(1, (depth+1)/2));
-    g.strokeStyle = U.rgba(c, .35+.55*(1-t)); g.lineWidth = 1; g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); });
-  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1; g.beginPath(); g.ellipse(W/2, H/2+R*.02, R*1.02, R*.28, 0, 0, U.TAU); g.stroke();
+  const tilt = .32, ct = Math.cos(tilt), st = Math.sin(tilt), [cr,cg,cb] = U.rgb(c);
+  const L = (() => { const v = [-.75,-.35,.6], m = Math.hypot(...v); return v.map(x => x/m); })();
+  const bb = H*.8, bf = H*.9;
+  g.strokeStyle = "rgba(255,255,255,.22)"; g.lineWidth = 1; g.beginPath(); g.moveTo(W*.03, bb); g.lineTo(W*.97, bb); g.stroke();
+  const domes = [{cx:W*.2, R:W*.16, prof:.55, rings:4, base:bb, px:W*.2}, {cx:W*.8, R:W*.14, prof:1.6, rings:5, base:bb, px:W*.8}, {cx:W*.5, R:W*.27, prof:1, rings:6, base:bf, px:W*.5, pick:true}];
+  domes.forEach((d, di) => { const base = d.base;
+    const seg = 10 + 2*d.rings, V = [];
+    for(let i = 0; i <= d.rings; i++){ const phi = i/d.rings*Math.PI/2, row = [], m = i === d.rings ? 1 : seg;
+      for(let j = 0; j < m; j++){ const th = (j + (i%2)*.5)/seg*U.TAU + r()*.04;
+        const x = d.R*Math.cos(phi)*Math.cos(th), y = d.R*Math.cos(phi)*Math.sin(th), z = d.R*d.prof*Math.pow(Math.sin(phi), d.prof > 1.2 ? .8 : 1);
+        row.push([x,y,z]); }
+      V.push(row); }
+    const F = [];
+    for(let i = 0; i < d.rings; i++){ const A = V[i], B = V[i+1];
+      for(let j = 0; j < seg; j++){
+        if(B.length === 1){ F.push([A[j], A[(j+1)%seg], B[0]]); continue; }
+        if(i%2 === 0){ F.push([A[j], A[(j+1)%seg], B[j]]); F.push([A[(j+1)%seg], B[(j+1)%seg], B[j]]); }
+        else { F.push([A[j], A[(j+1)%seg], B[(j+1)%seg]]); F.push([A[j], B[(j+1)%seg], B[j]]); } } }
+    const P2 = p => [d.cx + p[0], base - p[2]*ct - p[1]*st];
+    // 地面影子
+    g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(d.cx + d.R*.25, base + 2, d.R*1.15, d.R*st*1.05, 0, 0, U.TAU); g.fill();
+    const faces = F.map(f => { const u = f[1].map((v,k) => v - f[0][k]), w = f[2].map((v,k) => v - f[0][k]);
+      let n = [u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]]; const m = Math.hypot(...n) || 1; n = n.map(x => x/m);
+      const cen = [0,1,2].map(k => (f[0][k]+f[1][k]+f[2][k])/3); if(n[0]*cen[0] + n[1]*cen[1] + n[2]*cen[2] < 0) n = n.map(x => -x);
+      return {f, n, depth: cen[1]}; })
+      .filter(o => -o.n[1]*ct + o.n[2]*st > 0).sort((a,b) => b.depth - a.depth);
+    const shade = n => { const lam = Math.max(0, n[0]*L[0] + n[1]*L[1] + n[2]*L[2]), k = .15 + .85*lam, wht = lam*lam*.55;
+      return `rgb(${Math.round(cr*k*(1-wht) + 255*wht)},${Math.round(cg*k*(1-wht) + 255*wht)},${Math.round(cb*k*(1-wht) + 255*wht)})`; };
+    faces.forEach(({f, n}) => { U.poly(g, f.map(P2), true); g.fillStyle = shade(n); g.fill();
+      g.strokeStyle = d.pick ? "rgba(255,255,255,.55)" : "rgba(12,12,16,.55)"; g.lineWidth = .7; g.stroke(); });
+    // 俯視平面：同一組三角面片往下壓平，看出測地分割的圖樣
+    const pr = Math.min(W*.11, H*.16), sc = pr/d.R, py = H*.2;
+    F.forEach(f => { U.poly(g, f.map(p => [d.px + p[0]*sc, py + p[1]*sc]), true); g.fillStyle = U.rgba(c, .12 + .5*(f[0][2]+f[1][2]+f[2][2])/(3*d.R*d.prof)); g.fill();
+      g.strokeStyle = d.pick ? "rgba(255,255,255,.7)" : "rgba(255,255,255,.3)"; g.lineWidth = .6; g.stroke(); });
+    if(d.pick){ g.strokeStyle = "#fff"; g.lineWidth = 1.4; g.beginPath(); g.arc(d.px, py, pr + 4, 0, U.TAU); g.stroke(); }
+  });
 };
-ART.case["F07-03"].ratio = .95;
+ART.case["F07-03"].ratio = .85;
 // F07-04 eifForm：桁架依規則長出後以應力色階上色，藍到紅代表低到高應力，底部支承、頂端載重箭頭
 ART.case["F07-04"] = function(g, W, H, r, c, U){
   const pad = Math.min(W,H)*.12;

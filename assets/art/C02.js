@@ -570,4 +570,92 @@ ART.case["C02-15"] = function(g, W, H, r, c){
   g.strokeStyle = ACC; g.lineWidth = 1.3; g.setLineDash([4,3]); lots.forEach(([x,y,w,h]) => g.strokeRect(x*cs, y*cs, w*cs, h*cs)); g.setLineDash([]);
 };
 ART.case["C02-15"].ratio = 1;
+
+/* ================= 新變形（V13 起） ================= */
+
+// Reiter 雪花模型：軸座標六角格，s≥1 或鄰居 s≥1 為可接收格；只有不可接收部分 u 擴散，可接收格每步加 gamma
+// 回傳 frozenAt（−1＝未凍結）；最外圈固定為 beta 當水氣來源
+function reiter(R, alpha, beta, gamma, maxT){
+  const D = 2*R+1, N = D*D, inside = new Uint8Array(N), ring = new Int32Array(N), cells = [];
+  let s = new Float32Array(N).fill(beta), t2 = new Float32Array(N);
+  const fz = new Int32Array(N).fill(-1), u = new Float32Array(N), rec = new Uint8Array(N), id = (q, rr) => (rr+R)*D + (q+R);
+  for(let rr = -R; rr <= R; rr++) for(let q = -R; q <= R; q++){ const k = Math.max(Math.abs(q), Math.abs(rr), Math.abs(q+rr)); if(k <= R){ const i = id(q,rr); inside[i] = 1; ring[i] = k; if(k < R) cells.push(i); } }
+  s[id(0,0)] = 1; fz[id(0,0)] = 0;
+  const NB = [1, -1, D, -D, 1-D, D-1];   // (+1,0)(−1,0)(0,+1)(0,−1)(+1,−1)(−1,+1)
+  let t = 1, far = 0;
+  for(; t <= maxT && far < R-2; t++){
+    for(const i of cells){ let k = s[i] >= 1; if(!k) for(const o of NB) if(s[i+o] >= 1){ k = true; break; } rec[i] = k ? 1 : 0; }
+    for(let i = 0; i < N; i++) u[i] = inside[i] && !rec[i] ? s[i] : 0;
+    t2.set(s);
+    for(const i of cells){ let a = 0; for(const o of NB) a += u[i+o];
+      t2[i] = u[i] + alpha/2*(a/6 - u[i]) + (rec[i] ? s[i] + gamma : 0);
+      if(t2[i] >= 1 && fz[i] < 0){ fz[i] = t; if(ring[i] > far) far = ring[i]; } }
+    const tmp = s; s = t2; t2 = tmp;
+  }
+  return {fz, D, R, t, id};
+}
+// 畫一片六角格晶體：凍結格依 frozenAt 分圈（年輪）上色，未凍結格只畫淡淡的格點
+function drawFlake(g, F, cx, cy, cs, c, bands, dots){
+  const {fz, R, t, id} = F, hr = cs/Math.sqrt(3);
+  const hex = (x, y, k) => { g.beginPath(); for(let j = 0; j < 6; j++){ const a = Math.PI/6 + j*Math.PI/3; const px = x + Math.cos(a)*hr*k, py = y + Math.sin(a)*hr*k; j ? g.lineTo(px,py) : g.moveTo(px,py); } g.closePath(); };
+  for(let rr = -R; rr <= R; rr++) for(let q = -R; q <= R; q++){
+    if(Math.max(Math.abs(q), Math.abs(rr), Math.abs(q+rr)) > R) continue;
+    const f = fz[id(q,rr)], x = cx + (q + rr/2)*cs, y = cy + rr*Math.sqrt(3)/2*cs;
+    if(f < 0){ if(dots){ g.fillStyle = "rgba(255,255,255,.1)"; g.fillRect(x-.6, y-.6, 1.2, 1.2); } continue; }
+    const k = f/t, band = Math.floor(k*bands) % 2;
+    hex(x, y, .98); g.fillStyle = band ? sh(c, 1.15 + k*.7) : sh(c, .55 + k*.5); g.fill();
+  }
+}
+// V13 六角格連續 CA（Reiter 雪花）：中心長出的枝狀雪花，凍結先後分圈呈現年輪；右下小圖是低 beta 的實心六角板
+ART.var["C02"][12] = function(g, W, H, r, c){
+  const R = 30, big = reiter(R, 1, .7, .001, 3000);   // beta 高：枝狀雪花
+  const cs = Math.min(W*.96/(2*R+1), H*.84/((2*R+1)*.866)), cx = W/2, cy = H*.46;
+  // 背景六角外框（格子範圍）
+  g.strokeStyle = "rgba(255,255,255,.14)"; g.lineWidth = 1; g.beginPath();
+  for(let j = 0; j <= 6; j++){ const a = j*Math.PI/3, px = cx + Math.cos(a)*R*cs, py = cy + Math.sin(a)*R*cs; j ? g.lineTo(px,py) : g.moveTo(px,py); } g.stroke();
+  drawFlake(g, big, cx, cy, cs, c, 7, true);
+  // 小圖：低 beta → 實心六角板
+  const Rs = 10, plate = reiter(Rs, 1, .2, .05, 3000), s2 = W*.016, ix = W*.83, iy = H*.83;   // beta 低：實心六角板
+  g.fillStyle = "rgba(10,10,14,.75)"; g.strokeStyle = "rgba(255,255,255,.35)"; g.beginPath();
+  for(let j = 0; j <= 6; j++){ const a = Math.PI/6 + j*Math.PI/3, px = ix + Math.cos(a)*(Rs+1.5)*s2*1.02, py = iy + Math.sin(a)*(Rs+1.5)*s2*1.02; j ? g.lineTo(px,py) : g.moveTo(px,py); } g.fill(); g.stroke();
+  drawFlake(g, plate, ix, iy, s2, c, 4, false);
+};
+ART.var["C02"][12].ratio = 1;
+
+// V14 交通 CA（Nagel–Schreckenberg）：上方時空圖（橫軸道路、往下是時間，顏色＝車速），下方為掃描密度得到的基本圖
+function nasch(L, dens, vmax, p, r, T, warm){
+  let road = new Int8Array(L).fill(-1), n = Math.max(1, Math.round(dens*L));
+  while(n > 0){ const i = (r()*L)|0; if(road[i] < 0){ road[i] = (r()*(vmax+1))|0; n--; } }   // 放入固定車數
+  const rows = []; let flow = 0, cnt = 0;
+  for(let t = 0; t < warm + T; t++){
+    const nx = new Int8Array(L).fill(-1);
+    for(let i = 0; i < L; i++){ if(road[i] < 0) continue;
+      let gap = 0; while(gap < vmax && road[(i+gap+1)%L] < 0) gap++;
+      let v = Math.min(road[i] + 1, vmax); v = Math.min(v, gap); if(v > 0 && r() < p) v--;
+      nx[(i+v)%L] = v; if(t >= warm){ flow += v; } }
+    road = nx; if(t >= warm){ rows.push(road); cnt++; }
+  }
+  return {rows, J: flow/(cnt*L)};
+}
+ART.var["C02"][13] = function(g, W, H, r, c){
+  const vmax = 5, L = 72, T = 54, sim = nasch(L, .28, vmax, .25, r, T, 30);
+  // 時空圖
+  const x0 = W*.05, y0 = H*.05, sw = W*.9, cw = sw/L, ch = Math.min(cw*1.05, H*.56/T);
+  g.fillStyle = "rgba(255,255,255,.035)"; g.fillRect(x0, y0, sw, T*ch);
+  const vc = v => v === 0 ? ACC : v === 1 ? sh(ACC, .75) : sh(c, .7 + v/vmax*.9);
+  sim.rows.forEach((row, t) => { for(let i = 0; i < L; i++) if(row[i] >= 0){ g.fillStyle = vc(row[i]); g.fillRect(x0 + i*cw, y0 + t*ch, cw*.92, ch*.92); } });
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.strokeRect(x0, y0, sw, T*ch);
+  arrow(g, x0 - W*.025, y0 + 4, x0 - W*.025, y0 + T*ch*.35, "rgba(255,255,255,.45)");   // 時間方向
+  // 基本圖：密度 0.05–0.95 的平均流量
+  const bx = W*.14, by = y0 + T*ch + H*.08, bw = W*.8, bh = H*.95 - by, pts = [];
+  pts.push([0, 0]); for(let k = 1; k <= 24; k++){ const d = k*.04; pts.push([d, nasch(80, d, vmax, .25, r, 30, 30).J]); } pts.push([1, 0]);
+  const Jm = Math.max(...pts.map(p => p[1])) || 1, crit = pts.find(p => p[1] === Jm);
+  const X = d => bx + d*bw, Y = j => by + bh - j/Jm*bh*.92;
+  g.strokeStyle = "rgba(255,255,255,.5)"; g.lineWidth = 1.2; g.beginPath(); g.moveTo(bx, by - 2); g.lineTo(bx, by + bh); g.lineTo(bx + bw, by + bh); g.stroke();
+  for(let k = 1; k < 10; k++){ g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(X(k/10) - .5, by + bh, 1, 4); }
+  g.setLineDash([3,3]); g.strokeStyle = U.rgba(ACC,.8); g.beginPath(); g.moveTo(X(crit[0]), by + bh); g.lineTo(X(crit[0]), Y(Jm)); g.stroke(); g.setLineDash([]);
+  g.strokeStyle = sh(c, 1.4); g.lineWidth = 2; g.beginPath(); pts.forEach(([d,j], i) => i ? g.lineTo(X(d), Y(j)) : g.moveTo(X(d), Y(j))); g.stroke();
+  pts.forEach(([d,j]) => { g.fillStyle = d === crit[0] ? ACC : "#fff"; g.beginPath(); g.arc(X(d), Y(j), d === crit[0] ? 3.5 : 2, 0, TAU); g.fill(); });
+};
+ART.var["C02"][13].ratio = 1.2;
 })();

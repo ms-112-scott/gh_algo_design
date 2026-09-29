@@ -182,23 +182,61 @@ ART.var["B06"][2] = function(g, W, H, r, c, U){
   [0,1,2].forEach((ty,i) => iconAt([16, 16+i*14], ty, 3.4));
 };
 
-// V4｜45° 斜接零件庫：直線與 45°/90°/135° 梁段組成的連續構架（側視），節點以圓套筒表示
+// V4｜45° 斜接零件庫：正立面。四種梁段（直線／45°／90°／135°）在 8 方向格網上聚合，
+// 每次從開放端點挑一種零件接上，碰到已用過的桿件、交叉斜撐或出界就拒絕，長成柱＋梁＋斜撐混合的連續構架；
+// 後方淡色一層是錯縫的第二層板，底部一列是零件庫
 ART.var["B06"][3] = function(g, W, H, r, c, U){
-  const L = Math.min(W,H)*.11, cx=W/2, cy=H*.62;
-  const dirs=[...Array(8)].map((_,k)=>k*Math.PI/4);
-  let pos=[cx,cy], segs=[], ang=-Math.PI/2;
-  for(let i=0;i<16;i++){
-    const cand=[...Array(6)].map(()=>dirs[(r()*8)|0]).sort((a,b)=>Math.abs(a-ang)-Math.abs(b-ang));
-    const a = cand[0], np=[pos[0]+Math.cos(a)*L, pos[1]+Math.sin(a)*L];
-    if(np[1] > H*.92 || np[0] < W*.03 || np[0] > W*.97) break;
-    segs.push([pos.slice(), np.slice()]); pos=np; ang=a;
+  const nx = 8, ny = 8, D8 = [[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+  const LIB = [[0], [0, 1], [0, 2], [0, 3]];          // 零件＝相對轉角序列：直線、45°、90°、135°
+  function grow(seedR){
+    const rr = U.mk(seedR), edges = [], used = new Set(), deg = new Map(), open = [];
+    const ek = (a, b) => a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]) ? a + "|" + b : b + "|" + a;
+    const nk = p => p[0] + "," + p[1];
+    [[0, 0], [3, 0], [5, 0], [nx, 0]].forEach(p => open.push({ p, d: 2 }));
+    for(let t = 0; t < 2400 && edges.length < 40 && open.length; t++){
+      const oi = (rr()*open.length)|0, o = open[oi], type = (rr()*4)|0, sgn = rr() < .5 ? 1 : -1;
+      let p = o.p, d = o.d, seg = [], ok = true;
+      for(const turn of LIB[type].map((v, i) => i ? v*sgn : 0)){
+        d = (d + turn + 8) % 8; const q = [p[0] + D8[d][0], p[1] + D8[d][1]];
+        if(q[0] < 0 || q[0] > nx || q[1] < 0 || q[1] > ny || D8[d][1] < 0){ ok = false; break; }   // 出界或往下長
+        const e = ek(p, q); if(used.has(e)){ ok = false; break; }
+        if(D8[d][0] && D8[d][1] && used.has(ek([p[0], q[1]], [q[0], p[1]]))){ ok = false; break; } // 同一格的交叉斜撐
+        if((deg.get(nk(q)) || 0) >= 3){ ok = false; break; }
+        seg.push([p, q]); p = q;
+      }
+      if(!ok || !seg.length){ if(rr() < .06) open.splice(oi, 1); continue; }
+      seg.forEach(([a, b]) => { used.add(ek(a, b)); deg.set(nk(a), (deg.get(nk(a)) || 0) + 1); deg.set(nk(b), (deg.get(nk(b)) || 0) + 1); });
+      edges.push({ seg, type });
+      open.push({ p, d }); if(rr() < .5) open.push({ p, d: (d + (rr() < .5 ? 2 : 6)) % 8 });
+    }
+    return edges;
   }
-  g.strokeStyle=U.rgba(c,.25); g.lineWidth=1; g.beginPath(); g.moveTo(W*.06,H*.9); g.lineTo(W*.94,H*.9); g.stroke();
-  g.lineCap="round";
-  segs.forEach(([a,b],i) => { g.strokeStyle = U.rgba(c, .35+.55*i/segs.length); g.lineWidth = L*.22; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
-    g.strokeStyle="rgba(10,10,14,.5)"; g.lineWidth=1; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); });
-  segs.forEach(([,b]) => { g.fillStyle="rgba(20,20,26,.9)"; g.beginPath(); g.arc(b[0],b[1], L*.14,0,U.TAU); g.fill(); g.strokeStyle=U.rgba(c,.8); g.lineWidth=1.2; g.stroke(); });
-  g.fillStyle="rgba(255,255,255,.85)"; g.beginPath(); g.arc(cx,cy,L*.16,0,U.TAU); g.fill();
+  const L = Math.min(W*.86/nx, H*.7/ny), ox = (W - nx*L)/2 - L*.15, oy = H*.8;
+  const Pt = (p, dx, dy) => [ox + p[0]*L + (dx||0), oy - p[1]*L + (dy||0)];
+  const tint = [1, .82, .66, 1.2], rgb = U.rgb(c);
+  const col = (k, a) => `rgba(${Math.min(255, rgb[0]*tint[k]|0)},${Math.min(255, rgb[1]*tint[k]|0)},${Math.min(255, rgb[2]*tint[k]|0)},${a})`;
+  const drawLayer = (edges, dx, dy, alpha, wid) => {
+    g.lineCap = "square";
+    edges.forEach(({ seg, type }) => seg.forEach(([a, b]) => {
+      g.strokeStyle = col(type, alpha); g.lineWidth = wid; g.beginPath(); g.moveTo(...Pt(a, dx, dy)); g.lineTo(...Pt(b, dx, dy)); g.stroke();
+      g.strokeStyle = `rgba(10,10,14,${alpha*.6})`; g.lineWidth = 1; g.beginPath(); g.moveTo(...Pt(a, dx, dy)); g.lineTo(...Pt(b, dx, dy)); g.stroke(); }));
+  };
+  // 地面
+  g.fillStyle = "rgba(255,255,255,.05)"; g.fillRect(0, oy + L*.12, W, H - oy); g.strokeStyle = U.rgba(c, .4); g.lineWidth = 1; g.beginPath(); g.moveTo(0, oy + L*.12); g.lineTo(W, oy + L*.12); g.stroke();
+  // 後層（錯縫）與前層
+  const seed = (r()*1e6)|0, back = grow(seed + 7), front = grow(seed);
+  drawLayer(back, L*.34, -L*.24, .34, L*.26);
+  drawLayer(front, 0, 0, .95, L*.3);
+  // 節點螺栓
+  const nodes = new Set(); front.forEach(({ seg }) => seg.forEach(([a, b]) => { nodes.add(a + ""); nodes.add(b + ""); }));
+  nodes.forEach(s => { const p = s.split(",").map(Number), q = Pt(p); g.fillStyle = "rgba(18,18,24,.95)"; g.beginPath(); g.arc(q[0], q[1], L*.09, 0, U.TAU); g.fill(); g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = 1; g.stroke(); });
+  // 零件庫：四種梁段縮圖
+  const s = L*.42, ly = H - s*1.1;
+  LIB.forEach((turns, k) => { let p = [W*.14 + k*W*.2, ly], d = 0;
+    g.strokeStyle = col(k, 1); g.lineWidth = s*.34; g.lineCap = "square"; g.beginPath(); g.moveTo(...p);
+    turns.forEach((tv, i) => { d = (d + (i ? tv : 0)) % 8; p = [p[0] + D8[d][0]*s*(D8[d][0] && D8[d][1] ? .72 : 1), p[1] - D8[d][1]*s*(D8[d][0] && D8[d][1] ? .72 : 1)]; g.lineTo(...p); });
+    if(turns.length === 1){ p = [p[0] + s, p[1]]; g.lineTo(...p); }
+    g.stroke(); });
 };
 ART.var["B06"][3].ratio = 1.1;
 

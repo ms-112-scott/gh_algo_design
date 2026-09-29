@@ -219,21 +219,39 @@ ART.var["A05"] = [
       for(let k = 0; k <= gen; k++){ g.fillStyle = k === gen ? c : "rgba(255,255,255,.3)"; g.fillRect(x + 9 + k*6, y + 9, 4, 4); }
     }
   },
-  // V11 混合 L-System：字串（下方色塊）逐字決定每個 A 的規則
+  // V11 混合 L-System：上層是字串逐代改寫的推導樹（A01 語彙），左下是「字元→形狀規則」對照，右下是照字串長出的形狀
   function(g, W, H, r, c){
-    let s = "B"; const R = {B:"BLR", L:"LB", R:"RSB", S:"S"}; for(let i = 0; i < 5; i++) s = s.split("").map(ch => R[ch] || ch).join("");
-    const col = {B:c, L:AMB, R:SKY, S:"rgba(255,255,255,.5)"}; let idx = (r()*5)|0;
+    const R = {B:"BLR", L:"LB", R:"RSB", S:"S"}, col = {B:c, L:AMB, R:SKY, S:"rgba(255,255,255,.6)"};
+    const gens = ["B"]; for(let i = 0; i < 5; i++) gens.push(gens[i].split("").map(ch => R[ch] || ch).join(""));
+    const glyph = (ch, x, y, s) => { g.fillStyle = col[ch];
+      if(ch === "L"){ U.poly(g, [[x+s*.85,y+s*.08],[x+s*.85,y+s*.92],[x+s*.12,y+s*.5]], true); g.fill(); }
+      else if(ch === "R"){ U.poly(g, [[x+s*.15,y+s*.08],[x+s*.15,y+s*.92],[x+s*.88,y+s*.5]], true); g.fill(); }
+      else if(ch === "S"){ g.beginPath(); g.arc(x+s*.5, y+s*.5, s*.28, 0, TAU); g.fill(); }
+      else g.fillRect(x+s*.1, y+s*.1, s*.8, s*.8); };
+    // 上層：第 0–3 代字串（1、3、8、20 個字元），每個字元連到它改寫出的子字串
+    const tx = W*.05, tw = W*.9, n3 = gens[3].length, bw = tw/n3, rowY = k => H*(.04 + k*.085);
+    const pos = gens.slice(0, 4).map(s => { const x0 = tx + (tw - s.length*bw)/2; return s.split("").map((ch, i) => x0 + (i+.5)*bw); });
+    g.lineWidth = .8;
+    for(let k = 0; k < 3; k++){ let j = 0; gens[k].split("").forEach((ch, i) => { const m = (R[ch] || ch).length;
+      for(let t = 0; t < m; t++){ g.strokeStyle = U.rgba(col[ch] === col.S ? "#FFFFFF" : col[ch], .45); g.beginPath(); g.moveTo(pos[k][i], rowY(k) + bw*.9); g.lineTo(pos[k+1][j+t], rowY(k+1) + bw*.1); g.stroke(); }
+      j += m; }); }
+    gens.slice(0, 4).forEach((s, k) => s.split("").forEach((ch, i) => glyph(ch, pos[k][i] - bw/2, rowY(k), bw)));
+    const sep = rowY(3) + bw + H*.03; g.fillStyle = "rgba(255,255,255,.18)"; g.fillRect(W*.04, sep, W*.92, 1);
+    // 左下：規則對照（字元 → 套用的形狀規則）
+    const ly = sep + H*.04, lh = (H*.96 - ly)/4, ls = Math.min(lh*.42, W*.06);
+    ["B","L","R","S"].forEach((ch, k) => { const y = ly + k*lh; glyph(ch, W*.05, y + lh*.2, ls);
+      g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.beginPath(); g.moveTo(W*.05 + ls*1.2, y + lh*.2 + ls/2); g.lineTo(W*.05 + ls*1.9, y + lh*.2 + ls/2); g.stroke();
+      const q = sqr([0,0],[1,0],0), kids = ch === "S" ? [] : pythKids(q, (ch === "L" ? 30 : ch === "R" ? 60 : 45)*D2R), use = ch === "L" ? [kids[0]] : ch === "R" ? [kids[1]] : kids, all = [q].concat(use);
+      fit(all, W*.05 + ls*2.1, y + lh*.05, lh*.85, lh*.8, true);
+      all.forEach((z, i) => { U.poly(g, z.pts, true); g.fillStyle = i ? U.rgba(col[ch] === col.S ? "#FFFFFF" : col[ch], .9) : "rgba(255,255,255,.18)"; g.fill(); });
+      if(ch === "S"){ const [x, yy] = ctr(q); g.strokeStyle = "rgba(255,255,255,.7)"; g.beginPath(); g.moveTo(x-3, yy-3); g.lineTo(x+3, yy+3); g.moveTo(x+3, yy-3); g.lineTo(x-3, yy+3); g.stroke(); } });
+    g.fillStyle = "rgba(255,255,255,.12)"; g.fillRect(W*.34, sep + H*.03, 1, H*.93 - sep);
+    // 右下：依第 5 代字串逐字元決定每個 A 的規則
+    const s = gens[5]; let idx = 1;
     const T = grow(sqr([0,0],[1,0],0), q => { const ch = q.d === 0 ? "B" : s[idx++ % s.length]; q.ch = ch; if(q.d >= 9 || ch === "S") return [];
       const k = pythKids(q, (ch === "L" ? 30 : ch === "R" ? 60 : 45)*D2R); return ch === "L" ? [k[0]] : ch === "R" ? [k[1]] : k; });
-    fit(T, W*.08, H*.06, W*.84, H*.7, true);
-    T.forEach(q => { U.poly(g, q.pts, true); g.fillStyle = col[q.ch]; g.globalAlpha = .85; g.fill(); g.globalAlpha = 1; });
-    const n = Math.min(s.length, 32), bw = W*.84/n;
-    for(let i = 0; i < n; i++){ const ch = s[i], x = W*.08 + i*bw, y = H*.86; g.fillStyle = col[ch];
-      if(ch === "L"){ U.poly(g, [[x+bw*.8,y],[x+bw*.8,y+bw*.9],[x+bw*.1,y+bw*.45]], true); g.fill(); }
-      else if(ch === "R"){ U.poly(g, [[x+bw*.1,y],[x+bw*.1,y+bw*.9],[x+bw*.8,y+bw*.45]], true); g.fill(); }
-      else if(ch === "S"){ g.beginPath(); g.arc(x+bw*.45, y+bw*.45, bw*.3, 0, TAU); g.fill(); }
-      else g.fillRect(x+bw*.1, y+bw*.05, bw*.7, bw*.8); }
-    g.fillStyle = "rgba(255,255,255,.15)"; g.fillRect(W*.08, H*.83, W*.84, 1);
+    fit(T, W*.38, sep + H*.03, W*.58, H*.95 - sep - H*.03, true);
+    T.forEach(q => { U.poly(g, q.pts, true); g.fillStyle = col[q.ch]; g.globalAlpha = .88; g.fill(); g.globalAlpha = 1; });
   },
   // V12 雷切片材：每個正方形內縮並加卡榫，排版在板材上
   function(g, W, H, r, c){
@@ -537,23 +555,34 @@ ART.case["A05-51"] = function(g, W, H, r, c){
 };
 ART.case["A05-51"].ratio = .9;
 
-// A05-52 Structure Synth：3D 設計文法的螺旋方塊塔，光線追蹤般的淺色明暗
+// A05-52 Structure Synth：淺灰算圖畫面（Sunflow／光線追蹤感）中的 3D 設計文法巨構——
+// 規則 tower 逐層疊方塊並繞 z 轉、縮小，每隔幾層向四方伸出懸臂，懸臂末端再呼叫 tower（maxdepth 2）
 ART.case["A05-52"] = function(g, W, H, r, c){
+  const px = W*.04, py = H*.04, pw = W*.92, ph = H*.92;
+  const bg = g.createLinearGradient(0, py, 0, py + ph); bg.addColorStop(0, "#AFAAA4"); bg.addColorStop(.55, "#D4D0CA"); bg.addColorStop(1, "#ECE9E4");
+  g.fillStyle = bg; g.fillRect(px, py, pw, ph);
   const F = []; let cnt = 0;
-  const R = (v, ax, t) => { const [x,y,z] = ax, c1 = Math.cos(t), s1 = Math.sin(t), dt = v[0]*x + v[1]*y + v[2]*z, cr = [y*v[2]-z*v[1], z*v[0]-x*v[2], x*v[1]-y*v[0]];
-    return [v[0]*c1 + cr[0]*s1 + x*dt*(1-c1), v[1]*c1 + cr[1]*s1 + y*dt*(1-c1), v[2]*c1 + cr[2]*s1 + z*dt*(1-c1)]; };
-  const rule = (o, ex, ey, ez, s, d) => {
-    for(let i = 0; i < 70 && s > .05 && cnt < 520; i++){ cnt++;
-      const P = (a,b,e) => [o[0] + (ex[0]*a + ey[0]*b + ez[0]*e)*s*.5, o[1] + (ex[1]*a + ey[1]*b + ez[1]*e)*s*.5, o[2] + (ex[2]*a + ey[2]*b + ez[2]*e)*s*.5];
-      const col = i%9 === 0 ? c : "#E7E4DF";
-      [[P(-1,-1,-1),P(1,-1,-1),P(1,1,-1),P(-1,1,-1)],[P(-1,-1,1),P(1,-1,1),P(1,1,1),P(-1,1,1)],[P(-1,-1,-1),P(1,-1,-1),P(1,-1,1),P(-1,-1,1)],[P(-1,1,-1),P(1,1,-1),P(1,1,1),P(-1,1,1)],[P(-1,-1,-1),P(-1,1,-1),P(-1,1,1),P(-1,-1,1)],[P(1,-1,-1),P(1,1,-1),P(1,1,1),P(1,-1,1)]].forEach(p => F.push({p, col}));
-      o = [o[0] + ez[0]*s, o[1] + ez[1]*s, o[2] + ez[2]*s];  // 沿 z 前進，繞軸小角度旋轉並縮小
-      const a = .22, b = .12; ex = R(R(ex, ez, a), ey, b); ey = R(ey, ez, a); ez = R(ez, ey, b); s *= .965;
-      if(d < 2 && i%14 === 7 && r() < .8) rule(o, ey, ez, ex, s*.8, d+1); } };
-  rule([0,0,0],[1,0,0],[0,1,0],[0,0,1],1,0);
-  render(g, F, persp(.7, .5, 26), W*.06, H*.06, W*.88, H*.88, {L:[.5,-.4,.8], line:"rgba(0,0,0,.25)", lw:.4});
+  // 繞 z 旋轉的方塊（中心 x,y、底 z、長 s、寬 w、高 h、角度 a）
+  const rbox = (x, y, z, s, h, a, col, w = s) => { const C = [[-1,-1],[1,-1],[1,1],[-1,1]].map(([u,v]) => [x + (u*s*Math.cos(a) - v*w*Math.sin(a))/2, y + (u*s*Math.sin(a) + v*w*Math.cos(a))/2]);
+    const B = C.map(p => [p[0], p[1], z]), T = C.map(p => [p[0], p[1], z + h]);
+    F.push({p:T, col}); for(let i = 0; i < 4; i++){ const j = (i+1)%4; F.push({p:[B[i], B[j], T[j], T[i]], col}); } };
+  const tower = (x, y, z, s, a, d) => {
+    const lv = d === 0 ? 22 : 10 - d*2;
+    for(let i = 0; i < lv && s > .08 && cnt < 420; i++){ cnt++;
+      const accent = d === 0 && i%6 === 5;
+      rbox(x, y, z, s, s*.45, a, accent ? c : "#F1EEE9"); z += s*.45; a += .09; s *= .955;
+      if(d < 2 && i%6 === 3){ const arms = d === 0 ? 4 : 2;
+        for(let k = 0; k < arms; k++){ const t = a + k*TAU/arms + (d ? Math.PI/4 : 0), L = s*(2.2 - d*.5);
+          cnt++; rbox(x + Math.cos(t)*L/2, y + Math.sin(t)*L/2, z - s*.3, L, s*.22, t, "#E2DED8", s*.3);   // 懸臂梁
+          if(r() < .85) tower(x + Math.cos(t)*L, y + Math.sin(t)*L, z - s*.25, s*.5, t, d+1); } } } };
+  tower(0, 0, 0, 1.4, r()*TAU, 0);
+  g.save(); g.beginPath(); g.rect(px, py, pw, ph); g.clip();
+  render(g, F, persp(.55, .5, 34), px + pw*.06, py + ph*.05, pw*.88, ph*.86, {bottom:true, L:[.55,-.45,.75], line:"rgba(60,55,50,.35)", lw:.4,
+    under:(m, k) => { const o = m([0,0,0]); const sh = g.createRadialGradient(o[0], o[1], 0, o[0], o[1], k*6); sh.addColorStop(0, "rgba(40,36,32,.45)"); sh.addColorStop(1, "rgba(40,36,32,0)"); g.fillStyle = sh; g.beginPath(); g.ellipse(o[0], o[1], k*6, k*2.2, 0, 0, TAU); g.fill(); }});
+  g.restore();
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = 1; g.strokeRect(px - 2, py - 2, pw + 4, ph + 4);
 };
-ART.case["A05-52"].ratio = 1;
+ART.case["A05-52"].ratio = 1.15;
 
 // A05-55 CGAjs：瀏覽器視窗，左側文法程式碼、右側 3D 教堂即時預覽
 ART.case["A05-55"] = function(g, W, H, r, c){
@@ -572,4 +601,51 @@ ART.case["A05-55"] = function(g, W, H, r, c){
   g.strokeStyle = "rgba(255,255,255,.12)"; g.lineWidth = 1; g.strokeRect(W*.36, H*.08, W*.64, H*.92);
 };
 ART.case["A05-55"].ratio = .8;
+
+/* ================= 新變形（V13 起） ================= */
+// V13 圖文法：房間鄰接圖的改寫。上方兩格是第 0、1 代（House → Entry–Public–Private），
+// 下方是第 2 代（Public → 客廳／廚房／餐廳、Private → 走道＋臥室＋浴室）經力導向排佈的泡泡圖
+ART.var["A05"][12] = function(g, W, H, r, c){
+  const nb = 2 + ((r()*2)|0);
+  const RULE = {
+    House:   {nodes:["Entry","Public","Private"], edges:[[0,1],[1,2]], port:1},
+    Public:  {nodes:["Living","Kitchen","Dining"], edges:[[0,1],[1,2],[0,2]], port:0},
+    Private: {nodes:["Hall"].concat(Array(nb).fill("Bed"), ["Bath"]), edges:Array.from({length:nb+1}, (_, i) => [0, i+1]), port:0}};
+  const AREA = {House:2.4, Entry:.45, Public:1.5, Private:1.4, Living:1.25, Kitchen:.7, Dining:.8, Hall:.45, Bed:.8, Bath:.45};
+  const ZONE = {House:"#FFFFFF", Entry:AMB, Public:c, Living:c, Kitchen:c, Dining:c, Private:SKY, Hall:SKY, Bed:SKY, Bath:"#9FD8C8"};
+  // 逐代改寫：所有非終端節點同時替換，外部連線接到規則指定的接口節點（嵌入規則）
+  let N = [{lab:"House", x:0, y:0}], E = []; const gens = [{N, E}];
+  while(N.some(n => RULE[n.lab])){ const NN = [], EE = [], map = [];
+    N.forEach((nd, i) => { const R = RULE[nd.lab]; if(!R){ map[i] = NN.length; NN.push({...nd}); return; }
+      const b = NN.length; R.nodes.forEach((l, k) => { const a = k/R.nodes.length*TAU + r(); NN.push({lab:l, x:nd.x + Math.cos(a)*.6, y:nd.y + Math.sin(a)*.6}); });
+      R.edges.forEach(([p, q]) => EE.push([b+p, b+q])); map[i] = b + R.port; });
+    E.forEach(([p, q]) => EE.push([map[p], map[q]])); N = NN; E = EE;
+    // 力導向：相連節點以彈簧拉近、所有節點兩兩互斥
+    for(let it = 0; it < 90; it++){ const fx = N.map(() => 0), fy = N.map(() => 0);
+      for(let i = 0; i < N.length; i++) for(let j = i+1; j < N.length; j++){ const dx = N[j].x - N[i].x, dy = N[j].y - N[i].y, d = Math.hypot(dx, dy) || .01, want = AREA[N[i].lab] + AREA[N[j].lab];
+        const f = d < want*1.05 ? (want*1.05 - d)*.5 : .02/(d*d); fx[i] -= dx/d*f; fy[i] -= dy/d*f; fx[j] += dx/d*f; fy[j] += dy/d*f; }
+      E.forEach(([i, j]) => { const dx = N[j].x - N[i].x, dy = N[j].y - N[i].y, d = Math.hypot(dx, dy) || .01, rest = (AREA[N[i].lab] + AREA[N[j].lab])*1.12, f = (d - rest)*.12;
+        fx[i] += dx/d*f; fy[i] += dy/d*f; fx[j] -= dx/d*f; fy[j] -= dy/d*f; });
+      N.forEach((n, i) => { n.x += fx[i]; n.y += fy[i]; }); }
+    gens.push({N, E}); }
+  // 畫一代的泡泡圖到框內
+  const draw = (G, bx, by, bw, bh, lw) => { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    G.N.forEach(n => { const a = AREA[n.lab]; x0 = Math.min(x0, n.x - a); y0 = Math.min(y0, n.y - a); x1 = Math.max(x1, n.x + a); y1 = Math.max(y1, n.y + a); });
+    const k = Math.min(bw/(x1 - x0), bh/(y1 - y0)), ox = bx + (bw - (x1-x0)*k)/2 - x0*k, oy = by + (bh - (y1-y0)*k)/2 - y0*k, P = n => [ox + n.x*k, oy + n.y*k];
+    g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = lw; g.lineCap = "round";
+    G.E.forEach(([i, j]) => { const a = P(G.N[i]), b = P(G.N[j]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+    G.N.forEach(n => { const [x, y] = P(n), rad = AREA[n.lab]*k*.92, col = ZONE[n.lab], term = !RULE[n.lab];
+      g.fillStyle = U.rgba(col, term ? .3 : .12); g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill();
+      g.strokeStyle = col; g.lineWidth = term ? 1.6 : 1.2; if(!term) g.setLineDash([4,3]); g.stroke(); g.setLineDash([]);
+      g.fillStyle = col; g.fillRect(x - 2.5, y - 2.5, 5, 5); }); };   // 小方點代表房名標記（TextDot）
+  const th = H*.26, pw = W*.36;
+  [[0, W*.05], [1, W*.59]].forEach(([gi, x]) => { g.strokeStyle = "rgba(255,255,255,.18)"; g.lineWidth = 1; g.strokeRect(x, H*.04, pw, th); draw(gens[gi], x + 6, H*.04 + 6, pw - 12, th - 12, 1.4);
+    for(let k = 0; k <= gi; k++){ g.fillStyle = k === gi ? c : "rgba(255,255,255,.35)"; g.fillRect(x + 5 + k*7, H*.04 + th - 9, 4, 4); } });
+  g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(W*.44, H*.17); g.lineTo(W*.56, H*.17); g.lineTo(W*.53, H*.15); g.moveTo(W*.56, H*.17); g.lineTo(W*.53, H*.19); g.stroke();
+  g.beginPath(); g.moveTo(W*.77, H*.32); g.lineTo(W*.77, H*.37); g.lineTo(W*.75, H*.35); g.moveTo(W*.77, H*.37); g.lineTo(W*.79, H*.35); g.stroke();
+  // 主圖：第 2 代泡泡圖，底下疊淡淡的平面格線
+  g.strokeStyle = "rgba(255,255,255,.05)"; g.lineWidth = 1; for(let x = W*.04; x < W*.96; x += W*.06){ g.beginPath(); g.moveTo(x, H*.39); g.lineTo(x, H*.97); g.stroke(); } for(let y = H*.39; y < H*.97; y += W*.06){ g.beginPath(); g.moveTo(W*.04, y); g.lineTo(W*.96, y); g.stroke(); }
+  draw(gens[gens.length-1], W*.05, H*.4, W*.9, H*.56, 2.2);
+};
+ART.var["A05"][12].ratio = 1.15;
 })();

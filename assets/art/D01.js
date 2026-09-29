@@ -207,6 +207,57 @@ ART.var["D01"] = [
 ];
 ART.var["D01"][2].ratio = .8; ART.var["D01"][3].ratio = 1.3; ART.var["D01"][5].ratio = 1.25; ART.var["D01"][9].ratio = 1.35; ART.var["D01"][11].ratio = 1.35; ART.var["D01"][8].ratio = 1;
 
+/* V13 捕食者－獵物雙物種群聚：獵物分離群又重新合攏，掠食者留下刀痕般的軌跡，下方是族群數量振盪曲線 */
+ART.var["D01"][12] = function(g, W, H, r, c){
+  const ACC2 = "#E65050", PH = H*.76, steps = 190, fearR = 66, predictT = 6, catchR = 9, breedEvery = 32;
+  let prey = [...Array(46)].map(() => { const a = r()*TAU; return {x:r()*W, y:r()*PH, vx:Math.cos(a), vy:Math.sin(a), t:[], alive:true}; });
+  let pred = [...Array(4)].map(() => { const a = r()*TAU; return {x:r()*W, y:r()*PH, vx:Math.cos(a), vy:Math.sin(a), t:[], energy:60}; });
+  const hist = [], deadTrails = [];
+  for(let st = 0; st < steps; st++){
+    prey.forEach(b => { if(!b.alive) return;
+      let sx=0,sy=0,ax=0,ay=0,cx=0,cy=0,k=0;
+      prey.forEach(q => { if(q===b || !q.alive) return; const dx=q.x-b.x, dy=q.y-b.y, d=Math.hypot(dx,dy);
+        if(d<32){ k++; ax+=q.vx; ay+=q.vy; cx+=dx; cy+=dy; if(d<12){ sx-=dx/(d||1); sy-=dy/(d||1); } } });
+      let evx=0, evy=0;
+      pred.forEach(p => { const px=p.x+p.vx*predictT, py=p.y+p.vy*predictT, dx=b.x-px, dy=b.y-py, d=Math.hypot(dx,dy);
+        if(d<fearR){ const f=(fearR-d)/fearR; evx+=dx/(d||1)*f; evy+=dy/(d||1)*f; } });
+      let nvx = b.vx + sx*1.3 + (k?(ax/k-b.vx)*.25:0) + (k?cx/k*.003:0) + evx*1.6;
+      let nvy = b.vy + sy*1.3 + (k?(ay/k-b.vy)*.25:0) + (k?cy/k*.003:0) + evy*1.6;
+      if(b.x<18) nvx+=.3; if(b.x>W-18) nvx-=.3; if(b.y<18) nvy+=.3; if(b.y>PH-18) nvy-=.3;
+      const s=Math.hypot(nvx,nvy)||1; b.vx=nvx/s*1.8; b.vy=nvy/s*1.8; b.x+=b.vx; b.y+=b.vy; b.t.push([b.x,b.y]);
+    });
+    pred.forEach(p => {
+      let best=null, bd=1e9; prey.forEach(q => { if(!q.alive) return; const d=Math.hypot(q.x-p.x,q.y-p.y); if(d<bd){ bd=d; best=q; } });
+      let nvx=p.vx, nvy=p.vy;
+      if(best){ const tx=best.x+best.vx*predictT, ty=best.y+best.vy*predictT, dx=tx-p.x, dy=ty-p.y, d=Math.hypot(dx,dy)||1; nvx+=dx/d*.5; nvy+=dy/d*.5; }
+      if(p.x<18) nvx+=.3; if(p.x>W-18) nvx-=.3; if(p.y<18) nvy+=.3; if(p.y>PH-18) nvy-=.3;
+      const s=Math.hypot(nvx,nvy)||1; p.vx=nvx/s*2.15; p.vy=nvy/s*2.15; p.x+=p.vx; p.y+=p.vy; p.t.push([p.x,p.y]); p.energy-=.12;
+    });
+    prey.forEach(b => { if(!b.alive) return; pred.forEach(p => { if(b.alive && Math.hypot(b.x-p.x,b.y-p.y)<catchR){ b.alive=false; p.energy+=18; deadTrails.push(b.t); } }); });
+    pred = pred.filter(p => p.energy > 0);
+    if(st>0 && st%breedEvery===0){ const alive = prey.filter(b=>b.alive);
+      if(alive.length && alive.length<58) for(let i=0;i<3 && i<alive.length;i++){ const par=alive[(r()*alive.length)|0];
+        prey.push({x:par.x+(r()-.5)*6, y:par.y+(r()-.5)*6, vx:par.vx, vy:par.vy, t:[[par.x,par.y]], alive:true}); } }
+    hist.push([prey.filter(b=>b.alive).length, pred.length]);
+  }
+  g.save(); g.beginPath(); g.rect(0,0,W,PH); g.clip();
+  g.lineWidth = .8; deadTrails.forEach(t => { g.strokeStyle = "rgba(255,255,255,.12)"; trail(g, t, 0); });
+  g.lineWidth = 1; prey.forEach(b => { g.strokeStyle = rgba(c, b.alive ? .55 : .12); trail(g, b.t, 30);
+    if(b.alive){ const p = last(b.t); head(g, p[0], p[1], Math.atan2(b.vy,b.vx), 3.2, "#fff"); } });
+  pred.forEach(p => { g.strokeStyle = "rgba(0,0,0,.4)"; g.lineWidth = 3.2; trail(g, p.t, 0);
+    g.strokeStyle = ACC2; g.lineWidth = 1.6; trail(g, p.t, 0); const q = last(p.t); head(g, q[0], q[1], Math.atan2(p.vy,p.vx), 5, ACC2); });
+  g.restore();
+  g.strokeStyle = "rgba(255,255,255,.3)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0,PH); g.lineTo(W,PH); g.stroke();
+  // 族群數量曲線
+  const cy0 = PH + 6, ch = H - PH - 10, mxPrey = Math.max(1, ...hist.map(h2=>h2[0])), mxPred = Math.max(1, ...hist.map(h2=>h2[1]));
+  const plot = (idx, mx, col) => { g.strokeStyle = col; g.lineWidth = 1.4; g.beginPath();
+    hist.forEach((h2,i) => { const x=i/(hist.length-1)*W, y=cy0+ch-(h2[idx]/mx)*ch; i? g.lineTo(x,y): g.moveTo(x,y); }); g.stroke(); };
+  plot(0, mxPrey, rgba(c, .9)); plot(1, mxPred, ACC2);
+  g.fillStyle = rgba(c,.9); g.beginPath(); g.arc(4, cy0+ch-(hist[0][0]/mxPrey)*ch, 2.4, 0, TAU); g.fill();
+  g.fillStyle = ACC2; g.beginPath(); g.arc(4, cy0+ch-(hist[0][1]/mxPred)*ch, 2.4, 0, TAU); g.fill();
+};
+ART.var["D01"][12].ratio = 1.05;
+
 /* ---------------- 案例 ---------------- */
 /* D01-01 Stanley and Stella：被冰層隔開的球體，上半鳥群、下半魚群（80 年代 CG 掃描線） */
 ART.case["D01-01"] = function(g, W, H, r, c){
