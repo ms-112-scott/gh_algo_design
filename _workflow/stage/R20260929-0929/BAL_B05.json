@@ -1,0 +1,125 @@
+{
+ "algo": "B05",
+ "classification": [
+  {"id": "B05-01", "source": "art", "why": "Tarbell原作生成藝術，視覺成果為主"},
+  {"id": "B05-02", "source": "art", "why": "CLI工具直接產出繪圖機視覺作品"},
+  {"id": "B05-03", "source": "research", "why": "課程部落格研究記錄，非創作成果"},
+  {"id": "B05-04", "source": "art", "why": "社群移植的可互動生成藝術demo"},
+  {"id": "B05-05", "source": "research", "why": "SIGGRAPH學術論文，都市模型工具"},
+  {"id": "B05-06", "source": "research", "why": "電腦圖學研究論文，非藝術作品"},
+  {"id": "B05-07", "source": "research", "why": "自然現象對照，非數位藝術創作"},
+  {"id": "B05-08", "source": "research", "why": "傳統陶瓷開片，作類比研究參考"},
+  {"id": "B05-09", "source": "research", "why": "3D軟體破壞外掛，屬技術對照"},
+  {"id": "B05-10", "source": "research", "why": "傳統修補工藝，非演算法創作"},
+  {"id": "B05-11", "source": "research", "why": "自然老化現象，研究性類比對照"},
+  {"id": "B05-12", "source": "art", "why": "Tarbell作品生長過程紀錄影片"},
+  {"id": "B05-51", "source": "art", "why": "Tarbell經典原作，已有實拍圖片"},
+  {"id": "B05-52", "source": "art", "why": "p5.js移植版，開源生成藝術示範"},
+  {"id": "B05-53", "source": "art", "why": "繪圖機SVG產生器，視覺輸出導向"},
+  {"id": "B05-54", "source": "art", "why": "iPad移植版，creative coding練習"}
+ ],
+ "art_count": 8,
+ "need": 0,
+ "removal_order": ["B05-11", "B05-10", "B05-07", "B05-08", "B05-09", "B05-03"],
+ "removal_reasons": {
+  "B05-11": "無網址、出處難以查證，且與B05-07／08／10同屬材料自然裂紋類比，重複性最高。",
+  "B05-10": "無網址，主題其實是「修補」而非裂紋生成本身，與本演算法關聯薄弱。",
+  "B05-07": "無網址無具體作者，是泛用自然現象類比，與08／10／11內容重疊。",
+  "B05-08": "無網址，是四個材料裂紋類比案例之一，留一個代表即可，非必須全留。",
+  "B05-09": "無網址，但提供「同時分割 vs 依序生長」的機制對照，教學價值高於純類比案例。",
+  "B05-03": "有網址可查證，但僅為學生課程部落格觀察紀錄，非正式研究成果，影響力有限。"
+ },
+ "new_art": [
+  {
+   "title": "Substrate（Python 重製版，含即時參數 GUI）",
+   "creator": "HertzVador",
+   "year": "2026",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "HertzVador 以 Python 重新實作 Tarbell 的 Substrate 演算法，裂紋沿既有裂紋垂直分岔、撞停後以水彩沙畫上色。作者另加 tkinter 即時預覽介面可調整裂紋數與分岔機率、並用 Numba 加速運算約 35 倍，也支援固定亂數種子重現同一張圖，這些都是 Grasshopper 基礎範例沒有的操作與效能考量。",
+   "variations": [
+    {"name": "GUI 參數即時預覽", "how": "用 tkinter 做即時預覽介面，可調整裂紋數、分岔機率等參數並立即重繪。", "effect": "邊調參數邊看圖樣變化，取代重新執行整個程式才能看到結果。"},
+    {"name": "Numba 加速與可重現亂數種子", "how": "用 Numba JIT 編譯核心迴圈，並可指定隨機種子重現同一張圖。", "effect": "生成速度大幅提升，且同一種子能重複得到相同構圖，方便版本比較。"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Python", "GUI", "效能優化", "沙畫上色"],
+   "tools": ["Python", "NumPy", "Numba", "tkinter"],
+   "url": "https://github.com/HertzVador/substrate",
+   "evidence": "README：「A Python generative art tool inspired by Jared Tarbell's Substrate (2004) ... Cracks grow across a canvas, branching perpendicularly off one another and filling enclosed regions with soft watercolor-like sand.」，License: MIT。",
+   "nearest_existing": "B05-52 Substrate（p5.js 移植版）——同樣是社群重新實作，但這裡改用 Python 並附加 GUI 與效能加速工具",
+   "image": {
+    "url": "https://raw.githubusercontent.com/HertzVador/substrate/main/preview.png",
+    "page": "https://github.com/HertzVador/substrate",
+    "verified": true,
+    "checked": "淺色底上布滿金黃與灰藍色調的密集裂紋線條，畫面幾乎完全被切割填滿，呈現水彩暈染的沙畫質感，是實際執行輸出而非縮圖或介面截圖。",
+    "source": "GitHub（HertzVador/substrate）README",
+    "author": "HertzVador",
+    "license": "MIT",
+    "license_url": "https://github.com/HertzVador/substrate",
+    "note": "Python 重製版輸出：密集裂紋網格搭配水彩沙畫上色"
+   }
+  },
+  {
+   "title": "substrate（黑底發光互動版）",
+   "creator": "Oliver Salzburg",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Oliver Salzburg 以 TypeScript／Canvas 重寫 Substrate，把原作的米黃沙畫改成黑底彩色細線，裂紋聚集處會像夜間城市的燈光節點。使用者可點擊畫布暫停、點擊背景切換全螢幕，載入時需先做校正，強調瀏覽器端即時互動而非單純輸出靜態圖。專案已封存但線上展示頁仍可執行。",
+   "variations": [
+    {"name": "即時互動控制", "how": "用滑鼠點擊暫停生長、點擊背景切換全螢幕，載入時先做畫布校正（calibration）。", "effect": "從一次性批次生成變成可互動觀察、隨時暫停檢視的即時畫面。"},
+    {"name": "黑底發光配色", "how": "把裂紋改成在黑色畫布上以彩色細線繪製並在節點處加強亮度。", "effect": "視覺上更像夜間城市燈光路網，而非原作的米黃沙畫質感。"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "TypeScript", "Canvas", "互動", "動畫"],
+   "tools": ["TypeScript", "Canvas API"],
+   "url": "https://oliversalzburg.github.io/substrate/",
+   "evidence": "GitHub repo README：「Canvas experiment inspired by original Substrate artwork by Jared Tarbell」；repo 頁面標示「This repository was archived by the owner on Mar 22, 2026」，展示頁 oliversalzburg.github.io/substrate 可實際執行。",
+   "nearest_existing": "B05-52 Substrate（p5.js 移植版）——同樣是網頁端重寫，但這裡改用黑底發光配色與互動控制",
+   "image": {
+    "url": "https://raw.githubusercontent.com/oliversalzburg/substrate/main/public/canvas.png",
+    "page": "https://oliversalzburg.github.io/substrate/",
+    "verified": true,
+    "checked": "黑底上的白色與彩色細線裂紋網絡，多處聚集成類似夜間城市光點的節點，呈現街道感十足的分岔結構，是畫布截圖而非影片縮圖。",
+    "source": "GitHub（oliversalzburg/substrate）",
+    "author": "Oliver Salzburg",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "TypeScript 重製版輸出：黑底發光裂紋網絡，聚集處如夜間城市光點"
+   }
+  },
+  {
+   "title": "Substrate（Haiku 作業系統螢幕保護程式移植）",
+   "creator": "stephanie-fu（原始 xscreensaver hack：J. Tarbell、M. Kershaw、D. Agraz）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "xscreensaver 內建的 Substrate 螢幕保護程式（原始碼由 Tarbell 與合作者 Kershaw、Agraz 改寫自 Processing 版）被 stephanie-fu 移植到 Haiku 作業系統，讓同一套裂紋演算法能在桌面待機時作為動態背景常駐執行。移植需改寫視窗建立與繪圖呼叫以符合 Haiku 的 API，但沙畫上色與分岔規則維持原樣。",
+   "variations": [
+    {"name": "跨平台系統移植", "how": "把 xscreensaver 的 C 語言 Substrate hack 移植到 Haiku 作業系統的螢幕保護程式框架，改寫視窗建立與繪圖呼叫。", "effect": "同一套裂紋演算法變成可在特定作業系統待機時常駐執行的動態背景，而非單次輸出的靜態圖。"},
+    {"name": "多代裂紋沙畫上色", "how": "沿用原作以像素方向欄位記錄裂紋角度，再以掃描線疊色做沙畫渲染。", "effect": "畫面呈現柔和漸層色塊而非單純線稿，與 Grasshopper 版本直接輸出線段的做法不同。"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "C", "screensaver", "沙畫上色", "跨平台移植"],
+   "tools": ["C", "Haiku OS"],
+   "url": "https://github.com/stephanie-fu/Substrate",
+   "evidence": "README：「Screensaver for Haiku based on xscreensaver's Substrate which is a port of code by Jared Tarbell」，並附兩張輸出截圖，License: MIT。",
+   "nearest_existing": "B05-54 Substrate iPad 移植版——同樣是把原始演算法移植到特定作業系統平台",
+   "image": {
+    "url": "https://cloud.githubusercontent.com/assets/3966931/5391233/5eef2300-8118-11e4-909b-222aab8ae39c.png",
+    "page": "https://github.com/stephanie-fu/Substrate",
+    "verified": true,
+    "checked": "米黃底色上以水彩筆觸填色的扇形裂紋分割，色塊沿裂紋邊界暈染，是實際執行輸出的截圖，類似原作的沙畫上色效果。",
+    "source": "GitHub（stephanie-fu/Substrate）README 附圖",
+    "author": "stephanie-fu",
+    "license": "MIT",
+    "license_url": "https://github.com/stephanie-fu/Substrate",
+    "note": "Haiku 螢幕保護程式版輸出：沙畫上色的扇形裂紋分割"
+   }
+  }
+ ],
+ "notes": "need=0（分類後 art／research 剛好各 8），本次分類與備援藝術案例均已完成，未實際移除或新增。特別提醒協調者：B05-01 與 B05-51 同為 Jared Tarbell 原作《Substrate》、B05-02 與 B05-53 同為 technologiestiftung/substrate 這個 CLI 專案，現有名單中重複收錄了兩組同一件作品，建議之後合併或擇一移除（不影響本次 art/research 各 8 的平衡）。本次 WebSearch 與 Parallel Search 額度已用盡，改用 GitHub 內建搜尋與直接 WebFetch 查證，3 個備援藝術案例因此都來自 GitHub 上的 Substrate 移植／重製專案（Python、TypeScript、C／Haiku），未涵蓋 p5.js、Processing 或 OpenProcessing 上的版本；若之後真的需要動用備援，建議協調者在額度恢復後再補搜一輪 p5.js／Processing 版本以符合「至少占一半」的建議比例。已排除 Morayla/Substrate（monet.jpg 經查證是程式讀取的調色參考圖，並非演算法輸出畫面，故未收錄）與 shinaisan/substrate-js（repo 與圖檔皆已 404，帳號可能已刪除或改名）兩個原本考慮的候選。"
+}

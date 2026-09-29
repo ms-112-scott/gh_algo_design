@@ -1,0 +1,597 @@
+{
+ "at": "2026-09-29T10:45+08:00",
+ "summary": {
+  "ok": false,
+  "run": "R20260929-0929",
+  "research": 356,
+  "art": 234,
+  "balanced": false,
+  "shortfall": 61,
+  "removed": 70,
+  "added": 69,
+  "missing_bal": [],
+  "new_ids": [
+   "A01-56",
+   "A01-57",
+   "A01-58",
+   "A01-59",
+   "A01-60",
+   "A02-55",
+   "A03-55",
+   "A03-56",
+   "A04-55",
+   "A05-56",
+   "A05-57",
+   "A05-58",
+   "A06-56",
+   "A06-57",
+   "A06-58",
+   "B01-56",
+   "B01-57",
+   "B01-58",
+   "B02-56",
+   "B03-56",
+   "B04-55",
+   "B04-56",
+   "B04-57",
+   "B05-55",
+   "B05-56",
+   "C01-56",
+   "C01-57",
+   "C01-58",
+   "C02-56",
+   "C02-57",
+   "C04-57",
+   "D01-56",
+   "D01-57",
+   "D01-58",
+   "D01-59",
+   "D01-60",
+   "D02-56",
+   "D02-57",
+   "D02-58",
+   "E01-55",
+   "E01-56",
+   "E02-56",
+   "E02-57",
+   "E03-56",
+   "E03-57",
+   "E03-58",
+   "E04-56",
+   "F01-51",
+   "F01-52",
+   "F01-53",
+   "F01-54",
+   "F01-55",
+   "F02-51",
+   "F03-51",
+   "F03-52",
+   "F03-53",
+   "F04-51",
+   "F04-52",
+   "F05-51",
+   "F06-51",
+   "F06-52",
+   "F06-53",
+   "F07-56",
+   "F07-57",
+   "F07-58",
+   "G01-56",
+   "G01-57",
+   "G01-58",
+   "G03-54"
+  ],
+  "images_ok": 69,
+  "images_queued": []
+ },
+ "per_algo": {
+  "A01": {
+   "art_before": 6,
+   "replace": 5,
+   "extra_removed": 0,
+   "art_after": 11,
+   "total_after": 20,
+   "removed": [
+    "A01-05",
+    "A01-54",
+    "A01-15",
+    "A01-09",
+    "A01-13"
+   ],
+   "backups_left": 0
+  },
+  "A02": {
+   "art_before": 2,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 3,
+   "total_after": 19,
+   "removed": [
+    "A02-08"
+   ],
+   "backups_left": 0
+  },
+  "A03": {
+   "art_before": 6,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 19,
+   "removed": [
+    "A03-14",
+    "A03-05"
+   ],
+   "backups_left": 0
+  },
+  "A04": {
+   "art_before": 9,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 18,
+   "removed": [
+    "A04-14"
+   ],
+   "backups_left": 0
+  },
+  "A05": {
+   "art_before": 3,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 6,
+   "total_after": 20,
+   "removed": [
+    "A05-03",
+    "A05-08",
+    "A05-15"
+   ],
+   "backups_left": 0
+  },
+  "A06": {
+   "art_before": 4,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 7,
+   "total_after": 19,
+   "removed": [
+    "A06-08",
+    "A06-10",
+    "A06-13"
+   ],
+   "backups_left": 0
+  },
+  "B01": {
+   "art_before": 7,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 18,
+   "removed": [
+    "B01-04",
+    "B01-05",
+    "B01-11"
+   ],
+   "backups_left": 0
+  },
+  "B02": {
+   "art_before": 9,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 19,
+   "removed": [
+    "B02-08"
+   ],
+   "backups_left": 0
+  },
+  "B03": {
+   "art_before": 9,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 20,
+   "removed": [
+    "B03-15"
+   ],
+   "backups_left": 0
+  },
+  "B04": {
+   "art_before": 5,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 18,
+   "removed": [
+    "B04-10",
+    "B04-11",
+    "B04-12"
+   ],
+   "backups_left": 0
+  },
+  "B05": {
+   "art_before": 8,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 16,
+   "removed": [
+    "B05-11",
+    "B05-10"
+   ],
+   "backups_left": 0
+  },
+  "B06": {
+   "art_before": 0,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 0,
+   "total_after": 10,
+   "removed": [],
+   "backups_left": 0
+  },
+  "C01": {
+   "art_before": 9,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 12,
+   "total_after": 20,
+   "removed": [
+    "C01-09",
+    "C01-55",
+    "C01-12"
+   ],
+   "backups_left": 0
+  },
+  "C02": {
+   "art_before": 7,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 9,
+   "total_after": 20,
+   "removed": [
+    "C02-13",
+    "C02-15"
+   ],
+   "backups_left": 0
+  },
+  "C03": {
+   "art_before": 9,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 9,
+   "total_after": 18,
+   "removed": [],
+   "backups_left": 0
+  },
+  "C04": {
+   "art_before": 7,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 18,
+   "removed": [
+    "C04-08"
+   ],
+   "backups_left": 0
+  },
+  "C05": {
+   "art_before": 3,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 3,
+   "total_after": 18,
+   "removed": [],
+   "backups_left": 0
+  },
+  "D01": {
+   "art_before": 6,
+   "replace": 5,
+   "extra_removed": 0,
+   "art_after": 11,
+   "total_after": 19,
+   "removed": [
+    "D01-14",
+    "D01-13",
+    "D01-05",
+    "D01-07",
+    "D01-04"
+   ],
+   "backups_left": 0
+  },
+  "D02": {
+   "art_before": 8,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 11,
+   "total_after": 19,
+   "removed": [
+    "D02-14",
+    "D02-13",
+    "D02-09"
+   ],
+   "backups_left": 0
+  },
+  "D03": {
+   "art_before": 3,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 3,
+   "total_after": 18,
+   "removed": [],
+   "backups_left": 0
+  },
+  "E01": {
+   "art_before": 8,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 10,
+   "total_after": 18,
+   "removed": [
+    "E01-14",
+    "E01-05"
+   ],
+   "backups_left": 0
+  },
+  "E02": {
+   "art_before": 3,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 5,
+   "total_after": 17,
+   "removed": [
+    "E02-11",
+    "E02-52"
+   ],
+   "backups_left": 0
+  },
+  "E03": {
+   "art_before": 5,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 20,
+   "removed": [
+    "E03-15",
+    "E03-07",
+    "E03-14"
+   ],
+   "backups_left": 0
+  },
+  "E04": {
+   "art_before": 5,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 6,
+   "total_after": 19,
+   "removed": [
+    "E04-55"
+   ],
+   "backups_left": 0
+  },
+  "E05": {
+   "art_before": 0,
+   "replace": 0,
+   "extra_removed": 1,
+   "art_after": 0,
+   "total_after": 12,
+   "removed": [
+    "E05-09"
+   ],
+   "backups_left": 0
+  },
+  "E06": {
+   "art_before": 0,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 0,
+   "total_after": 11,
+   "removed": [],
+   "backups_left": 0
+  },
+  "F01": {
+   "art_before": 3,
+   "replace": 5,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 14,
+   "removed": [
+    "F01-09",
+    "F01-14",
+    "F01-12",
+    "F01-08",
+    "F01-05"
+   ],
+   "backups_left": 0
+  },
+  "F02": {
+   "art_before": 0,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 1,
+   "total_after": 13,
+   "removed": [
+    "F02-13"
+   ],
+   "backups_left": 0
+  },
+  "F03": {
+   "art_before": 2,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 5,
+   "total_after": 13,
+   "removed": [
+    "F03-11",
+    "F03-10",
+    "F03-04"
+   ],
+   "backups_left": 0
+  },
+  "F04": {
+   "art_before": 2,
+   "replace": 2,
+   "extra_removed": 0,
+   "art_after": 4,
+   "total_after": 12,
+   "removed": [
+    "F04-09",
+    "F04-07"
+   ],
+   "backups_left": 0
+  },
+  "F05": {
+   "art_before": 0,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 1,
+   "total_after": 11,
+   "removed": [
+    "F05-08"
+   ],
+   "backups_left": 0
+  },
+  "F06": {
+   "art_before": 3,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 6,
+   "total_after": 11,
+   "removed": [
+    "F06-11",
+    "F06-09",
+    "F06-03"
+   ],
+   "backups_left": 0
+  },
+  "F07": {
+   "art_before": 5,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 8,
+   "total_after": 12,
+   "removed": [
+    "F07-06",
+    "F07-07",
+    "F07-03"
+   ],
+   "backups_left": 0
+  },
+  "F08": {
+   "art_before": 4,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 4,
+   "total_after": 10,
+   "removed": [],
+   "backups_left": 0
+  },
+  "G01": {
+   "art_before": 3,
+   "replace": 3,
+   "extra_removed": 0,
+   "art_after": 6,
+   "total_after": 12,
+   "removed": [
+    "G01-55",
+    "G01-51",
+    "G01-05"
+   ],
+   "backups_left": 0
+  },
+  "G02": {
+   "art_before": 0,
+   "replace": 0,
+   "extra_removed": 0,
+   "art_after": 0,
+   "total_after": 11,
+   "removed": [],
+   "backups_left": 0
+  },
+  "G03": {
+   "art_before": 2,
+   "replace": 1,
+   "extra_removed": 0,
+   "art_after": 3,
+   "total_after": 8,
+   "removed": [
+    "G03-04"
+   ],
+   "backups_left": 0
+  }
+ },
+ "notes": [
+  "D01 new_art[4]「Boids」與既有或其他新案例重複，略過"
+ ],
+ "removal_reasons": {
+  "D02-14": "PubMed 論文只談材料力學性能，沒有黏菌視覺畫面可查證，與本演算法關係最薄弱。",
+  "E01-14": "無網址、無圖、偏工具函式而非具體作品，最弱",
+  "B02-08": "與 B02-55 是同一支 Entagma 影片重複收錄，內容完全重疊",
+  "C01-12": "與 C01-11 同作者群、同技術路線的姊妹論文，內容重疊度高",
+  "C02-15": "作者本身在條目裡就標註未查證，出處單薄，難以確認可信度與圖片",
+  "E03-14": "arXiv預印本對Voronoi的角色描述籠統，且與E03-15同為都市尺度、內容高度重疊",
+  "E04-55": "圖片是Vimeo影片縮圖、畫質差，且與MSAPhysics同屬「其他求解器工具」重複",
+  "A01-13": "紋樣計算分析論文，與建築尺度 L-system 核心應用關聯較邊緣",
+  "D01-14": "與 D01-13 同屬 Kokkugia 代理人物件研究系列，內容高度重複，且黃銅／金屬小物件難找到可查證的清楚實體照片",
+  "C04-08": "官方未證實使用 Perlin noise，文中自承只是臆測類比，關聯薄弱",
+  "E03-07": "大學課程作業網頁，出處難以查證且找不到現場照片，內容描述也偏簡略",
+  "A06-13": "2026年新出的期刊論文，內容與09、10、11的住宅配置生成高度重疊，資訊也最少",
+  "A05-15": "實驗室網站內容單薄，缺乏具體案例與可查證的畫面。",
+  "G01-55": "純粹是開源計算幾何函式庫（軟體工具），與建築教學情境的關聯薄弱，也找不到示意圖",
+  "A05-03": "沒有網址也沒有照片，內容完全無法查證或找到真實圖片。",
+  "D01-13": "與 D01-04、D01-14 同系列重複，出處頁面幾乎沒有製作脈絡與清楚照片可查證",
+  "E05-09": "無真實照片，且教學平台性質與新增的互動式藝術案例概念重疊，最容易被取代",
+  "A03-05": "來源是二手轉貼連結（soylentnews），概念與 A03-01、A03-02 高度重複（重製 IPv4 地圖）",
+  "A04-14": "作者不明的論壇貼文，出處與真實性難以查證，也找不到真實畫面",
+  "F03-04": "泛用綜述、沒有具體命名案例，和12、13號主題重複",
+  "F03-11": "沒有網址、細節未能查證，證據最薄弱",
+  "F07-07": "與 F07-02、F07-03、F07-04 同屬 Cagan 形狀退火研究脈絡，主題重疊度高，本身較冷門小眾",
+  "A01-54": "TouchDesigner 節點文件，photo 為 null，找不到真實生成畫面，內容與 Houdini／Rabbit 重疊",
+  "D01-07": "AD 期刊論文需付費閱覽，只有摘要頁，找不到可公開查證的展示圖片",
+  "E03-15": "研討會論文對Voronoi的描述籠統（『常用於鋪面分割』），並非此篇論文明確驗證的核心方法",
+  "B04-12": "美國專利 PDF，與高爾夫球凹洞案例高度相似，內容薄弱",
+  "A01-15": "商業工具官網介紹，與本演算法連結籠統，非特定案例",
+  "D02-13": "與 D02-01、D02-07 同樣是「黏菌對應都市／路網」題材，敘述抽象重複，且找不到可用圖片。",
+  "D01-05": "沒有年份，AA DRL 內部研究出處薄弱，找不到可查證的清楚實作畫面",
+  "F03-10": "說明中自陳此案本身不是TPMS，只是製造路徑參考",
+  "F06-03": "水車只是類比示範混沌行為，並非真的畫出吸子曲線，也沒有可查證的實際照片",
+  "B04-11": "美國專利 PDF，圖片難以取得，且與研磨片專利案例重複性高",
+  "F01-08": "學術論文缺乏實際圖面可視化，與加工類案例重複",
+  "A02-08": "方形Koch島熱交換器與A02-07、A02-09同為熱交換器主題，重複度最高，ResearchGate只有摘要難以查證細節",
+  "A01-09": "機械手臂列印路徑研究，L-system 僅為上游輸入，關聯較薄弱",
+  "E02-52": "外掛內容單薄，與 E02-53 函式庫功能重疊",
+  "B05-11": "無網址、出處難以查證，且與B05-07／08／10同屬材料自然裂紋類比，重複性最高。",
+  "A01-05": "Houdini 內建節點的官方文件頁，無專屬示範照片，與 A01-04（Rabbit）功能重疊",
+  "F05-08": "作者不明、僅一篇難以查證的 ResearchGate 論文，且與 F05-04／F05-05／F05-07 的都市可及性主題高度重複",
+  "F06-11": "泛用商業混沌探索軟體，涵蓋範圍太廣、與奇異吸子本身的關係最薄弱，也沒有可查證的真實畫面",
+  "G01-51": "內容鎖定在遊戲視野與 AI 戰術判斷的技術說明，偏遊戲系統而非 isovist 在建築上的應用，且無圖片佐證",
+  "D01-04": "與其他 Kokkugia／Snooks 案例（D01-03、08、13、14）題材高度重複，本演算法的核心角色相對稀薄",
+  "B01-04": "與B01-53網址幾乎相同(同一Floraform專案頁面),重複收錄",
+  "E02-11": "論壇討論串未附圖，僅是計畫中的元件構想",
+  "B01-05": "與B01-52網址完全相同,是同一個GitHub專案的重複收錄",
+  "C01-09": "McNeel 論壇貼文，內容與 C01-08 高度重疊，出處薄弱",
+  "A06-08": "沒有可查證的網址與圖片，實習性質敘述空泛，最難查證",
+  "A06-10": "無作者與年份資訊，內容單薄，且與09、11、13同樣是住宅平面生成主題，重複度高",
+  "A05-08": "和 A05-07 冰裂紋文法高度重疊，只是把同一套規則重製成 Grasshopper 教學。",
+  "F07-06": "只是論壇貼文說明既有 Galapagos 功能，非具體作品案例，找不到圖片佐證，內容單薄",
+  "B04-10": "非正式設計成果，僅論壇討論串，缺乏完整案例與圖片",
+  "B01-11": "與B01-55為同一篇Entagma教學(同網域同路徑),重複收錄",
+  "B05-10": "無網址，主題其實是「修補」而非裂紋生成本身，與本演算法關聯薄弱。",
+  "C01-55": "參數圖鑑性質與 C01-06 Pearson 論文重疊，非獨立案例",
+  "F04-07": "作者不明、僅有 academia.edu 論文可查，內容與 F04-08 同質（性能導向多目標最佳化流程）",
+  "F01-12": "與F01-13同一來源網址，教具性質而非藝術陳述，證據薄弱",
+  "C02-13": "作者、年份都未查證，僅有一篇 academia.edu 文章，與本演算法關係薄弱又難找真實圖片",
+  "F06-09": "小眾個人 GitHub 外掛，吸子只是其眾多碎形功能之一，作者僅有帳號難以查證來歷",
+  "F02-13": "與Hankin接觸角法關聯薄弱，屬同心圓參數化的獨立研究，也難找到清楚生成畫面",
+  "G03-04": "論文本身用粒子模擬而非 D8 流向累積，和本演算法的核心機制關係薄弱，也沒有真實照片",
+  "E01-05": "與 E01-03 同作者同工具高度重複，無照片",
+  "F04-09": "IAAC 課程部落格文章，作者不具名難查證，且與 F04-07、F04-08 同質（結構性能最佳化流程展示）",
+  "F01-09": "Sketchfab上傳者作者年份不明，證據薄弱",
+  "D02-09": "小眾 arXiv 論文，僅有 PDF 公開，沒有清楚的生成畫面截圖，難以查證與呈現。",
+  "G01-05": "與 G01-04、G01-07 同屬個案研究，建築尺度已重複，且無真實圖片佐證",
+  "A03-14": "沒有 url 可查證，內容與 A03-13 的空間索引概念重複，最難確認真實性",
+  "F01-14": "與F01-05、F01-08同屬加工類重複，來源為列印分享站證據薄弱",
+  "F01-05": "加工類已有多筆重複，缺乏實際照片佐證",
+  "B03-15": "與基礎範例同為 Grasshopper 平台，區隔度最低，最先可換",
+  "F07-03": "與 F07-02、F07-04 同作者群、同為形狀退火論文，內容重疊，圓頂應用案例較窄"
+ }
+}

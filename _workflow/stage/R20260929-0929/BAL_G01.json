@@ -1,0 +1,289 @@
+{
+ "algo": "G01",
+ "classification": [
+  {
+   "id": "G01-01",
+   "source": "research",
+   "why": "Batty 提出 isovist 場量測的奠基學術論文"
+  },
+  {
+   "id": "G01-02",
+   "source": "research",
+   "why": "Turner 等人提出可見性圖分析（VGA）的奠基論文"
+  },
+  {
+   "id": "G01-03",
+   "source": "research",
+   "why": "Grasshopper 外掛教學頁，示範 isovist 元件與指標"
+  },
+  {
+   "id": "G01-04",
+   "source": "research",
+   "why": "以 isovist 分析上海豫園遊覽動線的學術論文"
+  },
+  {
+   "id": "G01-05",
+   "source": "research",
+   "why": "以 isovist 檢驗萊特住宅展望庇護理論的學術論文"
+  },
+  {
+   "id": "G01-06",
+   "source": "research",
+   "why": "以 3D isovist 做 Lynch 式都市意象分析的學術論文"
+  },
+  {
+   "id": "G01-07",
+   "source": "research",
+   "why": "SYNTACTIC 是 Grasshopper 的 space syntax 設計外掛"
+  },
+  {
+   "id": "G01-51",
+   "source": "research",
+   "why": "內容鎖定遊戲視野與 AI 戰術判斷的技術說明，非以視覺表現為目的"
+  },
+  {
+   "id": "G01-52",
+   "source": "art",
+   "why": "互動教學，成果是光影可視多邊形的生成畫面"
+  },
+  {
+   "id": "G01-53",
+   "source": "art",
+   "why": "Coding Train 教學，成果是射線與陰影的生成畫面"
+  },
+  {
+   "id": "G01-54",
+   "source": "art",
+   "why": "個人在 Houdini 中的生成畫面實驗，非發布的外掛工具"
+  },
+  {
+   "id": "G01-55",
+   "source": "research",
+   "why": "開源計算幾何函式庫，屬軟體工具而非視覺作品"
+  }
+ ],
+ "art_count": 3,
+ "need": 3,
+ "removal_order": [
+  "G01-55",
+  "G01-51",
+  "G01-07",
+  "G01-05",
+  "G01-06",
+  "G01-04"
+ ],
+ "removal_reasons": {
+  "G01-55": "純粹是開源計算幾何函式庫（軟體工具），與建築教學情境的關聯薄弱，也找不到示意圖",
+  "G01-51": "內容鎖定在遊戲視野與 AI 戰術判斷的技術說明，偏遊戲系統而非 isovist 在建築上的應用，且無圖片佐證",
+  "G01-07": "SYNTACTIC 是個人學術頁面介紹的 Grasshopper 外掛，資訊單薄、連結易失效，且建築尺度已有 G01-02、G01-05",
+  "G01-05": "與 G01-04、G01-07 同屬個案研究，建築尺度已重複，且無真實圖片佐證",
+  "G01-06": "雖有 3D 與都市意象的獨特角度，但都市尺度已有 G01-01、G01-03，且無圖片佐證",
+  "G01-04": "地景尺度目前唯一案例，內容獨特應優先保留，僅因協調者可能需要更多備援才列入名單"
+ },
+ "new_art": [
+  {
+   "title": "Isovist Sandbox：互動式可視域繪圖工具",
+   "creator": "Moxil Shah",
+   "year": "2022",
+   "category": "drawing",
+   "categories_extra": [
+    "2d-pattern"
+   ],
+   "scale": "物件",
+   "summary": "一個瀏覽器互動工具，讓使用者自由畫多邊形障礙物、放置觀察點（guard），即時用 O(n log n) 的 Asano 演算法算出該點的可視域多邊形並上色顯示；內建博物館、隨機牆面等範本。和 Grasshopper C# 基礎範例相比，這裡是即時互動繪圖介面而非批次運算格點場，適合直接操作、直觀理解 isovist 怎麼隨牆面改變。",
+   "variations": [
+    {
+     "name": "自由繪製障礙物",
+     "how": "直接在畫布上點擊放置多邊形頂點，取代事先讀入固定牆線",
+     "effect": "可以即時測試各種平面配置下的可視域形狀，用於快速草圖推敲"
+    },
+    {
+     "name": "多觀察點比較",
+     "how": "一次放置多個 guard，各自顯示不同顏色的可視域多邊形",
+     "effect": "直接比較不同位置的視野大小與重疊範圍，適合監視器或櫃台選址討論"
+    },
+    {
+     "name": "範本場景切換",
+     "how": "內建博物館、隨機牆面等 Templates 按鈕一鍵載入",
+     "effect": "可以快速展示同一演算法在規則與不規則平面上的差異"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "互動工具",
+    "計算幾何"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://moxil-shah.github.io/Isovist-Sandbox/",
+   "evidence": "GitHub 頁面 moxil-shah/Isovist-Sandbox 說明「a single isovist is the volume of space visible from a given point in space」，並採用 Asano 演算法，技術棧含 p5.js；README 附多張截圖確認為即時可視域繪圖工具",
+   "nearest_existing": "G01-55《visibility-polygon-js》— 同樣是可視多邊形函式庫，但本作品是有畫面、可直接操作的互動繪圖工具，而非純程式庫",
+   "image": {
+    "url": "https://raw.githubusercontent.com/moxil-shah/Isovist-Sandbox/master/images/Demo6.png",
+    "page": "https://github.com/moxil-shah/Isovist-Sandbox",
+    "verified": true,
+    "checked": "畫面中央觀察點打出藍綠色可視域多邊形，周圍有數個圓形障礙物擋住部分視線",
+    "source": "GitHub README 截圖",
+    "author": "Moxil Shah",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "觀察點的可視域多邊形（藍綠色三角扇形區域）被圓形障礙物遮擋出兩段視野"
+   }
+  },
+  {
+   "title": "Coding Challenge #146：Rendering Ray Casting（偽 3D 射線投射渲染）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "延續 G01-53 的 2D 射線投射挑戰，作者進一步把每條射線打到牆的距離換算成畫面右側直條的高度與明暗，仿造 Wolfenstein 3D 的偽 3D 渲染手法，讓一個在 2D 平面上移動、旋轉的觀察點即時畫出第一人稱視角的走廊景象。和基礎範例相比，這裡把 CastIsovist 算出的每條射線距離直接拿去畫透視牆面，而不是組成可視域多邊形。",
+   "variations": [
+    {
+     "name": "視野角度即時調整",
+     "how": "用滑鼠或滑桿即時改變 fov，射線扇形角度跟著變寬變窄",
+     "effect": "可以直接看到視角變寬時左右兩側牆面因為距離變長而被拉伸的效果"
+    },
+    {
+     "name": "左右分割畫面",
+     "how": "畫面左半保留 2D 俯視射線圖、右半即時畫出對應的偽 3D 渲染",
+     "effect": "同時看到「從上面看的可視域」與「站在裡面看到的畫面」兩種呈現方式"
+    },
+    {
+     "name": "牆面明暗分層",
+     "how": "依射線距離把牆面直條調成不同亮度代表不同深淺",
+     "effect": "距離越遠的牆面越暗，重現簡易的霧化透視感"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "射線投射",
+    "偽3D"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/146-rendering-ray-casting",
+   "evidence": "頁面標題與說明確認：「Building off of the previous coding challenge (2D Ray Casting) I attempt to make my own version the original Wolfenstein 3D Raycasting engine」",
+   "nearest_existing": "G01-53《Coding Challenge #145：Ray Casting 2D》— 同一系列的前一集，本案例是接續同一射線投射程式碼再加上偽 3D 渲染的後續挑戰",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/146-rendering-ray-casting/images/raycasting.png",
+    "page": "https://thecodingtrain.com/challenges/146-rendering-ray-casting",
+    "verified": true,
+    "checked": "畫面左半是俯視的 2D 射線扇形與牆面，右半是同一組射線距離換算出的偽 3D 走廊透視圖",
+    "source": "The Coding Train 官方 GitHub repo",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "2D 射線投射（左）與同一資料換算成偽 3D 走廊透視渲染（右）的對照畫面"
+   }
+  },
+  {
+   "title": "Raycast：用 React／DOM 做的偽 3D 射線投射示範",
+   "creator": "Andrew Huth",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "作者不用 canvas，改用一般 React 元件與 CSS 疊出偽 3D 走廊：每一欄 div 的寬度與顏色深淺由該角度射線打到牆的距離決定，示範同一套射線投射／可視域邏輯也能只靠 DOM 元素渲染。和基礎範例相比，輸出從 Rhino 幾何改成網頁 DOM 節點，說明演算法本身與渲染技術無關。",
+   "variations": [
+    {
+     "name": "純 DOM 渲染",
+     "how": "每條射線對應一個 div，用行內樣式設定寬度與背景色，取代畫布繪圖",
+     "effect": "證明射線投射演算法可以完全脫離繪圖 API，只靠排版元素重現偽 3D 效果"
+    },
+    {
+     "name": "React 狀態驅動",
+     "how": "觀察點位置與角度存在 React state，移動或轉向時觸發重新計算所有射線",
+     "effect": "可以直接改成任何前端框架的元件，方便嵌入一般網頁而非獨立畫布"
+    },
+    {
+     "name": "單色調牆面分層",
+     "how": "依距離分幾段固定色階而非連續漸層",
+     "effect": "畫面呈現復古電腦遊戲常見的分層明暗牆面，而不是平滑漸層"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "React",
+    "偽3D"
+   ],
+   "tools": [
+    "JavaScript",
+    "React"
+   ],
+   "url": "https://github.com/ahuth/raycast",
+   "evidence": "GitHub README 說明為「Raycasting demo using React」，並附動畫 GIF 展示偽 3D 牆面渲染，線上展示於 ahuth.github.io/raycast",
+   "nearest_existing": "Coding Challenge #146《Rendering Ray Casting》— 同樣是把射線距離換成偽 3D 牆面，但本作品完全不用畫布、只用網頁 DOM 元素渲染",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/2503289/27006798-32a4af54-4df3-11e7-88fb-61e72023e689.gif",
+    "page": "https://github.com/ahuth/raycast",
+    "verified": true,
+    "checked": "畫面中央一塊藍色矩形代表正前方牆面，左右兩側各有一段漸層代表側面牆的偽 3D 透視效果",
+    "source": "GitHub README",
+    "author": "Andrew Huth",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "用純 DOM／CSS 元素渲染出的偽 3D 射線投射走廊畫面"
+   }
+  },
+  {
+   "title": "Terminal Dungeon：終端機文字模式的射線投射迷宮",
+   "creator": "salt-die",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "一個可以 pip 安裝的 Python 函式庫，把射線投射（Doom／Wolfenstein 式）渲染畫在純文字終端機裡：牆面用不同 ASCII 字元與顏色深淺代表距離遠近，畫面角落還疊一張迷你地圖。和基礎範例相比，這裡把可視域的射線距離換算成字元畫面，示範同一演算法也能在完全沒有圖形介面的環境重現。",
+   "variations": [
+    {
+     "name": "字元密度代表距離",
+     "how": "依射線打到牆的距離挑選不同疏密的 ASCII 字元",
+     "effect": "純文字畫面也能表現出遠近深淺，模擬灰階明暗"
+    },
+    {
+     "name": "小地圖疊加",
+     "how": "畫面角落另外用字元畫出俯視地圖與觀察點位置",
+     "effect": "同時看到第一人稱偽 3D 畫面與 2D 平面位置，方便理解射線是怎麼打出去的"
+    },
+    {
+     "name": "紋理切換",
+     "how": "按鍵切換不同牆面字元組合",
+     "effect": "同一組射線距離資料可以換出好幾種文字材質風格"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Python",
+    "終端機",
+    "ASCII"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://github.com/salt-die/terminal_dungeon",
+   "evidence": "GitHub README 說明「A raycasting library for your terminal!」，並附 preview.gif 展示綠色 ASCII 字元渲染的迷宮走廊與小地圖",
+   "nearest_existing": "Coding Challenge #146、Raycast 同樣是射線投射的偽 3D 渲染，但本作品完全用純文字終端機字元呈現，視覺風格最不同",
+   "image": {
+    "url": "https://raw.githubusercontent.com/salt-die/terminal_dungeon/master/preview.gif",
+    "page": "https://github.com/salt-die/terminal_dungeon",
+    "verified": true,
+    "checked": "綠色單色 ASCII 字元組成的偽 3D 迷宮走廊畫面，右下角疊著一張文字小地圖與玩家位置",
+    "source": "GitHub README",
+    "author": "salt-die",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "純文字終端機渲染的偽 3D 迷宮走廊，附小地圖"
+   }
+  }
+ ],
+ "notes": "重新依分類準則檢視後，把原本標為 creative coding 的 G01-51（Red Blob Games，內容鎖定遊戲視野與 AI 戰術判斷的技術說明）與 G01-55（visibility-polygon-js，通用計算幾何函式庫）依邊界準則改判為研究，只有 G01-52/53/54 這三個成果本身是生成畫面的作品維持藝術設計，need 因此從表面的 1 提高為 3。新增 4 個案例（Isovist Sandbox、Coding Train #146、ahuth/raycast、terminal_dungeon）都親眼確認過真實生成畫面，扣掉 need 3 個後只剩 1 個備援，未達建議的 3 個備援；isovist／可見性圖相關且找得到真實圖片佐證的創意編程作品經廣泛搜尋（GitHub 程式碼搜尋、Shadertoy、OpenProcessing 皆嘗試但多數候選無圖或連結失效）後相當有限，其餘候選不是缺圖片就是偏軟體工具／技術說明而非視覺作品。"
+}

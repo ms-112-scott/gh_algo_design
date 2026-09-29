@@ -1,0 +1,554 @@
+{
+ "A01-56": {
+  "source": "GitHub kfahn22/L-System-Pattern-Generator",
+  "author": "kfahn22",
+  "license": "CC0-1.0（依 repo 授權）",
+  "license_url": "https://github.com/kfahn22/L-System-Pattern-Generator/blob/main/LICENSE",
+  "page": "https://github.com/kfahn22/L-System-Pattern-Generator",
+  "note": "L-system 規則疊加極坐標形狀所產生的對稱花紋（ADH231a 規則＋超級形狀）"
+ },
+ "A01-57": {
+  "source": "GitHub FrancescoGradi/L-System-Trees",
+  "author": "Francesco Gradi",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/FrancescoGradi/L-System-Trees",
+  "note": "L-system 文法生成的 3D 開花樹，以 Three.js 即時算圖（preset4）"
+ },
+ "A01-58": {
+  "source": "GitHub andonutts/donatello",
+  "author": "andonutts",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/andonutts/donatello",
+  "note": "L-system 直譯器生成的插畫風格花卉枝葉圖案"
+ },
+ "A01-59": {
+  "source": "GitHub TanviKumar/treegen",
+  "author": "Tanvi Kumar",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/TanviKumar/treegen",
+  "note": "p5.js 畫布上以漸層色畫出的密集 L-system 樹冠"
+ },
+ "A01-60": {
+  "source": "The Coding Train GitHub",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/185-dragon-curve",
+  "note": "L-system 版本龍形曲線範例，依生成區塊上色"
+ },
+ "A02-55": {
+  "source": "piratefsh 個人部落格",
+  "author": "Sher Minn Chong（piratefsh）",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://piratefsh.github.io/2020/08/07/koch-tesselation-uncommon-fractal-implementations.html",
+  "note": "2015 版（面積估算法）Koch 雪花鑲嵌遞迴 4 層的輸出，滿版重複的碎形紋理"
+ },
+ "A03-55": {
+  "source": "GitHub（MatthewMcGonagle/HilbertDraw）",
+  "author": "Matthew McGonagle",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://matthewmcgonagle.github.io/HilbertDraw/",
+  "note": "自適應 Hilbert 曲線把影像明暗轉成疏密不同的連續單線畫"
+ },
+ "A03-56": {
+  "source": "GitHub（johnnyawesome/HilbertCurve）",
+  "author": "JohnnyAwesome",
+  "license": "MIT License，教學引用",
+  "license_url": "https://github.com/johnnyawesome/HilbertCurve/blob/master/LICENSE",
+  "page": "https://github.com/johnnyawesome/HilbertCurve",
+  "note": "p5.js 以 L-System 規則動態畫出的 Hilbert 曲線"
+ },
+ "A04-55": {
+  "source": "Max Halford 個人部落格",
+  "author": "Max Halford",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://maxhalford.github.io/blog/mondrian/",
+  "note": "部落格文章中展示的其中一張 Mondrian 式矩形遞迴分割輸出"
+ },
+ "A05-56": {
+  "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/14-fractal-trees-recursive",
+  "note": "p5.js 遞迴畫出的碎形樹，是形狀文法「一換多」邏輯最精簡的教學示範。"
+ },
+ "A05-57": {
+  "source": "GitHub piebro/substitution-system",
+  "author": "piebro",
+  "license": "MIT License",
+  "license_url": "https://github.com/piebro/substitution-system/blob/main/LICENSE",
+  "page": "https://github.com/piebro/substitution-system",
+  "note": "README 展示圖：同一套格子替換規則在不同迭代代數下的視覺效果對照。"
+ },
+ "A05-58": {
+  "source": "leonrische.me 文章內嵌圖片",
+  "author": "Leon Rische",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.leonrische.me/pages/generative_art_with_cfgs.html",
+  "note": "文章展示圖：龜圖文法展開 300 層後畫出的分岔樹。"
+ },
+ "A06-56": {
+  "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model",
+  "note": "WFC 重疊模型（含旋轉、鏡射圖樣）塌縮到一半：已決定的區域長出綠枝黃花紋理，未決定的格子顯示候選平均色。"
+ },
+ "A06-57": {
+  "source": "GitHub BitwiseSupernova/wave-function-collapse",
+  "author": "noahbuddy",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/BitwiseSupernova/wave-function-collapse",
+  "note": "重疊模型生成的黑白管線紋理"
+ },
+ "A06-58": {
+  "source": "GitHub pascal-stoll/wave-function-collapse",
+  "author": "Pascal Stoll",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/pascal-stoll/wave-function-collapse",
+  "note": "Labyrinth tile組生成的線稿圖樣"
+ },
+ "B01-56": {
+  "source": "GitHub（mikolalysenko）",
+  "author": "Mikola Lysenko",
+  "license": "MIT（程式碼授權；圖片為專案示範圖）",
+  "license_url": "https://github.com/mikolalysenko/differential-growth/blob/master/LICENSE",
+  "page": "https://github.com/mikolalysenko/differential-growth",
+  "note": "差異生長網格以法線貼圖風格上色後的彩色球狀皺褶結構"
+ },
+ "B01-57": {
+  "source": "adrianton3 個人部落格",
+  "author": "adrianton3",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "http://adrianton3.github.io/blog/art/differential-growth/differential-growth.html",
+  "note": "WebGL 即時運算差異生長，最終呈現的發光迷宮紋理"
+ },
+ "B01-58": {
+  "source": "GitHub user-images（nowickam）",
+  "author": "nowickam",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/nowickam/differential-growth",
+  "note": "差異生長曲線驅動 GLSL 光線步進著色後的放射狀立體紋理"
+ },
+ "B02-56": {
+  "source": "FORM+CODE（formandcode.com）",
+  "author": "Casey Reas, Chandler McWilliams, LUST",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://formandcode.com/code-examples/simulate-dla",
+  "note": "FORM+CODE 書中 Processing 範例算圖：粉紅色樹枝狀 DLA 聚集，從中心向外分支"
+ },
+ "B03-56": {
+  "source": "GitHub（luciopaiva/tree）README",
+  "author": "Lucio Paiva",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/luciopaiva/tree",
+  "note": "README 展示的樹木生成畫面，實心枝幹剪影風格"
+ },
+ "B04-55": {
+  "source": "The Coding Train",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/183-mathematical-marbling",
+  "note": "大理石紋渦漩，色彩由中心向外呈現疏密漸變"
+ },
+ "B04-56": {
+  "source": "Paul Rickards（Mastodon @paulrickards）",
+  "author": "Paul Rickards",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://mastodon.social/@paulrickards/116268084744280038",
+  "note": "Python 產生、復古 HP 7585B 繪圖機以 CMYK 墨水畫在水彩紙上的彩虹葉序花瓣螺旋（2026）"
+ },
+ "B04-57": {
+  "source": "GitHub（evoluteur/sunflower-golden-angle）",
+  "author": "Olivier Giulieri",
+  "license": "MIT license",
+  "license_url": "https://github.com/evoluteur/sunflower-golden-angle/blob/main/LICENSE",
+  "page": "https://evoluteur.github.io/sunflower-golden-angle/",
+  "note": "互動網頁截圖，向日葵花盤與角度比較介面"
+ },
+ "B05-55": {
+  "source": "GitHub（HertzVador/substrate）README",
+  "author": "HertzVador",
+  "license": "MIT",
+  "license_url": "https://github.com/HertzVador/substrate",
+  "page": "https://github.com/HertzVador/substrate",
+  "note": "Python 重製版輸出：密集裂紋網格搭配水彩沙畫上色"
+ },
+ "B05-56": {
+  "source": "GitHub（oliversalzburg/substrate）",
+  "author": "Oliver Salzburg",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://oliversalzburg.github.io/substrate/",
+  "note": "TypeScript 重製版輸出：黑底發光裂紋網絡，聚集處如夜間城市光點"
+ },
+ "C01-56": {
+  "source": "StandardVision",
+  "author": "Jonathan McCabe",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://standardvision.com/news/generative-artist-jonathan-mccabe",
+  "note": "多尺度反應擴散生成的抽象紋理特寫，色彩如大理石般流動"
+ },
+ "C01-57": {
+  "source": "GitHub piellardj/reaction-diffusion-webgl",
+  "author": "Jérémie Piellard",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/piellardj/reaction-diffusion-webgl",
+  "note": "依蒙娜麗莎影像明暗調整參數生成的彩色反應擴散花紋"
+ },
+ "C01-58": {
+  "source": "deconbatch's Land of 1000 Creative Codings",
+  "author": "deconbatch",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.deconbatch.com/2022/04/turingpattern.html",
+  "note": "文章以 p5.js／Processing 生成的深藍底橘色迷宮狀反應擴散花紋"
+ },
+ "C02-56": {
+  "source": "Kate Vass Galerie（Artnome 文章轉載）",
+  "author": "Alexander Reben",
+  "license": "畫廊網頁作品圖片，教學引用",
+  "license_url": "",
+  "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+  "note": "生命遊戲以顏色記錄世代歷史後的畫面截圖"
+ },
+ "C02-57": {
+  "source": "Kate Vass Galerie",
+  "author": "Kjetil Golid",
+  "license": "畫廊網頁作品圖片，教學引用",
+  "license_url": "",
+  "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+  "note": "一維細胞自動機逐列生成的斜向條紋圖樣"
+ },
+ "C04-57": {
+  "source": "iquilezles.org",
+  "author": "Inigo Quilez",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://iquilezles.org/articles/fbm/",
+  "note": "fBm 疊層 noise 驅動的擬真山脈與雨林渲染畫面（Rainforest，2016）"
+ },
+ "D01-56": {
+  "source": "Brendan Dawes 官網",
+  "author": "Brendan Dawes",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://brendandawes.com/projects/flocksherdsschools",
+  "note": "限量筆繪作品照片，黑色曲線在米白手工紙上交織出鳥群軌跡，穿插 FLOCKS/HERDS/SCHOOLS 字樣"
+ },
+ "D01-57": {
+  "source": "GitHub（olafvisker/boids）",
+  "author": "Olaf Visker",
+  "license": "MIT（程式碼）；圖片為專案展示圖，教學引用",
+  "license_url": "https://github.com/olafvisker/boids/blob/master/LICENSE",
+  "page": "https://github.com/olafvisker/boids",
+  "note": "boid 依速度上色並保留殘影，疊加成一叢發光紋理"
+ },
+ "D01-58": {
+  "source": "ACM SIGGRAPH History Archives",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://history.siggraph.org/experience/swarm-by-shiffman/",
+  "note": "Swarm 裝置畫面：攝影機影像顏色被 boids 群體筆刷即時暈染成有機肌理"
+ },
+ "D01-59": {
+  "source": "itch.io",
+  "author": "tumati",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://tumati.itch.io/boids",
+  "note": "p5.js 瀏覽器版 boids，鳥形圖示在淺藍背景上聚散成群"
+ },
+ "D01-60": {
+  "source": "GitHub（gstarch/boids）",
+  "author": "gstarch",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/gstarch/boids",
+  "note": "p5.js boids 簡化版畫面，彩色三角形分成數股群聚"
+ },
+ "D02-56": {
+  "source": "Michael Fogleman 個人網站",
+  "author": "Michael Fogleman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.michaelfogleman.com/projects/physarum/",
+  "note": "Physarum Simulation 專案頁範例輸出圖，金黃網絡包覆暗紅色細胞狀斑點"
+ },
+ "D02-57": {
+  "source": "nicoptere（Nicolas Barradeau）GitHub repo",
+  "author": "Nicolas Barradeau",
+  "license": "The Unlicense（GitHub repo）",
+  "license_url": "https://github.com/nicoptere/physarum/blob/master/LICENSE",
+  "page": "https://github.com/nicoptere/physarum",
+  "note": "repo 內建範例輸出圖，黃綠色網格紋理呈現蜂窩與條紋交錯的有機圖樣"
+ },
+ "D02-58": {
+  "source": "QC20（Jonas Kjeldmand Jensen）GitHub repo",
+  "author": "Jonas Kjeldmand Jensen",
+  "license": "MIT License（GitHub repo）",
+  "license_url": "https://github.com/QC20/SlimeMolds/blob/main/LICENSE",
+  "page": "https://github.com/QC20/SlimeMolds",
+  "note": "repo 內建範例圖，代理人剛從中心撒出、尚未收斂成網絡的放射狀初始畫面"
+ },
+ "E01-55": {
+  "source": "GitHub pxlmotiv/circle-packing README",
+  "author": "pxlmotiv",
+  "license": "未標示，教學引用",
+  "license_url": "",
+  "page": "https://github.com/pxlmotiv/circle-packing",
+  "note": "黑白密鋪圓填充生成畫面，由大圓到細密小圓層層填滿"
+ },
+ "E01-56": {
+  "source": "GitHub danieledapo/circle-packing",
+  "author": "danieledapo",
+  "license": "未標示，教學引用",
+  "license_url": "",
+  "page": "https://github.com/danieledapo/circle-packing",
+  "note": "SDF 圓填充生成的多層巢狀彩色圓群"
+ },
+ "E02-56": {
+  "source": "GitHub benjamin-white/recursive-scatter",
+  "author": "benjamin-white",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/benjamin-white/recursive-scatter",
+  "note": "README 展示圖：影像位移圖控制密度的 Poisson 點連成 Voronoi 花紋，中心密、外圍疏"
+ },
+ "E02-57": {
+  "source": "GitHub pixelsnafu/ImageTriangulation",
+  "author": "pixelsnafu",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/pixelsnafu/ImageTriangulation",
+  "note": "README 展示圖：以加權藍噪點三角化重繪的梵谷《星夜》"
+ },
+ "E03-56": {
+  "source": "Jason Webb 個人作品網站",
+  "author": "Jason Webb",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://jasonwebb.github.io/2d-voronoi-experiments/",
+  "note": "以葉序（黃金角螺旋）點分布產生的 Voronoi 鑲嵌，呈漩渦狀漸變"
+ },
+ "E03-57": {
+  "source": "bleuje.com（Étienne Jacob 個人網站）",
+  "author": "Étienne Jacob",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://bleuje.com/gifanimationsite/single/moorevoronoi/",
+  "note": "種子點沿 Moore 空間填充曲線移動的 Voronoi 細胞動畫，黑底白線並標記種子點"
+ },
+ "E03-58": {
+  "source": "watabou.github.io 作品頁",
+  "author": "watabou",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://watabou.github.io/city.html",
+  "note": "以 Voronoi 分割街廓生成的中世紀奇幻城市地圖截圖"
+ },
+ "E04-56": {
+  "source": "The Coding Train（GitHub 原始碼庫）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/63-texturing-cloth-simulation",
+  "note": "貼了手繪圖案材質的彈簧網格旗幟，因風力模擬呈現波浪起伏"
+ },
+ "F01-51": {
+  "source": "Ned Batchelder 部落格",
+  "author": "Ned Batchelder",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://nedbatchelder.com/blog/202208/truchet_images.html",
+  "note": "以照片亮度驅動 Truchet 弧線密度的半色調肖像"
+ },
+ "F01-52": {
+  "source": "Marc Dunand 個人網站",
+  "author": "Marc Dunand",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://marcdunand.com/work/major-works/gentruchet",
+  "note": "多尺度貝茲曲線磁磚輸出成連續黑白圖樣，可供鋼筆繪圖機繪製"
+ },
+ "F01-53": {
+  "source": "GitHub",
+  "author": "ESikich",
+  "license": "MIT License",
+  "license_url": "",
+  "page": "https://github.com/ESikich/TruchetArt",
+  "note": "互動細分產生的多色有機Truchet圖樣"
+ },
+ "F01-54": {
+  "source": "Marginally Clever Robots 部落格",
+  "author": "Dan Royer",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://www.marginallyclever.com/2020/06/masked-and-weighted-truchet-tiles-in-processing/",
+  "note": "以遮罩與線寬雙重影像資訊驅動的Truchet人像"
+ },
+ "F01-55": {
+  "source": "GitHub",
+  "author": "dmackinnon1",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/dmackinnon1/truchet",
+  "note": "經典三角形版Truchet磁磚示範圖"
+ },
+ "F02-51": {
+  "source": "The Coding Train（GitHub）",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
+  "note": "p5.js 產生的伊斯蘭星形圖樣，橘色線條交織於深藍背景"
+ },
+ "F03-51": {
+  "source": "Nervous System 部落格（攝影：Sage Jenson）",
+  "author": "Nervous System",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://n-e-r-v-o-u-s.com/blog/?p=9386",
+  "note": "從下方仰視的 Corollaria Gyroid 公共藝術裝置，鏤空紋理清晰可見"
+ },
+ "F03-52": {
+  "source": "Nervous System 部落格",
+  "author": "Nervous System",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://n-e-r-v-o-u-s.com/blog/?p=8115",
+  "note": "Porifera 陶瓷項鍊局部，展現週期極小曲面的分支鏤空紋理"
+ },
+ "F03-53": {
+  "source": "Nervous System 部落格",
+  "author": "Nervous System",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://n-e-r-v-o-u-s.com/blog/?p=8521",
+  "note": "Puzzle Cell Complex 拼裝完成後的鏤空 Gyroid 雕塑，內有真人展示尺度"
+ },
+ "F04-51": {
+  "source": "GitHub CodingTrain/thecodingtrain.com",
+  "author": "Daniel Shiffman／The Coding Train",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/29-smart-rockets-in-p5js",
+  "note": "Smart Rockets 範例執行畫面：目標點、障礙與剛發射的火箭族群"
+ },
+ "F04-52": {
+  "source": "Wikimedia Commons",
+  "author": "Inductiveload（以 Electric Sheep 第 3404 號羊的參數算繪）",
+  "license": "CC BY-SA 2.5",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.5/",
+  "page": "https://commons.wikimedia.org/wiki/File:Electricsheep-3404_Large.jpg",
+  "note": "Electric Sheep 第 198 代第 3404 號「羊」算繪出的分形火焰畫面"
+ },
+ "F05-51": {
+  "source": "GitHub CodingTrain/thecodingtrain.com",
+  "author": "Daniel Shiffman／The Coding Train",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm",
+  "note": "p5.js 格點上 A* 搜尋完成後的畫面：黑點是障礙物，粉紅色與淺綠色是已展開與待評估的格子，洋紅色折線是回溯得到的最短路徑"
+ },
+ "F06-51": {
+  "source": "GitHub repo src/assets/img/clifford-attractor.png",
+  "author": "QC20",
+  "license": "MIT License（README 聲明）",
+  "license_url": "https://github.com/QC20/fractured-entropy",
+  "page": "https://github.com/QC20/fractured-entropy",
+  "note": "Clifford 吸子灰階密度圖，圓形構圖"
+ },
+ "F06-52": {
+  "source": "GitHub repo README 展示截圖",
+  "author": "cvarier",
+  "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+  "license_url": "",
+  "page": "https://github.com/cvarier/Lorenz-Sonified",
+  "note": "Processing 即時繪製的彩色 Lorenz 吸子軌跡"
+ },
+ "F06-53": {
+  "source": "GitHub repo res/1.PNG",
+  "author": "breadloafsky",
+  "license": "MIT License",
+  "license_url": "https://github.com/breadloafsky/phase-space/blob/master/LICENSE",
+  "page": "https://github.com/breadloafsky/phase-space",
+  "note": "多組吸子並排的霓虹色相空間軌跡展示圖"
+ },
+ "F07-56": {
+  "source": "Stefanie Molin｜Data Morph: A Cautionary Tale of Summary Statistics 演講投影片",
+  "author": "Stefanie Molin",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://stefaniemolin.com/data-morph-talk/",
+  "note": "同一組資料點以模擬退火變形成斜線與愛心，三張圖的平均值、標準差與相關係數都相同"
+ },
+ "F07-57": {
+  "source": "GitHub README",
+  "author": "Nikolai Janakiev",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/njanakiev/simulated-annealing",
+  "note": "退火過程中法國城市之間的路徑連線，此時尚未完全收斂成不交叉的巡迴路徑"
+ },
+ "F07-58": {
+  "source": "antirez 個人網站",
+  "author": "Salvatore Sanfilippo",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/antirez/shapeme",
+  "note": "以模擬退火疊加三角形逼近蒙娜麗莎原畫的重建結果"
+ },
+ "G01-56": {
+  "source": "GitHub README 截圖",
+  "author": "Moxil Shah",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/moxil-shah/Isovist-Sandbox",
+  "note": "觀察點的可視域多邊形（藍綠色三角扇形區域）被圓形障礙物遮擋出兩段視野"
+ },
+ "G01-57": {
+  "source": "The Coding Train 官方 GitHub repo",
+  "author": "Daniel Shiffman",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://thecodingtrain.com/challenges/146-rendering-ray-casting",
+  "note": "2D 射線投射（左）與同一資料換算成偽 3D 走廊透視渲染（右）的對照畫面"
+ },
+ "G01-58": {
+  "source": "GitHub README",
+  "author": "salt-die",
+  "license": "網頁預覽圖，教學引用",
+  "license_url": "",
+  "page": "https://github.com/salt-die/terminal_dungeon",
+  "note": "純文字終端機渲染的偽 3D 迷宮走廊，附小地圖"
+ },
+ "G03-54": {
+  "source": "GitHub README（SebLague/Hydraulic-Erosion）",
+  "author": "Sebastian Lague",
+  "license": "MIT（程式碼授權；圖片為 README 展示圖，教學引用）",
+  "license_url": "https://github.com/SebLague/Hydraulic-Erosion/blob/master/LICENSE",
+  "page": "https://github.com/SebLague/Hydraulic-Erosion",
+  "note": "水力侵蝕模擬跑完約 7 萬次疊代後的地形：可見水流沖刷出的溝谷與殘留稜線"
+ }
+}

@@ -187,20 +187,6 @@
    "has_image": true
   },
   {
-   "id": "A01-05",
-   "cc": false,
-   "title": "Houdini L-System SOP 與 LsystemBuilding 範例",
-   "creator": "SideFX",
-   "year": "",
-   "url": "https://www.sidefx.com/docs/houdini/examples/nodes/sop/lsystem/LsystemBuilding.html",
-   "category": "modeling",
-   "scale": "建築",
-   "tools": [
-    "Houdini"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A01-06",
    "cc": false,
    "title": "Procedural Modeling of Cities（CityEngine 前身）",
@@ -233,18 +219,6 @@
    "creator": "研究論文（Applied Sciences）",
    "year": "2022",
    "url": "https://doi.org/10.3390/app12115530",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [],
-   "has_image": true
-  },
-  {
-   "id": "A01-09",
-   "cc": false,
-   "title": "分枝幾何的機械手臂空間列印路徑生成",
-   "creator": "研究論文（Buildings）",
-   "year": "2022",
-   "url": "https://doi.org/10.3390/buildings12122247",
    "category": "fabrication",
    "scale": "構件",
    "tools": [],
@@ -289,18 +263,6 @@
    "has_image": true
   },
   {
-   "id": "A01-13",
-   "cc": false,
-   "title": "以計算方法解構巴塔克族 Gorga 裝飾紋樣",
-   "creator": "Hokky Situngkir",
-   "year": "2015",
-   "url": "https://arxiv.org/pdf/1510.01140",
-   "category": "2d-pattern",
-   "scale": "立面／表皮",
-   "tools": [],
-   "has_image": true
-  },
-  {
    "id": "A01-14",
    "cc": false,
    "title": "Riemannian L-systems：在彎曲空間中生長的形態",
@@ -310,20 +272,6 @@
    "category": "modeling",
    "scale": "物件",
    "tools": [],
-   "has_image": true
-  },
-  {
-   "id": "A01-15",
-   "cc": false,
-   "title": "SpeedTree 程序化植物建模",
-   "creator": "SpeedTree",
-   "year": "",
-   "url": "https://en.wikipedia.org/wiki/SpeedTree",
-   "category": "urban-landscape",
-   "scale": "地景",
-   "tools": [
-    "SpeedTree"
-   ],
    "has_image": true
   },
   {
@@ -369,20 +317,6 @@
    "has_image": true
   },
   {
-   "id": "A01-54",
-   "cc": true,
-   "title": "TouchDesigner LSystem SOP",
-   "creator": "Derivative",
-   "year": "",
-   "url": "https://docs.derivative.ca/LSystem_SOP",
-   "category": "performance",
-   "scale": "物件",
-   "tools": [
-    "TouchDesigner"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A01-55",
    "cc": true,
    "title": "The Nature of Code 第 8 章：L-systems",
@@ -395,40 +329,155 @@
     "p5.js"
    ],
    "has_image": true
+  },
+  {
+   "id": "A01-56",
+   "cc": true,
+   "title": "L-System Pattern Generator（L-system 極坐標圖樣產生器）",
+   "creator": "kfahn（GitHub：kfahn22）",
+   "year": "2022",
+   "url": "https://github.com/kfahn22/L-System-Pattern-Generator",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A01-57",
+   "cc": true,
+   "title": "L-System-Trees：可互動 3D L-system 樹木花園",
+   "creator": "Francesco Gradi",
+   "year": "",
+   "url": "https://github.com/FrancescoGradi/L-System-Trees",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "Three.js",
+    "WebGL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A01-58",
+   "cc": true,
+   "title": "donatello：瀏覽器 3D Turtle 與 L-system 直譯器",
+   "creator": "andonutts（GitHub）",
+   "year": "",
+   "url": "https://github.com/andonutts/donatello",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Three.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A01-59",
+   "cc": true,
+   "title": "treegen：p5.js 畫布 L-system 樹木產生器",
+   "creator": "Tanvi Kumar",
+   "year": "",
+   "url": "https://github.com/TanviKumar/treegen",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A01-60",
+   "cc": true,
+   "title": "Coding Challenge #185：Dragon Curve（L-system 彩色變化版）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2023",
+   "url": "https://thecodingtrain.com/challenges/185-dragon-curve",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "drawing": 5,
+   "drawing": 7,
    "modeling": 4,
-   "urban-landscape": 3,
    "3d-architecture": 2,
-   "performance": 2,
-   "fabrication": 2,
-   "art-installation": 1,
-   "2d-pattern": 1
+   "urban-landscape": 2,
+   "2d-pattern": 2,
+   "performance": 1,
+   "fabrication": 1,
+   "art-installation": 1
   },
   "scale": {
-   "物件": 9,
-   "建築": 4,
-   "構件": 3,
-   "地景": 2,
+   "物件": 13,
+   "建築": 3,
+   "構件": 2,
    "群體／都市": 1,
-   "立面／表皮": 1
+   "地景": 1
   },
   "tools": {
+   "p5.js": 5,
    "Grasshopper": 3,
-   "p5.js": 2,
+   "Three.js": 2,
    "Rabbit": 1,
    "C#": 1,
-   "Houdini": 1,
    "CityEngine": 1,
    "繪圖機": 1,
-   "SpeedTree": 1,
    "openFrameworks": 1,
    "JavaScript": 1,
-   "TouchDesigner": 1
+   "WebGL": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:A01-05",
+   "algo": "A01",
+   "kind": "RES",
+   "title": "Houdini L-System SOP 與 LsystemBuilding 範例",
+   "url_norm": "sidefx.com/docs/houdini/examples/nodes/sop/lsystem/lsystembuilding.html",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A01-54",
+   "algo": "A01",
+   "kind": "CC",
+   "title": "TouchDesigner LSystem SOP",
+   "url_norm": "docs.derivative.ca/lsystem_sop",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A01-15",
+   "algo": "A01",
+   "kind": "RES",
+   "title": "SpeedTree 程序化植物建模",
+   "url_norm": "en.wikipedia.org/wiki/speedtree",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A01-09",
+   "algo": "A01",
+   "kind": "RES",
+   "title": "分枝幾何的機械手臂空間列印路徑生成",
+   "url_norm": "doi:10.3390/buildings12122247",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A01-13",
+   "algo": "A01",
+   "kind": "RES",
+   "title": "以計算方法解構巴塔克族 Gorga 裝飾紋樣",
+   "url_norm": "arxiv:1510.01140",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

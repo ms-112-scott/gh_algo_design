@@ -299,6 +299,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "創作程式碼圈公認的差異生長經典：一條線上的節點互斥、與鄰居相吸，並依規則插入新節點，長成如腸道或珊瑚的密集線條，以黑白細線繪圖呈現。程式碼開源，是本課範例三條規則的原型。",
       "variations": [
@@ -339,6 +340,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "把差異生長從曲線推廣到 3D 三角網格：頂點具有「生長強度」，強度高的地方移動多、分裂多，網格逐漸捲曲成像地衣或海蛞蝓的皺褶曲面。以半邊資料結構維持網格一致並處理碰撞。",
       "variations": [
@@ -376,6 +378,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "受雞冠花與 Mahadevan 百合開花力學論文啟發，模擬一片「邊緣長得比中心快」的彈性曲面，長出花瓣般的荷葉邊，再 3D 列印成項圈、耳環等首飾。設計者稱之為「數位園藝」。",
       "variations": [
@@ -408,82 +411,6 @@
       "url": "https://n-e-r-v-o-u-s.com/blog/?p=6721"
     },
     {
-      "id": "B01-04",
-      "algo": "B01",
-      "title": "Floraform 吊燈",
-      "creator": "Nervous System",
-      "year": "",
-      "category": "art-installation",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "構件",
-      "summary": "以 Floraform 差異生長系統生成的 3D 列印尼龍吊燈，曾在 2017 年阿斯塔納世博會展出，並於丹佛美術館的自然與設計展中呈現；光線穿過皺褶曲面投下複雜陰影。",
-      "variations": [
-        {
-          "name": "由生長歷程做燈罩層",
-          "how": "記錄每一代的生長曲線，依步數賦予高度並 Loft，或每代轉成一片薄殼。",
-          "effect": "燈罩呈現由內而外長出的層次。"
-        },
-        {
-          "name": "開口控制光線",
-          "how": "在曲線或網格密度低的地方挖孔，用吸引子控制孔的位置。",
-          "effect": "光影分布可被設計，不再只是均勻透光。"
-        }
-      ],
-      "difficulty": 5,
-      "tags": [
-        "3D",
-        "開放生長",
-        "物理模擬"
-      ],
-      "tools": [
-        "自製模擬軟體",
-        "3D 列印"
-      ],
-      "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform"
-    },
-    {
-      "id": "B01-05",
-      "algo": "B01",
-      "title": "2D Differential Growth Experiments",
-      "creator": "Jason Webb",
-      "year": "",
-      "category": "2d-pattern",
-      "categories_extra": [
-        "drawing"
-      ],
-      "scale": "物件",
-      "summary": "以 JavaScript 做的一系列 2D 差異生長實驗，將規則拆成鄰居吸引、曲率平滑、互斥、插點與不對稱生長五條，並展示邊界約束、SVG 輸入形狀等變化，可輸出成向量圖給繪圖機。",
-      "variations": [
-        {
-          "name": "SVG 形狀當起點與邊界",
-          "how": "在 GH 以 Curve 輸入取代起始圓（Divide Curve 取點），另一條 Curve 當邊界並把越界點拉回。",
-          "effect": "文字、Logo 或平面輪廓會長成有機的填滿圖樣。"
-        },
-        {
-          "name": "分離曲率平滑與鄰居吸引",
-          "how": "把 AddAttractMoves 拆成「靠近鄰居」與「往中點對齊」兩個力，各自一個強度參數。",
-          "effect": "可以獨立調整曲線粗細感與平滑度。"
-        },
-        {
-          "name": "輸出繪圖機路徑",
-          "how": "輸出最終 Polyline 並依需要 Offset 成雙線，匯出 SVG/DXF。",
-          "effect": "可直接用筆式繪圖機或雷射雕刻。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "開放生長",
-        "鄰居搜尋",
-        "空間索引"
-      ],
-      "tools": [
-        "JavaScript"
-      ],
-      "url": "https://github.com/jasonwebb/2d-differential-growth-experiments"
-    },
-    {
       "id": "B01-06",
       "algo": "B01",
       "title": "Organic Labyrinths and Mazes",
@@ -493,6 +420,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "NPAR 2006 論文：以動態曲線模擬生成有機迷宮，曲線演化參數由貼圖在空間中變化控制；可用邊界曲線阻擋穿越，後期再放鬆邊界，讓迷宮線條自然填滿一幅畫的構圖。",
       "variations": [
@@ -531,6 +459,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "研究以黏結劑噴射 3D 列印砂模鑄造客製鋁製立面構件，並用差異生長演算法把鑄造限制（壁厚、脫模、金屬流動）整合進造形生成，最後與學習者實作一道實驗性的自由形立面屏風。",
       "variations": [
@@ -573,6 +502,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以 Grasshopper 建立從造形到大尺度積層製造（LSAM）的流程，生成珊瑚形態的模組；其中「Toadstool Coral」等圖樣以會擴張、延展曲線的生長演算法產生，並對應人工珊瑚礁棲地的需求。",
       "variations": [
@@ -615,6 +545,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以細胞生長模擬創作的雕塑形態系列：細胞之間有力的規則，細胞累積養分超過門檻就分裂並與鄰居重新連接，長出像植物、珊瑚、內臟的複雜形。與差異生長同屬「受限空間中持續增加元素而起皺」的邏輯。",
       "variations": [
@@ -651,6 +582,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "Grasshopper 教學影片：把起始曲線投影到任意網格曲面，再用 Kangaroo 模擬讓曲線在曲面上差異生長，得到貼合曲面的皺褶紋路。示範了不用自寫程式碼也能在曲面上生長的做法。",
       "variations": [
@@ -683,41 +615,6 @@
       "url": "https://www.youtube.com/watch?v=CVM-hk-p0C0"
     },
     {
-      "id": "B01-11",
-      "algo": "B01",
-      "title": "Differential Line Growth／Differential Mesh Growth（Houdini 教學）",
-      "creator": "Entagma",
-      "year": "2016",
-      "category": "modeling",
-      "categories_extra": [
-        "drawing"
-      ],
-      "scale": "物件",
-      "summary": "Houdini 教學網站 Entagma 的差異生長系列：先做線的差異生長，並用噪聲場傳值控制生長；接著推廣到網格差異生長，強調可藝術指導的控制方式。",
-      "variations": [
-        {
-          "name": "噪聲場控制生長",
-          "how": "以 C04 的噪聲值乘上每條邊的 maxEdgeLength，讓不同位置插點速度不同。",
-          "effect": "皺褶疏密呈現連續的大尺度變化。"
-        },
-        {
-          "name": "逐幀輸出做動畫",
-          "how": "每步輸出一條曲線到 DataTree，在 Rhino 中依序顯示或匯出成序列。",
-          "effect": "得到曲線生長的動畫素材。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "動畫",
-        "開放生長",
-        "3D"
-      ],
-      "tools": [
-        "Houdini"
-      ],
-      "url": "https://entagma.com/differential-line-growth"
-    },
-    {
       "id": "B01-12",
       "algo": "B01",
       "title": "Interactive Differential Growth Simulation for Design",
@@ -727,6 +624,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "研究如何讓設計者以互動方式引導差異生長模擬，把原本難以預測的生長過程轉成可操控的設計工具，是「如何控制差異生長」這個問題的學術回應。",
       "variations": [
@@ -760,6 +658,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "arXiv 上的研究論文，提出針對「開放曲面」（有自由邊界的曲面，例如葉片、花瓣）的差異生長框架，處理邊界生長與曲面彎曲，可視為 Floraform 類型形態的開源研究延伸。",
       "variations": [

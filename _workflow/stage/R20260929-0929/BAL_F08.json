@@ -1,0 +1,27 @@
+{
+ "algo": "F08",
+ "classification": [
+  {"id": "F08-01", "source": "research", "why": "學術論文以建築案例詮釋 MST／Steiner 樹"},
+  {"id": "F08-02", "source": "research", "why": "加權網格對偶圖的展開外掛與論文"},
+  {"id": "F08-03", "source": "research", "why": "以 MST 分析都市形態的期刊論文"},
+  {"id": "F08-04", "source": "research", "why": "GH 曲線網路 MST 計算的教學工具"},
+  {"id": "F08-05", "source": "research", "why": "以生成樹為骨幹的街網模型論文"},
+  {"id": "F08-06", "source": "research", "why": "圖論 GH 外掛，MST 只是其中一項元件"},
+  {"id": "F08-51", "source": "art", "why": "部落格教學，畫面即 Kruskal 生成的迷宮"},
+  {"id": "F08-52", "source": "art", "why": "D3.js 互動視覺文章，呈現建樹紋理差異"},
+  {"id": "F08-53", "source": "art", "why": "Coding Train p5.js 教學，Prim 生成畫面"},
+  {"id": "F08-54", "source": "art", "why": "Houdini VEX 教學，生成樹視覺化過程"}
+ ],
+ "art_count": 4,
+ "need": 1,
+ "removal_order": ["F08-05", "F08-03", "F08-02", "F08-06", "F08-04"],
+ "removal_reasons": {
+  "F08-05": "2025 年剛掛上 arXiv、無圖片，生成樹只是街網模型的起點而非設計成果，和 F08-01、F08-03 的都市尺度主題重疊",
+  "F08-03": "學術論文、無圖片，以建築物為節點的都市 MST 分析和 F08-01 主題重疊",
+  "F08-02": "無圖片，Ivy 外掛以網格面為節點做展開，和基礎範例的散點案例差異大，圖片也較難查證",
+  "F08-06": "有截圖但 LeafVein 外掛功能包山包海（最短路徑、TSP、割點…），MST 只是眾多元件之一，代表性較弱",
+  "F08-04": "有圖但只是單一作者的 GH 教學工具頁，功能與 F08-02、F08-06 的外掛重疊"
+ },
+ "new_art": [],
+ "notes": "need=1、備援 0：本輪用 WebSearch（額度用盡）、Parallel Search MCP（達免費額度上限並持續被限流）、Bing／DuckDuckGo（被導向不相關或 CAPTCHA 頁）、GitHub repo／topic／code 搜尋、tools/ct_index.py（spanning tree／kruskal／steiner／prim／maze／wilson／graph 等關鍵字）多輪查找以最小生成樹或 Steiner 樹為核心演算法的 creative coding 作品，找到的僅有零星的演算法教學型可視化練習（如個人 GitHub 的 Prim 可視化）與通用幾何函式庫（Processing Geometry Suite 的 EMST 函式），前者作者與品質難以查證、和既有 F08-51／F08-53 高度重疊，後者屬工具／函式庫應歸 research，均未達收錄門檻，故未新增藝術案例；need=1 待下輪或改用其他查證管道（如實際開啟 OpenProcessing／Openprocessing 搜尋頁、The Nature of Code 範例列表）補足。"
+}

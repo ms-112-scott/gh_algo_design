@@ -1,0 +1,464 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "B03",
+  "name_zh": "空間殖民",
+  "name_en": "Space Colonization",
+  "one_liner": "在空間裡撒一堆「養分點」，讓樹枝從根部一步步往最近的養分長過去、吃掉它們，最後長成填滿空間的分枝網路。",
+  "how_it_works": [
+   "準備吸引點（使用者輸入或在根部上方方塊內隨機撒點），樹一開始只有一個根節點。",
+   "每一步：每個吸引點找離它最近的枝端；距離小於 killDistance 就把吸引點刪掉（被吃掉），小於 influenceRadius 就對那個枝端施加一個單位向量拉力。",
+   "每個被拉的枝端把所有拉力加總後取單位方向，往該方向長出一段 segmentLength 的新節點，記住父節點索引。",
+   "若這一步沒有任何枝端被拉（樹幹還沒進入影響範圍），就讓最新的枝端直接朝最近的吸引點長一段，當作「樹幹階段」。",
+   "重複直到吸引點用完、長不動或達到 maxSteps，最後把每個節點與其父節點連成線段輸出。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "B03-01",
+   "title": "葉脈圖樣的建模與視覺化（Leaf Venation Patterns）",
+   "creator": "Adam Runions 等（University of Calgary, Algorithmic Botany）",
+   "year": "2005",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "開放生長",
+    "鄰居搜尋",
+    "空間索引",
+    "網格擴散"
+   ],
+   "tools": [
+    "論文",
+    "自製程式"
+   ],
+   "url": "https://algorithmicbotany.org/papers/venation.sig2005.html",
+   "summary": "空間殖民演算法的原點：在葉片中放置生長素（auxin）來源點，葉脈朝來源點生長、靠近後來源點消失，並隨葉片長大持續加入新來源點。論文同時提出開放（樹狀）與封閉（網狀）兩種葉脈，並用 Voronoi 空間分割加速。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-02",
+   "title": "以空間殖民演算法建模樹木（Modeling Trees with a Space Colonization Algorithm）",
+   "creator": "Adam Runions, Brendan Lane, Przemyslaw Prusinkiewicz",
+   "year": "2007",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "開放生長",
+    "吸引子控制"
+   ],
+   "tools": [
+    "論文",
+    "自製程式"
+   ],
+   "url": "https://algorithmicbotany.org/papers/colonization.egwnp2007.pdf",
+   "summary": "把 2005 年的開放式葉脈模型延伸到 3D，以樹冠包絡內的吸引點代表「可用空間」，枝條彼此競爭空間，就能長出相當逼真的樹。基礎範例就是這篇的簡化版。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-03",
+   "title": "Hyphae Lamps 分枝燈具系列",
+   "creator": "Nervous System（Jessica Rosenkrantz, Jesse Louis-Rosenberg）",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "開放生長",
+    "曲面上"
+   ],
+   "tools": [
+    "C++",
+    "CGAL",
+    "Cinder",
+    "3D 列印（SLS 尼龍）"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1701",
+   "summary": "受葉脈形成啟發的 3D 列印尼龍燈具，每一盞都獨一無二。設計軟體以 C++（CGAL、Cinder）自製，從一個基底量體與一組根部點出發，讓根部往充滿 auxin 的環境生長，並依流過的量決定枝的粗細，投出分枝狀光影。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-04",
+   "title": "Xylem + Hyphae 演算法草圖",
+   "creator": "Nervous System",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "開放生長",
+    "吸引子控制"
+   ],
+   "tools": [
+    "C++",
+    "自製程式"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/networks-sketches/",
+   "summary": "Nervous System 以 Runions 的葉脈論文為基礎，發展出 2D 的 Xylem 與 3D 的 Hyphae 兩套模擬系統；此相簿收錄大量演算法草圖，展示同一規則在不同邊界、根部配置下的網路變化。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-05",
+   "title": "2D Space Colonization Experiments",
+   "creator": "Jason Webb",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "空間索引",
+    "動畫",
+    "約束滿足"
+   ],
+   "tools": [
+    "JavaScript",
+    "Canvas API"
+   ],
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "summary": "以 JavaScript 與 Canvas 實作的一系列瀏覽器互動實驗，涵蓋基本空間殖民、邊界（bounds）限制、障礙物、開放與封閉葉脈、依階層改變線寬等，是理解參數與變形最直觀的資源。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-06",
+   "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "開放生長"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://www.youtube.com/watch?v=kKT0v3qhIQY",
+   "summary": "The Coding Train 演算法植物系列第 4 集，以 p5.js／Processing 從零寫出空間殖民樹生成器，並提供原始碼。邏輯與基礎範例幾乎一一對應，是自學對照的好教材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-07",
+   "title": "以空間殖民生成道路網（Space Colonisation for Procedural Road Generation）",
+   "creator": "",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "影像輸入",
+    "約束滿足",
+    "吸引子控制"
+   ],
+   "tools": [
+    "論文"
+   ],
+   "url": "https://www.researchgate.net/publication/330256216_Space_Colonisation_for_Procedural_Road_Generation",
+   "summary": "把吸引點詮釋為需要被道路服務的地點，用空間殖民生成都市與城際道路網，並可結合流場、人口分布、地理與邊界地圖微調路網佈局。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-08",
+   "title": "Procedural World：Space Colonization（城市街道的自然生長）",
+   "creator": "Miguel Cepero（Procedural World 部落格）",
+   "year": "2011",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "曲面上",
+    "開放生長"
+   ],
+   "tools": [
+    "C++",
+    "自製程式"
+   ],
+   "url": "http://procworld.blogspot.com/2011/02/space-colonization.html",
+   "summary": "程序化世界生成部落格文章，主張未經規劃的城市街道就像植物一樣「以最經濟的方式佔滿空間」，並用空間殖民演算法生成沿地形蔓延、覆蓋可用空間的街道網。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-09",
+   "title": "Space-Colonization 建築剖面生成工具",
+   "creator": "tiago0320（GitHub）",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "約束滿足",
+    "吸引子控制",
+    "影像輸入"
+   ],
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "url": "https://github.com/tiago0320/Space-Colonization",
+   "summary": "互動式生成設計與建築剖面工具：使用者繪製實／虛邊界、放置根部、甚至分析手繪草圖，用空間殖民生成剖面上的分枝空間網路；支援向性偏向、主次枝分級與修剪、曲直形態調整、以及產生次級連接迴圈來模擬結構斜撐與動線，並可匯出到 CAD／3D 軟體。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-10",
+   "title": "以空間殖民在 Blender 中設計軟材料內的血管通道（專利文件）",
+   "creator": "USPTO 專利（Fabrication materials and processes useful to form structures in soft materials）",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "開放生長",
+    "最佳化"
+   ],
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12208441",
+   "summary": "專利文件描述以 Blender Python API 自製的空間殖民實作設計血管結構：先在指定邊界內隨機產生 N 個虛擬細胞當吸引點，讓血管網長到每個細胞的擴散距離內，再製造成軟材料中的通道。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-11",
+   "title": "血管化生物混合組織的多尺度運算框架",
+   "creator": "bioRxiv 預印本作者群",
+   "year": "2026",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "收斂",
+    "最佳化"
+   ],
+   "tools": [
+    "論文"
+   ],
+   "url": "https://www.biorxiv.org/content/10.64898/2026.02.28.708633v1.full",
+   "summary": "研究以 Space Colonization 作為迭代生長方法，逐步把血管網擴展到尚未被灌流的區域，用於生成可製造的血管化組織構造。可視為「以服務範圍為性能指標」的空間殖民應用，概念上可類比建築設備管線或通風路徑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-12",
+   "title": "spacetree：Blender 空間殖民樹木外掛",
+   "creator": "Michel Anders（varkenvarken）",
+   "year": "2013",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "吸引子控制",
+    "可重現種子"
+   ],
+   "tools": [
+    "Blender",
+    "Python"
+   ],
+   "url": "https://github.com/varkenvarken/spacetree",
+   "summary": "以 Runions 演算法實作的 Blender 樹木生成外掛，參數對應景觀設計常用的樹形特徵，並特別適合建築表現：可輕易納入建築物或牆面造成的遮蔽效果，讓樹木對周邊環境做出反應。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-13",
+   "title": "Sverchok Tree Generator（節點式空間殖民）",
+   "creator": "elfnor",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "多元件",
+    "3D"
+   ],
+   "tools": [
+    "Blender",
+    "Sverchok",
+    "Python"
+   ],
+   "url": "https://elfnor.com/sverchok-tree-generator.html",
+   "summary": "把空間殖民樹生成器寫成 Blender Sverchok 的腳本節點，與 Grasshopper C# Script 的使用情境非常相似：上游節點提供吸引點與根部，下游接成管或網格。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-14",
+   "title": "VEX in Houdini：Space Colonization",
+   "creator": "Entagma（Manuel）",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "空間索引",
+    "3D"
+   ],
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "url": "https://entagma.com/1028-2/",
+   "summary": "Entagma 免費教學，在 Houdini 中以 VEX 與 SOP Solver 實作 Runions 的空間殖民，利用 Houdini 內建的最近點查詢函式加速，常用於動態圖像與藝術裝置的分枝生長動畫。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-15",
+   "title": "Grasshopper 空間殖民範例（Parametric House）",
+   "creator": "Parametric House",
+   "year": "",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "多元件",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://parametrichouse.com/space-colonization/",
+   "summary": "Grasshopper 教學範例網站提供的空間殖民定義，示範在 GH 中以目標點與起始點建立樹狀結構，可直接與基礎範例的 C# 版本比較元件式與程式碼式實作的差異。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B03-51",
+   "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+   "summary": "The Coding Train 依 Runions 等人的空間殖民演算法，在畫面上散布「葉子」吸引點，樹枝節點朝影響範圍內的吸引點平均方向長出新枝，吸引點被觸及後就移除。影片提供 p5.js 與 Processing 程式碼。適合對照 Grasshopper C# 版本的吸引距離與消除距離參數。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/17-fractal-trees-space-colonization",
+    "note": "Coding Challenge #17 影片縮圖，空間殖民樹"
+   }
+  },
+  {
+   "id": "B03-52",
+   "title": "2D Space Colonization Experiments（2D 空間殖民實驗）",
+   "creator": "Jason Webb",
+   "year": "2019",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "SVG",
+    "葉脈",
+    "數位製造"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+   "summary": "Jason Webb 以 JavaScript 實作空間殖民演算法的開放（open）與封閉（closed）葉脈兩種模式，並加入依末端累加的葉脈加粗（auxin flux canalization）、SVG 邊界與障礙物等功能。目標同樣是可輸出向量的數位製造用圖樣。相較於基礎範例，它多了封閉迴圈葉脈與粗細層級。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（jasonwebb/2d-space-colonization-experiments）",
+    "page": "https://github.com/jasonwebb/2d-space-colonization-experiments",
+    "note": "圓形範圍內的空間殖民葉脈圖"
+   }
+  },
+  {
+   "id": "B03-53",
+   "title": "Hyphae Lamps（Hyphae 燈具）",
+   "creator": "Nervous System",
+   "year": "2011",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "C++",
+    "CGAL",
+    "3D 列印",
+    "產品設計"
+   ],
+   "tools": [
+    "C++",
+    "CGAL"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+   "summary": "Nervous System 以葉脈形成為靈感設計的生成式燈具，每盞燈從基礎體積與一組根點出發，在充滿 auxin 吸引點的環境中反覆生長出分枝網路，再以選擇性雷射燒結 3D 列印製作。設計軟體是工作室以 C++ 與 CGAL 自行開發。部落格記錄了他們如何改成以機率讓流量大的葉脈優先生長，並以隱函數曲面產生網格。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Nervous System",
+    "page": "https://n-e-r-v-o-u-s.com/projects/sets/hyphae/",
+    "note": "Hyphae 燈具內部分枝結構照片"
+   }
+  },
+  {
+   "id": "B03-54",
+   "title": "ofxSpaceColonization",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D",
+    "即時"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxSpaceColonization",
+   "summary": "openFrameworks 的附加套件，實作 Runions、Lane 與 Prusinkiewicz 的論文〈Modeling Trees with a Space Colonization Algorithm〉，只要 build()、grow()、draw() 三步即可在 3D 中長出樹。可設定最大／最小吸引距離等選項，並能以包絡體（envelope）決定樹冠外形。相較於基礎範例，它著重即時 3D 繪製與可重用的 C++ 套件介面。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（edap/ofxSpaceColonization）README",
+    "page": "https://github.com/edap/ofxSpaceColonization",
+    "note": "README 封面圖，openFrameworks 生成的 3D 樹"
+   }
+  },
+  {
+   "id": "B03-55",
+   "title": "Dendrite",
+   "creator": "mattatz",
+   "year": "2018",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "GPU",
+    "即時"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://github.com/mattatz/Dendrite",
+   "summary": "mattatz 在 Unity 中以 GPU 運算實作空間殖民演算法，以輸入的點作為種子長出樹枝狀（dendrite）圖樣，並提供以 GPU marching cubes 把枝條轉成體積的渲染方式；SkinnedDendrite 還能讓分枝附著在動畫角色的蒙皮網格上。相較於基礎範例，它把演算法搬到 GPU 上以支援即時大量運算。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（mattatz/Dendrite）README",
+    "page": "https://github.com/mattatz/Dendrite",
+    "note": "DendriteSphere 動畫的第一格，球體上的分枝"
+   }
+  }
+ ]
+}

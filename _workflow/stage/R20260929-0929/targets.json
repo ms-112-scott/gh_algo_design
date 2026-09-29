@@ -1,0 +1,261 @@
+{
+ "A01": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "A02": {
+  "n": 19,
+  "final": 19,
+  "target_art": 9,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "A03": {
+  "n": 19,
+  "final": 19,
+  "target_art": 9,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "A04": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "A05": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "A06": {
+  "n": 19,
+  "final": 19,
+  "target_art": 9,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "B01": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "B02": {
+  "n": 19,
+  "final": 19,
+  "target_art": 10,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "B03": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "B04": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "B05": {
+  "n": 16,
+  "final": 16,
+  "target_art": 8,
+  "target_research": 8,
+  "must_remove_extra": 0
+ },
+ "B06": {
+  "n": 10,
+  "final": 10,
+  "target_art": 5,
+  "target_research": 5,
+  "must_remove_extra": 0
+ },
+ "C01": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "C02": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "C03": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "C04": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "C05": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "D01": {
+  "n": 19,
+  "final": 19,
+  "target_art": 10,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "D02": {
+  "n": 19,
+  "final": 19,
+  "target_art": 10,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "D03": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "E01": {
+  "n": 18,
+  "final": 18,
+  "target_art": 9,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "E02": {
+  "n": 17,
+  "final": 17,
+  "target_art": 9,
+  "target_research": 8,
+  "must_remove_extra": 0
+ },
+ "E03": {
+  "n": 20,
+  "final": 20,
+  "target_art": 10,
+  "target_research": 10,
+  "must_remove_extra": 0
+ },
+ "E04": {
+  "n": 19,
+  "final": 19,
+  "target_art": 10,
+  "target_research": 9,
+  "must_remove_extra": 0
+ },
+ "E05": {
+  "n": 13,
+  "final": 12,
+  "target_art": 6,
+  "target_research": 6,
+  "must_remove_extra": 1
+ },
+ "E06": {
+  "n": 11,
+  "final": 11,
+  "target_art": 5,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "F01": {
+  "n": 14,
+  "final": 14,
+  "target_art": 7,
+  "target_research": 7,
+  "must_remove_extra": 0
+ },
+ "F02": {
+  "n": 13,
+  "final": 13,
+  "target_art": 7,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "F03": {
+  "n": 13,
+  "final": 13,
+  "target_art": 6,
+  "target_research": 7,
+  "must_remove_extra": 0
+ },
+ "F04": {
+  "n": 12,
+  "final": 12,
+  "target_art": 6,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "F05": {
+  "n": 11,
+  "final": 11,
+  "target_art": 5,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "F06": {
+  "n": 11,
+  "final": 11,
+  "target_art": 6,
+  "target_research": 5,
+  "must_remove_extra": 0
+ },
+ "F07": {
+  "n": 12,
+  "final": 12,
+  "target_art": 6,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "F08": {
+  "n": 10,
+  "final": 10,
+  "target_art": 5,
+  "target_research": 5,
+  "must_remove_extra": 0
+ },
+ "G01": {
+  "n": 12,
+  "final": 12,
+  "target_art": 6,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "G02": {
+  "n": 11,
+  "final": 11,
+  "target_art": 5,
+  "target_research": 6,
+  "must_remove_extra": 0
+ },
+ "G03": {
+  "n": 8,
+  "final": 8,
+  "target_art": 4,
+  "target_research": 4,
+  "must_remove_extra": 0
+ }
+}

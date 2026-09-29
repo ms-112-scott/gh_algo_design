@@ -1,0 +1,96 @@
+{
+ "algo": "E01",
+ "classification": [
+  {"id": "E01-01", "source": "research", "why": "SIGGRAPH 論文，曲面三角網內切圓最佳化"},
+  {"id": "E01-02", "source": "research", "why": "建成建築，泡泡立面經典研究案例"},
+  {"id": "E01-03", "source": "research", "why": "Grasshopper／Kangaroo 立面開孔教學"},
+  {"id": "E01-04", "source": "research", "why": "McNeel 論壇工具討論，非視覺作品"},
+  {"id": "E01-05", "source": "research", "why": "Kangaroo 服裝曲面教學，工具導向"},
+  {"id": "E01-06", "source": "art", "why": "生成藝術家散文，成果是視覺草圖"},
+  {"id": "E01-07", "source": "art", "why": "Coding Train 教學，成果是生成畫面"},
+  {"id": "E01-08", "source": "art", "why": "OpenProcessing 互動生成藝術草稿"},
+  {"id": "E01-09", "source": "research", "why": "Bridges 學術論文，時尚製程研究"},
+  {"id": "E01-10", "source": "research", "why": "arXiv 超材料工程研究論文"},
+  {"id": "E01-11", "source": "research", "why": "期刊論文，建築曲面面板研究"},
+  {"id": "E01-12", "source": "art", "why": "Processing 教學，成果是生成構圖"},
+  {"id": "E01-13", "source": "research", "why": "SIGGRAPH 學術論文，植生態模擬"},
+  {"id": "E01-14", "source": "research", "why": "D3.js 資料視覺化版面工具函式"},
+  {"id": "E01-51", "source": "art", "why": "creative coding 預設，曲面模擬視覺"},
+  {"id": "E01-52", "source": "art", "why": "creative coding 預設，GPU 即時視覺"},
+  {"id": "E01-53", "source": "art", "why": "Gorilla Sun p5.js 生成藝術部落格"},
+  {"id": "E01-54", "source": "art", "why": "openFrameworks 互動生成藝術編輯器"}
+ ],
+ "art_count": 8,
+ "need": 1,
+ "removal_order": ["E01-14", "E01-05", "E01-04", "E01-11", "E01-09"],
+ "removal_reasons": {
+  "E01-14": "無網址、無圖、偏工具函式而非具體作品，最弱",
+  "E01-05": "與 E01-03 同作者同工具高度重複，無照片",
+  "E01-04": "論壇討論非正式作品，與 E01-03 重複，無照片",
+  "E01-11": "作者待查、期刊付費牆難以確認內容與圖片",
+  "E01-09": "應用小眾、無照片，與 E01-08 分形主題重疊"
+ },
+ "new_art": [
+  {
+   "title": "Circle Packing（黑白密鋪圓填充）",
+   "creator": "pxlmotiv",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "阿根廷獨立生成藝術創作者 pxlmotiv 以 Processing 寫的圓填充作品：整張正方形畫布被不同大小、彼此相切不重疊的圓完全鋪滿，圓內塗黑只留白色細邊，從大圓到極細密的小圓層層填滿所有縫隙。和 Grasshopper C# 基礎範例「先撒滿再互推到不重疊、圓數固定」不同，這裡的目標是把整個畫面的空隙都塞滿，呈現由粗到細、近乎分形的密度層次。",
+   "variations": [
+    {"name": "填滿式生成", "how": "不是先撒滿固定數量再互推，而是反覆在剩餘最大空隙裡塞入新圓，直到畫面被填滿為止", "effect": "產生從大圓到極細小圓的多尺度密鋪效果，而非均勻大小的圓陣"},
+    {"name": "描邊反轉配色", "how": "圓內填滿黑色、只留白色細邊框，背景維持淺色", "effect": "強調圓與圓相切的縫隙線條，畫面像黑白密鋪圖案而非彩色示意圖"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "密鋪", "黑白", "分形感"],
+   "tools": ["Processing"],
+   "url": "https://github.com/pxlmotiv/circle-packing",
+   "evidence": "GitHub 使用者 pxlmotiv（簡介為 generative artworks, and more，位於 La Plata, Argentina）的 circle-packing 專案，語言為 Processing，README 內嵌 circle-packing.PNG 生成畫面",
+   "nearest_existing": "無（既有案例為 Grasshopper／Kangaroo 教學或研究論文，此為獨立生成藝術創作者的 Processing 作品）",
+   "image": {"url": "https://raw.githubusercontent.com/pxlmotiv/circle-packing/master/circle-packing.PNG", "page": "https://github.com/pxlmotiv/circle-packing", "verified": true, "checked": "黑底畫面中滿滿的黑色實心圓、僅留白色細邊，彼此相切填滿整張正方形，大圓之間夾雜層層變小的圓群", "source": "GitHub pxlmotiv/circle-packing README", "author": "pxlmotiv", "license": "未標示，教學引用", "license_url": "", "note": "黑白密鋪圓填充生成畫面，由大圓到細密小圓層層填滿"}
+  },
+  {
+   "title": "circle-packing（SDF 巢狀圓填充）",
+   "creator": "danieledapo",
+   "year": "2020",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "獨立開發者 danieledapo 以 Rust 寫的圓填充函式庫與命令列工具，用符號距離場（SDF）定義可放置圓的區域，並在每個放好的大圓內部，以縮小的邊界再跑一次同樣的填圓程序、換一組顏色，做出圓中圓的巢狀圖樣。和 Grasshopper C# 基礎範例「所有圓在同一層級互推」不同，這裡是遞迴地在圓的內部再長出一整層更小的圓群，形成多層同心巢狀結構。",
+   "variations": [
+    {"name": "巢狀遞迴填色", "how": "每個圓填滿後，在其內部以縮小的邊界再跑一次相同的填圓程序，並換一組顏色", "effect": "畫面出現圓中圓的多層巢狀結構，色彩隨層級變化"},
+    {"name": "SDF 邊界限制", "how": "用符號距離場（而非簡單幾何形狀）定義可放置圓的區域，可讀入任意輪廓或 logo", "effect": "能把圓填充圖樣限制在文字、logo 等任意形狀內"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Rust", "SDF", "巢狀", "生成藝術"],
+   "tools": ["Rust"],
+   "url": "https://github.com/danieledapo/circle-packing",
+   "evidence": "GitHub danieledapo/circle-packing README，描述為「dead simple circle packing algorithm」，data/ 目錄含 packing.png、packing_no_inside.png、packed_logo.png 等生成畫面，主題標籤含 circle-packing、generative-art",
+   "nearest_existing": "無（既有案例無此種遞迴巢狀配色的作法）",
+   "image": {"url": "https://raw.githubusercontent.com/danieledapo/circle-packing/master/data/packing.png", "page": "https://github.com/danieledapo/circle-packing", "verified": true, "checked": "磚紅色背景上，大圓內嵌套黃色中圓、黃色圓內再嵌套灰藍與紅色小圓，多層同心圓群鋪滿整張矩形畫面", "source": "GitHub danieledapo/circle-packing", "author": "danieledapo", "license": "未標示，教學引用", "license_url": "", "note": "SDF 圓填充生成的多層巢狀彩色圓群"}
+  },
+  {
+   "title": "Circle Packing Art Visualization（影像驅動圓填充重建圖像）",
+   "creator": "pthavarasa",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "獨立開發者 pthavarasa 以 Python／pygame 寫的互動圓填充工具：讀入一張圖片（範例為 Python 標誌），依像素位置與顏色決定要放的圓要多大、什麼顏色，用大小不一、直接承襲原圖顏色的圓重新「畫」出影像輪廓。和 Grasshopper C# 基礎範例「圓的顏色與位置和輸入影像無關」不同，這裡影像本身就是生成規則的輸入與配色依據。",
+   "variations": [
+    {"name": "影像驅動配色與尺寸", "how": "圓心對應像素的顏色直接指定給該圓，亮度或該處輪廓決定圓可以放多大", "effect": "圓的排列與顏色共同重建原始影像的視覺內容"},
+    {"name": "互動式重新生成", "how": "提供互動介面，可即時調整參數重新生成填充結果", "effect": "方便比較不同參數下同一張圖的重建效果"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Python", "pygame", "影像驅動", "圖像重建"],
+   "tools": ["Python", "pygame"],
+   "url": "https://github.com/pthavarasa/circle-packing-art-visualization",
+   "evidence": "GitHub pthavarasa/circle-packing-art-visualization README，描述為互動式圓填充視覺化工具，可套用於圖片或文字，images/circle_packing_image.png 展示以圓重建 Python 標誌的生成畫面",
+   "nearest_existing": "E01-07（Coding Train 影像版 circle packing）技法方向相近，但作者、實作（Python／pygame）與呈現目標（重建 Python 標誌而非教學過程）皆不同",
+   "image": {"url": "https://github.com/pthavarasa/circle-packing-art-visualization/raw/master/images/circle_packing_image.png", "page": "https://github.com/pthavarasa/circle-packing-art-visualization", "verified": true, "checked": "黑色背景上，藍色與黃色的大小圓群組成 Python 標誌（雙蛇）形狀", "source": "GitHub pthavarasa/circle-packing-art-visualization", "author": "pthavarasa", "license": "未標示，教學引用", "license_url": "", "note": "以圓重建 Python 標誌的影像驅動生成畫面"}
+  }
+ ],
+ "notes": "need=1，已找到並親眼確認 3 個新藝術案例（1 個補實際需求＋2 個備援，未達規格建議的 3 個備援）；本次工作階段 WebSearch 與 Parallel Search 額度皆已用盡（多個平行 agent 共用配額），改用 WebFetch 對 GitHub API／頁面逐一查證，OpenProcessing／Shadertoy 搜尋頁對 WebFetch 回傳 403 無法瀏覽，因此難以再找到更多 p5.js／Processing 候選；3 個新案例中僅 1 個（pxlmotiv，需求用的那個）為 Processing，未達「p5.js／Processing 至少占一半」的建議比例，請協調者視情況在其他演算法補足或後續再找補件。移除順序第一名 E01-14 即可對應此次新增的 1 個名額。"
+}

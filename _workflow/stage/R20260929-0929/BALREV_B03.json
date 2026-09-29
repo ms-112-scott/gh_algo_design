@@ -1,0 +1,51 @@
+{
+  "reviewer": "BALREV",
+  "algos": {
+    "B03": {
+      "reject_new": [
+        {"index": 1, "reason": "屬數位研究而非藝術設計：README 定位是讀入 PLY 點雲、輸出 PLY 的 Rust 平行化命令列實作（軟體工具），沒有以視覺為目的的作品化；作者只有 GitHub 帳號，且自述主要參考 Jason Webb 的實作（已收 B03-05／B03-52）"},
+        {"index": 2, "reason": "作品性與圖片都太弱：這是 Jupyter 教學筆記本（作者是強化學習博士生的練習），README 五張圖都在 250px 以下，採用的 3.png 只有 244×247 且帶 matplotlib 標題「Final Result」，其餘 1、2、4、5.png 短邊不到 240px，找不到合格大圖"}
+      ],
+      "image_fix": [],
+      "fix_class": [
+        {"id": "B03-54", "source": "research", "why": "ofxSpaceColonization 是 openFrameworks 附加套件（可重用函式庫），依準則「外掛與工具→research」；同作者的 ofxPhyllotaxis（B04-52）也標 research，應一致"}
+      ],
+      "protect": [],
+      "notes": "分類大致正確，但 B03-54 改成 research 後 art 9／research 11、need 變成 1，照 removal_order 移除 B03-15，並用 new_art[0]（Lucio Paiva Tree，2018，圖已親眼確認是米黃底咖啡色實心樹剪影）補上；index 1、2 reject，因此只剩 1 個可用備援。"
+    },
+    "B04": {
+      "reject_new": [
+        {"index": 2, "reason": "摘要與變形是捏造的：app.js 就是 phi = n*137.5、r = 8*sqrt(n) 的標準寫法，沒有「偏離黃金角」或摩爾紋實驗，只有 fill(n%255) 的色相循環；內容等於 B04-51 Coding Challenge #30 的逐行翻版，repo 只有 2 次 commit"},
+        {"index": 3, "reason": "不是葉序：client/index.js 每按一次按鈕，角度就 +1 弧度（theta = ++angle），完全沒用黃金角，GIF 第一格是三臂螺旋；摘要寫的「逐點加入」「紫→粉→紅漸層」也和程式不符（一次畫 200 點、紅→藍漸層）"},
+        {"index": 5, "reason": "摘要有事實錯誤：.pde 的半徑是每步 radius += 0.5（線性、阿基米德型），不是摘要說的「開根號半徑」；顏色只有藍色通道遞增再加透明度淡出，沒有藍紫漸層；圖很暗，還帶 Processing 視窗標題列，作品本身是教學影片的練習改寫"}
+      ],
+      "image_fix": [
+        {"index": 1, "image": {"url": "https://files.mastodon.social/media_attachments/files/116/268/077/965/456/882/original/cd79f6ba475c9ac1.jpeg", "page": "https://mastodon.social/@paulrickards/116268084744280038", "verified": true, "checked": "白色水彩紙上，一片片帶黑色陰影、交叉線影填色的水滴形花瓣沿葉序螺旋排列，中心紅粉、往外依序是橙黃綠藍紫的彩虹漸層，右下有 @paulrickards 簽名", "source": "Paul Rickards（Mastodon @paulrickards）", "author": "Paul Rickards", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "Python 產生、復古 HP 7585B 繪圖機以 CMYK 墨水畫在水彩紙上的彩虹葉序花瓣螺旋（2026）"}}
+      ],
+      "fix_class": [],
+      "protect": [],
+      "notes": "6 個新案例 reject 3 個，可用的是 index 0、1、4 共 3 個，need 4 仍差 1。請協調者一併修正三筆可用案例的中繼資料：index 0 年份補 2024（Coding Train 的 index.json 寫 2024-05-02，Marbling Phyllotaxis 草圖確實用 137.5° 與 √n 決定下墨點）；index 1 的 url 目前是個人頁，應改成貼文 https://mastodon.social/@paulrickards/116268084744280038（2026-03-21，內文寫明 phyllotaxis、HP 7585B、Python）；index 4 年份補 2026（repo 建立於 2026-09-28），而且它的圖含網頁介面文字與滑桿，能裁成只留畫布會更好。"
+    },
+    "B05": {
+      "reject_new": [
+        {"index": 2, "reason": "作者歸屬錯誤，也不是新作品：stephanie-fu/Substrate 的 README 以「Source here」指向 atalax/haiku-substrate，兩張 2014 年上傳的圖也和 atalax 的 README 相同，實際移植者是 atalax；內容只是把 xscreensaver 的 Substrate 搬到 Haiku 螢幕保護程式，和既有 B05-54 iPad 移植同性質，不構成獨立的藝術作品"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "notes": "need=0，分類正確（8／8）。可用的備援有 2 個：index 0 HertzVador Python 版（2026，已確認 tkinter 即時預覽、Numba 約 35 倍加速、可重現亂數種子）、index 1 Oliver Salzburg 黑底版（年份空白，repo 已於 2026-03-22 封存）。同意撰寫者的提醒：B05-01／B05-51、B05-02／B05-53 是重複收錄。"
+    },
+    "B06": {
+      "reject_new": [
+        {"index": 0, "reason": "和本演算法的核心不符，摘要也有捏造：這是在固定網格上逐格填入 16 種雙色 Wang tile 的邊色配對（屬 A06 WFC／鋪磚），沒有接頭平面、零件對齊、自由生長或碰撞檢查；src/main.c 的 rand_tile 只是從上、左邊色相符的磚裡隨機挑一個，而完整 16 磚一定有解，摘要與變形說的「選不到就回溯重挑前一格」並不存在"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [
+        {"id": "B06-02", "why": "Gilles Retsin 塔林雙年展展館是離散建築的經典代表作，也是唯一有實景照片的建成量體，目錄變形「45° 斜接零件庫（Retsin 式）」就是出自它"},
+        {"id": "B06-05", "why": "唯一 performance 類，直接對應目錄變形「密度場導引（近似拓樸最佳化）」，和演算法關係很強；B06-06、B06-07 刪掉後，它是保留 DDU 研究脈絡的唯一一篇"}
+      ],
+      "notes": "10 個既有案例全部歸為 research，判斷正確；唯一的新案例 reject 後可用 0 個，need 5 完全補不到，需要協調者另外找離散聚合的藝術作品，或接受 B06 暫時不平衡。若日後補到藝術案例，保護 02、05 之後，移除順序會變成 06、53、07、04、03。"
+    }
+  }
+}

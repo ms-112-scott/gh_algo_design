@@ -316,6 +316,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "英國劍橋北站外牆以穿孔鋁板包覆，圖樣經 Wolfram 比對，正是一維細胞自動機 Rule 30 圖樣右側邊緣旋轉 45° 後的結果（從外看是 rule 135，從內看為 rule 149）。演算法在此直接產生整座車站的立面紋理與透光孔。",
       "variations": [
@@ -356,6 +357,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Krawczyk 從 450 個初始世代中挑出 27 種圖樣，記錄每一格在生長過程中被造訪的次數，以此決定格子尺寸，再轉成圓、方、菱形、八角、十字、八角星等單元。成果被構想為浮雕、鍛鐵裝飾或噴砂、雷刻玻璃圖樣。",
       "variations": [
@@ -393,6 +395,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Krawczyk 把 2D 細胞自動機的世代往上堆疊當成建築量體，並研究如何以人工詮釋與修改把原始 CA 結果轉成可讀的建築形體；後續論文〈Exploring the Massing of Growth in Cellular Automata〉進一步以細胞存活世代數塑造量體。與基礎範例的「時間＝樓層」概念完全相同。",
       "variations": [
@@ -430,6 +433,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "研究在設計初期用複合 CA 為荷蘭高密度住宅專案生成三維量體，格子狀態包含自然採光等條件，並以知名建築地標為基準比較生成的空間單元組合。示範 CA 規則如何加入建築需求而非只追求圖樣。",
       "variations": [
@@ -468,6 +472,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Herr 主張 CA 不必是全自動的形體產生器，而可以作為和設計者對話的「自動化圖解」：在設計工作室中讓學習者用 CA 產生抽象空間關係，再由設計者詮釋成混合機能的建築。延續她在香港大學的博士研究〈From Form Generators to Automated Diagrams〉。",
       "variations": [
@@ -505,6 +510,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "論文整理 CA 被用於建築設計時常見的改造方式，並以一個從 Game of Life 規則出發的案例研究說明：通用 CA 產生的形雖然精緻卻常是任意的，必須加入與建築需求相關的規則並經過建築詮釋才有用。",
       "variations": [
@@ -543,6 +549,7 @@
         "art-installation",
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "受 Tschumi 拉維列特公園的 Folies 啟發，貝爾格勒大學與高年級學習者以 Fun3D 軟體的 CA 模組生成一系列小型點景建築，探討 CA 在建築與都市設計中的應用，發表於 2009 年米蘭 Generative Art 研討會。",
       "variations": [
@@ -582,6 +589,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Serrière 改裝工業針織機，用 Processing 產生以 Rule 110、Rule 73 等一維 CA 為主的圖樣直接織成圍巾；每條圍巾記錄規則與起始種子，保證獨一無二。演算法一代一列，正好對應針織一排一排往下織的製程。",
       "variations": [
@@ -619,6 +627,7 @@
       "year": "1993",
       "category": "urban-landscape",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "White 與 Engelen 的經典模型以格子狀態代表土地使用，轉換規則同時考慮鄰域內既有土地使用與該格本身的適宜性，模擬都市土地使用的演變並呈現碎形都市形態，成為後續大量都市、區域與交通 CA 研究的基礎。",
       "variations": [
@@ -657,6 +666,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Rabbit 是 Morphocode 開發的開源 Grasshopper 外掛，提供 Conway's Life、Amoeba、Coral、Day&Night、Diamoeba 等多種 CA 規則與 3D CA 元件，可直接在 Rhino 中探索圖樣形成、自組織與湧現。適合拿來和自己寫的 C# 版本對照。",
       "variations": [
@@ -697,6 +707,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "網頁版 3D 視覺化：目前世代在最上方，舊世代逐步往下沉成歷史堆疊，八層歷史依序淡出透明度與顏色，以等角視角呈現時間切片。和基礎範例的「時間＝高度」相同，但只保留最近幾層做成動畫。",
       "variations": [
@@ -738,6 +749,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Lenia 把 Conway 生命遊戲推廣成空間、時間、狀態都連續的細胞自動機，用環形核計算鄰域勢能、高斯成長函數更新，產生會移動、脈動、分裂的類生物圖樣；後續研究再擴展到高維度、多核與多通道。",
       "variations": [
@@ -769,44 +781,6 @@
       "url": "https://arxiv.org/abs/1812.05433"
     },
     {
-      "id": "C02-13",
-      "algo": "C02",
-      "title": "以細胞自動機控制動態遮陽立面",
-      "creator": "",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "立面／表皮",
-      "summary": "研究以 CA 規則驅動建築立面的動態遮陽單元，讓每個立面格子依自身與鄰居的狀態（例如日照）決定開關，形成兼具性能與變化圖樣的表皮。演算法把 CA 的局部規則轉成分散式的立面控制邏輯。",
-      "variations": [
-        {
-          "name": "日照當外部輸入",
-          "how": "每格額外讀入 double[,] sun（由日照分析或太陽向量與面板法向量內積得到），規則改為日照高且鄰居開啟數少時才開啟遮陽。",
-          "effect": "遮陽分布跟著太陽移動並保留局部連續性。"
-        },
-        {
-          "name": "世代對應時刻",
-          "how": "不再把世代疊成樓層，而是一代對應一個小時，輸出每小時的面板開合狀態。",
-          "effect": "一天的立面動態動畫。"
-        },
-        {
-          "name": "面板旋轉角度",
-          "how": "活格輸出為旋轉的百葉板（角度依鄰居數映射），而非有無。",
-          "effect": "連續變化的動態百葉立面。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "Timer",
-        "動畫",
-        "吸引子控制"
-      ],
-      "tools": [],
-      "url": "https://www.academia.edu/48830065/Implementing_Cellular_Automata_for_Dynamically_Shading_a_Building_Facade"
-    },
-    {
       "id": "C02-14",
       "algo": "C02",
       "title": "An Evolutionary Architecture：演化建築與細胞自動機",
@@ -816,6 +790,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Frazer 的著作把建築視為會生長、演化的人工生命，早期實驗以人工演化與細胞自動機生成隨時間發展的建築形體，是 CA 建築生成的奠基文獻之一，與 Paul Coates 等人的研究同為此領域的起點。",
       "variations": [
@@ -843,43 +818,6 @@
       ],
       "tools": [],
       "url": ""
-    },
-    {
-      "id": "C02-15",
-      "algo": "C02",
-      "title": "Cellular Automata for Infill Designs in Historic Urban Quarters",
-      "creator": "Nexus Network Journal 論文（作者未查證）",
-      "year": "",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "群體／都市",
-      "summary": "研究把 CA 用於歷史街區的填充建築設計，讓新量體依周邊既有紋理的局部規則生成，以延續歷史街區的尺度與虛實關係。示範 CA 以既有環境為初始狀態、只在空地上生長的用法。",
-      "variations": [
-        {
-          "name": "既有建物為固定格",
-          "how": "新增 bool[,] fixedCells，由基地既有建物投影得到；計數鄰居時算入但永不改變狀態。",
-          "effect": "新量體會回應鄰房的位置與密度。"
-        },
-        {
-          "name": "只在空地生長",
-          "how": "以基地空地曲線做遮罩，遮罩外的格子保持死亡。",
-          "effect": "填充設計不超出可建範圍。"
-        },
-        {
-          "name": "高度跟隨鄰房",
-          "how": "層數上限依周邊既有建物高度平均值動態決定。",
-          "effect": "天際線與歷史街區協調。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "約束滿足",
-        "影像輸入"
-      ],
-      "tools": [],
-      "url": "https://link.springer.com/article/10.1007/s00004-022-00602-2"
     }
   ]
 }

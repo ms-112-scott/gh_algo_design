@@ -1,0 +1,431 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A05",
+  "name_zh": "形狀文法",
+  "name_en": "Shape Grammar",
+  "one_liner": "不改寫文字，而是直接把「帶標籤的形狀」換成新的形狀組合：一個大正方形 A 被換成定住的 B 加上兩個縮小旋轉的 A，反覆套用就長出畢氏樹。",
+  "how_it_works": [
+   "起始形狀：一個標籤為 A 的正方形（左下角、底邊方向、邊長）。",
+   "每一代把清單裡所有形狀同時丟進 ApplyRules：B、C 原樣保留；A 太小就改標籤成 C（葉）；A 夠大就變成 B，並在頂邊架出兩個新的 A。",
+   "兩個新 A 的邊長分別是 size·cos(angle) 與 size·sin(angle)，方向分別轉 angle 與 angle−90°，剛好和頂邊圍成直角三角形。",
+   "新清單取代舊清單；若已經沒有 A 就提早停止。",
+   "輸出每個正方形的封閉 Polyline 與標籤字串，可用標籤分色。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A05-01",
+   "title": "形狀文法的起點：繪畫與雕塑的生成規格",
+   "creator": "George Stiny、James Gips",
+   "year": "1972",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "字串改寫",
+    "對稱"
+   ],
+   "tools": [
+    "手繪",
+    "理論"
+   ],
+   "url": "https://www.semanticscholar.org/paper/Shape-Grammars-and-the-Generative-Specification-of-Stiny-Gips/c8f7baf704f7d7713eee196de6cb90cbfb7fc4cd",
+   "summary": "Stiny 與 Gips 首次提出形狀文法，主張規則直接作用在形狀上而非符號，並用一組規則生成一系列抽象繪畫與雕塑。這是基礎範例「形狀→形狀」改寫概念的源頭。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-02",
+   "title": "Palladian Grammar：帕拉底歐別墅平面文法",
+   "creator": "George Stiny、William J. Mitchell",
+   "year": "1978",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "對稱",
+    "約束滿足"
+   ],
+   "tools": [
+    "手繪",
+    "理論"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1068/b050005",
+   "summary": "以參數化形狀文法定義帕拉底歐別墅的平面風格，從網格格線開始，經過多個階段的規則逐步生成房間配置、牆、柱廊與門窗，並成功推導出 Villa Malcontenta 的平面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-03",
+   "title": "The Language of the Prairie：萊特草原住宅文法",
+   "creator": "Hank Koning、Julie Eizenberg",
+   "year": "1981",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D"
+   ],
+   "tools": [
+    "理論"
+   ],
+   "url": "",
+   "summary": "以壁爐為起始形狀，用參數化形狀文法生成萊特草原住宅的量體組合與機能分區，證明形狀文法能處理三維建築語彙，並能推導出新的「萊特風格」住宅。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-04",
+   "title": "Siza Malagueira 住宅文法與大量客製化",
+   "creator": "José P. Duarte",
+   "year": "2005",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "約束滿足",
+    "可重現種子"
+   ],
+   "tools": [
+    "理論",
+    "電腦程式"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1068/b31124",
+   "summary": "Duarte 從 Álvaro Siza 在 Malagueira 設計的 35 棟合院住宅歸納出形狀文法，目標是做出讓住戶參與設計的客製化集合住宅系統。文法把「建築師的風格」與「住戶的需求」同時寫進規則裡。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-05",
+   "title": "CGA Shape：程序化建築生成與龐貝古城重建",
+   "creator": "Pascal Müller、Peter Wonka、Simon Haegler、Andreas Ulmer、Luc Van Gool",
+   "year": "2006",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "3D",
+    "多元件"
+   ],
+   "tools": [
+    "CityEngine",
+    "CGA"
+   ],
+   "url": "https://dl.acm.org/doi/10.1145/1141911.1141931",
+   "summary": "CGA shape 把形狀文法轉成以量體、分割（split）、重複（repeat）與構件取代為核心的電腦文法，可大量生成具細節的建築外殼，並以龐貝古城的虛擬重建展示其效率。後來發展為 CityEngine 的核心語言。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-06",
+   "title": "CityEngine 立面建模教學（CGA split 規則）",
+   "creator": "Esri",
+   "year": "",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "多元件"
+   ],
+   "tools": [
+    "CityEngine",
+    "CGA"
+   ],
+   "url": "https://doc.arcgis.com/en/cityengine/latest/tutorials/tutorial-7-facade-modeling.htm",
+   "summary": "CityEngine 官方教學示範以 CGA 規則把立面水平切成樓層、以重複分割讓中間樓層自動填滿高度，再插入窗、門、線腳等構件。是分割文法最直接的業界工具範例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-07",
+   "title": "Ice-ray：中式冰裂紋窗格文法",
+   "creator": "George Stiny",
+   "year": "1977",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tags": [
+    "遞迴",
+    "隨機",
+    "拼貼"
+   ],
+   "tools": [
+    "理論"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1068/b040089",
+   "summary": "Stiny 分析中式冰裂紋窗格的構成慣例，提出以一條線把多邊形切成兩個多邊形的參數化遞迴規則。簡單的切割規則就能生成大小遞減、看似自然的窗花。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-08",
+   "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
+   "creator": "designcoding",
+   "year": "",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "吸引子控制",
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.designcoding.net/revisiting-chinese-ice-ray-lattices/",
+   "summary": "以 Grasshopper 重新實作冰裂紋格柵的生成，把 Stiny 的切割文法轉成可調參數的視覺程式。是學習者從論文走向 GH 實作的好參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-09",
+   "title": "The Grammar of Paradise：蒙兀兒花園文法",
+   "creator": "George Stiny、William J. Mitchell",
+   "year": "1980",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "遞迴",
+    "對稱",
+    "分形"
+   ],
+   "tools": [
+    "理論"
+   ],
+   "url": "https://www.andrew.cmu.edu/user/ramesh/teaching/course/48-747/subFrames/readings/Stiny&MItchell-1980-EPB7_209-226.TheGrammarOfParadise..pdf",
+   "summary": "以參數化形狀文法描述蒙兀兒四分花園（char-bagh）的設計慣例：正方形基地被水道與步道十字分割，四個象限再遞迴細分並加上邊界。泰姬瑪哈陵的花園平面可由此推導。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-10",
+   "title": "More than the Sum of Parts：Queen Anne 住宅文法",
+   "creator": "Ulrich Flemming",
+   "year": "1987",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "約束滿足"
+   ],
+   "tools": [
+    "理論"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1068/b140323",
+   "summary": "Flemming 為 1880 年代美國 Queen Anne 風格住宅寫出形狀文法，從平面配置、量體外推到複雜屋頂組合逐步生成，說明規則的組合能產生「大於部分總和」的整體風格。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-11",
+   "title": "Palladian Construction Grammar：文法加快速原型",
+   "creator": "Larry Sass",
+   "year": "2007",
+   "category": "fabrication",
+   "scale": "建築",
+   "tags": [
+    "多元件"
+   ],
+   "tools": [
+    "CAD",
+    "快速原型"
+   ],
+   "url": "https://www.researchgate.net/publication/23541586_A_Palladian_construction_grammar_-_Design_reasoning_with_shape_grammars_and_rapid_prototyping",
+   "summary": "Sass 把帕拉底歐文法延伸為「構築文法」，從平面圖出發，用規則生成可以實際製造組裝的構件，並透過快速原型製作實體模型，讓文法直接連到數位製造。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-12",
+   "title": "eifForm：形狀退火結構生成系統",
+   "creator": "Kristina Shea（與 Jonathan Cagan 合作）",
+   "year": "2000",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "隨機",
+    "收斂"
+   ],
+   "tools": [
+    "eifForm",
+    "Java"
+   ],
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+   "summary": "eifForm 結合參數化形狀文法、結構分析與隨機最佳化（shape annealing），用規則增刪桁架節點與桿件，並以結構性能與成本評估引導搜尋，生成有效率又新穎的平面桁架與空間桁架。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-13",
+   "title": "Diebenkorn《Ocean Park》系列的繪畫文法",
+   "creator": "Russell A. Kirsch、Joan L. Kirsch",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "隨機"
+   ],
+   "tools": [
+    "電腦程式"
+   ],
+   "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=821704",
+   "summary": "電腦科學家 Russell Kirsch 與藝術史學者 Joan Kirsch 為 Richard Diebenkorn 的《Ocean Park》抽象畫系列寫出形狀文法，以水平與垂直分割規則描述畫面結構，並能生成風格相似的新構圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-14",
+   "title": "《營造法式》形狀文法",
+   "creator": "Andrew I-kang Li",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "多元件"
+   ],
+   "tools": [
+    "理論",
+    "電腦程式"
+   ],
+   "url": "https://dspace.mit.edu/handle/1721.1/8631",
+   "summary": "以形狀文法解讀北宋李誡《營造法式》，將單一建築類型的平面、剖面與材分制度寫成可生成的規則，並用於教學，讓學習者自己判斷生成結果是否屬於宋式風格並調整文法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-15",
+   "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
+   "creator": "Athanassios Economou（Georgia Tech Shape Computation Lab）",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "Shape Machine",
+    "Rhino"
+   ],
+   "url": "https://shape.gatech.edu/Research/index.html",
+   "summary": "Shape Machine 是一套在 CAD 系統中做向量形狀「搜尋與取代」的工具，能在任意線稿中辨識出規則左側的形狀（包含子形狀），再換成右側的形狀，是真正「視覺計算」式的形狀文法直譯器。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A05-51",
+   "title": "Context Free Art（CFDG 設計文法）",
+   "creator": "Chris Coyne（CFDG 語言）；Mark Lentczner、John Horigan（Context Free 程式）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Context Free",
+    "CFDG",
+    "文法",
+    "生成藝術"
+   ],
+   "tools": [
+    "Context Free"
+   ],
+   "url": "https://www.contextfreeart.org/",
+   "summary": "Context Free 是以「上下文無關設計文法」（cfdg）生成圖像的程式：從 startshape 出發，每條 shape rule 把一個形狀換成一組帶有位移、縮放、旋轉、色彩調整的子形狀，最後只剩圓、方、三角等基本形；同一形狀可有多條加權規則。這與基礎範例「A 換成 B + 兩個縮小旋轉的 A」是同一件事，只是寫成文字文法。社群藝廊收錄近千件作品。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A05-52",
+   "title": "Structure Synth（EisenScript 3D 設計文法）",
+   "creator": "Mikael Hvidtfeldt Christensen（Syntopia）",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Structure Synth",
+    "EisenScript",
+    "3D",
+    "文法"
+   ],
+   "tools": [
+    "Structure Synth"
+   ],
+   "url": "https://structuresynth.sourceforge.net/",
+   "summary": "Structure Synth 是用設計文法（EisenScript）生成 3D 結構的跨平台程式，構想來自 Chris Coyne 的 Context Free；有 OpenGL 預覽、內建光線追蹤、可匯出 OBJ 或交給 Sunflow、POV-Ray 算圖。它把基礎範例的 2D 正方形替換規則推到 3D 方塊與球體，常用來生成巨構、塔樓狀的抽象量體。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A05-53",
+   "title": "MarkovJunior：以改寫規則與約束傳播生成的機率式程式語言",
+   "creator": "Maxim Gumin（mxgmn）",
+   "year": "2022",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "C#",
+    "改寫規則",
+    "體素",
+    "程序化生成"
+   ],
+   "tools": [
+    "C#"
+   ],
+   "url": "https://github.com/mxgmn/MarkovJunior",
+   "summary": "WFC 作者 Maxim Gumin 的新專案：程式就是一串改寫規則（例如 RBB=GGR），直譯器每一步找到第一條能匹配的規則並隨機套用一處，可組合 WFC、路徑搜尋等節點；範例包含迷宮、地牢，以及等角視圖的 ModernHouse 等建築。它是格網上的「形狀文法」：左手邊是一小塊圖樣，右手邊是替換結果。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub mxgmn/MarkovJunior",
+    "page": "https://github.com/mxgmn/MarkovJunior",
+    "note": "README 動圖（取一格）：ModernHouse 範例與其規則樹"
+   }
+  },
+  {
+   "id": "A05-54",
+   "title": "ShapeML：規則式程序化 3D 建模語言",
+   "creator": "Stefan Lienhard",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "C++",
+    "OpenGL",
+    "程序化建模",
+    "文法"
+   ],
+   "tools": [
+    "ShapeML"
+   ],
+   "url": "https://github.com/stefalie/shapeml",
+   "summary": "受形狀文法、L-System、CGA／CityEngine 與 G² 啟發的規則式建模框架：文法反覆把粗略的部件替換成更細的構件，附互動預覽程式 ShapeMaker，可即時調整文法參數；範例包含城堡、農舍、威尼斯建築與樹木（部分移植自 Lienhard 等人 2017 年論文）。和基礎範例相比，它的形狀是 3D 量體，規則以分割（split）與替換為主。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub stefalie/shapeml",
+    "page": "https://github.com/stefalie/shapeml",
+    "note": "README showcase：以 ShapeML 文法生成的地形、樹木、城堡、建築等模型"
+   }
+  },
+  {
+   "id": "A05-55",
+   "title": "CGAjs：瀏覽器中的 CGA 形狀文法編輯器",
+   "creator": "Gunnar Aastrand Grimnes（gromgull）",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "three.js",
+    "JavaScript",
+    "CGA",
+    "互動網頁"
+   ],
+   "tools": [
+    "three.js"
+   ],
+   "url": "https://gromgull.github.io/cgajs/",
+   "summary": "以 JavaScript 實作的 CGA Shape Grammar 解析、處理與視覺化工具，用 PEG.js 解析、three.js 顯示：在文字框輸入文法，3D 視窗立即更新，內建 house、church、castle、office building 等範例，支援 split、comp、extrude、taper、隨機規則等。作者自述只實作了 CGA 的一小部分，但很適合用來體驗「文字文法 → 建築量體」。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

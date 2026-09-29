@@ -1,0 +1,448 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "D02",
+  "name_zh": "Physarum 黏菌",
+  "name_en": "Physarum Transport Network",
+  "one_liner": "上千隻只會「聞、轉、走、留」的小蟲在網格上互相跟隨彼此留下的氣味，最後自己織出一張像葉脈或交通網的網絡。",
+  "how_it_works": [
+   "建立 gridSize × gridSize 的痕跡場 trail[x,y]，並把代理人隨機撒在中央的圓裡、面向隨機。",
+   "聞：每個代理人讀取左、前、右三個感測器位置（離身體 sensorDistance 格、張開 sensorAngle）的痕跡濃度。",
+   "轉：前面最濃就直走；左或右比較濃就轉過去 turnAngle；前面最淡就隨機左轉或右轉。",
+   "走與留：往前走一格（超出邊界從對面出來），並在腳下的格子加上 DepositAmount 的痕跡。",
+   "散：整張痕跡場做 3×3 平均（擴散），再乘上 (1 − decay) 讓舊痕跡變淡；重複 steps 次。",
+   "輸出：把痕跡值正規化成 0–1，接 Gradient 為 gridPoints 上色。"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 10,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "D02-01",
+   "title": "黏菌重現東京鐵路網",
+   "creator": "Atsushi Tero, Toshiyuki Nakagaki 等",
+   "year": "2010",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tags": [
+    "最佳化",
+    "吸引子控制",
+    "網格擴散"
+   ],
+   "tools": [
+    "生物實驗",
+    "數學模型"
+   ],
+   "url": "https://www.science.org/doi/10.1126/science.1177894",
+   "summary": "研究者把燕麥片放在培養皿上對應東京周邊城市的位置，黏菌長出的管網在效率、容錯與成本上可與真實鐵路網相比，並據此提出一套自適應網絡的數學規則。這是「黏菌會做網絡最佳化」最常被引用的案例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-02",
+   "title": "Physarum 多代理人模型的圖樣地圖",
+   "creator": "Jeff Jones",
+   "year": "2010",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "隨機",
+    "開放生長"
+   ],
+   "tools": [
+    "Processing",
+    "Java"
+   ],
+   "url": "https://cognet.mit.edu/journal/10.1162/artl.2010.16.2.16202",
+   "summary": "基礎範例的原型論文：以只會感測、轉向、前進、沉積的粒子群近似黏菌管網，並系統性掃描感測角度與轉向角度，整理出網狀、斑點、迷宮紋等圖樣對照圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-03",
+   "title": "physarum／36 Points 生成藝術",
+   "creator": "Sage Jenson (mxsage)",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "隨機",
+    "網格擴散"
+   ],
+   "tools": [
+    "GPU shader"
+   ],
+   "url": "https://cargocollective.com/sagejenson/physarum",
+   "summary": "Sage Jenson 以 Jeff Jones 的模型為基礎，在 GPU 上跑數百萬粒子並混合多物種與參數切換，產生極具辨識度的發光網紋作品，後來衍生出 36 Points 等廣為流傳的生成藝術系列。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-04",
+   "title": "3D Physarum 青銅燭台",
+   "creator": "Sage Jenson × Nervous System",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "等值面",
+    "網格擴散"
+   ],
+   "tools": [
+    "GPU 模擬",
+    "Formlabs",
+    "脫蠟鑄造"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9137",
+   "summary": "Jenson 在 Nervous System 駐村期間，用受引導的 3D 粒子—網格混合黏菌模擬長出網狀柱體，以 Formlabs 列印可燃蠟樹脂、做石膏模，再澆鑄成青銅燭台。展示了黏菌網絡從螢幕走向實體製造的完整流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-06",
+   "title": "bioTallinn 與 Paljassaare 半島黏菌規劃",
+   "creator": "ecoLogicStudio／Claudia Pasquero（策展）",
+   "year": "2017",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "影像輸入",
+    "開放生長"
+   ],
+   "tools": [
+    "生物實驗",
+    "衛星資料"
+   ],
+   "url": "https://www.ecologicstudio.com/projects/biotallinn-2",
+   "summary": "2017 塔林建築雙年展以 bioTallinn 為題，ecoLogicStudio 的 Paljassaare 半島提案讓黏菌在代表基地資訊的地景上生長，把城市汙水基礎設施與生物基質納入總體規劃的形態生成。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-07",
+   "title": "如果黏菌蓋高速公路：英國路網",
+   "creator": "Andrew Adamatzky, Jeff Jones",
+   "year": "2010",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "可重現種子",
+    "吸引子控制",
+    "最佳化"
+   ],
+   "tools": [
+    "生物實驗",
+    "多代理人模型"
+   ],
+   "url": "https://arxiv.org/abs/0912.3967",
+   "summary": "把英國十大都會區當作食物點，比較黏菌網絡與真實高速公路網；結果大致吻合，但黏菌會改以 Newcastle 直通 Glasgow。之後同一方法擴及荷蘭、比利時、加拿大、德國與羅馬古道等研究。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-08",
+   "title": "Monte Carlo Physarum Machine 描繪宇宙網",
+   "creator": "Joseph N. Burchett, Oskar Elek 等（UC Santa Cruz）",
+   "year": "2020",
+   "category": "drawing",
+   "scale": "地景",
+   "tags": [
+    "3D",
+    "隨機",
+    "空間索引"
+   ],
+   "tools": [
+    "GPU",
+    "Python"
+   ],
+   "url": "https://news.ucsc.edu/2020/03/cosmic-web/",
+   "summary": "天文學家把 37,000 多個星系當作食物點，用 3D 黏菌演算法（MCPM）重建連接星系的暗物質纖維網，並以哈伯太空望遠鏡的觀測資料驗證。說明同一套規則能在完全不同尺度上重建網絡結構。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-09",
+   "title": "3D Physarum 產生 3D 列印內部支撐",
+   "creator": "ACM 論文研究團隊（arXiv 2212.11527）",
+   "year": "2022",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "最佳化",
+    "等值面"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://arxiv.org/pdf/2212.11527",
+   "summary": "以 Monte Carlo 版的 3D 黏菌演算法，替 3D 列印物件產生近似拓撲最佳的內部支撐網絡，並以抗衝擊自行車安全帽為案例。把黏菌網絡從紋理提升為結構與材料設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-10",
+   "title": "PolyPhy：開源 3D 列印仿生物件生成器",
+   "creator": "PolyPhy 專案團隊",
+   "year": "2023",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "等值面"
+   ],
+   "tools": [
+    "Python",
+    "3D 列印"
+   ],
+   "url": "https://dl.acm.org/doi/10.1145/3623263.3629159",
+   "summary": "發表於 ACM 計算製造研討會的開源工具，把三角網格轉成以黏菌行為生成的網狀、可 3D 列印物件，讓設計者不用自己寫 GPU 模擬也能使用黏菌網絡建模。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-11",
+   "title": "Physarealm：Grasshopper 黏菌外掛",
+   "creator": "maajor",
+   "year": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#",
+    "Anemone",
+    "Kangaroo"
+   ],
+   "url": "https://www.food4rhino.com/en/app/physarealm",
+   "summary": "以 Jeff Jones 的 Processing 程式為基礎，擴展到 3D 並寫成 Rhino／Grasshopper 外掛，可在自訂邊界與食物源中跑黏菌代理人，常與 Anemone、Kangaroo 搭配做建築形體研究。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-12",
+   "title": "Skeleton Physarum：以骨架化誤差驅動的黏菌",
+   "creator": "YufanX",
+   "year": "",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "自訂 class",
+    "幾何轉換"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://github.com/YufanX/SkeletonPhysarum",
+   "summary": "開源 Grasshopper 外掛「Slime」的 C# 原始碼，提出以 Voronoi 為基礎的骨架化方法產生黏菌圖樣，示範如何把網格痕跡轉換成乾淨的線性網絡。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-13",
+   "title": "黏菌分步生長作為都市設計樣板",
+   "creator": "Scientific Reports 論文研究團隊",
+   "year": "2022",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "開放生長",
+    "吸引子控制"
+   ],
+   "tools": [
+    "生物實驗"
+   ],
+   "url": "https://www.nature.com/articles/s41598-022-05439-w",
+   "summary": "研究以分步方式讓黏菌在城市節點間生長，觀察網絡在不同階段的形態，探討其作為都市設計與路網規劃樣板的可能性。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-14",
+   "title": "受黏菌生長啟發的非均質建築材料",
+   "creator": "PubMed 收錄論文研究團隊",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "網格擴散"
+   ],
+   "tools": [
+    "數值模擬",
+    "3D 列印"
+   ],
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31412323/",
+   "summary": "研究以黏菌依養分分布生長的原理設計空間非均質的蜂巢／多孔材料，並量測其力學反應，示範黏菌網絡如何轉化為可調性能的結構材料。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-15",
+   "title": "互動式黏菌裝置（遊戲手把操控）",
+   "creator": "Bleuje",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer",
+    "吸引子控制"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "summary": "以 openFrameworks 實作、受 36 Points 啟發的黏菌模擬，讓觀眾用遊戲手把即時改變參數，作為藝術裝置展出，展現參數空間的豐富度。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D02-51",
+   "title": "physarum",
+   "creator": "Sage Jenson",
+   "year": "2019",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "GLSL",
+    "黏菌",
+    "physarum",
+    "GPU"
+   ],
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "url": "https://sagejenson.com/physarum",
+   "summary": "依據 Jeff Jones（2010）的 Physarum 傳輸網路模型，以 openFrameworks 的 C++ 與 GLSL 在 GPU 上即時模擬大量粒子：每個粒子有前、左前、右前三個感測器，朝軌跡濃度最高處轉向並沉積軌跡，軌跡圖每步做 3×3 平均擴散與乘法衰減。作者的圖解文章讓這個模型在 creative coding 社群廣為流傳，並示範感測角度、距離等參數對網路形態的巨大影響。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Sage Jenson（Cargo 網站）",
+    "page": "https://sagejenson.com/physarum",
+    "note": "physarum 文章首圖，黑白格狀黏菌網路"
+   }
+  },
+  {
+   "id": "D02-52",
+   "title": "Coding Adventure: Ant and Slime Simulations",
+   "creator": "Sebastian Lague",
+   "year": "2021",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "compute shader",
+    "HLSL",
+    "黏菌",
+    "physarum"
+   ],
+   "tools": [
+    "Unity",
+    "HLSL"
+   ],
+   "url": "https://github.com/SebLague/Slime-Simulation",
+   "summary": "以 Unity compute shader 實作 Jeff Jones 的黏菌模型（並與螞蟻費洛蒙模擬對照），影片逐步示範感測、轉向、沉積、擴散衰減的每個步驟，專案原始碼以 GPL-3.0 公開於 GitHub。多物種設定與色彩映射讓結果更具視覺張力。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=X-iSQQgOd1A",
+    "note": "Coding Adventure: Ant and Slime Simulations 影片縮圖，青綠色放射狀黏菌圖樣"
+   }
+  },
+  {
+   "id": "D02-53",
+   "title": "p5.js Coding Tutorial | Slime Molds (Physarum)",
+   "creator": "Patt Vira",
+   "year": "2024",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "黏菌",
+    "physarum",
+    "教學影片",
+    "入門"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
+   "summary": "以 p5.js 在 CPU 上實作 Jeff Jones 的黏菌演算法，並附教學影片逐步講解；草圖也收錄於 p5.js 官方網站的社群作品區。粒子數較少但程式精簡，最適合作為 GH C# 範例的對照入門版本。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=VyXxSNcgDtg",
+    "note": "p5.js Slime Molds 教學影片縮圖，含黑白黏菌網路"
+   }
+  },
+  {
+   "id": "D02-54",
+   "title": "interactive-physarum／Algorithms for making interesting organic simulations",
+   "creator": "Etienne Jacob（bleuje）",
+   "year": "2024",
+   "category": "art-installation",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "GLSL",
+    "compute shader",
+    "黏菌",
+    "互動裝置"
+   ],
+   "tools": [
+    "openFrameworks",
+    "GLSL"
+   ],
+   "url": "https://github.com/Bleuje/interactive-physarum",
+   "summary": "作者以 openFrameworks 與 compute shader 延伸 Physarum 模型，受 Sage Jenson《36 Points》啟發，並以遊戲手把即時操控，作為藝術裝置使用。搭配的長文（bleuje.com）逐步圖解原始演算法與各種變形。",
+   "currently_cc": true,
+   "photo": {
+    "source": "bleuje.com",
+    "page": "https://bleuje.com/physarum-explanation",
+    "note": "文章縮圖，左為單一代理感測示意，右為橘色有機網路模擬"
+   }
+  },
+  {
+   "id": "D02-55",
+   "title": "Artist in Residency: Sage Jenson — 3D Physarum 形體",
+   "creator": "Sage Jenson（Nervous System 駐村）",
+   "year": "2022",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "黏菌",
+    "physarum",
+    "3D",
+    "數位製造"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog?p=9137",
+   "summary": "Sage Jenson 在 Nervous System 駐村期間，把先前的 Houdini 草稿改寫成引導式的 3D 粒子—網格混合模擬（3D Physarum），產生網狀柱體（candlestick）等形體並以青銅鑄造實體化。這是把黏菌演算法從 2D 圖像推向 3D 可製造量體的案例，與建築構件尺度最接近。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Nervous System blog",
+    "page": "https://n-e-r-v-o-u-s.com/blog?p=9137",
+    "note": "駐村文章首圖，置於草地上的 3D physarum 網狀形體實體"
+   }
+  }
+ ]
+}

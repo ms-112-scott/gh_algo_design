@@ -1,17 +1,625 @@
-{"agent": "d", "algorithms": [], "cases": [
-{"id":"D01-51","algo":"D01","title":"Coding Challenge #124：Flocking Simulation（群聚模擬）","creator":"Daniel Shiffman（The Coding Train）","year":"2018","category":"drawing","categories_extra":["performance"],"scale":"物件","summary":"以 p5.js 從零實作 Craig Reynolds 的 boids，依序加入對齊（alignment）、聚合（cohesion）、分離（separation）三條規則，並用滑桿即時調整三股力的權重。與 Grasshopper C# 範例相比，它是在瀏覽器裡逐格即時繪製的 2D 動畫，重點在觀察參數改變時群體行為的即時變化。","variations":[{"name":"權重滑桿即時調參","how":"把 alignment／cohesion／separation 三個權重改成 GH Number Slider，並在每次迭代讀取","effect":"可以即時看到群體從鬆散游走切換成緊密團塊或分散漂流"},{"name":"邊界環繞（wrap-around）","how":"個體超出畫布時從對邊重新進入，取代反彈或刪除","effect":"群體可無限持續運動，不會在邊界堆積"},{"name":"軌跡累積成圖","how":"不清除背景，把每一步的位置連成 Polyline 保留下來","effect":"得到流線般的群聚軌跡圖，可作為平面圖紋或表皮紋理"}],"difficulty":2,"tags":["creative coding","p5.js","Processing","群聚","boids","動畫","教學影片"],"tools":["p5.js","Processing"],"url":"https://thecodingtrain.com/challenges/124-flocking-simulation"},
-{"id":"D01-52","algo":"D01","title":"Flocking（Processing 官方範例）","creator":"Daniel Shiffman","year":"2007","category":"drawing","categories_extra":[],"scale":"物件","summary":"Processing 官方範例（Topics › Simulate），以 PVector 與 ArrayList 實作 Reynolds 的 boids，每個個體依避碰、對齊、聚合三條規則自行轉向，點擊滑鼠可加入新個體。程式分成 Boid 與 Flock 兩個類別，是對照 GH C# 範例類別設計最精簡的版本。","variations":[{"name":"互動加入個體","how":"在 GH 中以點擊或新增點來即時增加 boid，而非固定初始數量","effect":"觀察新個體如何被既有群體吸收"},{"name":"箭頭形狀顯示方向","how":"用速度向量的方向角，把每個個體畫成三角形而非點","effect":"能直接讀出群體的流向與轉向"}],"difficulty":1,"tags":["creative coding","Processing","群聚","boids","官方範例","入門"],"tools":["Processing"],"url":"https://processing.org/examples/flocking.html"},
-{"id":"D01-53","algo":"D01","title":"three.js webgl gpgpu birds（GPU 鳥群）","creator":"Joshua Koo（zz85）／three.js","year":"2013","category":"art-installation","categories_extra":["performance"],"scale":"群體／都市","summary":"three.js 官方範例，把每隻鳥的位置與速度存成浮點紋理，用 GLSL shader 在 GPU 上平行計算群聚規則，可在瀏覽器即時模擬大量 3D 鳥群，滑鼠則扮演讓鳥群閃避的「掠食者」。與 GH C# 範例的 CPU 迴圈不同，關鍵在「以紋理當資料結構、以 shader 當更新函式」的 GPGPU 思路。","variations":[{"name":"掠食者迴避","how":"加入一個跟著游標（或 GH 中的吸引點）移動的點，距離內的個體加上反向排斥力","effect":"鳥群出現被撕開再癒合的動態破口"},{"name":"GPU 平行化","how":"把個體狀態改存成紋理／陣列，用 shader 同時更新所有個體","effect":"個體數可從數百提升到數萬，形成雲狀的大尺度群體"},{"name":"拍翅動畫","how":"依速度大小驅動每個個體網格頂點的上下擺動","effect":"讓抽象的點群變成可讀的鳥群影像"}],"difficulty":4,"tags":["creative coding","three.js","GLSL","WebGL","GPGPU","群聚","3D"],"tools":["three.js","GLSL"],"url":"https://threejs.org/examples/webgl_gpgpu_birds.html"},
-{"id":"D01-54","algo":"D01","title":"TouchDesigner Boids Flocking Tutorial","creator":"David Braun","year":"2021","category":"performance","categories_extra":["art-installation"],"scale":"群體／都市","summary":"在 TouchDesigner 中以 GLSL compute shader 實作 boids，並用「分箱」（binning）把空間切成格子、只搜尋鄰近格內的個體，大幅降低鄰居搜尋成本。專案檔公開於作者的 TouchDesigner_Shared GitHub 儲存庫，適合用於即時視覺演出。","variations":[{"name":"空間分箱加速鄰居搜尋","how":"把 GH 範例中兩兩比較全部個體的做法，改成先依格子索引分組、只比較同格與相鄰格","effect":"個體數增加時仍能維持即時互動"},{"name":"接上音訊或感測器","how":"把群聚權重或速度上限綁到外部輸入（音量、感測器數值）","effect":"群體行為隨聲音或觀眾動作即時改變，可用於演出與裝置"}],"difficulty":4,"tags":["creative coding","TouchDesigner","GLSL","compute shader","群聚","即時視覺"],"tools":["TouchDesigner","GLSL"],"url":"https://www.youtube.com/watch?v=f2yOYmOgZEA"},
-{"id":"D01-55","algo":"D01","title":"3D Flocking with POPs","creator":"Dean Cheesman（dcheesman）","year":"2025","category":"performance","categories_extra":["art-installation"],"scale":"群體／都市","summary":"利用 TouchDesigner 新推出的 POPs 運算子建構 3D boids，作者表示過去在 TouchDesigner 做群聚並不直觀，POPs 讓它容易許多。與 GH C# 範例的程式碼寫法相比，這是以節點圖表達同一套規則的做法，接近 Grasshopper 本身的視覺化程式思維。","variations":[{"name":"從 2D 延伸到 3D","how":"把位置與速度向量從 XY 平面改成完整的 3D 向量，邊界改用立方體或球體","effect":"得到立體的魚群、鳥群團塊，可作為空間裝置的動態量體"},{"name":"節點化規則","how":"把三條規則拆成獨立元件（或 GH Cluster），各自輸出力向量再加總","effect":"更容易替換、關閉或新增規則進行實驗"}],"difficulty":3,"tags":["creative coding","TouchDesigner","POPs","群聚","3D","節點式程式"],"tools":["TouchDesigner"],"url":"https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049"},
-{"id":"D02-51","algo":"D02","title":"physarum","creator":"Sage Jenson","year":"2019","category":"2d-pattern","categories_extra":["art-installation"],"scale":"地景","summary":"依據 Jeff Jones（2010）的 Physarum 傳輸網路模型，以 openFrameworks 的 C++ 與 GLSL 在 GPU 上即時模擬大量粒子：每個粒子有前、左前、右前三個感測器，朝軌跡濃度最高處轉向並沉積軌跡，軌跡圖每步做 3×3 平均擴散與乘法衰減。作者的圖解文章讓這個模型在 creative coding 社群廣為流傳，並示範感測角度、距離等參數對網路形態的巨大影響。","variations":[{"name":"感測角／轉向角掃描","how":"系統性地改變 sensor angle、sensor distance、rotation angle 三個參數並並排輸出","effect":"從細密網格、粗大管路到點狀聚集，得到一整張形態圖譜"},{"name":"多物種競爭","how":"加入多組粒子，各自只追蹤自己的軌跡並迴避他者軌跡","effect":"不同顏色的網路互相排擠，形成領域邊界"},{"name":"GPU 化","how":"把粒子與軌跡圖改成紋理，以 shader 平行更新","effect":"粒子數大幅增加，網路細節更連續"}],"difficulty":4,"tags":["creative coding","openFrameworks","GLSL","黏菌","physarum","GPU"],"tools":["openFrameworks","GLSL"],"url":"https://sagejenson.com/physarum"},
-{"id":"D02-52","algo":"D02","title":"Coding Adventure: Ant and Slime Simulations","creator":"Sebastian Lague","year":"2021","category":"2d-pattern","categories_extra":["performance"],"scale":"地景","summary":"以 Unity compute shader 實作 Jeff Jones 的黏菌模型（並與螞蟻費洛蒙模擬對照），影片逐步示範感測、轉向、沉積、擴散衰減的每個步驟，專案原始碼以 GPL-3.0 公開於 GitHub。多物種設定與色彩映射讓結果更具視覺張力。","variations":[{"name":"多物種色彩","how":"為每個物種指定獨立的軌跡通道與顏色，感測時吸引同類、排斥異類","effect":"產生彼此交織或互相劃界的彩色網路"},{"name":"初始分布改變","how":"粒子從圓心向外、圓周向內或隨機分布出發","effect":"得到放射狀、環狀或均勻的不同網路起始形態"}],"difficulty":4,"tags":["creative coding","Unity","compute shader","HLSL","黏菌","physarum"],"tools":["Unity","HLSL"],"url":"https://github.com/SebLague/Slime-Simulation"},
-{"id":"D02-53","algo":"D02","title":"p5.js Coding Tutorial | Slime Molds (Physarum)","creator":"Patt Vira","year":"2024","category":"2d-pattern","categories_extra":["drawing"],"scale":"物件","summary":"以 p5.js 在 CPU 上實作 Jeff Jones 的黏菌演算法，並附教學影片逐步講解；草圖也收錄於 p5.js 官方網站的社群作品區。粒子數較少但程式精簡，最適合作為 GH C# 範例的對照入門版本。","variations":[{"name":"用二維陣列當軌跡圖","how":"在 GH 中以二維 double 陣列或 Mesh 頂點顏色作為軌跡圖，每步做 3×3 平均與乘法衰減","effect":"不需 GPU 也能看到網路逐步收斂"},{"name":"降低粒子數以看清個體","how":"只放數百個粒子並畫出其感測點","effect":"適合教學時說明「感測—轉向—前進—沉積」的迴圈"}],"difficulty":2,"tags":["creative coding","p5.js","黏菌","physarum","教學影片","入門"],"tools":["p5.js"],"url":"https://www.youtube.com/watch?v=VyXxSNcgDtg"},
-{"id":"D02-54","algo":"D02","title":"interactive-physarum／Algorithms for making interesting organic simulations","creator":"Etienne Jacob（bleuje）","year":"2024","category":"art-installation","categories_extra":["performance"],"scale":"地景","summary":"作者以 openFrameworks 與 compute shader 延伸 Physarum 模型，受 Sage Jenson《36 Points》啟發，並以遊戲手把即時操控，作為藝術裝置使用。搭配的長文（bleuje.com）逐步圖解原始演算法與各種變形。","variations":[{"name":"參數隨濃度變化","how":"讓 sensor distance、移動步長等不再是常數，而是所在位置軌跡濃度的函數","effect":"出現更有機、多尺度的紋理，而非單一尺度的網路"},{"name":"參數組合切換","how":"預存多組參數，執行中平滑內插切換","effect":"圖樣在不同形態間流動變化，適合現場互動"}],"difficulty":5,"tags":["creative coding","openFrameworks","GLSL","compute shader","黏菌","互動裝置"],"tools":["openFrameworks","GLSL"],"url":"https://github.com/Bleuje/interactive-physarum"},
-{"id":"D02-55","algo":"D02","title":"Artist in Residency: Sage Jenson — 3D Physarum 形體","creator":"Sage Jenson（Nervous System 駐村）","year":"2022","category":"fabrication","categories_extra":["3d-architecture","modeling"],"scale":"構件","summary":"Sage Jenson 在 Nervous System 駐村期間，把先前的 Houdini 草稿改寫成引導式的 3D 粒子—網格混合模擬（3D Physarum），產生網狀柱體（candlestick）等形體並以青銅鑄造實體化。這是把黏菌演算法從 2D 圖像推向 3D 可製造量體的案例，與建築構件尺度最接近。","variations":[{"name":"2D 軌跡圖改為 3D 體素","how":"軌跡圖改成三維格點，粒子以 3D 方向感測與轉向","effect":"得到立體的管狀網路量體"},{"name":"引導場","how":"加入目標形狀或邊界作為額外吸引／限制","effect":"網路長成指定的柱體或容器外形，便於後續製造"},{"name":"體素轉網格製造","how":"以 marching cubes 等方法把軌跡濃度場轉成封閉網格","effect":"可直接 3D 列印或翻模鑄造"}],"difficulty":5,"tags":["creative coding","Houdini","黏菌","physarum","3D","數位製造"],"tools":["Houdini"],"url":"https://n-e-r-v-o-u-s.com/blog?p=9137"},
-{"id":"D03-51","algo":"D03","title":"Steering Behaviors For Autonomous Characters","creator":"Craig Reynolds","year":"1999","category":"urban-landscape","categories_extra":["drawing"],"scale":"群體／都市","summary":"Reynolds 在 GDC 1999 發表的論文線上版，定義 seek／flee、pursue／evade、arrival、wander、path following、wall following、collision avoidance、flow field following 等轉向行為，網站另附 Java 動畫圖示，後來成為遊戲與 creative coding 中人流、角色移動的共同基礎。與 GH C# 範例相比，這是把「人流」拆解成可組合轉向力模組的原始來源。","variations":[{"name":"路徑跟隨","how":"預測個體未來位置，投影到路徑中心線，若偏離半徑外就朝投影點前方 seek","effect":"人流沿走廊或動線流動，而非直線衝向目標"},{"name":"碰撞迴避","how":"預測兩兩個體未來最接近點，若會相撞就提早側向閃避","effect":"對向人流會自然錯身，減少擠成一團"},{"name":"牆面跟隨","how":"以建築平面邊界曲線做為牆，計算個體到牆的預測距離並施加法向排斥","effect":"模擬沿牆行走、轉角繞行等空間行為"}],"difficulty":3,"tags":["creative coding","steering behaviors","人流","自主代理","經典論文","Java"],"tools":["Java"],"url":"https://www.red3d.com/cwr/steer/gdc99/"},
-{"id":"D03-52","algo":"D03","title":"5.7 Path Following（Nature of Code 影片）","creator":"Daniel Shiffman（The Coding Train）","year":"2021","category":"drawing","categories_extra":["urban-landscape"],"scale":"群體／都市","summary":"Nature of Code 第 5 章的影片教學，以 p5.js 實作 Reynolds 的路徑跟隨：用純量投影（scalar projection）找出未來位置在路徑上的最近點，偏離時才轉向。這正是把 GH 中的動線曲線當作行人導引的核心計算。","variations":[{"name":"多段折線路徑","how":"把單一線段換成 GH Polyline，逐段計算投影並取最近者","effect":"行人可沿轉折的走廊或街道前進"},{"name":"路徑半徑即走廊寬度","how":"讓路徑半徑對應實際走廊寬度，並與分離力一起作用","effect":"可觀察寬窄走廊造成的人流密度差異"}],"difficulty":2,"tags":["creative coding","p5.js","路徑跟隨","steering behaviors","教學影片"],"tools":["p5.js"],"url":"https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following"},
-{"id":"D03-53","algo":"D03","title":"The Nature of Code 第 5 章：Autonomous Agents","creator":"Daniel Shiffman","year":"2024","category":"drawing","categories_extra":["urban-landscape"],"scale":"群體／都市","summary":"Nature of Code（2024 年 No Starch 出版，全文在網站上以 Creative Commons 公開）第 5 章，以 p5.js 講解轉向代理、flow field、path following 與 flocking 等群體行為，並討論演算法效率（空間分格）。可視為把 GH C# 人流範例拆成一個個可單獨練習的積木。","variations":[{"name":"流場導引","how":"把 GH 中的向量場（例如由出口距離計算的梯度）當作每個格子的期望速度","effect":"整群行人被場引導流向出口，類似疏散模擬"},{"name":"分離 + 路徑跟隨組合","how":"對每個代理把 separation 與 path following 兩股力依權重相加","effect":"得到既沿動線又彼此保持距離的較真實人流"},{"name":"空間分格加速","how":"用 bin-lattice 空間分割只檢查鄰近格的代理","effect":"數千人規模仍可即時模擬"}],"difficulty":2,"tags":["creative coding","p5.js","自主代理","steering behaviors","人流","教科書"],"tools":["p5.js"],"url":"https://natureofcode.com/autonomous-agents/"},
-{"id":"D03-54","algo":"D03","title":"Simple Crowd Simulation（Houdini 人群模擬）","creator":"bubble pins","year":"2020","category":"urban-landscape","categories_extra":["performance"],"scale":"群體／都市","summary":"SideFX 官網收錄的 Houdini 18 入門教學，以 Crowds 工具架建立代理並模擬大量行走角色。與 GH C# 範例的抽象點粒子不同，Houdini 的 crowd 系統把轉向行為接到帶骨架動畫的角色上，適合做街道、廣場的人流視覺化。","variations":[{"name":"以密度圖分布人群","how":"用影像或 Mesh 頂點權重控制初始人數密度，而非均勻隨機撒點","effect":"廣場、入口等處出現符合設計意圖的人潮熱區"},{"name":"狀態切換","how":"為代理定義站立、行走、奔跑等狀態，依周邊密度或距離目標切換","effect":"人流在擁擠處放慢、空曠處加速，更接近真實"}],"difficulty":3,"tags":["creative coding","Houdini","人群模擬","crowd","3D"],"tools":["Houdini"],"url":"https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/"},
-{"id":"D03-55","algo":"D03","title":"People in a Crowd","creator":"Sonia Martin","year":"2014","category":"drawing","categories_extra":["urban-landscape"],"scale":"群體／都市","summary":"OpenProcessing 上的 Processing 作品，以向量、物件與陣列模擬人群穿越場地並嘗試閃避放置的障礙物。作者自述行人仍會互相碰撞、路徑被推偏，正好示範只有排斥力而缺乏目標導向與預測迴避時的人流問題（程式需貼回 Processing 執行）。","variations":[{"name":"加入目標吸引力","how":"為每位行人加上朝對側出口的 seek 力，與障礙排斥相加","effect":"行人繞過障礙後會回到原本方向，而非被推離"},{"name":"預測式迴避","how":"改用未來位置判斷是否相撞，提早側向轉向","effect":"減少個體彼此碰撞、路徑較平順"}],"difficulty":1,"tags":["creative coding","Processing","OpenProcessing","人流","障礙迴避"],"tools":["Processing"],"url":"https://openprocessing.org/sketch/139678/"}
-]}
+{
+  "agent": "d",
+  "algorithms": [],
+  "cases": [
+    {
+      "id": "D01-51",
+      "algo": "D01",
+      "title": "Coding Challenge #124：Flocking Simulation（群聚模擬）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 p5.js 從零實作 Craig Reynolds 的 boids，依序加入對齊（alignment）、聚合（cohesion）、分離（separation）三條規則，並用滑桿即時調整三股力的權重。與 Grasshopper C# 範例相比，它是在瀏覽器裡逐格即時繪製的 2D 動畫，重點在觀察參數改變時群體行為的即時變化。",
+      "variations": [
+        {
+          "name": "權重滑桿即時調參",
+          "how": "把 alignment／cohesion／separation 三個權重改成 GH Number Slider，並在每次迭代讀取",
+          "effect": "可以即時看到群體從鬆散游走切換成緊密團塊或分散漂流"
+        },
+        {
+          "name": "邊界環繞（wrap-around）",
+          "how": "個體超出畫布時從對邊重新進入，取代反彈或刪除",
+          "effect": "群體可無限持續運動，不會在邊界堆積"
+        },
+        {
+          "name": "軌跡累積成圖",
+          "how": "不清除背景，把每一步的位置連成 Polyline 保留下來",
+          "effect": "得到流線般的群聚軌跡圖，可作為平面圖紋或表皮紋理"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Processing",
+        "群聚",
+        "boids",
+        "動畫",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://thecodingtrain.com/challenges/124-flocking-simulation"
+    },
+    {
+      "id": "D01-52",
+      "algo": "D01",
+      "title": "Flocking（Processing 官方範例）",
+      "creator": "Daniel Shiffman",
+      "year": "2007",
+      "category": "drawing",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Processing 官方範例（Topics › Simulate），以 PVector 與 ArrayList 實作 Reynolds 的 boids，每個個體依避碰、對齊、聚合三條規則自行轉向，點擊滑鼠可加入新個體。程式分成 Boid 與 Flock 兩個類別，是對照 GH C# 範例類別設計最精簡的版本。",
+      "variations": [
+        {
+          "name": "互動加入個體",
+          "how": "在 GH 中以點擊或新增點來即時增加 boid，而非固定初始數量",
+          "effect": "觀察新個體如何被既有群體吸收"
+        },
+        {
+          "name": "箭頭形狀顯示方向",
+          "how": "用速度向量的方向角，把每個個體畫成三角形而非點",
+          "effect": "能直接讀出群體的流向與轉向"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "群聚",
+        "boids",
+        "官方範例",
+        "入門"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://processing.org/examples/flocking.html"
+    },
+    {
+      "id": "D01-53",
+      "algo": "D01",
+      "title": "three.js webgl gpgpu birds（GPU 鳥群）",
+      "creator": "Joshua Koo（zz85）／three.js",
+      "year": "2013",
+      "category": "art-installation",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "three.js 官方範例，把每隻鳥的位置與速度存成浮點紋理，用 GLSL shader 在 GPU 上平行計算群聚規則，可在瀏覽器即時模擬大量 3D 鳥群，滑鼠則扮演讓鳥群閃避的「掠食者」。與 GH C# 範例的 CPU 迴圈不同，關鍵在「以紋理當資料結構、以 shader 當更新函式」的 GPGPU 思路。",
+      "variations": [
+        {
+          "name": "掠食者迴避",
+          "how": "加入一個跟著游標（或 GH 中的吸引點）移動的點，距離內的個體加上反向排斥力",
+          "effect": "鳥群出現被撕開再癒合的動態破口"
+        },
+        {
+          "name": "GPU 平行化",
+          "how": "把個體狀態改存成紋理／陣列，用 shader 同時更新所有個體",
+          "effect": "個體數可從數百提升到數萬，形成雲狀的大尺度群體"
+        },
+        {
+          "name": "拍翅動畫",
+          "how": "依速度大小驅動每個個體網格頂點的上下擺動",
+          "effect": "讓抽象的點群變成可讀的鳥群影像"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "three.js",
+        "GLSL",
+        "WebGL",
+        "GPGPU",
+        "群聚",
+        "3D"
+      ],
+      "tools": [
+        "three.js",
+        "GLSL"
+      ],
+      "url": "https://threejs.org/examples/webgl_gpgpu_birds.html"
+    },
+    {
+      "id": "D01-54",
+      "algo": "D01",
+      "title": "TouchDesigner Boids Flocking Tutorial",
+      "creator": "David Braun",
+      "year": "2021",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "在 TouchDesigner 中以 GLSL compute shader 實作 boids，並用「分箱」（binning）把空間切成格子、只搜尋鄰近格內的個體，大幅降低鄰居搜尋成本。專案檔公開於作者的 TouchDesigner_Shared GitHub 儲存庫，適合用於即時視覺演出。",
+      "variations": [
+        {
+          "name": "空間分箱加速鄰居搜尋",
+          "how": "把 GH 範例中兩兩比較全部個體的做法，改成先依格子索引分組、只比較同格與相鄰格",
+          "effect": "個體數增加時仍能維持即時互動"
+        },
+        {
+          "name": "接上音訊或感測器",
+          "how": "把群聚權重或速度上限綁到外部輸入（音量、感測器數值）",
+          "effect": "群體行為隨聲音或觀眾動作即時改變，可用於演出與裝置"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "compute shader",
+        "群聚",
+        "即時視覺"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://www.youtube.com/watch?v=f2yOYmOgZEA"
+    },
+    {
+      "id": "D01-55",
+      "algo": "D01",
+      "title": "3D Flocking with POPs",
+      "creator": "Dean Cheesman（dcheesman）",
+      "year": "2025",
+      "category": "performance",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "利用 TouchDesigner 新推出的 POPs 運算子建構 3D boids，作者表示過去在 TouchDesigner 做群聚並不直觀，POPs 讓它容易許多。與 GH C# 範例的程式碼寫法相比，這是以節點圖表達同一套規則的做法，接近 Grasshopper 本身的視覺化程式思維。",
+      "variations": [
+        {
+          "name": "從 2D 延伸到 3D",
+          "how": "把位置與速度向量從 XY 平面改成完整的 3D 向量，邊界改用立方體或球體",
+          "effect": "得到立體的魚群、鳥群團塊，可作為空間裝置的動態量體"
+        },
+        {
+          "name": "節點化規則",
+          "how": "把三條規則拆成獨立元件（或 GH Cluster），各自輸出力向量再加總",
+          "effect": "更容易替換、關閉或新增規則進行實驗"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "POPs",
+        "群聚",
+        "3D",
+        "節點式程式"
+      ],
+      "tools": [
+        "TouchDesigner"
+      ],
+      "url": "https://derivative.ca/community-post/tutorial/3d-flocking-pops/73049"
+    },
+    {
+      "id": "D02-51",
+      "algo": "D02",
+      "title": "physarum",
+      "creator": "Sage Jenson",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "依據 Jeff Jones（2010）的 Physarum 傳輸網路模型，以 openFrameworks 的 C++ 與 GLSL 在 GPU 上即時模擬大量粒子：每個粒子有前、左前、右前三個感測器，朝軌跡濃度最高處轉向並沉積軌跡，軌跡圖每步做 3×3 平均擴散與乘法衰減。作者的圖解文章讓這個模型在 creative coding 社群廣為流傳，並示範感測角度、距離等參數對網路形態的巨大影響。",
+      "variations": [
+        {
+          "name": "感測角／轉向角掃描",
+          "how": "系統性地改變 sensor angle、sensor distance、rotation angle 三個參數並並排輸出",
+          "effect": "從細密網格、粗大管路到點狀聚集，得到一整張形態圖譜"
+        },
+        {
+          "name": "多物種競爭",
+          "how": "加入多組粒子，各自只追蹤自己的軌跡並迴避他者軌跡",
+          "effect": "不同顏色的網路互相排擠，形成領域邊界"
+        },
+        {
+          "name": "GPU 化",
+          "how": "把粒子與軌跡圖改成紋理，以 shader 平行更新",
+          "effect": "粒子數大幅增加，網路細節更連續"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "GLSL",
+        "黏菌",
+        "physarum",
+        "GPU"
+      ],
+      "tools": [
+        "openFrameworks",
+        "GLSL"
+      ],
+      "url": "https://sagejenson.com/physarum"
+    },
+    {
+      "id": "D02-52",
+      "algo": "D02",
+      "title": "Coding Adventure: Ant and Slime Simulations",
+      "creator": "Sebastian Lague",
+      "year": "2021",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "以 Unity compute shader 實作 Jeff Jones 的黏菌模型（並與螞蟻費洛蒙模擬對照），影片逐步示範感測、轉向、沉積、擴散衰減的每個步驟，專案原始碼以 GPL-3.0 公開於 GitHub。多物種設定與色彩映射讓結果更具視覺張力。",
+      "variations": [
+        {
+          "name": "多物種色彩",
+          "how": "為每個物種指定獨立的軌跡通道與顏色，感測時吸引同類、排斥異類",
+          "effect": "產生彼此交織或互相劃界的彩色網路"
+        },
+        {
+          "name": "初始分布改變",
+          "how": "粒子從圓心向外、圓周向內或隨機分布出發",
+          "effect": "得到放射狀、環狀或均勻的不同網路起始形態"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "Unity",
+        "compute shader",
+        "HLSL",
+        "黏菌",
+        "physarum"
+      ],
+      "tools": [
+        "Unity",
+        "HLSL"
+      ],
+      "url": "https://github.com/SebLague/Slime-Simulation"
+    },
+    {
+      "id": "D02-53",
+      "algo": "D02",
+      "title": "p5.js Coding Tutorial | Slime Molds (Physarum)",
+      "creator": "Patt Vira",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 p5.js 在 CPU 上實作 Jeff Jones 的黏菌演算法，並附教學影片逐步講解；草圖也收錄於 p5.js 官方網站的社群作品區。粒子數較少但程式精簡，最適合作為 GH C# 範例的對照入門版本。",
+      "variations": [
+        {
+          "name": "用二維陣列當軌跡圖",
+          "how": "在 GH 中以二維 double 陣列或 Mesh 頂點顏色作為軌跡圖，每步做 3×3 平均與乘法衰減",
+          "effect": "不需 GPU 也能看到網路逐步收斂"
+        },
+        {
+          "name": "降低粒子數以看清個體",
+          "how": "只放數百個粒子並畫出其感測點",
+          "effect": "適合教學時說明「感測—轉向—前進—沉積」的迴圈"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "黏菌",
+        "physarum",
+        "教學影片",
+        "入門"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://www.youtube.com/watch?v=VyXxSNcgDtg"
+    },
+    {
+      "id": "D02-54",
+      "algo": "D02",
+      "title": "interactive-physarum／Algorithms for making interesting organic simulations",
+      "creator": "Etienne Jacob（bleuje）",
+      "year": "2024",
+      "category": "art-installation",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "作者以 openFrameworks 與 compute shader 延伸 Physarum 模型，受 Sage Jenson《36 Points》啟發，並以遊戲手把即時操控，作為藝術裝置使用。搭配的長文（bleuje.com）逐步圖解原始演算法與各種變形。",
+      "variations": [
+        {
+          "name": "參數隨濃度變化",
+          "how": "讓 sensor distance、移動步長等不再是常數，而是所在位置軌跡濃度的函數",
+          "effect": "出現更有機、多尺度的紋理，而非單一尺度的網路"
+        },
+        {
+          "name": "參數組合切換",
+          "how": "預存多組參數，執行中平滑內插切換",
+          "effect": "圖樣在不同形態間流動變化，適合現場互動"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "GLSL",
+        "compute shader",
+        "黏菌",
+        "互動裝置"
+      ],
+      "tools": [
+        "openFrameworks",
+        "GLSL"
+      ],
+      "url": "https://github.com/Bleuje/interactive-physarum"
+    },
+    {
+      "id": "D02-55",
+      "algo": "D02",
+      "title": "Artist in Residency: Sage Jenson — 3D Physarum 形體",
+      "creator": "Sage Jenson（Nervous System 駐村）",
+      "year": "2022",
+      "category": "fabrication",
+      "categories_extra": [
+        "3d-architecture",
+        "modeling"
+      ],
+      "source": "art",
+      "scale": "構件",
+      "summary": "Sage Jenson 在 Nervous System 駐村期間，把先前的 Houdini 草稿改寫成引導式的 3D 粒子—網格混合模擬（3D Physarum），產生網狀柱體（candlestick）等形體並以青銅鑄造實體化。這是把黏菌演算法從 2D 圖像推向 3D 可製造量體的案例，與建築構件尺度最接近。",
+      "variations": [
+        {
+          "name": "2D 軌跡圖改為 3D 體素",
+          "how": "軌跡圖改成三維格點，粒子以 3D 方向感測與轉向",
+          "effect": "得到立體的管狀網路量體"
+        },
+        {
+          "name": "引導場",
+          "how": "加入目標形狀或邊界作為額外吸引／限制",
+          "effect": "網路長成指定的柱體或容器外形，便於後續製造"
+        },
+        {
+          "name": "體素轉網格製造",
+          "how": "以 marching cubes 等方法把軌跡濃度場轉成封閉網格",
+          "effect": "可直接 3D 列印或翻模鑄造"
+        }
+      ],
+      "difficulty": 5,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "黏菌",
+        "physarum",
+        "3D",
+        "數位製造"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog?p=9137"
+    },
+    {
+      "id": "D03-51",
+      "algo": "D03",
+      "title": "Steering Behaviors For Autonomous Characters",
+      "creator": "Craig Reynolds",
+      "year": "1999",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "research",
+      "scale": "群體／都市",
+      "summary": "Reynolds 在 GDC 1999 發表的論文線上版，定義 seek／flee、pursue／evade、arrival、wander、path following、wall following、collision avoidance、flow field following 等轉向行為，網站另附 Java 動畫圖示，後來成為遊戲與 creative coding 中人流、角色移動的共同基礎。與 GH C# 範例相比，這是把「人流」拆解成可組合轉向力模組的原始來源。",
+      "variations": [
+        {
+          "name": "路徑跟隨",
+          "how": "預測個體未來位置，投影到路徑中心線，若偏離半徑外就朝投影點前方 seek",
+          "effect": "人流沿走廊或動線流動，而非直線衝向目標"
+        },
+        {
+          "name": "碰撞迴避",
+          "how": "預測兩兩個體未來最接近點，若會相撞就提早側向閃避",
+          "effect": "對向人流會自然錯身，減少擠成一團"
+        },
+        {
+          "name": "牆面跟隨",
+          "how": "以建築平面邊界曲線做為牆，計算個體到牆的預測距離並施加法向排斥",
+          "effect": "模擬沿牆行走、轉角繞行等空間行為"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "steering behaviors",
+        "人流",
+        "自主代理",
+        "經典論文",
+        "Java"
+      ],
+      "tools": [
+        "Java"
+      ],
+      "url": "https://www.red3d.com/cwr/steer/gdc99/"
+    },
+    {
+      "id": "D03-52",
+      "algo": "D03",
+      "title": "5.7 Path Following（Nature of Code 影片）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2021",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "Nature of Code 第 5 章的影片教學，以 p5.js 實作 Reynolds 的路徑跟隨：用純量投影（scalar projection）找出未來位置在路徑上的最近點，偏離時才轉向。這正是把 GH 中的動線曲線當作行人導引的核心計算。",
+      "variations": [
+        {
+          "name": "多段折線路徑",
+          "how": "把單一線段換成 GH Polyline，逐段計算投影並取最近者",
+          "effect": "行人可沿轉折的走廊或街道前進"
+        },
+        {
+          "name": "路徑半徑即走廊寬度",
+          "how": "讓路徑半徑對應實際走廊寬度，並與分離力一起作用",
+          "effect": "可觀察寬窄走廊造成的人流密度差異"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "路徑跟隨",
+        "steering behaviors",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following"
+    },
+    {
+      "id": "D03-53",
+      "algo": "D03",
+      "title": "The Nature of Code 第 5 章：Autonomous Agents",
+      "creator": "Daniel Shiffman",
+      "year": "2024",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "Nature of Code（2024 年 No Starch 出版，全文在網站上以 Creative Commons 公開）第 5 章，以 p5.js 講解轉向代理、flow field、path following 與 flocking 等群體行為，並討論演算法效率（空間分格）。可視為把 GH C# 人流範例拆成一個個可單獨練習的積木。",
+      "variations": [
+        {
+          "name": "流場導引",
+          "how": "把 GH 中的向量場（例如由出口距離計算的梯度）當作每個格子的期望速度",
+          "effect": "整群行人被場引導流向出口，類似疏散模擬"
+        },
+        {
+          "name": "分離 + 路徑跟隨組合",
+          "how": "對每個代理把 separation 與 path following 兩股力依權重相加",
+          "effect": "得到既沿動線又彼此保持距離的較真實人流"
+        },
+        {
+          "name": "空間分格加速",
+          "how": "用 bin-lattice 空間分割只檢查鄰近格的代理",
+          "effect": "數千人規模仍可即時模擬"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "自主代理",
+        "steering behaviors",
+        "人流",
+        "教科書"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://natureofcode.com/autonomous-agents/"
+    },
+    {
+      "id": "D03-54",
+      "algo": "D03",
+      "title": "Simple Crowd Simulation（Houdini 人群模擬）",
+      "creator": "bubble pins",
+      "year": "2020",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "research",
+      "scale": "群體／都市",
+      "summary": "SideFX 官網收錄的 Houdini 18 入門教學，以 Crowds 工具架建立代理並模擬大量行走角色。與 GH C# 範例的抽象點粒子不同，Houdini 的 crowd 系統把轉向行為接到帶骨架動畫的角色上，適合做街道、廣場的人流視覺化。",
+      "variations": [
+        {
+          "name": "以密度圖分布人群",
+          "how": "用影像或 Mesh 頂點權重控制初始人數密度，而非均勻隨機撒點",
+          "effect": "廣場、入口等處出現符合設計意圖的人潮熱區"
+        },
+        {
+          "name": "狀態切換",
+          "how": "為代理定義站立、行走、奔跑等狀態，依周邊密度或距離目標切換",
+          "effect": "人流在擁擠處放慢、空曠處加速，更接近真實"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "人群模擬",
+        "crowd",
+        "3D"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/"
+    },
+    {
+      "id": "D03-55",
+      "algo": "D03",
+      "title": "People in a Crowd",
+      "creator": "Sonia Martin",
+      "year": "2014",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "OpenProcessing 上的 Processing 作品，以向量、物件與陣列模擬人群穿越場地並嘗試閃避放置的障礙物。作者自述行人仍會互相碰撞、路徑被推偏，正好示範只有排斥力而缺乏目標導向與預測迴避時的人流問題（程式需貼回 Processing 執行）。",
+      "variations": [
+        {
+          "name": "加入目標吸引力",
+          "how": "為每位行人加上朝對側出口的 seek 力，與障礙排斥相加",
+          "effect": "行人繞過障礙後會回到原本方向，而非被推離"
+        },
+        {
+          "name": "預測式迴避",
+          "how": "改用未來位置判斷是否相撞，提早側向轉向",
+          "effect": "減少個體彼此碰撞、路徑較平順"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "OpenProcessing",
+        "人流",
+        "障礙迴避"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://openprocessing.org/sketch/139678/"
+    }
+  ]
+}

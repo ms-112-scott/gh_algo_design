@@ -1,0 +1,106 @@
+{
+ "algo": "D03",
+ "classification": [
+  {"id": "D03-01", "source": "research", "why": "社會力模型原始學術論文，基礎範例的理論來源"},
+  {"id": "D03-02", "source": "research", "why": "逃生恐慌與越急越慢的經典期刊論文"},
+  {"id": "D03-03", "source": "research", "why": "慾望路徑演化的學術研究論文"},
+  {"id": "D03-04", "source": "research", "why": "Space syntax圖論分析理論，非個體模擬"},
+  {"id": "D03-05", "source": "research", "why": "真實廣場步行化改造的都市設計案例"},
+  {"id": "D03-06", "source": "research", "why": "朝覲人潮災害的學術影像追蹤研究"},
+  {"id": "D03-07", "source": "research", "why": "商業3D行人模擬軟體工具"},
+  {"id": "D03-08", "source": "research", "why": "商業疏散模擬軟體，用於法規檢討"},
+  {"id": "D03-09", "source": "research", "why": "以動線分析決定形體的真實建成建築"},
+  {"id": "D03-10", "source": "research", "why": "Grasshopper代理人模擬外掛工具"},
+  {"id": "D03-11", "source": "research", "why": "Grasshopper都市分析工具組"},
+  {"id": "D03-12", "source": "research", "why": "視覺啟發式行人模型的學術論文"},
+  {"id": "D03-13", "source": "research", "why": "開源C++行人模擬函式庫"},
+  {"id": "D03-51", "source": "research", "why": "GDC技術論文，遊戲轉向行為的系統說明"},
+  {"id": "D03-52", "source": "art", "why": "Nature of Code教學，成果是p5.js生成畫面"},
+  {"id": "D03-53", "source": "art", "why": "NoC書籍章節，內容是p5.js生成畫面示範"},
+  {"id": "D03-54", "source": "research", "why": "Houdini工具教學，示範外掛功能而非藝術陳述"},
+  {"id": "D03-55", "source": "art", "why": "OpenProcessing上的Processing人群視覺作品"}
+ ],
+ "art_count": 3,
+ "need": 6,
+ "removal_order": ["D03-13", "D03-10", "D03-11", "D03-04", "D03-07", "D03-12", "D03-05", "D03-02", "D03-03", "D03-09", "D03-06", "D03-08", "D03-01", "D03-51", "D03-54"],
+ "removal_reasons": {
+  "D03-13": "與D03-01、D03-12同樣重製社會力模型，只是換成C++函式庫，沒有照片可查證獨特畫面",
+  "D03-10": "Grasshopper代理人外掛，與D03-11同屬工具類重複，且沒有照片",
+  "D03-11": "都市分析工具組與D03-04、D03-05的space syntax主題重疊，沒有照片可查證",
+  "D03-04": "純圖論分析空間、不模擬個人移動，與本演算法的個體力學邏輯關係薄弱",
+  "D03-07": "商業3D模擬軟體與D03-08同類重複，且沒有照片，D03-08已有確認過的真實照片",
+  "D03-12": "學術改良模型論文，與D03-01、D03-02、D03-06已有的Helbing系列論文主題重疊，沒有照片",
+  "D03-05": "廣場步行化案例與D03-09同屬「人流分析影響設計」類型重複，且找不到清楚照片",
+  "D03-02": "經典期刊論文，越急越慢現象常被引用，但主要以文字與圖表呈現，缺乏可查證的真實現場照片",
+  "D03-03": "地景尺度罕見但研究內容偏理論模型，缺乏可查證的真實照片",
+  "D03-09": "真實建成案例，但人流分析只是設計依據之一，並非本演算法的直接示範",
+  "D03-06": "研究影響深遠，但同為Helbing團隊論文，與D03-01、D03-02主題略重疊",
+  "D03-08": "有確認過的真實產品照片，且是常見於法規實務的商業工具，保留做代表",
+  "D03-01": "基礎範例的理論來源，社會力模型的原始出處，必須保留",
+  "D03-51": "轉向行為的經典技術論文，後續影響深遠，但屬於研究性技術文獻",
+  "D03-54": "Houdini群眾模擬教學，示範工具操作而非藝術陳述，但仍是少見的3D群眾示範"
+ },
+ "new_art": [
+  {
+   "title": "CrowdSimulation（機率路徑圖與碰撞時間避讓的太空船群）",
+   "creator": "MattyChoi",
+   "year": "2021",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Processing 寫成的多代理人導航練習：先用機率路徑圖（PRM）在障礙物間取樣建立可通行的圖，再用 A* 搜尋每個代理人到目標的最短路徑，行進時另外計算每對代理人的碰撞時間（TTC）並提前側移，避免沿同一條路徑互撞。作者把代理人畫成太空船、障礙物畫成行星與小行星，讓抽象的路徑規劃與避讓邏輯變成一場太空船群在星際間穿梭的畫面，核心避讓機制與基礎範例的推力邏輯直接對應。",
+   "variations": [
+    {"name": "機率路徑圖導航", "how": "用PRM在可通行區域隨機取樣節點並連線建圖，A*在圖上找最短路徑後依序前往路徑點，而不是每步直接朝終點算力", "effect": "在障礙物密集場地也能找到可行路徑，不會卡在凹角或死路"},
+    {"name": "碰撞時間預測避讓", "how": "每步計算每對代理人的Time-To-Collision，快要相撞時提前朝垂直方向微調速度，而不是等貼近才用推力彈開", "effect": "解決同一條路徑上的代理人反覆擦撞、原地打轉的「陀螺現象」"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Processing", "路徑規劃", "碰撞避讓"],
+   "tools": ["Processing"],
+   "url": "https://github.com/MattyChoi/CrowdSimulation",
+   "evidence": "GitHub README標題與說明：「Using Processing to simulate multiple agents navigating an obstacle-filled environment using A* search on a graph of networks created through probabilistic roadmap (PRM)」，commit紀錄顯示建立於2021年10月10日",
+   "nearest_existing": "D03-10 Quelea（Grasshopper代理人外掛）——同樣是代理人避障導航工具，但這裡是個人Processing專案，另外疊加TTC避讓與太空船視覺重皮",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/77593187/136684890-053cc9ee-abc5-4442-9d85-039ab7518a74.gif",
+    "page": "https://github.com/MattyChoi/CrowdSimulation",
+    "verified": true,
+    "checked": "深藍色星空背景中大量彩色行星、小行星與少數紫色球體散布，多艘小飛碟狀太空船穿梭其間，路徑彼此交錯但不重疊碰撞",
+    "source": "GitHub（MattyChoi/CrowdSimulation README動畫）",
+    "author": "MattyChoi",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "PRM＋A*導航搭配TTC避讓的太空船群模擬畫面，行星與小行星是障礙物"
+   }
+  },
+  {
+   "title": "Procedural Graphics Engine（河谷小鎮的人行步道群眾模擬）",
+   "creator": "Pulindu Fonseka",
+   "year": "2025",
+   "category": "urban-landscape",
+   "categories_extra": ["3d-architecture"],
+   "scale": "群體／都市",
+   "summary": "個人開發的 Three.js／WebGL 低多邊形場景引擎，在有河流、森林與街燈的夜間小鎮裡放入以四叉樹加速的群眾代理人系統（README 稱為「articulated pedestrians」），畫面疊加即時的鄰居查詢次數、配對數與空間索引效能統計，展示數千個代理人如何在場景中同時運算移動。這把基礎範例的「鄰居搜尋」問題從單純示意，變成一個有氣氛的城鎮縮影加上效能儀表板。",
+   "variations": [
+    {"name": "四叉樹空間索引", "how": "建立quadtree把代理人分格管理，鄰居查詢只比對鄰近格子而非兩兩全部比對，並把checks／pairs／查詢時間等統計即時疊加在畫面上", "effect": "同時運算超過三千個代理人仍維持60張影格，對應到基礎範例的空間格網加速變形"},
+    {"name": "低多邊形場景重皮", "how": "把代理人放進有河岸建築、森林、街燈的低多邊形夜間城鎮場景，而非空白畫布或抽象格線", "effect": "群眾模擬變成帶氣氛的城鎮縮影，而不是純技術示意圖"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "three.js", "quadtree", "低多邊形"],
+   "tools": ["three.js"],
+   "url": "https://github.com/Pulindu1/procedural-graphics-engine",
+   "evidence": "README描述展示畫面為「riverside orb swarm, articulated pedestrians and the glowing pyramid, with the live HUD and spatial-index statistics」，作者Pulindu Fonseka，MIT授權",
+   "nearest_existing": "D03-54（Houdini群眾模擬教學）——同樣是把代理人放進場景渲染，但這裡是個人three.js引擎，且疊加四叉樹效能統計儀表板",
+   "image": {
+    "url": "https://raw.githubusercontent.com/Pulindu1/procedural-graphics-engine/main/docs/demo.gif",
+    "page": "https://github.com/Pulindu1/procedural-graphics-engine",
+    "verified": true,
+    "checked": "深藍色夜景中的低多邊形河谷小鎮，左側河岸邊有建築與亮綠色街燈，右側森林與山丘間有一個粉紅色三角形標記，右上角HUD顯示Swarm Controls與空間索引統計數字，畫面下方文字寫著「This system sustains over 3,400 active agents at 60 FPS.」",
+    "source": "GitHub（Pulindu1/procedural-graphics-engine README動畫）",
+    "author": "Pulindu Fonseka",
+    "license": "MIT（程式碼）；圖片為專案展示圖，教學引用",
+    "license_url": "https://github.com/Pulindu1/procedural-graphics-engine/blob/main/LICENSE",
+    "note": "四叉樹加速的群眾代理人系統畫面，疊加即時空間索引效能統計"
+   }
+  }
+ ],
+ "notes": "need=6，但只找到2個能親眼確認生成畫面且非重複的藝術案例（皆已下載預覽確認），沒有備援。已用WebSearch、Parallel Search（皆額度用盡／被限流）、GitHub repo與code搜尋、Brave/Bing/DuckDuckGo等多種管道搜尋，並嘗試OpenProcessing（搜尋頁與標籤頁回傳403，個別作品頁也一度被拒），但社會力模型／行人群眾模擬這個主題在p5.js、Processing等creative coding社群裡的作品極少：搜尋到的多是學術重製（Python／Java／C++／ROS的social force model實作，如PySocialForce、group-social-force、pedsim系列）或工程效能測試（如webgpu-crowd-simulation、Godot節慶人潮benchmark），依規格屬於research而非art，未列入new_art。本機無法連線Claude in Chrome瀏覽器擴充功能，因此像Blarc/crowd-evacuation（p5.js疏散模擬，有互動demo但README無截圖）、lo-th/Crowd.lab（three.js群眾引擎demo）等原本很貼切的案例，因為只有即時互動頁面、找不到可直接下載驗證的靜態生成畫面而放棄；Kenny Vaden的鋼筆繪圖作品《Desire Path》雖主題呼應D03-03的慾望路徑，但演算法是格線扭曲而非行人代理人模擬，與本演算法核心關係不足，故未收錄。建議協調者若其他演算法有多餘的p5.js／Processing藝術備援案例，可考慮挪用補足D03的缺口，或維持research略多於art的暫時不平衡。"
+}

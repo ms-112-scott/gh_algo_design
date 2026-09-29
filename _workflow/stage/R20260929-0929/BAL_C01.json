@@ -1,0 +1,161 @@
+{
+ "algo": "C01",
+ "classification": [
+  {"id": "C01-01", "source": "art", "why": "Nervous System 珠寶系列，視覺圖樣為主要成果"},
+  {"id": "C01-02", "source": "art", "why": "客製 Processing 模擬長出的燈罩雕刻紋理，視覺裝飾導向"},
+  {"id": "C01-03", "source": "art", "why": "腦珊瑚陶瓷杯，紋理為主要藝術成果"},
+  {"id": "C01-04", "source": "art", "why": "RD 花紋用於球鞋產品圖樣設計"},
+  {"id": "C01-05", "source": "research", "why": "Gray-Scott 教學與參數說明，課程公式來源"},
+  {"id": "C01-06", "source": "research", "why": "學術論文，系統性分類參數圖樣"},
+  {"id": "C01-07", "source": "research", "why": "SIGGRAPH 論文，曲面紋理生成技術"},
+  {"id": "C01-08", "source": "research", "why": "Grasshopper 論壇工具應用，網格 RD 技術討論"},
+  {"id": "C01-09", "source": "research", "why": "McNeel 論壇 RD 轉曲線工具討論"},
+  {"id": "C01-10", "source": "research", "why": "結構工程論文，性能導向樓板設計"},
+  {"id": "C01-11", "source": "research", "why": "Science Advances 論文，充氣結構工程應用"},
+  {"id": "C01-12", "source": "research", "why": "Scientific Reports 論文，紡織致動器工程應用"},
+  {"id": "C01-13", "source": "research", "why": "Nature Communications 論文，天線超表面工程"},
+  {"id": "C01-14", "source": "research", "why": "學術論文，影像風格化演算法研究"},
+  {"id": "C01-15", "source": "art", "why": "互動式 RD 網頁視覺玩具，成果為生成畫面"},
+  {"id": "C01-51", "source": "art", "why": "Coding Train 教學挑戰，成果為生成動畫畫面"},
+  {"id": "C01-52", "source": "art", "why": "three.js／GLSL 互動式 RD 視覺作品"},
+  {"id": "C01-53", "source": "art", "why": "TouchDesigner 即時視覺表演教學"},
+  {"id": "C01-54", "source": "art", "why": "網頁版 RD 視覺實驗，早期 WebGL 經典"},
+  {"id": "C01-55", "source": "research", "why": "參數空間圖鑑，屬數學說明性質工具"}
+ ],
+ "art_count": 9,
+ "need": 1,
+ "removal_order": ["C01-10", "C01-09", "C01-55", "C01-12"],
+ "removal_reasons": {
+  "C01-10": "無作者、無工具資訊，ResearchGate 論文難以查證，與本演算法連結薄弱",
+  "C01-09": "McNeel 論壇貼文，內容與 C01-08 高度重疊，出處薄弱",
+  "C01-55": "參數圖鑑性質與 C01-06 Pearson 論文重疊，非獨立案例",
+  "C01-12": "與 C01-11 同作者群、同技術路線的姊妹論文，內容重疊度高"
+ },
+ "new_art": [
+  {
+   "title": "Vcsinet_1（多尺度反應擴散 Turing Flow 系列作品）",
+   "creator": "Jonathan McCabe",
+   "year": "2021",
+   "category": "art-installation",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "澳洲生成藝術家 Jonathan McCabe 長年以多層反應擴散疊加流體般的扭曲，做出高解析度的抽象生態紋理；本作於 2021 年展示於洛杉磯地標大樓的 8K 沉浸式大螢幕。和 Grasshopper 基礎範例的單層 Gray-Scott 不同，他疊加多個不同尺度的 RD 系統並讓上層結果驅動下層的擴散方向，產生像大理石、珊瑚般的層次感。",
+   "variations": [
+    {"name": "多尺度疊層", "how": "跑多組不同 gridSize／擴散速度的 RD，讓大尺度結果決定小尺度系統的參數或方向", "effect": "畫面同時有大塊面與細密紋理，不是單一尺度的斑點"},
+    {"name": "流場扭曲後處理", "how": "依 RD 濃度梯度算出一個向量場，再用它對整張影像做位移扭曲（domain warping）", "effect": "紋理像被液體拖曳，邊緣圓滑流動而非死板網格"},
+    {"name": "色彩映射與展示尺度", "how": "用連續色帶取代灰階，並輸出超高解析度供大型 LED 牆展示", "effect": "從電腦螢幕的教學示範放大成建築尺度的沉浸式藝術裝置"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "自製模擬軟體", "多尺度", "Turing Pattern", "art-installation"],
+   "tools": ["自製模擬軟體", "GPU 渲染"],
+   "url": "https://standardvision.com/news/generative-artist-jonathan-mccabe",
+   "evidence": "頁面標題「Generative Artist Jonathan McCabe」，內文說明作品 Vcsinet_1 展示於洛杉磯地標大樓的 8K 沉浸式大螢幕，採用 Turing 反應擴散演算法",
+   "nearest_existing": "C01-15（Red Blob Games 互動 RD）摘要提到受 Jonathan McCabe 多尺度 Turing 圖樣啟發，但本案例才是 McCabe 本人的原作",
+   "image": {
+    "url": "https://images.squarespace-cdn.com/content/v1/5fc76e1543c5ee75bf2c2e03/1617293353056-BHUUVKC0EQGCDFSL5PTI/Screen+Shot+2021-03-31+at+1.55.28+PM.png",
+    "page": "https://standardvision.com/news/generative-artist-jonathan-mccabe",
+    "verified": true,
+    "checked": "畫面為多彩、流體般的多尺度反應擴散紋理特寫，符合文章對 Vcsinet_1 的描述",
+    "source": "StandardVision",
+    "author": "Jonathan McCabe",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "多尺度反應擴散生成的抽象紋理特寫，色彩如大理石般流動"
+   }
+  },
+  {
+   "title": "Reaction-Diffusion WebGL（影像導引版）",
+   "creator": "Jérémie Piellard",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "法國獨立開發者 Jérémie Piellard 以 WebGL 片段著色器實作 GPU 版 Gray-Scott 模型，即時在瀏覽器跑數千步迭代。特別之處是可以載入一張影像，依明暗調整各處的 feed／kill 參數，讓花紋沿著貓咪或蒙娜麗莎的輪廓生長，直接示範 Grasshopper 範例「用影像或吸引子控制參數」的效果。",
+   "variations": [
+    {"name": "影像導引參數場", "how": "讀入一張圖片，依每格像素亮度在兩組 feed/kill 之間內插，取代原本整張固定參數", "effect": "花紋密度跟著影像明暗變化，暗處變迷宮、亮處變光滑"},
+    {"name": "GPU 著色器加速", "how": "把濃度陣列存成紋理，用 fragment shader 一次算全部格子的擴散與反應", "effect": "比 CPU 逐格迴圈快上百倍，能即時互動調整參數"},
+    {"name": "多組預設花紋切換", "how": "UI 提供 solitons、worms、mazes 等預設 feed/kill 組合供切換", "effect": "使用者不用理解公式也能瀏覽 Gray-Scott 的圖樣分類"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "WebGL", "GLSL", "影像控制"],
+   "tools": ["WebGL", "GLSL"],
+   "url": "https://github.com/piellardj/reaction-diffusion-webgl",
+   "evidence": "README 開頭寫「This is a GPU implementation of the Gray Scott model」，並附貓與蒙娜麗莎的影像導引成果圖",
+   "nearest_existing": "C01-54（pmneila WebGL Gray-Scott 實驗）技術路線相近，但本作多了影像導引參數的功能，非重複作品",
+   "image": {
+    "url": "https://raw.githubusercontent.com/piellardj/reaction-diffusion-webgl/main/src/readme/joconde.png",
+    "page": "https://github.com/piellardj/reaction-diffusion-webgl",
+    "verified": true,
+    "checked": "畫面是以蒙娜麗莎影像明暗控制生成的彩色迷宮狀反應擴散花紋，五官輪廓清晰可見",
+    "source": "GitHub piellardj/reaction-diffusion-webgl",
+    "author": "Jérémie Piellard",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "依蒙娜麗莎影像明暗調整參數生成的彩色反應擴散花紋"
+   }
+  },
+  {
+   "title": "Mastering Turing Patterns：p5.js／Processing 反應擴散教學",
+   "creator": "deconbatch",
+   "year": "2022",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "創作程式教學部落格「deconbatch's Land of 1000 Creative Codings」的 Gray-Scott 教學文章，同時提供 p5.js 與 Processing 兩種實作，並示範如何改變 feed／kill 與擴散係數得到魚鱗、豹紋等不同生物花紋。內容和 Grasshopper 基礎範例邏輯相同，但直接比較多組參數的結果圖，方便理解每個參數的視覺效果。",
+   "variations": [
+    {"name": "參數對照表", "how": "同一份程式碼跑多組 feed/kill 數值，並排輸出成果圖比較", "effect": "一眼看出參數如何從斑點漸變到迷宮、條紋"},
+    {"name": "仿生物花紋配色", "how": "依 B 濃度套用魚類、豹紋般的色票而非單純灰階", "effect": "生成結果更像真實生物表皮而非科學圖表"},
+    {"name": "p5.js 與 Processing 雙版本", "how": "同一套邏輯分別用 p5.js（網頁）與 Processing（桌面）實作", "effect": "學習者可依環境選擇線上互動或桌面高解析度輸出"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Processing", "教學"],
+   "tools": ["p5.js", "Processing"],
+   "url": "https://www.deconbatch.com/2022/04/turingpattern.html",
+   "evidence": "頁面標題「Mastering Turing Patterns: A Guide to Reaction-Diffusion in p5.js and Processing」，文中附多張參數對照的生成花紋圖",
+   "nearest_existing": "C01-51（Coding Train 挑戰）同為教學性質，但本作聚焦多組參數對照與仿生物花紋配色，內容不同",
+   "image": {
+    "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrj5g1uC9QgGO3E2oALqOZQ66ui-Gxafm8dGnmXYSjDYx28a0dk3XSDiiWDG-IZDNlWSH-5a7atR5C79TIb5DN6F7vDXH-_c-DZ6edjIhAmbD_SFYOudrBY9ij7SH2nyDigFPQTuf5QGEx7FheQlcYEi5Cu_4KSNZo1iCqd0so1EDqA82GADA3lg/s480/0101.jpg",
+    "page": "https://www.deconbatch.com/2022/04/turingpattern.html",
+    "verified": true,
+    "checked": "橘黑相間的反應擴散迷宮／斑點花紋範例圖，具生物表皮質感",
+    "source": "deconbatch's Land of 1000 Creative Codings",
+    "author": "deconbatch",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "文章示範的其中一組 feed/kill 參數生成的橘黑迷宮花紋"
+   }
+  },
+  {
+   "title": "Reaction Diffusion（WebGL2 GPGPU 版）",
+   "creator": "Thomas Diewald",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "慕尼黑工業大學計算設計講師暨創作程式開發者 Thomas Diewald，在其 WebGL 實驗集裡以 WebGL2 的 GPGPU 技術實作 Gray-Scott 反應擴散，善用多重渲染目標（MRT）同時處理多個化學物質層。和 Grasshopper 範例逐格 for 迴圈不同，整張網格的擴散與反應都在 GPU 上平行運算。",
+   "variations": [
+    {"name": "WebGL2 GPGPU 平行運算", "how": "把濃度陣列存進 texture，用 fragment shader 同時計算所有格子，取代 CPU 雙迴圈", "effect": "即使網格放大到上千格依然能即時運算與互動"},
+    {"name": "多重渲染目標（MRT）", "how": "用 WebGL2 的 MRT 一次輸出 A、B 兩張濃度紋理，省去來回切換的成本", "effect": "模擬效能更穩定，方便疊加更多化學物質層"},
+    {"name": "互動參數調整", "how": "提供即時滑桿調整 feed／kill／擴散係數並立即看到畫面變化", "effect": "適合現場展示不同參數如何改變花紋類型"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "WebGL2", "GLSL", "GPGPU"],
+   "tools": ["WebGL2", "GLSL"],
+   "url": "https://github.com/diwi/dw-webgl-sketchbook",
+   "evidence": "repo README 列出 ReactionDiffusion sketch 並附截圖，連結到可直接執行的線上 demo（diwi.github.io/dw-webgl-sketchbook/sketches/ReactionDiffusion.html）",
+   "nearest_existing": "C01-52（Jason Webb three.js／GLSL RD Playground）技術取向相近，但作者與實作方式不同，非同一作品",
+   "image": {
+    "url": "https://diwi.github.io/dw-webgl-sketchbook/sketches/screenshots/ReactionDiffusion1_small1.jpg",
+    "page": "https://github.com/diwi/dw-webgl-sketchbook",
+    "verified": true,
+    "checked": "橘黑相間、帶圓點紋理的反應擴散花紋截圖，畫面寬幅呈現並排結果",
+    "source": "GitHub diwi/dw-webgl-sketchbook",
+    "author": "Thomas Diewald",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "WebGL2 GPGPU 版反應擴散的即時渲染截圖，呈現橘黑迷宮與圓點混合紋理"
+   }
+  }
+ ],
+ "notes": "9 個既有案例分為 art、11 個為 research，need=1；4 個新藝術案例皆已下載預覽並親眼確認生成畫面（Char Stiles／MIT Media Lab 的裝置照片與 Anirudh Mukherjee 的截圖經檢視後因非合格生成畫面而捨棄，未列入）。p5.js／Processing 僅 deconbatch 一項達標，其餘 3 項因 OpenProcessing 頁面對本工具回傳 403 無法查證、多個 GitHub Processing 專案 README 未附生成畫面截圖而改用可查證的 WebGL／自製軟體作品，備援仍以 need=1 之首選 Jonathan McCabe 作品最強。"
+}

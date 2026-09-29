@@ -1,0 +1,68 @@
+{
+ "reviewer": "BALREV",
+ "algos": {
+  "F07": {
+   "reject_new": [
+    {
+     "index": 1,
+     "reason": "摘要與變形是捏造的：實際程式（SimulatedAnnealing.cs、CreativePart.cs）是以城市交換鄰域求 TSP 巡迴路徑，再把最終路徑「複雜化」畫成細線，並不是「放射狀三角形／星芒的角度與大小」；README 只有一句說明、1 顆星的匿名專案，圖上看到的是密集細線網，不是 checked 寫的三角形尖角圖案"
+    }
+   ],
+   "image_fix": [
+    {
+     "index": 0,
+     "image": {
+      "url": "https://stefaniemolin.com/data-morph-talk/media/example_datasets.png",
+      "page": "https://stefaniemolin.com/data-morph-talk/",
+      "verified": true,
+      "checked": "三張散佈圖並排：左為 Python 標誌形狀的原始資料點，中為變形成數條斜向平行線、右為變形成愛心的點群，後兩張是 Data Morph 以模擬退火變形的結果",
+      "source": "Stefanie Molin｜Data Morph: A Cautionary Tale of Summary Statistics 演講投影片",
+      "author": "Stefanie Molin",
+      "license": "網頁預覽圖，教學引用",
+      "license_url": "",
+      "note": "同一組資料點以模擬退火變形成斜線與愛心，三張圖的平均值、標準差與相關係數都相同"
+     }
+    }
+   ],
+   "fix_class": [],
+   "protect": [],
+   "notes": "Data Morph（index 0）作品與年份（2023）查證相符、模擬退火是核心，屬「以視覺表現為目的的資料視覺化」的邊界案例，可收；但原圖 panda-to-star.gif 第一格只是尚未退火的起始貓熊資料（checked 寫的「點群正在打散重組」與圖不符），改用演講投影片中的變形結果圖；另外變形 1 的「載入自訂 SVG 輪廓當目標」工具並不支援（自訂的是 CSV 起始資料，目標形狀為內建），合併時宜改寫。Gen1 摘要與實際程式不符而退回。備援 njanakiev（Processing，2017 查證相符，圖為退火中途的城市路徑）可用，但這是第 4 個 TSP 案例，scale 應改成「物件」；shapeme（repo 2014 發布，程式約 2008–09 年寫成）圖為三角形重建的蒙娜麗莎，可用，但與 F07-55 Primitive 概念相近。分類與移除順序（先刪 F07-06 論壇貼文）合理。"
+  },
+  "F08": {
+   "reject_new": [],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [],
+   "notes": "new_art 是空的（撰寫者搜尋額度用完），need=1 補不足，需要協調者另外處理；分類合理（F08-51～54 迷宮／視覺化／Coding Train／Houdini 教學為 art，論文與 GH 外掛為 research），移除順序第一個 F08-05（2025 arXiv、無圖、和都市尺度案例重疊）合理，不需保護。"
+  },
+  "G01": {
+   "reject_new": [
+    {
+     "index": 2,
+     "reason": "ahuth/raycast 是 React 射線投射「引擎」技術示範，偏軟體／遊戲技術而非視覺作品；摘要寫「div 的寬度由射線距離決定」與原始碼不符（Column.jsx 以距離決定高度與變暗程度，寬度固定），變形「分幾段固定色階」也與程式的連續變暗相反；圖只是一塊藍色矩形，看不出演算法；且與 #146、terminal_dungeon 同為第三個 Wolfenstein 式偽 3D 渲染"
+    }
+   ],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [
+    {
+     "id": "G01-07",
+     "why": "唯一把 isovist 反過來當生成規則的案例（Isovist Bubble 維持面積且邊界始終是可視邊界），與演算法關係強；頁面仍在且有圖。移除理由「連結易失效」不成立，可改刪與 G01-04 同作者群、同為沿動線 isovist 分析且無圖的 G01-05"
+    }
+   ],
+   "notes": "Isovist Sandbox（2022，p5.js＋Asano 演算法，已查證）與 Coding Train #146（2019，圖是 ct_index 的範例執行畫面）合格；Isovist Sandbox 的圖含瀏覽器外框，但 README 的 Demo1–6 都是這樣，Demo6 已是可視域最清楚的一張，可接受。terminal_dungeon（2019，DDA 射線＋ASCII 字元明暗階梯＋小地圖，原始碼查證相符）合格，但本身自稱函式庫、屬邊界案例。G01-51／G01-55 改判 research 可接受（遊戲技術說明／函式庫）。退回 1 個後剩 3 個，剛好補 need=3，沒有備援。"
+  },
+  "G02": {
+   "reject_new": [],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [
+    {
+     "id": "G02-02",
+     "why": "SolCAD 出自太陽包絡概念提出者 Ralph Knowles 的團隊，是本演算法唯一的 Knowles 系譜代表作，且有論文附圖；「被 Ladybug 取代」不構成弱案例的理由"
+    }
+   ],
+   "notes": "G02-51～54（ShadeMap、pybdshadow、Blender 外掛、SunCalc）改判 research 合理，都是分析工具、套件、外掛或函式庫；art_count=0、need=5，但 new_art 是空的，完全無法補，需要協調者另外處理（例如放寬到日照、陰影相關的 creative coding 作品）。移除順序除 G02-02 外合理。"
+  }
+ }
+}

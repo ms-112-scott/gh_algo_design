@@ -1,0 +1,420 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A06",
+  "name_zh": "波函數塌縮",
+  "name_en": "Wave Function Collapse (WFC)",
+  "one_liner": "先定好「哪些模組可以相鄰」的規則，再讓電腦從最沒得選的格子開始一格一格決定，並把限制傳給鄰居，直到整張網格都拼得起來。",
+  "how_it_works": [
+   "建立 tile 清單：每個水管 tile 用北東南西四個 0/1 表示哪邊有開口（共 12 種，不含只開一邊的死路）",
+   "每格一開始把所有 tile 都當成候選；邊界格先刪掉開口朝外的 tile，並傳播一次",
+   "找候選數最少（但還大於 1）的格子，同分隨機挑一格，從它的候選中隨機決定一個 tile（塌縮）",
+   "傳播：用 Stack 記錄有變動的格子，逐一通知四個鄰居，鄰居刪掉「跟這格任何候選都接不起來」的 tile；鄰居有刪東西就再推進 Stack",
+   "若某格候選變 0 就是矛盾，整張重來（最多 20 次）；全部格子只剩一個候選就完成，輸出每格中心到開口邊中點的線段"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 9,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A06-01",
+   "title": "WaveFunctionCollapse 原始實作",
+   "creator": "Maxim Gumin",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "約束滿足",
+    "拼貼",
+    "影像輸入",
+    "隨機"
+   ],
+   "tools": [
+    "C#"
+   ],
+   "url": "https://github.com/mxgmn/WaveFunctionCollapse",
+   "summary": "WFC 的起點：從一張小範例圖產生局部相似的大圖，分成 overlapping model（從像素範例學 N×N 圖樣）與 tiled model（像基礎範例一樣用 tile 相鄰規則）。README 整理了後續遊戲、3D 與研究的延伸。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-02",
+   "title": "Model Synthesis：從範例模型產生大型 3D 模型",
+   "creator": "Paul C. Merrell",
+   "year": "2007",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tags": [
+    "約束滿足",
+    "3D",
+    "拼貼"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://paulmerrell.org/model-synthesis/",
+   "summary": "WFC 的前身。Merrell 從使用者給的小型 3D 範例模型中推導模組間的相鄰限制，再用約束傳播（AC-3）生成大很多的建築群、橋、管線等模型；並提出分區逐塊修改以降低失敗率。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-03",
+   "title": "Bad North 島嶼關卡生成",
+   "creator": "Oskar Stålberg（Plausible Concept）",
+   "year": "2018",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "拼貼",
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "Unity",
+    "C#"
+   ],
+   "url": "https://www.youtube.com/watch?v=0bcZb-SsnrA",
+   "summary": "策略遊戲 Bad North 用 3D WFC 把手工製作的 tile 組拼成小島地景（崖壁、階梯、房屋、沙灘），並加入「每一步都保持可通行」的啟發式選 tile。Stålberg 在 Everything Procedural 2018 講解了整套流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-04",
+   "title": "Townscaper：不規則網格上的小鎮玩具",
+   "creator": "Oskar Stålberg",
+   "year": "2020",
+   "category": "art-installation",
+   "scale": "群體／都市",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "拼貼",
+    "等值面"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://www.gamedeveloper.com/game-platforms/how-townscaper-works-a-story-four-games-in-the-making",
+   "summary": "使用者點一下就長出房子的造鎮玩具。底層把六角網格切成四邊形並擾動成不規則網格，再結合 WFC 與 marching cubes 決定每個角落該放哪種屋頂、牆、拱、樓梯模組，讓任意點擊都能得到合理的建築形。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-05",
+   "title": "無限程序城市（Infinite City）",
+   "creator": "Marian Kleineberg（marian42）",
+   "year": "2018",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "開放生長",
+    "拼貼"
+   ],
+   "tools": [
+    "Unity",
+    "C#"
+   ],
+   "url": "https://marian42.de/article/wfc/",
+   "summary": "Procjam 2018 作品：玩家在城市中行走時，城市用 3D 方塊模組與帶回溯的 WFC 即時長出來。作者撰文說明如何設定模組接頭、回溯與「邊走邊生成」的線上版 WFC，後續又寫了更快、可決定、可平行化的無限世界版本。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-06",
+   "title": "Caves of Qud 遺跡地圖生成",
+   "creator": "Brian Bucklew（Freehold Games）",
+   "year": "2019",
+   "category": "2d-pattern",
+   "scale": "建築",
+   "tags": [
+    "約束滿足",
+    "拼貼",
+    "多元件"
+   ],
+   "tools": [
+    "C#"
+   ],
+   "url": "https://gdcvault.com/play/1026263/Math-for-Game-Developers-Tile",
+   "summary": "第一個商業使用 WFC 的遊戲。在多階段生成流程的中段用 WFC 補上遺跡、建築平面的細節，並討論過度擬合、單調與連通性問題，以及如何與其他建構式生成方法混用。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-07",
+   "title": "Monoceros：Grasshopper 模組化組合外掛",
+   "creator": "Ján Tóth、Ján Pernecký（Subdigital）",
+   "year": "2021",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "拼貼",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://monoceros.sub.digital/",
+   "summary": "把 WFC 包成 Grasshopper 元件：使用者定義包絡（Envelope）切成 Slot、自訂 Module 與面對面的 Rule，外掛負責把模組填滿空間並保證相鄰合法，用於離散聚合的建築與都市設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-08",
+   "title": "Subdigital 離散實體化實習",
+   "creator": "Subdigital（Ján Pernecký 等）",
+   "year": "2020",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "拼貼",
+    "約束滿足"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Monoceros"
+   ],
+   "url": "",
+   "summary": "Subdigital 2020 年舉辦的暑期實習，以既有數位製造技術探索「資料驅動設計的離散實體化」，並為此開發了後來成為 Monoceros 的工具，讓學習者以 WFC 組合可製造的模組。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-09",
+   "title": "以編碼建築 tile 組做量體設計（Gameplay with encoded architectural tilesets）",
+   "creator": "E. Chasioti",
+   "year": "2020",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.academia.edu/44870033/Gameplay_with_encoded_architectural_tilesets_A_computational_framework_for_building_massing_design_using_the_Wave_Function_Collapse_algorithm",
+   "summary": "碩士論文提出以 WFC 做建築量體設計的四步驟框架：把建築 tile 幾何編碼成二進位字串，在 Grasshopper 中重新實作兩種不需回溯的 WFC 變體，再把結果解碼回量體。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-10",
+   "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
+   "creator": "",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "約束滿足",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/chapter/10.1007/978-3-031-71008-7_28",
+   "summary": "研究以 WFC 生成社會住宅的房間配置，把 WFC 輸出的整數矩陣解讀為 BIM 結構區塊（IFC 格式）之間的關係，產生符合巴西最大社會住宅計畫最低需求的平面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-11",
+   "title": "階層式 WFC 平面生成（HWFC floor plan generation）",
+   "creator": "qin2500（GitHub）",
+   "year": "",
+   "category": "drawing",
+   "scale": "建築",
+   "tags": [
+    "約束滿足",
+    "拼貼",
+    "多元件"
+   ],
+   "tools": [],
+   "url": "https://github.com/qin2500/HWFC_floor_plan_generation",
+   "summary": "用階層式 WFC 產生建築平面：從粗略的建築結構開始，經過多層細化一路做到房間內部配置，每一層的結果成為下一層的約束。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-13",
+   "title": "以 WFC 生成與評估鄉村住宅配置",
+   "creator": "Yin Zhang、Zhen Xu、Hanlin Li 等",
+   "year": "2026",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "約束滿足",
+    "最佳化",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.1177/14780771251326773",
+   "summary": "以 WFC 生成鄉村住宅群的配置，能適應不同基地條件與居住需求，並對生成結果進行評估。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-14",
+   "title": "WFC 結合 AR／MR 的不規則原木升級再利用",
+   "creator": "Scientific Reports 論文作者群",
+   "year": "2025",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://www.nature.com/articles/s41598-025-20398-8",
+   "summary": "把原木、樹枝分岔等不規則木材 3D 掃描後，用 WFC 當作數位聚合方法自動排出空間組合，再以有限元素分析檢查結構可行性，並以 AR 輔助組裝，目標是循環設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-15",
+   "title": "以 WFC 生成材料晶粒方向",
+   "creator": "arXiv 論文作者群",
+   "year": "2023",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "約束滿足",
+    "拼貼",
+    "物理模擬"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2311.12272",
+   "summary": "把 WFC 用在材料科學，生成多晶材料的晶粒方向分布，作為材料微結構與性能模擬的輸入，是 WFC 跨出遊戲與設計的例子。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A06-51",
+   "title": "Coding Challenge 171：Wave Function Collapse",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2022",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "約束滿足",
+    "拼貼",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+   "summary": "分三次直播錄成的 p5.js 挑戰，實作 WFC 的 tiled model：每格保留可能的 tile 清單，挑熵最低的格子塌縮，再依規則刪減鄰居選項；第二天重構成 Tile 類別並由 Tile 物件自動產生規則、換上電路板 tile 組，第三天替邊緣編索引以處理不對稱 tile，並在無解時重來。和基礎範例相同屬 tiled model，但 tile 是圖片、相容性由邊緣編碼比對而得。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/171-wave-function-collapse",
+    "note": "Coding Challenge 171 縮圖"
+   }
+  },
+  {
+   "id": "A06-52",
+   "title": "wavefunctioncollapse：WFC 的 JavaScript 移植",
+   "creator": "Kevin Chapelier（kchapelier）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "npm",
+    "函式庫"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/kchapelier/wavefunctioncollapse",
+   "summary": "mxgmn 原始 WFC 的 JavaScript 移植（npm 套件，MIT 授權），同時提供 OverlappingModel 與 SimpleTiledModel，可設定圖樣大小 N、輸入／輸出是否週期性、對稱數以及 ground 圖樣，並以 iterate() 分步執行。它讓網頁創作者直接把 WFC 當成函式庫使用；與基礎範例的差別在於多了從範例圖學習的 overlapping model。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A06-53",
+   "title": "Wave：瀏覽器中的互動 WFC tiled model",
+   "creator": "Oskar Stålberg",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "WebGL",
+    "互動",
+    "約束滿足"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://oskarstalberg.com/game/wave/wave.html",
+   "summary": "Oskar Stålberg 做的互動版 tiled model，以 Unity WebGL 在瀏覽器中執行，mxgmn 的 WFC README 把它列為可直接體驗的互動示範。Stålberg 後來把 WFC 發展到 3D tile、不規則網格與球面上，並用於 Bad North 與 Townscaper。它和基礎範例的差別是「人機互動」：使用者可以指定格子，其餘交給演算法補完。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A06-54",
+   "title": "wfc_houdini：在 Houdini 中實作 WFC（2D Wang tiles、3D 管線、拱橋）",
+   "creator": "Chloe Sun",
+   "year": "2020",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "Python",
+    "3D",
+    "模組化"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://github.com/chloesun/wfc_houdini",
+   "summary": "在 Houdini（18.0，Python 2.7）中實作 mxgmn WFC 的 Simple Tiled Model，示範 2D Wang tiles、3D 管線與 3D 拱／橋三種 tile 組，並有 Medium 文章與示範影片。其中 3D 管線範例幾乎就是基礎範例水管 tile 的立體版本，展示 WFC 從平面拼貼走向 3D 內容生成。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub chloesun/wfc_houdini",
+    "page": "https://github.com/chloesun/wfc_houdini",
+    "note": "README 動圖最後一格：Houdini 中以 WFC 生成的 3D 管線"
+   }
+  },
+  {
+   "id": "A06-55",
+   "title": "The Wavefunction Collapse Algorithm explained very clearly",
+   "creator": "Robert Heaton",
+   "year": "2018",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Python",
+    "教學文章",
+    "約束滿足"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+   "summary": "以終端機文字方塊（陸地 L、海岸 C、海 S）為例，用 Python 一步步說明 WFC：從範例學出相鄰規則與出現權重，以 Shannon 熵挑選最不確定性最低的格子、依權重塌縮、再傳播約束。和基礎範例相比，它多了「從範例統計權重」與「以熵加權挑格」兩項。",
+   "currently_cc": true,
+   "photo": {
+    "source": "robertheaton.com",
+    "page": "https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/",
+    "note": "文章預覽圖：終端機中以 L／C／S 字元生成的陸地、海岸、海洋"
+   }
+  }
+ ]
+}

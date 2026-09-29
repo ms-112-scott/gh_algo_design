@@ -1,0 +1,386 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A04",
+  "name_zh": "遞迴分割",
+  "name_en": "Recursive Subdivision",
+  "one_liner": "把一塊基地沿長邊切成兩塊，每一塊再丟回同一個函式繼續切，直到太小或隨機停下，得到 Mondrian 式的矩形分區。",
+  "how_it_works": [
+   "用 width、height 建立一個代表整塊基地的 Block（左下角＋寬＋深＋深度 0）。",
+   "SplitBlock 先檢查停止條件：最長邊已切不出兩塊 minSize，或（深度 > 0 時）擲骰小於 stopChance，就把這塊收進 finishedBlocks。",
+   "否則比較寬與深，沿長邊切；切割位置 = 長邊 × 介於 minRatio～maxRatio 的隨機比例，並夾在 minSize 與（長邊 − minSize）之間。",
+   "產生兩個深度 +1 的新 Block，分別再呼叫 SplitBlock（遞迴）。",
+   "全部遞迴結束後，把每塊轉成封閉 Polyline 輸出，並輸出每塊的 Depth 供上色。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A04-01",
+   "title": "Subdivided Columns – A New Order",
+   "creator": "Michael Hansmeyer",
+   "year": "",
+   "category": "art-installation",
+   "scale": "構件",
+   "tags": [
+    "遞迴",
+    "3D",
+    "數位製造"
+   ],
+   "tools": [
+    "Java"
+   ],
+   "url": "https://michael-hansmeyer.com/subdivided-columns",
+   "summary": "以多立克柱為起點，用自寫的 Java 細分程式反覆細分網格面，柱體面數可達數百萬；再切成約 3,000 層 1 mm 厚紙板以銑床切割疊成 3 公尺高柱。設計的是「產生柱子的過程」，換參數即得無窮變體，曾於 2011 光州設計雙年展展出。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-02",
+   "title": "Platonic Solids – Subdivision Studies",
+   "creator": "Michael Hansmeyer",
+   "year": "2008",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "3D",
+    "分形"
+   ],
+   "tools": [],
+   "url": "https://michael-hansmeyer.com/platonic-solids",
+   "summary": "從最原始的柏拉圖多面體出發，只重複一個操作：把面分成更小的面。所有形體都用同一個過程，只改變控制分割的變數，就影響拓樸、曲率、分枝與孔隙度，許多結果看起來像植物或生物。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-03",
+   "title": "Digital Grotesque I",
+   "creator": "Michael Hansmeyer, Benjamin Dillenburger",
+   "year": "",
+   "category": "fabrication",
+   "scale": "建築",
+   "tags": [
+    "遞迴",
+    "3D",
+    "數位製造"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "summary": "第一個以 3D 列印砂岩構成的人尺度沉浸空間，為 FRAC Centre（奧爾良）製作。演算法從一個簡單立方體出發，反覆分割並變形幾何，形成約 8,000 萬個面的洞窟。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-04",
+   "title": "Digital Grotesque II",
+   "creator": "Michael Hansmeyer, Benjamin Dillenburger",
+   "year": "2017",
+   "category": "art-installation",
+   "scale": "建築",
+   "tags": [
+    "遞迴",
+    "3D",
+    "數位製造"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://www.designboom.com/architecture/digital-grotesque-grotto-2-3d-printed-michael-hansmeyer-benjamin-dillenburger-07-14-2017/",
+   "summary": "於龐畢度中心 Imprimer le monde 展首展的全尺度 3D 列印洞窟，並成為館方永久典藏。細分演算法被設計成能產生拓樸複雜、多孔、多層次的結構，據報導含約 13.5 億個面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-05",
+   "title": "Mondrian-Generative-Art（Processing／p5.js）",
+   "creator": "PzanettiD",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "隨機"
+   ],
+   "tools": [
+    "Processing",
+    "p5.js"
+   ],
+   "url": "https://github.com/PzanettiD/Mondrian-Generative-Art",
+   "summary": "向 Piet Mondrian 致敬的開源生成藝術，以 Processing 與 p5.js 產生 Mondrian 式構圖並隨機上色。Mondrian 的語彙只有三原色、黑白灰與水平垂直兩方向，正好就是遞迴矩形分割的輸出。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-06",
+   "title": "Squarified Treemaps",
+   "creator": "Mark Bruls, Kees Huizing, Jarke J. van Wijk",
+   "year": "2000",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6783-0_4",
+   "summary": "把階層資料（如資料夾結構）畫成巢狀矩形的 treemap 視覺化方法。原始 treemap 會產生細長矩形，本文改進排列方式讓每個矩形接近正方形，更易比較與點選。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-07",
+   "title": "以 Squarified Treemaps 即時產生住宅平面",
+   "creator": "Fernando Marson, Soraia Raupp Musse",
+   "year": "2010",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "遞迴",
+    "約束滿足"
+   ],
+   "tools": [],
+   "url": "https://www.researchgate.net/publication/47696530_Automatic_Real-Time_Generation_of_Floor_Plans_Based_on_Squarified_Treemaps_Algorithm",
+   "summary": "把原本用於資料視覺化的 squarified treemap 改用來產生住宅平面，自動切出帶有機能語意的房間，並建出對應的 3D 模型，強調即時、穩健與參數簡單。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-08",
+   "title": "Procedural Modeling of Buildings（CGA shape）",
+   "creator": "Pascal Müller, Peter Wonka, Simon Haegler, Andreas Ulmer, Luc Van Gool",
+   "year": "2006",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "遞迴",
+    "字串改寫",
+    "3D"
+   ],
+   "tools": [
+    "CityEngine"
+   ],
+   "url": "https://history.siggraph.org/learning/procedural-modeling-of-buildings-by-muller-wonka-haegler-ulmer-and-gool/",
+   "summary": "提出 CGA shape 形狀文法，以 split 規則把量體與立面一層層分割成樓層、開間、窗戶等元素，可大量產生高細節的建築，並以重建龐貝古城示範。遞迴分割在此成為有名稱、有語意的文法規則。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-09",
+   "title": "Image-based Procedural Modeling of Facades",
+   "creator": "Pascal Müller, Gang Zeng, Peter Wonka, Luc Van Gool",
+   "year": "2007",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tags": [
+    "遞迴",
+    "影像輸入"
+   ],
+   "tools": [],
+   "url": "https://dl.acm.org/doi/10.1145/1276377.1276484",
+   "summary": "結合形狀文法與影像分析，從一張立面照片推導出階層式的立面分割（樓層、開間、窗格），再轉成可編輯的程序化模型。是「從影像反推遞迴分割」的代表研究。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-10",
+   "title": "Procedural Generation of Parcels in Urban Modeling",
+   "creator": "Carlos A. Vanegas, Tom Kelly, Basil Weber, Jan Halatsch, Daniel G. Aliaga, Pascal Müller",
+   "year": "2012",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "遞迴",
+    "可重現種子",
+    "約束滿足"
+   ],
+   "tools": [
+    "CityEngine"
+   ],
+   "url": "https://twak.org/project/parcels/",
+   "summary": "在都市街廓內部互動式產生地籍分割，其中一種方法是以最小外接矩形（OBB）做二元空間分割，遞迴切到目標地塊大小，並保證結果在幾何與機能上合理，編輯後仍能對應原本的地塊。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-11",
+   "title": "ArcGIS CityEngine 街廓遞迴分割（Recursive Subdivision）",
+   "creator": "Esri",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "遞迴",
+    "隨機"
+   ],
+   "tools": [
+    "CityEngine"
+   ],
+   "url": "https://doc.arcgis.com/en/cityengine/latest/help/help-layers-block-parameters.htm",
+   "summary": "CityEngine 預設的街廓分割方法即為遞迴分割，將街廓切成大小不一的矩形地塊，使用者可設定地塊面積、寬度、變化量等參數，並可逐個街廓個別設定。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-12",
+   "title": "Quads – Quadtree Art",
+   "creator": "Michael Fogleman",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "影像輸入",
+    "動畫"
+   ],
+   "tools": [
+    "Go"
+   ],
+   "url": "https://github.com/fogleman/Quads",
+   "summary": "讀入照片，以四分樹反覆分割：每個象限填平均色，誤差最大的象限優先再切成四塊，重複 N 次，得到色塊風格化的影像，也可輸出分割過程的動畫。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-13",
+   "title": "Weaverbird – Topological Mesh Editor",
+   "creator": "Giulio Piacentino",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Weaverbird"
+   ],
+   "url": "https://www.giuliopiacentino.com/weaverbird/",
+   "summary": "Grasshopper 外掛，提供 Catmull-Clark、Loop 等常見網格細分運算子。Catmull-Clark 每次把網格面細分並平滑，趨近 B-spline 曲面；Loop 細分則永遠輸出三角面。是建築系學習者最常接觸的「遞迴細分」工具。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-14",
+   "title": "Recursive image subdivision（Grasshopper 論壇範例）",
+   "creator": "Grasshopper3d 社群",
+   "year": "",
+   "category": "drawing",
+   "scale": "立面／表皮",
+   "tags": [
+    "遞迴",
+    "影像輸入"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Anemone"
+   ],
+   "url": "https://www.grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples",
+   "summary": "Grasshopper 論壇上分享的範例：用 Anemone 做迴圈，可指定遞迴層數，並比較每個矩形取樣的灰階值來決定是否繼續切，把影像轉成大小不一的矩形分割。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A04-51",
+   "title": "Coding Challenge #77：Recursion（遞迴）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "遞迴",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/77-recursion",
+   "summary": "用 p5.js 示範函式呼叫自己來畫碎形：drawCircle 在畫完一個圓後，於兩側呼叫自己畫出較小的圓，加上離開條件，最後再加入隨機性。雖然切的是圓不是矩形，但「檢查停止條件 → 產生子圖形 → 再丟回同一函式」的結構和基礎範例的 SplitBlock 完全相同，是理解遞迴分割最直接的入門。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/77-recursion",
+    "note": "Coding Challenge #77 影片縮圖"
+   }
+  },
+  {
+   "id": "A04-52",
+   "title": "Coding Challenge #98：Quadtree（四分樹）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "2d-pattern",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "空間索引",
+    "資料結構"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/98-quadtree",
+   "summary": "多集的 p5.js 挑戰，實作 Quadtree：一個格子內的點數超過容量就平均切成四塊，再遞迴處理，並用它加速碰撞偵測與範圍查詢。和基礎範例相比，切割不是隨機而是「依資料密度」觸發，所以點越密的地方分割越細。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/98-quadtree",
+    "note": "Coding Challenge #98 影片縮圖"
+   }
+  },
+  {
+   "id": "A04-53",
+   "title": "Aesthetically Pleasing Triangle Subdivision（好看的三角形遞迴分割）",
+   "creator": "Tyler Hobbs",
+   "year": "2017",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "creative coding",
+    "Clojure",
+    "生成藝術",
+    "三角網"
+   ],
+   "tools": [
+    "Clojure"
+   ],
+   "url": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+   "summary": "生成藝術家 Tyler Hobbs 的文章：從頂點連到對邊的一點把三角形切成兩個，遞迴下去。他比較中點切割（僵硬）、以截尾常態分布隨機取點、永遠切最長邊（自我平衡、避免細長三角形），以及以機率或依位置決定何時停止；文中程式為 Clojure 語法。和基礎範例一樣是二分遞迴，只是單元從矩形換成三角形。",
+   "currently_cc": true,
+   "photo": {
+    "source": "tylerxhobbs.com",
+    "page": "https://tylerxhobbs.com/essays/2017/aesthetically-pleasing-triangle-subdivision",
+    "note": "文中插圖：隨機取點的三角形遞迴分割"
+   }
+  },
+  {
+   "id": "A04-54",
+   "title": "SideFX Labs Lot Subdivision（Houdini 地塊／面板細分節點）",
+   "creator": "SideFX",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "程序化建模",
+    "街廓"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/labs--lot_subdivision-2.0.html",
+   "summary": "Houdini SideFX Labs 的節點，把多邊形反覆切割成大小不一的「lot」，可用於太空船面板、科幻室內、城市街廓與不規則牆面；可選依世界座標或最長邊對齊切割，設定最小尺寸、迭代次數、不規則度，還能把相鄰小塊合併成更有趣的形狀。它把基礎範例的矩形遞迴推廣到任意多邊形。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

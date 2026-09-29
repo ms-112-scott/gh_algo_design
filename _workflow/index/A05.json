@@ -170,20 +170,6 @@
    "has_image": false
   },
   {
-   "id": "A05-03",
-   "cc": false,
-   "title": "The Language of the Prairie：萊特草原住宅文法",
-   "creator": "Hank Koning、Julie Eizenberg",
-   "year": "1981",
-   "url": "",
-   "category": "3d-architecture",
-   "scale": "建築",
-   "tools": [
-    "理論"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A05-04",
    "cc": false,
    "title": "Siza Malagueira 住宅文法與大量客製化",
@@ -239,20 +225,6 @@
    "scale": "構件",
    "tools": [
     "理論"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "A05-08",
-   "cc": false,
-   "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
-   "creator": "designcoding",
-   "year": "",
-   "url": "https://www.designcoding.net/revisiting-chinese-ice-ray-lattices/",
-   "category": "modeling",
-   "scale": "立面／表皮",
-   "tools": [
-    "Grasshopper"
    ],
    "has_image": false
   },
@@ -344,21 +316,6 @@
    "has_image": false
   },
   {
-   "id": "A05-15",
-   "cc": false,
-   "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
-   "creator": "Athanassios Economou（Georgia Tech Shape Computation Lab）",
-   "year": "",
-   "url": "https://shape.gatech.edu/Research/index.html",
-   "category": "modeling",
-   "scale": "物件",
-   "tools": [
-    "Shape Machine",
-    "Rhino"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A05-51",
    "cc": true,
    "title": "Context Free Art（CFDG 設計文法）",
@@ -427,46 +384,118 @@
     "three.js"
    ],
    "has_image": false
+  },
+  {
+   "id": "A05-56",
+   "cc": true,
+   "title": "遞迴碎形樹（The Coding Train Coding Challenge #14）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "url": "https://thecodingtrain.com/challenges/14-fractal-trees-recursive",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A05-57",
+   "cc": true,
+   "title": "Substitution System：格子替換生成藝術與繪圖機輸出",
+   "creator": "piebro",
+   "year": "2024",
+   "url": "https://github.com/piebro/substitution-system",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "vpype"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A05-58",
+   "cc": true,
+   "title": "Generative Art with Context Free Grammars：龜圖文法生成的分岔樹",
+   "creator": "Leon Rische",
+   "year": "",
+   "url": "https://www.leonrische.me/pages/generative_art_with_cfgs.html",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "3d-architecture": 7,
-   "modeling": 4,
+   "3d-architecture": 6,
    "urban-landscape": 3,
-   "2d-pattern": 2,
+   "2d-pattern": 3,
+   "drawing": 3,
+   "modeling": 2,
    "art-installation": 1,
    "fabrication": 1,
-   "performance": 1,
-   "drawing": 1
+   "performance": 1
   },
   "scale": {
-   "建築": 8,
-   "物件": 5,
+   "物件": 7,
+   "建築": 7,
    "群體／都市": 2,
-   "立面／表皮": 2,
    "構件": 2,
+   "立面／表皮": 1,
    "地景": 1
   },
   "tools": {
-   "理論": 8,
+   "理論": 7,
    "電腦程式": 3,
    "手繪": 2,
    "CityEngine": 2,
    "CGA": 2,
-   "Grasshopper": 1,
    "CAD": 1,
    "快速原型": 1,
    "eifForm": 1,
    "Java": 1,
-   "Shape Machine": 1,
-   "Rhino": 1,
    "Context Free": 1,
    "Structure Synth": 1,
    "C#": 1,
    "ShapeML": 1,
-   "three.js": 1
+   "three.js": 1,
+   "p5.js": 1,
+   "JavaScript": 1,
+   "vpype": 1,
+   "Python": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:A05-03",
+   "algo": "A05",
+   "kind": "RES",
+   "title": "The Language of the Prairie：萊特草原住宅文法",
+   "url_norm": "",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A05-08",
+   "algo": "A05",
+   "kind": "RES",
+   "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
+   "url_norm": "designcoding.net/revisiting-chinese-ice-ray-lattices",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A05-15",
+   "algo": "A05",
+   "kind": "RES",
+   "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
+   "url_norm": "shape.gatech.edu/research/index.html",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

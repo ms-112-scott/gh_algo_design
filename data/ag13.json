@@ -568,6 +568,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "SIGGRAPH 1987 論文，把 CT、MRI 等 3D 醫學掃描資料中「密度相同」的位置轉成三角形模型，是 Marching Squares 的 3D 版本，也是電腦圖學引用最多的論文之一。基礎範例的查表＋邊上內插就是它在 2D 的縮小版。",
       "variations": [
@@ -609,6 +610,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Blinn 為電視節目《Cosmos》模擬原子交互作用而發展出 blobby 模型，1982 年發表於 ACM TOG。每個球貢獻一個隨距離衰減的場，相加後取等值面，形體會自然融合——正是基礎範例 FieldValue 的原型。",
       "variations": [
@@ -646,6 +648,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Greg Lynn 在 1995 年以 metaball 圖學軟體實驗設計並提出 blob architecture 一詞，影響了一整代以數位工具生成有機曲面的建築。其形體生成邏輯即為多個場源加總後取等值面。",
       "variations": [
@@ -684,6 +687,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "用 Kinect 深度相機即時掃描沙盤高度，再以投影機把高程色帶、地形等高線與模擬水流投回沙面，讓人用手堆沙就能看懂等高線地形圖。全世界已有數千處安裝，軟體開源。",
       "variations": [
@@ -725,6 +729,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "Marching Squares 最典型的用途：從規則格網的高程或氣壓資料畫出等高線（isoline）與等值帶（isoband）。建築系做基地模型時的分層等高線，背後就是同一件事。",
       "variations": [
@@ -764,6 +769,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "D3 的 d3-contour 模組對矩形數值陣列套用 Marching Squares 計算等值多邊形，常用於密度圖、地形圖等資料視覺化。它輸出的是封閉多邊形，是基礎範例「散線段」的進階版。",
       "variations": [
@@ -804,6 +810,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 p5.js 逐步講解 Marching Squares，示範把 Open Simplex 雜訊、metaballs、Worley 雜訊、攝影機畫面與影像等各種輸入描成平滑等值線，是自學最好上手的教材。",
       "variations": [
@@ -845,6 +852,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Grasshopper 外掛，建構於 OpenVDB，把點、曲線、Mesh 包成體積資料後做布林、平滑、偏移、形變，再轉回 Mesh。本質是 3D 場＋等值面擷取，等於基礎範例的工業強度版。",
       "variations": [
@@ -888,6 +896,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Millipede 是 Grasshopper 的結構分析與拓樸最佳化外掛，同時提供從體積純量場擷取等值面 Mesh，以及在 Mesh 上畫曲線等值線的功能。拓樸最佳化得到的密度場，就是靠等值面變成可建造的形。",
       "variations": [
@@ -928,6 +937,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "ETH Zurich 數位建築技術研究室開發的 Grasshopper 元件集，以有號距離函數（SDF）表示形體，支援布林、晶格與 TPMS，並用 Marching Cubes 轉成 Mesh。多數元件為 Python 腳本，定位偏向教學。",
       "variations": [
@@ -968,6 +978,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Shadertoy 共同創辦人 Inigo Quilez 整理的 SDF 基本形與平滑組合公式集，是 demoscene 與程式化建模的重要參考。這些公式可直接貼進基礎範例的 FieldValue，再由 Marching Squares／Cubes 轉成幾何。",
       "variations": [
@@ -1008,6 +1019,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "以 Unity 與 compute shader 實作 Marching Cubes 產生可挖掘、可有洞穴的程式化地形，並附教學影片與 MIT 授權原始碼。展示了等值面方法能處理高度圖做不到的懸崖與洞穴。",
       "variations": [
@@ -1051,6 +1063,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Autodesk 研究團隊開發的體素化設計工具，以體積場而非邊界曲面描述物件，適合多材料 3D 列印與漸變材質。場的思維與基礎範例一致，最後同樣需要等值面把場轉成可輸出的幾何。",
       "variations": [
@@ -1090,6 +1103,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Schoen 在 1970 年 NASA 技術報告〈Infinite Periodic Minimal Surfaces Without Self-Intersections〉中描述了 Gyroid 等 12 種新的 TPMS，並以塑膠模型與電腦動畫展示；嚴格證明要到 1996 年才完成。基礎範例用的 sin·cos 三角函數式則是後來常用的近似公式。",
       "variations": [
@@ -1128,6 +1142,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "數學雕塑家 Bathsheba Grossman 以 Mathematica 與 Kenneth Brakke 的 Surface Evolver 計算 Gyroid 的一段，再以鋼材 3D 列印成約 3 吋的立方雕塑；她自述自己的創作貢獻是「開的洞」。",
       "variations": [
@@ -1170,6 +1185,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "FDM 切片軟體普遍提供 Gyroid 填充樣式：各方向強度接近、同一層內不自我交叉、列印快、重量強度比佳。每一層列印路徑正是 Gyroid 在該高度的 2D 切片等值線。",
       "variations": [
@@ -1201,46 +1217,6 @@
       "url": "https://help.prusa3d.com/article/infill-patterns_177130"
     },
     {
-      "id": "F03-04",
-      "algo": "F03",
-      "title": "徑向漸變 TPMS 骨骼支架",
-      "creator": "骨組織工程研究（綜述論文）",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "物件",
-      "summary": "近年以 3D 列印的徑向漸變 TPMS 多孔支架修復骨缺損，常見 Gyroid、Diamond、Schwarz P；材料有 PLA、PCL、PEEK、鈦合金等，製程涵蓋 FDM、光固化、擠出與 SLM。孔隙率、孔徑與連通性直接由公式與 isoValue 控制。",
-      "variations": [
-        {
-          "name": "徑向漸變",
-          "how": "isoValue 依到中心軸的距離 r 變化，例如 iso = a + b·r",
-          "effect": "外圍緻密承重、中心多孔利於長骨"
-        },
-        {
-          "name": "Sheet 型 vs Skeletal 型",
-          "how": "分別用 |f| − t 與 f − t 兩種場",
-          "effect": "比較兩種晶格的孔隙率與表面積"
-        },
-        {
-          "name": "外形來自掃描",
-          "how": "以骨缺損 Mesh 的 SDF 與 TPMS 取交集",
-          "effect": "客製化形狀的植入物"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "等值面",
-        "3D",
-        "最佳化"
-      ],
-      "tools": [
-        "3D 列印"
-      ],
-      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664"
-    },
-    {
       "id": "F03-05",
       "algo": "F03",
       "title": "Gyroid 積層製造熱交換器",
@@ -1250,6 +1226,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Gyroid 把空間分成兩個互不相通、卻彼此緊貼的通道，正好讓冷熱兩股流體各走一邊；金屬 3D 列印可一體成形，不需傳統熱交換器的墊片與組件。研究以 CFD 與實驗分析其流動與傳熱。",
       "variations": [
@@ -1291,6 +1268,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "MIT 研究以 Gyroid 幾何把石墨烯壓成多孔 3D 結構，密度僅鋼的 5% 卻有其 10 倍強度；團隊並把放大數千倍的 Gyroid 模型 3D 列印出來做力學測試，結論是「幾何才是主要因素」。",
       "variations": [
@@ -1331,6 +1309,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "部分蝴蝶翅膀鱗片與鳥類羽毛含有單一 Gyroid 網路的奈米光子晶體，靠光的干涉產生結構色，而不是色素。這說明 TPMS 不只是數學，也是自然界的材料組織方式。",
       "variations": [
@@ -1368,6 +1347,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Axolotl 把 Gyroid、Schwarz 等 TPMS 當作 SDF 物件，可與任意外形做布林並以 Marching Cubes 輸出 Mesh。開發團隊 DBT 長期研究 3D 砂印與建築構件，是基礎範例延伸成「裁進建築構件的晶格」的直接參考。",
       "variations": [
@@ -1409,6 +1389,7 @@
         "3d-architecture",
         "art-installation"
       ],
+      "source": "art",
       "scale": "建築",
       "summary": "首件可進入、全尺度、完全以砂 3D 列印的封閉空間（約 16 平方公尺，2013 年 Archilab 展出）；續作 Digital Grotesque II 以 7 噸砂岩列印。注意：此作品的形體來自細分（subdivision）演算法而非 TPMS，列在此處是作為「複雜多孔幾何可用砂印做到建築尺度」的製造參考。",
       "variations": [
@@ -1439,86 +1420,6 @@
       "url": "https://michael-hansmeyer.com/digital-grotesque-I"
     },
     {
-      "id": "F03-10",
-      "algo": "F03",
-      "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
-      "creator": "Benjamin Dillenburger、Robert Flatt、Joseph Schwartz 等（ETH Zurich，DFAB HOUSE）",
-      "year": "2018",
-      "category": "fabrication",
-      "categories_extra": [
-        "performance",
-        "3d-architecture"
-      ],
-      "scale": "構件",
-      "summary": "在 Empa NEST 的 DFAB HOUSE 中，以黏著劑噴印（binder jetting）的砂模當模板澆置混凝土，做出肋梁分級的輕量樓板，比一般實心樓板輕約 70%。此案本身不是 TPMS，但示範了把演算法生成的複雜多孔幾何變成建築構件的製造路徑。",
-      "variations": [
-        {
-          "name": "TPMS 砂模",
-          "how": "輸出 Gyroid solid 一側作為模具，另一側即為混凝土",
-          "effect": "內含雙連通空腔的輕量混凝土構件"
-        },
-        {
-          "name": "依彎矩漸變",
-          "how": "isoValue 沿跨度依彎矩大小變化",
-          "effect": "支承處密、跨中疏（或相反）的樓板晶格"
-        },
-        {
-          "name": "只做下半部",
-          "how": "上半為實心板，下半 z 範圍內才套 TPMS",
-          "effect": "平整樓面、下方呈現晶格天花"
-        }
-      ],
-      "difficulty": 5,
-      "tags": [
-        "3D",
-        "最佳化",
-        "多元件"
-      ],
-      "tools": [
-        "砂印（binder jetting）",
-        "混凝土"
-      ],
-      "url": "https://dbt.arch.ethz.ch/project/smart-slab/"
-    },
-    {
-      "id": "F03-11",
-      "algo": "F03",
-      "title": "Minimal Complexity 極小曲面裝置",
-      "creator": "Vlad Tenu",
-      "year": "2010",
-      "category": "art-installation",
-      "categories_extra": [
-        "3d-architecture",
-        "fabrication"
-      ],
-      "scale": "構件",
-      "summary": "以 Schwarz 系列極小曲面單元重複組成的可穿越金屬裝置，是 TEX-FAB 競賽的得獎作品，常被引為 TPMS 進入建築裝置尺度的早期案例。（本條細節未能於本次搜尋中取得網頁佐證，年份與材料請再查證。）",
-      "variations": [
-        {
-          "name": "單元化與展開",
-          "how": "只取一個週期的 Mesh，沿對稱面切成可展開的片",
-          "effect": "可用金屬板雷切彎折組裝的單元"
-        },
-        {
-          "name": "有限重複",
-          "how": "periods 設為非整數並以外形 SDF 裁切",
-          "effect": "邊界處自然開口的裝置外形"
-        },
-        {
-          "name": "改成 Schwarz D",
-          "how": "切換公式",
-          "effect": "更扭轉、更具動感的單元"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "3D",
-        "對稱"
-      ],
-      "tools": [],
-      "url": ""
-    },
-    {
       "id": "F03-12",
       "algo": "F03",
       "title": "Gyroid 水凝膠支架：軟組織工程",
@@ -1528,6 +1429,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 DLP 生物列印製作含細胞的 Gyroid 水凝膠支架，連續曲面與高連通性支持微血管網路在整個構造中形成。展示了 TPMS 從硬材料（骨、金屬）擴展到軟材料的製造挑戰。",
       "variations": [
@@ -1567,6 +1469,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "研究以最佳化方法決定 TPMS 支架各處的壁厚，在剛度、滲透率與孔隙率之間取得平衡，並以積層製造實作驗證。對應到基礎範例，就是讓 isoValue／thickness 從常數變成一個空間場。",
       "variations": [

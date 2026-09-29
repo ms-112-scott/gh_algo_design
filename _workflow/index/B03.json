@@ -342,20 +342,6 @@
    "has_image": false
   },
   {
-   "id": "B03-15",
-   "cc": false,
-   "title": "Grasshopper 空間殖民範例（Parametric House）",
-   "creator": "Parametric House",
-   "year": "",
-   "url": "https://parametrichouse.com/space-colonization/",
-   "category": "modeling",
-   "scale": "構件",
-   "tools": [
-    "Grasshopper"
-   ],
-   "has_image": false
-  },
-  {
    "id": "B03-51",
    "cc": true,
    "title": "Coding Challenge #17：Fractal Trees - Space Colonization",
@@ -426,12 +412,27 @@
     "Unity"
    ],
    "has_image": true
+  },
+  {
+   "id": "B03-56",
+   "cc": true,
+   "title": "Tree（瀏覽器空間殖民生長樹）",
+   "creator": "Lucio Paiva",
+   "year": "2018",
+   "url": "https://github.com/luciopaiva/tree",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "modeling": 5,
-   "drawing": 4,
+   "drawing": 5,
+   "modeling": 4,
    "fabrication": 3,
    "2d-pattern": 2,
    "urban-landscape": 2,
@@ -440,32 +441,41 @@
    "performance": 1
   },
   "scale": {
-   "物件": 14,
-   "構件": 3,
+   "物件": 15,
    "群體／都市": 2,
+   "構件": 2,
    "建築": 1
   },
   "tools": {
    "論文": 4,
    "自製程式": 4,
    "C++": 4,
-   "JavaScript": 3,
+   "JavaScript": 4,
    "Blender": 3,
    "Python": 3,
    "CGAL": 2,
    "p5.js": 2,
    "Processing": 2,
+   "HTML5 Canvas": 2,
    "Cinder": 1,
    "3D 列印（SLS 尼龍）": 1,
    "Canvas API": 1,
-   "HTML5 Canvas": 1,
    "Sverchok": 1,
    "Houdini": 1,
    "VEX": 1,
-   "Grasshopper": 1,
    "openFrameworks": 1,
    "Unity": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:B03-15",
+   "algo": "B03",
+   "kind": "RES",
+   "title": "Grasshopper 空間殖民範例（Parametric House）",
+   "url_norm": "parametrichouse.com/space-colonization",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

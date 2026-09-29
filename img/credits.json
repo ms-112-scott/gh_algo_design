@@ -55,14 +55,6 @@
     "page": "https://doi.org/10.3390/app12115530",
     "note": "論文圖：不同 L-system 規則生成的輕量結構"
   },
-  "A01-09": {
-    "source": "Buildings (MDPI)",
-    "author": "",
-    "license": "CC BY 4.0",
-    "license_url": "",
-    "page": "https://doi.org/10.3390/buildings12122247",
-    "note": "論文圖：分枝節點的列印路徑成果"
-  },
   "A01-10": {
     "source": "Paul Bourke",
     "author": "",
@@ -87,14 +79,6 @@
     "page": "https://lotta-stoever.net/works/mutiertes-l-system",
     "note": ""
   },
-  "A01-13": {
-    "source": "Wikimedia Commons",
-    "author": "parpining",
-    "license": "CC BY-SA 4.0",
-    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-    "page": "https://commons.wikimedia.org/wiki/File:Gorga_boraspati_dan_adop-adop.jpg",
-    "note": "巴塔克族傳統住屋的 Gorga 雕刻紋樣"
-  },
   "A01-14": {
     "source": "arXiv:2404.03270",
     "author": "",
@@ -102,14 +86,6 @@
     "license_url": "",
     "page": "https://arxiv.org/abs/2404.03270",
     "note": "論文圖：在球面上生長的分枝"
-  },
-  "A01-15": {
-    "source": "SpeedTree 官網",
-    "author": "",
-    "license": "官網圖片，教學引用",
-    "license_url": "",
-    "page": "https://www.speedtree.com/",
-    "note": "SpeedTree 程序化生成的樹"
   },
   "B01-13": {
     "source": "arXiv：Liu & Tang, Cabbage: A Differential Growth Framework for Open Surfaces (2025) 圖 1",
@@ -430,14 +406,6 @@
     "license_url": "",
     "page": "https://michael-hansmeyer.com/digital-grotesque-I",
     "note": "Digital Grotesque I 全尺度砂印洞窟裝置"
-  },
-  "F03-10": {
-    "source": "ETH Zurich DBT Group",
-    "author": "",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://dbt.arch.ethz.ch/project/smart-slab/",
-    "note": "Smart Slab 3D 砂印模板澆置的肋梁樓板底面"
   },
   "F03-03": {
     "source": "Prusa Knowledge Base",

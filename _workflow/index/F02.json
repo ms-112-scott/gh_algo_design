@@ -176,7 +176,7 @@
    "category": "3d-architecture",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F02-04",
@@ -188,7 +188,7 @@
    "category": "2d-pattern",
    "scale": "立面／表皮",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F02-05",
@@ -214,7 +214,7 @@
    "tools": [
     "手繪／紙本"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F02-07",
@@ -226,7 +226,7 @@
    "category": "3d-architecture",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F02-08",
@@ -238,7 +238,7 @@
    "category": "art-installation",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F02-09",
@@ -289,18 +289,18 @@
    "has_image": false
   },
   {
-   "id": "F02-13",
-   "cc": false,
-   "title": "Next Generation of Star Patterns（同心圓參數化星形）",
-   "creator": "Hadi Mansourifar、Weidong Shi",
-   "year": "2018",
-   "url": "https://arxiv.org/abs/1809.09270",
+   "id": "F02-51",
+   "cc": true,
+   "title": "Islamic Star Pattern（The Coding Train #54 Part 1）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
    "category": "2d-pattern",
-   "scale": "構件",
+   "scale": "物件",
    "tools": [
-    "Android App"
+    "p5.js"
    ],
-   "has_image": false
+   "has_image": true
   }
  ],
  "distribution": {
@@ -313,15 +313,26 @@
    "art-installation": 1
   },
   "scale": {
-   "構件": 5,
+   "構件": 4,
    "建築": 4,
-   "立面／表皮": 4
+   "立面／表皮": 4,
+   "物件": 1
   },
   "tools": {
    "手繪／紙本": 2,
    "C++": 1,
-   "Android App": 1
+   "p5.js": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:F02-13",
+   "algo": "F02",
+   "kind": "RES",
+   "title": "Next Generation of Star Patterns（同心圓參數化星形）",
+   "url_norm": "arxiv:1809.09270",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

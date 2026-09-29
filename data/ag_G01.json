@@ -274,6 +274,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Batty 在規則格點上逐點計算 isovist，定義距離、面積、周長、緊湊度與凸性等量測，並以倫敦的案例把這些量測畫成 isovist 場，說明視野如何由實體幾何與人的移動交互形成。它就是本演算法「每一格算一次可視域再上色」的原型；和基礎範例相比，論文更著重比較多種指標之間的相關，以及用場的起伏讀出空間形態。",
       "variations": [
@@ -308,6 +309,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "論文把一組格點上的 isovist 轉成「互相看得到就連邊」的可見性圖，用圖的鄰居數、群聚係數與平均深度描述建築空間的組構，後來成為 space syntax 的 VGA（可見性圖分析）方法。基礎範例只算單點的可視多邊形，這篇示範了下一步：把兩兩可見關係存成圖，再以圖論量測取代形狀量測。",
       "variations": [
@@ -343,6 +345,7 @@
         "urban-landscape",
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "DeCodingSpaces 工具箱的教學頁，示範用 Grasshopper 的 isovist 元件做單點 isovist、路徑上的 isovist、格點 isovist 場，以及把可見度回映到立面與建築上；2D 指標包含面積、周長、緊湊度、遮蔽度、徑向統計與 drift，3D 還有天空與地面比例。本案例取其 isovist 場的計算與指標：工具箱把基礎範例包成現成元件並提供更多指標，自己寫 C# 則能看到射線與求交的內部並自由改規則。",
       "variations": [
@@ -380,6 +383,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "研究沿上海豫園的遊覽路線取樣，以 isovist、isovist 場與可見性圖量測空間與視覺性質如何隨步行改變，用來檢驗四種關於中國私家園林空間體驗的理論；結果顯示沿線並非規律的開合循環，而是先漸增、再遞減、最後略增。和基礎範例相比，重點在沿動線取樣並把指標排成時間序列，再與設計理論對照。",
       "variations": [
@@ -406,40 +410,6 @@
       "url": "https://www.sciencedirect.com/science/article/pii/S2095263518300451"
     },
     {
-      "id": "G01-05",
-      "algo": "G01",
-      "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
-      "creator": "Michael J. Dawes、Michael J. Ostwald",
-      "year": "2014",
-      "category": "3d-architecture",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "建築",
-      "summary": "研究以 isovist 沿動線分析 Wright 的五棟織物磚住宅（Millard、Storer、Freeman、Ennis、Lloyd Jones），推導十個空間量測，檢驗 Hildebrand 以展望—庇護理論提出的「Wright 空間」是否存在；結果只找到部分支持，其中 Freeman 住宅最符合。案例示範如何把 isovist 指標組合成「展望（看得多遠多廣）」與「庇護（背後被圍住的程度）」兩類量測。",
-      "variations": [
-        {
-          "name": "展望與庇護雙指標",
-          "how": "展望取 isovist 面積或最遠距離，庇護取射線中距離小於 refugeDist 的比例，兩者分別正規化後輸出成雙色場。",
-          "effect": "找出「看得開、背有靠」的位置，例如壁爐角落或窗邊座位。"
-        },
-        {
-          "name": "樓層平面批次比較",
-          "how": "把多個平面的牆線放進 DataTree，逐一計算同一組指標並輸出統計表。",
-          "effect": "用一致的量測比較不同住宅或不同設計方案。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "形狀指標",
-        "展望—庇護",
-        "住宅",
-        "論文"
-      ],
-      "tools": [],
-      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0360132314001760"
-    },
-    {
       "id": "G01-06",
       "algo": "G01",
       "title": "城市的數位意象：以 3D isovist 做 Lynch 式都市分析",
@@ -449,6 +419,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "作者以數值高程模型（DEM）在像素與體素上計算 3D isovist，並提出「isovisimatrix」，把 Kevin Lynch《城市意象》的可意象性分析變成可量化的視覺量測，用來評估新建物對都市視覺特性的影響。和基礎範例的平面射線不同，這裡射線在高程影像上前進，檢查視線是否被建築高度擋住。",
       "variations": [
@@ -483,6 +454,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "SYNTACTIC 是把 space syntax 分析帶進平面配置設計的 Grasshopper 外掛；其中的 Isovist Bubble 是一個會保持固定面積、同時邊界始終是 isovist（可見邊界）的泡泡，把可視域從「分析結果」反過來變成「生成形體的規則」。和基礎範例相比，它讓 isovist 在設計過程中即時更新並驅動形狀。",
       "variations": [
@@ -510,43 +482,6 @@
       "url": "https://sites.google.com/site/pirouznourian/syntactic-design"
     },
     {
-      "id": "G01-51",
-      "algo": "G01",
-      "title": "2D Visibility（2D 可視範圍互動解說）",
-      "creator": "Amit J. Patel（Red Blob Games）",
-      "year": "2012",
-      "category": "drawing",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "Red Blob Games 的互動文章，以一條繞觀察點旋轉 360° 的掃描線，在牆的起訖角度處停下，追蹤目前最近的牆，最近的牆一換就輸出一個可見三角形，拼起來就是可視範圍；文章也討論用 GPU 畫陰影與多個光源合成。和基礎範例的等角度射線相比，這是只在「關鍵角度」計算的掃描線演算法，精確又省計算，並用於遊戲的視野、火把照明與 AI 戰術判斷。",
-      "variations": [
-        {
-          "name": "角度掃描取代等角射線",
-          "how": "把所有牆端點依 Math.Atan2 排序，掃描時用 List 維護與掃描線相交的牆，只在最近牆改變時新增頂點。",
-          "effect": "頂點數等於真正的轉角數，計算量從射線數 × 牆數降到約 n log n。"
-        },
-        {
-          "name": "多光源疊加",
-          "how": "對多個觀察點各算一次 isovist，用 Mesh 半透明疊色或 Curve.CreateBooleanUnion 合併。",
-          "effect": "得到多盞燈或多位守衛的聯合照明／視野範圍。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "creative coding",
-        "JavaScript",
-        "掃描線",
-        "互動解說",
-        "遊戲"
-      ],
-      "tools": [
-        "JavaScript"
-      ],
-      "url": "https://www.redblobgames.com/articles/visibility/"
-    },
-    {
       "id": "G01-52",
       "algo": "G01",
       "title": "Sight & Light：2D 視線與光影效果教學",
@@ -556,6 +491,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Nicky Case 的互動教學，逐步示範射線與線段的參數式求交、只朝線段端點（加上左右微偏的兩條）發射射線、依角度排序交點組成可視多邊形，最後從幾個略微偏移的位置各算一次多邊形疊成柔和陰影，當作遮罩合成前景與背景。內容源自遊戲《Nothing To Hide》；和基礎範例相比，它把可視域當成光照遮罩，重點在畫面效果。",
       "variations": [
@@ -594,6 +530,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Daniel Shiffman 在 p5.js 裡從零寫出 2D 射線投射：牆是線段物件（Boundary）、光源是發出一圈射線的粒子，每條射線用線段交點公式找最近的牆，並讓粒子隨滑鼠或雜訊移動，畫面即時呈現光線與陰影。流程和基礎範例的 CastIsovist 幾乎一一對應，差別在 p5.js 每一格動畫都重算一次，而且直接畫射線而不組多邊形。",
       "variations": [
@@ -630,6 +567,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "art",
       "scale": "建築",
       "summary": "作者在 Houdini 中自行實作 isovist 與可見性圖：先比較每 1° 旋轉射線的圓形取樣與直接取樣環境幾何點的「邊點取樣」，後者只需 56 條射線就更精確；再把多點的結果做成面積、最遠距離、凸性等量測的場，並以鄰接矩陣存可見性圖。和基礎範例相比，它示範了程序化節點環境（HDK／VEX）裡的同一套流程與射線取樣策略的取捨。",
       "variations": [
@@ -655,42 +593,6 @@
         "Houdini"
       ],
       "url": "https://houdinigubbins.wordpress.com/2017/05/03/isovist-and-visibility-graph/"
-    },
-    {
-      "id": "G01-55",
-      "algo": "G01",
-      "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
-      "creator": "Byron Knoll",
-      "year": "2013",
-      "category": "modeling",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "Byron Knoll 發布的開源 JavaScript 函式庫（公有領域），輸入一組線段與觀察點即可以 O(n log n) 的角度掃描求出可視多邊形，另附點在多邊形內判斷、多邊形轉線段與線段交點打斷等工具，並有 C# 等語言的移植版。和基礎範例相比，它先把相交的牆在交點處打斷，處理重疊、交叉的牆更穩健。",
-      "variations": [
-        {
-          "name": "先打斷交叉的牆",
-          "how": "對所有牆段兩兩用 Intersection.LineLine 找交點，把線段在交點處切開後再做 isovist。",
-          "effect": "手畫交錯的牆或開放的線條圖也能得到正確的可視域。"
-        },
-        {
-          "name": "可視域內外判斷",
-          "how": "用 isovist 的 PolylineCurve.Contains 判斷一組目標點（展品、座位）是否看得到，輸出 bool 清單。",
-          "effect": "快速統計從一個位置能看到幾件展品。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "creative coding",
-        "JavaScript",
-        "函式庫",
-        "計算幾何"
-      ],
-      "tools": [
-        "JavaScript"
-      ],
-      "url": "https://github.com/byronknoll/visibility-polygon-js"
     }
   ]
 }

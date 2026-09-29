@@ -175,35 +175,6 @@
    "has_image": false
   },
   {
-   "id": "B01-04",
-   "cc": false,
-   "title": "Floraform 吊燈",
-   "creator": "Nervous System",
-   "year": "",
-   "url": "https://n-e-r-v-o-u-s.com/projects/sets/floraform",
-   "category": "art-installation",
-   "scale": "構件",
-   "tools": [
-    "自製模擬軟體",
-    "3D 列印"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "B01-05",
-   "cc": false,
-   "title": "2D Differential Growth Experiments",
-   "creator": "Jason Webb",
-   "year": "",
-   "url": "https://github.com/jasonwebb/2d-differential-growth-experiments",
-   "category": "2d-pattern",
-   "scale": "物件",
-   "tools": [
-    "JavaScript"
-   ],
-   "has_image": false
-  },
-  {
    "id": "B01-06",
    "cc": false,
    "title": "Organic Labyrinths and Mazes",
@@ -278,20 +249,6 @@
    "has_image": false
   },
   {
-   "id": "B01-11",
-   "cc": false,
-   "title": "Differential Line Growth／Differential Mesh Growth（Houdini 教學）",
-   "creator": "Entagma",
-   "year": "2016",
-   "url": "https://entagma.com/differential-line-growth",
-   "category": "modeling",
-   "scale": "物件",
-   "tools": [
-    "Houdini"
-   ],
-   "has_image": false
-  },
-  {
    "id": "B01-12",
    "cc": false,
    "title": "Interactive Differential Growth Simulation for Design",
@@ -313,7 +270,7 @@
    "category": "modeling",
    "scale": "物件",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "B01-51",
@@ -384,6 +341,53 @@
     "Houdini"
    ],
    "has_image": true
+  },
+  {
+   "id": "B01-56",
+   "cc": true,
+   "title": "Differential Growth（creative-dev 週挑戰）",
+   "creator": "Mikola Lysenko",
+   "year": "",
+   "url": "https://github.com/mikolalysenko/differential-growth",
+   "category": "modeling",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-57",
+   "cc": true,
+   "title": "Real-time Differential Growth（WebGL 迷宮生長）",
+   "creator": "adrianton3（GitHub 帳號，全名未公開）",
+   "year": "",
+   "url": "https://github.com/adrianton3/differential-growth",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "WebGL",
+    "PixiJS"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B01-58",
+   "cc": true,
+   "title": "Differential Growth Raymarching",
+   "creator": "nowickam（GitHub 帳號，全名未公開）",
+   "year": "",
+   "url": "https://github.com/nowickam/differential-growth",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "openFrameworks",
+    "C++",
+    "GLSL"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
@@ -391,31 +395,64 @@
    "modeling": 6,
    "drawing": 4,
    "fabrication": 3,
-   "art-installation": 2,
-   "2d-pattern": 2,
-   "3d-architecture": 1
+   "2d-pattern": 3,
+   "3d-architecture": 1,
+   "art-installation": 1
   },
   "scale": {
-   "物件": 14,
-   "構件": 2,
-   "立面／表皮": 2
+   "物件": 15,
+   "立面／表皮": 2,
+   "構件": 1
   },
   "tools": {
-   "自製模擬軟體": 4,
    "Python": 3,
+   "自製模擬軟體": 3,
    "Grasshopper": 3,
-   "3D 列印": 2,
-   "JavaScript": 2,
-   "Houdini": 2,
+   "JavaScript": 3,
+   "WebGL": 2,
    "Cython": 1,
+   "3D 列印": 1,
    "3D 列印砂模": 1,
    "鋁鑄造": 1,
    "Rhino": 1,
    "大尺度積層製造": 1,
    "GPU": 1,
    "Kangaroo": 1,
-   "Processing": 1
+   "Processing": 1,
+   "Houdini": 1,
+   "PixiJS": 1,
+   "openFrameworks": 1,
+   "C++": 1,
+   "GLSL": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:B01-04",
+   "algo": "B01",
+   "kind": "RES",
+   "title": "Floraform 吊燈",
+   "url_norm": "n-e-r-v-o-u-s.com/projects/sets/floraform",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:B01-05",
+   "algo": "B01",
+   "kind": "RES",
+   "title": "2D Differential Growth Experiments",
+   "url_norm": "github:jasonwebb/2d-differential-growth-experiments",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:B01-11",
+   "algo": "B01",
+   "kind": "RES",
+   "title": "Differential Line Growth／Differential Mesh Growth（Houdini 教學）",
+   "url_norm": "entagma.com/differential-line-growth",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

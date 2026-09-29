@@ -1,0 +1,430 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "C02",
+  "name_zh": "生命遊戲疊層",
+  "name_en": "Game of Life 3D (Stacked Generations)",
+  "one_liner": "在一張棋盤上跑 Conway 生命遊戲，每一代活著的格子疊成一層方塊，時間往上長成一棟由規則「長」出來的量體。",
+  "how_it_works": [
+   "建立 width × depth 的 bool[,] 網格，用固定 seed 的 Random 依 density 撒下初始活細胞。",
+   "每一代先把活著的格子轉成 Box 放在第 layer 層（z = layer × cellSize），並記錄活格數。",
+   "對每一格數周圍 8 格（Moore 鄰域，邊界用 % 左右上下相接）有幾個活鄰居。",
+   "套 B3/S23 規則：活的有 2 或 3 個鄰居才存活；死的剛好 3 個鄰居就復活；結果寫進新陣列（雙緩衝），避免同一代互相干擾。",
+   "新陣列取代舊陣列，重複 generations 次，最後輸出所有方塊與每層活格數。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "C02-01",
+   "title": "Cambridge North 車站 Rule 30 穿孔鋁板立面",
+   "creator": "Cambridge North 車站（設計方未查證；Stephen Wolfram 撰文辨識出規則）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "對稱",
+    "拼貼",
+    "字串改寫"
+   ],
+   "tools": [
+    "Wolfram Language"
+   ],
+   "url": "https://writings.stephenwolfram.com/2017/06/oh-my-gosh-its-covered-in-rule-30s",
+   "summary": "英國劍橋北站外牆以穿孔鋁板包覆，圖樣經 Wolfram 比對，正是一維細胞自動機 Rule 30 圖樣右側邊緣旋轉 45° 後的結果（從外看是 rule 135，從內看為 rule 149）。演算法在此直接產生整座車站的立面紋理與透光孔。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-02",
+   "title": "Metallic Lace：以細胞自動機為基礎的裝飾系統",
+   "creator": "Robert J. Krawczyk（Illinois Institute of Technology）",
+   "year": "2006",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tags": [
+    "影像輸入",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://www.wolframscience.com/conference/2006/presentations/materials/krawczyk.pdf",
+   "summary": "Krawczyk 從 450 個初始世代中挑出 27 種圖樣，記錄每一格在生長過程中被造訪的次數，以此決定格子尺寸，再轉成圓、方、菱形、八角、十字、八角星等單元。成果被構想為浮雕、鍛鐵裝飾或噴砂、雷刻玻璃圖樣。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-03",
+   "title": "Architectural Interpretation of Cellular Automata：CA 量體生成",
+   "creator": "Robert J. Krawczyk",
+   "year": "2002",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "開放生長"
+   ],
+   "tools": [],
+   "url": "https://generativeart.com/on/cic/papersGA2002/7.pdf",
+   "summary": "Krawczyk 把 2D 細胞自動機的世代往上堆疊當成建築量體，並研究如何以人工詮釋與修改把原始 CA 結果轉成可讀的建築形體；後續論文〈Exploring the Massing of Growth in Cellular Automata〉進一步以細胞存活世代數塑造量體。與基礎範例的「時間＝樓層」概念完全相同。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-04",
+   "title": "以 CA 生成荷蘭高密度集合住宅量體",
+   "creator": "Sanaz Khalili Araghi、Rudi Stouffs（TU Delft）",
+   "year": "2015",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "約束滿足",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580514002180",
+   "summary": "研究在設計初期用複合 CA 為荷蘭高密度住宅專案生成三維量體，格子狀態包含自然採光等條件，並以知名建築地標為基準比較生成的空間單元組合。示範 CA 規則如何加入建築需求而非只追求圖樣。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-05",
+   "title": "Automated Diagrams：以 CA 作為設計工作室的概念圖解",
+   "creator": "Christiane M. Herr、Joanna Karakiewicz",
+   "year": "2007",
+   "category": "drawing",
+   "scale": "建築",
+   "tags": [
+    "Timer",
+    "動畫"
+   ],
+   "tools": [],
+   "url": "https://papers.cumincad.org/data/works/att/cf2007_167.content.pdf",
+   "summary": "Herr 主張 CA 不必是全自動的形體產生器，而可以作為和設計者對話的「自動化圖解」：在設計工作室中讓學習者用 CA 產生抽象空間關係，再由設計者詮釋成混合機能的建築。延續她在香港大學的博士研究〈From Form Generators to Automated Diagrams〉。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-06",
+   "title": "Adapting Cellular Automata as Architectural Design Tools：實務專案中的 CA 改造",
+   "creator": "Christiane M. Herr、Ryan C. Ford",
+   "year": "2015",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "約束滿足",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://papers.cumincad.org/data/works/att/caadria2015_139.content.pdf",
+   "summary": "論文整理 CA 被用於建築設計時常見的改造方式，並以一個從 Game of Life 規則出發的案例研究說明：通用 CA 產生的形雖然精緻卻常是任意的，必須加入與建築需求相關的規則並經過建築詮釋才有用。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-07",
+   "title": "Les Folies Cellulaires：以 CA 生成的點景建築（Folies）",
+   "creator": "Mirjana Devetaković、Ljiljana Petruševski、Milana Dabić、Bojan Mitrović（貝爾格勒大學建築學院）",
+   "year": "2009",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "可重現種子"
+   ],
+   "tools": [
+    "Fun3D"
+   ],
+   "url": "https://generativeart.com/on/cic/GA2009Papers/p18.pdf",
+   "summary": "受 Tschumi 拉維列特公園的 Folies 啟發，貝爾格勒大學與高年級學習者以 Fun3D 軟體的 CA 模組生成一系列小型點景建築，探討 CA 在建築與都市設計中的應用，發表於 2009 年米蘭 Generative Art 研討會。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-08",
+   "title": "KnitYak：細胞自動機針織圍巾",
+   "creator": "Fabienne \"fbz\" Serrière",
+   "year": "2015",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "可重現種子",
+    "隨機"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://www.kickstarter.com/projects/fbz/knityak-custom-mathematical-knit-scarves/",
+   "summary": "Serrière 改裝工業針織機，用 Processing 產生以 Rule 110、Rule 73 等一維 CA 為主的圖樣直接織成圍巾；每條圍巾記錄規則與起始種子，保證獨一無二。演算法一代一列，正好對應針織一排一排往下織的製程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-09",
+   "title": "Cellular Automata and Fractal Urban Form：都市土地使用 CA 模型",
+   "creator": "Roger White、Guy Engelen",
+   "year": "1993",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "隨機",
+    "影像輸入",
+    "鄰居搜尋"
+   ],
+   "tools": [],
+   "url": "https://journals.sagepub.com/doi/10.1068/a251175",
+   "summary": "White 與 Engelen 的經典模型以格子狀態代表土地使用，轉換規則同時考慮鄰域內既有土地使用與該格本身的適宜性，模擬都市土地使用的演變並呈現碎形都市形態，成為後續大量都市、區域與交通 CA 研究的基礎。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-10",
+   "title": "Rabbit：Grasshopper 的細胞自動機與 L-System 外掛",
+   "creator": "Morphocode",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "Timer"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Rabbit"
+   ],
+   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+   "summary": "Rabbit 是 Morphocode 開發的開源 Grasshopper 外掛，提供 Conway's Life、Amoeba、Coral、Day&Night、Diamoeba 等多種 CA 規則與 3D CA 元件，可直接在 Rhino 中探索圖樣形成、自組織與湧現。適合拿來和自己寫的 C# 版本對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-11",
+   "title": "Stacked Game of Life：世代疊層的 3D 視覺化",
+   "creator": "vnglst（GitHub）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer",
+    "3D"
+   ],
+   "tools": [
+    "JavaScript",
+    "three.js"
+   ],
+   "url": "https://github.com/vnglst/stacked-game-of-life",
+   "summary": "網頁版 3D 視覺化：目前世代在最上方，舊世代逐步往下沉成歷史堆疊，八層歷史依序淡出透明度與顏色，以等角視角呈現時間切片。和基礎範例的「時間＝高度」相同，但只保留最近幾層做成動畫。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-12",
+   "title": "Lenia：連續狀態的生命遊戲",
+   "creator": "Bert Wang-Chak Chan",
+   "year": "2018",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "動畫",
+    "網格擴散"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://arxiv.org/abs/1812.05433",
+   "summary": "Lenia 把 Conway 生命遊戲推廣成空間、時間、狀態都連續的細胞自動機，用環形核計算鄰域勢能、高斯成長函數更新，產生會移動、脈動、分裂的類生物圖樣；後續研究再擴展到高維度、多核與多通道。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-13",
+   "title": "以細胞自動機控制動態遮陽立面",
+   "creator": "",
+   "year": "",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "Timer",
+    "動畫",
+    "吸引子控制"
+   ],
+   "tools": [],
+   "url": "https://www.academia.edu/48830065/Implementing_Cellular_Automata_for_Dynamically_Shading_a_Building_Facade",
+   "summary": "研究以 CA 規則驅動建築立面的動態遮陽單元，讓每個立面格子依自身與鄰居的狀態（例如日照）決定開關，形成兼具性能與變化圖樣的表皮。演算法把 CA 的局部規則轉成分散式的立面控制邏輯。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-14",
+   "title": "An Evolutionary Architecture：演化建築與細胞自動機",
+   "creator": "John Frazer（AA 建築聯盟學院）",
+   "year": "1995",
+   "category": "3d-architecture",
+   "scale": "群體／都市",
+   "tags": [
+    "最佳化",
+    "3D",
+    "開放生長"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "Frazer 的著作把建築視為會生長、演化的人工生命，早期實驗以人工演化與細胞自動機生成隨時間發展的建築形體，是 CA 建築生成的奠基文獻之一，與 Paul Coates 等人的研究同為此領域的起點。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-15",
+   "title": "Cellular Automata for Infill Designs in Historic Urban Quarters",
+   "creator": "Nexus Network Journal 論文（作者未查證）",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "約束滿足",
+    "影像輸入"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/article/10.1007/s00004-022-00602-2",
+   "summary": "研究把 CA 用於歷史街區的填充建築設計，讓新量體依周邊既有紋理的局部規則生成，以延續歷史街區的尺度與虛實關係。示範 CA 以既有環境為初始狀態、只在空地上生長的用法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C02-51",
+   "title": "Coding Challenge 85：The Game of Life",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "JavaScript",
+    "細胞自動機",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+   "summary": "用 p5.js 從零寫出 Conway 生命遊戲：建立二維陣列、隨機初始化、計算八鄰格存活數，並依規則產生下一代，同時說明邊界處理。和 Grasshopper C# 範例同一套規則，但以畫布方格即時播放世代變化。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/85-the-game-of-life",
+    "note": "挑戰頁預覽圖：生命遊戲方格"
+   }
+  },
+  {
+   "id": "C02-52",
+   "title": "A Processing implementation of Game of Life（Processing 官方範例）",
+   "creator": "Joan Soler-Adillon",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Java",
+    "細胞自動機",
+    "互動"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://processing.org/examples/gameoflife.html",
+   "summary": "Processing 官方範例庫「Cellular Automata」類別中的生命遊戲，可用空白鍵暫停、在暫停時用滑鼠點選切換細胞，按 R 隨機重設、按 C 清空。重點是把規則做成可以手動介入的互動畫面，而不只是自動跑。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Processing.org",
+    "page": "https://processing.org/examples/gameoflife.html",
+    "note": "Processing 官方範例的生命遊戲畫面"
+   }
+  },
+  {
+   "id": "C02-53",
+   "title": "The Nature of Code 第 7 章：Cellular Automata",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "細胞自動機",
+    "Wolfram CA",
+    "線上教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/cellular-automata/",
+   "summary": "《The Nature of Code》2024 年版（p5.js）的細胞自動機章節，從 Wolfram 一維基本 CA（Rule 30、90、110 等）講到二維生命遊戲，並示範穩定、振盪、移動的典型圖形與物件導向的細胞寫法。比 Grasshopper 基礎範例多了規則分類與變形的系統整理。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/cellular-automata/",
+    "note": "書中 Figure 7.30：會移動的圖形（滑翔機、輕型太空船）"
+   }
+  },
+  {
+   "id": "C02-54",
+   "title": "Creating Generative Visuals with Complex Systems（TouchDesigner Summit 2019 工作坊）",
+   "creator": "Simon Alexander-Adams",
+   "year": "2019",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "細胞自動機",
+    "即時影像",
+    "工作坊"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+   "summary": "2019 年 TouchDesigner Summit 工作坊，以 GLSL 從零建構一維與二維細胞自動機，並示範衰減細胞（generations 變體）、在同一系統中使用多組規則，以及把 CA 圖樣拿去驅動粒子、變形幾何，搭配聲音或 Kinect、Leap Motion 互動。工作坊也涵蓋反應擴散，範例檔（CA_Explorer.tox、Wolfram.tox）以 MIT 授權公開在 GitHub。",
+   "currently_cc": true,
+   "photo": {
+    "source": "simonaa.media",
+    "page": "https://www.simonaa.media/tutorials/complex-systems-workshop",
+    "note": "工作坊頁面橫幅：生成圖樣"
+   }
+  },
+  {
+   "id": "C02-55",
+   "title": "Coding Challenge 179：Elementary Cellular Automata（Wolfram CA）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "細胞自動機",
+    "Wolfram CA",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+   "summary": "以 p5.js 實作 Wolfram 的一維基本細胞自動機：一列細胞依左右與自身三格的狀態查 8 位元規則表，逐代往下堆疊成二維圖樣。是二維生命遊戲的「降維版」，也是 Rule 30 等立面圖樣背後的程式寫法。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/179-wolfram-ca",
+    "note": "挑戰頁預覽圖：一維 CA 世代疊層圖樣"
+   }
+  }
+ ]
+}

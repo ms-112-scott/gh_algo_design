@@ -501,6 +501,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 Koch 雪花作為貼片天線的輪廓，在同樣尺寸下增加有效周長，讓一片天線涵蓋 GSM、UMTS、WLAN、LTE 多個頻段；透明基板使它能貼在玻璃上。Koch 遞迴層數直接控制電氣長度。",
       "variations": [
@@ -541,6 +542,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "MATLAB 內建的 Koch 雪花天線產生函式，以迭代次數、邊長等參數化輸入產生天線幾何並直接模擬。和基礎範例一樣是「參數 → 遞迴幾何」的元件化思維。",
       "variations": [
@@ -575,6 +577,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "為體積極小的立方衛星設計 Koch 雪花天線，利用分形在有限面積內塞入更長邊界的特性達到小型化。展示分形在「空間受限」條件下的價值。",
       "variations": [
@@ -609,6 +612,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以 Koch 雪花邊緣做聲學透射超穎表面，分形邊緣產生多個二次繞射源，在 10–18 kHz 讓聲音更均勻地擴散。分形邊界被當成聲學性能工具。",
       "variations": [
@@ -647,6 +651,7 @@
       "year": "2018",
       "category": "performance",
       "categories_extra": [],
+      "source": "research",
       "scale": "構件",
       "summary": "用 Koch 曲線形狀的聲波導管，利用多條傳遞路徑的共振與干涉同時得到慢波與快波。說明分形路徑長度可以控制波的行為。",
       "variations": [
@@ -679,6 +684,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以邊界元素法分析一維分形擴散器作為道路隔音牆頂部斷面，結果比傳統 T 形牆頂在陰影區有更好的衰減。分形斷面成為都市基礎設施的造形語彙。",
       "variations": [
@@ -718,6 +724,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "把熱交換器內管截面改成第 2 層 Koch 雪花，增加表面積，總熱傳係數與熱傳率都明顯提升。展示 Koch 截面擠出成實體構件的製造與性能關係。",
       "variations": [
@@ -743,38 +750,6 @@
       "url": "https://digitalcommons.georgiasouthern.edu/etd/1697/"
     },
     {
-      "id": "A02-08",
-      "algo": "A02",
-      "title": "方形 Koch 島熱交換器",
-      "creator": "研究論文作者群",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "構件",
-      "summary": "以方形（quadratic）Koch 島作為熱交換器截面，研究其熱傳特性。是基礎範例 60° 規則換成 90° 規則的直接實例。",
-      "variations": [
-        {
-          "name": "90° 規則",
-          "how": "中段改為推出方形凸塊，遞迴改呼叫 5 段或 8 段",
-          "effect": "得到方形 Koch 島輪廓"
-        },
-        {
-          "name": "周長面積比表",
-          "how": "輸出每層周長與 AreaMassProperties 面積",
-          "effect": "量化比較 60° 與 90° 版本"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "分形",
-        "遞迴"
-      ],
-      "tools": [],
-      "url": "https://www.researchgate.net/publication/233225229_Heat_Transfer_Characteristics_of_a_Quadratic_Koch_Island_Fractal_Heat_Exchanger"
-    },
-    {
       "id": "A02-09",
       "algo": "A02",
       "title": "雪花分形仿生微流道散熱器",
@@ -784,6 +759,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以雪花分形形式規劃電子元件的微流道散熱器，比原始分形流道有更好的熱傳與更低壓降。分形路徑從輪廓轉為流道網路。",
       "variations": [
@@ -818,6 +794,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "墨爾本聯邦廣場立面採用 Conway 與 Radin 的 pinwheel 非週期鋪磚：五片三角磚組成一片面板，五片面板組成巨型面板，同一三角形比例在各尺度自我相似並可異地預製。它不是 Koch，但示範了「遞迴細分 → 建築構件層級」的同一邏輯。",
       "variations": [
@@ -856,6 +833,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以分形維度分析街道立面組成，討論立面的複雜度與視覺偏好的關係。Koch 曲線常被當作已知分形維度（約 1.26）的參考圖形。",
       "variations": [
@@ -888,6 +866,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "Mandelbrot 指出海岸線具統計自我相似性，量尺越小長度越長，並以 Koch 曲線類比，提出分數維度的概念。是用 Koch 理解地景邊界的經典文獻。",
       "variations": [
@@ -926,6 +905,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "參數化設計教學網站提供的 Koch 雪花圖樣 Grasshopper 定義，示範用電池而非程式碼產生雪花圖樣。可與基礎範例的 C# 遞迴寫法對照。",
       "variations": [
@@ -961,6 +941,7 @@
         "modeling",
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 Blender 與 Snowflake Generator 外掛產生不同階數的 Koch 雪花數位模型，作為圖樣設計與製造的基礎。",
       "variations": [
@@ -995,6 +976,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "從墊片（gasket）式的挖除與填補觀點重新建構 Koch 雪花並提出變體，說明同一個形可以有不同的遞迴生成方式。",
       "variations": [
@@ -1028,6 +1010,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "漫畫用 Hilbert 曲線把一維的 IPv4 位址空間摺進正方形，讓同一網段聚成方塊。是 Hilbert 曲線「保持局部性」最有名的資料視覺化示範。",
       "variations": [
@@ -1063,6 +1046,7 @@
       "year": "",
       "category": "drawing",
       "categories_extra": [],
+      "source": "research",
       "scale": "物件",
       "summary": "以 12 階 Hilbert 曲線把 IPv4 空間映射成 4096×4096 影像，每個像素代表一個 /24 網段，顏色顯示使用率。示範高階 Hilbert 作為大規模資料的版面。",
       "variations": [
@@ -1095,6 +1079,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "在 Observable 上以互動方式呈現 IPv4 的 Hilbert 地圖，可縮放瀏覽各網段。說明 Hilbert 版面天然支援「縮放 = 換階數」的層級瀏覽。",
       "variations": [
@@ -1128,6 +1113,7 @@
       "year": "",
       "category": "drawing",
       "categories_extra": [],
+      "source": "research",
       "scale": "物件",
       "summary": "R 語言的 ggplot2 延伸套件，說明 Hilbert 與 Morton 曲線的差異並以 Hilbert 版面繪製 IP 資料熱圖。可作為比較兩種空間填充曲線的教材。",
       "variations": [
@@ -1152,38 +1138,6 @@
       "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html"
     },
     {
-      "id": "A03-05",
-      "algo": "A03",
-      "title": "用 Hilbert 曲線繪製整個 IPv4 網際網路",
-      "creator": "benjojo（blog.benjojo.co.uk）",
-      "year": "2018",
-      "category": "drawing",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "對全部 IPv4 位址發送 ping，再依 Hilbert 版面把回應結果畫成一張圖，重現並更新 xkcd 的網路地圖。",
-      "variations": [
-        {
-          "name": "時間序列比較",
-          "how": "同一版面輸入不同年份資料，並排或做差值上色",
-          "effect": "看出空間化資料隨時間的變化"
-        },
-        {
-          "name": "大圖輸出",
-          "how": "將高階結果切成多張 tile 輸出",
-          "effect": "可印製成大尺寸牆面圖"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "空間填充",
-        "影像輸入"
-      ],
-      "tools": [],
-      "url": "https://soylentnews.org/article.pl?sid=18%2F04%2F23%2F074207"
-    },
-    {
       "id": "A03-06",
       "algo": "A03",
       "title": "Hilbert Cube 512 雕塑",
@@ -1194,6 +1148,7 @@
         "fabrication",
         "modeling"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Séquin 把 2D Hilbert 推到三維：以立方體邊上的路徑為起點，每個角再代入縮小一半的路徑，三次遞迴後得到 512 個 L 形轉角的「大腦狀」結構，並以不鏽鋼粉末加銅滲透的快速原型製程鑄成小型金屬雕塑。",
       "variations": [
@@ -1234,6 +1189,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "收錄於 ACM SIGGRAPH 藝術展檔案的 Hilbert Cube，說明以遞迴方式把立方體反覆切成鏡像對稱的兩半來生成路徑。可作為把空間填充曲線放大成空間構架的靈感。",
       "variations": [
@@ -1267,6 +1223,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 Hilbert 曲線為題材的數學繪畫與雕塑作品分享，展示同一條曲線在不同色彩與線寬下的藝術表現。",
       "variations": [
@@ -1297,6 +1254,7 @@
       "year": "",
       "category": "fabrication",
       "categories_extra": [],
+      "source": "research",
       "scale": "構件",
       "summary": "提出 FDM 列印以 Hilbert 曲線作為每層路徑的策略，一筆連續走完、消除空跑，可調整填充率並得到較等向的性質。",
       "variations": [
@@ -1337,6 +1295,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以 Hilbert 曲線讓每層填充以單一連續運動完成，減少時間與能耗；同階曲線依斷面縮小而縮短邊長，形成自適應密度填充。",
       "variations": [
@@ -1371,6 +1330,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "先把構件區域離散成格子，再以 Hilbert 曲線填充，並在不同區域改變填充參數，得到局部性質可調的列印件。",
       "variations": [
@@ -1406,6 +1366,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以四分樹把正交多邊形分解成正方形格，再用 Hilbert（也可用 Peano、Moore）曲線決定走訪順序，對多個準則最佳化 3D 列印路徑。",
       "variations": [
@@ -1446,6 +1407,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以 Hilbert 值排序空間物件來建構 R-tree，讓空間上相近的資料在索引中也相鄰，提升地理資料庫查詢效能。都市尺度的建物、地籍資料都能用同樣方式排序。",
       "variations": [
@@ -1469,36 +1431,6 @@
       "url": ""
     },
     {
-      "id": "A03-14",
-      "algo": "A03",
-      "title": "以 Google S2 儲存遙測影像",
-      "creator": "Wang 等人（IEEE Access）",
-      "year": "2020",
-      "category": "urban-landscape",
-      "categories_extra": [],
-      "scale": "地景",
-      "summary": "利用 Google S2（在球面上以 Hilbert 曲線編碼格子）組織遙測影像的儲存。展示 Hilbert 從平面推廣到球面地理格網。",
-      "variations": [
-        {
-          "name": "球面上的 Hilbert",
-          "how": "在立方體六面各產生 Hilbert，再把點投影到球面",
-          "effect": "包覆球體的空間填充曲線"
-        },
-        {
-          "name": "地形曲面映射",
-          "how": "用 Surface.PointAt 把 UV 點映到地形曲面",
-          "effect": "貼地的連續掃描路徑"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "空間索引",
-        "曲面上"
-      ],
-      "tools": [],
-      "url": ""
-    },
-    {
       "id": "A03-15",
       "algo": "A03",
       "title": "Gosper-Peano 曲線的 Grasshopper 實作",
@@ -1508,6 +1440,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 Anemone 迴圈與 Orient 元件重複移動、旋轉、縮放同一曲線，在 Grasshopper 中產生 Gosper（flowsnake）空間填充曲線，是 Hilbert 的六角格變體。",
       "variations": [

@@ -1,814 +1,747 @@
 {
- "agent": "e",
- "algorithms": [],
- "cases": [
-  {
-   "id": "E01-51",
-   "algo": "E01",
-   "title": "Packing The Torus（Houdini 曲面圓填充）",
-   "creator": "Manuel Casasola Merkle（Entagma）",
-   "year": "2017",
-   "category": "modeling",
-   "categories_extra": [
-    "3d-architecture"
-   ],
-   "scale": "立面／表皮",
-   "summary": "Entagma 在 Houdini 裡用模擬的方式，把半徑各不相同的粒子緊密排在甜甜圈（torus）曲面上：粒子彼此推開，同時藉由符號距離場（SDF）與其梯度被投影回曲面。和 Grasshopper C# 基礎範例在平面圓形邊界內互推不同，這裡的「邊界」換成任意 3D 曲面，而且整個鬆弛過程本身就是可以輸出的動畫。",
-   "variations": [
+  "agent": "e",
+  "algorithms": [],
+  "cases": [
     {
-     "name": "平面邊界改成曲面投影",
-     "how": "每輪推開之後，不再做「超出邊界圓就拉回」，改成把圓心用 Surface.ClosestPoint（或 Mesh.ClosestPoint）拉回目標曲面，並以曲面法向量決定圓的平面。",
-     "effect": "圓填充可以包覆穹頂、雙曲面等自由曲面，直接成為開孔立面或表皮面板的配置。"
+      "id": "E01-51",
+      "algo": "E01",
+      "title": "Packing The Torus（Houdini 曲面圓填充）",
+      "creator": "Manuel Casasola Merkle（Entagma）",
+      "year": "2017",
+      "category": "modeling",
+      "categories_extra": [
+        "3d-architecture"
+      ],
+      "source": "art",
+      "scale": "立面／表皮",
+      "summary": "Entagma 在 Houdini 裡用模擬的方式，把半徑各不相同的粒子緊密排在甜甜圈（torus）曲面上：粒子彼此推開，同時藉由符號距離場（SDF）與其梯度被投影回曲面。和 Grasshopper C# 基礎範例在平面圓形邊界內互推不同，這裡的「邊界」換成任意 3D 曲面，而且整個鬆弛過程本身就是可以輸出的動畫。",
+      "variations": [
+        {
+          "name": "平面邊界改成曲面投影",
+          "how": "每輪推開之後，不再做「超出邊界圓就拉回」，改成把圓心用 Surface.ClosestPoint（或 Mesh.ClosestPoint）拉回目標曲面，並以曲面法向量決定圓的平面。",
+          "effect": "圓填充可以包覆穹頂、雙曲面等自由曲面，直接成為開孔立面或表皮面板的配置。"
+        },
+        {
+          "name": "半徑依曲率或吸引點變化",
+          "how": "把 minRadius～maxRadius 的隨機半徑改成依曲面曲率或到吸引點的距離做 remap。",
+          "effect": "曲率大或靠近焦點的地方圓較小，形成有方向性的疏密漸層。"
+        },
+        {
+          "name": "輸出每一輪的狀態",
+          "how": "把每次迭代的圓心清單存成 DataTree 的一個分支，用 Slider 選擇顯示第幾輪。",
+          "effect": "可以做成從擁擠重疊到均勻鋪滿的過程動畫，方便教學說明收斂。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "VEX",
+        "曲面",
+        "模擬",
+        "動畫"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://entagma.com/packing-the-torus/"
     },
     {
-     "name": "半徑依曲率或吸引點變化",
-     "how": "把 minRadius～maxRadius 的隨機半徑改成依曲面曲率或到吸引點的距離做 remap。",
-     "effect": "曲率大或靠近焦點的地方圓較小，形成有方向性的疏密漸層。"
+      "id": "E01-52",
+      "algo": "E01",
+      "title": "Circle packing with compute shaders（TouchDesigner）",
+      "creator": "noones_img（Derivative 社群轉載）",
+      "year": "2021",
+      "category": "performance",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "這是 TouchDesigner 社群的教學，用 GLSL compute shader 在 GPU 上實作圓填充，讓大量圓能即時生成、推擠並用於視覺表演。基礎範例用 C# 雙層迴圈兩兩比對（N²），這裡則把每個圓的碰撞檢查平行分給 GPU 執行緒，換取即時互動的效能。",
+      "variations": [
+        {
+          "name": "平行化的兩兩比對",
+          "how": "把「先累積位移、再一次套用」的兩階段迴圈改成 Parallel.For（每個圓一個工作），各自只寫入自己的位移陣列欄位。",
+          "effect": "在 Grasshopper 裡也能體會 GPU 版「每個圓獨立計算」的思路，圓數變多時明顯加速。"
+        },
+        {
+          "name": "由影像控制生成區域",
+          "how": "在隨機放置圓心時，先取樣一張影像的亮度，亮度低於門檻的位置才接受。",
+          "effect": "圓只長在影像的暗部，排出文字、標誌或平面圖的輪廓。"
+        },
+        {
+          "name": "即時參數驅動",
+          "how": "把 maxRadius 或 boundaryRadius 接到 Timer 或音訊振幅之類隨時間變化的輸入，每次更新都從上一輪結果繼續推。",
+          "effect": "圖樣會隨節奏呼吸、重新排列，適合展場投影。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "TouchDesigner",
+        "GLSL",
+        "GPU",
+        "即時互動"
+      ],
+      "tools": [
+        "TouchDesigner",
+        "GLSL"
+      ],
+      "url": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846"
     },
     {
-     "name": "輸出每一輪的狀態",
-     "how": "把每次迭代的圓心清單存成 DataTree 的一個分支，用 Slider 選擇顯示第幾輪。",
-     "effect": "可以做成從擁擠重疊到均勻鋪滿的過程動畫，方便教學說明收斂。"
+      "id": "E01-53",
+      "algo": "E01",
+      "title": "A Recursive Circle Packing Algorithm for Organic Growth Patterns",
+      "creator": "Ahmad Moussa（Gorilla Sun）",
+      "year": "2023",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Ahmad Moussa 以 p5.js 寫的圓填充變體：新圓不是隨機散落，而是從一個起始節點開始，在已有圓的旁邊找空位放置，成為它的子節點；放不下時就遞迴往子節點、孫節點找空間，長成樹狀分枝的圓群（靈感來自 Happy Coding 的 Bonsai Tree 範例）。與基礎範例「一次撒滿再互推」不同，它是逐一放置、不重疊的生長式填充。",
+      "variations": [
+        {
+          "name": "互推改成貼邊生長",
+          "how": "不再一次產生全部圓，而是每次挑一個已放置的圓，在其外側距離 r1+r2 的位置試放新圓，只要不與任何圓重疊就收下並記錄父子關係。",
+          "effect": "得到由核心向外延伸的有機分枝圖樣，而非均勻鋪滿。"
+        },
+        {
+          "name": "遞迴往外尋找空位",
+          "how": "放置失敗時，改從該圓的子節點中隨機挑一個再試，直到末端節點。",
+          "effect": "生長集中在外緣，形狀像珊瑚或菌落。"
+        },
+        {
+          "name": "父子連線",
+          "how": "除了輸出圓，也把每對父子圓心連成 Line。",
+          "effect": "同時得到一張樹狀網絡，可轉成結構分枝或路徑系統。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "遞迴",
+        "生長",
+        "生成藝術"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/"
+    },
+    {
+      "id": "E01-54",
+      "algo": "E01",
+      "title": "circlepack-cpp：openFrameworks 圓填充編輯器",
+      "creator": "Joseff（jn3008）",
+      "year": "2023",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 openFrameworks（C++）寫的互動應用，使用者編輯一張三角化的圖（刪點、翻邊、加點），程式依 Collins 與 Stephenson 的方法算出每個頂點對應圓的半徑，讓相鄰的圓剛好相切。和基礎範例「隨機圓互推到不重疊」不同，這是由拓樸（誰和誰相鄰）決定幾何的「相切型」圓填充，可固定邊界圓半徑或邊界角度和。",
+      "variations": [
+        {
+          "name": "由網格拓樸決定相切",
+          "how": "先把一張三角網格的每個頂點當作一個圓，對每個內部頂點反覆調整半徑，使它與所有鄰居圓相切時角度總和為 2π。",
+          "effect": "得到 CP mesh 式的相切圓陣列，可直接對應到立面開孔或節點配置。"
+        },
+        {
+          "name": "固定邊界條件",
+          "how": "邊界頂點的半徑固定為設定值（或讓邊界圓都貼齊外框），只迭代內部頂點。",
+          "effect": "同一張網格可以產生不同的外輪廓與漸變大小。"
+        },
+        {
+          "name": "互動編輯網格",
+          "how": "把三角網格作為 Grasshopper 輸入，讓設計者在 Rhino 中移動、刪除頂點後重新計算。",
+          "effect": "設計者用拓樸控制圖樣，而不是用亂數種子碰運氣。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "C++",
+        "互動",
+        "拓樸"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/jn3008/circlepack-cpp"
+    },
+    {
+      "id": "E02-51",
+      "algo": "E02",
+      "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
+      "creator": "Manohar Vanga（Sighack）",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Manohar Vanga 先用 Processing 實作 Bridson 演算法，再把 Poisson 點用在照片上，做出點描、油畫、炭筆、Voronoi 馬賽克、交叉排線、點彩等八種風格。基礎範例只輸出點與對照用的純隨機點，這裡則示範同一組藍噪點如何透過「點的大小、顏色、筆觸方向」變成完全不同的畫面。",
+      "variations": [
+        {
+          "name": "點大小對應影像灰階",
+          "how": "為每個 Poisson 點取樣影像亮度，把圓半徑設為亮度的反比。",
+          "effect": "得到點描（stippling）效果，也可轉成立面穿孔板的孔徑分布。"
+        },
+        {
+          "name": "由大到小多層取樣",
+          "how": "以遞減的 minDistance 重複執行取樣，大間距層先畫、小間距層後畫。",
+          "effect": "先有大色塊再有細節，類似油畫層層上色。"
+        },
+        {
+          "name": "點轉成 Voronoi 馬賽克",
+          "how": "把輸出點送進 Voronoi 元件，並以細胞中心的影像顏色填色。",
+          "effect": "得到均勻但不規則的馬賽克磚拼貼。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "影像處理",
+        "點描",
+        "生成藝術"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://sighack.com/post/fun-with-poisson-disk-sampling"
+    },
+    {
+      "id": "E02-53",
+      "algo": "E02",
+      "title": "poisson-disk-sampling（JavaScript 任意維度與變密度）",
+      "creator": "Kevin Chapelier",
+      "year": "2015",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "research",
+      "scale": "物件",
+      "summary": "Kevin Chapelier 維護的 JavaScript 函式庫（MIT 授權），以 Bridson 演算法支援任意維度取樣，並可傳入距離函式讓最小間距隨位置變化；線上示範用影像亮度控制點的疏密。基礎範例只有固定的 minDistance，這個函式庫示範了變密度與高維度兩種延伸。",
+      "variations": [
+        {
+          "name": "變距離取樣",
+          "how": "把固定 minDistance 改成 minDistance(x,y) 函式，例如依影像亮度在 minDist～maxDist 之間插值；網格邊長改用最小值 minDist/√2，檢查鄰格範圍則依最大值加大。",
+          "effect": "點在暗部密、亮部疏，形成漸層網點。"
+        },
+        {
+          "name": "推廣到 3D",
+          "how": "把網格改成 int[,,]，候選點改在球殼（r～2r）內取樣，並檢查 5×5×5 鄰格。",
+          "effect": "在體積內得到均勻散布的點，可作為 3D Voronoi 或空間桁架的節點。"
+        },
+        {
+          "name": "逐步產生動畫",
+          "how": "每次只從活躍名單取一個點處理，把目前結果輸出後再繼續下一步。",
+          "effect": "可以看到點從種子向外擴散填滿的過程。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "開源",
+        "變密度",
+        "3D"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/kchapelier/poisson-disk-sampling"
+    },
+    {
+      "id": "E02-54",
+      "algo": "E02",
+      "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
+      "creator": "Nikolai Janakiev",
+      "year": "2017",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 Processing 實作 Bridson 論文的 Poisson 圓盤取樣（MIT 授權），同時提供 2D 與 3D 版本，並把「活躍點」與「已確定的點」用不同方式畫出來做成動畫。基礎範例只輸出最終點位，這個作品把演算法的生長過程本身變成可觀看的視覺。",
+      "variations": [
+        {
+          "name": "顯示活躍名單",
+          "how": "另外輸出目前 active list 裡的點（用不同顏色），並以 Slider 控制已執行的步數。",
+          "effect": "清楚看出取樣前緣如何向外推進，適合講解演算法。"
+        },
+        {
+          "name": "3D 空間取樣",
+          "how": "把平面網格改成立體網格，候選點改在 3D 球殼內取樣。",
+          "effect": "在體積內撒出均勻點雲，可接 3D Voronoi 做多孔構造。"
+        },
+        {
+          "name": "點轉成實體",
+          "how": "把每個點替換成直徑略小於 minDistance 的球或柱。",
+          "effect": "得到不互相碰撞、分布均勻的構件陣列。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "動畫",
+        "3D",
+        "開源"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://github.com/njanakiev/poisson-disk-sampling"
+    },
+    {
+      "id": "E02-55",
+      "algo": "E02",
+      "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
+      "creator": "Sebastian Lague",
+      "year": "2018",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "modeling"
+      ],
+      "source": "research",
+      "scale": "地景",
+      "summary": "Sebastian Lague 在 Unity（C#）中依 Bridson 論文實作 Poisson 圓盤取樣，目的是在遊戲場景裡擺放物件，使物件彼此保持最小距離又不顯得規則。和 Grasshopper C# 基礎範例語言相同，但應用從「畫點」轉成「放置場景物件」，很適合對照到地景配置。",
+      "variations": [
+        {
+          "name": "點轉成植栽配置",
+          "how": "在每個 Poisson 點放置樹木或灌木的 Block，並依種類設定不同的 minDistance。",
+          "effect": "得到自然、不排排站的植栽分布。"
+        },
+        {
+          "name": "限制在指定區域內",
+          "how": "候選點除了要在矩形內，還要通過 Curve.Contains 檢查，只在基地邊界曲線內部收下。",
+          "effect": "點只落在基地、草坪或廣場範圍內。"
+        },
+        {
+          "name": "多種物件分層取樣",
+          "how": "先用較大的 minDistance 放大樹，再以較小的間距放小樹，並同時檢查與前一層的距離。",
+          "effect": "形成大、中、小物件交錯的層次。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Unity",
+        "C#",
+        "遊戲",
+        "程序化生成"
+      ],
+      "tools": [
+        "Unity"
+      ],
+      "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o"
+    },
+    {
+      "id": "E03-51",
+      "algo": "E03",
+      "title": "Coding Challenge 181：Weighted Voronoi Stippling",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2024",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Daniel Shiffman 用 p5.js 搭配 d3-delaunay 套件，從 Delaunay 三角化與 Voronoi 圖講起，逐步實作 Lloyd 鬆弛，再把重心改成「以影像暗度加權的重心」，做出點描肖像。基礎範例的 Lloyd 用的是細胞的幾何面積重心，這裡則把影像當成密度場，讓點聚集到暗部。",
+      "variations": [
+        {
+          "name": "加權重心",
+          "how": "計算細胞重心時，對細胞內的取樣點以影像暗度（1 − 亮度）加權平均，而非用鞋帶公式算幾何重心。",
+          "effect": "點往暗部聚集，數次迭代後形成點描影像。"
+        },
+        {
+          "name": "點大小隨暗度變化",
+          "how": "最後輸出時，依點所在位置的暗度設定圓半徑。",
+          "effect": "加強明暗對比，也能對應成穿孔板的孔徑。"
+        },
+        {
+          "name": "迭代中逐步移動",
+          "how": "每次只把點往重心移動一部分（例如 10%）而非直接跳到重心。",
+          "effect": "動畫更平滑，並可在任何時刻停下取得中間狀態。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "d3.js",
+        "點描",
+        "影像處理"
+      ],
+      "tools": [
+        "p5.js",
+        "d3.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/181-image-stippling"
+    },
+    {
+      "id": "E03-52",
+      "algo": "E03",
+      "title": "Voronoi edges（精確 Voronoi 邊界著色器）",
+      "creator": "Inigo Quilez",
+      "year": "2012",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "立面／表皮",
+      "summary": "Inigo Quilez 的文章與 Shadertoy 範例，用 GLSL 片段著色器逐像素計算 Voronoi：一般 F2−F1 近似會讓細胞邊線粗細不均，他改用第二輪搜尋算出到細胞邊界的真正距離，得到線寬一致、等距線正確的程序化 Voronoi 紋理。與基礎範例用半平面切出多邊形不同，這裡從「每個像素找最近點」的角度計算，而且完全在 GPU 上即時執行。",
+      "variations": [
+        {
+          "name": "逐點查詢距離場",
+          "how": "對一組取樣點（例如表面上的格點）計算到最近與次近 site 的距離，並求到兩者垂直平分線的距離。",
+          "effect": "得到可用於厚度、顏色或凹凸的距離場，而不只是細胞外框。"
+        },
+        {
+          "name": "等寬邊框",
+          "how": "以「到邊界距離 < 固定值」判定是否為邊框，取代 Polyline 偏移。",
+          "effect": "所有細胞框的寬度一致，適合轉成雷射切割的格柵。"
+        },
+        {
+          "name": "網格加速",
+          "how": "把 site 放在規則格子裡（每格一點並加隨機偏移），查詢時只看鄰近 3×3 格。",
+          "effect": "點數很多時也能快速計算，延伸至無限平鋪的紋理。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "GLSL",
+        "Shadertoy",
+        "著色器",
+        "程序化紋理"
+      ],
+      "tools": [
+        "GLSL",
+        "Shadertoy"
+      ],
+      "url": "https://iquilezles.org/articles/voronoilines/"
+    },
+    {
+      "id": "E03-53",
+      "algo": "E03",
+      "title": "The Book of Shaders 第 12 章：Cellular Noise",
+      "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+      "year": "2015",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "立面／表皮",
+      "summary": "The Book of Shaders 的細胞雜訊章節，從 Steven Worley 的 cellular texture 講起，用 GLSL 在網格中每格放一點、只檢查鄰近 9 格，最後導出 Voronoi 演算法並延伸到 Gustavson 的優化與 Quilez 的精確邊界。書中可直接在網頁上修改並即時預覽。與基礎範例的多邊形 Voronoi 相比，它把 Voronoi 當成連續的「距離場」來上色。",
+      "variations": [
+        {
+          "name": "顯示最近距離場",
+          "how": "對平面上的格點計算到最近 site 的距離，並以灰階或色帶上色。",
+          "effect": "看到每顆細胞由中心向外漸變的圖樣，類似細胞或龜裂地面。"
+        },
+        {
+          "name": "以 site 編號上色",
+          "how": "記錄每個取樣點最近的 site 是哪一個，依編號給顏色。",
+          "effect": "得到色塊拼貼，可對應材料分區。"
+        },
+        {
+          "name": "site 隨時間移動",
+          "how": "讓 site 依正弦函數或 Lloyd 迭代緩慢移動，每幀重新計算。",
+          "effect": "細胞會流動、呼吸，適合動態立面或投影。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "GLSL",
+        "著色器",
+        "雜訊",
+        "教學"
+      ],
+      "tools": [
+        "GLSL"
+      ],
+      "url": "https://thebookofshaders.com/12/"
+    },
+    {
+      "id": "E03-54",
+      "algo": "E03",
+      "title": "ofxVoronoi（openFrameworks Voronoi 與 Lloyd 鬆弛外掛）",
+      "creator": "Matthias Esterl、Todd Vanderlin 等",
+      "year": "2015",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "research",
+      "scale": "物件",
+      "summary": "openFrameworks 的 Voronoi 外掛，使用 Voro++ 中改寫的 Fortune 掃描線演算法產生 2D Voronoi 圖；2015 年加入 relax() 方法，可反覆執行 Lloyd 鬆弛，讓細胞變得均勻，README 也提到可用於點描效果。基礎範例用 O(n²) 半平面切割自行計算，這裡則示範採用較快的掃描線演算法，並把鬆弛包成一行呼叫。",
+      "variations": [
+        {
+          "name": "只做少數次鬆弛",
+          "how": "把 iterations 設為 1～3，並依次輸出各次的結果。",
+          "effect": "細胞保有一些大小差異卻不再極端，介於隨機與蜂巢之間。"
+        },
+        {
+          "name": "圓形邊界",
+          "how": "把起始的矩形改成近似圓的多邊形（例如 64 邊形）作為每個細胞的初始範圍。",
+          "effect": "得到圓盤內的 Voronoi，可做圓形天花或廣場鋪面。"
+        },
+        {
+          "name": "換成更快的 Voronoi",
+          "how": "點數超過數百時，把自製半平面切割改成呼叫 Grasshopper 內建 Voronoi，只保留 Lloyd 迴圈。",
+          "effect": "可以處理上千個細胞並保持互動速度。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "C++",
+        "開源",
+        "Lloyd 鬆弛"
+      ],
+      "tools": [
+        "openFrameworks"
+      ],
+      "url": "https://github.com/madc/ofxVoronoi"
+    },
+    {
+      "id": "E03-55",
+      "algo": "E03",
+      "title": "Lloyd’s Relaxation（d3.js 互動示範）",
+      "creator": "Jason Davies",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Jason Davies 用 d3.js 在畫布上即時展示 Lloyd 鬆弛：1000 個點一開始擠在滑鼠點擊處，每一步計算 Voronoi 後把點移到細胞重心，直到總位移小於門檻才停；每次點擊會換一組色調重新開始。基礎範例從均勻隨機分布出發，這裡刻意從「全部擠在一點」開始，讓擴散與收斂過程更戲劇化。",
+      "variations": [
+        {
+          "name": "從單點出發",
+          "how": "起始點不在整個矩形內隨機撒，而是全部放在同一點附近（加上極小亂數）。",
+          "effect": "可以看到細胞從中心爆開、逐漸鋪滿畫面的過程。"
+        },
+        {
+          "name": "以位移量判斷收斂",
+          "how": "每輪計算所有點移動距離的總和，小於門檻就停止，並輸出實際迭代次數。",
+          "effect": "不必猜 iterations，得到可比較的收斂速度。"
+        },
+        {
+          "name": "依距離上色",
+          "how": "以細胞到起始點的距離決定填色明暗。",
+          "effect": "畫面出現同心放射的色彩層次，突顯生長方向。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "d3.js",
+        "JavaScript",
+        "互動",
+        "動畫"
+      ],
+      "tools": [
+        "d3.js"
+      ],
+      "url": "https://www.jasondavies.com/lloyd/"
+    },
+    {
+      "id": "E04-51",
+      "algo": "E04",
+      "title": "Coding Challenge 177：Soft Body Physics",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2023",
+      "category": "drawing",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Daniel Shiffman 用 p5.js 搭配 toxiclibs.js 的 Verlet 物理，把一個卡通角色的輪廓拆成粒子，再以外圈彈簧加上內部交叉彈簧撐住形狀，做出可以被滑鼠拖動、Q 彈晃動的軟體角色。基礎範例是固定角點、以重力找出懸垂形，這裡則是自由的彈簧網，重點在形狀的保持與互動。",
+      "variations": [
+        {
+          "name": "加入內部對角彈簧",
+          "how": "除了相鄰質點的彈簧，額外在網格對角線與跨越多格的點之間加上 Spring。",
+          "effect": "網格抵抗剪切與塌陷，形狀更能維持，像有骨架的軟體。"
+        },
+        {
+          "name": "拖曳一個質點",
+          "how": "把某個質點設為固定，位置由 Rhino 中可移動的點參數決定，每次更新都從上一個狀態繼續模擬。",
+          "effect": "可以互動地拉扯網面，觀察整體如何重新平衡。"
+        },
+        {
+          "name": "改用 Verlet 積分",
+          "how": "不存速度，改以 p_new = p + (p − p_prev)·damping + F·dt² 更新位置。",
+          "effect": "程式更精簡且數值較穩定，與 toxiclibs、Kangaroo 的做法一致。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "toxiclibs.js",
+        "物理模擬",
+        "互動"
+      ],
+      "tools": [
+        "p5.js",
+        "toxiclibs.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/177-soft-body-character"
+    },
+    {
+      "id": "E04-52",
+      "algo": "E04",
+      "title": "The Nature of Code 第 6 章：Physics Libraries",
+      "creator": "Daniel Shiffman",
+      "year": "2024",
+      "category": "drawing",
+      "categories_extra": [
+        "modeling"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "The Nature of Code（2024 年 JavaScript 版）第 6 章介紹 Matter.js 與 toxiclibs.js 兩種物理函式庫，後半段以 Verlet 物理實作彈簧、弦、布料網格與軟體角色，並說明 Euler 與 Verlet 積分的差異。基礎範例自行寫出質點與彈簧 class，本章則展示同樣的概念如何交給現成物理引擎，並比較不同積分方法的穩定性。",
+      "variations": [
+        {
+          "name": "由一條弦開始",
+          "how": "先只做一排質點（string），兩端固定，看它在重力下形成懸鏈線，再擴充到二維網格（blanket）。",
+          "effect": "從懸鏈線一路推到懸垂曲面，觀念循序漸進。"
+        },
+        {
+          "name": "加上吸引／排斥行為",
+          "how": "對所有質點加上指向吸引點的力，或質點之間的短距離排斥力。",
+          "effect": "網面會被局部拉起或撐開，可得到非純重力的形態。"
+        },
+        {
+          "name": "比較 Euler 與 Verlet",
+          "how": "同一組參數分別用兩種積分方法跑，記錄最大速度曲線。",
+          "effect": "看出 Verlet 在較大時間步長下仍然穩定，理解數值爆炸的原因。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "toxiclibs.js",
+        "Matter.js",
+        "教學"
+      ],
+      "tools": [
+        "p5.js",
+        "toxiclibs.js",
+        "Matter.js"
+      ],
+      "url": "https://natureofcode.com/physics-libraries/"
+    },
+    {
+      "id": "E04-53",
+      "algo": "E04",
+      "title": "three.js webgpu - compute cloth",
+      "creator": "holtsetio（three.js 官方範例）",
+      "year": "2025",
+      "category": "modeling",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "three.js 的官方範例，以 WebGPU compute shader 執行 Verlet 布料模擬：由彈簧相連的頂點網格組成布料，在 GPU 上即時計算。與基礎範例在 CPU 上逐一計算彈簧力不同，它把彈簧力與頂點力分成兩個 compute pass 平行計算，再以即時算繪的布料材質呈現。",
+      "variations": [
+        {
+          "name": "拆成兩個計算階段",
+          "how": "先迴圈所有 Spring 算出力並存入 springForce 陣列，再迴圈所有質點彙總與自己相連的彈簧力，避免多執行緒同時寫入。",
+          "effect": "邏輯與 GPU 版一致，也方便改成 Parallel.For 加速。"
+        },
+        {
+          "name": "固定邊改成固定一整排",
+          "how": "把固定條件從四個角點改成最上面一整排質點。",
+          "effect": "得到像布簾、旗幟的懸掛形，而非四點支撐的殼。"
+        },
+        {
+          "name": "加入球體碰撞",
+          "how": "每步之後檢查質點是否進入球體內，若是則把它推回球面。",
+          "effect": "網面會包覆障礙物，可做充氣膜或覆蓋地形的形態研究。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "three.js",
+        "WebGPU",
+        "GPU",
+        "布料模擬"
+      ],
+      "tools": [
+        "three.js",
+        "WebGPU"
+      ],
+      "url": "https://threejs.org/examples/webgpu_compute_cloth.html"
+    },
+    {
+      "id": "E04-54",
+      "algo": "E04",
+      "title": "MSAPhysics（openFrameworks／Cinder 粒子彈簧物理庫）",
+      "creator": "Memo Akten",
+      "year": "2008",
+      "category": "art-installation",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "research",
+      "scale": "物件",
+      "summary": "Memo Akten 開發的開源 C++ 物理函式庫，供 openFrameworks 與 Cinder 使用，以粒子與約束為基礎，提供彈簧、吸引子與碰撞；API 刻意仿照 Processing 的 Traer.physics，方便移植。與基礎範例只有彈簧加重力相比，它把吸引子與碰撞也納入同一個粒子系統，常用於即時互動與視覺作品。",
+      "variations": [
+        {
+          "name": "加入吸引子",
+          "how": "在 Particle 以外新增 Attractor class，對每個質點施加與距離平方成反比的力。",
+          "effect": "網面被局部拉起或凹陷，形成多峰的膜形。"
+        },
+        {
+          "name": "質點間碰撞",
+          "how": "每一步檢查質點之間的距離，小於兩倍半徑就互相推開（與 E01 圓填充相同的規則）。",
+          "effect": "網面不會自我穿透，適合模擬堆疊與皺褶。"
+        },
+        {
+          "name": "2D／3D 共用程式",
+          "how": "把 Particle 的位置型別抽象化（例如只用 X、Y 或 X、Y、Z），讓同一套彈簧程式跑在平面或空間。",
+          "effect": "一套程式同時做平面網格張拉與立體找形。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "Cinder",
+        "C++",
+        "物理模擬",
+        "開源"
+      ],
+      "tools": [
+        "openFrameworks",
+        "Cinder"
+      ],
+      "url": "https://www.memo.tv/msaphysics"
     }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "Houdini",
-    "VEX",
-    "曲面",
-    "模擬",
-    "動畫"
-   ],
-   "tools": [
-    "Houdini"
-   ],
-   "url": "https://entagma.com/packing-the-torus/"
-  },
-  {
-   "id": "E01-52",
-   "algo": "E01",
-   "title": "Circle packing with compute shaders（TouchDesigner）",
-   "creator": "noones_img（Derivative 社群轉載）",
-   "year": "2021",
-   "category": "performance",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "物件",
-   "summary": "這是 TouchDesigner 社群的教學，用 GLSL compute shader 在 GPU 上實作圓填充，讓大量圓能即時生成、推擠並用於視覺表演。基礎範例用 C# 雙層迴圈兩兩比對（N²），這裡則把每個圓的碰撞檢查平行分給 GPU 執行緒，換取即時互動的效能。",
-   "variations": [
-    {
-     "name": "平行化的兩兩比對",
-     "how": "把「先累積位移、再一次套用」的兩階段迴圈改成 Parallel.For（每個圓一個工作），各自只寫入自己的位移陣列欄位。",
-     "effect": "在 Grasshopper 裡也能體會 GPU 版「每個圓獨立計算」的思路，圓數變多時明顯加速。"
-    },
-    {
-     "name": "由影像控制生成區域",
-     "how": "在隨機放置圓心時，先取樣一張影像的亮度，亮度低於門檻的位置才接受。",
-     "effect": "圓只長在影像的暗部，排出文字、標誌或平面圖的輪廓。"
-    },
-    {
-     "name": "即時參數驅動",
-     "how": "把 maxRadius 或 boundaryRadius 接到 Timer 或音訊振幅之類隨時間變化的輸入，每次更新都從上一輪結果繼續推。",
-     "effect": "圖樣會隨節奏呼吸、重新排列，適合展場投影。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "TouchDesigner",
-    "GLSL",
-    "GPU",
-    "即時互動"
-   ],
-   "tools": [
-    "TouchDesigner",
-    "GLSL"
-   ],
-   "url": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846"
-  },
-  {
-   "id": "E01-53",
-   "algo": "E01",
-   "title": "A Recursive Circle Packing Algorithm for Organic Growth Patterns",
-   "creator": "Ahmad Moussa（Gorilla Sun）",
-   "year": "2023",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "物件",
-   "summary": "Ahmad Moussa 以 p5.js 寫的圓填充變體：新圓不是隨機散落，而是從一個起始節點開始，在已有圓的旁邊找空位放置，成為它的子節點；放不下時就遞迴往子節點、孫節點找空間，長成樹狀分枝的圓群（靈感來自 Happy Coding 的 Bonsai Tree 範例）。與基礎範例「一次撒滿再互推」不同，它是逐一放置、不重疊的生長式填充。",
-   "variations": [
-    {
-     "name": "互推改成貼邊生長",
-     "how": "不再一次產生全部圓，而是每次挑一個已放置的圓，在其外側距離 r1+r2 的位置試放新圓，只要不與任何圓重疊就收下並記錄父子關係。",
-     "effect": "得到由核心向外延伸的有機分枝圖樣，而非均勻鋪滿。"
-    },
-    {
-     "name": "遞迴往外尋找空位",
-     "how": "放置失敗時，改從該圓的子節點中隨機挑一個再試，直到末端節點。",
-     "effect": "生長集中在外緣，形狀像珊瑚或菌落。"
-    },
-    {
-     "name": "父子連線",
-     "how": "除了輸出圓，也把每對父子圓心連成 Line。",
-     "effect": "同時得到一張樹狀網絡，可轉成結構分枝或路徑系統。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "p5.js",
-    "遞迴",
-    "生長",
-    "生成藝術"
-   ],
-   "tools": [
-    "p5.js"
-   ],
-   "url": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/"
-  },
-  {
-   "id": "E01-54",
-   "algo": "E01",
-   "title": "circlepack-cpp：openFrameworks 圓填充編輯器",
-   "creator": "Joseff（jn3008）",
-   "year": "2023",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "物件",
-   "summary": "以 openFrameworks（C++）寫的互動應用，使用者編輯一張三角化的圖（刪點、翻邊、加點），程式依 Collins 與 Stephenson 的方法算出每個頂點對應圓的半徑，讓相鄰的圓剛好相切。和基礎範例「隨機圓互推到不重疊」不同，這是由拓樸（誰和誰相鄰）決定幾何的「相切型」圓填充，可固定邊界圓半徑或邊界角度和。",
-   "variations": [
-    {
-     "name": "由網格拓樸決定相切",
-     "how": "先把一張三角網格的每個頂點當作一個圓，對每個內部頂點反覆調整半徑，使它與所有鄰居圓相切時角度總和為 2π。",
-     "effect": "得到 CP mesh 式的相切圓陣列，可直接對應到立面開孔或節點配置。"
-    },
-    {
-     "name": "固定邊界條件",
-     "how": "邊界頂點的半徑固定為設定值（或讓邊界圓都貼齊外框），只迭代內部頂點。",
-     "effect": "同一張網格可以產生不同的外輪廓與漸變大小。"
-    },
-    {
-     "name": "互動編輯網格",
-     "how": "把三角網格作為 Grasshopper 輸入，讓設計者在 Rhino 中移動、刪除頂點後重新計算。",
-     "effect": "設計者用拓樸控制圖樣，而不是用亂數種子碰運氣。"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "creative coding",
-    "openFrameworks",
-    "C++",
-    "互動",
-    "拓樸"
-   ],
-   "tools": [
-    "openFrameworks"
-   ],
-   "url": "https://github.com/jn3008/circlepack-cpp"
-  },
-  {
-   "id": "E02-51",
-   "algo": "E02",
-   "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
-   "creator": "Manohar Vanga（Sighack）",
-   "year": "2018",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "物件",
-   "summary": "Manohar Vanga 先用 Processing 實作 Bridson 演算法，再把 Poisson 點用在照片上，做出點描、油畫、炭筆、Voronoi 馬賽克、交叉排線、點彩等八種風格。基礎範例只輸出點與對照用的純隨機點，這裡則示範同一組藍噪點如何透過「點的大小、顏色、筆觸方向」變成完全不同的畫面。",
-   "variations": [
-    {
-     "name": "點大小對應影像灰階",
-     "how": "為每個 Poisson 點取樣影像亮度，把圓半徑設為亮度的反比。",
-     "effect": "得到點描（stippling）效果，也可轉成立面穿孔板的孔徑分布。"
-    },
-    {
-     "name": "由大到小多層取樣",
-     "how": "以遞減的 minDistance 重複執行取樣，大間距層先畫、小間距層後畫。",
-     "effect": "先有大色塊再有細節，類似油畫層層上色。"
-    },
-    {
-     "name": "點轉成 Voronoi 馬賽克",
-     "how": "把輸出點送進 Voronoi 元件，並以細胞中心的影像顏色填色。",
-     "effect": "得到均勻但不規則的馬賽克磚拼貼。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "Processing",
-    "影像處理",
-    "點描",
-    "生成藝術"
-   ],
-   "tools": [
-    "Processing"
-   ],
-   "url": "https://sighack.com/post/fun-with-poisson-disk-sampling"
-  },
-  {
-   "id": "E02-52",
-   "algo": "E02",
-   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
-   "creator": "Marcel Ruegenberg",
-   "year": "2015",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "modeling"
-   ],
-   "scale": "物件",
-   "summary": "把 Poisson 圓盤取樣包成 openFrameworks 外掛，README 以兩張 Delaunay 三角網做對照：用 ofRandom 純隨機點會出現細長三角形，改用 Poisson 點則得到大小接近、形狀勻稱的三角形。這正好延伸基礎範例的「Poisson 點 vs 純隨機點」對照，把差異放到網格品質上來看。",
-   "variations": [
-    {
-     "name": "輸出點接 Delaunay",
-     "how": "把 poissonPoints 與 randomPoints 分別送入 Delaunay Mesh 元件並排顯示。",
-     "effect": "直接看到藍噪點產生較均勻的三角網，適合作為面板分割或結構網格。"
-    },
-    {
-     "name": "量化網格品質",
-     "how": "計算每個三角形的最小內角，統計兩種點集的平均值與最小值。",
-     "effect": "用數字說明 Poisson 取樣為何能避免細長三角形。"
-    },
-    {
-     "name": "在曲面 UV 上取樣",
-     "how": "把 width/height 改成曲面的 UV 範圍，取樣後用 Surface.PointAt 映射到 3D。",
-     "effect": "在自由曲面上得到分布均勻的點，可作為開孔或節點位置（注意 UV 變形需修正）。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "openFrameworks",
-    "C++",
-    "Delaunay",
-    "開源"
-   ],
-   "tools": [
-    "openFrameworks"
-   ],
-   "url": "https://github.com/mruegenberg/ofxPoissonDiskSampling"
-  },
-  {
-   "id": "E02-53",
-   "algo": "E02",
-   "title": "poisson-disk-sampling（JavaScript 任意維度與變密度）",
-   "creator": "Kevin Chapelier",
-   "year": "2015",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "物件",
-   "summary": "Kevin Chapelier 維護的 JavaScript 函式庫（MIT 授權），以 Bridson 演算法支援任意維度取樣，並可傳入距離函式讓最小間距隨位置變化；線上示範用影像亮度控制點的疏密。基礎範例只有固定的 minDistance，這個函式庫示範了變密度與高維度兩種延伸。",
-   "variations": [
-    {
-     "name": "變距離取樣",
-     "how": "把固定 minDistance 改成 minDistance(x,y) 函式，例如依影像亮度在 minDist～maxDist 之間插值；網格邊長改用最小值 minDist/√2，檢查鄰格範圍則依最大值加大。",
-     "effect": "點在暗部密、亮部疏，形成漸層網點。"
-    },
-    {
-     "name": "推廣到 3D",
-     "how": "把網格改成 int[,,]，候選點改在球殼（r～2r）內取樣，並檢查 5×5×5 鄰格。",
-     "effect": "在體積內得到均勻散布的點，可作為 3D Voronoi 或空間桁架的節點。"
-    },
-    {
-     "name": "逐步產生動畫",
-     "how": "每次只從活躍名單取一個點處理，把目前結果輸出後再繼續下一步。",
-     "effect": "可以看到點從種子向外擴散填滿的過程。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "JavaScript",
-    "開源",
-    "變密度",
-    "3D"
-   ],
-   "tools": [
-    "JavaScript"
-   ],
-   "url": "https://github.com/kchapelier/poisson-disk-sampling"
-  },
-  {
-   "id": "E02-54",
-   "algo": "E02",
-   "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
-   "creator": "Nikolai Janakiev",
-   "year": "2017",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "物件",
-   "summary": "以 Processing 實作 Bridson 論文的 Poisson 圓盤取樣（MIT 授權），同時提供 2D 與 3D 版本，並把「活躍點」與「已確定的點」用不同方式畫出來做成動畫。基礎範例只輸出最終點位，這個作品把演算法的生長過程本身變成可觀看的視覺。",
-   "variations": [
-    {
-     "name": "顯示活躍名單",
-     "how": "另外輸出目前 active list 裡的點（用不同顏色），並以 Slider 控制已執行的步數。",
-     "effect": "清楚看出取樣前緣如何向外推進，適合講解演算法。"
-    },
-    {
-     "name": "3D 空間取樣",
-     "how": "把平面網格改成立體網格，候選點改在 3D 球殼內取樣。",
-     "effect": "在體積內撒出均勻點雲，可接 3D Voronoi 做多孔構造。"
-    },
-    {
-     "name": "點轉成實體",
-     "how": "把每個點替換成直徑略小於 minDistance 的球或柱。",
-     "effect": "得到不互相碰撞、分布均勻的構件陣列。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "Processing",
-    "動畫",
-    "3D",
-    "開源"
-   ],
-   "tools": [
-    "Processing"
-   ],
-   "url": "https://github.com/njanakiev/poisson-disk-sampling"
-  },
-  {
-   "id": "E02-55",
-   "algo": "E02",
-   "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
-   "creator": "Sebastian Lague",
-   "year": "2018",
-   "category": "urban-landscape",
-   "categories_extra": [
-    "modeling"
-   ],
-   "scale": "地景",
-   "summary": "Sebastian Lague 在 Unity（C#）中依 Bridson 論文實作 Poisson 圓盤取樣，目的是在遊戲場景裡擺放物件，使物件彼此保持最小距離又不顯得規則。和 Grasshopper C# 基礎範例語言相同，但應用從「畫點」轉成「放置場景物件」，很適合對照到地景配置。",
-   "variations": [
-    {
-     "name": "點轉成植栽配置",
-     "how": "在每個 Poisson 點放置樹木或灌木的 Block，並依種類設定不同的 minDistance。",
-     "effect": "得到自然、不排排站的植栽分布。"
-    },
-    {
-     "name": "限制在指定區域內",
-     "how": "候選點除了要在矩形內，還要通過 Curve.Contains 檢查，只在基地邊界曲線內部收下。",
-     "effect": "點只落在基地、草坪或廣場範圍內。"
-    },
-    {
-     "name": "多種物件分層取樣",
-     "how": "先用較大的 minDistance 放大樹，再以較小的間距放小樹，並同時檢查與前一層的距離。",
-     "effect": "形成大、中、小物件交錯的層次。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "Unity",
-    "C#",
-    "遊戲",
-    "程序化生成"
-   ],
-   "tools": [
-    "Unity"
-   ],
-   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o"
-  },
-  {
-   "id": "E03-51",
-   "algo": "E03",
-   "title": "Coding Challenge 181：Weighted Voronoi Stippling",
-   "creator": "Daniel Shiffman（The Coding Train）",
-   "year": "2024",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "物件",
-   "summary": "Daniel Shiffman 用 p5.js 搭配 d3-delaunay 套件，從 Delaunay 三角化與 Voronoi 圖講起，逐步實作 Lloyd 鬆弛，再把重心改成「以影像暗度加權的重心」，做出點描肖像。基礎範例的 Lloyd 用的是細胞的幾何面積重心，這裡則把影像當成密度場，讓點聚集到暗部。",
-   "variations": [
-    {
-     "name": "加權重心",
-     "how": "計算細胞重心時，對細胞內的取樣點以影像暗度（1 − 亮度）加權平均，而非用鞋帶公式算幾何重心。",
-     "effect": "點往暗部聚集，數次迭代後形成點描影像。"
-    },
-    {
-     "name": "點大小隨暗度變化",
-     "how": "最後輸出時，依點所在位置的暗度設定圓半徑。",
-     "effect": "加強明暗對比，也能對應成穿孔板的孔徑。"
-    },
-    {
-     "name": "迭代中逐步移動",
-     "how": "每次只把點往重心移動一部分（例如 10%）而非直接跳到重心。",
-     "effect": "動畫更平滑，並可在任何時刻停下取得中間狀態。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "p5.js",
-    "d3.js",
-    "點描",
-    "影像處理"
-   ],
-   "tools": [
-    "p5.js",
-    "d3.js"
-   ],
-   "url": "https://thecodingtrain.com/challenges/181-image-stippling"
-  },
-  {
-   "id": "E03-52",
-   "algo": "E03",
-   "title": "Voronoi edges（精確 Voronoi 邊界著色器）",
-   "creator": "Inigo Quilez",
-   "year": "2012",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "立面／表皮",
-   "summary": "Inigo Quilez 的文章與 Shadertoy 範例，用 GLSL 片段著色器逐像素計算 Voronoi：一般 F2−F1 近似會讓細胞邊線粗細不均，他改用第二輪搜尋算出到細胞邊界的真正距離，得到線寬一致、等距線正確的程序化 Voronoi 紋理。與基礎範例用半平面切出多邊形不同，這裡從「每個像素找最近點」的角度計算，而且完全在 GPU 上即時執行。",
-   "variations": [
-    {
-     "name": "逐點查詢距離場",
-     "how": "對一組取樣點（例如表面上的格點）計算到最近與次近 site 的距離，並求到兩者垂直平分線的距離。",
-     "effect": "得到可用於厚度、顏色或凹凸的距離場，而不只是細胞外框。"
-    },
-    {
-     "name": "等寬邊框",
-     "how": "以「到邊界距離 < 固定值」判定是否為邊框，取代 Polyline 偏移。",
-     "effect": "所有細胞框的寬度一致，適合轉成雷射切割的格柵。"
-    },
-    {
-     "name": "網格加速",
-     "how": "把 site 放在規則格子裡（每格一點並加隨機偏移），查詢時只看鄰近 3×3 格。",
-     "effect": "點數很多時也能快速計算，延伸至無限平鋪的紋理。"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "creative coding",
-    "GLSL",
-    "Shadertoy",
-    "著色器",
-    "程序化紋理"
-   ],
-   "tools": [
-    "GLSL",
-    "Shadertoy"
-   ],
-   "url": "https://iquilezles.org/articles/voronoilines/"
-  },
-  {
-   "id": "E03-53",
-   "algo": "E03",
-   "title": "The Book of Shaders 第 12 章：Cellular Noise",
-   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
-   "year": "2015",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "立面／表皮",
-   "summary": "The Book of Shaders 的細胞雜訊章節，從 Steven Worley 的 cellular texture 講起，用 GLSL 在網格中每格放一點、只檢查鄰近 9 格，最後導出 Voronoi 演算法並延伸到 Gustavson 的優化與 Quilez 的精確邊界。書中可直接在網頁上修改並即時預覽。與基礎範例的多邊形 Voronoi 相比，它把 Voronoi 當成連續的「距離場」來上色。",
-   "variations": [
-    {
-     "name": "顯示最近距離場",
-     "how": "對平面上的格點計算到最近 site 的距離，並以灰階或色帶上色。",
-     "effect": "看到每顆細胞由中心向外漸變的圖樣，類似細胞或龜裂地面。"
-    },
-    {
-     "name": "以 site 編號上色",
-     "how": "記錄每個取樣點最近的 site 是哪一個，依編號給顏色。",
-     "effect": "得到色塊拼貼，可對應材料分區。"
-    },
-    {
-     "name": "site 隨時間移動",
-     "how": "讓 site 依正弦函數或 Lloyd 迭代緩慢移動，每幀重新計算。",
-     "effect": "細胞會流動、呼吸，適合動態立面或投影。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "GLSL",
-    "著色器",
-    "雜訊",
-    "教學"
-   ],
-   "tools": [
-    "GLSL"
-   ],
-   "url": "https://thebookofshaders.com/12/"
-  },
-  {
-   "id": "E03-54",
-   "algo": "E03",
-   "title": "ofxVoronoi（openFrameworks Voronoi 與 Lloyd 鬆弛外掛）",
-   "creator": "Matthias Esterl、Todd Vanderlin 等",
-   "year": "2015",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "物件",
-   "summary": "openFrameworks 的 Voronoi 外掛，使用 Voro++ 中改寫的 Fortune 掃描線演算法產生 2D Voronoi 圖；2015 年加入 relax() 方法，可反覆執行 Lloyd 鬆弛，讓細胞變得均勻，README 也提到可用於點描效果。基礎範例用 O(n²) 半平面切割自行計算，這裡則示範採用較快的掃描線演算法，並把鬆弛包成一行呼叫。",
-   "variations": [
-    {
-     "name": "只做少數次鬆弛",
-     "how": "把 iterations 設為 1～3，並依次輸出各次的結果。",
-     "effect": "細胞保有一些大小差異卻不再極端，介於隨機與蜂巢之間。"
-    },
-    {
-     "name": "圓形邊界",
-     "how": "把起始的矩形改成近似圓的多邊形（例如 64 邊形）作為每個細胞的初始範圍。",
-     "effect": "得到圓盤內的 Voronoi，可做圓形天花或廣場鋪面。"
-    },
-    {
-     "name": "換成更快的 Voronoi",
-     "how": "點數超過數百時，把自製半平面切割改成呼叫 Grasshopper 內建 Voronoi，只保留 Lloyd 迴圈。",
-     "effect": "可以處理上千個細胞並保持互動速度。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "openFrameworks",
-    "C++",
-    "開源",
-    "Lloyd 鬆弛"
-   ],
-   "tools": [
-    "openFrameworks"
-   ],
-   "url": "https://github.com/madc/ofxVoronoi"
-  },
-  {
-   "id": "E03-55",
-   "algo": "E03",
-   "title": "Lloyd’s Relaxation（d3.js 互動示範）",
-   "creator": "Jason Davies",
-   "year": "",
-   "category": "2d-pattern",
-   "categories_extra": [
-    "drawing"
-   ],
-   "scale": "物件",
-   "summary": "Jason Davies 用 d3.js 在畫布上即時展示 Lloyd 鬆弛：1000 個點一開始擠在滑鼠點擊處，每一步計算 Voronoi 後把點移到細胞重心，直到總位移小於門檻才停；每次點擊會換一組色調重新開始。基礎範例從均勻隨機分布出發，這裡刻意從「全部擠在一點」開始，讓擴散與收斂過程更戲劇化。",
-   "variations": [
-    {
-     "name": "從單點出發",
-     "how": "起始點不在整個矩形內隨機撒，而是全部放在同一點附近（加上極小亂數）。",
-     "effect": "可以看到細胞從中心爆開、逐漸鋪滿畫面的過程。"
-    },
-    {
-     "name": "以位移量判斷收斂",
-     "how": "每輪計算所有點移動距離的總和，小於門檻就停止，並輸出實際迭代次數。",
-     "effect": "不必猜 iterations，得到可比較的收斂速度。"
-    },
-    {
-     "name": "依距離上色",
-     "how": "以細胞到起始點的距離決定填色明暗。",
-     "effect": "畫面出現同心放射的色彩層次，突顯生長方向。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "d3.js",
-    "JavaScript",
-    "互動",
-    "動畫"
-   ],
-   "tools": [
-    "d3.js"
-   ],
-   "url": "https://www.jasondavies.com/lloyd/"
-  },
-  {
-   "id": "E04-51",
-   "algo": "E04",
-   "title": "Coding Challenge 177：Soft Body Physics",
-   "creator": "Daniel Shiffman（The Coding Train）",
-   "year": "2023",
-   "category": "drawing",
-   "categories_extra": [
-    "performance"
-   ],
-   "scale": "物件",
-   "summary": "Daniel Shiffman 用 p5.js 搭配 toxiclibs.js 的 Verlet 物理，把一個卡通角色的輪廓拆成粒子，再以外圈彈簧加上內部交叉彈簧撐住形狀，做出可以被滑鼠拖動、Q 彈晃動的軟體角色。基礎範例是固定角點、以重力找出懸垂形，這裡則是自由的彈簧網，重點在形狀的保持與互動。",
-   "variations": [
-    {
-     "name": "加入內部對角彈簧",
-     "how": "除了相鄰質點的彈簧，額外在網格對角線與跨越多格的點之間加上 Spring。",
-     "effect": "網格抵抗剪切與塌陷，形狀更能維持，像有骨架的軟體。"
-    },
-    {
-     "name": "拖曳一個質點",
-     "how": "把某個質點設為固定，位置由 Rhino 中可移動的點參數決定，每次更新都從上一個狀態繼續模擬。",
-     "effect": "可以互動地拉扯網面，觀察整體如何重新平衡。"
-    },
-    {
-     "name": "改用 Verlet 積分",
-     "how": "不存速度，改以 p_new = p + (p − p_prev)·damping + F·dt² 更新位置。",
-     "effect": "程式更精簡且數值較穩定，與 toxiclibs、Kangaroo 的做法一致。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "p5.js",
-    "toxiclibs.js",
-    "物理模擬",
-    "互動"
-   ],
-   "tools": [
-    "p5.js",
-    "toxiclibs.js"
-   ],
-   "url": "https://thecodingtrain.com/challenges/177-soft-body-character"
-  },
-  {
-   "id": "E04-52",
-   "algo": "E04",
-   "title": "The Nature of Code 第 6 章：Physics Libraries",
-   "creator": "Daniel Shiffman",
-   "year": "2024",
-   "category": "drawing",
-   "categories_extra": [
-    "modeling"
-   ],
-   "scale": "物件",
-   "summary": "The Nature of Code（2024 年 JavaScript 版）第 6 章介紹 Matter.js 與 toxiclibs.js 兩種物理函式庫，後半段以 Verlet 物理實作彈簧、弦、布料網格與軟體角色，並說明 Euler 與 Verlet 積分的差異。基礎範例自行寫出質點與彈簧 class，本章則展示同樣的概念如何交給現成物理引擎，並比較不同積分方法的穩定性。",
-   "variations": [
-    {
-     "name": "由一條弦開始",
-     "how": "先只做一排質點（string），兩端固定，看它在重力下形成懸鏈線，再擴充到二維網格（blanket）。",
-     "effect": "從懸鏈線一路推到懸垂曲面，觀念循序漸進。"
-    },
-    {
-     "name": "加上吸引／排斥行為",
-     "how": "對所有質點加上指向吸引點的力，或質點之間的短距離排斥力。",
-     "effect": "網面會被局部拉起或撐開，可得到非純重力的形態。"
-    },
-    {
-     "name": "比較 Euler 與 Verlet",
-     "how": "同一組參數分別用兩種積分方法跑，記錄最大速度曲線。",
-     "effect": "看出 Verlet 在較大時間步長下仍然穩定，理解數值爆炸的原因。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "p5.js",
-    "toxiclibs.js",
-    "Matter.js",
-    "教學"
-   ],
-   "tools": [
-    "p5.js",
-    "toxiclibs.js",
-    "Matter.js"
-   ],
-   "url": "https://natureofcode.com/physics-libraries/"
-  },
-  {
-   "id": "E04-53",
-   "algo": "E04",
-   "title": "three.js webgpu - compute cloth",
-   "creator": "holtsetio（three.js 官方範例）",
-   "year": "2025",
-   "category": "modeling",
-   "categories_extra": [
-    "performance"
-   ],
-   "scale": "物件",
-   "summary": "three.js 的官方範例，以 WebGPU compute shader 執行 Verlet 布料模擬：由彈簧相連的頂點網格組成布料，在 GPU 上即時計算。與基礎範例在 CPU 上逐一計算彈簧力不同，它把彈簧力與頂點力分成兩個 compute pass 平行計算，再以即時算繪的布料材質呈現。",
-   "variations": [
-    {
-     "name": "拆成兩個計算階段",
-     "how": "先迴圈所有 Spring 算出力並存入 springForce 陣列，再迴圈所有質點彙總與自己相連的彈簧力，避免多執行緒同時寫入。",
-     "effect": "邏輯與 GPU 版一致，也方便改成 Parallel.For 加速。"
-    },
-    {
-     "name": "固定邊改成固定一整排",
-     "how": "把固定條件從四個角點改成最上面一整排質點。",
-     "effect": "得到像布簾、旗幟的懸掛形，而非四點支撐的殼。"
-    },
-    {
-     "name": "加入球體碰撞",
-     "how": "每步之後檢查質點是否進入球體內，若是則把它推回球面。",
-     "effect": "網面會包覆障礙物，可做充氣膜或覆蓋地形的形態研究。"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "creative coding",
-    "three.js",
-    "WebGPU",
-    "GPU",
-    "布料模擬"
-   ],
-   "tools": [
-    "three.js",
-    "WebGPU"
-   ],
-   "url": "https://threejs.org/examples/webgpu_compute_cloth.html"
-  },
-  {
-   "id": "E04-54",
-   "algo": "E04",
-   "title": "MSAPhysics（openFrameworks／Cinder 粒子彈簧物理庫）",
-   "creator": "Memo Akten",
-   "year": "2008",
-   "category": "art-installation",
-   "categories_extra": [
-    "performance"
-   ],
-   "scale": "物件",
-   "summary": "Memo Akten 開發的開源 C++ 物理函式庫，供 openFrameworks 與 Cinder 使用，以粒子與約束為基礎，提供彈簧、吸引子與碰撞；API 刻意仿照 Processing 的 Traer.physics，方便移植。與基礎範例只有彈簧加重力相比，它把吸引子與碰撞也納入同一個粒子系統，常用於即時互動與視覺作品。",
-   "variations": [
-    {
-     "name": "加入吸引子",
-     "how": "在 Particle 以外新增 Attractor class，對每個質點施加與距離平方成反比的力。",
-     "effect": "網面被局部拉起或凹陷，形成多峰的膜形。"
-    },
-    {
-     "name": "質點間碰撞",
-     "how": "每一步檢查質點之間的距離，小於兩倍半徑就互相推開（與 E01 圓填充相同的規則）。",
-     "effect": "網面不會自我穿透，適合模擬堆疊與皺褶。"
-    },
-    {
-     "name": "2D／3D 共用程式",
-     "how": "把 Particle 的位置型別抽象化（例如只用 X、Y 或 X、Y、Z），讓同一套彈簧程式跑在平面或空間。",
-     "effect": "一套程式同時做平面網格張拉與立體找形。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "openFrameworks",
-    "Cinder",
-    "C++",
-    "物理模擬",
-    "開源"
-   ],
-   "tools": [
-    "openFrameworks",
-    "Cinder"
-   ],
-   "url": "https://www.memo.tv/msaphysics"
-  },
-  {
-   "id": "E04-55",
-   "algo": "E04",
-   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
-   "creator": "Moritz Schwind（Entagma）",
-   "year": "2018",
-   "category": "modeling",
-   "categories_extra": [
-    "3d-architecture"
-   ],
-   "scale": "構件",
-   "summary": "Entagma 的五集快速入門，介紹 Houdini 17 新推出的 Vellum：以 XPBD（擴展式位置基礎動力學）穩定且快速地模擬布料、線材與軟體，內容包含撕裂布料與軟體的基本設定，並附場景檔。基礎範例以彈簧力、速度、阻尼逐步積分，Vellum 則直接以位置約束迭代修正，較不容易數值爆炸。",
-   "variations": [
-    {
-     "name": "力改成位置約束",
-     "how": "不計算彈簧力，而是每步直接把每條彈簧兩端點沿連線各移動一半誤差（目前長度－原長），重複數次。",
-     "effect": "即使 stiffness 很大也不會爆炸，收斂更穩定。"
-    },
-    {
-     "name": "加入壓力約束",
-     "how": "對封閉網格計算體積，體積小於目標值時沿頂點法向量往外推。",
-     "effect": "得到充氣膜或氣球般的形態，可研究充氣結構。"
-    },
-    {
-     "name": "彈簧斷裂",
-     "how": "當彈簧伸長超過原長的某個倍數時，把它從清單中移除。",
-     "effect": "網面會撕裂開孔，可做破壞或開口的形態實驗。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "Houdini",
-    "Vellum",
-    "XPBD",
-    "布料模擬"
-   ],
-   "tools": [
-    "Houdini"
-   ],
-   "url": "https://entagma.com/houdini-17-is-here-a-quickstart-to-vellum/"
-  }
- ]
+  ]
 }

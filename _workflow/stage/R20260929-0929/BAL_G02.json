@@ -1,0 +1,31 @@
+{
+ "algo": "G02",
+ "classification": [
+  {"id": "G02-01", "source": "research", "why": "已建成建築，太陽包絡削切立面的代表案例"},
+  {"id": "G02-02", "source": "research", "why": "學術研究開發的 3D 太陽包絡設計工具"},
+  {"id": "G02-03", "source": "research", "why": "Ladybug 太陽包絡元件，屬 GH 外掛"},
+  {"id": "G02-04", "source": "research", "why": "計算太陽體積推導都市紋理的研究論文"},
+  {"id": "G02-05", "source": "research", "why": "多目標最佳化法規包絡的研究論文"},
+  {"id": "G02-06", "source": "research", "why": "3D 體素射線投射的工程研究論文"},
+  {"id": "G02-07", "source": "research", "why": "以 GH／C# 反推法規包絡的研究案例"},
+  {"id": "G02-51", "source": "research", "why": "全球即時陰影地圖，屬都市環境分析工具"},
+  {"id": "G02-52", "source": "research", "why": "建築陰影生成與分析的 Python 套件"},
+  {"id": "G02-53", "source": "research", "why": "Blender 太陽位置外掛，屬工具非作品"},
+  {"id": "G02-54", "source": "research", "why": "太陽位置計算函式庫，無獨立視覺作品"}
+ ],
+ "art_count": 0,
+ "need": 5,
+ "removal_order": ["G02-54", "G02-04", "G02-02", "G02-05", "G02-52", "G02-53", "G02-06", "G02-51"],
+ "removal_reasons": {
+  "G02-54": "純計算函式庫、無圖片，沒有獨立的視覺作品可看，最容易被取代",
+  "G02-04": "2001 年論文、無圖片，「太陽體積」概念和 G02-02、G02-05 重疊",
+  "G02-02": "雖有圖但是 2003 年的早期原型工具論文，功能已被 G02-03 Ladybug 元件取代",
+  "G02-05": "無圖片，多目標最佳化法規案例和 G02-06、G02-07 主題重疊",
+  "G02-52": "有圖但是 Python 陰影分析套件，和 G02-51 ShadeMap 同屬『由建築反推陰影』工具，功能重疊",
+  "G02-53": "有圖但只處理太陽定位這一步，和基礎範例『由陰影反推高度』的核心關聯較弱",
+  "G02-06": "無圖片，雖然 3D 體素方法獨特，但期刊論文難找到示意圖",
+  "G02-51": "有圖、做法獨特（全球即時陰影地圖）但偏分析工具，和基礎範例的『設計』用途距離較遠"
+ },
+ "new_art": [],
+ "notes": "need=5、備援 0：既有 currently_cc=true 的 G02-51～54（ShadeMap、pybdshadow、Blender Sun Position、SunCalc）逐一檢視後判定分別屬『都市與環境分析工具』『軟體套件』『外掛』『函式庫』，依規格明顯屬 research，故 art_count=0、need=5。本輪用 WebSearch（額度用盡）、Parallel Search MCP（達免費額度上限並持續被限流）、Bing／DuckDuckGo（被導向不相關結果或 CAPTCHA）、GitHub repo／topic／code 搜尋、tools/ct_index.py（solar／shadow／sun／earth／season／equinox／latitude 等關鍵字）多輪查找以太陽位置計算、陰影投射、太陽包絡為核心演算法的 creative coding 或生成藝術作品，找到的多為分析用的軟體工具或函式庫（性質同既有案例，應歸 research）、未具名或缺乏查證資訊的個人練習頁，均未達收錄門檻，故未新增藝術案例；need=5 缺口偏大，建議下輪改用可直接瀏覽的管道（OpenProcessing／Openprocessing 主題頁、Genuary 歷年主題、The Coding Train 完整清單）或請協調者放寬到『日照與光影』相關的鄰近題材（如日晷、天文鐘的 pen plotter 作品）查找。"
+}

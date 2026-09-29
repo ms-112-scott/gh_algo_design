@@ -1,0 +1,250 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F08",
+  "name_zh": "最小生成樹與 Steiner 樹",
+  "name_en": "Minimum Spanning Tree & Steiner Tree",
+  "one_liner": "用最少的總長度把所有點連成一張不繞圈的網：先把邊由短到長挑、會成環就跳過；再在分岔夾角太小的地方加入 120° 三叉的 Steiner 點，讓網路再縮短一些。",
+  "how_it_works": [
+   "讀入端點 pts（留空就用 seed 在 size × size 的正方形內撒 pointCount 個點），把所有點兩兩連成候選邊並依長度由短到長排序。",
+   "Kruskal：由短到長檢查每條邊，用並查集的 Find 判斷兩端是否已在同一群；不同群才加入並合併，同群代表會成環就跳過，加滿 n − 1 條邊就是最小生成樹。",
+   "Steiner 改良（steiner = true）：在樹上找出夾角小於 120° 的一對邊 v–a、v–b，用 Weiszfeld 迭代求三點的 Fermat 點 s，拆掉原本兩條邊、改接成 s 的三叉。",
+   "鬆弛 relaxIterations 次：每個 Steiner 點移到三個鄰點的 Fermat 點；度數降到 2 或貼到鄰點上的 Steiner 點刪除，並把鄰點重新接好。",
+   "輸出 MST 線段、Steiner 網路、Steiner 點，並在 info 印出兩者總長與節省比例（通常省 2–4%，依 Gilbert–Pollak 猜想最多約 13.4%）；Steiner 部分是啟發式，不保證精確最佳。"
+  ]
+ },
+ "final_total": 10,
+ "target_art": 5,
+ "target_research": 5,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F08-01",
+   "title": "Emerging Spanning Trees in the Work of Candilis–Josic–Woods（Candilis–Josic–Woods 作品中浮現的生成樹）",
+   "creator": "Georgios-Spyridon Athanasopoulos",
+   "year": "2020",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "圖",
+    "Steiner 樹",
+    "動線",
+    "都市設計"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+   "summary": "刊於 Nexus Network Journal 的論文，用圖論重讀 Team X 成員 Candilis–Josic–Woods 的都市與建築設計，先定義最小生成樹（minimum spanning tree）、最短步行樹與 Steiner 樹，再以柏林自由大學這類 mat-building 的動線邏輯為對照。作者在 Rhino／Grasshopper 中以演算法近似歐氏 Steiner 樹，並用 Kangaroo 鬆弛點位，主張 Steiner 點可以成為「可被活化成空間、又方便步行」的節點；和基礎範例相同都是 MST＋Steiner 點，但端點來自建築配置、Steiner 點被詮釋成廣場與聚集空間。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Nexus Network Journal（Springer）",
+    "page": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
+    "note": "論文頁 og:image（Fig. 1），論文插圖"
+   }
+  },
+  {
+   "id": "F08-02",
+   "title": "Ivy：以加權網格表示法做網格分割與展開",
+   "creator": "Andrei Nejur、Kyle Steinfeld",
+   "year": "2016",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "網格分割",
+    "展開",
+    "圖",
+    "數位製造"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Ivy"
+   ],
+   "url": "https://www.academia.edu/33285328/Ivy_Bringing_a_Weighted-Mesh_Representation_to_Bear_on_Generative_Architectural_Design_Applications",
+   "summary": "論文與同名 Grasshopper 外掛 Ivy，把 Mesh 轉成加權的對偶圖（每個面是節點、相鄰面之間是帶權重的邊），再以 Kruskal 等建樹程序做網格分割（segmentation）與展開，外掛提供 MST Kruskal 元件計算網格圖的最小生成樹或森林。和基礎範例不同，這裡的節點是網格面而不是散點，邊權重是面與面之間的折角或其他分析值，生成樹決定哪些邊保留相連、哪些剪開，用來製作可展開的板片。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F08-03",
+   "title": "An Extended Minimum Spanning Tree method for characterizing local urban patterns（以延伸最小生成樹描述局部都市形態）",
+   "creator": "Bin Wu、Bailang Yu、Qiusheng Wu、Zuoqi Chen、S. Yao、Yan Huang、Jianping Wu",
+   "year": "2018",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "都市形態",
+    "空間分析",
+    "圖"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.1080/13658816.2017.1384830",
+   "summary": "刊於 International Journal of Geographical Information Science 的研究，以建築物為單元建立延伸的最小生成樹，用樹上邊的長度、方向與分布來量化建築群的局部都市形態，進而辨識不同的街區類型。和基礎範例相比，端點是建築物（而非單點），MST 在這裡是分析工具而不是設計成果：用來衡量密度、排列與群聚程度。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F08-04",
+   "title": "Minimum Spanning Tree（Grasshopper 曲線網路的最小生成樹工具）",
+   "creator": "Tuğrul Yazar（designcoding）",
+   "year": "2012",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "圖",
+    "貪婪法",
+    "教學工具"
+   ],
+   "tools": [
+    "Grasshopper",
+    "VB.NET"
+   ],
+   "url": "https://www.designcoding.net/minimum-spanning-tree/",
+   "summary": "designcoding 網站上的 Grasshopper 教學工具，輸入一組相連的線段網路，以 VB.NET 程式計算其最小生成樹並逐步說明。作者比較過 Kruskal、Prim 等做法後改用「反向刪除」（reverse-delete）：從最長的連線開始，若刪掉後兩端仍然相連就刪除。和基礎範例相反：不是由短到長加邊，而是由長到短刪邊，且輸入是既有的曲線網路而不是散點。",
+   "currently_cc": false,
+   "photo": {
+    "source": "designcoding｜Minimum Spanning Tree",
+    "page": "https://www.designcoding.net/minimum-spanning-tree/",
+    "note": "作者頁面的最小生成樹動畫主圖：虛線為候選曲線網路，粗管為留下的生成樹"
+   }
+  },
+  {
+   "id": "F08-05",
+   "title": "Universal Model of Urban Street Networks（以生成樹為骨幹的都市街道網路模型）",
+   "creator": "Marc Barthelemy、Geoff Boeing",
+   "year": "2025",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "街道網路",
+    "都市形態",
+    "圖"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/abs/2509.21931",
+   "summary": "arXiv 上的研究論文，比較大量城市街道網路的共同性質後提出一個精簡的生成模型：先以一棵生成樹當骨幹，再逐步加邊，使節點度數分布符合實測資料。和基礎範例相比，生成樹在這裡是街網的起點而不是最終結果；在樹上再補邊，就從「最省」走向有迴路、較好走的真實街網。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F08-06",
+   "title": "LeafVein：Grasshopper 圖論外掛（含最小生成樹）",
+   "creator": "Dachuan",
+   "year": "",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tags": [
+    "圖",
+    "外掛",
+    "都市設計"
+   ],
+   "tools": [
+    "Grasshopper",
+    "LeafVein"
+   ],
+   "url": "https://www.food4rhino.com/en/app/leafvein",
+   "summary": "Food4Rhino 上的 Grasshopper 圖論外掛，可從幾何物件或地圖建立有向、無向或混合圖，提供最小生成樹、最短路徑（Dijkstra、A*）、連通元件、割點與割邊、TSP 啟發式等演算法，定位於建築與都市規劃的應用。和基礎範例相比，它把 MST 包成現成元件，能與其他圖論分析串接；自己寫的版本則能修改加邊規則（障礙、度數上限、Steiner 點）。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Food4Rhino｜LeafVein",
+    "page": "https://www.food4rhino.com/en/app/leafvein",
+    "note": "外掛頁面的圖分析示意：最小成本生成樹、匹配、二分、連通與割、拓撲排序等結果"
+   }
+  },
+  {
+   "id": "F08-51",
+   "title": "Maze Generation: Kruskal's Algorithm（以 Kruskal 生成迷宮）",
+   "creator": "Jamis Buck",
+   "year": "2011",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Ruby",
+    "JavaScript",
+    "迷宮",
+    "隨機"
+   ],
+   "tools": [
+    "Ruby",
+    "JavaScript"
+   ],
+   "url": "https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm",
+   "summary": "Buckblog 迷宮生成系列文章之一，把格網上相鄰格子之間的牆當成隨機權重的邊，用 Kruskal 演算法與集合合併（以樹狀結構判斷兩格是否同一集合）打通牆面，得到每兩格之間恰好一條路的完美迷宮，並附互動示範。和基礎範例相比，點是規則格網、邊權重是亂數，MST 的「不成環又全連通」直接變成迷宮的「沒有迴圈、每格都到得了」。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "F08-52",
+   "title": "Visualizing Algorithms（視覺化演算法：以生成樹生成迷宮）",
+   "creator": "Mike Bostock",
+   "year": "2014",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "D3.js",
+    "JavaScript",
+    "迷宮",
+    "視覺化"
+   ],
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "url": "https://bost.ocks.org/mike/algorithms/",
+   "summary": "Mike Bostock 的互動長文，以動畫說明取樣、洗牌、排序與迷宮生成等演算法；迷宮一節指出所有做法都是在二維格網上生成一棵生成樹，並比較隨機 Prim（最小生成樹）與 Wilson 演算法（loop-erased random walk 產生均勻生成樹）等做法。和基礎範例相比，重點不在最短總長，而在不同建樹方法留下的紋理差異。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "F08-53",
+   "title": "9.9: Minimum Spanning Tree (Prim's Algorithm) - p5.js Tutorial",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "互動",
+    "教學"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0",
+   "summary": "The Coding Train 的 p5.js 教學影片，用 Prim 演算法把畫布上的一組點連成最小生成樹：維持「已連接」與「未連接」兩組點，每次找出兩組之間最短的一條邊加入。和基礎範例的 Kruskal 不同，Prim 從一個點往外長，不需要排序全部邊與並查集。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "F08-54",
+   "title": "Spanning Trees（Houdini VEX 生成樹）",
+   "creator": "Sergen Eren",
+   "year": "2018",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "網格展開"
+   ],
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "url": "https://sergeneren.com/2018/09/24/spanning-trees/",
+   "summary": "Sergen Eren 的 Houdini 教學文章，以 VEX 遞迴程式在幾何的連接關係上建立生成樹，文中以 Prim 演算法、點與點之間的距離為成本求最小成本生成樹，並作為後續網格展開（unfolding）教學的基礎。和基礎範例相比，它在 Houdini 的點與圖元屬性上直接操作，生成樹連接的是網格圖元而不是散點。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Sergen Eren｜Spanning Trees",
+    "page": "https://sergeneren.com/2018/09/24/spanning-trees/",
+    "note": "文章中的 wire_loop 動畫一格：在球面網格的連接關係上長出的生成樹被攤開"
+   }
+  }
+ ]
+}

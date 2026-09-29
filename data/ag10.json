@@ -311,6 +311,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "從一對客製婚戒發展出的整個珠寶系列，戒指、莫比烏斯環、貝殼形耳環表面布滿 RD 生成的凹凸脊谷，以不鏽鋼、銀、黃銅金屬 3D 列印。RD 在平面上模擬，再包覆到環形；莫比烏斯款利用「兩面各一份花紋等於兩倍長的環」的性質避開非定向曲面的模擬。",
       "variations": [
@@ -354,6 +355,7 @@
         "performance",
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 Processing 自寫的 RD 模擬，讓一顆球「長」成有雕刻感的燈罩，再以 SLS 選擇性雷射燒結列印。Seed 系列同時疊加大尺度（整體起伏）與小尺度（壁厚變化）兩層 RD，點燈時薄處透光形成細胞紋理。",
       "variations": [
@@ -396,6 +398,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "受腦珊瑚啟發的瓷杯，表面深溝般的蜿蜒脊谷由 RD 生成，調整反應速率、尺度與擴散方向可得不同花紋。製程為 3D 列印原型→矽膠翻模→石膏模→注漿成型，分模線刻意對齊花紋脊線。",
       "variations": [
@@ -439,6 +442,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Nervous System 在其 Reaction Jewelry 文章中提到與 New Balance 合作，將 RD 花紋用在 Kawhi Leonard 系列球鞋上，是 RD 圖樣進入量產產品設計的例子。",
       "variations": [
@@ -472,6 +476,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "最常被引用的 Gray-Scott 圖解教學：本課範例的 DA=1.0、DB=0.5、f=0.055、k=0.062 與 3×3 卷積權重（中心 −1、上下左右 0.2、斜角 0.05）都出自此頁。另提供 k–f 參數圖與線上 RD Tool 互動實驗。",
       "variations": [
@@ -511,6 +516,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Pearson 以數值模擬系統性掃描 Gray-Scott 模型的 (F, k) 平面，發現十餘種不同的時空圖樣類型（斑點分裂、條紋、混沌等），並指出擴散係數相等時不會出現花紋。是理解範例中 feed／kill 為何如此敏感的經典依據。",
       "variations": [
@@ -552,6 +558,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "SIGGRAPH 91 論文，直接在任意 3D 模型表面上模擬 RD，讓紋理貼合幾何而不需 UV 展開；並用多個 RD 系統級聯（先鋪底圖再細化）生成花豹玫瑰斑、長頸鹿網紋等。",
       "variations": [
@@ -593,6 +600,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "在 Grasshopper 論壇分享以 Kangaroo 重新網格化、再在 40 萬個三角面的花瓶上跑 RD 的流程；拉普拉斯改用相鄰頂點的正規化權重。後來以自寫 C# 取代 Sandbox 拓樸運算，速度提升約 14 倍；兔子模型示範調整 B 擴散係數改變花紋尺度。",
       "variations": [
@@ -627,49 +635,6 @@
       "url": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh"
     },
     {
-      "id": "C01-09",
-      "algo": "C01",
-      "title": "把反應擴散變成曲線（Nautilus iso-split）",
-      "creator": "McNeel 論壇討論（Laurent Delrieu、Peter Davis 等）",
-      "year": "2023",
-      "category": "drawing",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "構件",
-      "summary": "使用者詢問如何把 RD 結果輸出成曲線而不是密集 Mesh；回覆建議用 Nautilus 外掛的 RD 元件與 Mesh 等值切割，再用 Catmull-Clark 細分平滑；另有人結合 Kangaroo 的圓堆積非均勻網格與自寫 C# 做六角形 RD 花紋。",
-      "variations": [
-        {
-          "name": "等值切割輸出曲線",
-          "how": "把 coloredMesh 的頂點 Z 設為 B，用 Mesh 等高線在固定高度切出輪廓，或接 C05 Marching Squares。",
-          "effect": "得到可雷射切割、可繪圖機描繪的封閉曲線。"
-        },
-        {
-          "name": "細分平滑",
-          "how": "等值切割前先把 Mesh 做 1–2 次細分（或先放大 gridSize 再降採樣）。",
-          "effect": "曲線鋸齒消失，邊緣呈圓滑有機形。"
-        },
-        {
-          "name": "非均勻網格",
-          "how": "用圓堆積點建立三角網格代替正方格，RD 改為頂點鄰居版本。",
-          "effect": "花紋密度隨網格密度變化，並出現六角形排列傾向。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "等值面",
-        "網格擴散",
-        "多元件"
-      ],
-      "tools": [
-        "Grasshopper",
-        "Nautilus",
-        "Kangaroo",
-        "C#"
-      ],
-      "url": "https://discourse.mcneel.com/t/reaction-diffusion-curves/160082"
-    },
-    {
       "id": "C01-10",
       "algo": "C01",
       "title": "以各向異性反應擴散生成等應力肋板樓板",
@@ -679,6 +644,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "研究以各向異性 RD 系統設計等應力（isostatic）肋板樓板：系統會自發沿主應力與彎矩場形成條紋，條紋再轉成加勁肋，並可調控肋的密度與厚度。是 RD 從裝飾走向結構性能的代表。",
       "variations": [
@@ -718,6 +684,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "發表於 Science Advances。先以最佳化求出各處材料的各向異性分布，再用 Turing 圖樣把它轉成只有兩種材料的離散分布，以灰階 DLP 3D 列印製作，充氣後可變形為指定形狀。",
       "variations": [
@@ -746,48 +713,6 @@
       "url": "https://www.science.org/doi/10.1126/sciadv.ade4381"
     },
     {
-      "id": "C01-12",
-      "algo": "C01",
-      "title": "具 Turing 圖樣紋理的織物氣動致動器",
-      "creator": "Masato Tanaka、Yuyang Song、Tsuyoshi Nomura",
-      "year": "2024",
-      "category": "fabrication",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "構件",
-      "summary": "發表於 Scientific Reports。以方向最佳化結合殼元素分析求出材料方向，再以各向異性 RD 生成 Turing 紋理；製作時雷射切割 Dyneema 硬布熱壓到 TPU 軟布，或以 Kevlar 線刺繡，做出 C 形、S 形彎曲與扭轉的充氣元件。",
-      "variations": [
-        {
-          "name": "紋理→雷射切割路徑",
-          "how": "B 等值線輸出為封閉曲線，按圖層分為切割線，供硬布切割後熱壓。",
-          "effect": "平面織物獲得可程式化的變形行為。"
-        },
-        {
-          "name": "紋理→刺繡／縫紉路徑",
-          "how": "取 B 條紋的中心線（骨架）轉成連續 Polyline 作為刺繡針跡。",
-          "effect": "用縫線形成剛性條紋，可做軟性建築構件或可展開遮蔽。"
-        },
-        {
-          "name": "局部方向切換",
-          "how": "把網格分區，各區指定不同擴散方向（如 0°、45°）。",
-          "effect": "同一片布上產生彎曲與扭轉兩種變形。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "各向異性",
-        "紡織",
-        "軟性結構"
-      ],
-      "tools": [
-        "有限元素分析",
-        "雷射切割",
-        "刺繡"
-      ],
-      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11333703/"
-    },
-    {
       "id": "C01-13",
       "algo": "C01",
       "title": "Morphogenetic Metasurfaces：以 Turing 圖樣設計天線超表面",
@@ -797,6 +722,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "發表於 Nature Communications。把 Turing 反應擴散模型加入各向異性擴散，讓橢圓形單元自組織排列以滿足局部電磁需求，程序化生成可控制波束方向與極化的超表面，不需手工排版網格。",
       "variations": [
@@ -833,6 +759,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "發表於 The Visual Computer。把照片轉成 RD 自組織圖樣：以各向異性擴散與流場引導花紋方向，搭配邊緣偵測、分區與門檻、上色後處理，產生剪紙、風格化網點、運動錯視等效果；GitHub 公開實作。",
       "variations": [
@@ -874,6 +801,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "依 Karl Sims 公式寫成的 WebGL 即時互動頁面，可調 feed／kill，也可用滑鼠或觸控在畫布上塗抹干擾系統；作者提到受 Jonathan McCabe 多尺度 Turing 圖樣作品啟發。適合當作互動裝置或教學展示的原型。",
       "variations": [

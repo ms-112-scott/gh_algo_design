@@ -1,0 +1,55 @@
+{
+ "reviewer": "BALREV",
+ "algos": {
+  "E05": {
+   "reject_new": [],
+   "image_fix": [],
+   "fix_class": [
+    {"id": "E05-51", "source": "research", "why": "MIT 結構教學用的互動圖解靜力學示範（配合 Allen／Zalewski 教材），屬力學說明與教學工具，不是以視覺表現為目的的作品"},
+    {"id": "E05-52", "source": "research", "why": "UPenn 多面體結構實驗室開發的研究／教學軟體，對應學術論文，屬軟體工具"},
+    {"id": "E05-53", "source": "research", "why": "工程教學網站的 GeoGebra 作圖教學，屬力學說明，不是視覺作品"},
+    {"id": "E05-54", "source": "research", "why": "把 Lee、Van Mele、Block 2018 論文方法重寫成瀏覽器互動程式，屬研究原型重製"}
+   ],
+   "protect": [],
+   "notes": "new_art 為空（撰寫者搜尋額度用完），沒有新案例可審；E05-51～54 都是教學或研究工具，依分類準則改判 research（和 E06 撰寫者對同類工具的判法一致），改判後 art=0，實際需要 6 個藝術案例，建議另派 agent 補找。若只移除 must_remove_extra 的 1 個，E05-53（無年份、無照片）或 E05-54 其實比 E05-09 更弱，協調者可考慮把它們排到 removal_order 最前面。"
+  },
+  "E06": {
+   "reject_new": [
+    {"index": 0, "reason": "作品用 toxiclibs 的 Verlet 質點彈簧逐步模擬，是 E04 動態鬆弛的演算法，沒有用到力密度法；E04 本批候選已有其續集 #63 Texturing Cloth，且已收 E04-52（Nature of Code 物理函式庫章，含布料網格）"},
+    {"index": 1, "reason": "力導向圖是彈簧加排斥的圖形佈局演算法，沒有固定點、也不解力密度線性方程組，力密度法不是核心；出自 Nature of Code 物理函式庫章，與既有 E04-52 同一教材"},
+    {"index": 2, "reason": "Matter.js 剛體約束鏈是物理引擎示範，不是力密度法；它是 Nature of Code 第 6 章 6.4 節，與既有 E04-52（第 6 章 Physics Libraries）是同一件作品"},
+    {"index": 3, "reason": "和 index 1 相同問題：toxiclibs 彈簧群集是物理模擬，不是力密度法，summary「力密度夠大時網會收縮聚攏」屬牽強詮釋；也出自 E04-52 同一章"}
+   ],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [
+    {"id": "E06-03", "why": "ETH BRG 官方開源力密度套件，是本演算法最具代表性的現代實作、關係最強；較弱的 E06-53（個人筆記本實作）可先移除"}
+   ],
+   "notes": "4 個新案例的圖片都是真實生成畫面，但全部是質點彈簧或物理引擎模擬（屬 E04），力密度法不是核心，全數 reject；E06 仍需 5 個以力密度法為核心的藝術案例，建議另派 agent 補找。E06-51～53 改判 research 同意。"
+  },
+  "F01": {
+   "reject_new": [
+    {"index": 4, "reason": "summary 與內容不符：文章用作者自己設計的圓弧／Bézier 曲線磚（首圖標為 Truchet Tiling of my own design），不是 Truchet 1704 原始三角磚；variations 與 nearest_existing 都建立在錯誤描述上"},
+    {"index": 5, "reason": "售價 425 美元的木工商品頁，產生器本身沒有連結可查證，tools 的「JavaScript」在頁面上找不到依據，「CNC」「徵得同意」也是推測；creative coding 成分無法驗證，寧缺勿濫"}
+   ],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [
+    {"id": "F01-06", "why": "唯一的量產室內建材應用（Steelcase 四分之一圓吸音模組，以 Truchet 組合原理拼牆），比後面的 F01-08（作者不明的期刊論文）更值得保留"}
+   ],
+   "notes": "前 4 個（index 0～3）都已查證並親眼確認是生成畫面，可用；需小修：index 1 summary 的「或雷射雕刻」，作品頁強調的是鋼筆繪圖機；index 3 的磚其實是斜線磚（不是弧線），summary 與 variations 的「弧線／Arc」應改成斜線；index 2、6 年份缺；index 6 圖片只有 244px，只適合當最後備援。分類同意。"
+  },
+  "F02": {
+   "reject_new": [
+    {"index": 1, "reason": "和 index 0 是同一件作品（同一頁 Coding Challenge #54 的 Part 2）；且官方說明 Part 2 是用正弦定律（law of sines）計算射線，不是用 sin() 讓接觸角週期變化，summary 描述錯誤"},
+    {"index": 2, "reason": "範例設定檔是把六邊形繞中心旋轉複製、遞迴疊合（n_segments 6、n=12 環狀排列），不是 Hankin 接觸多邊形射線法；語言是 OCaml 而非 Python，tools 錯誤、年份缺"},
+    {"index": 3, "reason": "以 de Bruijn 多重網格法產生 Penrose 等菱形準週期鋪面，沒有 Hankin 射線步驟，圖上是菱形磁磚而不是星形圖樣；本演算法不是核心（最多只算底圖）"},
+    {"index": 4, "reason": "圖片是抱枕商品合成示意圖（mockup），不是演算法生成畫面，repo 內也只有 tote／tee／cushion 三張商品圖；生成方式是隨機分枝線網加三種固定星形圖案，不是 Hankin 法"}
+   ],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [],
+   "notes": "只有 index 0（Coding Challenge #54 Part 1）可用：頁面引用 Kaplan 論文與 Hankin 法，圖片為 p5.js 生成畫面；year 應補「2017」（官方內容庫日期 2017-02-01），summary 的「八角形加正方形底圖」請再核對（成果圖看起來是正方形格網上的四角星與八角形）。分類全 research 同意；F02 仍缺 6 個藝術案例，依目前結果只會移除 F02-13。"
+  }
+ }
+}

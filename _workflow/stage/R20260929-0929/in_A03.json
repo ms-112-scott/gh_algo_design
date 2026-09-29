@@ -1,0 +1,398 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A03",
+  "name_zh": "Hilbert 曲線",
+  "name_en": "Hilbert Curve",
+  "one_liner": "把正方形一直切成 2×2 小格，用一條不交叉的連續線依 ㄇ 字順序走遍每一格，所以一筆就能填滿整個平面。",
+  "how_it_works": [
+   "整個正方形用角點 corner 加兩條邊向量 edgeA、edgeB 表示",
+   "遞迴 VisitSquare 把正方形切成四個小格，依 ㄇ 字順序走過",
+   "第 1 格把兩邊向量對調（翻轉）、第 4 格反向對調，四段頭尾才接得上",
+   "切到最小格（levelsLeft = 0）就記下格子中心，最後串成 Polyline，點數 = 4^order"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 9,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A03-01",
+   "title": "Map of the Internet（xkcd 195）",
+   "creator": "Randall Munroe",
+   "year": "2006",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "空間填充"
+   ],
+   "tools": [],
+   "url": "https://www.explainxkcd.com/wiki/index.php/195:_Map_of_the_Internet",
+   "summary": "漫畫用 Hilbert 曲線把一維的 IPv4 位址空間摺進正方形，讓同一網段聚成方塊。是 Hilbert 曲線「保持局部性」最有名的資料視覺化示範。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-02",
+   "title": "IPv4 Census Map",
+   "creator": "CAIDA",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "空間填充",
+    "影像輸入"
+   ],
+   "tools": [],
+   "url": "https://www.caida.org/archive/id-consumption/census-map/",
+   "summary": "以 12 階 Hilbert 曲線把 IPv4 空間映射成 4096×4096 影像，每個像素代表一個 /24 網段，顏色顯示使用率。示範高階 Hilbert 作為大規模資料的版面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-03",
+   "title": "Hilbert Map of IPv4 address space（互動筆記本）",
+   "creator": "Vasco Asturiano",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "空間填充",
+    "動畫"
+   ],
+   "tools": [
+    "Observable",
+    "JavaScript"
+   ],
+   "url": "https://observablehq.com/@vasturiano/hilbert-map-of-ipv4-address-space",
+   "summary": "在 Observable 上以互動方式呈現 IPv4 的 Hilbert 地圖，可縮放瀏覽各網段。說明 Hilbert 版面天然支援「縮放 = 換階數」的層級瀏覽。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-04",
+   "title": "ggip：以 Hilbert 曲線視覺化 IP 資料的 R 套件",
+   "creator": "David Hall",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "空間填充"
+   ],
+   "tools": [
+    "R"
+   ],
+   "url": "https://davidchall.github.io/ggip/articles/visualizing-ip-data.html",
+   "summary": "R 語言的 ggplot2 延伸套件，說明 Hilbert 與 Morton 曲線的差異並以 Hilbert 版面繪製 IP 資料熱圖。可作為比較兩種空間填充曲線的教材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-05",
+   "title": "用 Hilbert 曲線繪製整個 IPv4 網際網路",
+   "creator": "benjojo（blog.benjojo.co.uk）",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "空間填充",
+    "影像輸入"
+   ],
+   "tools": [],
+   "url": "https://soylentnews.org/article.pl?sid=18%2F04%2F23%2F074207",
+   "summary": "對全部 IPv4 位址發送 ping，再依 Hilbert 版面把回應結果畫成一張圖，重現並更新 xkcd 的網路地圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-06",
+   "title": "Hilbert Cube 512 雕塑",
+   "creator": "Carlo H. Séquin",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "3D",
+    "空間填充"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://people.eecs.berkeley.edu/~sequin/SCULPTS/CHS_bronzes/Hilbert512/",
+   "summary": "Séquin 把 2D Hilbert 推到三維：以立方體邊上的路徑為起點，每個角再代入縮小一半的路徑，三次遞迴後得到 512 個 L 形轉角的「大腦狀」結構，並以不鏽鋼粉末加銅滲透的快速原型製程鑄成小型金屬雕塑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-07",
+   "title": "Hilbert Cube（SIGGRAPH 藝術展）",
+   "creator": "Carlo H. Séquin",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "遞迴",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://history.siggraph.org/artwork/carlo-sequin-hilbert-cube/",
+   "summary": "收錄於 ACM SIGGRAPH 藝術展檔案的 Hilbert Cube，說明以遞迴方式把立方體反覆切成鏡像對稱的兩半來生成路徑。可作為把空間填充曲線放大成空間構架的靈感。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-08",
+   "title": "Hilbert 曲線數學繪畫",
+   "creator": "Mathematical paintings and sculptures 部落格",
+   "year": "2008",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "空間填充"
+   ],
+   "tools": [],
+   "url": "http://mathpaint.blogspot.com/2008/02/hilbert-curve.html",
+   "summary": "以 Hilbert 曲線為題材的數學繪畫與雕塑作品分享，展示同一條曲線在不同色彩與線寬下的藝術表現。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-09",
+   "title": "以 Hilbert 曲線為基礎的 FDM 刀具路徑",
+   "creator": "研究論文作者群",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "空間填充",
+    "3D"
+   ],
+   "tools": [
+    "3D 列印",
+    "G-code"
+   ],
+   "url": "https://www.researchgate.net/publication/318174069_Hilbert_Curve_Based_Toolpath_for_FDM_Process",
+   "summary": "提出 FDM 列印以 Hilbert 曲線作為每層路徑的策略，一筆連續走完、消除空跑，可調整填充率並得到較等向的性質。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-10",
+   "title": "以 Hilbert 曲線規劃 3D 列印件填充路徑",
+   "creator": "Procedia Manufacturing 論文作者群",
+   "year": "2018",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "空間填充",
+    "約束滿足"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S235197891830221X",
+   "summary": "以 Hilbert 曲線讓每層填充以單一連續運動完成，減少時間與能耗；同階曲線依斷面縮小而縮短邊長，形成自適應密度填充。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-11",
+   "title": "離散化區域的 Hilbert 填充：可調性質的 3D 列印構件",
+   "creator": "研究論文作者群",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "空間填充",
+    "吸引子控制",
+    "最佳化"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://www.researchgate.net/publication/347781041_3D_Printing_of_Components_with_Tailored_Properties_Through_Hilbert_Curve_Filling_of_a_Discretized_Domain",
+   "summary": "先把構件區域離散成格子，再以 Hilbert 曲線填充，並在不同區域改變填充參數，得到局部性質可調的列印件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-12",
+   "title": "SFCDecomp：以空間填充曲線分解區域的多準則刀具路徑最佳化",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "空間填充",
+    "最佳化",
+    "空間索引"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://arxiv.org/pdf/2109.01769",
+   "summary": "以四分樹把正交多邊形分解成正方形格，再用 Hilbert（也可用 Peano、Moore）曲線決定走訪順序，對多個準則最佳化 3D 列印路徑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-13",
+   "title": "Hilbert R-tree 空間索引",
+   "creator": "Ibrahim Kamel、Christos Faloutsos",
+   "year": "1994",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "空間索引",
+    "空間填充"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "以 Hilbert 值排序空間物件來建構 R-tree，讓空間上相近的資料在索引中也相鄰，提升地理資料庫查詢效能。都市尺度的建物、地籍資料都能用同樣方式排序。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-14",
+   "title": "以 Google S2 儲存遙測影像",
+   "creator": "Wang 等人（IEEE Access）",
+   "year": "2020",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "空間索引",
+    "曲面上"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "利用 Google S2（在球面上以 Hilbert 曲線編碼格子）組織遙測影像的儲存。展示 Hilbert 從平面推廣到球面地理格網。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-15",
+   "title": "Gosper-Peano 曲線的 Grasshopper 實作",
+   "creator": "designcoding",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "空間填充",
+    "分形"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Anemone"
+   ],
+   "url": "https://www.designcoding.net/gosper-peano-curve-in-grasshopper/",
+   "summary": "以 Anemone 迴圈與 Orient 元件重複移動、旋轉、縮放同一曲線，在 Grasshopper 中產生 Gosper（flowsnake）空間填充曲線，是 Hilbert 的六角格變體。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A03-51",
+   "title": "Coding in the Cabana 3：Hilbert Curve（Hilbert 曲線）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2020",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "空間填充",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+   "summary": "The Coding Train「Coding in the Cabana」系列，用 Processing 以「迭代演算法」算出 Hilbert 曲線：由每個索引的二進位位元逐層推出格子位置，而不是遞迴切格，把路徑逐點畫出並加上顏色。與基礎範例的遞迴 VisitSquare 形成對照。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/c3-hilbert-curve",
+    "note": "Coding in the Cabana 3 影片縮圖"
+   }
+  },
+  {
+   "id": "A03-52",
+   "title": "3Blue1Brown：Hilbert's Curve: Is infinite math useful?",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Manim",
+    "Python",
+    "數學動畫",
+    "空間填充"
+   ],
+   "tools": [
+    "Manim"
+   ],
+   "url": "https://www.3blue1brown.com/lessons/hilbert-curve",
+   "summary": "3Blue1Brown 以 Manim 動畫說明 Hilbert 曲線如何把一維位置對應到二維平面，並以「用聲音頻率讓人『聽見』影像」的假想應用，說明為什麼要用 Hilbert 而不是逐行掃描：階數提高時，同一個點的位置幾乎不變。這正是基礎範例 teaching note 所說「相鄰索引在空間上也相鄰」的直覺版。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube（3Blue1Brown）",
+    "page": "https://www.youtube.com/watch?v=3s7h2MHQtxc",
+    "note": "影片「Hilbert's Curve: Is infinite math useful?」縮圖"
+   }
+  },
+  {
+   "id": "A03-53",
+   "title": "Hilbert Curve（D3.js 互動展示）",
+   "creator": "Jason Davies",
+   "year": "2012",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "D3.js",
+    "JavaScript",
+    "互動網頁",
+    "資料視覺化"
+   ],
+   "tools": [
+    "D3.js"
+   ],
+   "url": "https://www.jasondavies.com/hilbert-curve/",
+   "summary": "Jason Davies 以 D3.js 與 SVG 做的互動頁面：拉動 n 看 Hilbert 曲線的第 n 次近似如何逐漸填滿正方形，並可切換「show colours」，把彩虹色依曲線順序排上，讓相近顏色永遠落在相鄰位置（參考 Mike Bostock 的 Hilbert Tiles）。展示的是基礎範例輸出結果在網頁上的即時視覺化。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A03-54",
+   "title": "Portrait of the Hilbert curve（Hilbert 曲線肖像）",
+   "creator": "Aldo Cortesi",
+   "year": "2010",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "creative coding",
+    "POV-Ray",
+    "資料視覺化",
+    "色彩",
+    "空間填充"
+   ],
+   "tools": [
+    "POV-Ray"
+   ],
+   "url": "https://corte.si/posts/code/hilbert/portrait/",
+   "summary": "Aldo Cortesi 的文章：先用 3D Hilbert 曲線走遍 RGB 色彩立方體，再把這串顏色依 2D Hilbert 順序鋪滿平面，得到「Hilbert on Hilbert」的抽象色塊畫，並與 Zigzag 順序比較；文中 3D Hilbert 曲線以 POV-Ray 算圖，也說明 N 維 Hilbert 曲線（Gray code）的演算法。它把基礎範例的 2D 曲線延伸到 3D，並把順序當成色彩映射工具。",
+   "currently_cc": true,
+   "photo": {
+    "source": "corte.si",
+    "page": "https://corte.si/posts/code/hilbert/portrait/",
+    "note": "文中「Hilbert on Hilbert」：3D Hilbert 走訪 RGB 色彩，鋪在 2D Hilbert 曲線上"
+   }
+  }
+ ]
+}

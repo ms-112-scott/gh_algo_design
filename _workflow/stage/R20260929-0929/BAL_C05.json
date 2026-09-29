@@ -1,0 +1,39 @@
+{
+ "algo": "C05",
+ "classification": [
+  {"id": "C05-01", "source": "research", "why": "SIGGRAPH 經典論文，技術研究性質"},
+  {"id": "C05-02", "source": "research", "why": "ACM TOG 論文，技術原型非藝術作品"},
+  {"id": "C05-03", "source": "research", "why": "建築理論與已建成案例，屬研究"},
+  {"id": "C05-04", "source": "research", "why": "科學教育用互動裝置，工具性質"},
+  {"id": "C05-05", "source": "research", "why": "地圖氣象製圖通用做法，非特定作品"},
+  {"id": "C05-06", "source": "research", "why": "資料視覺化軟體函式庫，屬工具"},
+  {"id": "C05-07", "source": "art", "why": "Coding Train 教學，成果是生成畫面"},
+  {"id": "C05-08", "source": "research", "why": "Grasshopper 體積建模外掛，屬工具"},
+  {"id": "C05-09", "source": "research", "why": "Grasshopper 結構分析外掛，屬工具"},
+  {"id": "C05-10", "source": "research", "why": "研究室開發的 SDF 建模元件，屬工具"},
+  {"id": "C05-11", "source": "research", "why": "SDF 公式技術參考文章，非作品"},
+  {"id": "C05-12", "source": "research", "why": "Unity 程式化地形技術示範，非藝術"},
+  {"id": "C05-13", "source": "research", "why": "Autodesk 研究用體素建模工具"},
+  {"id": "C05-51", "source": "art", "why": "Processing 生成畫面為主的創作示範"},
+  {"id": "C05-52", "source": "art", "why": "互動文章，逐步生成融合視覺"},
+  {"id": "C05-53", "source": "research", "why": "查表演算法技術參考，非藝術作品"},
+  {"id": "C05-54", "source": "research", "why": "openFrameworks 建模外掛，屬工具"},
+  {"id": "C05-55", "source": "research", "why": "比較演算法優劣的技術文章"}
+ ],
+ "art_count": 3,
+ "need": 6,
+ "removal_order": ["C05-05", "C05-54", "C05-11", "C05-13", "C05-10", "C05-55", "C05-53", "C05-08", "C05-09"],
+ "removal_reasons": {
+  "C05-05": "沒有具體作者與作品，出處籠統，也找不到可用的真實圖片",
+  "C05-54": "沒有真實截圖，且與其他體素建模外掛案例（Dendro、Axolotl、Monolith）主題重複",
+  "C05-11": "是公式與技巧的參考文章，不是具體作品案例，也沒有生成畫面可用",
+  "C05-13": "與 Dendro、Axolotl 同屬體素／SDF 建模工具，內容高度重複",
+  "C05-10": "與 Dendro 同屬 Grasshopper 體積建模工具，內容重複性高",
+  "C05-55": "與 Sebastian Lague 的程式化地形案例主題重疊（皆為體素地形技術比較）",
+  "C05-53": "與 Marching Cubes 論文（C05-01）主題重疊，屬技術查表參考而非具體作品",
+  "C05-08": "Grasshopper 體積建模外掛，與其他工具類案例略有重複，且與本演算法關係偏工具面",
+  "C05-09": "結構分析外掛，其等值面功能為附屬用途，與本演算法核心關係較薄弱"
+ },
+ "new_art": [],
+ "notes": "本次執行時 WebSearch 額度已用罄（200/200），Parallel Search（web_search／web_fetch）也回傳 free-tier rate limit 無法查詢，因此改用 WebFetch 直接查證候選頁面：查過 GitHub 主題頁與程式碼搜尋（marching-squares、metaballs 相關 repo）、Wikipedia Marching squares 條目外部連結、generativeartistry.com、printingcode.runemadsen.com、bit-101.com 部落格搜尋、greweb.me（Mountain Slices／Mountain Moons 系列及其技術文章）、jasonwebb 的 GitHub。找到的 marching squares／metaballs 相關 GitHub 專案（如 goranjosko/Marching-Squares_MetaBalls、matterconi/lava_lamps、jtnimoy/marching）多半是個人習作或通用函式庫、沒有可驗證的生成畫面截圖或可信作者資訊，不符合規格「有生成畫面圖片且親眼確認過」與「不可捏造」的要求，故未收錄，new_art 暫留空。removal_order／removal_reasons 已依規格列出（含 need=6 所需替換的研究案例），待下次有可用的網路搜尋額度時，建議針對 p5.js／Processing／Shadertoy 的 metaball、等值線、地形切片（isoline slicing）主題創作者（例如 Coding Train 系列以外的獨立創作者、demoscene／pen plotter 藝術家）再查一次，補齊 6 個（另加 3 個備援）新藝術案例後再執行移除。"
+}

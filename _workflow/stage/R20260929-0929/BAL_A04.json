@@ -1,0 +1,98 @@
+{
+ "algo": "A04",
+ "classification": [
+  {"id": "A04-01", "source": "art", "why": "設計雙年展展出的藝術裝置柱體"},
+  {"id": "A04-02", "source": "art", "why": "純形式探索的生成式數位雕塑研究"},
+  {"id": "A04-03", "source": "art", "why": "FRAC Centre 委託展出的沉浸式裝置"},
+  {"id": "A04-04", "source": "art", "why": "龐畢度中心典藏的3D列印藝術裝置"},
+  {"id": "A04-05", "source": "art", "why": "向 Mondrian 致敬的開源生成藝術"},
+  {"id": "A04-06", "source": "research", "why": "資料視覺化演算法論文，非空間設計"},
+  {"id": "A04-07", "source": "research", "why": "住宅平面自動生成的工程研究論文"},
+  {"id": "A04-08", "source": "research", "why": "形狀文法程序化建模的經典研究論文"},
+  {"id": "A04-09", "source": "research", "why": "從影像反推立面分割的學術論文"},
+  {"id": "A04-10", "source": "research", "why": "都市地籍分割的工程研究與工具"},
+  {"id": "A04-11", "source": "research", "why": "CityEngine 官方街廓分割工具文件"},
+  {"id": "A04-12", "source": "art", "why": "影像轉四分樹色塊的生成藝術工具"},
+  {"id": "A04-13", "source": "research", "why": "Grasshopper 網格細分外掛工具"},
+  {"id": "A04-14", "source": "research", "why": "Grasshopper 論壇分享的工具範例"},
+  {"id": "A04-51", "source": "art", "why": "Coding Train 教學，成果為生成畫面"},
+  {"id": "A04-52", "source": "art", "why": "Coding Train 教學，四分樹生成視覺"},
+  {"id": "A04-53", "source": "art", "why": "生成藝術家的三角形細分技法文章"},
+  {"id": "A04-54", "source": "research", "why": "Houdini 官方外掛工具節點，非作品"}
+ ],
+ "art_count": 9,
+ "need": 0,
+ "removal_order": ["A04-14", "A04-11", "A04-09", "A04-06", "A04-54"],
+ "removal_reasons": {
+  "A04-14": "作者不明的論壇貼文，出處與真實性難以查證，也找不到真實畫面",
+  "A04-11": "與 A04-10 同為 CityEngine 街廓分割，內容高度重疊，只是官方文件頁",
+  "A04-09": "與 A04-08 同一作者、同主題（形狀文法／立面），關係重疊且論文圖難取得",
+  "A04-06": "原演算法用於資料視覺化而非空間分割，和本演算法關係較薄弱，已被 A04-07 的應用涵蓋",
+  "A04-54": "僅為 Houdini 節點文件，沒有實際作品畫面，也難找到獨特案例佐證"
+ },
+ "new_art": [
+  {
+   "title": "Sketch-a-Day 2026-02-16：三角形／四邊形反覆細分鋪面",
+   "creator": "Alexandre B. A. Villares（villares）",
+   "year": "2026",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "巴西創意編程教育者 villares 在他的『每日一張生成圖』系列中，用 Processing／py5 反覆把三角形與四邊形切成更小的子形，依細分層級與位置決定填色（綠、藍、黃、紫）。和基礎範例一樣是『檢查條件→切開→丟回同一函式』的遞迴結構，差別在於單元從矩形換成三角形／四邊形，且畫面各處的切割深度不均勻，局部特別碎、局部保留大塊。",
+   "variations": [
+    {"name": "三角形基本單元", "how": "把 Block 從矩形換成三角形／四邊形，每次沿一邊或內部一點切成兩個子多邊形再遞迴", "effect": "產生類似鑲嵌拼貼的碎形紋理，而非規則矩形網格"},
+    {"name": "局部不均勻深度", "how": "依隨機或位置條件讓部分子區域提前停止、部分持續遞迴到更深層", "effect": "畫面出現明顯的『細碎區塊』與『大塊區塊』並存，增加視覺層次"},
+    {"name": "色彩依深度分群", "how": "用有限色票（綠、藍、黃、紫）依細分層級或索引指定顏色，而非隨機上色", "effect": "讓遞迴的層級關係在色彩上變得可讀"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "py5", "三角網", "鑲嵌"],
+   "tools": ["Processing", "py5"],
+   "url": "https://github.com/villares/sketch-a-day/tree/main/2026/sketch_2026_02_16",
+   "evidence": "GitHub 目錄含原始碼 sketch_2026_02_16.py 與輸出圖 sketch_2026_02_16.png，repo 說明為 villares 的每日創意編程練習（Processing／py5）",
+   "nearest_existing": "無（既有案例沒有以三角形／四邊形反覆細分為視覺主體的藝術案例）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/villares/sketch-a-day/main/2026/sketch_2026_02_16/sketch_2026_02_16.png",
+    "page": "https://github.com/villares/sketch-a-day/tree/main/2026/sketch_2026_02_16",
+    "verified": true,
+    "checked": "看到整張正方形畫布被綠、藍、黃、紫色的三角形與四邊形反覆細分鋪滿，部分角落細分層級明顯較深、碎片更小",
+    "source": "GitHub（villares/sketch-a-day）",
+    "author": "Alexandre B. A. Villares",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "三角形與四邊形反覆細分鋪滿畫布的生成圖樣"
+   }
+  },
+  {
+   "title": "Grid Paintings à la Mondrian with JavaScript",
+   "creator": "Max Halford",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "資料科學家 Max Halford 在部落格文章中用純 JavaScript／HTML5 Canvas 寫一個 Rectangle.split 方法：依寬高比決定切左右或切上下，切點限制在內縮的安全範圍內，遞迴到指定深度後停止，每塊隨機填 Mondrian 式的白、黑、紅、黃、藍。結構與基礎範例幾乎一致（比較長邊、遞迴切兩塊、深度停止），差別在於用內縮 padding 取代 minSize 避免過細長矩形，並用色票機率讓白色最常出現。",
+   "variations": [
+    {"name": "內縮安全邊界", "how": "切割點限制在 min+padding 到 max-padding 之間，而非直接用 minSize 判斷", "effect": "避免出現過細的長條矩形，畫面更接近真實 Mondrian 構圖"},
+    {"name": "色票機率加權", "how": "顏色陣列刻意放入多個白色，讓隨機選色時白色出現機率遠高於黑紅黃藍", "effect": "重現 Mondrian 畫作『大面積留白、少量原色點綴』的視覺比例"},
+    {"name": "固定遞迴深度", "how": "用 depth 參數而非隨機停止機率決定何時停止切割", "effect": "每次產生的構圖複雜度較一致，適合做參數對照教學"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "JavaScript", "Mondrian", "生成藝術"],
+   "tools": ["JavaScript", "HTML5 Canvas"],
+   "url": "https://maxhalford.github.io/blog/mondrian/",
+   "evidence": "頁面標題『Grid paintings à la Mondrian with JavaScript』，發布日期 2017-03-04，內文附三張輸出成果圖與完整程式碼 GitHub 連結",
+   "nearest_existing": "A04-05 Mondrian-Generative-Art（Processing／p5.js）— 同樣致敬 Mondrian 的矩形遞迴分割，但作者、語言（純 JS Canvas）與切割／停止規則不同",
+   "image": {
+    "url": "https://maxhalford.github.io/img/blog/mondrian/result1.png",
+    "page": "https://maxhalford.github.io/blog/mondrian/",
+    "verified": true,
+    "checked": "看到白底為主、左上大塊黃色、中間紅色方塊、右側黑色與藍色色塊的矩形遞迴分割構圖，黑色細線分隔每一塊",
+    "source": "Max Halford 個人部落格",
+    "author": "Max Halford",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "部落格文章中展示的其中一張 Mondrian 式矩形遞迴分割輸出"
+   }
+  }
+ ],
+ "notes": "need=0（分類後 art／research 恰為 9／9，未替換也未新增），仍依規格分類全部案例並提供 removal_order 備援與 2 個已親眼確認圖片的備援藝術案例；受限於本輪 WebSearch／Parallel Search 額度已用盡，只找到 2 個（規格建議 3 個）通過圖片驗證的高品質備援作品，其餘嘗試（Studio/Shpigford 多合一工具、Generative Art with Math 網站）因圖片是網站選單截圖或找不到清楚生成畫面而放棄。"
+}

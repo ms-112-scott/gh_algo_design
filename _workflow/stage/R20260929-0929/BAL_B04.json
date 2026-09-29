@@ -1,0 +1,165 @@
+{
+ "algo": "B04",
+ "classification": [
+  {"id": "B04-01", "source": "art", "why": "藝術家個人動能雕塑作品，非建成或研究案例"},
+  {"id": "B04-02", "source": "research", "why": "建成建築屋頂結構，工程與建築案例"},
+  {"id": "B04-03", "source": "research", "why": "工程研究最佳化配置，非視覺藝術"},
+  {"id": "B04-04", "source": "research", "why": "建築提案，塔樓結構與遮陽設計"},
+  {"id": "B04-05", "source": "research", "why": "學院建築課程亭子設計案例"},
+  {"id": "B04-06", "source": "research", "why": "建築／地景學院檔案案例，非藝術家作品"},
+  {"id": "B04-07", "source": "research", "why": "技術說明文章，非視覺藝術創作"},
+  {"id": "B04-08", "source": "art", "why": "p5.js 生成畫面為主要成果，creative coding"},
+  {"id": "B04-09", "source": "art", "why": "p5.js 生成圖樣，視覺為目的的創意編程"},
+  {"id": "B04-10", "source": "research", "why": "BIM 論壇討論串，屬工具／實務課題"},
+  {"id": "B04-11", "source": "research", "why": "工業專利，非視覺藝術"},
+  {"id": "B04-12", "source": "research", "why": "工業專利，非視覺藝術"},
+  {"id": "B04-13", "source": "art", "why": "藝術家雕塑於科學博物館展出"},
+  {"id": "B04-14", "source": "research", "why": "Grasshopper 教學網站，非創作作品"},
+  {"id": "B04-51", "source": "art", "why": "p5.js 生成畫面，creative coding 預設為 art"},
+  {"id": "B04-52", "source": "research", "why": "openFrameworks 外掛工具，非視覺作品"},
+  {"id": "B04-53", "source": "research", "why": "建立可重複使用工具的教學，非作品"},
+  {"id": "B04-54", "source": "research", "why": "Unity 效能練習專案，技術示範"}
+ ],
+ "art_count": 5,
+ "need": 4,
+ "removal_order": ["B04-10", "B04-11", "B04-12", "B04-53", "B04-14", "B04-06", "B04-52"],
+ "removal_reasons": {
+  "B04-10": "非正式設計成果，僅論壇討論串，缺乏完整案例與圖片",
+  "B04-11": "美國專利 PDF，圖片難以取得，且與研磨片專利案例重複性高",
+  "B04-12": "美國專利 PDF，與高爾夫球凹洞案例高度相似，內容薄弱",
+  "B04-53": "建立工具的教學，圖片僅為影片縮圖，且與球面葉序案例重疊",
+  "B04-14": "Grasshopper 教學網站，內容與基礎範例高度重疊，缺乏獨特真實圖片",
+  "B04-06": "小眾學院檔案案例，出處與圖片皆難以查證",
+  "B04-52": "openFrameworks 工具套件，與其他球面／立體排列案例重疊"
+ },
+ "new_art": [
+  {
+   "title": "Marbling Phyllotaxis（大理石紋葉序）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "The Coding Train 在『數學大理石紋』挑戰中，先用葉序公式在畫布上排出一圈圈的墨滴起點，再對每個點做大理石紋常見的扭曲運算，畫出一張色彩渦漩狀的紋樣。和基礎 C# 範例只放圓點不同，這裡葉序被當成『下墨點的分佈規則』，用來控制大理石紋渦漩的疏密與方向。",
+   "variations": [
+    {"name": "葉序當作下墨點分佈", "how": "用 number×137.5° 與 √number 算出的點位取代大理石紋原本的隨機／網格下墨點", "effect": "渦漩紋樣依葉序疏密分布，中心緊、外圍鬆"},
+    {"name": "疊加扭曲濾鏡", "how": "每個點加入大理石紋的扭曲函式，讓周圍色層沿半徑方向扭曲", "effect": "原本單純的點陣變成連續渦漩色帶"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "大理石紋", "色彩"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/183-mathematical-marbling",
+   "evidence": "頁面列出範例『Marbling Phyllotaxis』，程式敘述寫著 Adding ink drops using phyllotaxis",
+   "nearest_existing": "B04-51 Coding Challenge #30：Phyllotaxis（同作者但用途不同，該案例只畫葉序點，本作把葉序點當大理石紋下墨起點）",
+   "image": {"url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/183-mathematical-marbling/images/phyllotaxis.jpg", "page": "https://thecodingtrain.com/challenges/183-mathematical-marbling", "verified": true, "checked": "圖片呈現一圈圈多彩渦漩狀大理石紋，中心點狀分佈明顯延續葉序疏密規律",
+             "source": "The Coding Train", "author": "Daniel Shiffman", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "大理石紋渦漩，色彩由中心向外呈現疏密漸變"}
+  },
+  {
+   "title": "Rainbow Phyllotaxis Spiral（彩虹葉序繪圖機作品）",
+   "creator": "Paul Rickards",
+   "year": "2026",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "美國繪圖機藝術家 Paul Rickards 用 Python 算出葉序點位，在每個點畫一片水滴狀花瓣並填上彩虹漸層的交叉線影，再用復古繪圖機（HP 7585B／DraftPro DXL）以 CMYK 墨水一筆筆畫在水彩紙上。相較於基礎範例只用圓點標示位置，這裡每個葉序點被放大成一片有陰影、有色彩層次的花瓣，整張作品是可實際收藏的手工紙本作品。",
+   "variations": [
+    {"name": "點位換成花瓣圖案", "how": "在每個葉序點位放一個水滴狀花瓣路徑，而非單純的圓", "effect": "點陣變成連續的花瓣鋪面，視覺上更接近真實花盤"},
+    {"name": "半徑控制色彩漸層", "how": "依 number 對應的半徑把色相沿彩虹漸層映射到每片花瓣", "effect": "中心到外圈呈現連續彩虹漸層而非重複配色"},
+    {"name": "輸出到實體繪圖機", "how": "把向量路徑送進復古筆式繪圖機，分層分色實際下筆", "effect": "產生獨一無二、帶有筆觸與墨水暈染的實體紙本作品"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "pen plotter", "Python", "色彩漸層"],
+   "tools": ["Python", "繪圖機"],
+   "url": "https://mastodon.social/@paulrickards",
+   "evidence": "Mastodon 貼文文字寫著『rainbow phyllotaxis spiral』與『phyllotaxis pattern』，並附繪圖機成品照片",
+   "nearest_existing": "無（既有案例中沒有繪圖機／pen plotter 類型的葉序作品）",
+   "image": {"url": "https://files.mastodon.social/media_attachments/files/116/268/077/965/456/882/original/cd79f6ba475c9ac1.jpeg", "page": "https://shop.paulrickards.com/wildcards/", "verified": true, "checked": "圖上是一系列水滴狀花瓣依螺旋排列並呈現彩虹漸層，符合貼文描述的 phyllotaxis pattern",
+             "source": "Paul Rickards（Mastodon @paulrickards）", "author": "Paul Rickards", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "彩虹葉序繪圖機作品，CMYK 墨水手工繪製於水彩紙"}
+  },
+  {
+   "title": "PhyllotaxisJS",
+   "creator": "Anirudh Mukherjee",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "以 p5.js 重寫葉序公式的個人練習專案，把發散角度略微偏離黃金角並用 HSB 色相隨編號循環上色，因此螺旋臂之間出現彩虹般的摩爾紋（moiré）互相干涉。與基礎 C# 範例固定用黃金角、單色圓點不同，這裡刻意示範角度偏移如何讓點陣從均勻圓盤變成有方向性的螺旋臂圖樣。",
+   "variations": [
+    {"name": "角度偏移實驗", "how": "把 angle 設成略偏離 137.508° 的數值", "effect": "點陣不再均勻，而是浮現數條彩色螺旋臂"},
+    {"name": "色相隨編號循環", "how": "用 HSB 色彩模式，色相 = (number × 常數) mod 360", "effect": "越外圈色彩循環次數越多，形成彩虹漸層螺旋"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "色彩", "摩爾紋"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/AnirudhMukherjee/PhyllotaxisJS",
+   "evidence": "GitHub README 寫著『A p5.js sketch that generates phyllotactic patterns!』並附截圖 Capture.JPG",
+   "nearest_existing": "B04-51 Coding Challenge #30：Phyllotaxis（本作是角度偏移與上色的個人再詮釋，非直接複製）",
+   "image": {"url": "https://raw.githubusercontent.com/AnirudhMukherjee/PhyllotaxisJS/master/img/Capture.JPG", "page": "https://github.com/AnirudhMukherjee/PhyllotaxisJS", "verified": true, "checked": "截圖顯示彩虹色的螺旋臂點陣，因角度偏移黃金角而出現摩爾紋般的多條螺旋",
+             "source": "GitHub（AnirudhMukherjee/PhyllotaxisJS）", "author": "Anirudh Mukherjee", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "彩虹色葉序點陣，角度偏移後呈現螺旋臂摩爾紋"}
+  },
+  {
+   "title": "d3-phyllotaxis",
+   "creator": "Andrew Kovar",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "用 D3.js 資料視覺化框架重寫葉序演算法的示範專案，以動畫方式逐點加入並用漸層色標示編號先後順序，說明同一套公式也能用資料視覺化工具實作。和 GH C# 範例用幾何元件產生圓不同，這裡的每個點是 SVG 元素，透過 D3 的資料繫結（data join）逐一動畫生成。",
+   "variations": [
+    {"name": "改用 D3 資料繫結生成", "how": "把 number 陣列當資料集，用 D3 的 selection.data().enter() 逐一產生 SVG 圓", "effect": "可以直接套用 D3 的動畫、互動與過場效果"},
+    {"name": "漸層配色標示順序", "how": "色彩依編號用線性漸層（紫→粉→紅）", "effect": "清楚看出點是由中心往外一個個加入的順序"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "D3.js", "資料視覺化"],
+   "tools": ["D3.js"],
+   "url": "https://github.com/ajkovar/d3-phyllotaxis",
+   "evidence": "GitHub README 寫著『A demonstration of a natural phenomenon known as phyllotaxis using d3』並附 phyllotaxis.gif 動畫",
+   "nearest_existing": "B04-51 Coding Challenge #30：Phyllotaxis（本作用 D3.js 而非 p5.js，示範同一公式在資料視覺化工具上的實作）",
+   "image": {"url": "https://raw.githubusercontent.com/ajkovar/d3-phyllotaxis/master/phyllotaxis.gif", "page": "https://github.com/ajkovar/d3-phyllotaxis", "verified": true, "checked": "動畫顯示紫色到粉紅漸層的螺旋點陣，符合葉序由中心向外生長的描述",
+             "source": "GitHub（ajkovar/d3-phyllotaxis）", "author": "Andrew Kovar", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "D3.js 繪製的葉序螺旋動畫，漸層色標示點的生成順序"}
+  },
+  {
+   "title": "Sunflower Golden Angle",
+   "creator": "Olivier Giulieri",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "純 HTML／Canvas 打造的互動網頁，讓使用者拖曳滑桿比較黃金角（137.508°）與其他角度（如 137.3°、360×5/13）畫出的葉序點陣，並疊加向日葵花瓣輪廓與種子點色彩主題。相較於基礎 C# 範例只輸出一種角度，這裡直接把角度掃描比較做成互動介面，讓學習者一眼看出黃金角為什麼特別。",
+   "variations": [
+    {"name": "角度快速切換比較", "how": "提供多顆預設角度按鈕（黃金角、有理角等），點擊即時重繪", "effect": "可以直接對照有理角出現輻條、黃金角最均勻的差異"},
+    {"name": "疊加花瓣輪廓", "how": "在點陣外圍加一圈固定數量的花瓣形狀", "effect": "點陣看起來像完整的向日葵花盤而不只是散點"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "JavaScript", "Canvas", "互動"],
+   "tools": ["JavaScript", "Canvas"],
+   "url": "https://evoluteur.github.io/sunflower-golden-angle/",
+   "evidence": "GitHub README 說明『Grow a sunflower seed head from the golden angle, nudge the angle and watch it fall apart』，並附成品截圖",
+   "nearest_existing": "B04-51 Coding Challenge #30：Phyllotaxis（本作加入角度比較介面與花瓣繪製，非單純複製）",
+   "image": {"url": "https://raw.githubusercontent.com/evoluteur/sunflower-golden-angle/main/sunflower-golden-angle.png", "page": "https://evoluteur.github.io/sunflower-golden-angle/", "verified": true, "checked": "畫面顯示完整向日葵圖案，中央為葉序點陣、外圈為黃色花瓣，右側附角度與種子數滑桿",
+             "source": "GitHub（evoluteur/sunflower-golden-angle）", "author": "Olivier Giulieri", "license": "MIT license", "license_url": "https://github.com/evoluteur/sunflower-golden-angle/blob/main/LICENSE", "note": "互動網頁截圖，向日葵花盤與角度比較介面"}
+  },
+  {
+   "title": "Phyllotaxis Sunflower Colored",
+   "creator": "johnnyawesome",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "以 Processing 重寫葉序範例並改用內建的 rotate() 取代三角函數手算角度，同時把顏色從單色改成隨編號漸層的藍紫色系，是個人練習性質的再詮釋作品。和基礎 C# 範例一樣採黃金角與開根號半徑，但把公式改寫得更精簡，可作為程式寫法對照的例子。",
+   "variations": [
+    {"name": "用 rotate() 取代手算三角函數", "how": "呼叫 Processing 內建 rotate(number×angle) 再畫點，取代手動計算 cos／sin", "effect": "程式碼更精簡，效果與原公式相同"},
+    {"name": "編號漸層上色", "how": "顏色依 number 從深藍漸層到亮藍紫", "effect": "可以看出點是依編號由中心往外一圈圈疊上去的"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "Processing", "色彩"],
+   "tools": ["Processing"],
+   "url": "https://github.com/johnnyawesome/PhyllotaxisSunflowerColored",
+   "evidence": "GitHub README 寫著『A Colored Version of the Phyllotaxis Sunflower』並附成品截圖",
+   "nearest_existing": "B04-51 Coding Challenge #30：Phyllotaxis（本作為同一教學的 Processing 再詮釋，改寫法與配色）",
+   "image": {"url": "https://github.com/johnnyawesome/PhyllotaxisSunflowerColored/raw/master/PhyllotaxisSunflowerColored.jpg", "page": "https://github.com/johnnyawesome/PhyllotaxisSunflowerColored", "verified": true, "checked": "截圖顯示深藍到亮藍紫漸層的螺旋點陣，執行視窗標題列可見專案名稱",
+             "source": "GitHub（johnnyawesome/PhyllotaxisSunflowerColored）", "author": "johnnyawesome", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "藍紫漸層葉序點陣，執行畫面含應用程式視窗邊框"}
+  }
+ ],
+ "notes": "備援只找到 2 個（共 6 個新藝術案例，需求 4 個），未達規格建議的需求+3＝7 個；WebSearch 與 Parallel Search 額度在查證途中用盡，多個 OpenProcessing／Shadertoy 搜尋管道被封鎖，只能靠 GitHub 搜尋與已知來源（The Coding Train、Paul Rickards）補足，排除多筆缺圖或僅為編輯器截圖的候選（如 Rigellute/phyllotaxis-reasonml 的截圖是終端機畫面，不合格）。"
+}

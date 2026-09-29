@@ -1,0 +1,381 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "B04",
+  "name_zh": "葉序",
+  "name_en": "Phyllotaxis",
+  "one_liner": "把第 n 個點轉 n × 137.5°、推到 √n 的距離，就長出向日葵般均勻又不重複的螺旋點陣。",
+  "how_it_works": [
+   "給每個點一個編號 number = 1…count。",
+   "角度 = number × angle（預設黃金角 137.508°），轉成弧度。",
+   "半徑 = spacing × √number；開根號讓每一圈的面積相同，點的密度因此均勻（Vogel 1979 的 Fermat 螺旋）。",
+   "用極座標 (cos, sin) × 半徑得到 Point3d，並依編號由內到外放大圓的半徑作為視覺輸出。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "B04-01",
+   "title": "Blooms 頻閃動畫雕塑",
+   "creator": "John Edmark",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "曲面上",
+    "動畫",
+    "對稱"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://www.designboom.com/art/john-edmark-3d-printed-strobe-animated-blooms-01-11-2017/",
+   "summary": "3D 列印的葉序雕塑，放在轉台上以頻閃燈照射，每轉 137.5° 閃一次，雕塑看起來就像自己在綻放。葉序公式同時決定了幾何形態與動畫的節奏。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-02",
+   "title": "Eden Project：The Core 教育中心屋頂",
+   "creator": "Grimshaw（Jolyon Brewis）、Peter Randall-Page、SKM Anthony Hunts（Mike Purvis）",
+   "year": "2005",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://grimshaw.global/projects/culture-and-exhibition/the-eden-project-the-core/",
+   "summary": "屋頂的木構梁以兩組相反方向的 Fibonacci 螺旋（21 與 34 條）排列，形式取自向日葵花盤。結構工程師開發了『Phyllotactic converter』，採用 21／34 的螺旋數讓梁深能控制在約 0.8 公尺。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-03",
+   "title": "向日葵式聚光太陽能鏡場配置（PS10 改良）",
+   "creator": "MIT（Mitsos 研究室）與 RWTH Aachen",
+   "year": "2012",
+   "category": "performance",
+   "scale": "地景",
+   "tags": [
+    "最佳化",
+    "吸引子控制"
+   ],
+   "tools": [],
+   "url": "https://news.mit.edu/2012/sunflower-concentrated-solar-0111",
+   "summary": "研究者把聚光太陽能電廠的定日鏡改成以約 137° 黃金角螺旋排列（Fermat 螺旋），與 PS10 電廠原配置相比，鏡場佔地減少約 20%，同時減少鏡子間的遮蔽與阻擋、提升效率。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-04",
+   "title": "Phyllotaxis Tower 葉序塔樓",
+   "creator": "Ernesto Bueno Wills",
+   "year": "2009",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "對稱"
+   ],
+   "tools": [
+    "Grasshopper",
+    "RhinoScript",
+    "Rhino"
+   ],
+   "url": "https://ernestobueno.blogspot.com/2009/07/phyllotaxis-tower.html",
+   "summary": "以向日葵葉序為概念的摩天樓提案：每層五片『葉』繞著核心旋轉生長並折出做為遮陽，內部結構以依黃金比例擴大的環狀點陣連成放射 diagrid。以 Grasshopper 與 RhinoScript 產生。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-05",
+   "title": "Phyllo Pavilion",
+   "creator": "Maryam Deshmukh、Sidhant Choudhary（IAAC）",
+   "year": "2022",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tags": [
+    "曲面上",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.iaacblog.com/programs/phyllo-pavilion/",
+   "summary": "IAAC 學習者的半透空亭子設計，以 21:34 的 Fibonacci 比例產生網格拓樸，把葉子換成參數化演化的面片，靈感也來自棕櫚葉柄束作為結構的 Arish 建築。以 Grasshopper 外掛完成運算設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-06",
+   "title": "Phyllotaxis：Estufa Fria 溫室花園裝置",
+   "creator": "Melanie Waidler",
+   "year": "2019",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "曲面上",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://archive.dpa-etsam.com/projects/phyllotaxis",
+   "summary": "位於里斯本 Estufa Fria 植物溫室的 follie 設計，以 Fibonacci 螺旋撐起一片紅色的可穿透摺面，讓它『殖民』整個溫室結構，讓人有置身花朵之中的空間體驗。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-07",
+   "title": "Fibonacci Lattice：球面點均佈",
+   "creator": "Extreme Learning",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "曲面上"
+   ],
+   "tools": [],
+   "url": "https://extremelearning.com.au/evenly-distributing-points-on-a-sphere/",
+   "summary": "說明如何把 Fibonacci 格點以等面積圓柱投影映射到球面，快速得到近乎均勻的球面點分佈，並提出比標準 Fibonacci lattice 更佳的偏移修正。是把基礎範例平面葉序推到球面的標準做法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-08",
+   "title": "Coding Challenge：Phyllotaxis",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://editor.p5js.org/codingtrain/sketches/CehY0jsLV",
+   "summary": "以 p5.js 逐幀畫出 Vogel 葉序點，並用編號或角度改變顏色，是最普及的葉序入門教學，與基礎 C# 範例的公式完全相同。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-09",
+   "title": "Coding Challenge 181：Voronoi Phyllotaxis",
+   "creator": "The Coding Train",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "拼貼",
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://editor.p5js.org/codingtrain/sketches/ydiZeUK8R",
+   "summary": "把葉序點陣當作 Voronoi 的種子點，得到向日葵花盤般的細胞圖樣。示範了葉序與幾何分割家族的混合。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-10",
+   "title": "以葉序排列立面面板（Dynamo 論壇討論）",
+   "creator": "Dynamo BIM 社群",
+   "year": "",
+   "category": "fabrication",
+   "scale": "立面／表皮",
+   "tags": [
+    "吸引子控制"
+   ],
+   "tools": [
+    "Dynamo",
+    "Revit"
+   ],
+   "url": "https://forum.dynamobim.com/t/phyllotaxis-for-facade-panel-pattern/32489",
+   "summary": "BIM 使用者討論如何讓立面面板改以葉序排列，取代傳統上下左右對齊的菱形排列。代表葉序從圖樣走向實際立面面板的需求。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-11",
+   "title": "以葉序排列的高爾夫球凹洞（Phyllotaxis-based dimple patterns 專利）",
+   "creator": "美國專利 US 6,682,441",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "曲面上",
+    "鄰居搜尋"
+   ],
+   "tools": [],
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6682441",
+   "summary": "以葉序規則在球面上配置高爾夫球的凹洞，讓凹洞分佈均勻且不重複，影響球的空氣動力表現。說明葉序也是工業產品表面均佈的方法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-12",
+   "title": "開孔非均勻分佈的研磨片（Abrasive article 專利）",
+   "creator": "美國專利 US 9,656,366",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9656366",
+   "summary": "研磨圓片上的集塵開孔以非均勻（葉序類）方式分佈，而非規則網格，使開孔不會沿同一軌跡排列。可視為『圓盤上的葉序開孔』的工業應用。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-13",
+   "title": "Flourish (Bloom) 互動展品",
+   "creator": "Exploratorium（John Edmark 作品）",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://www.exploratorium.edu/exhibits/flourish-bloom",
+   "summary": "舊金山 Exploratorium 科學博物館的展品，觀眾可觀看以黃金角旋轉搭配頻閃產生動畫的葉序雕塑，把葉序數學轉成可體驗的公共教育裝置。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-14",
+   "title": "Fibonacci Sphere 與 Sunflower Spiral 參數化教學",
+   "creator": "designcoding",
+   "year": "",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "曲面上"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.designcoding.net/fibonacci-sphere/",
+   "summary": "參數化設計教學網站示範在 Grasshopper 中建立向日葵螺旋與 Fibonacci 球面點陣，並延伸成球形結構（Fibonacci Dome）。適合作為學習者把 C# 範例對照 GH 原生元件寫法的參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B04-51",
+   "title": "Coding Challenge #30：Phyllotaxis（葉序）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "黃金角",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+   "summary": "The Coding Train 以 p5.js 實作 Vogel 葉序模型：第 n 個點的角度為 n × 137.5°、半徑為 c√n，逐幀加一個點就畫出向日葵般的螺旋。是 Grasshopper C# 葉序範例最直接的網頁對照。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/30-phyllotaxis",
+    "note": "Coding Challenge #30 影片縮圖，葉序螺旋"
+   }
+  },
+  {
+   "id": "B04-52",
+   "title": "ofxPhyllotaxis",
+   "creator": "Davide Prati（edap）",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxPhyllotaxis",
+   "summary": "openFrameworks 附加套件，只提供三個靜態方法：simple（平面圓盤）、conical（沿 y 軸推出的圓錐）與 apple（包成蘋果般的球面），傳入序號、發散角與間距就回傳位置，可用來排列任何 2D 或 3D 物件。相較於基礎範例只在平面上放點，它把葉序當成可套用在 3D 場景的排列工具。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（edap/ofxPhyllotaxis）README",
+    "page": "https://github.com/edap/ofxPhyllotaxis",
+    "note": "README 中 apple 方法的 3D 葉序排列圖"
+   }
+  },
+  {
+   "id": "B04-53",
+   "title": "TD Essentials：Create a Swept Phyllotaxis Operator in Houdini",
+   "creator": "Manuel（Entagma）",
+   "year": "2021",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/td-essentials-create-a-swept-phyllotaxis-operator-in-houdini/",
+   "summary": "Entagma 的教學以 VEX 在 Houdini 中建立葉序運算子，但不只做平面圓盤模型，而是讓葉序分布在一條輪廓旋轉而成的曲面（surface of revolution）上。成果可作為可重複使用的 Houdini 工具。相較於基礎範例，它處理了曲面上面積不均時如何保持密鋪。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube（Entagma）",
+    "page": "https://www.youtube.com/watch?v=yGwhnt7mZ50",
+    "note": "Houdini 旋轉曲面葉序教學影片縮圖"
+   }
+  },
+  {
+   "id": "B04-54",
+   "title": "ECS-Phyllotaxis（Unity ECS 葉序方塊）",
+   "creator": "avvie",
+   "year": "2018",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "C#",
+    "即時",
+    "效能"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://github.com/avvie/ECS-Phyllotaxis",
+   "summary": "一個學習 Unity ECS（Entity Component System）的練習專案，以葉序公式排列大量方塊並讓它們全部旋轉，並加入剔除（culling）以提升效能。它示範葉序排列在遊戲引擎中大量實例化時的做法。相較於基礎範例，重點是在即時引擎中處理上萬個物件。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（avvie/ECS-Phyllotaxis）README",
+    "page": "https://github.com/avvie/ECS-Phyllotaxis",
+    "note": "Unity 中以葉序排列的大量方塊截圖"
+   }
+  }
+ ]
+}

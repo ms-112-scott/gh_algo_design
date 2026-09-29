@@ -564,6 +564,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "數學家兼視覺特效藝術家 Andy Lomas 以 DLA 變體模擬數百萬顆粒子在力場中流動並沉積在初始種子曲面上，長出類似珊瑚與植物的雕塑形態，並於 SIGGRAPH 2005 發表「Aggregation: Complexity out of Simplicity」。DLA 是整個形態的生成核心。",
       "variations": [
@@ -605,6 +606,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jason Webb 以 JavaScript 做了一系列 DLA 視覺實驗：基本 DLA、方向偏移、不同粒子大小、不同形狀、以 SVG 形狀作為邊界或種子，並著重輸出可供數位製造的向量 SVG。示範了同一演算法換輸入與約束後的多樣性。",
       "variations": [
@@ -645,6 +647,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 以 p5.js 現場寫出 DLA：隨機行走者圍繞中心種子聚集成樹枝狀圖樣，是最常被引用的入門教學之一，另有雪花（Brownian Tree Snowflake）延伸。適合對照本課 C# 版本理解相同邏輯。",
       "variations": [
@@ -679,6 +682,7 @@
       "year": "1989",
       "category": "urban-landscape",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Batty 等人把 DLA 用來解釋都市形態：人口像粒子從外圍移入，碰到已開發區就定居，模擬出具負密度梯度與碎形維度的都市，與真實城市形態相似，是後來《Fractal Cities》研究的基礎。",
       "variations": [
@@ -717,6 +721,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "發表於 Findings 期刊的研究，將 DLA 與隨機重力模型結合來模擬都市形態，讓遠方中心的吸引力影響粒子行走，補足純 DLA 只有單一中心的限制。",
       "variations": [
@@ -749,6 +754,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "IaaC 機器人與先進營造碩士的研究，在 Grasshopper 中以 DLA 生成亭子結構：先在 2D 測試種子數、黏著距離、吸引子與邊界，再到 3D 引入點電荷、旋轉力、曲線吸引子等場，最後寫後處理讓節點與接頭可建造。結論是需選擇易於合理化的生長方式。",
       "variations": [
@@ -793,6 +799,7 @@
         "modeling",
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Paul Bourke 長期整理 DLA：3D 體素 DLA（26 方向）、黏著機率從 1 到 0.01 的形態差異、在盒子、圓柱、球、頭像等形體內生長，並有處理成 3D 列印模型的流程，以及與藝術家合作的容器、雕塑作品。",
       "variations": [
@@ -824,41 +831,6 @@
       "url": "https://paulbourke.net/fractals/dla/"
     },
     {
-      "id": "B02-08",
-      "algo": "B02",
-      "title": "VEX in Houdini：Diffusion Limited Aggregation",
-      "creator": "Entagma",
-      "year": "",
-      "category": "modeling",
-      "categories_extra": [
-        "drawing"
-      ],
-      "scale": "物件",
-      "summary": "Entagma 的教學示範在 Houdini 以 VEX 寫 DLA，並用 Mantra 與 Redshift 渲染。呈現 DLA 在影視與動態設計建模流程中的用法，可與本課 C# 實作互相對照。",
-      "variations": [
-        {
-          "name": "轉成網格體積",
-          "how": "輸出線段後以 Mesh Pipe 或體素化（VDB 概念）加厚。",
-          "effect": "得到可渲染、可列印的實體。"
-        },
-        {
-          "name": "依生長時間上材質",
-          "how": "記錄黏住順序作為屬性，渲染時映射成發光強度。",
-          "effect": "生長路徑以光呈現，適合動態影像。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D",
-        "動畫"
-      ],
-      "tools": [
-        "Houdini",
-        "VEX"
-      ],
-      "url": "https://entagma.com/vex-in-houdini-diffusion-limited-aggregation-plus-rendering-in-mantra-redshift/"
-    },
-    {
       "id": "B02-09",
       "algo": "B02",
       "title": "Exploring Diffusion Limited Aggregation in Geometry Nodes",
@@ -868,6 +840,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Blender 使用者以 Geometry Nodes 的節點式模擬實作 DLA 並分享成果，顯示 DLA 不一定要寫程式，也能在節點環境中以模擬迴圈完成。",
       "variations": [
@@ -902,6 +875,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "高壓放電在壓克力或木材中留下的 Lichtenberg 圖形、閃電分枝，其形態與 DLA 相關；1984 年提出的介電崩潰模型（DBM）把電場與 DLA 結合來描述這類放電。可作為閃電紋表皮或木作燒紋設計的依據。",
       "variations": [
@@ -933,6 +907,7 @@
       "year": "",
       "category": "performance",
       "categories_extra": [],
+      "source": "research",
       "scale": "物件",
       "summary": "電化學研究以 DLA 模型模擬鋰對稱電池充電時的枝晶（dendrite）生長，並以 MRI 觀測驗證，顯示 DLA 除了造形，也是材料性能與失效分析的工具。",
       "variations": [
@@ -965,6 +940,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Grasshopper3d 社群的影片教學與討論串示範在 GH 裡以腳本實作 DLA，是建築領域使用者接觸 DLA 的主要入口之一，可作為本課範例的延伸參考。",
       "variations": [
@@ -999,6 +975,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "義大利數位藝術工作室 Fuse* 在其研發實驗室以 openFrameworks 實作 DLA 草稿，作為即時影像與裝置作品的生成素材，示範 DLA 在即時互動藝術中的應用。",
       "variations": [
@@ -1034,6 +1011,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "DLA 被用來描述珊瑚、地衣、礦物樹枝石（dendrite）、硫酸銅電沉積結晶與雪花等自然樹枝狀形態，是學習者觀察自然、蒐集參考影像並對照模擬結果的好題材。",
       "variations": [
@@ -1067,6 +1045,7 @@
         "drawing",
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jared Tarbell 以 Processing 創作並開源的生成藝術：直線從其他直線上垂直長出、撞到就停，最終形成像都市街道的結晶圖樣，並沿裂紋以沙畫筆觸上色。本課範例即依其規則簡化而來。",
       "variations": [
@@ -1107,6 +1086,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "為 CityLAB Berlin 開發的命令列工具，依 Tarbell 演算法產生 A0 尺寸的 SVG，可設定執行時間、最大裂紋數與最短線長過濾（1px = 1mm），用於輸出大型圖面或繪圖機。",
       "variations": [
@@ -1146,6 +1126,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "建築系課程部落格記錄學習者研究 Tarbell 的 Substrate，觀察執行 1.5 小時後浮現類似都市格網的圖樣，並討論 Processing 作為建築設計工具的可能與限制。",
       "variations": [
@@ -1179,6 +1160,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "社群開發者將 Substrate 移植到瀏覽器的 CodePen 版本，可即時看到裂紋生長動畫，說明此演算法已成為生成藝術的經典練習題。",
       "variations": [
@@ -1213,6 +1195,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "SIGGRAPH 2001 論文以擴充 L-System 生成街道網路，再切分街廓與地塊、以語法產生建築，後發展為 CityEngine。其「道路延伸、碰到既有道路就截止並接上」的規則與 Substrate 的撞停分岔邏輯相通，可作為對照。",
       "variations": [
@@ -1253,6 +1236,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "電腦圖學研究以表面應力場驅動裂紋在網格表面上生長，用來產生泥土、陶瓷釉面、老化油漆等真實裂紋。相較 Substrate 的純幾何規則，它以物理應力決定方向，是進階比較對象。",
       "variations": [
@@ -1285,6 +1269,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "泥土乾燥收縮時先出現的裂紋會成為後來裂紋的邊界，因此多形成 T 字接頭且後生裂紋常垂直於前者，與 Substrate「依序生長、撞停、垂直分岔」的規則高度吻合，是很好的觀察對照。",
       "variations": [
@@ -1322,6 +1307,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "釉與胎體收縮率不同，冷卻時釉面產生開片裂紋，並可能以大小兩層紋路呈現（俗稱金絲鐵線）。這是材料物理造成的裂紋圖樣，可用 Substrate 加彎曲與多世代線寬來模擬其視覺。",
       "variations": [
@@ -1354,6 +1340,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "3D 軟體常用 Voronoi 分割把物件打碎做破壞模擬。Voronoi 是同時分割、接頭多為 Y 字，與 Substrate 依序生長的 T 字接頭形態不同，適合當作兩種裂紋機制的比較教材。",
       "variations": [
@@ -1380,69 +1367,6 @@
       "url": ""
     },
     {
-      "id": "B05-10",
-      "algo": "B05",
-      "title": "金繼（Kintsugi）",
-      "creator": "日本傳統修補工藝",
-      "year": "",
-      "category": "fabrication",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "物件",
-      "summary": "以漆與金粉修補破碎陶瓷，讓裂縫成為視覺焦點。可作為 Substrate 輸出「裂紋即裝飾」的延伸：用演算法決定裂紋，再以數位製造（CNC 刻溝、金屬填縫）實現。",
-      "variations": [
-        {
-          "name": "裂紋轉刻溝刀路",
-          "how": "把裂紋線段依世代給不同深度，輸出成 CNC 刻溝刀路。",
-          "effect": "在木板或石材上刻出裂紋溝槽可再填金屬或樹脂。"
-        },
-        {
-          "name": "碎片化拼板",
-          "how": "取得封閉碎片後向內 Offset 留縫並編號。",
-          "effect": "做成可拼回的碎片桌面或牆板，縫隙填色。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "拼貼"
-      ],
-      "tools": [],
-      "url": ""
-    },
-    {
-      "id": "B05-11",
-      "algo": "B05",
-      "title": "油畫龜裂（Craquelure）",
-      "creator": "藝術品保存研究（自然老化現象）",
-      "year": "",
-      "category": "drawing",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "油畫顏料與底層隨時間收縮產生的細密龜裂網，形態與畫布張力方向相關，是修復與鑑定研究的對象。用 Substrate 加方向偏好可以模擬不同畫布的龜裂風格，作為繪圖表現的肌理。",
-      "variations": [
-        {
-          "name": "方向偏好",
-          "how": "起始方向與分岔方向加入偏好軸（例如畫布經緯向），抖動只在偏好軸附近。",
-          "effect": "出現有方向性的長方形龜裂。"
-        },
-        {
-          "name": "疊加於影像",
-          "how": "裂紋輸出成細線，疊在渲染圖或照片上做老化效果。",
-          "effect": "取得手繪老化質感的圖面。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "影像輸入",
-        "隨機"
-      ],
-      "tools": [],
-      "url": ""
-    },
-    {
       "id": "B05-12",
       "algo": "B05",
       "title": "Substrate 生長過程影片",
@@ -1452,6 +1376,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Vimeo 上的 Substrate 動態記錄，呈現裂紋逐步延伸、分岔、填滿畫面的時間過程，說明此演算法本身的生長過程就是作品，而不只是最終靜態圖。",
       "variations": [

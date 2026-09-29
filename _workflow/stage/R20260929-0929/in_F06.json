@@ -1,0 +1,240 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F06",
+  "name_zh": "奇異吸子",
+  "name_en": "Strange Attractor",
+  "one_liner": "一條固定、沒有亂數的公式反覆代入上一步的位置，卻畫出永不重複、細節無窮的蝴蝶曲線或點雲。",
+  "how_it_works": [
+   "從 startPoint 出發，把目前位置放進清單。",
+   "Lorenz（type 0）：用 a(y−x)、x(b−z)−y、xy−cz 算出速度向量，往前走 stepTime（歐拉法積分）。",
+   "Clifford（type 1）：直接用 sin／cos 公式把 (x, y) 映射到下一個點，沒有時間概念。",
+   "每一步檢查是否發散（無效或離原點超過 10⁶），發散就停止並提示係數不對。",
+   "輸出 Polyline（看 Lorenz 軌跡）與點清單（看 Clifford 點雲）。"
+  ]
+ },
+ "final_total": 11,
+ "target_art": 6,
+ "target_research": 5,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F06-01",
+   "title": "Clifford Attractors 圖像",
+   "creator": "Paul Bourke（公式出自 Clifford Pickover）",
+   "year": "2004",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "混沌"
+   ],
+   "tools": [
+    "C"
+   ],
+   "url": "https://paulbourke.net/fractals/clifford/",
+   "summary": "Bourke 以本範例相同的 Clifford 公式產生八組不同係數的吸子，並用 32 位元格子累計每格被點落入的次數（二維直方圖），再後製映射成漸層色，得到細膩的明暗圖像。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-02",
+   "title": "Peter de Jong Attractors 圖像",
+   "creator": "Paul Bourke",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "混沌"
+   ],
+   "tools": [
+    "C"
+   ],
+   "url": "https://paulbourke.net/fractals/peterdejong/",
+   "summary": "以 x' = sin(a·y) − cos(b·x)、y' = sin(c·x) − cos(d·y) 迭代的 de Jong 吸子（出自 1987 年《Scientific American》），同樣以佔有密度直方圖再上色，並可額外編碼曲率等性質。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-03",
+   "title": "Lorenz 水車（混沌的實體模型）",
+   "creator": "Willem Malkus、Lou Howard（原型）",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "動畫",
+    "物理模擬"
+   ],
+   "tools": [
+    "實體模型"
+   ],
+   "url": "https://paulbourke.net/fractals/lorenz/",
+   "summary": "Bourke 的 Lorenz 頁面介紹一種會漏水的杯子水車，其轉動方向會混沌地反覆切換，行為與 Lorenz 方程等價；並記錄有人為物理教師研討會實際製作水車。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-04",
+   "title": "鉤織 Lorenz 流形",
+   "creator": "Hinke M. Osinga、Bernd Krauskopf",
+   "year": "2004",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "3D",
+    "曲面上"
+   ],
+   "tools": [
+    "自製程式",
+    "手工鉤織"
+   ],
+   "url": "https://www.math.auckland.ac.nz/~hinke/crochet/",
+   "summary": "兩位數學家以電腦計算出 Lorenz 系統的穩定流形曲面，轉成逐圈的鉤織指示，共 25,511 針、約 85 小時手工完成，讓混沌系統的幾何變成可觸摸的實體。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-05",
+   "title": "Strange Attractors: Creating Patterns in Chaos",
+   "creator": "Julien C. Sprott",
+   "year": "1993",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "隨機",
+    "可重現種子"
+   ],
+   "tools": [
+    "BASIC",
+    "自製程式"
+   ],
+   "url": "https://sprott.physics.wisc.edu/sa.htm",
+   "summary": "以電腦自動挑選二次映射與微分方程的係數，篩出會產生混沌吸子的組合，產生超過 350 個範例圖樣，並附原始碼與 3D 立體、聲音化等延伸。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-06",
+   "title": "Chimpanzee 碎形與混沌外掛",
+   "creator": "Matous Stieber",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Chimpanzee"
+   ],
+   "url": "https://grasshopperdocs.com/addons/chimpanzee.html",
+   "summary": "Grasshopper 外掛，提供約 70 個碎形與混沌元件，包含 Lorenz、Rössler、Chen、Halvorsen、Burke-Shaw 等吸子系統，可直接在參數流程中產生吸子軌跡。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-07",
+   "title": "Coding Challenge #12：Lorenz Attractor",
+   "creator": "The Coding Train（Daniel Shiffman）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "動畫",
+    "3D"
+   ],
+   "tools": [
+    "Processing",
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/12-lorenz-attractor",
+   "summary": "在 Processing 中逐步推進 Lorenz 方程並即時畫出軌跡，加上顏色漸變與 PeasyCam 3D 旋轉，是最常被引用的吸子入門教學，有 p5.js 版本。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-08",
+   "title": "Strange Attractor（堪薩斯市國際機場公共藝術）",
+   "creator": "Alice Aycock",
+   "year": "",
+   "category": "art-installation",
+   "scale": "建築",
+   "tags": [
+    "混沌",
+    "3D"
+   ],
+   "tools": [
+    "3D 建模",
+    "金屬加工"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Alice_Aycock",
+   "summary": "Aycock 以旋風、亂流為題的大型金屬公共雕塑之一，設置於堪薩斯市國際機場；她的同系列作品以 3D 建模後切割、滾彎金屬板製作，可作為「以混沌意象轉成大尺度雕塑」的參照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-09",
+   "title": "vpype-fractal 筆繪機碎形與吸子外掛",
+   "creator": "mreierson（GitHub）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "混沌"
+   ],
+   "tools": [
+    "Python",
+    "vpype",
+    "Pen plotter"
+   ],
+   "url": "https://github.com/mreierson/vpype-fractal",
+   "summary": "vpype 的外掛，產生 L-System、IFS、奇異吸子等碎形並輸出成 pen plotter 可繪製的向量線條，是吸子轉成實體繪圖的典型流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-10",
+   "title": "Strange Attractors WebGL 互動繪圖",
+   "creator": "piellardj（GitHub）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "隨機"
+   ],
+   "tools": [
+    "WebGL",
+    "TypeScript"
+   ],
+   "url": "https://github.com/piellardj/strange-attractors-webgl",
+   "summary": "以 WebGL 在瀏覽器中高速繪製二維奇異吸子，圖像由大量隨機起點的軌跡疊加而成，可即時調整公式與係數。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F06-11",
+   "title": "Visions of Chaos 混沌探索軟體",
+   "creator": "Softology",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "混沌",
+    "3D"
+   ],
+   "tools": [
+    "Visions of Chaos"
+   ],
+   "url": "https://softology.pro/voc.htm",
+   "summary": "涵蓋大量混沌與生成系統的免費軟體，內含 2D 與 3D 奇異吸子模式，讓使用者不必處理方程式就能調參探索，也是找靈感與係數的資料庫。",
+   "currently_cc": false,
+   "photo": null
+  }
+ ]
+}

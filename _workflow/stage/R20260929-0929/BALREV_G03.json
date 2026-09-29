@@ -1,0 +1,16 @@
+{
+ "reviewer": "BALREV",
+ "algos": {
+  "G03": {
+   "reject_new": [
+    {"index": 1, "reason": "Mapgen4（https://www.redblobgames.com/maps/mapgen4/，Amit Patel 2018）已是 E02-08「mapgen4：Poisson 點＋Voronoi 的程序化地形地圖」，網址完全相同，屬其他演算法已收的同一件作品，balance.md 規定不可重複；撰寫者的 nearest_existing 也漏列 E02-08。圖片（screenshot15-small.jpg）本身合格，是作品生成的地圖畫面。"}
+   ],
+   "image_fix": [],
+   "fix_class": [],
+   "protect": [
+    {"id": "G03-03", "why": "移除順序前兩個（G03-04、G03-03）是 G03 僅有的兩個「群體／都市」尺度、也是僅有的兩個 performance 類案例，若都刪掉，本演算法就沒有都市尺度與性能分析案例；Rainwater+ 是以 Rhino＋Grasshopper 為平台的逕流工具，和學習者的工具鏈最接近，應保留，往後改取 G03-53。"}
+   ],
+   "notes": "8 個既有案例的分類都正確（51、52 為 art，53 為 Houdini 節點文件，依規則歸 research）。new_art[0] Sebastian Lague《Hydraulic-Erosion》已查證：GitHub 儲存庫存在，README 寫「Simulating erosion to try make procedural terrains look a little more natural」「After 70k iterations of erosion」，MIT 授權，首次 commit 在 2019-02-18，年份相符；預覽圖（i.imgur.com/4p5Rmk4.png）是侵蝕後的 3D 地形算繪，可見溝谷與稜線，是作品本身的生成畫面，合格；和全站其他案例不重複（C04-07 是 dandrino 的另一件侵蝕作品）。它屬於水滴粒子沿坡度下行的侵蝕模擬，不是 D8 格網累積，但沿最陡下坡的逕流路徑與沖刷正是作品核心，對應本演算法的變形「河流侵蝕地形演化」，可以收。不過撰寫者以「粒子模擬不是 D8」為由把 G03-04 排為最弱，卻新增同為粒子法的案例，標準不一致。summary 的「逐格找最陡下坡」要注意：原始碼實際上是用所在格四個角點的高度做雙線性內插求梯度，再依慣性（預設 0.05）混合方向，水滴位置是連續的，不是逐格跳動；合併時建議改寫成「依所在格四角高度內插出的梯度，混合慣性決定方向」。new_art[1] 因重複被 reject，G03 只剩 1 個合格的新藝術案例，也沒有備援，還差 1 個（need=2）；兩個新案例都不是 p5.js／Processing，未達 balance.md「至少一半」的要求，補案例時應優先找 p5.js／Processing 的流向、河網或等高線生成作品。"
+  }
+ }
+}

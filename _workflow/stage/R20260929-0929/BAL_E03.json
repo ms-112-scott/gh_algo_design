@@ -1,0 +1,144 @@
+{
+ "algo": "E03",
+ "classification": [
+  {"id": "E03-01", "source": "research", "why": "建成建築工程案例，非真正隨機Voronoi"},
+  {"id": "E03-02", "source": "art", "why": "威尼斯雙年展藝術裝置，非建成建築"},
+  {"id": "E03-03", "source": "research", "why": "學術論文記錄的建成展亭研究"},
+  {"id": "E03-04", "source": "research", "why": "CNC加工設計傢俱，屬製造案例"},
+  {"id": "E03-05", "source": "research", "why": "演算法首飾產品，屬製造設計案例"},
+  {"id": "E03-06", "source": "research", "why": "實際建成的3D列印混凝土構造物"},
+  {"id": "E03-07", "source": "research", "why": "大學課程的動態立面研究專案"},
+  {"id": "E03-08", "source": "research", "why": "木構展亭結構最佳化研究"},
+  {"id": "E03-09", "source": "research", "why": "NPAR學術論文提出的點描演算法"},
+  {"id": "E03-10", "source": "research", "why": "生醫期刊論文的骨支架結構研究"},
+  {"id": "E03-11", "source": "research", "why": "材料期刊論文的晶格建模方法"},
+  {"id": "E03-12", "source": "research", "why": "arXiv論文的可微分結構最佳化"},
+  {"id": "E03-13", "source": "research", "why": "Grasshopper加權Voronoi外掛工具"},
+  {"id": "E03-14", "source": "research", "why": "arXiv論文的都市空間規劃分析"},
+  {"id": "E03-15", "source": "research", "why": "研討會論文的景觀生成式設計法"},
+  {"id": "E03-51", "source": "art", "why": "Coding Train以p5.js示範的生成畫面"},
+  {"id": "E03-52", "source": "art", "why": "Shadertoy著色器生成的紋理創作"},
+  {"id": "E03-53", "source": "art", "why": "著色器教學網站的生成紋理範例"},
+  {"id": "E03-54", "source": "art", "why": "開源創作外掛openFrameworks展示畫面"},
+  {"id": "E03-55", "source": "art", "why": "d3.js互動生成動畫展示"}
+ ],
+ "art_count": 6,
+ "need": 4,
+ "removal_order": ["E03-05", "E03-04", "E03-15", "E03-07", "E03-14", "E03-11", "E03-03"],
+ "removal_reasons": {
+  "E03-05": "商業珠寶產品設計，屬製造案例而非數位研究的核心示範，與其他製造類案例（E03-04、E03-06）性質重複",
+  "E03-04": "商業傢俱產品，CNC加工只是把Voronoi當裝飾格線，與本演算法的迭代邏輯關係薄弱",
+  "E03-15": "研討會論文對Voronoi的描述籠統（『常用於鋪面分割』），並非此篇論文明確驗證的核心方法",
+  "E03-07": "大學課程作業網頁，出處難以查證且找不到現場照片，內容描述也偏簡略",
+  "E03-14": "arXiv預印本對Voronoi的角色描述籠統，且與E03-15同為都市尺度、內容高度重疊",
+  "E03-11": "與E03-10同為積層製造用Voronoi晶格結構論文，主題重複，E03-10應用場景（仿生骨骼）更具體",
+  "E03-03": "與E03-01同屬Weaire-Phelan泡沫鑲嵌（非真正隨機Voronoi），知名度不如E03-01，保留較經典的水立方即可"
+ },
+ "new_art": [
+  {
+   "title": "2D Voronoi Experiments：Phyllotaxis（葉序點陣的 Voronoi 圖）",
+   "creator": "Jason Webb",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Jason Webb 用 p5.js 搭配 d3-delaunay 做的一系列 Voronoi 視覺實驗之一：把撒點方式從均勻隨機改成葉序（phyllotaxis，黃金角螺旋）分布，再算出對應的 Voronoi 圖。基礎範例用均勻隨機點加 Lloyd 鬆弛讓格子變規則，這裡則反過來，用「規則的點分布規則」直接決定細胞形狀，不需要疊代收斂就能得到中心緊密、邊緣疏鬆、向外螺旋放射的鑲嵌圖案。",
+   "variations": [
+    {"name": "葉序點分布", "how": "撒點方式改用葉序公式（黃金角螺旋）取代均勻隨機分布，再算 Voronoi", "effect": "細胞從中心到邊緣呈螺旋放射狀漸變，中心緊密、外圍稀疏"},
+    {"name": "多種點分布切換", "how": "同一介面另外提供 Rings、Orbits、Reducing Radii 等不同撒點規則可切換比較", "effect": "同一套 Voronoi 運算在不同初始點分布下產生截然不同的鑲嵌美感"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "d3-delaunay", "點陣"],
+   "tools": ["p5.js", "d3-delaunay"],
+   "url": "https://jasonwebb.github.io/2d-voronoi-experiments/",
+   "evidence": "頁面標題「2D Voronoi Experiments」，作者 Jason Webb，說明以 p5.js 與 d3-delaunay 展示多種點分布方式產生的 Voronoi 圖案，其中一組即為 Phyllotaxis",
+   "nearest_existing": "無（與基礎範例的均勻隨機撒點不同，這裡示範規則的葉序分布）",
+   "image": {"url": "https://jasonwebb.github.io/2d-voronoi-experiments/media/phyllotaxis.png", "page": "https://jasonwebb.github.io/2d-voronoi-experiments/", "verified": true, "checked": "白底細黑線描出的 Voronoi 細胞由中心向外呈螺旋葉序排列，中心細小密集、邊緣的細胞逐漸變大稀疏，形成漩渦狀鑲嵌圖案，畫面乾淨無介面元素",
+             "source": "Jason Webb 個人作品網站", "author": "Jason Webb", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "以葉序（黃金角螺旋）點分布產生的 Voronoi 鑲嵌，呈漩渦狀漸變"}
+  },
+  {
+   "title": "Moore Voronoi（沿 Moore 曲線移動點的 Voronoi 動畫）",
+   "creator": "Étienne Jacob（bleuje）",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "生成藝術家 Étienne Jacob（暱稱 bleuje）用 Processing 搭配 GLSL 著色器做的動畫：改用 Inigo Quilez 精確計算 Voronoi 邊界的著色器技術畫細胞，但點的位置不是靠 Lloyd 疊代收斂，而是沿著 Moore 空間填充曲線移動，並用他自創的「替換技巧」讓動畫首尾無縫循環。基礎範例用半平面切割多邊形＋重心疊代讓格子變均勻，這裡則是逐像素距離場著色器＋固定路徑移動，呈現對稱且會持續變化的動態鑲嵌，而非收斂到靜態蜂巢。",
+   "variations": [
+    {"name": "沿空間填充曲線移動點", "how": "不用 Lloyd 的重心收斂，而是讓每個點沿 Moore 曲線上的固定路徑移動，並用替換技巧讓路徑首尾相接成循環", "effect": "產生對稱且會持續變化的動態鑲嵌動畫，而非收斂到均勻蜂巢狀"},
+    {"name": "距離場著色器繪製", "how": "改用 GPU 著色器逐像素計算到最近種子點的真實距離場來畫細胞邊界（承接 Quilez 的精確 Voronoi 邊界技術）", "effect": "即時演算且不受頂點數限制，邊線寬度均勻一致"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Processing", "GLSL", "Moore curve", "動畫"],
+   "tools": ["Processing", "GLSL shader"],
+   "url": "https://bleuje.com/gifanimationsite/single/moorevoronoi/",
+   "evidence": "頁面標題「Moore voronoi animation」，作者 Etienne Jacob（bleuje），說明以 Quilez 的 Voronoi 著色器技術繪製沿 Moore 曲線移動的點，並提供 Processing 原始碼連結",
+   "nearest_existing": "E03-52 Voronoi edges（同樣採用 Quilez 的精確 Voronoi 邊界著色器技術，但這裡改成沿 Moore 空間填充曲線移動點，產生對稱的動態循環動畫，不同作者不同作品）",
+   "image": {"url": "https://animation-files.bleuje.com/2024/2024_moorevoronoi.gif", "page": "https://bleuje.com/gifanimationsite/single/moorevoronoi/", "verified": true, "checked": "黑底動畫，白色細線描出對稱的菱形／盾形 Voronoi 細胞格線，每格中心有一個同心圓點記號（種子點），因為種子點沿 Moore 曲線對稱排列而呈現如幾何鑲嵌磚紋般的圖案",
+             "source": "bleuje.com（Étienne Jacob 個人網站）", "author": "Étienne Jacob", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "種子點沿 Moore 空間填充曲線移動的 Voronoi 細胞動畫，黑底白線並標記種子點"}
+  },
+  {
+   "title": "Medieval Fantasy City Generator（中世紀奇幻城市生成器）",
+   "creator": "watabou（@watawatabou）",
+   "year": "",
+   "category": "urban-landscape",
+   "categories_extra": ["2d-pattern"],
+   "scale": "群體／都市",
+   "summary": "獨立開發者 watabou 做的網頁工具，在城牆範圍內撒點做 Voronoi 分割，每個細胞就是一個街區，再依離市中心的遠近與城牆內外指定街區用途（市場、貴族區、貧民窟等），疊上河流與地形裁切。基礎範例輸出的是抽象的封閉多邊形細胞，這裡則把每個 Voronoi 細胞直接當成「一整塊街區」，再用其他規則細分出建築物，是把 Voronoi 分割直接當成程序化城市生成核心步驟的知名案例，被大量遊戲主持人與世界觀設計者使用。",
+   "variations": [
+    {"name": "Voronoi 分割街廓", "how": "在城牆範圍內撒點做 Voronoi，每個細胞成為一個街區，再依距市中心遠近指定街區用途", "effect": "產生看起來自然生長、不規則但合理的中世紀城市街廓紋理"},
+    {"name": "河流與地形疊加裁切", "how": "在 Voronoi 分割之上疊加地形雜訊、河流路徑與城牆多邊形做進一步裁切", "effect": "細胞不再是單純幾何形狀，而是被地形與邊界自然裁切出的街區"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "procedural generation", "JavaScript", "城市生成"],
+   "tools": ["JavaScript", "Delaunator"],
+   "url": "https://watabou.itch.io/medieval-fantasy-city-generator",
+   "evidence": "itch.io 頁面標題確認為 Medieval Fantasy City Generator by watabou；作者網站 city.html 說明早期版本『maps it produced weren't much more than city-shaped Voronoi diagrams』，後期改用 Delaunator 計算 Voronoi 加速",
+   "nearest_existing": "無（唯一以程序化城市地圖生成為主題的案例）",
+   "image": {"url": "https://watabou.github.io/images/desc_city.png", "page": "https://watabou.github.io/city.html", "verified": true, "checked": "截圖顯示一座中世紀風格城市地圖，城牆內外由不規則多邊形街廓（Voronoi 細胞）組成深淺不同的街區，並標註街區名稱、河流與道路",
+             "source": "watabou.github.io 作品頁", "author": "watabou", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "以 Voronoi 分割街廓生成的中世紀奇幻城市地圖截圖"}
+  },
+  {
+   "title": "d3-voronoi-treemap（Voronoi 樹狀圖）",
+   "creator": "Franck Lebeau（GitHub：Kcnarf）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "開源 d3.js 外掛，把樹狀圖（treemap）改用 Voronoi 鑲嵌呈現：先用加權 Voronoi 疊代讓每個細胞的面積逼近資料權重，再視需要對每個細胞內部再切一次子 Voronoi 對應下一層資料。基礎範例的 Lloyd 疊代目標是讓所有細胞大小平均，這裡剛好相反，是刻意讓細胞大小對應資料數值（例如國家 GDP 占比），同時維持不規則、有機的多邊形外觀，而不是矩形樹狀圖那種死板的格線。",
+   "variations": [
+    {"name": "以資料權重取代等權重", "how": "重心 Voronoi 疊代時，把每個細胞的目標面積設為對應資料數值（如 GDP 占比）而非平分", "effect": "細胞大小直接對應資料量，形成邊界不規則的『Voronoi 版圓餅圖』"},
+    {"name": "巢狀多層 Voronoi", "how": "在每個外層細胞內部再做一次子 Voronoi 切割，對應資料的下一層級（如洲→國家）", "effect": "呈現階層式資料的巢狀 Voronoi 樹狀圖，一次看出兩層結構"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "d3.js", "資料視覺化", "Voronoi treemap"],
+   "tools": ["d3.js", "JavaScript"],
+   "url": "https://github.com/Kcnarf/d3-voronoi-treemap",
+   "evidence": "GitHub README 確認以 Voronoi 鑲嵌計算樹狀圖，作者 GitHub 帳號 Kcnarf；CRAN 套件文件（voronoiTreemap）列出真實姓名 Franck Lebeau 為 d3-voronoi-treemap 函式庫作者",
+   "nearest_existing": "無（唯一以資料視覺化樹狀圖為主題的案例）",
+   "image": {"url": "https://raw.githubusercontent.com/Kcnarf/d3-voronoi-treemap/master/img/hexagon.png", "page": "https://github.com/Kcnarf/d3-voronoi-treemap", "verified": true, "checked": "六邊形外框內，依國家 GDP 占比切割出大小不同的不規則 Voronoi 細胞（美國、中國、日本等），並標示國名與百分比數字",
+             "source": "GitHub Kcnarf/d3-voronoi-treemap README", "author": "Franck Lebeau", "license": "BSD-3-Clause（程式碼授權；圖片為網頁預覽圖，教學引用）", "license_url": "https://github.com/Kcnarf/d3-voronoi-treemap/blob/master/LICENSE", "note": "以各國 GDP 占比為權重產生的 Voronoi 樹狀圖範例"}
+  },
+  {
+   "title": "2D Voronoi Experiments：Rings（同心環點陣的 Voronoi 圖）",
+   "creator": "Jason Webb",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "同一套 Jason Webb 的 p5.js／d3-delaunay Voronoi 實驗collection中的另一組：把撒點方式改成沿多圈同心圓環分布，取代均勻隨機分布，再算 Voronoi。與前一個 Phyllotaxis 範例出自同一位作者、同一套工具，但呈現完全不同的視覺效果——放射狀加環狀交錯的對稱鑲嵌，像萬花筒或花窗一樣，適合拿來對照「同一演算法、不同初始點分布」會得到多不一樣的結果。",
+   "variations": [
+    {"name": "同心環狀點分布", "how": "撒點方式改成沿多圈同心圓環均勻分布，取代均勻隨機分布，再算 Voronoi", "effect": "Voronoi 細胞呈現放射狀與環狀交錯、類似萬花筒的對稱圖案"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "d3-delaunay", "對稱圖樣"],
+   "tools": ["p5.js", "d3-delaunay"],
+   "url": "https://jasonwebb.github.io/2d-voronoi-experiments/",
+   "evidence": "頁面標題「2D Voronoi Experiments」，作者 Jason Webb，其中一組命名為 Rings，以同心環點分布產生 Voronoi 圖",
+   "nearest_existing": "與同批新增的 Phyllotaxis 案例同一作者同一工具，但點分布規則與視覺效果不同（環狀對稱 vs 螺旋漸變）",
+   "image": {"url": "https://jasonwebb.github.io/2d-voronoi-experiments/media/rings.png", "page": "https://jasonwebb.github.io/2d-voronoi-experiments/", "verified": true, "checked": "白底細黑線描出的 Voronoi 圖案以放射狀直線與多圈同心環狀細胞交錯構成中心對稱的花朵／萬花筒圖案，畫面乾淨無介面元素",
+             "source": "Jason Webb 個人作品網站", "author": "Jason Webb", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "以多圈同心環點分布產生的 Voronoi 鑲嵌，呈放射對稱圖案（備援案例）"}
+  }
+ ],
+ "notes": "need=4，本次僅確認到 4 個主要＋1 個備援（共5個，非預期的4+3=7個）：OpenProcessing 相關候選頁面回傳 403 無法查證，Ondina Frate 的 Voronoi Mirror 裝置只有 Vimeo 影片沒有靜態生成畫面圖（依規則不可用影片縮圖，故捨棄），且本次 session 的 WebSearch／Parallel Search 額度提前用罄，未能再找第3個備援；若協調者需要更多備援可之後補找。E03-04（Voronoi Shelf）與 E03-05（Radiolaria）在市場上常被當作『Voronoi 藝術／設計』案例展示，但因其本質是商業製造產品而非開放性視覺創作，本次判為 research 並列入移除候選最前面。"
+}

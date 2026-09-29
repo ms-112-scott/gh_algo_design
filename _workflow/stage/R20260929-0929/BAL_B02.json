@@ -1,0 +1,99 @@
+{
+ "algo": "B02",
+ "classification": [
+  {"id": "B02-01", "source": "art", "why": "SIGGRAPH 展出的視覺雕塑作品，非工程案例"},
+  {"id": "B02-02", "source": "art", "why": "創作者個人視覺實驗合輯，重點在造形"},
+  {"id": "B02-03", "source": "art", "why": "程式教學挑戰，成果是一張生成畫面"},
+  {"id": "B02-04", "source": "research", "why": "都市研究經典論文，都市尺度案例"},
+  {"id": "B02-05", "source": "research", "why": "期刊研究，結合隨機重力模型"},
+  {"id": "B02-06", "source": "research", "why": "碩士研究設計亭，Grasshopper 技術案例"},
+  {"id": "B02-07", "source": "research", "why": "個人技術資料整理頁，非單一作品"},
+  {"id": "B02-08", "source": "research", "why": "VFX 算圖流程教學，技術說明為主"},
+  {"id": "B02-09", "source": "research", "why": "論壇節點模擬分享，技術示範性質"},
+  {"id": "B02-10", "source": "research", "why": "自然現象與物理模型的背景說明"},
+  {"id": "B02-11", "source": "research", "why": "電化學研究論文，材料性能驗證"},
+  {"id": "B02-12", "source": "research", "why": "社群技術影片，GH 腳本教學"},
+  {"id": "B02-13", "source": "art", "why": "數位藝術工作室的研發實驗草稿"},
+  {"id": "B02-14", "source": "research", "why": "自然現象背景知識頁面，非單一作品"},
+  {"id": "B02-51", "source": "art", "why": "The Coding Train 生成畫面教學影片"},
+  {"id": "B02-52", "source": "art", "why": "布朗樹雪花，對稱生成藝術"},
+  {"id": "B02-53", "source": "art", "why": "creative coding 視覺實驗合輯"},
+  {"id": "B02-54", "source": "art", "why": "高效能演算法的生成畫面展示"},
+  {"id": "B02-55", "source": "research", "why": "VFX 算圖技術教學，與 08 同一內容"}
+ ],
+ "art_count": 8,
+ "need": 2,
+ "removal_order": ["B02-08", "B02-14", "B02-10", "B02-09", "B02-12", "B02-05", "B02-07"],
+ "removal_reasons": {
+  "B02-08": "與 B02-55 是同一支 Entagma 影片重複收錄，內容完全重疊",
+  "B02-14": "只是自然現象背景說明的維基百科頁，不是具體設計案例",
+  "B02-10": "同樣是背景知識性質的維基百科頁，和 B02-14 重疊",
+  "B02-09": "論壇貼文，缺作者與年份，內容單薄難查證",
+  "B02-12": "社群教學影片，缺年份與明確作者，難查證",
+  "B02-05": "資料單薄（無作者無年份），主題與 B02-04 都市案例重複",
+  "B02-07": "個人技術資料整理頁，非聚焦單一設計案例"
+ },
+ "new_art": [
+  {
+   "title": "Simulate: Diffusion-Limited Aggregation（FORM+CODE 教材範例）",
+   "creator": "Casey Reas, Chandler McWilliams, LUST",
+   "year": "2010",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "出自創意程式經典教材《FORM+CODE in Design, Art, and Architecture》（Casey Reas 也是 Processing 共同創辦人）的 DLA 範例：以 Processing 1.2 寫出隨機行走粒子聚集成樹枝狀圖樣，並另外提供 openFrameworks、Cinder 版本程式碼對照。和本課 C# 版本一樣示範最基礎的擴散限制聚集，但強調「同一演算法在不同創意程式語言間可直接對照」的教學價值。",
+   "variations": [
+    {"name": "跨語言對照版本", "how": "同一套 DLA 邏輯另外提供 openFrameworks 與 Cinder 的程式碼版本，供對照同一演算法在不同框架的寫法", "effect": "方便學習者比較同一套規則在不同創意程式環境下的實作差異"},
+    {"name": "教材標準參數畫面", "how": "用書中固定的種子點、黏著距離與畫布尺寸產生單一代表性畫面，不強調互動或參數調整", "effect": "呈現最經典、教科書等級的樹枝狀生長形態，適合作為入門對照基準"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "經典教材", "生成藝術"],
+   "tools": ["Processing"],
+   "url": "https://formandcode.com/code-examples/simulate-dla",
+   "evidence": "WebFetch 確認頁面標題「Simulate: DIFFUSION-LIMITED AGGREGATION」，內文列出書名 FORM+CODE in Design, Art, and Architecture（Princeton Architectural Press, 2010）與作者 Casey Reas、Chandler McWilliams、LUST，程式語言 Processing 1.2+",
+   "nearest_existing": "B02-51 Coding Train Challenge #34（同樣是教學性質的 DLA 基礎範例，但這個是 2010 年出版書籍的靜態範例圖，而非影片）",
+   "image": {
+    "url": "https://formandcode.com/_content/code-examples/full/dla.png",
+    "page": "https://formandcode.com/code-examples/simulate-dla",
+    "verified": true,
+    "checked": "黑底畫面上一團粉紅色樹枝狀圖形，從中心向外呈放射狀分支生長，是典型 DLA 聚集畫面",
+    "source": "FORM+CODE（formandcode.com）",
+    "author": "Casey Reas, Chandler McWilliams, LUST",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "FORM+CODE 書中 Processing 範例算圖：粉紅色樹枝狀 DLA 聚集，從中心向外分支"
+   }
+  },
+  {
+   "title": "dla：3D Diffusion-Limited Aggregation（POV-Ray 算圖版）",
+   "creator": "danieledapo（GitHub 開發者）",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "以 Rust 寫成的 3D DLA 引擎，聚集完成後可匯出成 POV-Ray 場景檔，用光線追蹤把每個粒子算成有材質與陰影的球體，另外也提供瀏覽器版即時檢視器與 CSV 輸出。和本課 C# 版本同樣是「隨機行走＋碰撞黏著」的核心邏輯，差別在於它把最終點雲交給獨立算圖引擎產生具光影質感的靜態畫面，而不是即時畫線。",
+   "variations": [
+    {"name": "POV-Ray 光線追蹤算圖", "how": "把聚集完成的點雲座標匯出成 POV-Ray 場景描述檔，每個黏著點畫成球體並加上材質與燈光，離線算圖而非即時畫線", "effect": "得到有立體光澤與陰影堆疊感的球狀聚合體，而不是平面線段構成的樹枝圖"},
+    {"name": "緊密聚集（buzz）版本", "how": "調整聚集參數讓黏著更緊密、隨機遊走範圍更集中，使聚集體從稀疏樹枝變成密實球體", "effect": "表面呈現蜂窩顆粒狀紋理的密實團塊，和鬆散的樹枝狀 DLA 形成對比"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Rust", "3D", "POV-Ray", "開源"],
+   "tools": ["Rust"],
+   "url": "https://github.com/danieledapo/dla",
+   "evidence": "WebFetch 確認 GitHub README 標題與說明為「3D diffusion limited aggregation」，程式語言 Rust，支援 POV-Ray 算圖、JS 檢視器與 CSV 輸出，並列出 dla-small.png、dla-small-buzz.png 兩張範例算圖；GitHub API 顯示建立於 2019-07-14",
+   "nearest_existing": "B02-54 dlaf（同樣是開源高效能 3D DLA 程式，但 dlaf 直接輸出點雲光線追蹤畫面，這個作品改用 POV-Ray 把點雲算成有材質的球體堆疊）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/danieledapo/dla/master/images/dla-small-buzz.png",
+    "page": "https://github.com/danieledapo/dla",
+    "verified": true,
+    "checked": "黑底畫面上一團黃綠色球體堆疊而成的密實聚合體，表面呈現顆粒狀蜂窩紋理，邊緣有零星分支",
+    "source": "GitHub（danieledapo/dla）README",
+    "author": "danieledapo",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "POV-Ray 算圖：黃綠色球體堆疊而成的密實 3D DLA 聚合體（buzz 版本）"
+   }
+  }
+ ],
+ "notes": "need=2 但只確認到 2 個新藝術案例、沒有備援：OpenProcessing（aadebdeb、DaniAbalde、Alasdair Turner 等多個 DLA 草稿）與 Shadertoy（davidar 的 DLA shader）的頁面都回傳 403 無法用 WebFetch 開啟確認圖片，Jason Davies（2012）的 DLA 視覺化頁面圖片連結已失效（404），BrutPitt/DLAf-optimized（glChAoSP，3D DLA + Thomas Attractor）雖能查證但畫面被程式介面選單與座標覆蓋，不符合「不可用程式編輯器截圖」規則故捨棄，Anders Hoff（inconvergent）的 Hyphae 是相近但機制不同的演算法（相切圓生長，非隨機行走）故未收錄。其餘找到的 GitHub 版本（kush789、woodhjo、BrutPitt 的其他截圖）多屬課堂作業或技術函式庫展示，非以視覺表現為主的創作，故未收錄。建議協調者可考慮用 B02-05／B02-07 這類次弱案例暫緩移除，待之後補到更多藝術案例再處理。"
+}

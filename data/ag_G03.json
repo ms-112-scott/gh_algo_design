@@ -1,578 +1,548 @@
 {
- "agent": "ag_G03",
- "algorithms": [
-  {
-   "id": "G03",
-   "name_zh": "地表逕流與集水區（D8 流向累積）",
-   "name_en": "Flow Accumulation & Watershed Delineation (D8)",
-   "family": "G",
-   "family_name": "空間分析",
-   "file": "G03_FlowAccumulationD8.cs",
-   "loc": 305,
-   "logic": [
-    "搜尋／求解"
-   ],
-   "data_structure": [
-    "網格",
-    "圖"
-   ],
-   "difficulty": 3,
-   "difficulty_reason": "305 行、單一元件，自訂一個二元堆積 class（MinHeap）與 PriorityFlood、IsEdge、ToMesh 等方法；要理解「每格一個下游指標」構成的樹、依高程排序的拓樸累加與優先佇列，數學只需要高差 ÷ 距離的坡度，但資料流比一般迴圈範例多一層。",
-   "tags": [
-    "網格",
-    "鄰居搜尋",
-    "排序",
-    "優先佇列",
-    "樹狀結構",
-    "地形",
-    "水文",
-    "景觀分析"
-   ],
-   "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
-   "how_it_works": [
-    "取樣：把 Surface／Brep 轉成 Mesh，在 cellCount 決定的格點上由上往下打射線（Intersection.MeshRay），得到高程陣列 z。",
-    "填窪：Priority-Flood 把所有邊界格放進優先佇列，每次取出最低的一格往內淹，比它低的鄰居抬到它的高度再加一點 ε，封閉窪地因此都有出路。",
-    "流向（D8）：每格比較八個鄰居的「高差 ÷ 距離」，取最大的那個當下游指標 down[k]；找不到更低鄰居的就是出口。",
-    "累積：依高程由高到低排序（Array.Sort），每格把自己的水量加到下游格，同時由上游河段的河序推出 Strahler 河序。",
-    "河網：累積量 ≥ streamThreshold 的格子是河道，從源頭或匯流點沿箭頭追到下一個匯流點，輸出一段段 Polyline 與河序。",
-    "集水區：依高程由低到高，每格繼承下游格的出口編號；把面積最大的 basinCount 個集水區上色，輸出格子 Mesh 與流向箭頭。"
-   ],
-   "pseudo_code": [
-    "public class Script_Instance",
-    "  private void RunScript(…)",
-    "    輸入 terrain, cellCount, fillSinks, streamThreshold, basinCount",
-    "    輸出 streams, orders, basins, flowLines, info",
-    "",
-    "    // 0. 防呆",
-    "    terrain 轉不成 Mesh → 結束",
-    "    cellCount 限 4～400；basinCount 至少 1",
-    "",
-    "    // 1. DATA 資料",
-    "    長邊切 cellCount 格 → 格子大小",
-    "    每格中心從上往下打射線 → 高程；沒打到 → 無資料",
-    "",
-    "    // 2. INIT 初始",
-    "    fillSinks → Priority-Flood 填窪（窪地抬到溢流高度再多一點點）",
-    "    每格找 8 個鄰居中最陡的下坡 → 下游（D8）；沒有 → 出口",
-    "    格子依高程由高到低排序",
-    "",
-    "    // 3. LOOP 迭代",
-    "    每格降雨 1",
-    "    由高到低每一格：",
-    "      累積量 ≥ streamThreshold → 算 Strahler 河序",
-    "      水量加給下游，記下游有幾條河道流進來",
-    "    從源頭或匯流點沿下游追到下一個匯流點 → 一段河道",
-    "    由低到高每一格：沿用下游格的出口編號 → 集水區",
-    "",
-    "    // 4. OUTPUT 輸出",
-    "    河道 → streams；河序 → orders",
-    "    最大的 basinCount 個集水區上色、其餘灰色 → basins",
-    "    每格指向下游的短線 → flowLines",
-    "    格子數、填窪格數、最大累積量、河段數、集水區數 → info",
-    "",
-    "  // ----- RunScript 下方 -----",
-    "  Fields：8 個鄰居的偏移與距離（對角 √2）、格數、格子大小、外框",
-    "  PriorityFlood：從邊界往內淹，比周圍低的格子抬高；回傳抬了幾格",
-    "  IsEdge：在邊界上或旁邊沒資料嗎",
-    "  Id：欄列 → 格號",
-    "  P：格號 → 格子中心點",
-    "  Hue：數字 → 顏色",
-    "  ToMesh：Surface、Brep、Mesh 都轉成 Mesh",
-    "  MinHeap：二元堆積，每次取出最低的格子"
-   ],
-   "key_params": [
+  "agent": "ag_G03",
+  "algorithms": [
     {
-     "name": "terrain",
-     "effect": "輸入地形（Surface、Brep 或 Mesh）；形狀決定水往哪裡流，可以直接接 C04 雜訊地形或實測 DEM 轉成的 Mesh"
-    },
-    {
-     "name": "cellCount",
-     "effect": "長邊格子數；越大河網越細緻，但計算量約與格子總數 × log 成正比，建議 40–150"
-    },
-    {
-     "name": "fillSinks",
-     "effect": "true 時先填窪，水系連成一片、出口都在邊界；false 時每個窪地各自成為內流集水區，可用來找積水處"
-    },
-    {
-     "name": "streamThreshold",
-     "effect": "成為河道的最小上游格數；調小出現許多細小支流，調大只剩主幹河"
-    },
-    {
-     "name": "basinCount",
-     "effect": "上色的最大集水區數；其餘小集水區（多半是邊緣零碎的）畫成灰色"
+      "id": "G03",
+      "name_zh": "地表逕流與集水區（D8 流向累積）",
+      "name_en": "Flow Accumulation & Watershed Delineation (D8)",
+      "family": "G",
+      "family_name": "空間分析",
+      "file": "G03_FlowAccumulationD8.cs",
+      "loc": 305,
+      "logic": [
+        "搜尋／求解"
+      ],
+      "data_structure": [
+        "網格",
+        "圖"
+      ],
+      "difficulty": 3,
+      "difficulty_reason": "305 行、單一元件，自訂一個二元堆積 class（MinHeap）與 PriorityFlood、IsEdge、ToMesh 等方法；要理解「每格一個下游指標」構成的樹、依高程排序的拓樸累加與優先佇列，數學只需要高差 ÷ 距離的坡度，但資料流比一般迴圈範例多一層。",
+      "tags": [
+        "網格",
+        "鄰居搜尋",
+        "排序",
+        "優先佇列",
+        "樹狀結構",
+        "地形",
+        "水文",
+        "景觀分析"
+      ],
+      "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
+      "how_it_works": [
+        "取樣：把 Surface／Brep 轉成 Mesh，在 cellCount 決定的格點上由上往下打射線（Intersection.MeshRay），得到高程陣列 z。",
+        "填窪：Priority-Flood 把所有邊界格放進優先佇列，每次取出最低的一格往內淹，比它低的鄰居抬到它的高度再加一點 ε，封閉窪地因此都有出路。",
+        "流向（D8）：每格比較八個鄰居的「高差 ÷ 距離」，取最大的那個當下游指標 down[k]；找不到更低鄰居的就是出口。",
+        "累積：依高程由高到低排序（Array.Sort），每格把自己的水量加到下游格，同時由上游河段的河序推出 Strahler 河序。",
+        "河網：累積量 ≥ streamThreshold 的格子是河道，從源頭或匯流點沿箭頭追到下一個匯流點，輸出一段段 Polyline 與河序。",
+        "集水區：依高程由低到高，每格繼承下游格的出口編號；把面積最大的 basinCount 個集水區上色，輸出格子 Mesh 與流向箭頭。"
+      ],
+      "pseudo_code": [
+        "public class Script_Instance",
+        "  private void RunScript(…)",
+        "    輸入 terrain, cellCount, fillSinks, streamThreshold, basinCount",
+        "    輸出 streams, orders, basins, flowLines, info",
+        "",
+        "    // 0. 防呆",
+        "    terrain 轉不成 Mesh → 結束",
+        "    cellCount 限 4～400；basinCount 至少 1",
+        "",
+        "    // 1. DATA 資料",
+        "    長邊切 cellCount 格 → 格子大小",
+        "    每格中心從上往下打射線 → 高程；沒打到 → 無資料",
+        "",
+        "    // 2. INIT 初始",
+        "    fillSinks → Priority-Flood 填窪（窪地抬到溢流高度再多一點點）",
+        "    每格找 8 個鄰居中最陡的下坡 → 下游（D8）；沒有 → 出口",
+        "    格子依高程由高到低排序",
+        "",
+        "    // 3. LOOP 迭代",
+        "    每格降雨 1",
+        "    由高到低每一格：",
+        "      累積量 ≥ streamThreshold → 算 Strahler 河序",
+        "      水量加給下游，記下游有幾條河道流進來",
+        "    從源頭或匯流點沿下游追到下一個匯流點 → 一段河道",
+        "    由低到高每一格：沿用下游格的出口編號 → 集水區",
+        "",
+        "    // 4. OUTPUT 輸出",
+        "    河道 → streams；河序 → orders",
+        "    最大的 basinCount 個集水區上色、其餘灰色 → basins",
+        "    每格指向下游的短線 → flowLines",
+        "    格子數、填窪格數、最大累積量、河段數、集水區數 → info",
+        "",
+        "  // ----- RunScript 下方 -----",
+        "  Fields：8 個鄰居的偏移與距離（對角 √2）、格數、格子大小、外框",
+        "  PriorityFlood：從邊界往內淹，比周圍低的格子抬高；回傳抬了幾格",
+        "  IsEdge：在邊界上或旁邊沒資料嗎",
+        "  Id：欄列 → 格號",
+        "  P：格號 → 格子中心點",
+        "  Hue：數字 → 顏色",
+        "  ToMesh：Surface、Brep、Mesh 都轉成 Mesh",
+        "  MinHeap：二元堆積，每次取出最低的格子"
+      ],
+      "key_params": [
+        {
+          "name": "terrain",
+          "effect": "輸入地形（Surface、Brep 或 Mesh）；形狀決定水往哪裡流，可以直接接 C04 雜訊地形或實測 DEM 轉成的 Mesh"
+        },
+        {
+          "name": "cellCount",
+          "effect": "長邊格子數；越大河網越細緻，但計算量約與格子總數 × log 成正比，建議 40–150"
+        },
+        {
+          "name": "fillSinks",
+          "effect": "true 時先填窪，水系連成一片、出口都在邊界；false 時每個窪地各自成為內流集水區，可用來找積水處"
+        },
+        {
+          "name": "streamThreshold",
+          "effect": "成為河道的最小上游格數；調小出現許多細小支流，調大只剩主幹河"
+        },
+        {
+          "name": "basinCount",
+          "effect": "上色的最大集水區數；其餘小集水區（多半是邊緣零碎的）畫成灰色"
+        }
+      ],
+      "csharp_concepts": [
+        "一維陣列模擬二維格子（k = j·nx + i）",
+        "Array.Sort(keys, items) 依鍵值同步排序",
+        "自訂二元堆積 class（優先佇列）",
+        "Intersection.MeshRay 射線取樣",
+        "Dictionary<int,int> 統計集水區大小",
+        "Mesh 頂點色（VertexColors）",
+        "int[] 當指標構成樹狀結構"
+      ],
+      "prerequisites": [
+        "巢狀迴圈與二維格子索引",
+        "排序與比較函式",
+        "堆積／優先佇列的概念",
+        "坡度（高差 ÷ 水平距離）",
+        "C04 雜訊地形或任一種地形 Mesh 的建立"
+      ],
+      "teaching_note": "建議先不填窪，只寫 D8：在小格子（20×20）上畫出每格的箭頭，確認箭頭都指向下坡；再加排序累積，用線寬顯示累積量，學習者會看到河網「自己長出來」。接著故意做一個窪地，觀察河流在窪地斷掉，再加上 Priority-Flood 解決，最後才做集水區標記與 Strahler 河序。常見錯誤：對角鄰居忘了除以 √2，使河道偏向斜向；累積時沒有依高程排序，導致下游先被處理而少算水量；填窪時沒有加 ε，平地上的格子彼此等高、找不到下坡。效能上，射線取樣是最慢的部分（格子數 × 網格面數），cellCount 超過 200 時可以改用 Mesh.ClosestPoint 或先把地形簡化；優先佇列在 Rhino 8 可以改用 .NET 的 PriorityQueue<int,double>。",
+      "variations": [
+        {
+          "title": "D∞ 無限方向流向（Tarboton）",
+          "level": 4,
+          "what_changes": "流向規則：從單一鄰居改成在兩個鄰居之間分配",
+          "how": "在每格周圍切成 8 個三角面，對每個三角面算斜面最陡方向角 r 與坡度，取坡度最大的三角面；把 acc 依角度比例分給夾住該方向的兩個鄰居（down1、down2 與權重 w、1−w），累積迴圈改成 acc[down1] += w·acc[k]、acc[down2] += (1−w)·acc[k]。",
+          "result": "河網不再被限制在 45° 的鋸齒方向，平緩坡面上的匯流帶變得平滑，集水面積估計更接近真實地形。"
+        },
+        {
+          "title": "多流向分流（FD8／MFD）",
+          "level": 3,
+          "what_changes": "累積規則：水量分給所有下坡鄰居",
+          "how": "把 down[k] 改成 List<(int n, double w)>，對每個 z 更低的鄰居算 w = (坡度)^p，正規化後把 acc[k]·w 分給每個鄰居；新增 exponent p 輸入（1.1 左右接近 Freeman，越大越接近 D8），並加上「累積量超過門檻後改回單一流向」的開關。",
+          "result": "山坡上出現扇形散開的濕潤帶、河谷才收斂成線，適合畫坡面漫流與草溝分布，而不是只有一條條細河。"
+        },
+        {
+          "title": "降雨與不透水面權重",
+          "level": 2,
+          "what_changes": "輸入：每格的初始水量不再是 1",
+          "how": "新增 List<Curve> 屋頂、鋪面、綠地輪廓與對應的逕流係數（例如屋頂 0.9、柏油 0.85、草地 0.2），取樣時用 Curve.Contains 判斷每格落在哪一區，acc 初值改成 rain × 係數 × 格子面積。",
+          "result": "同一塊地形在硬鋪面多的一側河道明顯變粗，可以直接比較透水鋪面改造前後各出口的逕流量。"
+        },
+        {
+          "title": "建築與道路燒入地形",
+          "level": 3,
+          "what_changes": "輸入：在取樣後修改高程格",
+          "how": "新增建築 Brep 與道路 Curve 輸入：建築腳印內的格子抬高（z += 牆高，或直接設為無資料 NaN），道路中心線附近 2 格內降低 0.15 m（stream burning 的做法），再進入填窪與 D8。",
+          "result": "水流被建築擋住而繞行，並沿道路側溝集中，河網從自然地形的樹枝狀變成貼著街廓走的都市排水網。"
+        },
+        {
+          "title": "保留窪地：積水點與滯洪池",
+          "level": 3,
+          "what_changes": "分析：輸出填窪的差值而不是丟掉它",
+          "how": "同時保留原始 z 與填窪後的 zf，depth = zf − z > 0 的格子就是會積水的窪地；用 flood-fill（佇列）把相連的積水格分群，每群輸出面積、體積（Σdepth × 格子面積）與邊界 Polyline（接 C05 的等值線或直接畫格子邊）。",
+          "result": "得到基地上每個「藍點」積水區的位置與蓄水量，可直接當作雨水花園或滯洪池的候選位置。"
+        },
+        {
+          "title": "河序決定管徑與草溝寬度",
+          "level": 2,
+          "what_changes": "輸出：河道轉成有粗細的構件",
+          "how": "把每段 Polyline 依 Strahler 河序 o 設半徑 r = r0 × 1.6^(o−1)，用 Brep.CreatePipe 產生管件；或用 Curve.Offset 向兩側偏移成草溝平面，寬度依累積量 √acc 漸變，匯出給雷切或 3D 列印的地形模型。",
+          "result": "得到一套由源頭細、下游粗的排水管或生態草溝配置，模型上可以一眼讀出集水階層。"
+        },
+        {
+          "title": "畫一條溝，比較改造前後",
+          "level": 3,
+          "what_changes": "分析：設計介入與前後差異",
+          "how": "新增 List<Curve> swales（設計者畫的截水溝或土堤）：溝線附近的格子降低、堤線附近的格子抬高，分別跑兩次完整流程，輸出 Δacc = acc改造後 − acc原始 的彩色網格，並列出每個出口的流量變化。",
+          "result": "一張紅藍差異圖顯示截水溝把哪些坡面的水攔下、改送到哪個出口，方便反覆調整溝的位置與走向。"
+        },
+        {
+          "title": "河流侵蝕地形演化（stream power）",
+          "level": 4,
+          "what_changes": "時間：流量回頭改寫地形並重算",
+          "how": "外層加 steps 迴圈：每步先做 D8 與累積，再對每格 z -= K·acc^m·slope^n·dt（常用 m = 0.5、n = 1），並加上均勻抬升 U·dt；每 10 步把地形 Mesh 存進 DataTree 分支，用 Slider 選擇顯示。",
+          "result": "隨機地形慢慢被切出分枝狀山谷與稜線，河谷越來越深、網路越來越像真實流域，可以做成地景演化動畫。"
+        },
+        {
+          "title": "三角網格（TIN）上的流向",
+          "level": 3,
+          "what_changes": "維度：從規則格子改成不規則網格",
+          "how": "不取樣成格子，直接用 Mesh.TopologyVertices：每個頂點的鄰居改用 ConnectedTopologyVertices，坡度用實際的 3D 邊長算，排序與累積迴圈不變；可先用 E02 Poisson 取樣＋Delaunay 產生均勻的不規則網格。",
+          "result": "河網沒有 45° 的格子方向感，沿著任意走向的谷線蜿蜒，也能直接套在實測點雲轉成的 TIN 上。"
+        },
+        {
+          "title": "自由曲面屋頂排水",
+          "level": 3,
+          "what_changes": "維度：把地形換成建築屋頂曲面",
+          "how": "在屋頂 Surface 的 UV 參數域上建格（Surface.PointAt(u,v)），高程用點的世界座標 Z，鄰居距離改用 3D 距離；出口不是只在邊界，而是屋面邊緣最低點，輸出每個出口的集水面積當落水頭的配置依據。",
+          "result": "在薄殼或波浪屋面上畫出雨水的匯流線與各落水頭負擔的屋面範圍，可以檢查有沒有積水死角。"
+        },
+        {
+          "title": "沿稜線的步道（接 F05）",
+          "level": 4,
+          "what_changes": "混合：用集水分析當 F05 最短路徑的成本",
+          "how": "以本演算法算出 acc 與集水區編號，把「累積量大（易淹）」與「跨越集水區邊界次數」轉成每格成本 cost = 1 + a·log(acc)；把成本格交給 F05 Dijkstra，並讓集水區邊界（分水嶺）的格子成本最低。",
+          "result": "步道會避開谷底與河道、沿著分水嶺稜線走，不用額外排水設施，對應地景設計中「沿稜線走、跨谷少」的原則。"
+        },
+        {
+          "title": "濕度指數 TWI 植栽分區",
+          "level": 2,
+          "what_changes": "分析：由累積量與坡度算出新的指標場",
+          "how": "每格算 TWI = ln(acc × 格子面積 ÷ 格子寬 ÷ tanβ)，β 為該格到下游的坡度（tanβ 設下限 0.001 避免除以 0）；把 TWI 分成 3–5 段上色，輸出每段的格子中心點供植栽群落配置。",
+          "result": "得到從乾燥稜線到潮濕谷底的連續濕度分區圖，可對應旱生、中生、濕生植栽帶。"
+        }
+      ],
+      "project_seeds": [
+        {
+          "title": "校園雨水花園選址",
+          "brief": "以校園實測地形與建築、鋪面輪廓建立逕流係數，找出累積量大的匯流線與保留窪地，提出三處雨水花園與草溝，並比較設置前後各出口的逕流量。",
+          "difficulty": 3,
+          "combine_with": [
+            "C05"
+          ]
+        },
+        {
+          "title": "雜訊地形上的河網與聚落",
+          "brief": "用 C04 產生多組地形，跑 D8 取得河網與集水區，再以河道距離與坡度為條件用 E02 撒出聚落點，做成一系列可比較的虛構流域地圖。",
+          "difficulty": 3,
+          "combine_with": [
+            "C04",
+            "E02"
+          ]
+        },
+        {
+          "title": "流量刻畫的地景切片模型",
+          "brief": "以 stream power 迭代讓地形被河流侵蝕 50–200 步，取最終地形用 C05 等高線切片，雷切成疊層模型，河道依河序做不同深度的刻痕。",
+          "difficulty": 4,
+          "combine_with": [
+            "C04",
+            "C05"
+          ]
+        },
+        {
+          "title": "自由曲面屋頂的落水頭配置",
+          "brief": "在波浪或薄殼屋面上做曲面版 D8，找出匯流線與出口，依各出口的集水面積決定落水頭位置與管徑，並檢查有無積水死角。",
+          "difficulty": 4,
+          "combine_with": [
+            "E04"
+          ]
+        },
+        {
+          "title": "以集水區劃分的街廓與步道",
+          "brief": "用集水區邊界當街廓劃分的骨架、河道當綠帶，再以 F05 沿分水嶺規劃步道網，比較和格子狀街廓在逕流量與土方量上的差異。",
+          "difficulty": 4,
+          "combine_with": [
+            "F05",
+            "E03"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "title": "The extraction of drainage networks from digital elevation data",
+          "author": "John F. O'Callaghan, David M. Mark",
+          "year": "1984",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0734189X84800110"
+        },
+        {
+          "title": "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm for Digital Elevation Models",
+          "author": "Richard Barnes, Clarence Lehman, David Mulla",
+          "year": "2014",
+          "url": "https://arxiv.org/abs/1511.04463"
+        },
+        {
+          "title": "A new method for the determination of flow directions and upslope areas in grid digital elevation models",
+          "author": "David G. Tarboton",
+          "year": "1997",
+          "url": "https://doi.org/10.1029/96WR03137"
+        }
+      ]
     }
-   ],
-   "csharp_concepts": [
-    "一維陣列模擬二維格子（k = j·nx + i）",
-    "Array.Sort(keys, items) 依鍵值同步排序",
-    "自訂二元堆積 class（優先佇列）",
-    "Intersection.MeshRay 射線取樣",
-    "Dictionary<int,int> 統計集水區大小",
-    "Mesh 頂點色（VertexColors）",
-    "int[] 當指標構成樹狀結構"
-   ],
-   "prerequisites": [
-    "巢狀迴圈與二維格子索引",
-    "排序與比較函式",
-    "堆積／優先佇列的概念",
-    "坡度（高差 ÷ 水平距離）",
-    "C04 雜訊地形或任一種地形 Mesh 的建立"
-   ],
-   "teaching_note": "建議先不填窪，只寫 D8：在小格子（20×20）上畫出每格的箭頭，確認箭頭都指向下坡；再加排序累積，用線寬顯示累積量，學習者會看到河網「自己長出來」。接著故意做一個窪地，觀察河流在窪地斷掉，再加上 Priority-Flood 解決，最後才做集水區標記與 Strahler 河序。常見錯誤：對角鄰居忘了除以 √2，使河道偏向斜向；累積時沒有依高程排序，導致下游先被處理而少算水量；填窪時沒有加 ε，平地上的格子彼此等高、找不到下坡。效能上，射線取樣是最慢的部分（格子數 × 網格面數），cellCount 超過 200 時可以改用 Mesh.ClosestPoint 或先把地形簡化；優先佇列在 Rhino 8 可以改用 .NET 的 PriorityQueue<int,double>。",
-   "variations": [
+  ],
+  "cases": [
     {
-     "title": "D∞ 無限方向流向（Tarboton）",
-     "level": 4,
-     "what_changes": "流向規則：從單一鄰居改成在兩個鄰居之間分配",
-     "how": "在每格周圍切成 8 個三角面，對每個三角面算斜面最陡方向角 r 與坡度，取坡度最大的三角面；把 acc 依角度比例分給夾住該方向的兩個鄰居（down1、down2 與權重 w、1−w），累積迴圈改成 acc[down1] += w·acc[k]、acc[down2] += (1−w)·acc[k]。",
-     "result": "河網不再被限制在 45° 的鋸齒方向，平緩坡面上的匯流帶變得平滑，集水面積估計更接近真實地形。"
+      "id": "G03-01",
+      "algo": "G03",
+      "title": "Groundhog：景觀建築的 Grasshopper 外掛與知識庫",
+      "creator": "Philip Belesky（RMIT 大學景觀建築）",
+      "year": "2018",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape",
+        "performance"
+      ],
+      "source": "research",
+      "scale": "地景",
+      "summary": "Groundhog 是為景觀建築設計的 Grasshopper 外掛，提供坡度計算、地表逕流路徑（Flow Paths）與集水區（Flow Catchments）等分析元件，並附上以參數化方式重建知名地景作品的教學。它的逕流是從取樣點沿最陡下坡一路追蹤，集水區則依各路徑的終點分組、以 Voronoi 細胞合併而成；和基礎範例「每一格都有下游指標、依高程排序累加」相比，Groundhog 是逐條追線的做法，較直觀但不會得到整張累積量場。",
+      "variations": [
+        {
+          "name": "取樣點追線改成全格累積",
+          "how": "把 Groundhog 式「每個點沿下坡走到底」改成基礎範例的 down[] 陣列＋排序累積，路徑的重疊次數就等於累積量。",
+          "effect": "同樣的地形一次得到所有格子的集水面積，河道粗細不必再靠路徑疊加估計。"
+        },
+        {
+          "name": "終點分組的集水區",
+          "how": "保留基礎範例的 label[]，但像 Groundhog 一樣只在指定的取樣點上輸出，並用 E03 Voronoi 把同一出口的細胞合併成多邊形。",
+          "effect": "得到較平滑、可直接放進平面圖的集水區邊界線。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "景觀分析",
+        "外掛",
+        "地形",
+        "教學資源"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Groundhog"
+      ],
+      "url": "https://philipbelesky.com/projects/groundhog"
     },
     {
-     "title": "多流向分流（FD8／MFD）",
-     "level": 3,
-     "what_changes": "累積規則：水量分給所有下坡鄰居",
-     "how": "把 down[k] 改成 List<(int n, double w)>，對每個 z 更低的鄰居算 w = (坡度)^p，正規化後把 acc[k]·w 分給每個鄰居；新增 exponent p 輸入（1.1 左右接近 Freeman，越大越接近 D8），並加上「累積量超過門檻後改回單一流向」的開關。",
-     "result": "山坡上出現扇形散開的濕潤帶、河谷才收斂成線，適合畫坡面漫流與草溝分布，而不是只有一條條細河。"
+      "id": "G03-02",
+      "algo": "G03",
+      "title": "MAX IV 實驗室地景（Groundhog 參數化重建）",
+      "creator": "Snøhetta（原設計）；Philip Belesky（Groundhog 重建）",
+      "year": "2016",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "research",
+      "scale": "地景",
+      "summary": "Snøhetta 為 MAX IV 同步輻射實驗室設計的波紋狀土丘地景，Groundhog 的專案頁以參數化方式重建其地形，並說明如此起伏的整地附帶管理地表逕流的效益，另以 Grasshopper 定義量測雨水的排放與滯留。它示範了地景設計中「地形形狀先決定、再用水文分析檢查」的流程；若把重建的地形接到基礎範例，可以看到每條溝谷的累積量與各低窪處的集水範圍。",
+      "variations": [
+        {
+          "name": "波紋地形的積水點",
+          "how": "以正弦波疊加產生重建地形，fillSinks 設為 false，統計每個內流窪地的集水格數與填窪深度。",
+          "effect": "找出波谷中會積水的位置與蓄水量，對應滯留設計。"
+        },
+        {
+          "name": "波長與逕流比較",
+          "how": "用 Slider 改變土丘的波長與振幅，每次重算並記錄邊界出口的總累積量與最大河序。",
+          "effect": "得到地形參數與逕流集中程度的關係曲線，協助在造型與排水之間取捨。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "地形",
+        "整地",
+        "雨水管理",
+        "景觀分析"
+      ],
+      "tools": [
+        "Grasshopper",
+        "Groundhog"
+      ],
+      "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/"
     },
     {
-     "title": "降雨與不透水面權重",
-     "level": 2,
-     "what_changes": "輸入：每格的初始水量不再是 1",
-     "how": "新增 List<Curve> 屋頂、鋪面、綠地輪廓與對應的逕流係數（例如屋頂 0.9、柏油 0.85、草地 0.2），取樣時用 Curve.Contains 判斷每格落在哪一區，acc 初值改成 rain × 係數 × 格子面積。",
-     "result": "同一塊地形在硬鋪面多的一側河道明顯變粗，可以直接比較透水鋪面改造前後各出口的逕流量。"
+      "id": "G03-03",
+      "algo": "G03",
+      "title": "Rainwater+：整合進設計軟體的都市雨水管理工具",
+      "creator": "Yujiao Chen, Holly W. Samuelson, Zheming Tong",
+      "year": "2016",
+      "category": "performance",
+      "categories_extra": [
+        "modeling",
+        "urban-landscape"
+      ],
+      "source": "research",
+      "scale": "群體／都市",
+      "summary": "刊於 Journal of Environmental Management 的研究，開發以 Rhino＋Grasshopper 為平台的開源雨水工具 Rainwater+，讓建築與景觀設計者在早期設計就能估算逕流量，並視覺化逕流的流向，協助配置低衝擊開發（LID）設施，文中附兩個案例示範。基礎範例只處理地形上的流向與累積，Rainwater+ 則把逕流量計算與設計工作流程結合；可把它的逕流係數概念加到基礎範例的初始水量上。",
+      "variations": [
+        {
+          "name": "LID 設施截流",
+          "how": "新增雨水花園或透水鋪面的輪廓輸入，落在其中的格子在累積時只把 (1 − 截流率) × acc 交給下游。",
+          "effect": "河網在 LID 設施下游明顯變細，可比較不同配置的削減效果。"
+        },
+        {
+          "name": "流向箭頭的設計圖面",
+          "how": "把 flowLines 依累積量分級上色並只在每 3 格畫一支，輸出成平面圖圖層。",
+          "effect": "得到設計初期可直接討論的逕流方向圖。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "雨水管理",
+        "低衝擊開發",
+        "性能分析",
+        "早期設計"
+      ],
+      "tools": [
+        "Rhino",
+        "Grasshopper",
+        "Rainwater+"
+      ],
+      "url": "https://www.sciencedirect.com/science/article/pii/S0301479716302468"
     },
     {
-     "title": "建築與道路燒入地形",
-     "level": 3,
-     "what_changes": "輸入：在取樣後修改高程格",
-     "how": "新增建築 Brep 與道路 Curve 輸入：建築腳印內的格子抬高（z += 牆高，或直接設為無資料 NaN），道路中心線附近 2 格內降低 0.15 m（stream burning 的做法），再進入填窪與 D8。",
-     "result": "水流被建築擋住而繞行，並沿道路側溝集中，河網從自然地形的樹枝狀變成貼著街廓走的都市排水網。"
+      "id": "G03-05",
+      "algo": "G03",
+      "title": "結合水文與土方成本效益的地形改造多目標最佳化",
+      "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
+      "year": "2024",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "research",
+      "scale": "地景",
+      "summary": "以 DEM 水文分析結合 NSGA-II 多目標最佳化來改造地形，同時追求最小化最大流速、最大化逕流路徑長度與最小化土方成本，用於降低降雨侵蝕與逕流動能的雨水管理。它把流向與逕流路徑當成地形設計的評估函數；基礎範例只算一次分析，這裡則是每個候選地形都要重跑一次流向，再交給演算法篩選。",
+      "variations": [
+        {
+          "name": "接 F04 基因演算法",
+          "how": "把地形用少數控制點（高度當基因）描述，每個個體跑一次 D8，適應度 = 最長流路長度 − a × 土方量，交給 F04 演化。",
+          "effect": "自動找出讓水繞行較長、流速較慢且土方較省的整地方案。"
+        },
+        {
+          "name": "最長流路輸出",
+          "how": "在累積迴圈裡同時記錄每格到源頭的最長路徑長度 L[k] = max(L[k], L[上游] + 距離)，出口處的 L 就是最長流路。",
+          "effect": "得到可當作最佳化目標的逕流路徑長度指標。"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "最佳化",
+        "整地",
+        "雨水管理",
+        "多目標"
+      ],
+      "tools": [
+        "DEM 水文分析",
+        "NSGA-II"
+      ],
+      "url": "https://arxiv.org/abs/2401.02698"
     },
     {
-     "title": "保留窪地：積水點與滯洪池",
-     "level": 3,
-     "what_changes": "分析：輸出填窪的差值而不是丟掉它",
-     "how": "同時保留原始 z 與填窪後的 zf，depth = zf − z > 0 的格子就是會積水的窪地；用 flood-fill（佇列）把相連的積水格分群，每群輸出面積、體積（Σdepth × 格子面積）與邊界 Polyline（接 C05 的等值線或直接畫格子邊）。",
-     "result": "得到基地上每個「藍點」積水區的位置與蓄水量，可直接當作雨水花園或滯洪池的候選位置。"
+      "id": "G03-51",
+      "algo": "G03",
+      "title": "Fantasy map generator（terrain.js）",
+      "creator": "Martin O'Leary",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "Martin O'Leary 為推特機器人 @unchartedatlas 寫的奇幻地圖生成程式，以 JavaScript＋D3.js 在 Voronoi 不規則網格上生成地形：每個點找最低的鄰居當下坡（downhill），用反覆迭代填平窪地（fillSinks），再依高度排序把水量（flux）往下游累加，流量大的地方畫成河流並用來侵蝕地形。它和基礎範例是同一套流向累積邏輯，但網格是不規則的 Voronoi 點而不是方格，輸出是手繪風格的地圖。",
+      "variations": [
+        {
+          "name": "方格換成不規則點",
+          "how": "把基礎範例的八鄰居改成 Delaunay 鄰接（用 E03 或 E02 取樣點建網格），down 取最低鄰居。",
+          "effect": "河道走向不再有 45° 的格子感，更像手繪地圖。"
+        },
+        {
+          "name": "流量回頭侵蝕",
+          "how": "每輪以 z -= k × √flux × 坡度 侵蝕後再重算 downhill 與 flux，重複數次。",
+          "effect": "河谷被切深，海岸與山脊輪廓更自然。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "D3.js",
+        "程序地圖",
+        "Voronoi",
+        "地形"
+      ],
+      "tools": [
+        "JavaScript",
+        "D3.js"
+      ],
+      "url": "https://github.com/mewo2/terrain"
     },
     {
-     "title": "河序決定管徑與草溝寬度",
-     "level": 2,
-     "what_changes": "輸出：河道轉成有粗細的構件",
-     "how": "把每段 Polyline 依 Strahler 河序 o 設半徑 r = r0 × 1.6^(o−1)，用 Brep.CreatePipe 產生管件；或用 Curve.Offset 向兩側偏移成草溝平面，寬度依累積量 √acc 漸變，匯出給雷切或 3D 列印的地形模型。",
-     "result": "得到一套由源頭細、下游粗的排水管或生態草溝配置，模型上可以一眼讀出集水階層。"
+      "id": "G03-52",
+      "algo": "G03",
+      "title": "Fantasy Map Generator（C++ 實作）",
+      "creator": "Ryan L. Guy",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "以 C++ 實作 Martin O'Leary 的奇幻地圖方法：先用 Planchon-Darboux 演算法填平窪地，確保每個點都有下坡路徑，再追蹤水往地圖邊緣流的流向圖（flow map），以流量（flux）決定河流位置並依流量與坡度侵蝕地形，最後加上城市、國界與地名標註。和基礎範例相比，它用不同的填窪法（Planchon-Darboux 迭代而非優先佇列），並把流量結果延伸到城市選址等後續規則。",
+      "variations": [
+        {
+          "name": "兩種填窪法比較",
+          "how": "把基礎範例的 Priority-Flood 換成 Planchon-Darboux：所有內部格先設成無限高，反覆降到「鄰居 + ε」直到不再變化，記錄迭代次數與時間。",
+          "effect": "看出優先佇列版一次完成、迭代版需要多輪掃描的效能差異。"
+        },
+        {
+          "name": "流量決定聚落位置",
+          "how": "每格分數 = √acc × 平坦度，扣除靠近既有聚落的分數後取最高分，重複放置數個聚落點。",
+          "effect": "聚落自然落在河流匯流處與平緩河谷。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "C++",
+        "程序地圖",
+        "填窪",
+        "地形"
+      ],
+      "tools": [
+        "C++"
+      ],
+      "url": "https://rlguy.com/map_generation/"
     },
     {
-     "title": "畫一條溝，比較改造前後",
-     "level": 3,
-     "what_changes": "分析：設計介入與前後差異",
-     "how": "新增 List<Curve> swales（設計者畫的截水溝或土堤）：溝線附近的格子降低、堤線附近的格子抬高，分別跑兩次完整流程，輸出 Δacc = acc改造後 − acc原始 的彩色網格，並列出每個出口的流量變化。",
-     "result": "一張紅藍差異圖顯示截水溝把哪些坡面的水攔下、改送到哪個出口，方便反覆調整溝的位置與走向。"
-    },
-    {
-     "title": "河流侵蝕地形演化（stream power）",
-     "level": 4,
-     "what_changes": "時間：流量回頭改寫地形並重算",
-     "how": "外層加 steps 迴圈：每步先做 D8 與累積，再對每格 z -= K·acc^m·slope^n·dt（常用 m = 0.5、n = 1），並加上均勻抬升 U·dt；每 10 步把地形 Mesh 存進 DataTree 分支，用 Slider 選擇顯示。",
-     "result": "隨機地形慢慢被切出分枝狀山谷與稜線，河谷越來越深、網路越來越像真實流域，可以做成地景演化動畫。"
-    },
-    {
-     "title": "三角網格（TIN）上的流向",
-     "level": 3,
-     "what_changes": "維度：從規則格子改成不規則網格",
-     "how": "不取樣成格子，直接用 Mesh.TopologyVertices：每個頂點的鄰居改用 ConnectedTopologyVertices，坡度用實際的 3D 邊長算，排序與累積迴圈不變；可先用 E02 Poisson 取樣＋Delaunay 產生均勻的不規則網格。",
-     "result": "河網沒有 45° 的格子方向感，沿著任意走向的谷線蜿蜒，也能直接套在實測點雲轉成的 TIN 上。"
-    },
-    {
-     "title": "自由曲面屋頂排水",
-     "level": 3,
-     "what_changes": "維度：把地形換成建築屋頂曲面",
-     "how": "在屋頂 Surface 的 UV 參數域上建格（Surface.PointAt(u,v)），高程用點的世界座標 Z，鄰居距離改用 3D 距離；出口不是只在邊界，而是屋面邊緣最低點，輸出每個出口的集水面積當落水頭的配置依據。",
-     "result": "在薄殼或波浪屋面上畫出雨水的匯流線與各落水頭負擔的屋面範圍，可以檢查有沒有積水死角。"
-    },
-    {
-     "title": "沿稜線的步道（接 F05）",
-     "level": 4,
-     "what_changes": "混合：用集水分析當 F05 最短路徑的成本",
-     "how": "以本演算法算出 acc 與集水區編號，把「累積量大（易淹）」與「跨越集水區邊界次數」轉成每格成本 cost = 1 + a·log(acc)；把成本格交給 F05 Dijkstra，並讓集水區邊界（分水嶺）的格子成本最低。",
-     "result": "步道會避開谷底與河道、沿著分水嶺稜線走，不用額外排水設施，對應地景設計中「沿稜線走、跨谷少」的原則。"
-    },
-    {
-     "title": "濕度指數 TWI 植栽分區",
-     "level": 2,
-     "what_changes": "分析：由累積量與坡度算出新的指標場",
-     "how": "每格算 TWI = ln(acc × 格子面積 ÷ 格子寬 ÷ tanβ)，β 為該格到下游的坡度（tanβ 設下限 0.001 避免除以 0）；把 TWI 分成 3–5 段上色，輸出每段的格子中心點供植栽群落配置。",
-     "result": "得到從乾燥稜線到潮濕谷底的連續濕度分區圖，可對應旱生、中生、濕生植栽帶。"
+      "id": "G03-53",
+      "algo": "G03",
+      "title": "HeightField Flow Field 節點",
+      "creator": "SideFX",
+      "year": "2018",
+      "category": "modeling",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "source": "research",
+      "scale": "地景",
+      "summary": "Houdini 17.0 起提供的高度場節點，依高度圖產生累積流量（flow）與平均流向（flow dir）圖層：先在部分格子降雨，再讓水沿下坡散開（Smooth 模式向所有下坡方向擴散、Granular 模式保持成束），可選擇依流量刻出谷地。它相當於多流向版本的流量累積，常用來當地形材質與植被分布的遮罩；和基礎範例的單一方向 D8 相比，結果較柔和，但沒有明確的樹狀河網與集水區編號。",
+      "variations": [
+        {
+          "name": "流量當遮罩",
+          "how": "把基礎範例的 acc 取 log 後正規化到 0–1，寫進 Mesh 頂點色或當作 C04 地形的材質混合權重。",
+          "effect": "谷地自動變成濕潤的深色、稜線保持乾燥，地形立刻有真實感。"
+        },
+        {
+          "name": "依流量刻谷",
+          "how": "每格 z -= depth × (log acc ÷ log maxAcc)，只做一次，不再迭代。",
+          "effect": "快速得到有河谷的地形，效果類似節點的 Adjust Height 選項。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Houdini",
+        "高度場",
+        "多流向",
+        "地形"
+      ],
+      "tools": [
+        "Houdini"
+      ],
+      "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heightfield_flowfield.html"
     }
-   ],
-   "project_seeds": [
-    {
-     "title": "校園雨水花園選址",
-     "brief": "以校園實測地形與建築、鋪面輪廓建立逕流係數，找出累積量大的匯流線與保留窪地，提出三處雨水花園與草溝，並比較設置前後各出口的逕流量。",
-     "difficulty": 3,
-     "combine_with": [
-      "C05"
-     ]
-    },
-    {
-     "title": "雜訊地形上的河網與聚落",
-     "brief": "用 C04 產生多組地形，跑 D8 取得河網與集水區，再以河道距離與坡度為條件用 E02 撒出聚落點，做成一系列可比較的虛構流域地圖。",
-     "difficulty": 3,
-     "combine_with": [
-      "C04",
-      "E02"
-     ]
-    },
-    {
-     "title": "流量刻畫的地景切片模型",
-     "brief": "以 stream power 迭代讓地形被河流侵蝕 50–200 步，取最終地形用 C05 等高線切片，雷切成疊層模型，河道依河序做不同深度的刻痕。",
-     "difficulty": 4,
-     "combine_with": [
-      "C04",
-      "C05"
-     ]
-    },
-    {
-     "title": "自由曲面屋頂的落水頭配置",
-     "brief": "在波浪或薄殼屋面上做曲面版 D8，找出匯流線與出口，依各出口的集水面積決定落水頭位置與管徑，並檢查有無積水死角。",
-     "difficulty": 4,
-     "combine_with": [
-      "E04"
-     ]
-    },
-    {
-     "title": "以集水區劃分的街廓與步道",
-     "brief": "用集水區邊界當街廓劃分的骨架、河道當綠帶，再以 F05 沿分水嶺規劃步道網，比較和格子狀街廓在逕流量與土方量上的差異。",
-     "difficulty": 4,
-     "combine_with": [
-      "F05",
-      "E03"
-     ]
-    }
-   ],
-   "references": [
-    {
-     "title": "The extraction of drainage networks from digital elevation data",
-     "author": "John F. O'Callaghan, David M. Mark",
-     "year": "1984",
-     "url": "https://www.sciencedirect.com/science/article/abs/pii/S0734189X84800110"
-    },
-    {
-     "title": "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm for Digital Elevation Models",
-     "author": "Richard Barnes, Clarence Lehman, David Mulla",
-     "year": "2014",
-     "url": "https://arxiv.org/abs/1511.04463"
-    },
-    {
-     "title": "A new method for the determination of flow directions and upslope areas in grid digital elevation models",
-     "author": "David G. Tarboton",
-     "year": "1997",
-     "url": "https://doi.org/10.1029/96WR03137"
-    }
-   ]
-  }
- ],
- "cases": [
-  {
-   "id": "G03-01",
-   "algo": "G03",
-   "title": "Groundhog：景觀建築的 Grasshopper 外掛與知識庫",
-   "creator": "Philip Belesky（RMIT 大學景觀建築）",
-   "year": "2018",
-   "category": "modeling",
-   "categories_extra": [
-    "urban-landscape",
-    "performance"
-   ],
-   "scale": "地景",
-   "summary": "Groundhog 是為景觀建築設計的 Grasshopper 外掛，提供坡度計算、地表逕流路徑（Flow Paths）與集水區（Flow Catchments）等分析元件，並附上以參數化方式重建知名地景作品的教學。它的逕流是從取樣點沿最陡下坡一路追蹤，集水區則依各路徑的終點分組、以 Voronoi 細胞合併而成；和基礎範例「每一格都有下游指標、依高程排序累加」相比，Groundhog 是逐條追線的做法，較直觀但不會得到整張累積量場。",
-   "variations": [
-    {
-     "name": "取樣點追線改成全格累積",
-     "how": "把 Groundhog 式「每個點沿下坡走到底」改成基礎範例的 down[] 陣列＋排序累積，路徑的重疊次數就等於累積量。",
-     "effect": "同樣的地形一次得到所有格子的集水面積，河道粗細不必再靠路徑疊加估計。"
-    },
-    {
-     "name": "終點分組的集水區",
-     "how": "保留基礎範例的 label[]，但像 Groundhog 一樣只在指定的取樣點上輸出，並用 E03 Voronoi 把同一出口的細胞合併成多邊形。",
-     "effect": "得到較平滑、可直接放進平面圖的集水區邊界線。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "景觀分析",
-    "外掛",
-    "地形",
-    "教學資源"
-   ],
-   "tools": [
-    "Grasshopper",
-    "Groundhog"
-   ],
-   "url": "https://philipbelesky.com/projects/groundhog"
-  },
-  {
-   "id": "G03-02",
-   "algo": "G03",
-   "title": "MAX IV 實驗室地景（Groundhog 參數化重建）",
-   "creator": "Snøhetta（原設計）；Philip Belesky（Groundhog 重建）",
-   "year": "2016",
-   "category": "urban-landscape",
-   "categories_extra": [
-    "performance"
-   ],
-   "scale": "地景",
-   "summary": "Snøhetta 為 MAX IV 同步輻射實驗室設計的波紋狀土丘地景，Groundhog 的專案頁以參數化方式重建其地形，並說明如此起伏的整地附帶管理地表逕流的效益，另以 Grasshopper 定義量測雨水的排放與滯留。它示範了地景設計中「地形形狀先決定、再用水文分析檢查」的流程；若把重建的地形接到基礎範例，可以看到每條溝谷的累積量與各低窪處的集水範圍。",
-   "variations": [
-    {
-     "name": "波紋地形的積水點",
-     "how": "以正弦波疊加產生重建地形，fillSinks 設為 false，統計每個內流窪地的集水格數與填窪深度。",
-     "effect": "找出波谷中會積水的位置與蓄水量，對應滯留設計。"
-    },
-    {
-     "name": "波長與逕流比較",
-     "how": "用 Slider 改變土丘的波長與振幅，每次重算並記錄邊界出口的總累積量與最大河序。",
-     "effect": "得到地形參數與逕流集中程度的關係曲線，協助在造型與排水之間取捨。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "地形",
-    "整地",
-    "雨水管理",
-    "景觀分析"
-   ],
-   "tools": [
-    "Grasshopper",
-    "Groundhog"
-   ],
-   "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/"
-  },
-  {
-   "id": "G03-03",
-   "algo": "G03",
-   "title": "Rainwater+：整合進設計軟體的都市雨水管理工具",
-   "creator": "Yujiao Chen, Holly W. Samuelson, Zheming Tong",
-   "year": "2016",
-   "category": "performance",
-   "categories_extra": [
-    "modeling",
-    "urban-landscape"
-   ],
-   "scale": "群體／都市",
-   "summary": "刊於 Journal of Environmental Management 的研究，開發以 Rhino＋Grasshopper 為平台的開源雨水工具 Rainwater+，讓建築與景觀設計者在早期設計就能估算逕流量，並視覺化逕流的流向，協助配置低衝擊開發（LID）設施，文中附兩個案例示範。基礎範例只處理地形上的流向與累積，Rainwater+ 則把逕流量計算與設計工作流程結合；可把它的逕流係數概念加到基礎範例的初始水量上。",
-   "variations": [
-    {
-     "name": "LID 設施截流",
-     "how": "新增雨水花園或透水鋪面的輪廓輸入，落在其中的格子在累積時只把 (1 − 截流率) × acc 交給下游。",
-     "effect": "河網在 LID 設施下游明顯變細，可比較不同配置的削減效果。"
-    },
-    {
-     "name": "流向箭頭的設計圖面",
-     "how": "把 flowLines 依累積量分級上色並只在每 3 格畫一支，輸出成平面圖圖層。",
-     "effect": "得到設計初期可直接討論的逕流方向圖。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "雨水管理",
-    "低衝擊開發",
-    "性能分析",
-    "早期設計"
-   ],
-   "tools": [
-    "Rhino",
-    "Grasshopper",
-    "Rainwater+"
-   ],
-   "url": "https://www.sciencedirect.com/science/article/pii/S0301479716302468"
-  },
-  {
-   "id": "G03-04",
-   "algo": "G03",
-   "title": "支援永續都市綠地設計的整合雨水分析模型",
-   "creator": "J. Jia, S. Zlatanova, K. Zhang, H. Liu",
-   "year": "2022",
-   "category": "performance",
-   "categories_extra": [
-    "urban-landscape"
-   ],
-   "scale": "群體／都市",
-   "summary": "發表於 ISPRS Annals（第 17 屆 3D GeoInfo 研討會）的論文，指出傳統水文模型對設計者門檻太高，因此在 Rhino＋Grasshopper 中以粒子系統模擬並量化都市綠地的雨水逕流，輸入包含地形、建築腳印等都市物件，並檢驗迭代次數、降雨事件與粒子大小的敏感度。論文本身是粒子模擬，並非 D8 實作；它的角色是把逕流分析整合進綠地設計，和基礎範例比較可以看出「粒子沿坡滾動」與「每格一個下游指標再排序累加」兩種做法的差異。",
-   "variations": [
-    {
-     "name": "粒子與 D8 對照",
-     "how": "在同一地形上撒雨滴粒子沿 Mesh 最陡方向移動，記錄每格被經過的次數，和基礎範例的 acc 並排上色比較。",
-     "effect": "看出粒子法需要大量迭代才會收斂，而 D8 一次排序就得到完整累積量。"
-    },
-    {
-     "name": "建築腳印當阻擋",
-     "how": "把建築輪廓內的格子設成 NaN（無資料），IsEdge 會把它們旁邊的格子當成出口。",
-     "effect": "逕流在建築周邊匯集，可找出需要排水設施的牆腳位置。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "雨水管理",
-    "都市綠地",
-    "粒子模擬",
-    "性能分析"
-   ],
-   "tools": [
-    "Rhino",
-    "Grasshopper"
-   ],
-   "url": "https://isprs-annals.copernicus.org/articles/X-4-W2-2022/153/2022/"
-  },
-  {
-   "id": "G03-05",
-   "algo": "G03",
-   "title": "結合水文與土方成本效益的地形改造多目標最佳化",
-   "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
-   "year": "2024",
-   "category": "urban-landscape",
-   "categories_extra": [
-    "performance"
-   ],
-   "scale": "地景",
-   "summary": "以 DEM 水文分析結合 NSGA-II 多目標最佳化來改造地形，同時追求最小化最大流速、最大化逕流路徑長度與最小化土方成本，用於降低降雨侵蝕與逕流動能的雨水管理。它把流向與逕流路徑當成地形設計的評估函數；基礎範例只算一次分析，這裡則是每個候選地形都要重跑一次流向，再交給演算法篩選。",
-   "variations": [
-    {
-     "name": "接 F04 基因演算法",
-     "how": "把地形用少數控制點（高度當基因）描述，每個個體跑一次 D8，適應度 = 最長流路長度 − a × 土方量，交給 F04 演化。",
-     "effect": "自動找出讓水繞行較長、流速較慢且土方較省的整地方案。"
-    },
-    {
-     "name": "最長流路輸出",
-     "how": "在累積迴圈裡同時記錄每格到源頭的最長路徑長度 L[k] = max(L[k], L[上游] + 距離)，出口處的 L 就是最長流路。",
-     "effect": "得到可當作最佳化目標的逕流路徑長度指標。"
-    }
-   ],
-   "difficulty": 4,
-   "tags": [
-    "最佳化",
-    "整地",
-    "雨水管理",
-    "多目標"
-   ],
-   "tools": [
-    "DEM 水文分析",
-    "NSGA-II"
-   ],
-   "url": "https://arxiv.org/abs/2401.02698"
-  },
-  {
-   "id": "G03-51",
-   "algo": "G03",
-   "title": "Fantasy map generator（terrain.js）",
-   "creator": "Martin O'Leary",
-   "year": "2016",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "地景",
-   "summary": "Martin O'Leary 為推特機器人 @unchartedatlas 寫的奇幻地圖生成程式，以 JavaScript＋D3.js 在 Voronoi 不規則網格上生成地形：每個點找最低的鄰居當下坡（downhill），用反覆迭代填平窪地（fillSinks），再依高度排序把水量（flux）往下游累加，流量大的地方畫成河流並用來侵蝕地形。它和基礎範例是同一套流向累積邏輯，但網格是不規則的 Voronoi 點而不是方格，輸出是手繪風格的地圖。",
-   "variations": [
-    {
-     "name": "方格換成不規則點",
-     "how": "把基礎範例的八鄰居改成 Delaunay 鄰接（用 E03 或 E02 取樣點建網格），down 取最低鄰居。",
-     "effect": "河道走向不再有 45° 的格子感，更像手繪地圖。"
-    },
-    {
-     "name": "流量回頭侵蝕",
-     "how": "每輪以 z -= k × √flux × 坡度 侵蝕後再重算 downhill 與 flux，重複數次。",
-     "effect": "河谷被切深，海岸與山脊輪廓更自然。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "JavaScript",
-    "D3.js",
-    "程序地圖",
-    "Voronoi",
-    "地形"
-   ],
-   "tools": [
-    "JavaScript",
-    "D3.js"
-   ],
-   "url": "https://github.com/mewo2/terrain"
-  },
-  {
-   "id": "G03-52",
-   "algo": "G03",
-   "title": "Fantasy Map Generator（C++ 實作）",
-   "creator": "Ryan L. Guy",
-   "year": "2016",
-   "category": "drawing",
-   "categories_extra": [
-    "2d-pattern"
-   ],
-   "scale": "地景",
-   "summary": "以 C++ 實作 Martin O'Leary 的奇幻地圖方法：先用 Planchon-Darboux 演算法填平窪地，確保每個點都有下坡路徑，再追蹤水往地圖邊緣流的流向圖（flow map），以流量（flux）決定河流位置並依流量與坡度侵蝕地形，最後加上城市、國界與地名標註。和基礎範例相比，它用不同的填窪法（Planchon-Darboux 迭代而非優先佇列），並把流量結果延伸到城市選址等後續規則。",
-   "variations": [
-    {
-     "name": "兩種填窪法比較",
-     "how": "把基礎範例的 Priority-Flood 換成 Planchon-Darboux：所有內部格先設成無限高，反覆降到「鄰居 + ε」直到不再變化，記錄迭代次數與時間。",
-     "effect": "看出優先佇列版一次完成、迭代版需要多輪掃描的效能差異。"
-    },
-    {
-     "name": "流量決定聚落位置",
-     "how": "每格分數 = √acc × 平坦度，扣除靠近既有聚落的分數後取最高分，重複放置數個聚落點。",
-     "effect": "聚落自然落在河流匯流處與平緩河谷。"
-    }
-   ],
-   "difficulty": 3,
-   "tags": [
-    "creative coding",
-    "C++",
-    "程序地圖",
-    "填窪",
-    "地形"
-   ],
-   "tools": [
-    "C++"
-   ],
-   "url": "https://rlguy.com/map_generation/"
-  },
-  {
-   "id": "G03-53",
-   "algo": "G03",
-   "title": "HeightField Flow Field 節點",
-   "creator": "SideFX",
-   "year": "2018",
-   "category": "modeling",
-   "categories_extra": [
-    "urban-landscape"
-   ],
-   "scale": "地景",
-   "summary": "Houdini 17.0 起提供的高度場節點，依高度圖產生累積流量（flow）與平均流向（flow dir）圖層：先在部分格子降雨，再讓水沿下坡散開（Smooth 模式向所有下坡方向擴散、Granular 模式保持成束），可選擇依流量刻出谷地。它相當於多流向版本的流量累積，常用來當地形材質與植被分布的遮罩；和基礎範例的單一方向 D8 相比，結果較柔和，但沒有明確的樹狀河網與集水區編號。",
-   "variations": [
-    {
-     "name": "流量當遮罩",
-     "how": "把基礎範例的 acc 取 log 後正規化到 0–1，寫進 Mesh 頂點色或當作 C04 地形的材質混合權重。",
-     "effect": "谷地自動變成濕潤的深色、稜線保持乾燥，地形立刻有真實感。"
-    },
-    {
-     "name": "依流量刻谷",
-     "how": "每格 z -= depth × (log acc ÷ log maxAcc)，只做一次，不再迭代。",
-     "effect": "快速得到有河谷的地形，效果類似節點的 Adjust Height 選項。"
-    }
-   ],
-   "difficulty": 2,
-   "tags": [
-    "creative coding",
-    "Houdini",
-    "高度場",
-    "多流向",
-    "地形"
-   ],
-   "tools": [
-    "Houdini"
-   ],
-   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heightfield_flowfield.html"
-  }
- ]
+  ]
 }

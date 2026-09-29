@@ -1,0 +1,2727 @@
+{
+  "agent": "gh-balance：數位研究／藝術設計 1:1 替換進來的藝術設計案例",
+  "cases": [
+    {
+      "id": "A01-56",
+      "algo": "A01",
+      "title": "L-System Pattern Generator（L-system 極坐標圖樣產生器）",
+      "creator": "kfahn（GitHub：kfahn22）",
+      "year": "2022",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "p5.js 網頁工具，把經典 L-system 規則集（Dragon、Hilbert、Tree 等）疊加極坐標形狀（齒輪、超級形狀、卡西尼卵形線）產生對稱花紋。與 Grasshopper 基礎範例只輸出線段樹狀結構不同，這裡把 turtle 的落點再包一層形狀函式，讓同一套改寫規則長出色彩繽紛的紋樣而非枝幹。",
+      "variations": [
+        {
+          "name": "規則集切換",
+          "how": "同一介面可切換 Dragon curve、Hilbert curve、Tree 等不同改寫規則",
+          "effect": "從空間填充曲線到分枝樹形的多種圖案"
+        },
+        {
+          "name": "極坐標形狀疊加",
+          "how": "在 turtle 前進路徑上疊加齒輪、超級形狀等極坐標輪廓，取代單純直線",
+          "effect": "產生具花紋質感的對稱圖樣，而非單純線段"
+        },
+        {
+          "name": "調色盤與漸層",
+          "how": "依深度或角度指定漸層色",
+          "effect": "強化圖樣的層次與韻律感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "字串改寫",
+        "對稱",
+        "圖樣"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/kfahn22/L-System-Pattern-Generator"
+    },
+    {
+      "id": "A01-57",
+      "algo": "A01",
+      "title": "L-System-Trees：可互動 3D L-system 樹木花園",
+      "creator": "Francesco Gradi",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 Three.js／WebGL 實作的瀏覽器 3D 花園：使用者點擊地面種樹，每棵樹依 L-system 文法與參數即時長成帶材質的分枝，並可切換季節（落葉、開花、光禿）與樹皮紋理。相對於 Grasshopper 基礎範例只輸出線段，這裡把改寫結果轉成即時算圖的 3D 網格與材質，且支援多棵樹同時生長於同一場景。",
+      "variations": [
+        {
+          "name": "自訂文法規則",
+          "how": "使用者可編輯公理與改寫規則、角度、分枝機率",
+          "effect": "同一系統可長出松樹、闊葉樹等不同樹形"
+        },
+        {
+          "name": "季節材質切換",
+          "how": "樹皮與樹葉材質依季節設定切換（含落葉版本）",
+          "effect": "同一分枝結構表現四季外觀差異"
+        },
+        {
+          "name": "多樹場景",
+          "how": "可在地面多點種植，各自獨立生成",
+          "effect": "從單株示範延伸成小型「花園」群體效果"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Three.js",
+        "WebGL",
+        "3D",
+        "字串改寫"
+      ],
+      "tools": [
+        "Three.js",
+        "WebGL"
+      ],
+      "url": "https://github.com/FrancescoGradi/L-System-Trees"
+    },
+    {
+      "id": "A01-58",
+      "algo": "A01",
+      "title": "donatello：瀏覽器 3D Turtle 與 L-system 直譯器",
+      "creator": "andonutts（GitHub）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 Three.js 實作的瀏覽器版 3D turtle 繪圖機與 L-system 直譯器：輸入文法規則後即時把改寫字串轉成向量圖形，範例展示以 L-system 生成的花卉枝葉插畫。和基礎範例純線段輸出不同，這裡把 F、+、-、[ ] 等符號對應到可上色的面與曲線，長出扁平插畫風格的植物圖案。",
+      "variations": [
+        {
+          "name": "符號對應繪圖基本形",
+          "how": "把改寫字串的符號對應到花瓣、葉片等向量形狀而非單純線段",
+          "effect": "同一套改寫邏輯畫出插畫風格的花卉圖案"
+        },
+        {
+          "name": "即時互動",
+          "how": "瀏覽器內即時輸入規則並重新生成",
+          "effect": "可快速比較不同規則對圖案的影響"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Three.js",
+        "字串改寫",
+        "插畫"
+      ],
+      "tools": [
+        "Three.js"
+      ],
+      "url": "https://github.com/andonutts/donatello"
+    },
+    {
+      "id": "A01-59",
+      "algo": "A01",
+      "title": "treegen：p5.js 畫布 L-system 樹木產生器",
+      "creator": "Tanvi Kumar",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "p5.js 畫布上的 L-system 樹木產生器，讀者可自行輸入公理、規則與角度即時畫出分枝樹形。作者在範例中示範了不同角度、生成代數下的樹形變化，包含以漸層色畫出的密集樹冠版本。與基礎範例不同之處在於直接在瀏覽器畫布上即時預覽，方便快速嘗試各種規則組合。",
+      "variations": [
+        {
+          "name": "角度與代數即時調整",
+          "how": "改變旋轉角度與迭代代數立即重繪",
+          "effect": "從稀疏枝幹到密集樹冠的連續變化"
+        },
+        {
+          "name": "漸層配色",
+          "how": "依分枝深度指定顏色漸層",
+          "effect": "用色彩強化樹形的放射層次"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "字串改寫",
+        "分形"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/TanviKumar/treegen"
+    },
+    {
+      "id": "A01-60",
+      "algo": "A01",
+      "title": "Coding Challenge #185：Dragon Curve（L-system 彩色變化版）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2023",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "同一集挑戰示範了兩種畫龍形曲線的方法：主線用旋轉線段的摺紙式演算法，另外提供一個以 L-system 字串改寫直接生成龍形曲線的 p5.js 版本，並依生成深度上色。和 Grasshopper 基礎範例的樹狀分枝不同，這裡的規則沒有分岔（無 [ ]），純粹靠改寫長出自我相似的空間填充曲線。",
+      "variations": [
+        {
+          "name": "L-system 龍形曲線規則",
+          "how": "以 X→X+YF、Y→FX-Y 等無分岔規則改寫",
+          "effect": "長出經典龍形曲線而非樹狀分枝"
+        },
+        {
+          "name": "依代數上色",
+          "how": "依字串生成代數或線段位置指定顏色",
+          "effect": "曲線呈現彩虹漸層的分區塊效果"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "字串改寫",
+        "空間填充曲線"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/185-dragon-curve"
+    },
+    {
+      "id": "A02-55",
+      "algo": "A02",
+      "title": "Koch Snowflake Tessellation（罕見碎形鑲嵌實作）",
+      "creator": "Sher Minn Chong（piratefsh）",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "紐約軟體工程師 Sher Minn Chong 在她的生成藝術部落格中，不把 Koch 雪花只當成單一輪廓，而是把整個雪花形狀當成鑲嵌單元：依大小雪花直徑比 √3:1，在中央雪花周圍排列 6 個縮小版雪花、再對每個縮小版遞迴同樣的排列，長出滿版的碎形鑲嵌紋理。和基礎範例只細分邊界不同，這是把「雪花本身」拿去做鑲嵌遞迴。",
+      "variations": [
+        {
+          "name": "雪花當鑲嵌單元",
+          "how": "不細分邊界，而是依 √3:1 直徑比在中央雪花周圍放 6 個縮小版雪花，逐層遞迴",
+          "effect": "產生滿版重複的碎形鑲嵌紋理，而非單一封閉雪花輪廓"
+        },
+        {
+          "name": "面積估算法（2015 版）與比例法（2019 版）對照",
+          "how": "文章比較用面積比例估算縮放倍率、與用直徑比例精算兩種鑲嵌算法",
+          "effect": "同一鑲嵌目標可以用不同的遞迴比例規則達成，適合比較不同解法的精確度"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing.js",
+        "碎形",
+        "鑲嵌"
+      ],
+      "tools": [
+        "Processing.js"
+      ],
+      "url": "https://piratefsh.github.io/2020/08/07/koch-tesselation-uncommon-fractal-implementations.html"
+    },
+    {
+      "id": "A03-55",
+      "algo": "A03",
+      "title": "HilbertDraw：以自適應 Hilbert 曲線繪製的連續單線肖像",
+      "creator": "Matthew McGonagle",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "開源 Python 函式庫，把輸入影像換成一條不交叉的連續線畫：先用近似 Hilbert 曲線遞迴細分正方形，影像顏色越深的區域細分越多，最後把所有格心連成一筆畫完的肖像（示範對象是數學家大衛．希爾伯特本人的素描）。和 Grasshopper 基礎範例固定切到某一階不同，這裡的停止條件由影像明暗驅動，格線疏密因此呈現出影像內容。",
+      "variations": [
+        {
+          "name": "影像驅動的細分深度",
+          "how": "把 VisitSquare 的停止條件從固定 levelsLeft 改成讀取對應影像區域的平均灰階，暗部才繼續往下切",
+          "effect": "疏密不均的單線畫，越暗的地方線越密"
+        },
+        {
+          "name": "輸出成單一連續 Polyline",
+          "how": "所有格心依走訪順序直接串接，不做任何斷開",
+          "effect": "整張畫可以一筆畫完，適合繪圖機或雷射雕刻"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "影像輸入",
+        "單線畫",
+        "空間填充"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://matthewmcgonagle.github.io/HilbertDraw/"
+    },
+    {
+      "id": "A03-56",
+      "algo": "A03",
+      "title": "Hilbert Curve（P5JS 動態繪製）",
+      "creator": "JohnnyAwesome",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 p5.js 寫成的 Hilbert 曲線動畫：用 L-System 規則逐步展開路徑，畫面上綠色線條在黑底逐步長出完整的空間填充圖樣。和 Grasshopper 基礎範例用角點＋邊向量遞迴不同，這裡改用 L-System 文字重寫規則配合海龜繪圖展開，是 V03 Gosper 變體同一套思路用在標準 Hilbert 曲線上的示範。",
+      "variations": [
+        {
+          "name": "L-System 規則展開",
+          "how": "把 VisitSquare 遞迴改成文字規則重寫（A/B 兩種符號＋轉向指令），再用海龜繪圖逐步畫出",
+          "effect": "同一條 Hilbert 曲線但用改寫／遞迴的另一種寫法產生"
+        },
+        {
+          "name": "逐步生長動畫",
+          "how": "畫面隨畫圖進度即時更新，而非一次畫完",
+          "effect": "像 V12 逐點生長動畫一樣，能直觀看到曲線如何依序填滿"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "L-System",
+        "動畫",
+        "空間填充"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/johnnyawesome/HilbertCurve"
+    },
+    {
+      "id": "A04-55",
+      "algo": "A04",
+      "title": "Grid Paintings à la Mondrian with JavaScript",
+      "creator": "Max Halford",
+      "year": "2017",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "資料科學家 Max Halford 在部落格文章中用純 JavaScript／HTML5 Canvas 寫一個 Rectangle.split 方法：依寬高比決定切左右或切上下，切點限制在內縮的安全範圍內，遞迴到指定深度後停止，每塊隨機填 Mondrian 式的白、黑、紅、黃、藍。結構與基礎範例幾乎一致（比較長邊、遞迴切兩塊、深度停止），差別在於用內縮 padding 取代 minSize 避免過細長矩形，並用色票機率讓白色最常出現。",
+      "variations": [
+        {
+          "name": "內縮安全邊界",
+          "how": "切割點限制在 min+padding 到 max-padding 之間，而非直接用 minSize 判斷",
+          "effect": "避免出現過細的長條矩形，畫面更接近真實 Mondrian 構圖"
+        },
+        {
+          "name": "色票機率加權",
+          "how": "顏色陣列刻意放入多個白色，讓隨機選色時白色出現機率遠高於黑紅黃藍",
+          "effect": "重現 Mondrian 畫作『大面積留白、少量原色點綴』的視覺比例"
+        },
+        {
+          "name": "固定遞迴深度",
+          "how": "用 depth 參數而非隨機停止機率決定何時停止切割",
+          "effect": "每次產生的構圖複雜度較一致，適合做參數對照教學"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "Mondrian",
+        "生成藝術"
+      ],
+      "tools": [
+        "JavaScript",
+        "HTML5 Canvas"
+      ],
+      "url": "https://maxhalford.github.io/blog/mondrian/"
+    },
+    {
+      "id": "A05-56",
+      "algo": "A05",
+      "title": "遞迴碎形樹（The Coding Train Coding Challenge #14）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2016",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "用一個遞迴函式畫一段樹枝，樹枝末端呼叫自己畫出兩段更短、角度偏轉的子樹枝，一路遞迴到夠短為止。這和基礎範例「正方形 A 換成 B 加上兩個縮小旋轉的 A」是同一種「一個元素被換成多個變形子元素」的邏輯，只是元素從標籤正方形換成線段樹枝，是「演算法植物學」系列教學的第一支。",
+      "variations": [
+        {
+          "name": "滑桿控制分岔角與長度比",
+          "how": "把分岔角度與縮放比接上 slider 即時調整",
+          "effect": "從細瘦分岔到誇張展開的樹形連續變化"
+        },
+        {
+          "name": "隨機分岔角",
+          "how": "每次遞迴呼叫前為角度加入 random 偏移",
+          "effect": "樹形不再左右對稱，更接近自然植物"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "遞迴",
+        "分岔"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/14-fractal-trees-recursive"
+    },
+    {
+      "id": "A05-57",
+      "algo": "A05",
+      "title": "Substitution System：格子替換生成藝術與繪圖機輸出",
+      "creator": "piebro",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "網頁互動生成藝術：從一個 2×2 色塊格子出發，隨機產生一組「每格換成 2×2 新色塊」的替換規則，反覆套用讓網格邊長加倍、細節加倍，最後輸出像素風格圖樣；並提供指令用 vpype 轉成路徑交給繪圖機（pen plotter）實際畫出來。和基礎範例「一個形狀換成一組新形狀」邏輯完全一致，只是替換對象是色塊格子而不是標籤正方形。",
+      "variations": [
+        {
+          "name": "限制色板與規則數",
+          "how": "把調色盤與規則組數縮小到 2–3 色、1–2 條規則",
+          "effect": "圖案從隨機雜訊變成清楚可讀的條紋或棋盤結構"
+        },
+        {
+          "name": "繪圖機分層輸出",
+          "how": "用 vpype pixelart 外掛把每個顏色圖層拆開分別畫",
+          "effect": "實體筆繪的分層套色作品，刻意不完全對齊會有手繪感"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "pen plotter",
+        "替換系統"
+      ],
+      "tools": [
+        "JavaScript",
+        "vpype"
+      ],
+      "url": "https://github.com/piebro/substitution-system"
+    },
+    {
+      "id": "A05-58",
+      "algo": "A05",
+      "title": "Generative Art with Context Free Grammars：龜圖文法生成的分岔樹",
+      "creator": "Leon Rische",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "用一個小型 Python 文法框架，把「非終端符號」定義成一串龜圖動作（前進、轉彎、縮放）再展開成路徑；文章示範同一套文法規則反覆展開三百層，就能長出對稱的愛心狀分岔樹或螺旋線。這是把「形狀換成一組新形狀」的邏輯換成「符號換成一串龜圖指令」，剛好介於 A01 L-System 與 A05 形狀文法之間，可對照展示改寫系統的異同。",
+      "variations": [
+        {
+          "name": "角度連續改變",
+          "how": "把固定轉角角度換成隨參數連續變化",
+          "effect": "同一條規則從螺旋線連續變化成分岔樹"
+        },
+        {
+          "name": "加入隨機非終端",
+          "how": "同一個符號名稱註冊多條規則，展開時隨機選一條",
+          "effect": "樹形不再完全對稱，每次展開結果都不同"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "龜圖",
+        "文法"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://www.leonrische.me/pages/generative_art_with_cfgs.html"
+    },
+    {
+      "id": "A06-56",
+      "algo": "A06",
+      "title": "Coding Challenge 186：Wave Function Collapse - Overlapping Model",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2025",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Coding Train在171之後推出的第二支WFC挑戰，改用「重疊模型（overlapping model）」：不是手動定義tile相鄰規則，而是從一張小範例點陣圖逐格擷取N×N圖樣（含旋轉、鏡射），統計圖樣間的重疊相容性與出現頻率，再以Shannon熵挑格塌縮。與基礎範例最大差別是規則來自「學習」而非手寫。",
+      "variations": [
+        {
+          "name": "從範例圖自動擷取規則",
+          "how": "新增取樣範例點陣圖輸入，掃描每個N×N視窗當一種圖樣，兩個圖樣重疊處顏色相同就視為相容，取代原本手寫的四方向0/1相鄰表。",
+          "effect": "設計者只要畫一張小範例圖，就能長出風格一致的大圖，不用自己列開口規則"
+        },
+        {
+          "name": "以出現頻率加權熵",
+          "how": "用Shannon entropy公式，依每種圖樣在範例中出現的次數計算每格的不確定性，取代單純數候選項目數。",
+          "effect": "塌縮順序更貼近範例的統計特性，生成結果更像原圖的紋理"
+        },
+        {
+          "name": "加入旋轉與鏡射變體",
+          "how": "把每個擷取到的圖樣再產生90度旋轉與鏡射版本一併加入圖樣庫。",
+          "effect": "用同一張小範例就能長出方向更多變、不死板的紋理"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "重疊模型",
+        "Shannon熵",
+        "教學影片"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model"
+    },
+    {
+      "id": "A06-57",
+      "algo": "A06",
+      "title": "Wave Function Collapse：Processing重疊模型實作",
+      "creator": "noahbuddy（BitwiseSupernova）",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "在Processing論壇的WFC討論串裡，noahbuddy把社群分享的Python重疊模型改寫成物件導向的Processing（.pde）版本並公開在GitHub；輸入一張小範例圖就能生成局部相似的等大紋理，矛盾時以填色作為容錯處理。這則討論串後來也是Daniel Shiffman製作Coding Train WFC挑戰的靈感來源。",
+      "variations": [
+        {
+          "name": "物件導向重構",
+          "how": "把演算法拆成Pattern、PatternLibrary、Field、Wave等類別，取代單一函式的寫法。",
+          "effect": "規則、狀態與求解邏輯分開，較容易讀懂與擴充"
+        },
+        {
+          "name": "矛盾容錯處理",
+          "how": "求解失敗（某格候選歸零）時不整張重來，而是把未決定的區域直接填上預設色。",
+          "effect": "永遠有輸出可看，方便偵錯與示範，但畫面會留下明顯的補色區塊"
+        },
+        {
+          "name": "重疊模型輸入輸出",
+          "how": "直接讀取點陣圖當範例，輸出等比例放大的生成圖。",
+          "effect": "和基礎範例的手寫tile規則不同，規則完全來自影像本身"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "重疊模型",
+        "論壇作品"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://github.com/BitwiseSupernova/wave-function-collapse"
+    },
+    {
+      "id": "A06-58",
+      "algo": "A06",
+      "title": "Wave Function Collapse：Java生成藝術工具（Labyrinth圖樣）",
+      "creator": "Pascal Stoll",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "用Java／Swing寫成、明確定位為生成視覺演算法的WFC工具，內建Labyrinth、Wavy、Carcassonne三種tile組，並暴露起始位置、塌縮速度、隨機程度、邊界開口等參數。其中Labyrinth tile組長出的線稿和基礎範例的水管tile精神相同，但改以多種邊型（EdgeType）比對取代單純0/1開口。",
+      "variations": [
+        {
+          "name": "可切換多套tile組",
+          "how": "提供LabyrinthTileSet、WavyTiles、CarcassoneTileSet三個內建TileSet子類別可切換，並可自行擴充新的TileSet。",
+          "effect": "同一套程式在迷宮、波浪線、卡卡頌拼貼等截然不同的風格間切換"
+        },
+        {
+          "name": "起始塌縮位置與速度可調",
+          "how": "提供隨機、置中、多起點（multistart）等起始設定，以及每步塌縮的毫秒延遲參數。",
+          "effect": "可以控制圖樣是從一點長出還是多點同時生長，並放慢速度做逐步示範"
+        },
+        {
+          "name": "自訂tile出現機率",
+          "how": "可為每個TileType指定機率分佈，取代預設的均勻隨機。",
+          "effect": "讓某些造型的tile出現得更頻繁或更稀少，調整畫面的疏密感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Java",
+        "生成藝術",
+        "tile組"
+      ],
+      "tools": [
+        "Java"
+      ],
+      "url": "https://github.com/pascal-stoll/wave-function-collapse"
+    },
+    {
+      "id": "B01-56",
+      "algo": "B01",
+      "title": "Differential Growth（creative-dev 週挑戰）",
+      "creator": "Mikola Lysenko",
+      "year": "",
+      "category": "modeling",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "向 Anders Hoff（inconvergent）致敬的 creative-dev 週挑戰作品：以 JavaScript／WebGL 即時運算差異生長，並把皺褶曲面依表面法向量做類似 matcap 的漸層上色。和 Grasshopper C# 基礎範例相比，多了 WebGL 即時渲染與法線貼圖風格上色，讓皺褶曲率被顏色強化，呈現出立體感很強的彩色球狀結構。",
+      "variations": [
+        {
+          "name": "WebGL 即時渲染",
+          "how": "用 WebGL 著色器即時繪製生長中的網格並上色",
+          "effect": "生長過程即時可見，呈色彩鮮豔的立體皺褶球"
+        },
+        {
+          "name": "法線貼圖風格上色",
+          "how": "依表面法向量映射顏色（類似 matcap 材質）",
+          "effect": "皺褶曲率透過顏色被強化，視覺上更有雕塑感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "WebGL",
+        "JavaScript",
+        "即時渲染"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL"
+      ],
+      "url": "https://github.com/mikolalysenko/differential-growth"
+    },
+    {
+      "id": "B01-57",
+      "algo": "B01",
+      "title": "Real-time Differential Growth（WebGL 迷宮生長）",
+      "creator": "adrianton3（GitHub 帳號，全名未公開）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 JavaScript、WebGL 與 PixiJS 即時模擬差異生長，並用格狀空間分桶（bucket）取代兩兩比較加速鄰居搜尋；作者在部落格文章中逐步畫出規則 2、規則 3 的示意圖。生長到後期自然填滿畫面，形成發光的迷宮狀紋理。和 Grasshopper C# 基礎範例相比，多了格狀分桶加速與發光描邊上色。",
+      "variations": [
+        {
+          "name": "格狀分桶加速鄰居搜尋",
+          "how": "把點依座標分配進固定大小的格子，只比對同格與鄰格的點",
+          "effect": "點數變多時仍可即時運算，不會卡頓"
+        },
+        {
+          "name": "發光迷宮上色",
+          "how": "用 WebGL／PixiJS 疊加輝光（glow）效果描邊",
+          "effect": "曲線呈現藍紫發光的迷宮紋理，而非單純黑白細線"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "WebGL",
+        "JavaScript",
+        "PixiJS"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL",
+        "PixiJS"
+      ],
+      "url": "https://github.com/adrianton3/differential-growth"
+    },
+    {
+      "id": "B01-58",
+      "algo": "B01",
+      "title": "Differential Growth Raymarching",
+      "creator": "nowickam（GitHub 帳號，全名未公開）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 openFrameworks 實作差異生長，再把生長曲線交給 GLSL 光線步進（raymarching）著色器當作遮罩，控制畫面的色彩與深度，滑鼠位置則決定打光方向。畫面呈現放射狀、如珊瑚或血管般的立體光影紋理。和 Grasshopper C# 基礎範例相比，多了以生長曲線驅動光線步進著色的做法。",
+      "variations": [
+        {
+          "name": "生長曲線驅動光線步進著色",
+          "how": "把曲線位置與密度傳入 GLSL raymarching shader 當遮罩",
+          "effect": "曲線呈現出有深度與光影的放射狀立體紋理"
+        },
+        {
+          "name": "滑鼠即時控制打光",
+          "how": "滑鼠座標映射成光源方向，即時影響漫射光",
+          "effect": "觀者可互動改變畫面明暗與立體感"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "openFrameworks",
+        "GLSL",
+        "raymarching"
+      ],
+      "tools": [
+        "openFrameworks",
+        "C++",
+        "GLSL"
+      ],
+      "url": "https://github.com/nowickam/differential-growth"
+    },
+    {
+      "id": "B02-56",
+      "algo": "B02",
+      "title": "Simulate: Diffusion-Limited Aggregation（FORM+CODE 教材範例）",
+      "creator": "Casey Reas, Chandler McWilliams, LUST",
+      "year": "2010",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "出自創意程式經典教材《FORM+CODE in Design, Art, and Architecture》（Casey Reas 也是 Processing 共同創辦人）的 DLA 範例：以 Processing 1.2 寫出隨機行走粒子聚集成樹枝狀圖樣，並另外提供 openFrameworks、Cinder 版本程式碼對照。和本課 C# 版本一樣示範最基礎的擴散限制聚集，但強調「同一演算法在不同創意程式語言間可直接對照」的教學價值。",
+      "variations": [
+        {
+          "name": "跨語言對照版本",
+          "how": "同一套 DLA 邏輯另外提供 openFrameworks 與 Cinder 的程式碼版本，供對照同一演算法在不同框架的寫法",
+          "effect": "方便學習者比較同一套規則在不同創意程式環境下的實作差異"
+        },
+        {
+          "name": "教材標準參數畫面",
+          "how": "用書中固定的種子點、黏著距離與畫布尺寸產生單一代表性畫面，不強調互動或參數調整",
+          "effect": "呈現最經典、教科書等級的樹枝狀生長形態，適合作為入門對照基準"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "經典教材",
+        "生成藝術"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://formandcode.com/code-examples/simulate-dla"
+    },
+    {
+      "id": "B03-56",
+      "algo": "B03",
+      "title": "Tree（瀏覽器空間殖民生長樹）",
+      "creator": "Lucio Paiva",
+      "year": "2018",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以原生 JavaScript 與 HTML5 Canvas 寫成的瀏覽器空間殖民樹生成器，依 Runions 等人 2007 年論文與 Daniel Shiffman 的教學實作。README 特別記錄了吸引點幾乎正對分枝時會造成無限遞迴分岔的邊界情況，並用「子枝與父枝夾角需大於門檻」的規則修正。相較於 Grasshopper C# 基礎範例，這裡把樹畫成有粗細漸變的實心咖啡色剪影，而不是單純線段。",
+      "variations": [
+        {
+          "name": "最小夾角限制",
+          "how": "新枝生成前檢查子枝方向與父枝方向的夾角，太小就不允許生成",
+          "effect": "避免吸引點幾乎正對枝端時造成的無限遞迴分岔，讓演算法穩定收斂"
+        },
+        {
+          "name": "實心剪影渲染",
+          "how": "依枝條粗細規則把線段畫成填色多邊形，而不是單純線段",
+          "effect": "呈現接近插畫風格的樹木剪影，而非工程用的細線示意圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "Canvas API",
+        "邊界案例除錯"
+      ],
+      "tools": [
+        "JavaScript",
+        "HTML5 Canvas"
+      ],
+      "url": "https://github.com/luciopaiva/tree"
+    },
+    {
+      "id": "B04-55",
+      "algo": "B04",
+      "title": "Marbling Phyllotaxis（大理石紋葉序）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "The Coding Train 在『數學大理石紋』挑戰中，先用葉序公式在畫布上排出一圈圈的墨滴起點，再對每個點做大理石紋常見的扭曲運算，畫出一張色彩渦漩狀的紋樣。和基礎 C# 範例只放圓點不同，這裡葉序被當成『下墨點的分佈規則』，用來控制大理石紋渦漩的疏密與方向。",
+      "variations": [
+        {
+          "name": "葉序當作下墨點分佈",
+          "how": "用 number×137.5° 與 √number 算出的點位取代大理石紋原本的隨機／網格下墨點",
+          "effect": "渦漩紋樣依葉序疏密分布，中心緊、外圍鬆"
+        },
+        {
+          "name": "疊加扭曲濾鏡",
+          "how": "每個點加入大理石紋的扭曲函式，讓周圍色層沿半徑方向扭曲",
+          "effect": "原本單純的點陣變成連續渦漩色帶"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "大理石紋",
+        "色彩"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/183-mathematical-marbling"
+    },
+    {
+      "id": "B04-56",
+      "algo": "B04",
+      "title": "Rainbow Phyllotaxis Spiral（彩虹葉序繪圖機作品）",
+      "creator": "Paul Rickards",
+      "year": "2026",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "美國繪圖機藝術家 Paul Rickards 用 Python 算出葉序點位，在每個點畫一片水滴狀花瓣並填上彩虹漸層的交叉線影，再用復古繪圖機（HP 7585B／DraftPro DXL）以 CMYK 墨水一筆筆畫在水彩紙上。相較於基礎範例只用圓點標示位置，這裡每個葉序點被放大成一片有陰影、有色彩層次的花瓣，整張作品是可實際收藏的手工紙本作品。",
+      "variations": [
+        {
+          "name": "點位換成花瓣圖案",
+          "how": "在每個葉序點位放一個水滴狀花瓣路徑，而非單純的圓",
+          "effect": "點陣變成連續的花瓣鋪面，視覺上更接近真實花盤"
+        },
+        {
+          "name": "半徑控制色彩漸層",
+          "how": "依 number 對應的半徑把色相沿彩虹漸層映射到每片花瓣",
+          "effect": "中心到外圈呈現連續彩虹漸層而非重複配色"
+        },
+        {
+          "name": "輸出到實體繪圖機",
+          "how": "把向量路徑送進復古筆式繪圖機，分層分色實際下筆",
+          "effect": "產生獨一無二、帶有筆觸與墨水暈染的實體紙本作品"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "pen plotter",
+        "Python",
+        "色彩漸層"
+      ],
+      "tools": [
+        "Python",
+        "繪圖機"
+      ],
+      "url": "https://mastodon.social/@paulrickards"
+    },
+    {
+      "id": "B04-57",
+      "algo": "B04",
+      "title": "Sunflower Golden Angle",
+      "creator": "Olivier Giulieri",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "純 HTML／Canvas 打造的互動網頁，讓使用者拖曳滑桿比較黃金角（137.508°）與其他角度（如 137.3°、360×5/13）畫出的葉序點陣，並疊加向日葵花瓣輪廓與種子點色彩主題。相較於基礎 C# 範例只輸出一種角度，這裡直接把角度掃描比較做成互動介面，讓學習者一眼看出黃金角為什麼特別。",
+      "variations": [
+        {
+          "name": "角度快速切換比較",
+          "how": "提供多顆預設角度按鈕（黃金角、有理角等），點擊即時重繪",
+          "effect": "可以直接對照有理角出現輻條、黃金角最均勻的差異"
+        },
+        {
+          "name": "疊加花瓣輪廓",
+          "how": "在點陣外圍加一圈固定數量的花瓣形狀",
+          "effect": "點陣看起來像完整的向日葵花盤而不只是散點"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "Canvas",
+        "互動"
+      ],
+      "tools": [
+        "JavaScript",
+        "Canvas"
+      ],
+      "url": "https://evoluteur.github.io/sunflower-golden-angle/"
+    },
+    {
+      "id": "B05-55",
+      "algo": "B05",
+      "title": "Substrate（Python 重製版，含即時參數 GUI）",
+      "creator": "HertzVador",
+      "year": "2026",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "HertzVador 以 Python 重新實作 Tarbell 的 Substrate 演算法，裂紋沿既有裂紋垂直分岔、撞停後以水彩沙畫上色。作者另加 tkinter 即時預覽介面可調整裂紋數與分岔機率、並用 Numba 加速運算約 35 倍，也支援固定亂數種子重現同一張圖，這些都是 Grasshopper 基礎範例沒有的操作與效能考量。",
+      "variations": [
+        {
+          "name": "GUI 參數即時預覽",
+          "how": "用 tkinter 做即時預覽介面，可調整裂紋數、分岔機率等參數並立即重繪。",
+          "effect": "邊調參數邊看圖樣變化，取代重新執行整個程式才能看到結果。"
+        },
+        {
+          "name": "Numba 加速與可重現亂數種子",
+          "how": "用 Numba JIT 編譯核心迴圈，並可指定隨機種子重現同一張圖。",
+          "effect": "生成速度大幅提升，且同一種子能重複得到相同構圖，方便版本比較。"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "GUI",
+        "效能優化",
+        "沙畫上色"
+      ],
+      "tools": [
+        "Python",
+        "NumPy",
+        "Numba",
+        "tkinter"
+      ],
+      "url": "https://github.com/HertzVador/substrate"
+    },
+    {
+      "id": "B05-56",
+      "algo": "B05",
+      "title": "substrate（黑底發光互動版）",
+      "creator": "Oliver Salzburg",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Oliver Salzburg 以 TypeScript／Canvas 重寫 Substrate，把原作的米黃沙畫改成黑底彩色細線，裂紋聚集處會像夜間城市的燈光節點。使用者可點擊畫布暫停、點擊背景切換全螢幕，載入時需先做校正，強調瀏覽器端即時互動而非單純輸出靜態圖。專案已封存但線上展示頁仍可執行。",
+      "variations": [
+        {
+          "name": "即時互動控制",
+          "how": "用滑鼠點擊暫停生長、點擊背景切換全螢幕，載入時先做畫布校正（calibration）。",
+          "effect": "從一次性批次生成變成可互動觀察、隨時暫停檢視的即時畫面。"
+        },
+        {
+          "name": "黑底發光配色",
+          "how": "把裂紋改成在黑色畫布上以彩色細線繪製並在節點處加強亮度。",
+          "effect": "視覺上更像夜間城市燈光路網，而非原作的米黃沙畫質感。"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "TypeScript",
+        "Canvas",
+        "互動",
+        "動畫"
+      ],
+      "tools": [
+        "TypeScript",
+        "Canvas API"
+      ],
+      "url": "https://oliversalzburg.github.io/substrate/"
+    },
+    {
+      "id": "C01-56",
+      "algo": "C01",
+      "title": "Vcsinet_1（多尺度反應擴散 Turing Flow 系列作品）",
+      "creator": "Jonathan McCabe",
+      "year": "2021",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "澳洲生成藝術家 Jonathan McCabe 長年以多層反應擴散疊加流體般的扭曲，做出高解析度的抽象生態紋理；本作於 2021 年展示於洛杉磯地標大樓的 8K 沉浸式大螢幕。和 Grasshopper 基礎範例的單層 Gray-Scott 不同，他疊加多個不同尺度的 RD 系統並讓上層結果驅動下層的擴散方向，產生像大理石、珊瑚般的層次感。",
+      "variations": [
+        {
+          "name": "多尺度疊層",
+          "how": "跑多組不同 gridSize／擴散速度的 RD，讓大尺度結果決定小尺度系統的參數或方向",
+          "effect": "畫面同時有大塊面與細密紋理，不是單一尺度的斑點"
+        },
+        {
+          "name": "流場扭曲後處理",
+          "how": "依 RD 濃度梯度算出一個向量場，再用它對整張影像做位移扭曲（domain warping）",
+          "effect": "紋理像被液體拖曳，邊緣圓滑流動而非死板網格"
+        },
+        {
+          "name": "色彩映射與展示尺度",
+          "how": "用連續色帶取代灰階，並輸出超高解析度供大型 LED 牆展示",
+          "effect": "從電腦螢幕的教學示範放大成建築尺度的沉浸式藝術裝置"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "自製模擬軟體",
+        "多尺度",
+        "Turing Pattern",
+        "art-installation"
+      ],
+      "tools": [
+        "自製模擬軟體",
+        "GPU 渲染"
+      ],
+      "url": "https://standardvision.com/news/generative-artist-jonathan-mccabe"
+    },
+    {
+      "id": "C01-57",
+      "algo": "C01",
+      "title": "Reaction-Diffusion WebGL（影像導引版）",
+      "creator": "Jérémie Piellard",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "法國獨立開發者 Jérémie Piellard 以 WebGL 片段著色器實作 GPU 版 Gray-Scott 模型，即時在瀏覽器跑數千步迭代。特別之處是可以載入一張影像，依明暗調整各處的 feed／kill 參數，讓花紋沿著貓咪或蒙娜麗莎的輪廓生長，直接示範 Grasshopper 範例「用影像或吸引子控制參數」的效果。",
+      "variations": [
+        {
+          "name": "影像導引參數場",
+          "how": "讀入一張圖片，依每格像素亮度在兩組 feed/kill 之間內插，取代原本整張固定參數",
+          "effect": "花紋密度跟著影像明暗變化，暗處變迷宮、亮處變光滑"
+        },
+        {
+          "name": "GPU 著色器加速",
+          "how": "把濃度陣列存成紋理，用 fragment shader 一次算全部格子的擴散與反應",
+          "effect": "比 CPU 逐格迴圈快上百倍，能即時互動調整參數"
+        },
+        {
+          "name": "多組預設花紋切換",
+          "how": "UI 提供 solitons、worms、mazes 等預設 feed/kill 組合供切換",
+          "effect": "使用者不用理解公式也能瀏覽 Gray-Scott 的圖樣分類"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "WebGL",
+        "GLSL",
+        "影像控制"
+      ],
+      "tools": [
+        "WebGL",
+        "GLSL"
+      ],
+      "url": "https://github.com/piellardj/reaction-diffusion-webgl"
+    },
+    {
+      "id": "C01-58",
+      "algo": "C01",
+      "title": "Mastering Turing Patterns：p5.js／Processing 反應擴散教學",
+      "creator": "deconbatch",
+      "year": "2022",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "創作程式教學部落格「deconbatch's Land of 1000 Creative Codings」的 Gray-Scott 教學文章，同時提供 p5.js 與 Processing 兩種實作，並示範如何改變 feed／kill 與擴散係數得到魚鱗、豹紋等不同生物花紋。內容和 Grasshopper 基礎範例邏輯相同，但直接比較多組參數的結果圖，方便理解每個參數的視覺效果。",
+      "variations": [
+        {
+          "name": "參數對照表",
+          "how": "同一份程式碼跑多組 feed/kill 數值，並排輸出成果圖比較",
+          "effect": "一眼看出參數如何從斑點漸變到迷宮、條紋"
+        },
+        {
+          "name": "仿生物花紋配色",
+          "how": "依 B 濃度套用魚類、豹紋般的色票而非單純灰階",
+          "effect": "生成結果更像真實生物表皮而非科學圖表"
+        },
+        {
+          "name": "p5.js 與 Processing 雙版本",
+          "how": "同一套邏輯分別用 p5.js（網頁）與 Processing（桌面）實作",
+          "effect": "學習者可依環境選擇線上互動或桌面高解析度輸出"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Processing",
+        "教學"
+      ],
+      "tools": [
+        "p5.js",
+        "Processing"
+      ],
+      "url": "https://www.deconbatch.com/2022/04/turingpattern.html"
+    },
+    {
+      "id": "C02-56",
+      "algo": "C02",
+      "title": "puritan_communion（生命遊戲的世代歷史配色）",
+      "creator": "Alexander Reben",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Reben 保留 Conway 生命遊戲原本的存活／死亡規則（B3/S23），但額外記錄每一格「上次改變狀態」的世代數：剛誕生的格子先顯示黃色，死亡後顏色隨時間慢慢變暗回到黑色，讓原本非黑即白的棋盤變成會隨時間演變的彩色畫面。和基礎範例用的是同一套規則，差別在輸出時多讀一份世代歷史來決定顏色，而不是只分活／死兩色。作品於 2020 年『The Game of Life – Emergence in Generative Art』聯展展出，是向 John Conway 致敬的展覽之一。",
+      "variations": [
+        {
+          "name": "世代歷史配色",
+          "how": "另開一個陣列記錄每格上次改變狀態的世代數，輸出的顏色（或本例中方塊的材質／高度）依這個數值做漸層，而不是只用活／死兩種顏色",
+          "effect": "畫面從純黑白棋盤變成帶有時間深淺層次的彩色構圖，單張靜態圖也能讀出格子的存活／死亡歷史"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "生命遊戲",
+        "世代歷史配色",
+        "生成藝術"
+      ],
+      "tools": [],
+      "url": "https://www.katevassgalerie.com/alexander-reben"
+    },
+    {
+      "id": "C02-57",
+      "algo": "C02",
+      "title": "Dual（一維細胞自動機限量版畫）",
+      "creator": "Kjetil Golid",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Golid 把二維生命遊戲換成一維細胞自動機：畫面每一列的每一格顏色，只由左上、正上方鄰居的顏色依規則決定，逐列往下疊代畫出整張圖。與基礎範例同樣是『看鄰居狀態決定下一格狀態、一代代疊代』的邏輯，只是把二維 8 鄰居的 Moore 鄰域換成一維鄰居，成品是 25×35 公分的限量版畫，於 2020 年『The Game of Life』聯展展出。",
+      "variations": [
+        {
+          "name": "降維為一維細胞自動機",
+          "how": "網格改成一列，鄰居只看左上、正上兩格（或左右上三格），組成索引後查規則表決定顏色",
+          "effect": "疊代方向從『世代往上長成量體』變成『一列一列往下畫成平面』，形成類似旗幟、織品的條紋圖樣"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "一維細胞自動機",
+        "生成藝術",
+        "限量版畫"
+      ],
+      "tools": [],
+      "url": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1"
+    },
+    {
+      "id": "C04-57",
+      "algo": "C04",
+      "title": "fBm（Fractional Brownian Motion）與《Rainforest》",
+      "creator": "Inigo Quilez",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "Quilez 的技術文章解釋 fBm：把 noise 疊很多層、每層頻率加倍、振幅減半再加總——正是本元件 LayeredNoise 的做法，並用光譜分析證明這種疊法最像真實山脈的粗糙度。文中展示的《Rainforest》（2016）是一個即時 raymarching shader，同一組 fBm 同時決定地形高度、雲層密度與樹冠分布，畫出一整片擬真雨林山谷，而不是只做出一片靜態的建築基地地形 Mesh。",
+      "variations": [
+        {
+          "name": "per-pixel 即時 fBm 渲染",
+          "how": "把 LayeredNoise 從逐格點離散取樣改成逐像素即時運算的 GLSL shader",
+          "effect": "地形解析度不受格點數限制，還能疊加大氣、光照即時運算"
+        },
+        {
+          "name": "一組 fBm 多重用途",
+          "how": "同一個 fBm 函式同時決定地形高度、雲霧密度、樹木分布與顏色深淺",
+          "effect": "整個場景風格自動一致，不用分別設計多套 noise 參數"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "GLSL",
+        "Shadertoy",
+        "fBm",
+        "shader"
+      ],
+      "tools": [
+        "GLSL",
+        "Shadertoy"
+      ],
+      "url": "https://iquilezles.org/articles/fbm/"
+    },
+    {
+      "id": "D01-56",
+      "algo": "D01",
+      "title": "Flocks, Herds and Schools",
+      "creator": "Brendan Dawes",
+      "year": "2025",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "英國藝術家 Brendan Dawes 向 Craig Reynolds 1987 年 boids 演算法致敬的限量筆繪作品，用 Processing 模擬鳥群行為、再以 AxiDraw 繪圖機把軌跡畫在手工棉紙上，鳥群飛行時會避開標題文字的幾何外框。與 Grasshopper C# 範例即時算繪 3D 軌跡不同，這裡的模擬結果最終變成一張獨一無二的實體版畫。",
+      "variations": [
+        {
+          "name": "避字軌跡",
+          "how": "把標題文字外框當成排斥物件，boids 的分離規則同時要避開文字幾何",
+          "effect": "鳥群繞過字母留白，畫面與文字共構出構圖"
+        },
+        {
+          "name": "筆繪輸出",
+          "how": "把模擬出的路徑用 AxiDraw 直接畫在 230gsm 手工棉紙上，而非螢幕即時算繪",
+          "effect": "線條帶有實體筆觸的粗細與壓力變化，每張都是獨一無二的實體版畫"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "pen plotter",
+        "AxiDraw",
+        "boids"
+      ],
+      "tools": [
+        "Processing",
+        "AxiDraw"
+      ],
+      "url": "https://brendandawes.com/projects/flocksherdsschools"
+    },
+    {
+      "id": "D01-57",
+      "algo": "D01",
+      "title": "Spatial Partitioned Boids",
+      "creator": "Olaf Visker",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 JavaScript 搭配空間分割（spatial partitioning）加速鄰居搜尋的 boids 實作，每個 boid 依速度上色並保留殘影、不清除畫布，數百條軌跡疊加成一叢發光的抽象紋理。與 Grasshopper C# 範例逐格清空重畫不同，這裡刻意保留過程本身，讓軌跡疊加就是最終畫面。",
+      "variations": [
+        {
+          "name": "速度上色",
+          "how": "boid 顏色隨速度大小或方向變化",
+          "effect": "畫面出現冷暖漸層，一眼就能看出群體裡哪裡流動快、哪裡聚集慢"
+        },
+        {
+          "name": "軌跡殘影",
+          "how": "畫布不清除，每一步只疊加半透明短線段",
+          "effect": "個體路徑疊成叢狀的發光紋理，而不是乾淨的即時動畫"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "boids",
+        "空間分割",
+        "殘影"
+      ],
+      "tools": [
+        "JavaScript",
+        "HTML5 Canvas"
+      ],
+      "url": "https://github.com/olafvisker/boids"
+    },
+    {
+      "id": "D01-58",
+      "algo": "D01",
+      "title": "Swarm",
+      "creator": "Daniel Shiffman",
+      "year": "2004",
+      "category": "art-installation",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Daniel Shiffman（後來的 The Coding Train 創辦人）在 SIGGRAPH 2004 Emerging Technologies 展出的互動影像裝置：觀眾站在攝影機前，畫面即時擷取的顏色被大量依 boids 規則移動的虛擬筆刷塗抹成一幅不斷變化的肖像，靈感取自 Jackson Pollock 的潑灑技法。與 Grasshopper C# 範例輸出乾淨的軌跡線不同，這裡群聚規則被當成即時繪畫的筆刷分佈邏輯。",
+      "variations": [
+        {
+          "name": "即時影像取色",
+          "how": "boid 移動時從攝影機畫面對應位置取樣顏色，畫在自己的筆刷路徑上",
+          "effect": "畫面顏色來自站在裝置前的觀眾即時影像，而非固定色票"
+        },
+        {
+          "name": "群體筆刷",
+          "how": "每個 boid 本身是一小段筆刷、依分離／對齊／聚集規則移動並持續作畫、不清除畫布",
+          "effect": "顏色隨群體流動暈染，產生像油畫潑濺又像雲霧的有機肌理"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "互動裝置",
+        "即時影像",
+        "boids",
+        "SIGGRAPH"
+      ],
+      "tools": [
+        "自訂軟體",
+        "即時影像"
+      ],
+      "url": "https://history.siggraph.org/experience/swarm-by-shiffman/"
+    },
+    {
+      "id": "D01-59",
+      "algo": "D01",
+      "title": "Boids",
+      "creator": "tumati",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "itch.io 上以 p5.js 製作的瀏覽器 boids 模擬，鳥群以三角形圖示表示、依分離、對齊、聚集規則飛行，背景維持單一淺藍色，讓群體聚散的路徑本身成為畫面主角。與 Grasshopper C# 範例輸出 3D 軌跡線不同，這裡強調 2D 鳥群圖形化造型與群聚後的負空間構圖。",
+      "variations": [
+        {
+          "name": "鳥形圖示",
+          "how": "每個 boid 畫成三角形／鳥形圖案並依速度方向旋轉，而非單純的點或箭頭",
+          "effect": "畫面更像真實的鳥群空拍照，而不是抽象粒子圖"
+        },
+        {
+          "name": "單色背景",
+          "how": "背景固定為淺藍色，只用深淺藍區分個體",
+          "effect": "觀者的注意力集中在群體聚散形成的形狀，而非顏色變化"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "boids",
+        "itch.io"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://tumati.itch.io/boids"
+    },
+    {
+      "id": "D01-60",
+      "algo": "D01",
+      "title": "Boids Flocking Simulation",
+      "creator": "gstarch",
+      "year": "2023",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "p5.js 寫成的精簡 boids 練習作品，個體畫成彩色半透明三角形、依隨機色相分群，黑色背景上呈現數股分散的彩色群聚。原作者說明這是從一個更大的資料視覺化作業裡抽出的簡化版，拿掉了 Perlin noise 與掠食者等進階功能，只留下分離、對齊、聚集三條核心規則。",
+      "variations": [
+        {
+          "name": "彩色分群",
+          "how": "每個 boid 初始化時隨機給一個色相，畫成半透明三角形",
+          "effect": "即使群體混在一起也能從顏色分辨大致的子群來源"
+        },
+        {
+          "name": "邊界置中力",
+          "how": "boid 接近畫布邊界時額外加一個朝中心的力，而不是直接反彈或穿越",
+          "effect": "群體會平滑地被推回可視範圍，不會有生硬的反彈動作"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "boids",
+        "入門"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/gstarch/boids"
+    },
+    {
+      "id": "D02-56",
+      "algo": "D02",
+      "title": "Physarum Simulation",
+      "creator": "Michael Fogleman",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 Go 語言與 OpenGL 即時檢視器實作的 CPU 版黏菌模擬，靈感來自 Sage Jenson 的圖解文章。作者隨機化感測角、轉向角、沉積量等參數跑出大量結果，挑選最具視覺張力的畫面公開展示，是 creative coding 社群中辨識度極高的黏菌生成藝術範例，和基礎範例最大差異在於刻意做參數批次探索而非單一設定。",
+      "variations": [
+        {
+          "name": "多物種混色",
+          "how": "同時跑三組獨立的 trail 場與代理人（各自對應一個色版），感測時互相影響但各自沉積",
+          "effect": "產生色彩豐富、層次分明的複合網絡，而非單色濃淡圖"
+        },
+        {
+          "name": "隨機參數批次產圖",
+          "how": "每次執行前隨機決定 sensorAngle、turnAngle、depositAmount 的範圍，重跑數百次取樣",
+          "effect": "建立參數與圖樣風格的對照集，比手動微調更快找到想要的紋理"
+        },
+        {
+          "name": "OpenGL 即時檢視",
+          "how": "把痕跡場即時上傳成 GPU 材質顯示，取代跑完才畫的作法",
+          "effect": "可邊跑邊看網絡生長過程，方便隨時停止或調整參數"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Go",
+        "physarum",
+        "生成藝術",
+        "參數探索"
+      ],
+      "tools": [
+        "Go",
+        "OpenGL"
+      ],
+      "url": "https://www.michaelfogleman.com/projects/physarum/"
+    },
+    {
+      "id": "D02-57",
+      "algo": "D02",
+      "title": "physarum（JS／WebGL 互動黏菌）",
+      "creator": "Nicolas Barradeau",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "WebGL 創作者 Nicolas Barradeau 依 Jeff Jones 論文與 Sage Jenson 作品實作的網頁版黏菌模擬，可用滑鼠拖曳即時「畫」出高濃度痕跡吸引代理人聚集，雙擊則生成新的代理人群。和基礎範例最大差異在於把痕跡輸入改成即時互動繪圖，而不是固定的食物點或影像。",
+      "variations": [
+        {
+          "name": "滑鼠拖曳造型",
+          "how": "按住滑鼠拖曳時，沿路徑持續加高該處的 trail 濃度",
+          "effect": "代理人會即時被手繪路徑吸引，聚集成順著滑鼠軌跡生長的網絡"
+        },
+        {
+          "name": "雙擊生成粒子群",
+          "how": "雙擊畫面在該處生成一整群代理人",
+          "effect": "可疊加多個生長中心，觀察不同來源的網絡如何互相競爭與合併"
+        },
+        {
+          "name": "即時參數面板",
+          "how": "開放感測角、轉向角、感測距離、步長四個即時滑桿",
+          "effect": "方便直接比較不同參數對網紋密度與粗細的影響"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "WebGL",
+        "JavaScript",
+        "physarum",
+        "互動"
+      ],
+      "tools": [
+        "JavaScript",
+        "WebGL"
+      ],
+      "url": "https://github.com/nicoptere/physarum"
+    },
+    {
+      "id": "D02-58",
+      "algo": "D02",
+      "title": "Slime Mold: Emergent Pattern Simulator",
+      "creator": "Jonas Kjeldmand Jensen（QC20）",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 p5.js 寫成的互動黏菌視覺化專案，把黏菌模擬類比為介面設計中的「去中心化系統」與「群體行為」，程式碼附大量教學性註解。和基礎範例最大差異在於刻意把黏菌演算法當作 UX／互動設計的隱喻教材，並做成全螢幕自適應畫布。",
+      "variations": [
+        {
+          "name": "點狀初始噴發",
+          "how": "所有代理人一開始集中於圓心、方向朝外",
+          "effect": "形成放射狀的初始噴發圖樣，再隨時間逐漸收斂成網絡"
+        },
+        {
+          "name": "UX 隱喻註解",
+          "how": "把每個模擬步驟對應到介面設計概念（去中心化系統、群體行為）並寫入程式碼註解",
+          "effect": "適合作為演算法思維跨領域類比教材，而不只是視覺展示"
+        },
+        {
+          "name": "全螢幕互動畫布",
+          "how": "依裝置尺寸自動縮放並全螢幕呈現",
+          "effect": "適合作為網頁背景或展場投影的沉浸式黏菌畫面"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "physarum",
+        "UX 隱喻"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/QC20/SlimeMolds"
+    },
+    {
+      "id": "E01-55",
+      "algo": "E01",
+      "title": "Circle Packing（黑白密鋪圓填充）",
+      "creator": "pxlmotiv",
+      "year": "2019",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "阿根廷獨立生成藝術創作者 pxlmotiv 以 Processing 寫的圓填充作品：整張正方形畫布被不同大小、彼此相切不重疊的圓完全鋪滿，圓內塗黑只留白色細邊，從大圓到極細密的小圓層層填滿所有縫隙。和 Grasshopper C# 基礎範例「先撒滿再互推到不重疊、圓數固定」不同，這裡的目標是把整個畫面的空隙都塞滿，呈現由粗到細、近乎分形的密度層次。",
+      "variations": [
+        {
+          "name": "填滿式生成",
+          "how": "不是先撒滿固定數量再互推，而是反覆在剩餘最大空隙裡塞入新圓，直到畫面被填滿為止",
+          "effect": "產生從大圓到極細小圓的多尺度密鋪效果，而非均勻大小的圓陣"
+        },
+        {
+          "name": "描邊反轉配色",
+          "how": "圓內填滿黑色、只留白色細邊框，背景維持淺色",
+          "effect": "強調圓與圓相切的縫隙線條，畫面像黑白密鋪圖案而非彩色示意圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "密鋪",
+        "黑白",
+        "分形感"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://github.com/pxlmotiv/circle-packing"
+    },
+    {
+      "id": "E01-56",
+      "algo": "E01",
+      "title": "circle-packing（SDF 巢狀圓填充）",
+      "creator": "danieledapo",
+      "year": "2020",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "獨立開發者 danieledapo 以 Rust 寫的圓填充函式庫與命令列工具，用符號距離場（SDF）定義可放置圓的區域，並在每個放好的大圓內部，以縮小的邊界再跑一次同樣的填圓程序、換一組顏色，做出圓中圓的巢狀圖樣。和 Grasshopper C# 基礎範例「所有圓在同一層級互推」不同，這裡是遞迴地在圓的內部再長出一整層更小的圓群，形成多層同心巢狀結構。",
+      "variations": [
+        {
+          "name": "巢狀遞迴填色",
+          "how": "每個圓填滿後，在其內部以縮小的邊界再跑一次相同的填圓程序，並換一組顏色",
+          "effect": "畫面出現圓中圓的多層巢狀結構，色彩隨層級變化"
+        },
+        {
+          "name": "SDF 邊界限制",
+          "how": "用符號距離場（而非簡單幾何形狀）定義可放置圓的區域，可讀入任意輪廓或 logo",
+          "effect": "能把圓填充圖樣限制在文字、logo 等任意形狀內"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Rust",
+        "SDF",
+        "巢狀",
+        "生成藝術"
+      ],
+      "tools": [
+        "Rust"
+      ],
+      "url": "https://github.com/danieledapo/circle-packing"
+    },
+    {
+      "id": "E02-56",
+      "algo": "E02",
+      "title": "Recursive Scatter：影像位移驅動的 Poisson 點 Voronoi 花紋",
+      "creator": "benjamin-white（GitHub）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 kchapelier 的 poisson-disk-sampling 函式庫搭配影像位移圖控制取樣密度，再用 d3-delaunay 把點連成 Voronoi 圖，只畫胞元邊界，得到中心密、邊緣疏、放射狀的花紋。基礎範例的 minDistance 是固定值，這件作品示範 V01 變密度取樣：位移圖決定每個區域的取樣密度，產生類似花朵或年輪的圖案。",
+      "variations": [
+        {
+          "name": "影像位移控制密度",
+          "how": "用位移貼圖的灰階值決定該區域的取樣半徑",
+          "effect": "畫面中心點密集、邊緣稀疏，形成放射狀漸層"
+        },
+        {
+          "name": "Poisson 點轉 Voronoi 花紋",
+          "how": "把 Poisson 點餵給 d3-delaunay 算出 Voronoi 圖，只畫胞元邊界線",
+          "effect": "疏密不同的區域呈現大小不一的多邊形，形成類似花朵／年輪的紋理"
+        },
+        {
+          "name": "色彩漸層疊加",
+          "how": "用 chroma.js 依點的半徑或位置指定填色",
+          "effect": "讓密度變化同時反映在顏色深淺上"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "d3-delaunay",
+        "變密度",
+        "生成藝術"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://github.com/benjamin-white/recursive-scatter"
+    },
+    {
+      "id": "E02-57",
+      "algo": "E02",
+      "title": "ImageTriangulation：藍噪點三角化重繪名畫",
+      "creator": "pxv8270（GitHub）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Python 腳本以「加權藍噪聲取樣」（依影像邊緣調整密度的 Poisson 式取樣）在畫作上撒點，再用 Delaunay 三角化、每個三角形填入平均色重繪影像，把梵谷《星夜》等名畫轉成低多邊形幾何畫風。基礎範例只輸出點本身，這件作品示範把取樣點接上三角網並著色的完整流程，對應 V06 變形（Poisson 點→Voronoi／Delaunay）。",
+      "variations": [
+        {
+          "name": "依內容加權取樣",
+          "how": "取樣密度依影像邊緣強度調整，細節多的地方點更密",
+          "effect": "重要輪廓（如星光、樹形邊緣）保留清晰，天空等大面積區域點稀疏"
+        },
+        {
+          "name": "三角面平均色著色",
+          "how": "每個 Delaunay 三角形填入該區域原始像素的平均色",
+          "effect": "畫面呈現色塊分明的低多邊形幾何畫風"
+        },
+        {
+          "name": "可調點數畫質權衡",
+          "how": "調整目標取樣點數（如 1000～5000 點）",
+          "effect": "點數越多三角形越小、細節越接近原圖，點數少則更抽象"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Python",
+        "Delaunay",
+        "低多邊形藝術"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://github.com/pxv8270/ImageTriangulation"
+    },
+    {
+      "id": "E03-56",
+      "algo": "E03",
+      "title": "2D Voronoi Experiments：Phyllotaxis（葉序點陣的 Voronoi 圖）",
+      "creator": "Jason Webb",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Jason Webb 用 p5.js 搭配 d3-delaunay 做的一系列 Voronoi 視覺實驗之一：把撒點方式從均勻隨機改成葉序（phyllotaxis，黃金角螺旋）分布，再算出對應的 Voronoi 圖。基礎範例用均勻隨機點加 Lloyd 鬆弛讓格子變規則，這裡則反過來，用「規則的點分布規則」直接決定細胞形狀，不需要疊代收斂就能得到中心緊密、邊緣疏鬆、向外螺旋放射的鑲嵌圖案。",
+      "variations": [
+        {
+          "name": "葉序點分布",
+          "how": "撒點方式改用葉序公式（黃金角螺旋）取代均勻隨機分布，再算 Voronoi",
+          "effect": "細胞從中心到邊緣呈螺旋放射狀漸變，中心緊密、外圍稀疏"
+        },
+        {
+          "name": "多種點分布切換",
+          "how": "同一介面另外提供 Rings、Orbits、Reducing Radii 等不同撒點規則可切換比較",
+          "effect": "同一套 Voronoi 運算在不同初始點分布下產生截然不同的鑲嵌美感"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "d3-delaunay",
+        "點陣"
+      ],
+      "tools": [
+        "p5.js",
+        "d3-delaunay"
+      ],
+      "url": "https://jasonwebb.github.io/2d-voronoi-experiments/"
+    },
+    {
+      "id": "E03-57",
+      "algo": "E03",
+      "title": "Moore Voronoi（沿 Moore 曲線移動點的 Voronoi 動畫）",
+      "creator": "Étienne Jacob（bleuje）",
+      "year": "2024",
+      "category": "2d-pattern",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "生成藝術家 Étienne Jacob（暱稱 bleuje）用 Processing 搭配 GLSL 著色器做的動畫：改用 Inigo Quilez 精確計算 Voronoi 邊界的著色器技術畫細胞，但點的位置不是靠 Lloyd 疊代收斂，而是沿著 Moore 空間填充曲線移動，並用他自創的「替換技巧」讓動畫首尾無縫循環。基礎範例用半平面切割多邊形＋重心疊代讓格子變均勻，這裡則是逐像素距離場著色器＋固定路徑移動，呈現對稱且會持續變化的動態鑲嵌，而非收斂到靜態蜂巢。",
+      "variations": [
+        {
+          "name": "沿空間填充曲線移動點",
+          "how": "不用 Lloyd 的重心收斂，而是讓每個點沿 Moore 曲線上的固定路徑移動，並用替換技巧讓路徑首尾相接成循環",
+          "effect": "產生對稱且會持續變化的動態鑲嵌動畫，而非收斂到均勻蜂巢狀"
+        },
+        {
+          "name": "距離場著色器繪製",
+          "how": "改用 GPU 著色器逐像素計算到最近種子點的真實距離場來畫細胞邊界（承接 Quilez 的精確 Voronoi 邊界技術）",
+          "effect": "即時演算且不受頂點數限制，邊線寬度均勻一致"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "GLSL",
+        "Moore curve",
+        "動畫"
+      ],
+      "tools": [
+        "Processing",
+        "GLSL shader"
+      ],
+      "url": "https://bleuje.com/gifanimationsite/single/moorevoronoi/"
+    },
+    {
+      "id": "E03-58",
+      "algo": "E03",
+      "title": "Medieval Fantasy City Generator（中世紀奇幻城市生成器）",
+      "creator": "watabou（@watawatabou）",
+      "year": "",
+      "category": "urban-landscape",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "獨立開發者 watabou 做的網頁工具，在城牆範圍內撒點做 Voronoi 分割，每個細胞就是一個街區，再依離市中心的遠近與城牆內外指定街區用途（市場、貴族區、貧民窟等），疊上河流與地形裁切。基礎範例輸出的是抽象的封閉多邊形細胞，這裡則把每個 Voronoi 細胞直接當成「一整塊街區」，再用其他規則細分出建築物，是把 Voronoi 分割直接當成程序化城市生成核心步驟的知名案例，被大量遊戲主持人與世界觀設計者使用。",
+      "variations": [
+        {
+          "name": "Voronoi 分割街廓",
+          "how": "在城牆範圍內撒點做 Voronoi，每個細胞成為一個街區，再依距市中心遠近指定街區用途",
+          "effect": "產生看起來自然生長、不規則但合理的中世紀城市街廓紋理"
+        },
+        {
+          "name": "河流與地形疊加裁切",
+          "how": "在 Voronoi 分割之上疊加地形雜訊、河流路徑與城牆多邊形做進一步裁切",
+          "effect": "細胞不再是單純幾何形狀，而是被地形與邊界自然裁切出的街區"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "procedural generation",
+        "JavaScript",
+        "城市生成"
+      ],
+      "tools": [
+        "JavaScript",
+        "Delaunator"
+      ],
+      "url": "https://watabou.itch.io/medieval-fantasy-city-generator"
+    },
+    {
+      "id": "E04-56",
+      "algo": "E04",
+      "title": "Coding Challenge #63：Texturing Cloth Simulation（Unikitty 旗幟）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "drawing",
+      "categories_extra": [
+        "art-installation"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "用 Toxiclibs 的 Verlet 物理模擬一面由彈簧網格構成的旗幟：格點之間以彈簧相連、旗桿那排格點固定，側向風力加重力讓網格擺動，再把手繪圖案當材質貼到每個四邊形面上。與基礎範例同樣是「質點＋彈簧網格＋外力→收斂形狀」，差別是這裡外力是側向風力而非重力垂直下拉，且輸出的是貼了材質的曲面而非純線段。",
+      "variations": [
+        {
+          "name": "貼圖來源改成攝影機串流",
+          "how": "把 texture() 的來源從靜態圖片換成 createCapture() 的即時影像",
+          "effect": "旗幟上的畫面即時變成使用者的臉或現場畫面，適合互動裝置"
+        },
+        {
+          "name": "多面旗幟排列成旗海",
+          "how": "建立多個獨立的布料網格，指定不同的固定列與間距排開",
+          "effect": "從單一旗幟變成隨風飄動、材質各異的一整排旗海"
+        },
+        {
+          "name": "風力隨時間與位置變化",
+          "how": "把固定方向的側向力改成用 noise(x, y, t) 產生的向量場",
+          "effect": "旗幟飄動更接近真實陣風，也能模擬布料在亂流中的皺褶"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "toxiclibs.js",
+        "布料模擬",
+        "材質貼圖"
+      ],
+      "tools": [
+        "p5.js",
+        "toxiclibs.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/63-texturing-cloth-simulation"
+    },
+    {
+      "id": "F01-51",
+      "algo": "F01",
+      "title": "Truchet Images（以照片驅動的半色調 Truchet 圖樣）",
+      "creator": "Ned Batchelder",
+      "year": "2022",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Python 開發者 Ned Batchelder 寫程式把照片轉成灰階，依每格局部亮度挑選不同粗細或種類的 Truchet 弧線磁磚（含 Smith 版與 Carlson 多尺度版），讓遠看是人像、近看是連續曲線的半色調效果。相較基礎範例每格只靠擲硬幣決定方向，這裡改用像素亮度驅動整組磁磚選擇。",
+      "variations": [
+        {
+          "name": "亮度分級選磚",
+          "how": "每格依像素亮度切成多個等級，選用粗細或密度不同的弧線磁磚而非單純二選一",
+          "effect": "灰階漸層轉成疏密不同的曲線紋理"
+        },
+        {
+          "name": "套用多尺度磚組",
+          "how": "對同一張照片改用 Carlson 的多尺度磁磚集合而非單一尺寸磁磚",
+          "effect": "亮部區域自動換成更細的磁磚呈現更多細節"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Python",
+        "影像驅動",
+        "半色調"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://nedbatchelder.com/blog/202208/truchet_images.html"
+    },
+    {
+      "id": "F01-52",
+      "algo": "F01",
+      "title": "GenTruchet（無限展開的多尺度 Truchet 鋼筆繪圖作品）",
+      "creator": "Marc Dunand",
+      "year": "2024",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "創作者 Marc Dunand 用 Processing 寫的生成系統，讓每片磁磚從「功能上無限」的圖案集合中即時生成，並確保線條在磁磚間平滑相接、形成永不相交的封閉形，最後輸出 SVG 交給鋼筆繪圖機或雷射雕刻於紙上。跟基礎範例固定用兩種磁磚不同，這裡磁磚形狀本身也是隨機生成、種類趨近無限多。",
+      "variations": [
+        {
+          "name": "磁磚形狀本身隨機化",
+          "how": "不用固定的兩種弧線磚，改成每格呼叫函式即時生成一組保證邊界相接的貝茲曲線磚",
+          "effect": "圖樣不再只有「單一磚兩種轉向」而是無限多種局部形狀"
+        },
+        {
+          "name": "輸出成鋼筆繪圖 SVG",
+          "how": "收集所有曲線 Join 後匯出向量 SVG，交給 AxiDraw 一類鋼筆繪圖機繪製",
+          "effect": "數位圖樣變成手繪質感的紙上原作"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "繪圖機",
+        "鋼筆繪圖"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://marcdunand.com/work/major-works/gentruchet"
+    },
+    {
+      "id": "F01-53",
+      "algo": "F01",
+      "title": "TruchetArt（互動式細分 Truchet 產生器）",
+      "creator": "ESikich",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以 p5.js 寫成的互動網頁，滑鼠點擊可把任一磁磚細分成四個更小的磁磚，滾動滾輪能切換磁磚的圖案風格與配色，讓觀者即時「長出」局部更密的區域。跟基礎範例固定網格不同，這裡的細分程度由使用者互動決定，磁磚造型也可即時切換。",
+      "variations": [
+        {
+          "name": "點擊局部細分",
+          "how": "點一下某格就把該格換成 2×2 更小的同類磁磚並各自重新擲亂數",
+          "effect": "圖樣可以局部越長越細，形成不均勻的多尺度效果"
+        },
+        {
+          "name": "滾輪切換磚型與配色",
+          "how": "用滑鼠滾輪切換一組預先定義好的磁磚造型與色盤陣列",
+          "effect": "同一張網格可以立刻變成好幾種視覺風格"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "互動",
+        "細分"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/ESikich/TruchetArt"
+    },
+    {
+      "id": "F01-54",
+      "algo": "F01",
+      "title": "Masked and Weighted Truchet Tiles（遮罩與線寬雙重影像驅動）",
+      "creator": "Dan Royer（i-make-robots）",
+      "year": "2020",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "繪圖機工程師 Dan Royer 用 Processing 讀入兩張灰階照片：一張控制每格磁磚要不要旋轉（遮罩），另一張把弧線切成許多小段、依局部亮度即時調整每小段的線寬（權重），暗部線條變粗、亮部變細。基礎範例每格只有「轉不轉」一個位元，這裡疊加了「線寬隨影像變化」的第二層資訊。",
+      "variations": [
+        {
+          "name": "雙圖驅動（方向＋線寬）",
+          "how": "除了用第一張圖的亮度決定rotated，再讀第二張圖依亮度用strokeWeight()逐段調整弧線粗細",
+          "effect": "同一張網格同時編碼兩種影像資訊"
+        },
+        {
+          "name": "弧線切段變粗細",
+          "how": "把每段Arc用DivideByCount切成多個短線段，各自依所在位置的像素亮度設定線寬",
+          "effect": "遠看是灰階肖像、近看每段弧粗細都不同"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "影像驅動",
+        "線寬調變"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://www.marginallyclever.com/2020/06/masked-and-weighted-truchet-tiles-in-processing/"
+    },
+    {
+      "id": "F01-55",
+      "algo": "F01",
+      "title": "Truchet Pattern Explorer（磁磚配對探索器）",
+      "creator": "dmackinnon1",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "開源網頁工具，用原生JavaScript即時展示多種Truchet磁磚配對規則，使用者可以切換不同的磚型組合觀察圖樣如何變化，附兩篇部落格文章說明各種變化的原理。跟基礎範例固定用圓弧磚不同，這裡把「磚型本身」當成可切換的參數。",
+      "variations": [
+        {
+          "name": "磚型組合切換",
+          "how": "準備好幾組不同的磚型定義（三角、弧線等），讓使用者即時切換整組磁磚而非只調旋轉",
+          "effect": "同一網格骨架可以呈現完全不同的圖樣家族"
+        },
+        {
+          "name": "即時互動介面",
+          "how": "用HTML/JS建立可調整參數的介面而非跑一次算圖",
+          "effect": "可以邊調邊看效果，適合教學展示"
+        }
+      ],
+      "difficulty": 1,
+      "tags": [
+        "creative coding",
+        "JavaScript",
+        "互動",
+        "教學"
+      ],
+      "tools": [
+        "JavaScript"
+      ],
+      "url": "https://dmackinnon1.github.io/truchet/"
+    },
+    {
+      "id": "F02-51",
+      "algo": "F02",
+      "title": "Islamic Star Pattern（The Coding Train #54 Part 1）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "The Coding Train 的直播教學挑戰，直接依 Hankin 的「接觸多邊形」法在 p5.js 建立八角形加正方形底圖，從每條邊中點射出兩條線並在交會處連起來成星形；程式結構與 Grasshopper C# 基礎範例幾乎一一對應，是本演算法最貼近的 creative coding 版本。",
+      "variations": [
+        {
+          "name": "滑鼠即時調角度",
+          "how": "用滑鼠 X、Y 位置即時決定接觸角與偏移距離，取代固定參數",
+          "effect": "即時看到星芒從鈍變尖的連續變化，等同互動版的吸引子漸變"
+        },
+        {
+          "name": "深色配色示範",
+          "how": "改用橘色線條搭配深藍底色，取代預設灰階線稿",
+          "effect": "星形圖樣在畫面上更醒目，適合作為教學展示的第一張圖"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Hankin法",
+        "互動"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/54-islamic-star-patterns"
+    },
+    {
+      "id": "F03-51",
+      "algo": "F03",
+      "title": "Corollaria Gyroid（阿爾巴尼國際機場公共藝術）",
+      "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+      "year": "2023",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Nervous System 為美國 Albany 國際機場設計的公共藝術，主體是一段裁切過的 Gyroid 曲面，表面再疊上仿生細胞狀鏤空紋理，靈感來自植物細胞、多孔菌與苔蘚蟲。和基礎範例只輸出單一等值面不同，這件作品在 Gyroid 骨架上又長出第二層有機孔洞場，並放大到公共藝術尺度。",
+      "variations": [
+        {
+          "name": "雙層紋理疊加",
+          "how": "先用 Gyroid 公式生成主體曲面骨架，再依曲面法線與局部曲率長出第二層仿生細胞狀鏤空場",
+          "effect": "從單一光滑等值面變成兼具結構與裝飾紋理的鏤空表皮"
+        },
+        {
+          "name": "大尺度金屬雷射切割",
+          "how": "曲面攤平分件後用金屬雷射切割／彎折成形，取代基礎範例的整塊 3D 列印輸出",
+          "effect": "讓 TPMS 幾何可以放大到公共藝術尺度並降低製造成本"
+        },
+        {
+          "name": "依場館採光調整孔隙",
+          "how": "依現場天窗光線與觀看角度局部調整鏤空密度",
+          "effect": "白天讓光線篩落、夜晚被燈光點亮，呼應機場天窗環境"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "generative design",
+        "gyroid",
+        "公共藝術"
+      ],
+      "tools": [
+        "自訂生成軟體",
+        "雷射切割",
+        "金屬"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog/?p=9386"
+    },
+    {
+      "id": "F03-52",
+      "algo": "F03",
+      "title": "Porifera：3D 列印陶瓷首飾系列",
+      "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+      "year": "2018",
+      "category": "fabrication",
+      "categories_extra": [
+        "modeling"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "以深海玻璃海綿為靈感的 3D 列印陶瓷首飾系列。Nervous System 用近似 Gyroid／Schwarz-D 的週期極小曲面生成「薄壁 3D 泡沫」骨架，再以陶瓷 SLA 列印、手工上釉並兩次窯燒，做成項鍊、耳環與手鍊。",
+      "variations": [
+        {
+          "name": "用 Voronoi 骨架取代公式場",
+          "how": "先以重心最佳化 Voronoi 圖產生骨架點，再計算骨架兩側的 Voronoi 面並做均曲率流平滑，取代基礎範例直接代入三角函數公式的做法",
+          "effect": "得到不規則卻仍具極小曲面特性的有機孔洞紋理"
+        },
+        {
+          "name": "依配戴造型調整密度函數",
+          "how": "用自訂密度函數控制骨架點在項鍊、耳環外形內的疏密",
+          "effect": "同一套演算法能生出項鍊、耳環等不同首飾造型"
+        },
+        {
+          "name": "陶瓷列印與後製",
+          "how": "SLA 列印陶瓷生坯，再經打磨、上釉、兩次窯燒",
+          "effect": "展示 TPMS 薄殼幾何從數位模型走到可配戴陶瓷成品的完整製程"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "generative design",
+        "TPMS",
+        "首飾"
+      ],
+      "tools": [
+        "自訂生成軟體",
+        "陶瓷 SLA 3D 列印"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog/?p=8115"
+    },
+    {
+      "id": "F03-53",
+      "algo": "F03",
+      "title": "Puzzle Cell Complex：Construct3D 協作拼裝雕塑",
+      "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+      "year": "2020",
+      "category": "art-installation",
+      "categories_extra": [
+        "fabrication"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "為 Construct3D 數位製造研討會設計的可拆組雕塑：把一段 Gyroid 曲面裁切成 69 片獨特平面拼片，附組裝說明，讓與會者現場協力組裝成約 5 呎大小的鏤空曲面雕塑。",
+      "variations": [
+        {
+          "name": "曲面展開成平面拼片",
+          "how": "把 Gyroid 曲面依三角化面片攤平（unroll／flatten），每片標號並設計互扣卡榫",
+          "effect": "原本要用列印機做的雙曲曲面，改成雷射切割平面材料再手工組裝"
+        },
+        {
+          "name": "可拆組的接合設計",
+          "how": "在攤平的每片邊緣加上榫接與編號系統",
+          "effect": "曲面可拆解裝箱運輸，一般人不需專業工具就能協力組裝"
+        },
+        {
+          "name": "縮小取樣範圍",
+          "how": "只取 Gyroid 大範圍曲面中的一小段裁切區域，而非完整週期單元",
+          "effect": "保留曲面的有機起伏，又能控制在展場可承受的尺度"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "generative design",
+        "gyroid",
+        "參與式製作"
+      ],
+      "tools": [
+        "自訂生成軟體",
+        "雷射切割",
+        "手工組裝"
+      ],
+      "url": "https://n-e-r-v-o-u-s.com/blog/?p=8521"
+    },
+    {
+      "id": "F04-51",
+      "algo": "F04",
+      "title": "Smart Rockets（智慧火箭）",
+      "creator": "Daniel Shiffman（The Coding Train，概念源自 Jer Thorp）",
+      "year": "2016",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "基因演算法版本的火箭導航：每個個體的基因是一串固定長度的推力向量，族群裡的火箭同時發射，適應度依火箭最終離目標的距離與是否撞到障礙物計算，透過選擇、交配、突變逐代演化出能繞過障礙抵達目標的推力序列。與 Grasshopper 基礎範例一樣用「族群→評分→精英＋交配＋突變」的迴圈，但基因是連續推力向量而非點座標，且會即時畫出飛行軌跡。",
+      "variations": [
+        {
+          "name": "障礙物形狀",
+          "how": "換成任意多邊形或多個障礙",
+          "effect": "演化出的最佳路徑會跟著繞過新的障礙"
+        },
+        {
+          "name": "基因長度（飛行時間）",
+          "how": "改變推力向量陣列長度",
+          "effect": "太短會讓火箭來不及抵達，演化不出成功個體"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "路徑演化"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/29-smart-rockets-in-p5js"
+    },
+    {
+      "id": "F04-52",
+      "algo": "F04",
+      "title": "Electric Sheep（電子羊）",
+      "creator": "Scott Draves",
+      "year": "1999",
+      "category": "art-installation",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "全球參與者的電腦螢幕保護程式共同演化的分形火焰藝術：每隻「羊」是一組分形轉換函式的參數（基因），使用者對喜歡的羊投票，得票高的存活更久，再依基因演算法互相交配、突變產生下一代，算繪成動畫分享給所有參與者。把 Grasshopper 基礎範例「族群＋適應度＋世代」的結構搬到大規模群眾外包場景，適應度不是公式而是人類集體品味。",
+      "variations": [
+        {
+          "name": "適應度來源",
+          "how": "適應度改成使用者按讚次數而非數學公式",
+          "effect": "示範「人當評審」的互動式演化如何擴大到群眾規模"
+        },
+        {
+          "name": "基因型",
+          "how": "基因換成分形轉換函式的係數而非點座標",
+          "effect": "演化出的表現型是連續流動的抽象分形動畫，而非離散幾何"
+        }
+      ],
+      "difficulty": 4,
+      "tags": [
+        "creative coding",
+        "群眾外包",
+        "分形藝術"
+      ],
+      "tools": [
+        "自製程式"
+      ],
+      "url": "https://electricsheep.org/"
+    },
+    {
+      "id": "F05-51",
+      "algo": "F05",
+      "title": "A* Pathfinding Algorithm（A* 尋路演算法教學挑戰）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2017",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "The Coding Train 第 51 集程式挑戰，用 p5.js 在 2D 格點上實作 A* 演算法，分「基本演算法」「加入障礙物與斜走」「改善視覺化」三部分教學。畫面把所有格點、已展開（open）與已確定（closed）的格子分別上色，再用一條鋸齒折線畫出回溯得到的最短路徑，和 Grasshopper 基礎範例同樣是格點波前擴散＋回溯，但多了以「已走距離＋到終點直線距離」排序的啟發式搜尋，對應本演算法的 A* 變形（V01）。",
+      "variations": [
+        {
+          "name": "加入障礙物與對角移動",
+          "how": "格子隨機標記為障礙、8 方向鄰居改成含對角線並個別給權重",
+          "effect": "路徑會繞開障礙物，且會出現斜線而非只有直角轉折"
+        },
+        {
+          "name": "改善視覺化：分色的 open／closed 集合",
+          "how": "把還沒展開、已展開待評估、已確定三種狀態分別上色，而不是只畫最終路徑",
+          "effect": "可以清楚看到搜尋波前如何一圈圈往終點方向擴散、收斂"
+        },
+        {
+          "name": "啟發式權重調整",
+          "how": "把估計距離的權重從 1 調大，讓演算法更偏向直衝終點",
+          "effect": "展開的格子數明顯變少、搜尋變快，但在有障礙時可能不是最短路"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "A*",
+        "路徑搜尋",
+        "教學挑戰"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm"
+    },
+    {
+      "id": "F06-51",
+      "algo": "F06",
+      "title": "Fractured Entropy — Clifford Attractor",
+      "creator": "QC20",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "p5.js 即時互動數學藝術作品，內建 Lorenz、Rössler、Chua、Chen、Aizawa、Clifford、de Jong 七組經典吸子公式，可切換觀看並看著畫面即時堆疊生成。這裡選用的 Clifford 範例把上百萬次迭代累積成圓形裁切的灰階密度圖，和 Grasshopper 基礎範例只輸出單一係數、單一公式的點清單不同，是把吸子圖鑑做成一支可互動切換的作品。",
+      "variations": [
+        {
+          "name": "七種吸子公式切換",
+          "how": "內建多組吸子的下一步公式與係數，介面可即時切換",
+          "effect": "一支作品就是吸子圖鑑，方便比較不同混沌系統的畫面差異"
+        },
+        {
+          "name": "圓形遮罩構圖",
+          "how": "畫布用圓形遮罩裁切、疊加半透明筆觸",
+          "effect": "畫面從單純演算輸出變成有構圖感的平面設計"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "Clifford",
+        "混沌",
+        "即時渲染"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://github.com/QC20/fractured-entropy"
+    },
+    {
+      "id": "F06-52",
+      "algo": "F06",
+      "title": "Lorenz Sonified",
+      "creator": "cvarier",
+      "year": "2017",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "performance"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Processing 程式，即時畫出 Lorenz 系統的軌跡動畫，並把相鄰節點間的距離、與吸子中點的距離，映射成音高與速度輸出聲音，讓混沌軌跡「被聽見」。相對於 Grasshopper 基礎範例只輸出靜態 Polyline，這裡把同一條演算法算出的軌跡同時變成即時動畫與聲音演出的雙重媒介。",
+      "variations": [
+        {
+          "name": "軌跡轉聲音",
+          "how": "把相鄰節點距離與到吸子中心的距離，映射成音高與音序器速度",
+          "effect": "同一條混沌軌跡同時是視覺動畫與一段會隨參數改變的聲音演出"
+        },
+        {
+          "name": "互動係數（sigma／beta／rho）",
+          "how": "使用者可即時調整三個 Lorenz 係數觀察軌跡改變",
+          "effect": "能直接聽/看出係數變動如何讓蝴蝶形狀與聲音跟著改變"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "Lorenz",
+        "混沌",
+        "聲音化"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://github.com/cvarier/Lorenz-Sonified"
+    },
+    {
+      "id": "F06-53",
+      "algo": "F06",
+      "title": "Phase Space",
+      "creator": "breadloafsky",
+      "year": "",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "用 Svelte 與 WebGL 寫成的即時三維相空間繪圖器，使用者可在側欄用類似 JavaScript 的語法自訂微分方程並即時看到軌跡展開，內部以四階 Runge–Kutta 積分。展示頁把多組吸子並排成一列霓虹色軌跡，和 Grasshopper 基礎範例固定兩種公式、用歐拉法積分不同，這裡把積分方法與公式都開放給使用者自訂。",
+      "variations": [
+        {
+          "name": "自訂方程式介面",
+          "how": "側欄用類似程式碼的語法輸入任意 ODE，取代寫死的 Lorenz／Clifford 公式",
+          "effect": "同一支工具可以探索任何相空間系統，不限於奇異吸子"
+        },
+        {
+          "name": "RK4 積分",
+          "how": "內部用四階 Runge–Kutta 取代簡單歐拉法推進",
+          "effect": "軌跡在大步長下依然平滑準確，呼應把歐拉法換成 RK4 的變形方向"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "WebGL",
+        "Svelte",
+        "混沌",
+        "RK4"
+      ],
+      "tools": [
+        "WebGL",
+        "Svelte"
+      ],
+      "url": "https://github.com/breadloafsky/phase-space"
+    },
+    {
+      "id": "F07-56",
+      "algo": "F07",
+      "title": "Data Morph：用模擬退火把資料點變形成目標圖案",
+      "creator": "Stefanie Molin",
+      "year": "2023",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Data Morph 是一個教學工具與 Python 套件：把一組 2D 資料點（例如貓熊圖案）用模擬退火逐步變形成另一個目標形狀（例如星形），過程中持續檢查平均值、標準差、相關係數等統計摘要值維持不變，藉此說明「統計量相同不代表資料長相相同」。和 Grasshopper C# 基礎範例相比，狀態是每個點的座標而非格位排列，成本函數同時要逼近目標形狀、又要讓統計量偏差最小。",
+      "variations": [
+        {
+          "name": "目標形狀切換",
+          "how": "從貓熊、星形換成恐龍、心形等預設形狀，或載入自訂 SVG 輪廓當目標",
+          "effect": "同一組原始資料可以變形成完全不同的畫面，示範資料視覺化「先看圖再信統計」的重要性"
+        },
+        {
+          "name": "逐步降溫動畫輸出",
+          "how": "把每個溫度區間的中間狀態存成一張圖，串成 GIF 顯示點群從原始形狀緩慢融解、重組成目標形狀",
+          "effect": "退火「高溫亂跳、低溫收斂」的特性變成一段可以直接看的動畫"
+        },
+        {
+          "name": "多重統計量鎖定",
+          "how": "成本函數同時鎖住 x、y 平均、標準差與相關係數到小數點後兩位，而不是只鎖單一指標",
+          "effect": "變形後的散佈圖幾乎無法用摘要統計分辨，凸顯視覺化不可被統計量取代"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Python",
+        "matplotlib",
+        "資料視覺化",
+        "統計"
+      ],
+      "tools": [
+        "Python",
+        "matplotlib"
+      ],
+      "url": "https://github.com/stefmolin/data-morph"
+    },
+    {
+      "id": "F07-57",
+      "algo": "F07",
+      "title": "Simulated Annealing：以退火求解法國城市 TSP 路徑（Processing）",
+      "creator": "Nikolai Janakiev",
+      "year": "2017",
+      "category": "drawing",
+      "categories_extra": [
+        "urban-landscape"
+      ],
+      "source": "art",
+      "scale": "群體／都市",
+      "summary": "作者用 Processing 讀入城市資料庫的經緯度與人口，以 Web Mercator 投影畫出城市點，再用模擬退火求一條走訪所有城市的最短路徑，animation.gif 記錄從隨機連線逐漸收斂的過程。和基礎範例相比，狀態是城市走訪順序而不是格位排列，畫面同時保留真實地理位置。",
+      "variations": [
+        {
+          "name": "城市資料集切換",
+          "how": "換一批國家或洲的城市經緯度資料，重新計算 Mercator 投影座標",
+          "effect": "同一套退火程式可以畫出不同國家的城市巡迴路線圖"
+        },
+        {
+          "name": "人口加權城市大小",
+          "how": "點的半徑依人口數縮放",
+          "effect": "大城市在圖上更醒目，路線圖同時傳達城市規模資訊"
+        },
+        {
+          "name": "收斂動畫輸出",
+          "how": "把每隔幾步的路徑存成一張圖並輸出成 animation.gif",
+          "effect": "可以直接看到路徑從雜亂連線逐漸解開成較少交叉的巡迴路徑"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "Processing",
+        "地圖",
+        "TSP"
+      ],
+      "tools": [
+        "Processing"
+      ],
+      "url": "https://github.com/njanakiev/simulated-annealing"
+    },
+    {
+      "id": "F07-58",
+      "algo": "F07",
+      "title": "Shapeme：以模擬退火演化三角形重建圖片（蒙娜麗莎）",
+      "creator": "Salvatore Sanfilippo（antirez）",
+      "year": "2014",
+      "category": "2d-pattern",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "Redis 作者 antirez 公開的舊作：從隨機的半透明三角形與圓形開始，用模擬退火反覆突變形狀的頂點、顏色與透明度，讓疊加結果逐漸逼近參考圖片（作者示範蒙娜麗莎），過程可視化並可輸出 SVG 供列印。和基礎範例相比，狀態是一組彩色形狀而非房間排列，成本是與目標圖片的像素誤差。",
+      "variations": [
+        {
+          "name": "形狀種類切換",
+          "how": "只用三角形、只用圓形，或兩者混合當作退火的鄰域",
+          "effect": "同一張目標圖片會因形狀種類不同而呈現三角面或圓點馬賽克風格"
+        },
+        {
+          "name": "漸進儲存與續跑",
+          "how": "可儲存／載入目前進度狀態，中途中斷後從同一組形狀繼續退火",
+          "effect": "可以把長時間的收斂過程拆成多段執行，也方便比較不同階段的畫面"
+        },
+        {
+          "name": "向量輸出供實體輸出",
+          "how": "最終形狀集合輸出成 SVG 而非點陣圖",
+          "effect": "可以把退火收斂的結果放大列印或雷射雕刻，不會有像素鋸齒"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "C",
+        "SDL",
+        "影像重建"
+      ],
+      "tools": [
+        "C",
+        "SDL"
+      ],
+      "url": "https://github.com/antirez/shapeme"
+    },
+    {
+      "id": "G01-56",
+      "algo": "G01",
+      "title": "Isovist Sandbox：互動式可視域繪圖工具",
+      "creator": "Moxil Shah",
+      "year": "2022",
+      "category": "drawing",
+      "categories_extra": [
+        "2d-pattern"
+      ],
+      "source": "art",
+      "scale": "物件",
+      "summary": "一個瀏覽器互動工具，讓使用者自由畫多邊形障礙物、放置觀察點（guard），即時用 O(n log n) 的 Asano 演算法算出該點的可視域多邊形並上色顯示；內建博物館、隨機牆面等範本。和 Grasshopper C# 基礎範例相比，這裡是即時互動繪圖介面而非批次運算格點場，適合直接操作、直觀理解 isovist 怎麼隨牆面改變。",
+      "variations": [
+        {
+          "name": "自由繪製障礙物",
+          "how": "直接在畫布上點擊放置多邊形頂點，取代事先讀入固定牆線",
+          "effect": "可以即時測試各種平面配置下的可視域形狀，用於快速草圖推敲"
+        },
+        {
+          "name": "多觀察點比較",
+          "how": "一次放置多個 guard，各自顯示不同顏色的可視域多邊形",
+          "effect": "直接比較不同位置的視野大小與重疊範圍，適合監視器或櫃台選址討論"
+        },
+        {
+          "name": "範本場景切換",
+          "how": "內建博物館、隨機牆面等 Templates 按鈕一鍵載入",
+          "effect": "可以快速展示同一演算法在規則與不規則平面上的差異"
+        }
+      ],
+      "difficulty": 2,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "互動工具",
+        "計算幾何"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://moxil-shah.github.io/Isovist-Sandbox/"
+    },
+    {
+      "id": "G01-57",
+      "algo": "G01",
+      "title": "Coding Challenge #146：Rendering Ray Casting（偽 3D 射線投射渲染）",
+      "creator": "Daniel Shiffman（The Coding Train）",
+      "year": "2019",
+      "category": "drawing",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "延續 G01-53 的 2D 射線投射挑戰，作者進一步把每條射線打到牆的距離換算成畫面右側直條的高度與明暗，仿造 Wolfenstein 3D 的偽 3D 渲染手法，讓一個在 2D 平面上移動、旋轉的觀察點即時畫出第一人稱視角的走廊景象。和基礎範例相比，這裡把 CastIsovist 算出的每條射線距離直接拿去畫透視牆面，而不是組成可視域多邊形。",
+      "variations": [
+        {
+          "name": "視野角度即時調整",
+          "how": "用滑鼠或滑桿即時改變 fov，射線扇形角度跟著變寬變窄",
+          "effect": "可以直接看到視角變寬時左右兩側牆面因為距離變長而被拉伸的效果"
+        },
+        {
+          "name": "左右分割畫面",
+          "how": "畫面左半保留 2D 俯視射線圖、右半即時畫出對應的偽 3D 渲染",
+          "effect": "同時看到「從上面看的可視域」與「站在裡面看到的畫面」兩種呈現方式"
+        },
+        {
+          "name": "牆面明暗分層",
+          "how": "依射線距離把牆面直條調成不同亮度代表不同深淺",
+          "effect": "距離越遠的牆面越暗，重現簡易的霧化透視感"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "p5.js",
+        "射線投射",
+        "偽3D"
+      ],
+      "tools": [
+        "p5.js"
+      ],
+      "url": "https://thecodingtrain.com/challenges/146-rendering-ray-casting"
+    },
+    {
+      "id": "G01-58",
+      "algo": "G01",
+      "title": "Terminal Dungeon：終端機文字模式的射線投射迷宮",
+      "creator": "salt-die",
+      "year": "2019",
+      "category": "drawing",
+      "categories_extra": [],
+      "source": "art",
+      "scale": "物件",
+      "summary": "一個可以 pip 安裝的 Python 函式庫，把射線投射（Doom／Wolfenstein 式）渲染畫在純文字終端機裡：牆面用不同 ASCII 字元與顏色深淺代表距離遠近，畫面角落還疊一張迷你地圖。和基礎範例相比，這裡把可視域的射線距離換算成字元畫面，示範同一演算法也能在完全沒有圖形介面的環境重現。",
+      "variations": [
+        {
+          "name": "字元密度代表距離",
+          "how": "依射線打到牆的距離挑選不同疏密的 ASCII 字元",
+          "effect": "純文字畫面也能表現出遠近深淺，模擬灰階明暗"
+        },
+        {
+          "name": "小地圖疊加",
+          "how": "畫面角落另外用字元畫出俯視地圖與觀察點位置",
+          "effect": "同時看到第一人稱偽 3D 畫面與 2D 平面位置，方便理解射線是怎麼打出去的"
+        },
+        {
+          "name": "紋理切換",
+          "how": "按鍵切換不同牆面字元組合",
+          "effect": "同一組射線距離資料可以換出好幾種文字材質風格"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Python",
+        "終端機",
+        "ASCII"
+      ],
+      "tools": [
+        "Python"
+      ],
+      "url": "https://github.com/salt-die/terminal_dungeon"
+    },
+    {
+      "id": "G03-54",
+      "algo": "G03",
+      "title": "Coding Adventure: Hydraulic Erosion（地形水力侵蝕模擬）",
+      "creator": "Sebastian Lague",
+      "year": "2019",
+      "category": "modeling",
+      "categories_extra": [
+        "drawing"
+      ],
+      "source": "art",
+      "scale": "地景",
+      "summary": "Sebastian Lague 的程式教學專案：用「水滴」在高度圖上逐格找最陡下坡方向前進，沿路依流速與坡度計算能挾帶的泥沙量，坡陡流快時侵蝕地面、坡緩流慢或水滴消失時沉積泥沙，重複數萬次水滴路徑後，原本隨機的地形就被沖出樹枝狀的溝谷與稜線。和 Grasshopper C# 基礎範例「每格都有下游指標、依高程排序一次性累加全部水量」不同，這裡是逐滴模擬個別路徑、且會反過來真的修改地形高度，因此可以直接看到侵蝕後地形的視覺變化，而不只是一張累積量圖。",
+      "variations": [
+        {
+          "name": "水滴路徑侵蝕",
+          "how": "每滴水從隨機起點出發，依鄰近 4 格的高度梯度決定下一步方向與速度，逐步更新自己的位置與挾沙量",
+          "effect": "地形隨每一滴水的路徑被慢慢刻出蜿蜒的溝谷，而不是一次算完的靜態流向場"
+        },
+        {
+          "name": "挾沙容量與沉積",
+          "how": "挾沙容量正比於水滴速度與坡度，超過容量就沉積多餘泥沙、不足容量就從地面挖取泥沙",
+          "effect": "陡坡被削低、緩坡與谷底被墊高，長期下來地形會自然收斂出合理的縱剖面"
+        },
+        {
+          "name": "大量疊代的視覺化比較",
+          "how": "同一張隨機高度圖分別輸出「侵蝕前」與「侵蝕 7 萬次後」的兩張 3D 網格截圖",
+          "effect": "一眼就能比較出生硬雜訊地形和被水沖刷過的自然地形差異"
+        }
+      ],
+      "difficulty": 3,
+      "tags": [
+        "creative coding",
+        "Unity",
+        "C#",
+        "地形侵蝕",
+        "程式教學"
+      ],
+      "tools": [
+        "Unity",
+        "C#"
+      ],
+      "url": "https://github.com/SebLague/Hydraulic-Erosion"
+    }
+  ]
+}

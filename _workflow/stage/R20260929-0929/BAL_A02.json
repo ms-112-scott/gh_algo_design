@@ -1,0 +1,124 @@
+{
+ "algo": "A02",
+ "classification": [
+  {"id": "A02-01", "source": "research", "why": "電磁模擬天線設計論文，工程效能導向"},
+  {"id": "A02-02", "source": "research", "why": "MATLAB內建天線元件，軟體工具性質"},
+  {"id": "A02-03", "source": "research", "why": "立方衛星天線論文，與A02-01同類重複"},
+  {"id": "A02-04", "source": "research", "why": "聲學超穎表面期刊論文，性能分析"},
+  {"id": "A02-05", "source": "research", "why": "聲波導管物理研究，非視覺作品"},
+  {"id": "A02-06", "source": "research", "why": "隔音牆聲學分析論文，都市基礎設施"},
+  {"id": "A02-07", "source": "research", "why": "熱交換器學位論文，製造與性能導向"},
+  {"id": "A02-08", "source": "research", "why": "方形熱交換器研究，性能分析論文"},
+  {"id": "A02-09", "source": "research", "why": "微流道散熱器期刊論文，工程應用"},
+  {"id": "A02-10", "source": "research", "why": "已建成建築立面，真實案例研究"},
+  {"id": "A02-11", "source": "research", "why": "街道立面分形維度分析論文"},
+  {"id": "A02-12", "source": "research", "why": "Mandelbrot分形維度經典文獻"},
+  {"id": "A02-13", "source": "research", "why": "Grasshopper教學工具網站，非藝術作品"},
+  {"id": "A02-14", "source": "research", "why": "Blender外掛學術論文，參數化研究"},
+  {"id": "A02-15", "source": "research", "why": "arXiv數學論文，雪花構造理論"},
+  {"id": "A02-51", "source": "art", "why": "Coding Train教學，成果是生成畫面"},
+  {"id": "A02-52", "source": "art", "why": "Nature of Code書中p5.js生成範例"},
+  {"id": "A02-53", "source": "research", "why": "3Blue1Brown數學講解影片，依規則歸research"},
+  {"id": "A02-54", "source": "research", "why": "Houdini外掛工具示範，依規則歸research"}
+ ],
+ "art_count": 2,
+ "need": 7,
+ "removal_order": [
+  "A02-08", "A02-06", "A02-05", "A02-03", "A02-53", "A02-54", "A02-11", "A02-09", "A02-13", "A02-14"
+ ],
+ "removal_reasons": {
+  "A02-08": "方形Koch島熱交換器與A02-07、A02-09同為熱交換器主題，重複度最高，ResearchGate只有摘要難以查證細節",
+  "A02-06": "隔音牆擴散器出處為academia.edu非正式典藏，且與A02-04聲學、A02-11都市案例主題重疊",
+  "A02-05": "Koch曲線聲波導管研究主題與A02-04聲學超穎表面高度重複，屬次要期刊",
+  "A02-03": "CubeSat天線與A02-01同為Koch雪花天線工程論文，主題重複只差應用場景",
+  "A02-53": "3Blue1Brown內容偏碎形維度講解而非Koch生成邏輯本身，且只有YouTube影片縮圖可用",
+  "A02-54": "Houdini VEX案例與A02-13 Grasshopper教學同為軟體工具示範，重複且無可用圖片",
+  "A02-11": "街景立面分形維度分析較概括性，與Koch曲線本身的直接關聯薄弱",
+  "A02-09": "微流道散熱器雖為2025年新研究，但與A02-07熱交換器主題仍重複",
+  "A02-13": "Grasshopper教學示範價值與基礎範例工具重疊，較缺乏獨特觀點",
+  "A02-14": "Blender外掛學位/期刊來源較冷門，圖樣設計說明簡略"
+ },
+ "new_art": [
+  {
+   "title": "Koch Snowflake Tessellation（罕見碎形鑲嵌實作）",
+   "creator": "Sher Minn Chong（piratefsh）",
+   "year": "2020",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "紐約軟體工程師 Sher Minn Chong 在她的生成藝術部落格中，不把 Koch 雪花只當成單一輪廓，而是把整個雪花形狀當成鑲嵌單元：依大小雪花直徑比 √3:1，在中央雪花周圍排列 6 個縮小版雪花、再對每個縮小版遞迴同樣的排列，長出滿版的碎形鑲嵌紋理。和基礎範例只細分邊界不同，這是把「雪花本身」拿去做鑲嵌遞迴。",
+   "variations": [
+    {"name": "雪花當鑲嵌單元", "how": "不細分邊界，而是依 √3:1 直徑比在中央雪花周圍放 6 個縮小版雪花，逐層遞迴", "effect": "產生滿版重複的碎形鑲嵌紋理，而非單一封閉雪花輪廓"},
+    {"name": "面積估算法（2015 版）與比例法（2019 版）對照", "how": "文章比較用面積比例估算縮放倍率、與用直徑比例精算兩種鑲嵌算法", "effect": "同一鑲嵌目標可以用不同的遞迴比例規則達成，適合比較不同解法的精確度"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Processing.js", "碎形", "鑲嵌"],
+   "tools": ["Processing.js"],
+   "url": "https://piratefsh.github.io/2020/08/07/koch-tesselation-uncommon-fractal-implementations.html",
+   "evidence": "WebFetch 讀到文章標題「Rare implementations: Koch Snowflake Tessellation」，發布日期 2020-08-07，作者頁確認本名 Sher Minn Chong（GitHub piratefsh）",
+   "nearest_existing": "A02-51／A02-52：同樣逐代畫雪花，但本作品是把雪花當鑲嵌單元排列，不是單純細分邊界",
+   "image": {"url": "https://piratefsh.github.io/assets/images/uncommon-fractals/koch-tessel/koch-tessel-v1-4.png", "page": "https://piratefsh.github.io/2020/08/07/koch-tesselation-uncommon-fractal-implementations.html", "verified": true, "checked": "深綠色背景上滿版的雪花碎形鑲嵌圖案，多層淺綠線條重複排列，交界處有紅色與黃色小圓點標記", "source": "piratefsh 個人生成藝術部落格", "author": "Sher Minn Chong", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "Koch 雪花鑲嵌演算法第 4 版輸出，滿版重複的碎形紋理"}
+  },
+  {
+   "title": "fractal_viewer：GLSL Ray-marching 3D Koch 量體",
+   "creator": "Angramme",
+   "year": "",
+   "category": "modeling",
+   "categories_extra": ["art-installation"],
+   "scale": "物件",
+   "summary": "以 Processing 搭配 GLSL 寫的即時 ray-marching 分形檢視器，把 Koch 曲線「三等分、中段推出尖角」的規則從線段擴展到三角面，向外推出四面體堆疊成尖刺狀的立體量體，再用簽名距離場（SDF）即時渲染出強烈逆光與陰影，呈現雕塑感十足的畫面。和基礎範例的平面折線相比，是把同一條規則直接推到 3D 的示範。",
+   "variations": [
+    {"name": "3D 化為 Kochcube", "how": "遞迴對象從線段改成三角面，每面中央向外推出小四面體，取代平面的尖角推出", "effect": "從平面雪花變成尖刺狀立體分形量體，呼應基礎範例 V07 的 3D 化方向"},
+    {"name": "SDF ray-marching 即時渲染", "how": "用簽名距離場描述分形表面，逐像素 ray-march 求交點並打光", "effect": "不需要真的產生網格就能即時渲染複雜到很高深度的分形，並帶出強烈的雕塑光影"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "GLSL", "Processing", "ray marching", "3D分形"],
+   "tools": ["Processing", "GLSL"],
+   "url": "https://github.com/Angramme/fractal_viewer",
+   "evidence": "GitHub README 標題「A simple ray-marched fractal renderer in Processing and GLSL」，img/koch1.png、koch2.png、koch4.png 為 Koch 分形渲染展示圖",
+   "nearest_existing": "呼應基礎範例 V07（3D 化：Koch 曲面／Kochcube）的變形方向，但這是實際做出來的即時渲染作品",
+   "image": {"url": "https://raw.githubusercontent.com/Angramme/fractal_viewer/master/img/koch2.png", "page": "https://github.com/Angramme/fractal_viewer", "verified": true, "checked": "紫色漸層背景前，一個由密密麻麻的小尖刺三角量體組成的金字塔狀立體分形，強烈白色逆光從量體邊緣透出", "source": "Angramme GitHub repo README", "author": "Angramme", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "GLSL ray-marching 即時渲染的 3D Koch 分形量體，逆光呈現雕塑感"}
+  },
+  {
+   "title": "Frattale di Koch Interattivo（Koch Fractal Manipulation）",
+   "creator": "Santagati Ivan",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "義大利開發者用 p5.js 做的互動網頁小工具，畫面上有「細節（迭代深度）」與「縮放」兩個滑桿，還有一個按鈕可以在 Koch 雪花與反雪花（anti-snowflake，尖角朝內）之間切換。學習者可以直接拖滑桿即時看到遞迴深度如何讓輪廓從三角形變得越來越細碎，比對照著程式碼想像更直覺。",
+   "variations": [
+    {"name": "滑桿即時控制迭代深度", "how": "用 HTML range input 綁定 depth 參數，數值改變時立刻在 p5.js draw() 重畫", "effect": "能連續觀察雪花從三角形逐漸長出細節的過程，而不是只看最終結果"},
+    {"name": "一鍵切換雪花／反雪花", "how": "按鈕切換尖角推出方向（向外或向內），對應基礎範例的 V01 反雪花規則", "effect": "同一介面就能比較基礎雪花與 V01 反雪花變形的差異"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "互動", "碎形"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/santagatiivan/Koch-Fractal-Manipulation",
+   "evidence": "GitHub repo index.html 標題為「Frattale di Koch Interattivo」，sketch.js 引用 p5.js 1.4.0 CDN，README 有 snowflake 與 antisnowflake 兩組截圖",
+   "nearest_existing": "對應基礎範例 V01（尖角朝內／反雪花）的切換功能",
+   "image": {"url": "https://raw.githubusercontent.com/santagatiivan/Koch-Fractal-Manipulation/main/img/snowflake/4.PNG", "page": "https://github.com/santagatiivan/Koch-Fractal-Manipulation", "verified": true, "checked": "黑底網頁截圖，左上角有「Details of the snowflake/antisnowflake」與「Zoom」兩條滑桿，還有一個「Snowflake」按鈕，畫面中央是白色線條的雪花分形輪廓", "source": "santagatiivan GitHub repo README", "author": "Santagati Ivan", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "p5.js 互動小工具畫面，含控制滑桿與生成的雪花分形輪廓"}
+  },
+  {
+   "title": "KochCurve（p5.js 基礎示範）",
+   "creator": "JohnnyAwesome",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "用 p5.js 實作的 Koch 曲線最小示範：只對「一條線段」套用三等分推尖角的規則，畫出開放的鋸齒山形輪廓，而不是組成封閉雪花。黑底配螢光綠線條呈現，是最貼近基礎範例遞迴邏輯本身的 JavaScript 移植版本，適合初學者對照 C# 遞迴寫法逐行理解。",
+   "variations": [
+    {"name": "單一開放曲線而非封閉雪花", "how": "只對一條線段呼叫 SplitEdge 遞迴，不組成三角形迴圈生成雪花", "effect": "呈現 Koch 曲線本身的山形鋸齒輪廓，讓學習者先看懂單條曲線再理解雪花"},
+    {"name": "C# 遞迴移植成 JavaScript／p5.js", "how": "把遞迴函式改寫成 JavaScript，用 p5.js 的 line() 逐段畫出結果", "effect": "不需要 Grasshopper 環境，在瀏覽器就能執行並修改參數"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "遞迴", "基礎示範"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/johnnyawesome/KochCurve",
+   "evidence": "GitHub repo README 展示 KochCurve/DemoImage/KochCurve.gif，圖片下方印有文字「by JohnnyAwesome」",
+   "nearest_existing": "非常接近基礎範例本身的最小示範，沒有太多額外變形",
+   "image": {"url": "https://raw.githubusercontent.com/johnnyawesome/KochCurve/master/KochCurve/DemoImage/KochCurve.gif", "page": "https://github.com/johnnyawesome/KochCurve", "verified": true, "checked": "黑色畫布上的螢光綠色 Koch 曲線鋸齒／山形線條，下方印著文字「by JohnnyAwesome」", "source": "johnnyawesome GitHub repo README", "author": "JohnnyAwesome", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "p5.js 畫出的開放式 Koch 曲線鋸齒輪廓"}
+  }
+ ],
+ "notes": "只驗證到 4 個合格藝術案例（需要 7 個＋3 個備援），主因：本次 WebSearch 額度中途用罄改用 Parallel Search 但很快又觸發其免費額度限制；OpenProcessing／Shadertoy 的頁面幾乎都被機器人防護擋下 403，少數能截圖的不是「已封存、瀏覽器跑不動」就是「要按 Play 才會畫」，畫面仍是空白；GitHub 上多數 Koch 相關 repo 是課堂作業、沒有展示圖或圖片太小。建議協調者先用這 4 個（依序 piratefsh、Angramme、Santagati Ivan、JohnnyAwesome）替換 removal_order 前 4 個研究案例（A02-08、A02-06、A02-05、A02-03），其餘 3 個缺口與 removal_order 後段案例，留待下一輪用瀏覽器工具實際截圖互動式 p5.js／OpenProcessing 作品後再補上。"
+}

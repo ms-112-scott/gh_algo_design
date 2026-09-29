@@ -1,0 +1,57 @@
+{
+  "reviewer": "BALREV",
+  "algos": {
+    "E01": {
+      "reject_new": [
+        {"index": 2, "reason": "summary 說「依像素位置與顏色決定圓要多大」與原始碼不符：circle_packing_image.py 的圓是隨機位置生成、每幀半徑 +1 長到碰撞為止，只有顏色取自影像；做法與既有 E01-07（Coding Train #50 長大到相切＋影像取色）幾乎相同，作者不具代表性，沒有新增價值"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "notes": "3 個新案例都查證存在、圖片為生成畫面；[0] pxlmotiv（Processing，2019，La Plata 阿根廷）可用，但原始碼實際是 John Shier 統計幾何法：面積依冪次律 A_i=A_1·i^(−c) 遞減、隨機位置試放到不重疊，黑底、圓只畫淺灰細線不填色，variations 第 1 條「在剩餘最大空隙塞圓」與第 2 條「背景淺色」宜改寫成這個做法；[1] danieledapo（Rust，2020）SDF 與巢狀遞迴描述與 lib.rs 相符；分類與移除順序無誤。"
+    },
+    "E02": {
+      "reject_new": [
+        {"index": 0, "reason": "Blender 外掛（軟體工具），依分類準則屬 research，與撰寫者自己把 E02-52／E02-53 函式庫歸 research 的標準一致；README 並說明 Blender 2.92 後功能已由 Geometry Nodes 的 Poisson Disk 模式取代，即既有 E02-10；圖片是帶 Random／Blue Noise 文字標籤的工具比較圖"},
+        {"index": 1, "reason": "同一件作品已收錄為 E03-51（同網址 thecodingtrain.com/challenges/181-image-stippling），balance.md 規定不可重複其他演算法已收作品；且作品用亮度拒絕取樣＋加權 Lloyd，並未使用 Poisson 圓盤取樣"},
+        {"index": 2, "reason": "Swingline 是加權 Voronoi 點描的 GPU 實作工具，頁面完全沒有 Poisson 圓盤取樣，核心是 Lloyd 鬆弛（屬 E03）；summary 與 variations 的「保留原始影像色彩的彩色點描」為錯誤敘述，頁面說明底色色塊是 Voronoi 胞元的視覺化，點本身是黑點"},
+        {"index": 4, "reason": "pointu 是 Go 命令列工具（README：a tool to render images…），依分類準則屬 research；實作 Secord 加權 Voronoi 點描，沒有使用 Poisson 圓盤取樣，技法與既有 E02-02、E02-03 重複"}
+      ],
+      "image_fix": [
+        {"index": 3, "image": {"url": "https://raw.githubusercontent.com/benjamin-white/recursive-scatter/main/docs/render-009.png", "page": "https://github.com/benjamin-white/recursive-scatter", "verified": true, "checked": "橘紅底上以暗紅細線畫出的 Voronoi 細胞，中心一大團極細密的小細胞，往外逐漸變大變疏，外圍是大而尖角的多邊形，呈放射狀漸變", "source": "GitHub benjamin-white/recursive-scatter", "author": "benjamin-white", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "README 展示圖：影像位移圖控制密度的 Poisson 點連成 Voronoi 花紋，中心密、外圍疏"}},
+        {"index": 5, "image": {"url": "https://raw.githubusercontent.com/pixelsnafu/ImageTriangulation/master/ImageTriangulation/starry_1014_0.png", "page": "https://github.com/pixelsnafu/ImageTriangulation", "verified": true, "checked": "梵谷《星夜》被重繪成藍黃色調、由大小不一的三角形拼貼而成的低多邊形版本，星光、月亮與左側柏樹輪廓仍清楚可辨", "source": "GitHub pixelsnafu/ImageTriangulation", "author": "pixelsnafu", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "README 展示圖：以加權藍噪點三角化重繪的梵谷《星夜》"}}
+      ],
+      "fix_class": [
+        {"id": "E02-12", "source": "research", "why": "McNeel 論壇上重現 3D 字體效果的 Grasshopper 技術問答，不是藝術作品發表，與 E02-11 同類"}
+      ],
+      "protect": [],
+      "notes": "6 個新案例 reject 4 個（工具類歸 research、與 E03-51 重複、點描作品的核心是 Lloyd 不是 Poisson），只剩 [3] recursive-scatter（2022，Poisson＋影像位移密度＋Voronoi，原圖 render-001 是中心疏的環形，已換成與 summary 相符的 render-009；variations 第 3 條的 chroma.js 其實只用在雙色調色盤，不是依半徑漸層）與 [5] ImageTriangulation（原始碼確認是 Bridson 式 Poisson＋Sobel／熵加權；儲存庫已改名為 pixelsnafu，creator 宜改為 pixelsnafu，年份 2018；原圖 note 含「（備援案例）」會顯示在網站上，已換掉）；E02 藝術案例仍缺 3 個。"
+    },
+    "E03": {
+      "reject_new": [
+        {"index": 3, "reason": "d3-voronoi-treemap 是 D3 外掛函式庫（軟體工具），依分類準則屬 research，與 E01-14 d3.pack 歸 research 的標準一致；示範圖是國家 GDP 資訊圖表而非以視覺表現為目的，且只有 280×263"},
+        {"index": 4, "reason": "與 [0] 是同一件作品（同一個 2D Voronoi Experiments 網頁與儲存庫，只是另一組點分布預設），同一演算法不可重複收錄"}
+      ],
+      "image_fix": [],
+      "fix_class": [
+        {"id": "E03-54", "source": "research", "why": "ofxVoronoi 是 openFrameworks 外掛函式庫，屬軟體工具；與 E02-52 ofxPoissonDiskSampling 歸 research 一致"}
+      ],
+      "protect": [
+        {"id": "E03-05", "why": "Nervous System 2007 年的 Radiolaria 是生成式設計的經典代表作，Voronoi 細胞圖樣是作品核心，也是本演算法唯一的首飾類案例"},
+        {"id": "E03-04", "why": "Marc Newson 2006 年的 Voronoi Shelf（Gagosian 限量版）是最具代表性的 Voronoi 設計物件，本演算法唯一的家具類案例"}
+      ],
+      "notes": "[0] Jason Webb 2D Voronoi Experiments（p5.js＋d3-delaunay，2019）與 [1] bleuje Moore Voronoi（Processing＋GLSL，2024，著色器註解確實引用 Quilez、替換技巧有來源）查證無誤；[2] watabou 中世紀城市生成器（初版 2017）可歸 art（作者明言以美觀優先），TownGeneratorOS 的 Model.hx 確認是對隨機點做 Voronoi，再對中央街區做 3 次 Voronoi.relax（Lloyd），建議 summary 補上這點；但 tools／evidence 寫的 JavaScript、Delaunator 查無根據，開源版是 Haxe／OpenFL，宜更正。移除順序前兩個是經典代表作，已保護，會改從 E03-15、E03-07、E03-14 開始移除。"
+    },
+    "E04": {
+      "reject_new": [
+        {"index": 0, "reason": "summary 與 checked 描述錯誤：寫成「單一彈簧、畫出球的運動軌跡」，但圖上的 Soft Spring 範例原始碼是 10 個質點以彈簧串成、頂端固定、受重力、velocity×0.99 阻尼的懸垂鏈，黃線是用 curveVertex 畫的彈簧鏈本身，任何版本都每幀清背景、沒有軌跡。若把文字改寫成「懸垂彈簧鏈（2021，p5.js／Processing）」，反而是很貼近本演算法的好案例，可再補回"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [
+        {"id": "E04-10", "why": "Barnes 的動態鬆弛找形論文是本演算法的奠基文獻，和演算法關係最強"}
+      ],
+      "notes": "只有 [1] Coding Challenge #63 可用（Toxiclibs Verlet 彈簧網格旗幟＋風力＋材質，圖片是模擬畫面）；但 index.json 顯示 2017-03-14、語言只有 Processing／Java，tools 與 tags 的 p5.js、toxiclibs.js 宜改成 Processing、toxiclibs，variations 第 3 條的 noise 風場原片第 2 部已實作；另 E06 的 BAL 新增了它的前作 Coding Challenge #20 3D Cloth，不同作品但主題相近。E04 藝術案例仍缺 4 個。"
+    }
+  }
+}

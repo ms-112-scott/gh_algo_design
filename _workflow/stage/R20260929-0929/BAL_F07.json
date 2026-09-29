@@ -1,0 +1,294 @@
+{
+ "algo": "F07",
+ "classification": [
+  {
+   "id": "F07-01",
+   "source": "research",
+   "why": "CAADRIA 論文，以懲罰函數與退火最佳化住宅配置"
+  },
+  {
+   "id": "F07-02",
+   "source": "research",
+   "why": "形狀退火經典論文，定義以退火驅動形狀文法搜尋"
+  },
+  {
+   "id": "F07-03",
+   "source": "research",
+   "why": "形狀退火應用於測地線圓頂設計的學術研究"
+  },
+  {
+   "id": "F07-04",
+   "source": "research",
+   "why": "eifForm 結構設計系統，學術與工程應用整合"
+  },
+  {
+   "id": "F07-05",
+   "source": "research",
+   "why": "SIGGRAPH 論文，以退火自動配置室內家具"
+  },
+  {
+   "id": "F07-06",
+   "source": "research",
+   "why": "Grasshopper Galapagos 內建求解器的技術說明"
+  },
+  {
+   "id": "F07-07",
+   "source": "research",
+   "why": "退火解幾何背包排版的學術研究，近數位製造"
+  },
+  {
+   "id": "F07-51",
+   "source": "art",
+   "why": "R/Shiny 互動視覺化退火求解 TSP 的過程"
+  },
+  {
+   "id": "F07-52",
+   "source": "art",
+   "why": "Go 生成藝術，退火求像素路徑並輸出動畫"
+  },
+  {
+   "id": "F07-53",
+   "source": "art",
+   "why": "以退火排出好看的節點連線圖，視覺表現為目的"
+  },
+  {
+   "id": "F07-54",
+   "source": "art",
+   "why": "以退火生成單線肖像畫的生成藝術作品"
+  },
+  {
+   "id": "F07-55",
+   "source": "art",
+   "why": "以退火/爬山逐步用幾何圖形重建照片的生成藝術"
+  }
+ ],
+ "art_count": 5,
+ "need": 1,
+ "removal_order": [
+  "F07-06",
+  "F07-07",
+  "F07-03",
+  "F07-01"
+ ],
+ "removal_reasons": {
+  "F07-06": "只是論壇貼文說明既有 Galapagos 功能，非具體作品案例，找不到圖片佐證，內容單薄",
+  "F07-07": "與 F07-02、F07-03、F07-04 同屬 Cagan 形狀退火研究脈絡，主題重疊度高，本身較冷門小眾",
+  "F07-03": "與 F07-02、F07-04 同作者群、同為形狀退火論文，內容重疊，圓頂應用案例較窄",
+  "F07-01": "單篇會議論文，引用度不如 Cagan/Mitchell 經典論文，也沒有真實圖片佐證"
+ },
+ "new_art": [
+  {
+   "title": "Data Morph：用模擬退火把資料點變形成目標圖案",
+   "creator": "Stefanie Molin",
+   "year": "2023",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Data Morph 是一個教學工具與 Python 套件：把一組 2D 資料點（例如貓熊圖案）用模擬退火逐步變形成另一個目標形狀（例如星形），過程中持續檢查平均值、標準差、相關係數等統計摘要值維持不變，藉此說明「統計量相同不代表資料長相相同」。和 Grasshopper C# 基礎範例相比，狀態是每個點的座標而非格位排列，成本函數同時要逼近目標形狀、又要讓統計量偏差最小。",
+   "variations": [
+    {
+     "name": "目標形狀切換",
+     "how": "從貓熊、星形換成恐龍、心形等預設形狀，或載入自訂 SVG 輪廓當目標",
+     "effect": "同一組原始資料可以變形成完全不同的畫面，示範資料視覺化「先看圖再信統計」的重要性"
+    },
+    {
+     "name": "逐步降溫動畫輸出",
+     "how": "把每個溫度區間的中間狀態存成一張圖，串成 GIF 顯示點群從原始形狀緩慢融解、重組成目標形狀",
+     "effect": "退火「高溫亂跳、低溫收斂」的特性變成一段可以直接看的動畫"
+    },
+    {
+     "name": "多重統計量鎖定",
+     "how": "成本函數同時鎖住 x、y 平均、標準差與相關係數到小數點後兩位，而不是只鎖單一指標",
+     "effect": "變形後的散佈圖幾乎無法用摘要統計分辨，凸顯視覺化不可被統計量取代"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Python",
+    "matplotlib",
+    "資料視覺化",
+    "統計"
+   ],
+   "tools": [
+    "Python",
+    "matplotlib"
+   ],
+   "url": "https://github.com/stefmolin/data-morph",
+   "evidence": "GitHub 專案描述：「Morph an input dataset of 2D points into select shapes, while preserving the summary statistics ... through simulated annealing」，文件首頁 stefaniemolin.com/data-morph 確認為教學工具",
+   "nearest_existing": "無（本演算法目前研究案例多為建築配置或形狀退火，尚無以資料視覺化統計量為主題的案例）",
+   "image": {
+    "url": "https://stefaniemolin.com/data-morph/stable/_images/panda-to-star.gif",
+    "page": "https://github.com/stefmolin/data-morph",
+    "verified": true,
+    "checked": "貓熊形狀的散佈圖，點群正逐漸往外圍打散重組，右側同步列出維持不變的統計量數字",
+    "source": "Data Morph 官方文件",
+    "author": "Stefanie Molin",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "貓熊形狀的資料點雲，示範模擬退火如何在維持統計量不變下把點群逐步變形"
+   }
+  },
+  {
+   "title": "Gen1: Simulated Annealing（以模擬退火驅動的放射狀生成藝術）",
+   "creator": "rdmcnrmk",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "作者用 Unity 寫的生成藝術實驗：畫面上一群放射狀排列的三角形／星芒圖案，其角度與大小由模擬退火反覆調整生成，呈現類似萬花筒或花朵的放射狀構圖。和基礎範例的房間格位交換不同，這裡的狀態是每個圖案元素的角度與大小，成本函數改成評估整體構圖的視覺秩序。",
+   "variations": [
+    {
+     "name": "放射對稱層數",
+     "how": "改變外圈重複的花瓣／尖角數量與半徑",
+     "effect": "從稀疏的幾何圖案變成緊密的放射狀星芒"
+    },
+    {
+     "name": "色彩降溫映射",
+     "how": "依溫度高低把畫面明暗或色相分級",
+     "effect": "高溫時圖案雜亂鮮豔，降溫後收斂成單一色調的規則構圖"
+    },
+    {
+     "name": "多組退火並置",
+     "how": "同時跑多組獨立的退火過程，各自佔畫面一角",
+     "effect": "一張畫面裡同時看到不同收斂進度的構圖，像是退火過程的時間切片"
+    }
+   ],
+   "difficulty": 3,
+   "tags": [
+    "creative coding",
+    "Unity",
+    "C#",
+    "生成藝術"
+   ],
+   "tools": [
+    "Unity",
+    "C#"
+   ],
+   "url": "https://github.com/rdmcnrmk/gen1-simulated-annealing",
+   "evidence": "GitHub 專案描述：「generative art based on simulated annealing algorithm」，README 附示範圖片確認為放射狀圖案生成畫面",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/4717754/66346679-f6e05d80-e952-11e9-820e-7cb68ef65dd3.png",
+    "page": "https://github.com/rdmcnrmk/gen1-simulated-annealing",
+    "verified": true,
+    "checked": "放射狀排列的三角形尖角圖案，中心密集、向外展開成類似花朵或漩渦的構圖",
+    "source": "GitHub README 附圖",
+    "author": "rdmcnrmk",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "以模擬退火反覆調整生成的放射狀生成藝術構圖"
+   }
+  },
+  {
+   "title": "Simulated Annealing：以退火求解法國城市 TSP 路徑（Processing）",
+   "creator": "Nikolai Janakiev",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": [
+    "urban-landscape"
+   ],
+   "scale": "群體／都市",
+   "summary": "作者用 Processing 讀入城市資料庫的經緯度與人口，以 Web Mercator 投影畫出城市點，再用模擬退火求一條走訪所有城市的最短路徑，animation.gif 記錄從隨機連線逐漸收斂的過程。和基礎範例相比，狀態是城市走訪順序而不是格位排列，畫面同時保留真實地理位置。",
+   "variations": [
+    {
+     "name": "城市資料集切換",
+     "how": "換一批國家或洲的城市經緯度資料，重新計算 Mercator 投影座標",
+     "effect": "同一套退火程式可以畫出不同國家的城市巡迴路線圖"
+    },
+    {
+     "name": "人口加權城市大小",
+     "how": "點的半徑依人口數縮放",
+     "effect": "大城市在圖上更醒目，路線圖同時傳達城市規模資訊"
+    },
+    {
+     "name": "收斂動畫輸出",
+     "how": "把每隔幾步的路徑存成一張圖並輸出成 animation.gif",
+     "effect": "可以直接看到路徑從雜亂連線逐漸解開成較少交叉的巡迴路徑"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "Processing",
+    "地圖",
+    "TSP"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://github.com/njanakiev/simulated-annealing",
+   "evidence": "GitHub README 動畫 animation.gif 顯示法國城市與退火路徑，專案描述「Implementation of Simulated Annealing in Processing」",
+   "nearest_existing": "F07-51《The Traveling Salesman with Simulated Annealing, R, and Shiny》— 同樣是退火求 TSP，但本作品是 Processing 靜態地圖動畫、非互動網頁，且用真實城市經緯度而非任意點",
+   "image": {
+    "url": "https://raw.githubusercontent.com/njanakiev/simulated-annealing/master/SimulatedAnnealing/animation.gif",
+    "page": "https://github.com/njanakiev/simulated-annealing",
+    "verified": true,
+    "checked": "動畫其中一格：法國城市節點（巴黎、里昂、馬賽等）與退火過程中彼此交錯的連線",
+    "source": "GitHub README",
+    "author": "Nikolai Janakiev",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "退火過程中法國城市之間的路徑連線，此時尚未完全收斂成不交叉的巡迴路徑"
+   }
+  },
+  {
+   "title": "Shapeme：以模擬退火演化三角形重建圖片（蒙娜麗莎）",
+   "creator": "Salvatore Sanfilippo（antirez）",
+   "year": "2014",
+   "category": "2d-pattern",
+   "categories_extra": [
+    "drawing"
+   ],
+   "scale": "物件",
+   "summary": "Redis 作者 antirez 公開的舊作：從隨機的半透明三角形與圓形開始，用模擬退火反覆突變形狀的頂點、顏色與透明度，讓疊加結果逐漸逼近參考圖片（作者示範蒙娜麗莎），過程可視化並可輸出 SVG 供列印。和基礎範例相比，狀態是一組彩色形狀而非房間排列，成本是與目標圖片的像素誤差。",
+   "variations": [
+    {
+     "name": "形狀種類切換",
+     "how": "只用三角形、只用圓形，或兩者混合當作退火的鄰域",
+     "effect": "同一張目標圖片會因形狀種類不同而呈現三角面或圓點馬賽克風格"
+    },
+    {
+     "name": "漸進儲存與續跑",
+     "how": "可儲存／載入目前進度狀態，中途中斷後從同一組形狀繼續退火",
+     "effect": "可以把長時間的收斂過程拆成多段執行，也方便比較不同階段的畫面"
+    },
+    {
+     "name": "向量輸出供實體輸出",
+     "how": "最終形狀集合輸出成 SVG 而非點陣圖",
+     "effect": "可以把退火收斂的結果放大列印或雷射雕刻，不會有像素鋸齒"
+    }
+   ],
+   "difficulty": 2,
+   "tags": [
+    "creative coding",
+    "C",
+    "SDL",
+    "影像重建"
+   ],
+   "tools": [
+    "C",
+    "SDL"
+   ],
+   "url": "https://github.com/antirez/shapeme",
+   "evidence": "GitHub README 說明「Evolve images using simulated annealing」，並附蒙娜麗莎範例圖片，作者為 Redis 創作者 antirez",
+   "nearest_existing": "F07-55《Primitive》（Fogleman）— 概念同樣是用幾何圖形逼近照片，但作者、實作語言（C/SDL vs Go）與輸出格式（SVG vs PNG/GIF）不同",
+   "image": {
+    "url": "http://antirez.com/misc/monnalisa.png",
+    "page": "https://github.com/antirez/shapeme",
+    "verified": true,
+    "checked": "以半透明三角形疊加重建出的蒙娜麗莎肖像，色塊分明呈現低多邊形風格",
+    "source": "antirez 個人網站",
+    "author": "Salvatore Sanfilippo",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "以模擬退火疊加三角形逼近蒙娜麗莎原畫的重建結果"
+   }
+  }
+ ],
+ "notes": "現有 5 個藝術設計案例已多以模擬退火求 TSP 路徑為主題（F07-51~54），本次新增優先找非 TSP 的作品（Data Morph 資料變形、放射狀生成藝術）以增加多樣性。p5.js／Processing 的模擬退火生成藝術經廣泛搜尋（GitHub 代碼搜尋、Coding Train 索引皆查無以模擬退火為核心的範例）後數量稀少，僅找到 njanakiev 一件 Processing 作品，其餘為 Python、Unity/C#、C/SDL，未達成「至少一半 p5.js/Processing」的偏好；need 僅 1，若協調者需要更多備援，removal_order 前段（F07-06/07/03）可供其他演算法調度。"
+}

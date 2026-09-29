@@ -142,7 +142,7 @@
    "tools": [
     "圖解靜力學（手繪作圖）"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-02",
@@ -171,7 +171,7 @@
     "圖解靜力學",
     "互動參數模型"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-04",
@@ -185,7 +185,7 @@
    "tools": [
     "互動參數模型"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-05",
@@ -197,7 +197,7 @@
    "category": "performance",
    "scale": "構件",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-06",
@@ -239,21 +239,7 @@
     "Rhino",
     "Grasshopper"
    ],
-   "has_image": false
-  },
-  {
-   "id": "E05-09",
-   "cc": false,
-   "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
-   "creator": "Lorenz Lachauer、Philippe Block（ETH Zurich Block Research Group）",
-   "year": "2014",
-   "url": "https://block.arch.ethz.ch/eq/",
-   "category": "modeling",
-   "scale": "構件",
-   "tools": [
-    "網頁互動平台"
-   ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-51",
@@ -267,7 +253,7 @@
    "tools": [
     "Java"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-52",
@@ -281,7 +267,7 @@
    "tools": [
     "JavaScript（網頁互動）"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E05-53",
@@ -316,12 +302,12 @@
   "category": {
    "performance": 4,
    "drawing": 4,
-   "modeling": 3,
+   "modeling": 2,
    "3d-architecture": 1,
    "fabrication": 1
   },
   "scale": {
-   "構件": 7,
+   "構件": 6,
    "建築": 4,
    "物件": 2
   },
@@ -332,12 +318,21 @@
    "圖解靜力學": 1,
    "CEM": 1,
    "Rhino": 1,
-   "網頁互動平台": 1,
    "Java": 1,
    "JavaScript（網頁互動）": 1,
    "GeoGebra": 1,
    "JavaScript": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:E05-09",
+   "algo": "E05",
+   "kind": "RES",
+   "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
+   "url_norm": "block.arch.ethz.ch/eq",
+   "reason": "gh-balance R20260929-0929：總數調為偶數，讓兩類案例相等"
+  }
+ ]
 }

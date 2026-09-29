@@ -1,0 +1,396 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A02",
+  "name_zh": "Koch 曲線／雪花",
+  "name_en": "Koch Curve / Koch Snowflake",
+  "one_liner": "把每條線段的中間三分之一往外推成尖角，一層一層重複，讓一個三角形長成周長無限增加的雪花輪廓。",
+  "how_it_works": [
+   "依 sides 建立起始正多邊形（或一條直線）的角點清單",
+   "每條邊交給遞迴 SplitEdge：切成三等分，中段用旋轉 -60° 的向量推出尖點，得到四段",
+   "四段各自再呼叫 SplitEdge、深度減 1；深度為 0 時只記起點",
+   "所有點依序串成 Polyline 輸出，點數 = 邊數 × 4^depth + 1"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 9,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A02-01",
+   "title": "Koch 雪花分形天線（寬頻透明天線）",
+   "creator": "IEEE 研討會論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "遞迴",
+    "最佳化"
+   ],
+   "tools": [
+    "電磁模擬軟體"
+   ],
+   "url": "https://ieeexplore.ieee.org/document/9157327/",
+   "summary": "以 Koch 雪花作為貼片天線的輪廓，在同樣尺寸下增加有效周長，讓一片天線涵蓋 GSM、UMTS、WLAN、LTE 多個頻段；透明基板使它能貼在玻璃上。Koch 遞迴層數直接控制電氣長度。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-02",
+   "title": "MATLAB Antenna Toolbox：fractalSnowflake 元件",
+   "creator": "MathWorks",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "遞迴"
+   ],
+   "tools": [
+    "MATLAB"
+   ],
+   "url": "https://www.mathworks.com/help/antenna/ref/fractalsnowflake.html",
+   "summary": "MATLAB 內建的 Koch 雪花天線產生函式，以迭代次數、邊長等參數化輸入產生天線幾何並直接模擬。和基礎範例一樣是「參數 → 遞迴幾何」的元件化思維。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-03",
+   "title": "S 頻段 Koch 雪花天線（CubeSat 立方衛星）",
+   "creator": "IEEE 研討會論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "分形",
+    "最佳化"
+   ],
+   "tools": [
+    "電磁模擬軟體"
+   ],
+   "url": "https://ieeexplore.ieee.org/document/7836227/",
+   "summary": "為體積極小的立方衛星設計 Koch 雪花天線，利用分形在有限面積內塞入更長邊界的特性達到小型化。展示分形在「空間受限」條件下的價值。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-04",
+   "title": "Koch 雪花啟發的聲學超穎表面（車用喇叭擴散）",
+   "creator": "Journal of Applied Physics 論文作者群",
+   "year": "2025",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "分形",
+    "3D",
+    "吸引子控制"
+   ],
+   "tools": [
+    "聲學模擬"
+   ],
+   "url": "https://pubs.aip.org/aip/jap/article/138/18/183102/3371768/Koch-snowflake-inspired-acoustic-metasurface-for",
+   "summary": "以 Koch 雪花邊緣做聲學透射超穎表面，分形邊緣產生多個二次繞射源，在 10–18 kHz 讓聲音更均勻地擴散。分形邊界被當成聲學性能工具。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-05",
+   "title": "Koch 曲線結構中的快慢聲波",
+   "creator": "Scientific Reports 論文作者群",
+   "year": "2018",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "分形",
+    "遞迴"
+   ],
+   "tools": [],
+   "url": "https://www.nature.com/articles/s41598-018-19797-x",
+   "summary": "用 Koch 曲線形狀的聲波導管，利用多條傳遞路徑的共振與干涉同時得到慢波與快波。說明分形路徑長度可以控制波的行為。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-06",
+   "title": "分形擴散器作為隔音牆頂端構件",
+   "creator": "研究論文作者群",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "分形",
+    "遞迴"
+   ],
+   "tools": [
+    "BEM 聲學分析"
+   ],
+   "url": "https://www.academia.edu/97336487/Investigation_of_broadband_attenuation_with_fractal_diffusers_as_noise_barrier_top_edge_devices_using_indirect_boundary_element_method",
+   "summary": "以邊界元素法分析一維分形擴散器作為道路隔音牆頂部斷面，結果比傳統 T 形牆頂在陰影區有更好的衰減。分形斷面成為都市基礎設施的造形語彙。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-07",
+   "title": "Koch 雪花截面的套管式熱交換器",
+   "creator": "Georgia Southern University 學位論文",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "分形",
+    "3D"
+   ],
+   "tools": [
+    "CFD 熱流模擬"
+   ],
+   "url": "https://digitalcommons.georgiasouthern.edu/etd/1697/",
+   "summary": "把熱交換器內管截面改成第 2 層 Koch 雪花，增加表面積，總熱傳係數與熱傳率都明顯提升。展示 Koch 截面擠出成實體構件的製造與性能關係。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-08",
+   "title": "方形 Koch 島熱交換器",
+   "creator": "研究論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "分形",
+    "遞迴"
+   ],
+   "tools": [],
+   "url": "https://www.researchgate.net/publication/233225229_Heat_Transfer_Characteristics_of_a_Quadratic_Koch_Island_Fractal_Heat_Exchanger",
+   "summary": "以方形（quadratic）Koch 島作為熱交換器截面，研究其熱傳特性。是基礎範例 60° 規則換成 90° 規則的直接實例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-09",
+   "title": "雪花分形仿生微流道散熱器",
+   "creator": "Journal of Thermal Analysis and Calorimetry 論文作者群",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "3D"
+   ],
+   "tools": [
+    "CFD 熱流模擬"
+   ],
+   "url": "https://link.springer.com/article/10.1007/s10973-025-14920-3",
+   "summary": "以雪花分形形式規劃電子元件的微流道散熱器，比原始分形流道有更好的熱傳與更低壓降。分形路徑從輪廓轉為流道網路。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-10",
+   "title": "Federation Square（對照：pinwheel 分形立面）",
+   "creator": "LAB Architecture Studio（Don Bates、Peter Davidson）",
+   "year": "2002",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "分形",
+    "拼貼",
+    "遞迴"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Federation_Square",
+   "summary": "墨爾本聯邦廣場立面採用 Conway 與 Radin 的 pinwheel 非週期鋪磚：五片三角磚組成一片面板，五片面板組成巨型面板，同一三角形比例在各尺度自我相似並可異地預製。它不是 Koch，但示範了「遞迴細分 → 建築構件層級」的同一邏輯。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-11",
+   "title": "街景中的分形設計：建築立面組成的視覺美學",
+   "creator": "Alexandria Engineering Journal 論文作者群",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "分形",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/pii/S1110016819300845",
+   "summary": "以分形維度分析街道立面組成，討論立面的複雜度與視覺偏好的關係。Koch 曲線常被當作已知分形維度（約 1.26）的參考圖形。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-12",
+   "title": "英國海岸線有多長？（分形維度的起點）",
+   "creator": "Benoit B. Mandelbrot",
+   "year": "1967",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "分形",
+    "隨機",
+    "可重現種子"
+   ],
+   "tools": [],
+   "url": "https://www.science.org/doi/10.1126/science.156.3775.636",
+   "summary": "Mandelbrot 指出海岸線具統計自我相似性，量尺越小長度越長，並以 Koch 曲線類比，提出分數維度的概念。是用 Koch 理解地景邊界的經典文獻。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-13",
+   "title": "Koch snowflake Fractal Pattern（Grasshopper 教學）",
+   "creator": "Parametric House",
+   "year": "",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "分形",
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://parametrichouse.com/koch-snowflake-fractal-pattern",
+   "summary": "參數化設計教學網站提供的 Koch 雪花圖樣 Grasshopper 定義，示範用電池而非程式碼產生雪花圖樣。可與基礎範例的 C# 遞迴寫法對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-14",
+   "title": "Koch 雪花圖樣的數位參數化設計（Blender）",
+   "creator": "Dovramadjiev",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "3D"
+   ],
+   "tools": [
+    "Blender"
+   ],
+   "url": "https://atna-mam.utcluj.ro/index.php/Acta/article/view/1514",
+   "summary": "以 Blender 與 Snowflake Generator 外掛產生不同階數的 Koch 雪花數位模型，作為圖樣設計與製造的基礎。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-15",
+   "title": "Koch 雪花的墊片（gasket）構造與變體",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "遞迴",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2502.00815",
+   "summary": "從墊片（gasket）式的挖除與填補觀點重新建構 Koch 雪花並提出變體，說明同一個形可以有不同的遞迴生成方式。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A02-51",
+   "title": "Coding Challenge #129：Koch Fractal Snowflake（Koch 雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "分形",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+   "summary": "The Coding Train 雪花系列第 3 集，用 Processing（Java）畫出 Koch 曲線與雪花。以 Segment 類別與 ArrayList 存放所有線段，每按一次滑鼠（mousePressed）就把每段切成四段、產生下一代清單；這是「迭代換清單」寫法，和基礎範例一次遞迴到指定深度不同，因此可以逐代觀察。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/129-koch-fractal-snowflake",
+    "note": "Coding Challenge #129 影片縮圖"
+   }
+  },
+  {
+   "id": "A02-52",
+   "title": "The Nature of Code 第 8 章：The Koch Curve",
+   "creator": "Daniel Shiffman",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "教科書",
+    "向量"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/fractals/#the-koch-curve",
+   "summary": "《The Nature of Code》p5.js 版第 8 章的 Koch 曲線小節（Example 8.5 與雪花練習），用 KochLine 物件存兩端點，以 p5.Vector 除以 3、旋轉 60° 算出五個點。它把每條線段當成物件並用 ArrayList 世代替換，和基礎範例的遞迴函式寫法互為對照。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/fractals/#the-koch-curve",
+    "note": "第 8 章 Figure 8.12：Koch 曲線的逐代演變"
+   }
+  },
+  {
+   "id": "A02-53",
+   "title": "3Blue1Brown：Fractals are typically not self-similar（碎形維度）",
+   "creator": "Grant Sanderson（3Blue1Brown）",
+   "year": "2017",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Manim",
+    "Python",
+    "數學動畫",
+    "碎形維度"
+   ],
+   "tools": [
+    "Manim"
+   ],
+   "url": "https://www.3blue1brown.com/lessons/fractal-dimension",
+   "summary": "3Blue1Brown 解說碎形維度的影片，以 Koch 曲線等碎形說明「縮小為 1/3 時長度變成 4 倍」如何導出約 1.262 的 Hausdorff 維度；動畫由 Grant Sanderson 自己用 Python 寫的 Manim 產生。它提醒學習者：基礎範例的 depth 不只是細緻度，也是量測「粗糙度」的方法。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube（3Blue1Brown）",
+    "page": "https://www.youtube.com/watch?v=gB9n2gHsHN4",
+    "note": "影片「Fractals are typically not self-similar」縮圖"
+   }
+  },
+  {
+   "id": "A02-54",
+   "title": "Koch Snowflake using VEX（Houdini VEX 版 Koch 雪花）",
+   "creator": "secarri（GitHub）",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "程序化建模"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://github.com/secarri/KochSnowflake",
+   "summary": "在 Houdini 中以 VEX 建立正三角形，並在 For-Each 迴圈用 Fetch Feedback 方式一代一代細分出 Koch 雪花，最後再用 VEX 把點連成幾何；另附 ArtStation 文章解說。它以節點迴圈與點屬性取代基礎範例的 C# 遞迴，是同一演算法在程序化特效流程中的寫法。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

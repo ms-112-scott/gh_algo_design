@@ -1,0 +1,259 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "B06",
+  "name_zh": "離散聚合（連接點規則生長）",
+  "name_en": "Discrete Aggregation (Connection-based Stochastic Aggregation)",
+  "one_liner": "每個零件身上有幾個「接頭平面」，電腦反覆挑一個還空著的接頭、依規則把新零件翻過來對齊接上，撞到既有零件或出界就放棄，於是一顆顆相同的積木自己長成可拆裝的量體。",
+  "how_it_works": [
+   "定義零件庫：每種零件＝幾個邊長 1 的小立方體（碰撞用）＋數個接頭平面（原點在面中心、Z 軸朝外），並把規則字串「母零件|接頭>子零件|接頭」解析成規則表。",
+   "放入種子零件，把它所有的接頭放進「開放接頭」清單，也就是生長前緣。",
+   "每一步從前緣挑一個接頭（純隨機，或抽 4 個取最靠近吸引點者），並把它從清單移除；找出適用這個接頭的規則並打亂順序。",
+   "對每條規則與 0／90／180／270° 四種轉角：把子零件的接頭平面繞自己的 X 軸翻 180°、再繞法線轉，用 Transform.PlaneToPlane 對齊到母接頭，得到子零件的擺放轉換。",
+   "用 RTree 查新零件每個立方體中心附近有沒有已放的立方體、並檢查是否在邊界盒內；通過就加入零件、在連接圖記一條「母→子」的邊、把子零件其餘接頭加入前緣，全部失敗就記為失敗接頭。",
+   "重複到零件數上限、前緣清空或嘗試次數用完；輸出依加入順序排列的零件 Mesh（即組裝順序）、連接圖線段與剩下的開放接頭平面。"
+  ]
+ },
+ "final_total": 10,
+ "target_art": 5,
+ "target_research": 5,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "B06-01",
+   "title": "Wasp：Discrete Design for Grasshopper",
+   "creator": "Andrea Rossi（TU Darmstadt DDU）",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "開源",
+    "3D",
+    "模組化",
+    "碰撞偵測",
+    "外掛"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "url": "https://github.com/ar0551/Wasp",
+   "summary": "以 Python 撰寫的開源 Grasshopper 元件組（LGPL），把每個零件描述成幾何＋連接點位置與方向，連接點構成零件的拓樸圖，再用聚合規則「把一個零件對齊到另一個零件的某個連接上」，提供隨機聚合與場驅動聚合兩種程序，並處理碰撞避免。它就是本演算法的代表實作；和基礎範例相比，零件可以是任意 Rhino 幾何、規則與程序拆成獨立元件，也支援階層式零件與製造資訊。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B06-02",
+   "title": "Tallinn Architecture Biennale Pavilion（塔林建築雙年展展館）",
+   "creator": "Gilles Retsin Architecture",
+   "year": "2017",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "離散構件",
+    "合板",
+    "可拆組",
+    "模組化"
+   ],
+   "tools": [],
+   "url": "https://www.designboom.com/architecture/gilles-retsin-pavilion-tallin-architecture-biennale-12-04-2017/",
+   "summary": "以 18 mm 外用合板做出直線、45°、90°、135° 四種積木，共 80 個離散構件，錯縫組合成同時擔任柱、梁與外殼的 75 m² 展館，可懸挑約 4 m、四天內不用機具組完。它是由設計者依接合規則「手動」組合的離散構件，不是隨機聚合生成；在本演算法中是「少數零件＋接合規則＝可拆裝建築」這種離散構件思維的代表，可以把它的四種積木當成零件庫，再用基礎範例的前緣與碰撞檢查自動生成替代方案。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B06-03",
+   "title": "Combinatorial Nest（Combo-Nest）",
+   "creator": "Jose Sanchez／Plethora Project（主設計 Brendan Ho）",
+   "year": "2019",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "模組化",
+    "遊戲化",
+    "參與式設計",
+    "可拆組"
+   ],
+   "tools": [
+    "Common-hood（遊戲模擬）"
+   ],
+   "url": "https://www.plethora-project.com/combinatorial-nest",
+   "summary": "一個「離散、開放式」的構築系統：以 A 字形為原型的標準化材料單元透過排列組合在體積上生長，並用實體積木模型、指令卡與遊戲模擬介面讓大眾一起設計展館。本演算法在其中是「固定單元＋組合規則逐步長出量體」的機制；和基礎範例的隨機挑選不同，它把每一步的選擇交給參與者，電腦負責規則與可行性。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Plethora Project（Jose Sanchez）",
+    "page": "https://www.plethora-project.com/combinatorial-nest",
+    "note": "Combo-Nest 展館示意：A 字形標準單元組合生長的量體"
+   }
+  },
+  {
+   "id": "B06-04",
+   "title": "Assembler：建構與管理 assemblage 的 Grasshopper 外掛",
+   "creator": "Alessio Erioli（Co-de-iT）",
+   "year": "2022",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "開源",
+    "外掛",
+    "確定性",
+    "評分準則",
+    "圖結構"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://github.com/Co-de-iT/Assembler",
+   "summary": "以 C# 撰寫、GPL-3.0 授權的 Grasshopper 外掛，從零件與連接規則建立 assemblage，用「handle」描述接頭，並以可調整的 heuristics（評分準則）做確定性（非隨機）的逐步決策，同時記錄連接與遮擋的拓樸，可再對成果做構件與系統層級的分析。和基礎範例的隨機挑選相比，它每一步都依準則選出最佳候選，而且可用 C# 自訂準則與環境場。",
+   "currently_cc": false,
+   "photo": {
+    "source": "McNeel Forum（Assembler 發表文）",
+    "page": "https://discourse.mcneel.com/t/announcing-assembler-a-plugin-to-construct-and-manage-assemblages/144119",
+    "note": "Assembler 以準則驅動、確定性方式生成的範例 assemblage（1920×1175）"
+   }
+  },
+  {
+   "id": "B06-05",
+   "title": "Aggregated Structures：以離散積木近似拓樸最佳化的材料分布",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "結構",
+    "拓樸最佳化",
+    "場驅動",
+    "可拆組"
+   ],
+   "tools": [],
+   "url": "https://www.academia.edu/35602236/Aggregated_Structures_Approximating_Topology_Optimized_Material_Distribution_with_Discrete_Building_Blocks",
+   "summary": "IASS 2017 研討會論文：先以體素拓樸最佳化算出指定載重下的材料密度場，再用這個場驅動模組零件的聚合生長（梯度導向的聚合演算法），讓積木近似最佳化的材料配置，並評估組合體的穩定性、提出模組化的接合細部。本演算法在其中負責把連續的密度場轉成可逆組裝的離散構件；和基礎範例相比，挑選依據從亂數換成結構性能的場。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B06-06",
+   "title": "Collaborative Assembly of Digital Materials（ACADIA 2017）",
+   "creator": "Andrea Rossi, Oliver Tessmann",
+   "year": "2017",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "機械手臂",
+    "人機協作",
+    "數位材料",
+    "可拆組"
+   ],
+   "tools": [
+    "六軸機械手臂"
+   ],
+   "url": "https://www.academia.edu/35602244/Collaborative_Assembly_of_Digital_Materials",
+   "summary": "提出設計者與六軸機械手臂協作的離散結構組裝流程：一套不需寫程式的離散設計工具、在聚合過程中納入製造限制，以及一個讓設計者能在機械手臂組裝時即時修改設計的溝通平台。本演算法是其中「下一個零件放哪裡」的生成核心；和基礎範例相比，每一步除了碰撞之外還要檢查機械手臂能否取放，且設計與組裝同時進行。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B06-07",
+   "title": "Sequential Modular Assembly：以不同重量模組做機械手臂懸挑組裝",
+   "creator": "Bastian Wibranek, Timm Glätzer, Leon Wietschorke, Oliver Tessmann（TU Darmstadt DDU）",
+   "year": "2020",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "機械手臂",
+    "懸挑",
+    "組裝順序",
+    "重心"
+   ],
+   "tools": [
+    "機械手臂"
+   ],
+   "url": "https://www.dg.architektur.tu-darmstadt.de/fachgebiet_ddu/archiv/ddu_newsarchiv_details_111424.en.jsp",
+   "summary": "CAADRIA 2020 論文：使用具自我校準接合的模組，並設計不同重量的模組，以演算法計算讓模組聚合在每一個組裝步驟都保持平衡所需的配重，因此不用臨時支撐就能以機械手臂組出懸挑結構，也能拆解重用。本演算法對應其中的逐件聚合與組裝順序；和基礎範例相比，每一步多了重心平衡的判斷，零件也多了「重量」這個屬性。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B06-51",
+   "title": "Jigsaw Block（拼圖方塊結構生成）",
+   "creator": "Mojang Studios（Minecraft）",
+   "year": "2019",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Minecraft",
+    "遊戲",
+    "程序生成"
+   ],
+   "tools": [
+    "Minecraft"
+   ],
+   "url": "https://minecraft.wiki/w/Jigsaw_Block",
+   "summary": "Minecraft Java 版 1.14 加入的拼圖方塊：每個結構片段上的拼圖方塊記錄自己的名稱、要接的目標名稱與模板池，生成時從池中挑一個片段、把對應的拼圖方塊對齊接上，一層層長出村莊、遺跡等大型結構，並有層數上限與優先權設定。這就是「接頭＋規則池＋深度上限」的離散聚合；和 Grasshopper C# 基礎範例相比，零件是方塊世界裡的建築片段，規則以名稱配對而非編號，且生成時要避免片段互相重疊。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Minecraft Wiki",
+    "page": "https://minecraft.wiki/w/Jigsaw_Block",
+    "note": "掠奪者前哨站外圍結構的模板：框內的拼圖方塊就是片段之間的連接點"
+   }
+  },
+  {
+   "id": "B06-52",
+   "title": "ProceduralDungeon：Unreal Engine 程序地城外掛",
+   "creator": "Benoit Pelletier（BenPyton）",
+   "year": "2019",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "Unreal Engine",
+    "C++",
+    "遊戲",
+    "程序生成",
+    "開源"
+   ],
+   "tools": [
+    "Unreal Engine",
+    "C++",
+    "Blueprint"
+   ],
+   "url": "https://github.com/BenPyton/ProceduralDungeon",
+   "summary": "開源的 Unreal Engine 4／5 外掛（CeCILL-C 授權）：設計者先手工做好每個房間關卡並標出邊界與門的位置，生成時依可在 Blueprint 或 C++ 自訂的規則隨機挑下一個房間、把它的門對齊到既有房間的門，內建的重疊偵測確保房間不互相穿插。房間就是零件、門就是接頭；和 Grasshopper C# 基礎範例相比，它用遊戲引擎的關卡當零件，規則以程式回呼（選第一個房間、選下一個房間、是否繼續）表達。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub README（BenPyton/ProceduralDungeon）",
+    "page": "https://github.com/BenPyton/ProceduralDungeon",
+    "note": "README 中的生成結果動圖：房間經由門彼此串接成地城"
+   }
+  },
+  {
+   "id": "B06-53",
+   "title": "Dungeon Architect Snap Builder（房間預製件拼接）",
+   "creator": "Code Respawn",
+   "year": "2019",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "遊戲",
+    "程序生成",
+    "圖文法"
+   ],
+   "tools": [
+    "Unity",
+    "Unreal Engine"
+   ],
+   "url": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+   "summary": "Unity／Unreal 的關卡生成工具 Dungeon Architect 中的 Snap Builder：把事先做好的房間與走廊預製件（module）在連接點（connection）上拼接，每個連接點同時指定接上時放門、沒接時封牆的預製件，並用圖文法（dungeon flow graph）規則控制整體路線。本演算法對應其中的模組拼接與開放連接點；和 Grasshopper C# 基礎範例相比，它多了一層圖文法決定「哪裡該接什麼房間」，並自動處理未使用接頭的封口。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Snap Map Builder User Guide（Dungeon Architect for Unity）",
+    "page": "https://coderespawn.github.io/dungeon-architect-snap-map-user-guide-unity/",
+    "note": "使用手冊中的範例專案畫面：房間預製件拼接出的地城"
+   }
+  }
+ ]
+}

@@ -1,0 +1,169 @@
+{
+ "algo": "D02",
+ "classification": [
+  {"id": "D02-01", "source": "research", "why": "科學期刊實驗論文，比較黏菌網絡與真實鐵路網"},
+  {"id": "D02-02", "source": "research", "why": "演算法原型學術論文，非視覺藝術作品"},
+  {"id": "D02-03", "source": "art", "why": "生成藝術作品，發光網紋為主要視覺成果"},
+  {"id": "D02-04", "source": "art", "why": "藝術家與設計工作室合作的實體鑄造作品"},
+  {"id": "D02-06", "source": "art", "why": "建築雙年展策展裝置，藝術節展出的地景作品"},
+  {"id": "D02-07", "source": "research", "why": "比較黏菌網絡與真實高速公路的學術實驗"},
+  {"id": "D02-08", "source": "research", "why": "天文學研究，用黏菌演算法重建宇宙網"},
+  {"id": "D02-09", "source": "research", "why": "學術論文，黏菌用於 3D 列印結構最佳化"},
+  {"id": "D02-10", "source": "research", "why": "學術會議發表的開源建模工具"},
+  {"id": "D02-11", "source": "research", "why": "Grasshopper／C# 外掛工具"},
+  {"id": "D02-12", "source": "research", "why": "Grasshopper 外掛原始碼，骨架化演算法"},
+  {"id": "D02-13", "source": "research", "why": "學術期刊論文，都市設計樣板研究"},
+  {"id": "D02-14", "source": "research", "why": "學術論文，材料力學性能研究"},
+  {"id": "D02-15", "source": "art", "why": "openFrameworks 互動裝置，藝術展演作品"},
+  {"id": "D02-51", "source": "art", "why": "creative coding 生成藝術，個人作品網站"},
+  {"id": "D02-52", "source": "art", "why": "compute shader 教學實作，成果為生成畫面"},
+  {"id": "D02-53", "source": "art", "why": "p5.js 教學影片，成果為一張生成畫面"},
+  {"id": "D02-54", "source": "art", "why": "openFrameworks 藝術裝置，互動生成畫面"},
+  {"id": "D02-55", "source": "art", "why": "駐村藝術家的 3D 實體鑄造作品"}
+ ],
+ "art_count": 9,
+ "need": 1,
+ "removal_order": [
+  "D02-14",
+  "D02-13",
+  "D02-09",
+  "D02-12",
+  "D02-07",
+  "D02-10"
+ ],
+ "removal_reasons": {
+  "D02-14": "PubMed 論文只談材料力學性能，沒有黏菌視覺畫面可查證，與本演算法關係最薄弱。",
+  "D02-13": "與 D02-01、D02-07 同樣是「黏菌對應都市／路網」題材，敘述抽象重複，且找不到可用圖片。",
+  "D02-09": "小眾 arXiv 論文，僅有 PDF 公開，沒有清楚的生成畫面截圖，難以查證與呈現。",
+  "D02-12": "與 D02-11 同為 Grasshopper 黏菌外掛，功能與受眾高度重疊，知名度也較低。",
+  "D02-07": "與 D02-01 同類型「黏菌重現真實路網」實驗，敘事重複，可視為次要案例。",
+  "D02-10": "學術會議工具論文，敘述抽象，圖片來源僅論文截圖，較難取得高品質畫面。"
+ },
+ "new_art": [
+  {
+   "title": "Physarum Simulation",
+   "creator": "Michael Fogleman",
+   "year": "2020",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 Go 語言與 OpenGL 即時檢視器實作的 CPU 版黏菌模擬，靈感來自 Sage Jenson 的圖解文章。作者隨機化感測角、轉向角、沉積量等參數跑出大量結果，挑選最具視覺張力的畫面公開展示，是 creative coding 社群中辨識度極高的黏菌生成藝術範例，和基礎範例最大差異在於刻意做參數批次探索而非單一設定。",
+   "variations": [
+    {"name": "多物種混色", "how": "同時跑三組獨立的 trail 場與代理人（各自對應一個色版），感測時互相影響但各自沉積", "effect": "產生色彩豐富、層次分明的複合網絡，而非單色濃淡圖"},
+    {"name": "隨機參數批次產圖", "how": "每次執行前隨機決定 sensorAngle、turnAngle、depositAmount 的範圍，重跑數百次取樣", "effect": "建立參數與圖樣風格的對照集，比手動微調更快找到想要的紋理"},
+    {"name": "OpenGL 即時檢視", "how": "把痕跡場即時上傳成 GPU 材質顯示，取代跑完才畫的作法", "effect": "可邊跑邊看網絡生長過程，方便隨時停止或調整參數"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Go", "physarum", "生成藝術", "參數探索"],
+   "tools": ["Go", "OpenGL"],
+   "url": "https://www.michaelfogleman.com/projects/physarum/",
+   "evidence": "頁面標題「Michael Fogleman: Physarum Simulation」，內文說明 2020 年 11 月以 Go／OpenGL 實作並附多張範例輸出圖",
+   "nearest_existing": "D02-51 physarum（Sage Jenson）— 同樣是純粹的黏菌視覺作品，但 Fogleman 用 Go／CPU 實作、色彩與構圖語彙不同",
+   "image": {
+    "url": "https://www.michaelfogleman.com/static/img/project/physarum/2.png",
+    "page": "https://www.michaelfogleman.com/projects/physarum/",
+    "verified": true,
+    "checked": "深紅底色上一張金黃色的黏菌網絡，網格內散布均勻的暗紅色細胞狀斑點",
+    "source": "Michael Fogleman 個人網站",
+    "author": "Michael Fogleman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Physarum Simulation 專案頁範例輸出圖，金黃網絡包覆暗紅色細胞狀斑點"
+   }
+  },
+  {
+   "title": "physarums（Processing／p5.js 黏菌實驗系列）",
+   "creator": "Raphaël Perraud",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "互動設計師 Raphaël Perraud 以 Processing 與 p5.js 寫的一系列黏菌實驗，資料夾從基本規則、OpenCV 影像回饋到格狀初始排列逐步進階。和基礎範例最大差異在於加入外部影像／攝影機作為額外沉積來源，並比較規律排列與隨機撒點兩種起始條件對最終網絡構圖的影響。",
+   "variations": [
+    {"name": "OpenCV 影像回饋", "how": "用 OpenCV 讀攝影機或影像亮度，作為額外沉積來源疊加進 trail 場", "effect": "外部影像的亮暗分布會引導網絡生長方向，畫面帶有原始影像的輪廓"},
+    {"name": "格狀初始排列", "how": "代理人以規律格狀排列出發，而非隨機撒點於中央圓形", "effect": "網絡從條紋狀起步，逐漸長出有機孔洞，呈現條紋到自然紋理的過渡構圖"},
+    {"name": "Processing／p5.js 雙版本對照", "how": "同一套規則分別寫成 Processing 桌面版與 p5.js 網頁版", "effect": "方便比較兩種執行環境的效能與畫面細節差異"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "p5.js", "physarum", "參數實驗"],
+   "tools": ["Processing", "p5.js"],
+   "url": "https://github.com/R4ph3rd/physarums",
+   "evidence": "GitHub repo 說明「Processing & p5.js sketchs about physarum networks」，資料夾 physarum_02～04_grids 內含實際輸出圖片；作者 GitHub 個人頁列出真名 Raphaël Perraud，職稱 Interaction designer",
+   "nearest_existing": "D02-53 p5.js Coding Tutorial（Patt Vira）— 同樣用 p5.js／Processing 做黏菌，但這裡是作者個人一系列參數實驗，不是單一教學範例",
+   "image": {
+    "url": "https://raw.githubusercontent.com/R4ph3rd/physarums/master/physarum_04_grids/data/img/physarum-%2311841595603.5.png",
+    "page": "https://github.com/R4ph3rd/physarums",
+    "verified": true,
+    "checked": "黑底畫面上一排白色縱向長條孔洞，部分孔洞上下相連成有機的膠囊狀網絡",
+    "source": "R4ph3rd（Raphaël Perraud）GitHub repo",
+    "author": "Raphaël Perraud",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "physarum_04_grids 版本的實際執行輸出，格狀初始排列生長出的縱向孔洞網絡"
+   }
+  },
+  {
+   "title": "physarum（JS／WebGL 互動黏菌）",
+   "creator": "Nicolas Barradeau",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "WebGL 創作者 Nicolas Barradeau 依 Jeff Jones 論文與 Sage Jenson 作品實作的網頁版黏菌模擬，可用滑鼠拖曳即時「畫」出高濃度痕跡吸引代理人聚集，雙擊則生成新的代理人群。和基礎範例最大差異在於把痕跡輸入改成即時互動繪圖，而不是固定的食物點或影像。",
+   "variations": [
+    {"name": "滑鼠拖曳造型", "how": "按住滑鼠拖曳時，沿路徑持續加高該處的 trail 濃度", "effect": "代理人會即時被手繪路徑吸引，聚集成順著滑鼠軌跡生長的網絡"},
+    {"name": "雙擊生成粒子群", "how": "雙擊畫面在該處生成一整群代理人", "effect": "可疊加多個生長中心，觀察不同來源的網絡如何互相競爭與合併"},
+    {"name": "即時參數面板", "how": "開放感測角、轉向角、感測距離、步長四個即時滑桿", "effect": "方便直接比較不同參數對網紋密度與粗細的影響"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "WebGL", "JavaScript", "physarum", "互動"],
+   "tools": ["JavaScript", "WebGL"],
+   "url": "https://github.com/nicoptere/physarum",
+   "evidence": "GitHub repo README 標明「a slime mold simulation」、靈感來自 sagejenson.com/physarum 與 Jeff Jones 論文，並附 demo 連結 barradeau.com/2019/1103/；GitHub 個人頁確認作者真名 nicolas barradeau",
+   "nearest_existing": "D02-54 interactive-physarum（Etienne Jacob）— 同樣是純 JS／WebGL 黏菌互動作品，但此作品更早（2019）且聚焦滑鼠拖曳繪圖互動，非遊戲手把裝置",
+   "image": {
+    "url": "https://raw.githubusercontent.com/nicoptere/physarum/master/img/img1.png",
+    "page": "https://github.com/nicoptere/physarum",
+    "verified": true,
+    "checked": "深藍綠底色上一片黃綠色細密網格紋理，線條交織成蜂窩狀與條紋混合的有機圖樣",
+    "source": "nicoptere（Nicolas Barradeau）GitHub repo",
+    "author": "Nicolas Barradeau",
+    "license": "The Unlicense（GitHub repo）",
+    "license_url": "https://github.com/nicoptere/physarum/blob/master/LICENSE",
+    "note": "repo 內建範例輸出圖，黃綠色網格紋理呈現蜂窩與條紋交錯的有機圖樣"
+   }
+  },
+  {
+   "title": "Slime Mold: Emergent Pattern Simulator",
+   "creator": "Jonas Kjeldmand Jensen（QC20）",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": ["art-installation"],
+   "scale": "物件",
+   "summary": "以 p5.js 寫成的互動黏菌視覺化專案，把黏菌模擬類比為介面設計中的「去中心化系統」與「群體行為」，程式碼附大量教學性註解。和基礎範例最大差異在於刻意把黏菌演算法當作 UX／互動設計的隱喻教材，並做成全螢幕自適應畫布。",
+   "variations": [
+    {"name": "點狀初始噴發", "how": "所有代理人一開始集中於圓心、方向朝外", "effect": "形成放射狀的初始噴發圖樣，再隨時間逐漸收斂成網絡"},
+    {"name": "UX 隱喻註解", "how": "把每個模擬步驟對應到介面設計概念（去中心化系統、群體行為）並寫入程式碼註解", "effect": "適合作為演算法思維跨領域類比教材，而不只是視覺展示"},
+    {"name": "全螢幕互動畫布", "how": "依裝置尺寸自動縮放並全螢幕呈現", "effect": "適合作為網頁背景或展場投影的沉浸式黏菌畫面"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "physarum", "UX 隱喻"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/QC20/SlimeMolds",
+   "evidence": "GitHub repo README 標明「built using p5.js」，說明黏菌模擬如何類比介面設計概念；GitHub 個人頁確認作者 Jonas Kjeldmand Jensen（QC20）",
+   "nearest_existing": "D02-53 p5.js Coding Tutorial（Patt Vira）— 同為 p5.js 黏菌，但此作品聚焦 UX／互動設計隱喻與參數實驗，非入門教學",
+   "image": {
+    "url": "https://raw.githubusercontent.com/QC20/SlimeMolds/main/src/assets/img/SlimeMoldExplosion.png",
+    "page": "https://github.com/QC20/SlimeMolds",
+    "verified": true,
+    "checked": "深灰底色上一團由中心向外放射的白色細絲，呈現爆炸狀的初始噴發圖樣",
+    "source": "QC20（Jonas Kjeldmand Jensen）GitHub repo",
+    "author": "Jonas Kjeldmand Jensen",
+    "license": "MIT License（GitHub repo）",
+    "license_url": "https://github.com/QC20/SlimeMolds/blob/main/LICENSE",
+    "note": "repo 內建範例圖，代理人剛從中心撒出、尚未收斂成網絡的放射狀初始畫面"
+   }
+  }
+ ],
+ "notes": "need=1，故只需替換 1 個研究案例；4 個備援皆已找到真實圖片並親眼確認。另外發現既有案例 D02-15（互動式黏菌裝置）與 D02-54（interactive-physarum）網址相同、為同一件作品重複收錄，建議協調者之後合併或移除其一（不影響本次 art/research 計數，兩者皆分類為 art）。OpenProcessing 上另有數個 p5.js 黏菌草圖（如 sketch 781586、2329073），但頁面被 Cloudflare 擋下、縮圖僅 200×200 太小，故未收錄，留待日後有更好圖源時再補。"
+}

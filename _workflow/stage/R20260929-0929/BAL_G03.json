@@ -1,0 +1,94 @@
+{
+ "algo": "G03",
+ "classification": [
+  {"id": "G03-01", "source": "research", "why": "Grasshopper 外掛，逕流與集水區代表工具"},
+  {"id": "G03-02", "source": "research", "why": "建成地景案例，用工具重建分析"},
+  {"id": "G03-03", "source": "research", "why": "期刊論文＋設計工具，非直接 D8 實作"},
+  {"id": "G03-04", "source": "research", "why": "研討會論文，粒子模擬非 D8 實作"},
+  {"id": "G03-05", "source": "research", "why": "期刊論文，水文結合多目標最佳化研究"},
+  {"id": "G03-51", "source": "art", "why": "creative coding 奇幻地圖生成，成果是生成畫面"},
+  {"id": "G03-52", "source": "art", "why": "個人創作的地圖生成程式，成果是生成畫面"},
+  {"id": "G03-53", "source": "research", "why": "Houdini 內建節點文件，屬工具非藝術作品"}
+ ],
+ "art_count": 2,
+ "need": 2,
+ "removal_order": [
+  "G03-04",
+  "G03-03",
+  "G03-53",
+  "G03-05",
+  "G03-02"
+ ],
+ "removal_reasons": {
+  "G03-04": "論文本身用粒子模擬而非 D8 流向累積，和本演算法的核心機制關係薄弱，也沒有真實照片",
+  "G03-03": "屬早期設計階段的逕流係數整合工具，並非直接的 D8 實作案例，沒有真實照片",
+  "G03-53": "是 Houdini 內建節點的使用文件，屬工具說明而非案例作品，目前也沒有真實照片、官方文件截圖難以取得授權明確的版本",
+  "G03-05": "以水文分析當多目標最佳化其中一個目標函數，和本演算法的直接關係比其他案例更邊緣，沒有真實照片",
+  "G03-02": "雖是真實建成地景，但仍是用 Groundhog 工具重建既有設計的分析案例，和 G03-01（同工具的代表作）性質重疊"
+ },
+ "new_art": [
+  {
+   "title": "Coding Adventure: Hydraulic Erosion（地形水力侵蝕模擬）",
+   "creator": "Sebastian Lague",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": ["drawing"],
+   "scale": "地景",
+   "summary": "Sebastian Lague 的程式教學專案：用「水滴」在高度圖上逐格找最陡下坡方向前進，沿路依流速與坡度計算能挾帶的泥沙量，坡陡流快時侵蝕地面、坡緩流慢或水滴消失時沉積泥沙，重複數萬次水滴路徑後，原本隨機的地形就被沖出樹枝狀的溝谷與稜線。和 Grasshopper C# 基礎範例「每格都有下游指標、依高程排序一次性累加全部水量」不同，這裡是逐滴模擬個別路徑、且會反過來真的修改地形高度，因此可以直接看到侵蝕後地形的視覺變化，而不只是一張累積量圖。",
+   "variations": [
+    {"name": "水滴路徑侵蝕", "how": "每滴水從隨機起點出發，依鄰近 4 格的高度梯度決定下一步方向與速度，逐步更新自己的位置與挾沙量", "effect": "地形隨每一滴水的路徑被慢慢刻出蜿蜒的溝谷，而不是一次算完的靜態流向場"},
+    {"name": "挾沙容量與沉積", "how": "挾沙容量正比於水滴速度與坡度，超過容量就沉積多餘泥沙、不足容量就從地面挖取泥沙", "effect": "陡坡被削低、緩坡與谷底被墊高，長期下來地形會自然收斂出合理的縱剖面"},
+    {"name": "大量疊代的視覺化比較", "how": "同一張隨機高度圖分別輸出「侵蝕前」與「侵蝕 7 萬次後」的兩張 3D 網格截圖", "effect": "一眼就能比較出生硬雜訊地形和被水沖刷過的自然地形差異"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Unity", "C#", "地形侵蝕", "程式教學"],
+   "tools": ["Unity", "C#"],
+   "url": "https://github.com/SebLague/Hydraulic-Erosion",
+   "evidence": "GitHub 專案說明「Simulating erosion to try make procedural terrains look a little more natural.」，README 內嵌侵蝕前（i.imgur.com/c8BvDOj.jpg）與 7 萬次疊代後（i.imgur.com/4p5Rmk4.png）的地形截圖，並連結對應教學影片",
+   "nearest_existing": "與既有 G03-51／G03-52 奇幻地圖生成器同屬 creative coding 地形類，但本作品聚焦在「地形被水侵蝕的過程」而非畫出整張地圖，屬不同視覺表現",
+   "image": {
+    "url": "https://i.imgur.com/4p5Rmk4.png",
+    "page": "https://github.com/SebLague/Hydraulic-Erosion",
+    "verified": true,
+    "checked": "3D 算繪的山地地形網格，表面有明顯的深色溝谷與淺色稜線交錯，是水滴侵蝕疊代 7 萬次後的結果",
+    "source": "GitHub README（SebLague/Hydraulic-Erosion）",
+    "author": "Sebastian Lague",
+    "license": "MIT（程式碼授權；圖片為 README 展示圖，教學引用）",
+    "license_url": "https://github.com/SebLague/Hydraulic-Erosion/blob/master/LICENSE",
+    "note": "水力侵蝕模擬跑完約 7 萬次疊代後的地形：可見水流沖刷出的溝谷與殘留稜線"
+   }
+  },
+  {
+   "title": "Mapgen4：可即時互動的地形與河流地圖產生器",
+   "creator": "Amit Patel（Red Blob Games）",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "地景",
+   "summary": "Amit Patel 在 Red Blob Games 發表的手繪風格奇幻地圖產生器：使用者在畫面上塗畫山脈、河谷與海洋的大致高度，程式即時模擬蒸發、風向與降雨，算出各處的濕度與河流；累積夠多降雨的路徑會沿地勢一路匯到最低點或海岸，畫成從源頭漸粗到出海口的河流線。和 Grasshopper C# 基礎範例的批次運算不同，這裡的流向與累積是每次互動塗畫後就即時重算，並把結果畫成上視海岸線＋側視山脈的手繪地圖風格，而不是輸出分析用的網格與箭頭。",
+   "variations": [
+    {"name": "互動式高程塗繪", "how": "使用者用滑鼠在三角網格上塗畫抬升／下降高度，取代讀取既有 DEM", "effect": "設計者可以像畫草圖一樣「畫」出想要的山脈與海灣形狀，即時看到對應的河流反應"},
+    {"name": "風向與降雨場驅動水量", "how": "先模擬盛行風向把濕氣吹過地形、遇山抬升降雨，把降雨量當成每格的初始水量，再做流向與累積", "effect": "背風側自然形成乾燥的雨影區，河流密度和地形、風向連動而非到處均勻"},
+    {"name": "手繪地圖風格算繪", "how": "用自訂的著色器把等高線、山脈側視符號與海岸線暈染畫在同一張圖上", "effect": "產生的地圖看起來像奇幻小說附錄的手繪地圖，而不是工程用的高程網格"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "JavaScript", "WebGL", "程序地圖", "河流生成"],
+   "tools": ["JavaScript", "WebGL"],
+   "url": "https://www.redblobgames.com/maps/mapgen4/",
+   "evidence": "GitHub 專案（redblobgames/mapgen4）說明「Mapgen4 is a procedural wilderness map generator I wrote during 2017 and 2018...designed to run fast enough to regenerate in real time as you paint terrain」，部落格頁面貼有生成地圖的截圖 screenshot15-small.jpg",
+   "nearest_existing": "與既有 G03-51（terrain.js）、G03-52（C++ 實作）同屬奇幻地圖生成類，但本作品以即時互動塗繪高程、模擬風向雨量產生河流，視覺風格（手繪暈染山脈＋藍色河流線）與互動方式都不同",
+   "image": {
+    "url": "https://www.redblobgames.com/maps/mapgen4/blog/screenshot15-small.jpg",
+    "page": "https://github.com/redblobgames/mapgen4",
+    "verified": true,
+    "checked": "手繪風格奇幻地圖：多座山脈以側視暈染表現、藍色河流沿等高線匯流入海，海岸線與外島清晰可見",
+    "source": "Red Blob Games 部落格（mapgen4 blog）",
+    "author": "Amit Patel",
+    "license": "Apache License 2.0（程式碼授權；圖片為作者部落格展示圖，教學引用）",
+    "license_url": "https://github.com/redblobgames/mapgen4/blob/master/LICENSE",
+    "note": "Mapgen4 即時產生的奇幻地圖：可見依風向雨量模擬出的河流網路與海岸地形"
+   }
+  }
+ ],
+ "notes": "G03 既有 8 個案例中，G03-51（terrain.js）與 G03-52（C++ 實作）本來就是 creative coding 的奇幻地圖生成器，直接歸為 art；G03-53（Houdini HeightField Flow Field）雖標記 currently_cc，但實質是 Houdini 內建節點的技術文件（工具），依規則歸為 research。art_count=2、need=2，已找到 2 個新藝術案例（皆已下載預覽圖並親眼確認為作品本身的生成畫面），數量剛好等於 need、沒有備援。本次因 WebSearch 額度已用完、Parallel Search 也持續回報 free-tier 速率限制，只能改用 GitHub 全文搜尋與已知網址逐一 WebFetch 查證，搜尋效率較低，未能再多找 3 個備援；若協調者需要備援，建議之後針對「地形侵蝕」「等高線地圖」「TIN 河網」等關鍵字再補搜。"
+}

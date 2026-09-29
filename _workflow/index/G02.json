@@ -139,7 +139,7 @@
    "category": "3d-architecture",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-02",
@@ -151,7 +151,7 @@
    "category": "modeling",
    "scale": "群體／都市",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-03",
@@ -166,7 +166,7 @@
     "Grasshopper",
     "Ladybug"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-04",
@@ -222,7 +222,7 @@
     "TT Toolbox",
     "Galapagos"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-51",
@@ -237,7 +237,7 @@
     "WebGL",
     "Mapbox GL JS"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-52",
@@ -268,7 +268,7 @@
     "Blender",
     "Python"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G02-54",

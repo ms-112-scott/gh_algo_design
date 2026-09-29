@@ -1,0 +1,185 @@
+{
+ "algo": "B01",
+ "classification": [
+  {"id": "B01-01", "source": "research", "why": "與B01-51為同一作品,屬原型參考頁"},
+  {"id": "B01-02", "source": "research", "why": "3D網格技術文件,非成品藝術展示"},
+  {"id": "B01-03", "source": "research", "why": "與B01-53同屬Floraform系統,珠寶應用重複"},
+  {"id": "B01-04", "source": "research", "why": "與B01-53網址相同,重複收錄同一頁面"},
+  {"id": "B01-05", "source": "research", "why": "與B01-52網址完全相同,重複收錄"},
+  {"id": "B01-06", "source": "research", "why": "NPAR學術論文,以演算法生成有機迷宮"},
+  {"id": "B01-07", "source": "research", "why": "ETH建成立面研究計畫,屬營建研究"},
+  {"id": "B01-08", "source": "research", "why": "期刊論文,積層製造工程研究"},
+  {"id": "B01-09", "source": "art", "why": "生成藝術雕塑系列,以視覺表現為目的"},
+  {"id": "B01-10", "source": "research", "why": "Grasshopper／Kangaroo外掛教學影片"},
+  {"id": "B01-11", "source": "research", "why": "與B01-55為同一篇Entagma教學,重複"},
+  {"id": "B01-12", "source": "research", "why": "學術論文,研究如何互動控制生長"},
+  {"id": "B01-13", "source": "research", "why": "arXiv研究論文,開放曲面生長框架"},
+  {"id": "B01-51", "source": "art", "why": "creative coding經典,黑白生成繪圖"},
+  {"id": "B01-52", "source": "art", "why": "瀏覽器互動生成藝術,SVG向量輸出"},
+  {"id": "B01-53", "source": "art", "why": "生成藝術系統做成列印首飾雕塑"},
+  {"id": "B01-54", "source": "art", "why": "Processing教學生成藝術繪圖"},
+  {"id": "B01-55", "source": "art", "why": "Houdini生成藝術算圖教學"}
+ ],
+ "art_count": 6,
+ "need": 3,
+ "removal_order": ["B01-04", "B01-05", "B01-11", "B01-01", "B01-03", "B01-10"],
+ "removal_reasons": {
+  "B01-04": "與B01-53網址幾乎相同(同一Floraform專案頁面),重複收錄",
+  "B01-05": "與B01-52網址完全相同,是同一個GitHub專案的重複收錄",
+  "B01-11": "與B01-55為同一篇Entagma教學(同網域同路徑),重複收錄",
+  "B01-01": "與B01-51是Anders Hoff同一件Differential Line作品,只是連到程式碼頁,內容重複",
+  "B01-03": "與B01-53、B01-04同屬Nervous System的Floraform系統,只是套用在珠寶產品上,重複性高",
+  "B01-10": "YouTube教學影片,作者不明、來源難以查證,曲面生長已有其他更完整案例涵蓋"
+ },
+ "new_art": [
+  {
+   "title": "Differential Growth（creative-dev 週挑戰）",
+   "creator": "Mikola Lysenko",
+   "year": "",
+   "category": "modeling",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "向 Anders Hoff（inconvergent）致敬的 creative-dev 週挑戰作品：以 JavaScript／WebGL 即時運算差異生長，並把皺褶曲面依表面法向量做類似 matcap 的漸層上色。和 Grasshopper C# 基礎範例相比，多了 WebGL 即時渲染與法線貼圖風格上色，讓皺褶曲率被顏色強化，呈現出立體感很強的彩色球狀結構。",
+   "variations": [
+    {"name": "WebGL 即時渲染", "how": "用 WebGL 著色器即時繪製生長中的網格並上色", "effect": "生長過程即時可見，呈色彩鮮豔的立體皺褶球"},
+    {"name": "法線貼圖風格上色", "how": "依表面法向量映射顏色（類似 matcap 材質）", "effect": "皺褶曲率透過顏色被強化，視覺上更有雕塑感"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "WebGL", "JavaScript", "即時渲染"],
+   "tools": ["JavaScript", "WebGL"],
+   "url": "https://github.com/mikolalysenko/differential-growth",
+   "evidence": "GitHub README 寫「Differential growth, inspired by @inconvergent」，並說明是 creative-dev weekly challenge 作品",
+   "nearest_existing": "B01-02 Differential Mesh 3D（同樣是 3D 網格生長，但作者、上色方式不同）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/mikolalysenko/differential-growth/master/growth.png",
+    "page": "https://github.com/mikolalysenko/differential-growth",
+    "verified": true,
+    "checked": "看到一顆佈滿皺褶、以綠藍紫漸層法線貼圖風格上色的球狀生長結構",
+    "source": "GitHub（mikolalysenko）",
+    "author": "Mikola Lysenko",
+    "license": "MIT（程式碼授權；圖片為專案示範圖）",
+    "license_url": "https://github.com/mikolalysenko/differential-growth/blob/master/LICENSE",
+    "note": "差異生長網格以法線貼圖風格上色後的彩色球狀皺褶結構"
+   }
+  },
+  {
+   "title": "Real-time Differential Growth（WebGL 迷宮生長）",
+   "creator": "adrianton3（GitHub 帳號，全名未公開）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 JavaScript、WebGL 與 PixiJS 即時模擬差異生長，並用格狀空間分桶（bucket）取代兩兩比較加速鄰居搜尋；作者在部落格文章中逐步畫出規則 2、規則 3 的示意圖。生長到後期自然填滿畫面，形成發光的迷宮狀紋理。和 Grasshopper C# 基礎範例相比，多了格狀分桶加速與發光描邊上色。",
+   "variations": [
+    {"name": "格狀分桶加速鄰居搜尋", "how": "把點依座標分配進固定大小的格子，只比對同格與鄰格的點", "effect": "點數變多時仍可即時運算，不會卡頓"},
+    {"name": "發光迷宮上色", "how": "用 WebGL／PixiJS 疊加輝光（glow）效果描邊", "effect": "曲線呈現藍紫發光的迷宮紋理，而非單純黑白細線"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "WebGL", "JavaScript", "PixiJS"],
+   "tools": ["JavaScript", "WebGL", "PixiJS"],
+   "url": "https://github.com/adrianton3/differential-growth",
+   "evidence": "部落格文章標題「Real-time differential growth in JavaScript」，內含規則圖解與最終成果圖 final.png",
+   "nearest_existing": "B01-06 Organic Labyrinths and Mazes（同屬迷宮狀效果，但 B01-06 是學術論文，本作是即時互動程式作品）",
+   "image": {
+    "url": "http://adrianton3.github.io/blog/static/differential-growth/final.png",
+    "page": "http://adrianton3.github.io/blog/art/differential-growth/differential-growth.html",
+    "verified": true,
+    "checked": "看到藍紫發光的迷宮狀曲線紋理，密密麻麻填滿整個畫面",
+    "source": "adrianton3 個人部落格",
+    "author": "adrianton3",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "WebGL 即時運算差異生長，最終呈現的發光迷宮紋理"
+   }
+  },
+  {
+   "title": "Squigglies",
+   "creator": "allexandre97（GitHub 帳號，全名未公開）",
+   "year": "2024",
+   "category": "drawing",
+   "scale": "物件",
+   "summary": "以 p5.js 實作的互動差異線生長，用四元樹（quadtree）空間索引把鄰居搜尋從 O(N²) 降到 O(N log N)，並提供節點間距、內聚／排斥力比例、最大邊長三個即時滑桿。和 Grasshopper C# 基礎範例相比，多了瀏覽器即時互動調參與四元樹加速兩個重點。",
+   "variations": [
+    {"name": "四元樹空間索引", "how": "用 quadtree 只比對鄰近區域的點，取代兩兩比較", "effect": "點數變多時仍能維持流暢的即時運算"},
+    {"name": "即時滑桿調參", "how": "提供節點間距、內聚／排斥比例、最大邊長三個滑桿", "effect": "可以馬上看到參數如何改變皺褶密度與形狀"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "JavaScript", "四元樹"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/allexandre97/Squigglies",
+   "evidence": "README 寫「A differential line growth project written in JavaScript with P5.js」，並說明用 quadtree 加速",
+   "nearest_existing": "B01-52 2D Differential Growth Experiments（同為瀏覽器 p5／JS 差異生長，但本作用四元樹加速、作者不同）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/allexandre97/Squigglies/main/squigglies.gif",
+    "page": "https://github.com/allexandre97/Squigglies",
+    "verified": true,
+    "checked": "畫面右側有節點間距、內聚排斥比例、最大邊長三個滑桿，中央一圈略帶皺褶的差異生長曲線，屬生長初期畫面",
+    "source": "GitHub（allexandre97）",
+    "author": "allexandre97",
+    "license": "GPL-3.0",
+    "license_url": "https://github.com/allexandre97/Squigglies/blob/main/LICENSE",
+    "note": "p5.js 差異生長草稿，畫面為生長初期、曲線剛開始出現皺褶的狀態"
+   }
+  },
+  {
+   "title": "Differential Growth Raymarching",
+   "creator": "nowickam（GitHub 帳號，全名未公開）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 openFrameworks 實作差異生長，再把生長曲線交給 GLSL 光線步進（raymarching）著色器當作遮罩，控制畫面的色彩與深度，滑鼠位置則決定打光方向。畫面呈現放射狀、如珊瑚或血管般的立體光影紋理。和 Grasshopper C# 基礎範例相比，多了以生長曲線驅動光線步進著色的做法。",
+   "variations": [
+    {"name": "生長曲線驅動光線步進著色", "how": "把曲線位置與密度傳入 GLSL raymarching shader 當遮罩", "effect": "曲線呈現出有深度與光影的放射狀立體紋理"},
+    {"name": "滑鼠即時控制打光", "how": "滑鼠座標映射成光源方向，即時影響漫射光", "effect": "觀者可互動改變畫面明暗與立體感"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "openFrameworks", "GLSL", "raymarching"],
+   "tools": ["openFrameworks", "C++", "GLSL"],
+   "url": "https://github.com/nowickam/differential-growth",
+   "evidence": "README 寫「Implementation of the differential growth algorithm in openFrameworks」，並說明 raymarching 著色模式",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/49707233/170715843-6151313f-5748-4947-943a-a99e24b17325.png",
+    "page": "https://github.com/nowickam/differential-growth",
+    "verified": true,
+    "checked": "看到放射狀、紅白相間、如血管或珊瑚般的立體光影紋理，左上角有 raymarching 參數面板",
+    "source": "GitHub user-images（nowickam）",
+    "author": "nowickam",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "差異生長曲線驅動 GLSL 光線步進著色後的放射狀立體紋理"
+   }
+  },
+  {
+   "title": "Differential Growth（Rust／WebAssembly 繪圖機版）",
+   "creator": "Dries Cruyskens（Mugenosu）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "summary": "用 Rust 編譯成 WebAssembly、在瀏覽器中即時運算差異生長，提供 dat.gui 參數面板與 SVG 向量匯出，方便直接送進雷切機或繪圖機輸出。作者 Dries Cruyskens 以 Mugenosu 為名經營生成藝術創作。和 Grasshopper C# 基礎範例相比，重點在 WASM 效能與 SVG 向量輸出給實體繪圖機。",
+   "variations": [
+    {"name": "Rust／WASM 高效能運算", "how": "核心迴圈以 Rust 編譯成 WebAssembly 執行", "effect": "瀏覽器中也能即時跑出大量點的生長"},
+    {"name": "SVG 向量匯出給繪圖機", "how": "把生長結果輸出成 SVG 座標路徑", "effect": "可直接送進雷切機或 pen plotter 畫出實體作品"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "WebAssembly", "Rust", "繪圖機"],
+   "tools": ["Rust", "WebAssembly", "JavaScript"],
+   "url": "https://github.com/DriesCruyskens/differential-growth-rs-wasm",
+   "evidence": "README 寫「A WebAssembly wrapper around a Rust implementation of the differential growth algorithm」，並說明 SVG 匯出與 dat.gui 面板",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/DriesCruyskens/differential-growth-rs-wasm/main/images/example.gif",
+    "page": "https://github.com/DriesCruyskens/differential-growth-rs-wasm",
+    "verified": true,
+    "checked": "瀏覽器頁面右上角有 FPS／步數統計資訊，中央一圈剛開始長出皺褶的差異生長曲線，屬生長初期畫面",
+    "source": "GitHub（DriesCruyskens）",
+    "author": "Dries Cruyskens",
+    "license": "Apache-2.0／MIT 雙授權",
+    "license_url": "https://github.com/DriesCruyskens/differential-growth-rs-wasm/blob/main/LICENSE-MIT",
+    "note": "Rust／WASM 差異生長示範，畫面為生長初期階段並附即時效能面板"
+   }
+  }
+ ],
+ "notes": "B01-01/03/04/05/11 與既有 art 案例(51/52/53/55)高度重複(甚至網址完全相同)，已一併列入 research 分類並排在移除順序最前面。need=3 的新藝術案例已找滿並附備援(共5個，未達規格建議的need+3=6個)：差異生長是相對小眾的演算法，GitHub／部落格上找不到更多合格且非重複的p5.js／Processing真實生成畫面(嘗試過devloop01、Nekodigi、pbellon、ekimroyrp等repo，皆因只有YouTube縮圖、初始未生長畫面或純文字標題卡而放棄)；5個候選中僅1個(Squigglies)為p5.js，未達「至少占一半」的建議比例，其餘為WebGL／openFrameworks／Rust-WASM等其次工具，圖片皆已親眼確認為作品本身的生成畫面。"
+}

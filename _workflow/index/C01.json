@@ -267,23 +267,6 @@
    "has_image": false
   },
   {
-   "id": "C01-09",
-   "cc": false,
-   "title": "把反應擴散變成曲線（Nautilus iso-split）",
-   "creator": "McNeel 論壇討論（Laurent Delrieu、Peter Davis 等）",
-   "year": "2023",
-   "url": "https://discourse.mcneel.com/t/reaction-diffusion-curves/160082",
-   "category": "drawing",
-   "scale": "構件",
-   "tools": [
-    "Grasshopper",
-    "Nautilus",
-    "Kangaroo",
-    "C#"
-   ],
-   "has_image": false
-  },
-  {
    "id": "C01-10",
    "cc": false,
    "title": "以各向異性反應擴散生成等應力肋板樓板",
@@ -307,22 +290,6 @@
    "tools": [
     "有限元素分析",
     "DLP 3D 列印"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "C01-12",
-   "cc": false,
-   "title": "具 Turing 圖樣紋理的織物氣動致動器",
-   "creator": "Masato Tanaka、Yuyang Song、Tsuyoshi Nomura",
-   "year": "2024",
-   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11333703/",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [
-    "有限元素分析",
-    "雷射切割",
-    "刺繡"
    ],
    "has_image": false
   },
@@ -431,64 +398,121 @@
    "has_image": false
   },
   {
-   "id": "C01-55",
+   "id": "C01-56",
    "cc": true,
-   "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
-   "creator": "Robert Munafo",
-   "year": "2009",
-   "url": "https://www.mrob.com/pub/comp/xmorphia/",
+   "title": "Vcsinet_1（多尺度反應擴散 Turing Flow 系列作品）",
+   "creator": "Jonathan McCabe",
+   "year": "2021",
+   "url": "https://standardvision.com/news/generative-artist-jonathan-mccabe",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自製模擬軟體",
+    "GPU 渲染"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C01-57",
+   "cc": true,
+   "title": "Reaction-Diffusion WebGL（影像導引版）",
+   "creator": "Jérémie Piellard",
+   "year": "",
+   "url": "https://github.com/piellardj/reaction-diffusion-webgl",
    "category": "2d-pattern",
    "scale": "物件",
    "tools": [
-    "C",
-    "OpenGL"
+    "WebGL",
+    "GLSL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "C01-58",
+   "cc": true,
+   "title": "Mastering Turing Patterns：p5.js／Processing 反應擴散教學",
+   "creator": "deconbatch",
+   "year": "2022",
+   "url": "https://www.deconbatch.com/2022/04/turingpattern.html",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "Processing"
    ],
    "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 7,
-   "fabrication": 4,
+   "2d-pattern": 8,
    "performance": 4,
-   "drawing": 3,
-   "modeling": 2
+   "fabrication": 3,
+   "modeling": 2,
+   "drawing": 2,
+   "art-installation": 1
   },
   "scale": {
-   "物件": 15,
-   "構件": 4,
+   "物件": 17,
+   "構件": 2,
    "立面／表皮": 1
   },
   "tools": {
-   "GLSL": 3,
+   "GLSL": 4,
    "客製模擬軟體": 2,
+   "Processing": 2,
    "數值模擬": 2,
-   "C": 2,
-   "Grasshopper": 2,
-   "Kangaroo": 2,
-   "C#": 2,
-   "有限元素分析": 2,
+   "WebGL": 2,
+   "p5.js": 2,
    "three.js": 2,
    "金屬 3D 列印": 1,
-   "Processing": 1,
    "SLS 3D 列印": 1,
    "3D 列印": 1,
    "注漿成型": 1,
    "網頁互動工具": 1,
+   "C": 1,
    "電腦圖學": 1,
-   "Nautilus": 1,
+   "Grasshopper": 1,
+   "Kangaroo": 1,
+   "C#": 1,
+   "有限元素分析": 1,
    "DLP 3D 列印": 1,
-   "雷射切割": 1,
-   "刺繡": 1,
    "電磁模擬": 1,
    "C++": 1,
    "GitHub 開源": 1,
-   "WebGL": 1,
    "JavaScript": 1,
-   "p5.js": 1,
    "TouchDesigner": 1,
-   "OpenGL": 1
+   "自製模擬軟體": 1,
+   "GPU 渲染": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:C01-09",
+   "algo": "C01",
+   "kind": "RES",
+   "title": "把反應擴散變成曲線（Nautilus iso-split）",
+   "url_norm": "discourse.mcneel.com/t/reaction-diffusion-curves/160082",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:C01-55",
+   "algo": "C01",
+   "kind": "CC",
+   "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+   "url_norm": "mrob.com/pub/comp/xmorphia",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:C01-12",
+   "algo": "C01",
+   "kind": "RES",
+   "title": "具 Turing 圖樣紋理的織物氣動致動器",
+   "url_norm": "pmc.ncbi.nlm.nih.gov/articles/pmc11333703",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

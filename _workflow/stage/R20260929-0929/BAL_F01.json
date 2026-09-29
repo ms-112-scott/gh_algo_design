@@ -1,0 +1,181 @@
+{
+ "algo": "F01",
+ "classification": [
+  {"id": "F01-01", "source": "research", "why": "1704年原始數學論文，組合學文獻"},
+  {"id": "F01-02", "source": "research", "why": "Leonardo期刊翻譯與拓樸分析論文"},
+  {"id": "F01-03", "source": "art", "why": "Bridges發表的生成圖樣作品，視覺為主"},
+  {"id": "F01-04", "source": "art", "why": "生成藝術經典教材，成果是一張圖樣"},
+  {"id": "F01-05", "source": "research", "why": "科學館教具展示物，非藝術家陳述"},
+  {"id": "F01-06", "source": "research", "why": "商業聲學建材產品"},
+  {"id": "F01-07", "source": "research", "why": "SAGE期刊立面編碼研究論文"},
+  {"id": "F01-08", "source": "research", "why": "Nexus期刊預鑄面板研究論文"},
+  {"id": "F01-09", "source": "research", "why": "Sketchfab建築曲面立面模型"},
+  {"id": "F01-10", "source": "research", "why": "Grasshopper磁磚教學影片"},
+  {"id": "F01-11", "source": "research", "why": "GitHub命令列產生工具"},
+  {"id": "F01-12", "source": "research", "why": "科學館互動教具，非藝術創作"},
+  {"id": "F01-13", "source": "art", "why": "數學藝術家設計的視覺卡片"},
+  {"id": "F01-14", "source": "research", "why": "OpenSCAD客製化列印工具"}
+ ],
+ "art_count": 3,
+ "need": 4,
+ "removal_order": ["F01-09", "F01-14", "F01-12", "F01-06", "F01-08", "F01-05", "F01-10"],
+ "removal_reasons": {
+  "F01-09": "Sketchfab上傳者作者年份不明，證據薄弱",
+  "F01-14": "與F01-05、F01-08同屬加工類重複，來源為列印分享站證據薄弱",
+  "F01-12": "與F01-13同一來源網址，教具性質而非藝術陳述，證據薄弱",
+  "F01-06": "吸音磚實際幾何與Truchet弧線關係鬆散，只借用命名",
+  "F01-08": "學術論文缺乏實際圖面可視化，與加工類案例重複",
+  "F01-05": "加工類已有多筆重複，缺乏實際照片佐證",
+  "F01-10": "僅為影片教學連結，缺乏獨立圖片佐證"
+ },
+ "new_art": [
+  {
+   "title": "Truchet Images（以照片驅動的半色調 Truchet 圖樣）",
+   "creator": "Ned Batchelder",
+   "year": "2022",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Python 開發者 Ned Batchelder 寫程式把照片轉成灰階，依每格局部亮度挑選不同粗細或種類的 Truchet 弧線磁磚（含 Smith 版與 Carlson 多尺度版），讓遠看是人像、近看是連續曲線的半色調效果。相較基礎範例每格只靠擲硬幣決定方向，這裡改用像素亮度驅動整組磁磚選擇。",
+   "variations": [
+    {"name": "亮度分級選磚", "how": "每格依像素亮度切成多個等級，選用粗細或密度不同的弧線磁磚而非單純二選一", "effect": "灰階漸層轉成疏密不同的曲線紋理"},
+    {"name": "套用多尺度磚組", "how": "對同一張照片改用 Carlson 的多尺度磁磚集合而非單一尺寸磁磚", "effect": "亮部區域自動換成更細的磁磚呈現更多細節"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Python", "影像驅動", "半色調"],
+   "tools": ["Python"],
+   "url": "https://nedbatchelder.com/blog/202208/truchet_images.html",
+   "evidence": "頁面標題「Truchet images」，作者 Ned Batchelder，2022年8月17日發表，文中附多張以照片生成的 Truchet 影像",
+   "nearest_existing": "無（既有案例中沒有影像驅動的案例）",
+   "image": {"url": "https://nedbatchelder.com/pix/truchet/marilyn_truchet.png", "page": "https://nedbatchelder.com/blog/202208/truchet_images.html", "verified": true, "checked": "瑪麗蓮夢露照片以黑白 Truchet 弧線構成的半色調肖像，暗部弧線密、亮部弧線疏",
+     "source": "Ned Batchelder 部落格", "author": "Ned Batchelder", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "以照片亮度驅動 Truchet 弧線密度的半色調肖像"}
+  },
+  {
+   "title": "GenTruchet（無限展開的多尺度 Truchet 鋼筆繪圖作品）",
+   "creator": "Marc Dunand",
+   "year": "2024",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "創作者 Marc Dunand 用 Processing 寫的生成系統，讓每片磁磚從「功能上無限」的圖案集合中即時生成，並確保線條在磁磚間平滑相接、形成永不相交的封閉形，最後輸出 SVG 交給鋼筆繪圖機或雷射雕刻於紙上。跟基礎範例固定用兩種磁磚不同，這裡磁磚形狀本身也是隨機生成、種類趨近無限多。",
+   "variations": [
+    {"name": "磁磚形狀本身隨機化", "how": "不用固定的兩種弧線磚，改成每格呼叫函式即時生成一組保證邊界相接的貝茲曲線磚", "effect": "圖樣不再只有「單一磚兩種轉向」而是無限多種局部形狀"},
+    {"name": "輸出成鋼筆繪圖 SVG", "how": "收集所有曲線 Join 後匯出向量 SVG，交給 AxiDraw 一類鋼筆繪圖機繪製", "effect": "數位圖樣變成手繪質感的紙上原作"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Processing", "繪圖機", "鋼筆繪圖"],
+   "tools": ["Processing"],
+   "url": "https://marcdunand.com/work/major-works/gentruchet",
+   "evidence": "作品頁標題「GenTruchet」，年份 2024，描述使用 Processing 生成並輸出給繪圖機／雷射雕刻",
+   "nearest_existing": "F01-03 Multi-Scale Truchet Patterns（同樣是多尺度概念，但Carlson用固定縮放的磚組，這裡磚形本身隨機生成且強調鋼筆繪圖成品）",
+   "image": {"url": "https://marcdunand.com/media/gentruchet/02_outp5.png", "page": "https://marcdunand.com/work/major-works/gentruchet", "verified": true, "checked": "黑白同心圓弧交織成的連續曲線圖樣，磚與磚間線條平滑相接不中斷",
+     "source": "Marc Dunand 個人網站", "author": "Marc Dunand", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "多尺度貝茲曲線磁磚輸出成連續黑白圖樣，可供鋼筆繪圖機繪製"}
+  },
+  {
+   "title": "TruchetArt（互動式細分 Truchet 產生器）",
+   "creator": "ESikich",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 p5.js 寫成的互動網頁，滑鼠點擊可把任一磁磚細分成四個更小的磁磚，滾動滾輪能切換磁磚的圖案風格與配色，讓觀者即時「長出」局部更密的區域。跟基礎範例固定網格不同，這裡的細分程度由使用者互動決定，磁磚造型也可即時切換。",
+   "variations": [
+    {"name": "點擊局部細分", "how": "點一下某格就把該格換成 2×2 更小的同類磁磚並各自重新擲亂數", "effect": "圖樣可以局部越長越細，形成不均勻的多尺度效果"},
+    {"name": "滾輪切換磚型與配色", "how": "用滑鼠滾輪切換一組預先定義好的磁磚造型與色盤陣列", "effect": "同一張網格可以立刻變成好幾種視覺風格"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "互動", "細分"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/ESikich/TruchetArt",
+   "evidence": "README標題「Interactive generative art using Truchet tiles」，說明點擊細分、滾輪切換造型，MIT授權",
+   "nearest_existing": "無",
+   "image": {"url": "https://raw.githubusercontent.com/ESikich/TruchetArt/master/download.png", "page": "https://github.com/ESikich/TruchetArt", "verified": true, "checked": "黃底上藍紫綠多色的有機圓弧與細密電路狀紋理交織，局部明顯比其他區域更密集細碎",
+     "source": "GitHub", "author": "ESikich", "license": "MIT License", "license_url": "", "note": "互動細分產生的多色有機Truchet圖樣"}
+  },
+  {
+   "title": "Masked and Weighted Truchet Tiles（遮罩與線寬雙重影像驅動）",
+   "creator": "Dan Royer（i-make-robots）",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "繪圖機工程師 Dan Royer 用 Processing 讀入兩張灰階照片：一張控制每格磁磚要不要旋轉（遮罩），另一張把弧線切成許多小段、依局部亮度即時調整每小段的線寬（權重），暗部線條變粗、亮部變細。基礎範例每格只有「轉不轉」一個位元，這裡疊加了「線寬隨影像變化」的第二層資訊。",
+   "variations": [
+    {"name": "雙圖驅動（方向＋線寬）", "how": "除了用第一張圖的亮度決定rotated，再讀第二張圖依亮度用strokeWeight()逐段調整弧線粗細", "effect": "同一張網格同時編碼兩種影像資訊"},
+    {"name": "弧線切段變粗細", "how": "把每段Arc用DivideByCount切成多個短線段，各自依所在位置的像素亮度設定線寬", "effect": "遠看是灰階肖像、近看每段弧粗細都不同"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Processing", "影像驅動", "線寬調變"],
+   "tools": ["Processing"],
+   "url": "https://www.marginallyclever.com/2020/06/masked-and-weighted-truchet-tiles-in-processing/",
+   "evidence": "部落格標題「Masked and Weighted Truchet Tiles in Processing」，2020-06-14發表，作者Dan，示範以兩張影像分別控制磚向與線寬",
+   "nearest_existing": "無（既有案例中沒有影像驅動的案例）",
+   "image": {"url": "https://i0.wp.com/www.marginallyclever.com/wp-content/uploads/2020/06/3.jpg", "page": "https://www.marginallyclever.com/2020/06/masked-and-weighted-truchet-tiles-in-processing/", "verified": true, "checked": "灰階人像由粗細不一的鋸齒狀弧線紋理構成，暗部線條明顯較密較粗",
+     "source": "Marginally Clever Robots 部落格", "author": "Dan Royer", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "以遮罩與線寬雙重影像資訊驅動的Truchet人像"}
+  },
+  {
+   "title": "Exploring Truchet Tiling（三角形 Truchet 教學圖樣）",
+   "creator": "deconbatch",
+   "year": "2022",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "creative coding部落格deconbatch用p5.js與Processing兩種語言示範原始三角形版Truchet，四色三角磚隨機旋轉拼成菱形與風車紋，並附完整程式碼解說每格如何取邊中點對齊。是最接近Truchet 1704原始版本、而非Smith圓弧版的教材化示範。",
+   "variations": [
+    {"name": "三角磚四向旋轉", "how": "把每格切成對角三角形，random.Next(4)決定旋轉0/90/180/270度", "effect": "重現原始Truchet三角拼花而非圓弧版"},
+    {"name": "雙語言對照", "how": "同一演算法分別用p5.js與Processing各寫一次", "effect": "方便比較JavaScript與Java語法差異"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "Processing", "教學"],
+   "tools": ["p5.js", "Processing"],
+   "url": "https://www.deconbatch.com/2022/03/truchet-tiling.html",
+   "evidence": "文章標題「Exploring Truchet Tiling: Simple Tiles, Complex Patterns」，2022年3月發表，內文提供p5.js與Processing程式碼",
+   "nearest_existing": "F01-01 Truchet原始三角磚論文（同為三角形版本，但這裡是互動教學示範而非歷史文獻）",
+   "image": {"url": "https://blogger.googleusercontent.com/img/a/AVvXsEiph4c3AUsrsLmid1b2vF_E43wmfIWC67MpZJK_t0FZG3yeI5zv0eQA7eN-4qUe1moRF4YsJTpd0G6WwJxRlr1NlOdTIwJZNFkt5y1qhL_kIY_wnm9RRyE0VgyrGNTYILzB9feO_ftO02cSWKFDvKiRUTgRzMFlED3sNDgNDJIWQ_fpSS51NRqTMg=s640", "page": "https://www.deconbatch.com/2022/03/truchet-tiling.html", "verified": true, "checked": "紅黃藍白三角磚隨機旋轉拼成的菱形風車圖樣，灰底加彩色三角形",
+     "source": "deconbatch 部落格", "author": "deconbatch", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "原始三角形版Truchet的彩色教學示範圖"}
+  },
+  {
+   "title": "70's Pop Pattern Truchet 產生器（黑胡桃木鑲嵌淺盤）",
+   "creator": "Daniel Catt（生成程式）／Copper Pig Woodworking（製作）",
+   "year": "2021",
+   "category": "fabrication",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "生成藝術家Daniel Catt（@revdancatt）寫的Truchet磁磚產生器做出一款「70年代普普風」圖樣，木工工作室Copper Pig Woodworking徵得同意後把這個電腦生成圖樣用CNC銑進黑胡桃木淺盤、再鑲嵌黃銅，讓螢幕上的演算法圖樣變成實體木作。示範同一套Truchet邏輯如何直接轉成加工路徑。",
+   "variations": [
+    {"name": "圖樣轉CNC路徑", "how": "把產生器輸出的向量線稿轉成CNC銑刻路徑與黃銅鑲嵌溝槽", "effect": "螢幕圖樣變成可觸摸的實體木淺盤"},
+    {"name": "普普風配色與粗磚型", "how": "磚型與排列刻意做成粗曲線交織的70年代普普圖案而非細弧線", "effect": "視覺上比基礎範例更粗獷、更裝飾性"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "CNC", "木工", "鑲嵌"],
+   "tools": ["JavaScript"],
+   "url": "https://www.copperpigwoodworking.com/everyday-trays/plaid-in-highly-figured-cherry-9g3j2-sby3j-3tx45-fyke3-d9w45-5slp4-sgt82-tkwfs-fyz58-4tlrg-6pbzm-66n6a-4glmw-ge8bn-55rp6-ys5pw",
+   "evidence": "產品頁標題「Computer Generative Art: Truchet Tile」，內文說明圖樣來自Daniel Catt的Truchet磁磚產生器、由Copper Pig Woodworking銑刻於黑胡桃木並鑲嵌黃銅",
+   "nearest_existing": "F01-05 雷射切割Truchet拼圖（同樣把Truchet圖樣加工成實體物件，但這裡是CNC銑刻鑲嵌木作淺盤而非拼圖）",
+   "image": {"url": "https://images.squarespace-cdn.com/content/v1/5af5a248a2772cc078f93878/1637681946556-PAO43TM6IERCJQAQWNCL/20211120143842_D96A1501.jpg", "page": "https://www.copperpigwoodworking.com/everyday-trays/plaid-in-highly-figured-cherry-9g3j2-sby3j-3tx45-fyke3-d9w45-5slp4-sgt82-tkwfs-fyz58-4tlrg-6pbzm-66n6a-4glmw-ge8bn-55rp6-ys5pw", "verified": true, "checked": "深色胡桃木淺盤中央鑲嵌黃銅色連續曲線Truchet圖樣，弧線粗獷呈螺旋交織",
+     "source": "Copper Pig Woodworking", "author": "Daniel Catt／Copper Pig Woodworking", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "電腦生成Truchet圖樣銑刻鑲嵌於木淺盤"}
+  },
+  {
+   "title": "Truchet Pattern Explorer（磁磚配對探索器）",
+   "creator": "dmackinnon1",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "開源網頁工具，用原生JavaScript即時展示多種Truchet磁磚配對規則，使用者可以切換不同的磚型組合觀察圖樣如何變化，附兩篇部落格文章說明各種變化的原理。跟基礎範例固定用圓弧磚不同，這裡把「磚型本身」當成可切換的參數。",
+   "variations": [
+    {"name": "磚型組合切換", "how": "準備好幾組不同的磚型定義（三角、弧線等），讓使用者即時切換整組磁磚而非只調旋轉", "effect": "同一網格骨架可以呈現完全不同的圖樣家族"},
+    {"name": "即時互動介面", "how": "用HTML/JS建立可調整參數的介面而非跑一次算圖", "effect": "可以邊調邊看效果，適合教學展示"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "JavaScript", "互動", "教學"],
+   "tools": ["JavaScript"],
+   "url": "https://dmackinnon1.github.io/truchet/",
+   "evidence": "GitHub repo說明「A page for playing around with various flavors of Truchet tiles」，作者dmackinnon1，附即時展示頁與部落格文章連結",
+   "nearest_existing": "F01-01 Truchet原始三角磚（其中一種磚型組合即為經典三角版本）",
+   "image": {"url": "https://raw.githubusercontent.com/dmackinnon1/truchet/master/imgs/truchet2.png", "page": "https://github.com/dmackinnon1/truchet", "verified": true, "checked": "黑白三角形磁磚拼成的經典Truchet風車紋樣",
+     "source": "GitHub", "author": "dmackinnon1", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "經典三角形版Truchet磁磚示範圖"}
+  }
+ ],
+ "notes": "需要4個新藝術案例，已找到4個主要＋3個備援共7個，皆為p5.js／Processing／JavaScript／Python的creative coding作品並已下載預覽確認生成畫面；主要4個中3個為p5.js／Processing，符合半數以上要求。"
+}

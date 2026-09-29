@@ -1,0 +1,278 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F04",
+  "name_zh": "基因演算法",
+  "name_en": "Genetic Algorithm",
+  "one_liner": "先亂丟一大堆方案，打分數、讓好方案互相「生小孩」再隨機小改，一代一代留下更好的設計。",
+  "how_it_works": [
+   "把一個設計方案編碼成「基因」：這裡是一整組點的座標（Point3d 陣列）。",
+   "隨機產生第一代 populationSize 組方案，每組用 ScoreOf 算分數（點與點最近距離，越大越分散）。",
+   "排序後保留最好的 EliteCount 組直接進下一代（精英）。",
+   "其餘名額：用小組比賽（Tournament）挑兩個父母，逐點隨機繼承（均勻交配），再以 mutationRate 讓少數點小幅移動（突變）。",
+   "重複 generations 代，記錄每代最佳分數，最後輸出最佳解與收斂曲線。"
+  ]
+ },
+ "final_total": 12,
+ "target_art": 6,
+ "target_research": 6,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F04-01",
+   "title": "Autodesk MaRS 多倫多辦公室生成式設計",
+   "creator": "The Living（Autodesk Research）",
+   "year": "2017",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "多元件",
+    "3D"
+   ],
+   "tools": [
+    "Dynamo",
+    "Project Refinery",
+    "MOGA"
+   ],
+   "url": "https://www.research.autodesk.com/projects/autodesk-mars",
+   "summary": "為 Autodesk 多倫多辦公室建立可產生上萬種平面配置的幾何系統，以工作型態偏好、鄰接偏好、低干擾、連通性、日光、視野六個目標評分，再用多目標基因演算法 (MOGA) 演化出高分配置，是第一個大規模生成式設計的辦公空間。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-02",
+   "title": "Autodesk University 拉斯維加斯展場配置",
+   "creator": "The Living（Autodesk）",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "約束滿足"
+   ],
+   "tools": [
+    "Dynamo",
+    "Project Refinery"
+   ],
+   "url": "https://www.autodesk.com/autodesk-university/article/Generative-Design-Architectural-Space-Planning",
+   "summary": "延續 MaRS 辦公室的流程，將展場攤位與動線配置拆成「建立設計空間、以目標評估、以演化計算迭代」三步驟，用遺傳演算法搜尋同時滿足人流、曝光與實際限制的展場平面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-03",
+   "title": "An Evolutionary Architecture（演化建築）",
+   "creator": "John Frazer",
+   "year": "1995",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "開放生長"
+   ],
+   "tools": [
+    "自製程式"
+   ],
+   "url": "https://www.aaschool.ac.uk/public/whats-on/an-evolutionary-architecture",
+   "summary": "Frazer 在 AA 的研究與同名展覽／出版品，將建築視為人工生命，以遺傳編碼描述形態規則並透過演化機制產生建築形式，是建築界使用基因演算法的奠基性論述。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-04",
+   "title": "Galapagos 演化求解器",
+   "creator": "David Rutten",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "隨機"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Galapagos"
+   ],
+   "url": "https://www.researchgate.net/publication/264299633_Galapagos_On_the_Logic_and_Limitations_of_Generic_Solvers",
+   "summary": "Grasshopper 內建的通用演化求解器：把滑桿或 Gene Pool 當基因、任一數值當適應度，自動搜尋參數空間。Rutten 並撰文討論通用求解器的邏輯與限制，是學習者最常接觸的 GA 工具。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-05",
+   "title": "Octopus 多目標演化最佳化",
+   "creator": "Robert Vierlinger",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Octopus"
+   ],
+   "url": "https://grasshopperdocs.com/addons/octopus.html",
+   "summary": "Grasshopper 外掛，操作方式類似 Galapagos，但引入 Pareto 原則同時追求多個目標，輸出一整組互相取捨的最佳解，而非單一答案。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-06",
+   "title": "Wallacei 多目標演化與都市形態研究",
+   "creator": "Mohammed Makki、Milad Showkatbakhsh 等",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "最佳化",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Wallacei"
+   ],
+   "url": "https://www.wallacei.com/research",
+   "summary": "Wallacei 是 Grasshopper 的多目標演化引擎，附分析與分群工具協助挑選方案；其研究頁收錄以規則式多尺度程序建模結合 MOEA、探討相衝突條件下都市形態變化的研究。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-07",
+   "title": "醫院建築日光與能耗多目標最佳化（阿爾及利亞）",
+   "creator": "",
+   "year": "",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "最佳化",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Ladybug",
+    "Honeybee",
+    "Octopus"
+   ],
+   "url": "https://www.academia.edu/105936985/Parametric_Based_Multi_Objective_Optimization_Workflow_Daylight_and_Energy_Performance_Study_of_Hospital_Building_in_Algeria",
+   "summary": "以 Grasshopper 參數模型、Ladybug／Honeybee 模擬日光與能耗、Octopus 基因演算法組成閉迴路，最佳化開窗率、玻璃與遮陽等參數，是性能導向立面設計的典型流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-08",
+   "title": "殼體多目標最佳化基準測試（Karamba＋Octopus）",
+   "creator": "Alberto Pugnale",
+   "year": "2013",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "物理模擬",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Karamba3D",
+    "Octopus"
+   ],
+   "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/",
+   "summary": "以 Grasshopper 建立殼體參數模型、Karamba 做有限元素分析、Octopus 進行多目標演化，作為結構形態最佳化的簡單基準範例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-09",
+   "title": "IAAC 結構形態基因最佳化（Karamba＋Galapagos）",
+   "creator": "IAAC 學習者專案",
+   "year": "",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "物理模擬"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Karamba3D",
+    "Galapagos"
+   ],
+   "url": "https://www.iaacblog.com/programs/genetic-optimization-karamba-galapagos/",
+   "summary": "IAAC 課程將 Karamba 結構分析結果（位移）作為 Galapagos 的適應度，最佳化塔樓斜格構或屋頂的幾何參數，展示教學場景中 GA 與結構分析的整合。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F04-10",
+   "title": "NASA ST5 演化天線",
+   "creator": "NASA",
+   "year": "2006",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "3D"
+   ],
+   "tools": [
+    "演化演算法"
+   ],
+   "url": "https://www.jpl.nasa.gov/nmp/st5/TECHNOLOGY/antenna.html",
+   "summary": "為 Space Technology 5 衛星設計的 X 波段天線，由演化演算法在超級電腦上跑數天找出，形狀怪異到人類設計師不會想到，卻滿足任務要求並實際製造上太空。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:St_5-xband-antenna.jpg",
+    "note": "NASA ST5 任務演化天線實體照片，附比例尺"
+   }
+  },
+  {
+   "id": "F04-11",
+   "title": "Evolved Virtual Creatures（演化虛擬生物）",
+   "creator": "Karl Sims",
+   "year": "1994",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "物理模擬",
+    "動畫"
+   ],
+   "tools": [
+    "自製程式"
+   ],
+   "url": "https://www.karlsims.com/evolved-virtual-creatures.html",
+   "summary": "以基因演算法同時演化積木生物的形態與神經控制，讓牠們在物理模擬中比賽游泳、行走、跳躍，最成功的個體被複製、交配、突變，是演化計算在圖學與藝術中的經典作品。",
+   "currently_cc": false,
+   "photo": {
+    "source": "karlsims.com",
+    "page": "https://www.karlsims.com/evolved-virtual-creatures.html",
+    "note": "Evolved Virtual Creatures 中兩隻演化生物競爭綠色方塊的模擬畫面"
+   }
+  },
+  {
+   "id": "F04-12",
+   "title": "Genetic Images（互動式影像演化）",
+   "creator": "Karl Sims",
+   "year": "1993",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "影像輸入"
+   ],
+   "tools": [
+    "自製程式"
+   ],
+   "url": "https://karlsims.com/",
+   "summary": "觀眾在展場中挑選喜歡的抽象影像，被選中的影像基因被複製、組合與突變產生下一代，由人的審美當適應度；曾在龐畢度中心與 Ars Electronica 展出。",
+   "currently_cc": false,
+   "photo": {
+    "source": "karlsims.com",
+    "page": "https://www.karlsims.com/genetic-images.html",
+    "note": "Genetic Images 互動展示現場，觀眾前的螢幕牆顯示演化中的抽象影像"
+   }
+  }
+ ]
+}

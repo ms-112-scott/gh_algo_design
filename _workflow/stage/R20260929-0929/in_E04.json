@@ -1,0 +1,481 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "E04",
+  "name_zh": "動態鬆弛找形",
+  "name_en": "Dynamic Relaxation Form-Finding",
+  "one_liner": "把一張網格想成用彈簧連起來的質點，固定幾個角點、施加重力，讓它反覆晃動直到靜止，得到的懸垂形倒過來就是只受壓的殼。",
+  "how_it_works": [
+   "建立 (n+1)×(n+1) 個質點，四個角點設為固定；相鄰質點之間各連一條彈簧，原長等於格距。",
+   "每一步先算彈簧力：每條彈簧依伸長量（目前長度－原長）× stiffness，把兩端點互相拉近或推開，累加到力陣列。",
+   "再把彈簧力加上重力，更新速度（v = (v + F·dt)·damping）與位置（p += v·dt），固定點跳過。",
+   "記錄每一步最快質點的速度；速度趨近 0 表示系統已達平衡（收斂）。",
+   "重複 iterations 次後，用彈簧兩端點畫出線段；gravity 設正值就是把懸垂網倒過來，得到純受壓殼的形狀。"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 10,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "E04-01",
+   "title": "慕尼黑奧林匹克體育場索網屋頂",
+   "creator": "Frei Otto、Günter Behnisch、Fritz Leonhardt",
+   "year": "1972",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tags": [
+    "物理模擬",
+    "收斂",
+    "3D"
+   ],
+   "tools": [
+    "實體模型",
+    "早期電腦找形"
+   ],
+   "url": "https://www.sbp.de/en/project/roof-for-munich-olympic-stadium-1972/",
+   "summary": "以桅杆吊起的預力鋼索網屋頂，覆蓋體育場與奧林匹克公園。先用大型實體模型找形，再由 Argyris、Linkwitz 等人以迭代電腦計算求出索長與節點位置，是電腦找形的里程碑。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons（Usien）",
+    "page": "https://commons.wikimedia.org/wiki/File:Olympic_Stadium_Munich_Dachbegehung.JPG",
+    "note": "奧林匹克體育場索網屋頂的屋頂步道：桅杆、鋼索與透明屋面板"
+   }
+  },
+  {
+   "id": "E04-02",
+   "title": "曼海姆多功能廳 Multihalle 木格殼",
+   "creator": "Frei Otto、Carlfried Mutschler",
+   "year": "1975",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "3D",
+    "收斂"
+   ],
+   "tools": [
+    "懸垂鏈模型",
+    "攝影測量"
+   ],
+   "url": "https://mannheim-multihalle.de/en/architecture/",
+   "summary": "被視為世界最大木格殼之一，形狀以懸垂鏈網模型找出後倒轉，再由 Klaus Linkwitz 以攝影測量轉成數位模型。本範例的「網＋重力＋倒轉」正是其找形原理。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons（Immanuel Giel）",
+    "page": "https://commons.wikimedia.org/wiki/File:Herzogenriedpark_Mannheim_Multihalle_Deckenkonstruktion.jpg",
+    "note": "曼海姆 Multihalle 室內仰視：自由曲面的木格殼屋頂"
+   }
+  },
+  {
+   "id": "E04-03",
+   "title": "古埃爾紡織村教堂（Colònia Güell）懸垂模型",
+   "creator": "Antoni Gaudí",
+   "year": "1898–1908",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "3D"
+   ],
+   "tools": [
+    "懸垂模型",
+    "攝影"
+   ],
+   "url": "https://dataphys.org/list/gaudis-hanging-chain-models/",
+   "summary": "Gaudí 用繩子與裝鉛的小袋做成倒吊的多重懸垂模型，拍照後翻轉描繪，得到只受壓的拱與柱。這是物理版的動態鬆弛：讓重力把繩子拉到平衡，再倒過來。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons（作者不詳）",
+    "page": "https://commons.wikimedia.org/wiki/File:Maqueta_polifunicular.jpg",
+    "note": "Gaudí 為古埃爾紡織村教堂製作的倒吊多重懸垂模型原始照片"
+   }
+  },
+  {
+   "id": "E04-04",
+   "title": "Deitingen 南服務區薄殼",
+   "creator": "Heinz Isler",
+   "year": "1968",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "3D"
+   ],
+   "tools": [
+    "懸吊布模型",
+    "石膏模型"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Heinz_Isler",
+   "summary": "Isler 以「倒吊的布」找形：把浸濕的布掛在少數支點上、凍結後倒轉，得到只受壓的混凝土薄殼。Deitingen 服務區兩片三點支撐的殼是其代表作。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons（Chriusha／Christian Kleis）",
+    "page": "https://commons.wikimedia.org/wiki/File:Deitingen_Sued_Raststaette,_Schalendach_01_09.jpg",
+    "note": "Deitingen 南服務區：Heinz Isler 設計的三點支撐混凝土薄殼（1968）"
+   }
+  },
+  {
+   "id": "E04-05",
+   "title": "Armadillo Vault 無砂漿石拱",
+   "creator": "Block Research Group（ETH Zurich）、ODB Engineering、The Escobedo Group",
+   "year": "2016",
+   "category": "fabrication",
+   "scale": "建築",
+   "tags": [
+    "收斂",
+    "3D",
+    "最佳化"
+   ],
+   "tools": [
+    "RhinoVAULT",
+    "Rhino",
+    "CNC"
+   ],
+   "url": "https://www.dezeen.com/2016/05/31/armadillo-vault-block-research-group-eth-zurich-beyond-the-bending-limestone-structure-without-glue-venice-architecture-biennale-2016/",
+   "summary": "威尼斯建築雙年展展出的 399 塊石灰岩拱殼，跨距達 16 公尺，完全靠受壓自承、無砂漿無連接件。形狀以受壓平衡找形（Thrust Network Analysis）求得，再切分成可加工的石塊。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Flickr（Jean-Pierre Dalbéra）",
+    "page": "https://www.flickr.com/photos/dalbera/30245801805",
+    "note": "2016 威尼斯建築雙年展的 Armadillo Vault：石灰岩板拼成的無砂漿拱殼"
+   }
+  },
+  {
+   "id": "E04-06",
+   "title": "NEST HiLo 索網模板混凝土屋頂",
+   "creator": "Block Research Group、Architecture and Building Systems（ETH Zurich）",
+   "year": "2021",
+   "category": "fabrication",
+   "scale": "建築",
+   "tags": [
+    "收斂",
+    "最佳化",
+    "3D"
+   ],
+   "tools": [
+    "COMPAS",
+    "Rhino"
+   ],
+   "url": "https://www.empa.ch/web/nest/hilo",
+   "summary": "雙曲率混凝土夾層殼屋頂，以可重複使用的張力索網加薄膜作為模板，直接在上面噴灑混凝土。索網形狀需透過找形計算，使索網受混凝土重量後仍能落在目標幾何上。",
+   "currently_cc": false,
+   "photo": {
+    "source": "ETH Zurich 新聞（攝影：Roman Keller）",
+    "page": "https://ethz.ch/en/news-and-events/eth-news/news/2021/10/light-construction-efficient-operation.html",
+    "note": "NEST 大樓頂層的 HiLo 單元：頂端為雙曲率混凝土夾層殼屋頂"
+   }
+  },
+  {
+   "id": "E04-07",
+   "title": "Striatus 3D 列印混凝土拱橋",
+   "creator": "Block Research Group、Zaha Hadid Architects Computation and Design Group（ZHACODE）",
+   "year": "2021",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "收斂",
+    "3D"
+   ],
+   "tools": [
+    "COMPAS",
+    "3D 混凝土列印"
+   ],
+   "url": "https://www.zaha-hadid.com/design/striatus/",
+   "summary": "16×12 公尺的步行拱橋，由 53 塊 3D 列印混凝土塊乾式疊砌，無砂漿、無鋼筋。拱形為純受壓找形結果，列印層方向垂直於主壓力。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Zaha Hadid Architects 作品頁（攝影：Studio Naaro）",
+    "page": "https://www.zha.com/design/striatus/",
+    "note": "Striatus 3D 列印混凝土拱橋於威尼斯 Giardini della Marinaressa"
+   }
+  },
+  {
+   "id": "E04-08",
+   "title": "Thrust Network Analysis 與 RhinoVAULT",
+   "creator": "Philippe Block、John Ochsendorf",
+   "year": "2007",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "收斂",
+    "最佳化",
+    "3D"
+   ],
+   "tools": [
+    "RhinoVAULT",
+    "Rhino"
+   ],
+   "url": "https://web.mit.edu/masonry/thrustNetwork/",
+   "summary": "以投影幾何與力圖（force diagram）的對偶關係，找出落在給定包絡內的純受壓推力網。與動態鬆弛同樣求平衡網，但改用圖解靜力學求解，後來發展成 RhinoVAULT 外掛。",
+   "currently_cc": false,
+   "photo": {
+    "source": "MIT Masonry Research（Philippe Block、John Ochsendorf）",
+    "page": "https://web.mit.edu/masonry/thrustNetwork/",
+    "note": "Thrust Network Analysis 的形圖 Γ 與力圖 Γ* 的對偶（互易）關係"
+   }
+  },
+  {
+   "id": "E04-09",
+   "title": "Kangaroo Physics（Grasshopper 物理引擎）",
+   "creator": "Daniel Piker",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "物理模擬",
+    "約束滿足",
+    "Timer"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo2"
+   ],
+   "url": "https://www.food4rhino.com/en/app/kangaroo-physics",
+   "summary": "Rhino 內建的即時物理／約束求解器，用來做找形、最佳化、平面化等。核心概念與本範例一樣：點、目標（彈簧、錨點、載重）、反覆求解到平衡。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E04-10",
+   "title": "張拉結構的動態鬆弛找形與分析（Barnes 方法）",
+   "creator": "Michael R. Barnes",
+   "year": "1999",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "收斂",
+    "物理模擬",
+    "最佳化"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1260/0266351991494722",
+   "summary": "以 kinetic damping 的動態鬆弛法做大跨度索網、格殼、預力膜與肋膜屋頂的找形、分析與裁片，是張拉膜工程軟體的經典基礎。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E04-11",
+   "title": "KnitCandela 針織模板混凝土殼",
+   "creator": "Block Research Group、Zaha Hadid Architects Computation and Design Group",
+   "year": "2018",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "物理模擬",
+    "3D"
+   ],
+   "tools": [
+    "COMPAS",
+    "電腦針織"
+   ],
+   "url": "",
+   "summary": "以電腦針織的織物作為受拉模板，張開後在上面塗覆混凝土形成薄殼展館。織物張開後的形狀需以找形模擬預測，並依此設計針織圖案。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Zaha Hadid Architects 作品頁（攝影：Juan Pablo Allegre）",
+    "page": "https://www.zha.com/design/knitcandela/",
+    "note": "KnitCandela 俯視：針織模板上塗覆混凝土的薄殼，內側可見彩色針織布"
+   }
+  },
+  {
+   "id": "E04-12",
+   "title": "大型懸浮漁網雕塑",
+   "creator": "Janet Echelman",
+   "year": "",
+   "category": "art-installation",
+   "scale": "群體／都市",
+   "tags": [
+    "物理模擬",
+    "動畫",
+    "3D"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "以纖維網懸掛於建築物或城市廣場上空的大尺度雕塑，網的形狀取決於懸掛點與網本身的受力平衡，常以張力網模擬輔助設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E04-13",
+   "title": "Ark Nova 充氣音樂廳",
+   "creator": "Anish Kapoor、磯崎新（Arata Isozaki）",
+   "year": "2013",
+   "category": "art-installation",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "3D"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "為東日本震災後巡迴演出設計的可移動充氣音樂廳，以單一薄膜充氣成型。充氣膜的最終形狀是內壓與膜張力的平衡結果，可用法向壓力版本的動態鬆弛模擬。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Aerotrope 作品頁（©Anish Kapoor／Lucerne Festival）",
+    "page": "https://www.aerotrope.com/what-we-do/art/ark-nova.html",
+    "note": "Ark Nova 在日本松島充氣完成的空拍：單一薄膜鼓成的甜甜圈形音樂廳"
+   }
+  },
+  {
+   "id": "E04-14",
+   "title": "Savill Building 木格殼屋頂",
+   "creator": "Glenn Howells Architects、Buro Happold",
+   "year": "2006",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "3D"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "英國溫莎大公園遊客中心的波浪形木格殼屋頂，以落葉松木條構成。此類 gridshell 常以動態鬆弛模擬木條從平面格網彎折成形的過程。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons（Oosoom）",
+    "page": "https://commons.wikimedia.org/wiki/File:Saville_Building_roof_interior_long.jpg",
+    "note": "Savill Building 室內：落葉松木格殼屋頂與波浪形屋緣"
+   }
+  },
+  {
+   "id": "E04-51",
+   "title": "Coding Challenge 177：Soft Body Physics",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2023",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "toxiclibs.js",
+    "物理模擬",
+    "互動"
+   ],
+   "tools": [
+    "p5.js",
+    "toxiclibs.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/177-soft-body-character",
+   "summary": "Daniel Shiffman 用 p5.js 搭配 toxiclibs.js 的 Verlet 物理，把一個卡通角色的輪廓拆成粒子，再以外圈彈簧加上內部交叉彈簧撐住形狀，做出可以被滑鼠拖動、Q 彈晃動的軟體角色。基礎範例是固定角點、以重力找出懸垂形，這裡則是自由的彈簧網，重點在形狀的保持與互動。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/177-soft-body-character",
+    "note": "頁面預覽圖：彈簧骨架與軟體角色"
+   }
+  },
+  {
+   "id": "E04-52",
+   "title": "The Nature of Code 第 6 章：Physics Libraries",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "toxiclibs.js",
+    "Matter.js",
+    "教學"
+   ],
+   "tools": [
+    "p5.js",
+    "toxiclibs.js",
+    "Matter.js"
+   ],
+   "url": "https://natureofcode.com/physics-libraries/",
+   "summary": "The Nature of Code（2024 年 JavaScript 版）第 6 章介紹 Matter.js 與 toxiclibs.js 兩種物理函式庫，後半段以 Verlet 物理實作彈簧、弦、布料網格與軟體角色，並說明 Euler 與 Verlet 積分的差異。基礎範例自行寫出質點與彈簧 class，本章則展示同樣的概念如何交給現成物理引擎，並比較不同積分方法的穩定性。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/physics-libraries/",
+    "note": "書中圖 6.13：弦、布、骨架、軟體角色四種彈簧結構設計"
+   }
+  },
+  {
+   "id": "E04-53",
+   "title": "three.js webgpu - compute cloth",
+   "creator": "holtsetio（three.js 官方範例）",
+   "year": "2025",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "three.js",
+    "WebGPU",
+    "GPU",
+    "布料模擬"
+   ],
+   "tools": [
+    "three.js",
+    "WebGPU"
+   ],
+   "url": "https://threejs.org/examples/webgpu_compute_cloth.html",
+   "summary": "three.js 的官方範例，以 WebGPU compute shader 執行 Verlet 布料模擬：由彈簧相連的頂點網格組成布料，在 GPU 上即時計算。與基礎範例在 CPU 上逐一計算彈簧力不同，它把彈簧力與頂點力分成兩個 compute pass 平行計算，再以即時算繪的布料材質呈現。",
+   "currently_cc": true,
+   "photo": {
+    "source": "three.js 官方範例",
+    "page": "https://threejs.org/examples/webgpu_compute_cloth.html",
+    "note": "範例截圖：飄動的 Verlet 布料"
+   }
+  },
+  {
+   "id": "E04-54",
+   "title": "MSAPhysics（openFrameworks／Cinder 粒子彈簧物理庫）",
+   "creator": "Memo Akten",
+   "year": "2008",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "Cinder",
+    "C++",
+    "物理模擬",
+    "開源"
+   ],
+   "tools": [
+    "openFrameworks",
+    "Cinder"
+   ],
+   "url": "https://www.memo.tv/msaphysics",
+   "summary": "Memo Akten 開發的開源 C++ 物理函式庫，供 openFrameworks 與 Cinder 使用，以粒子與約束為基礎，提供彈簧、吸引子與碰撞；API 刻意仿照 Processing 的 Traer.physics，方便移植。與基礎範例只有彈簧加重力相比，它把吸引子與碰撞也納入同一個粒子系統，常用於即時互動與視覺作品。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Memo Akten 個人網站",
+    "page": "https://www.memo.tv/msaphysics",
+    "note": "作品圖：以彈簧相連的 3D 粒子網絡"
+   }
+  },
+  {
+   "id": "E04-55",
+   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
+   "creator": "Moritz Schwind（Entagma）",
+   "year": "2018",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "Vellum",
+    "XPBD",
+    "布料模擬"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/houdini-17-is-here-a-quickstart-to-vellum/",
+   "summary": "Entagma 的五集快速入門，介紹 Houdini 17 新推出的 Vellum：以 XPBD（擴展式位置基礎動力學）穩定且快速地模擬布料、線材與軟體，內容包含撕裂布料與軟體的基本設定，並附場景檔。基礎範例以彈簧力、速度、阻尼逐步積分，Vellum 則直接以位置約束迭代修正，較不容易數值爆炸。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Vimeo（Entagma）",
+    "page": "https://vimeo.com/294379827",
+    "note": "影片縮圖：Vellum 軟體模擬"
+   }
+  }
+ ]
+}

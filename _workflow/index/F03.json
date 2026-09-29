@@ -155,7 +155,7 @@
     "Surface Evolver",
     "金屬 3D 列印"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F03-03",
@@ -170,21 +170,7 @@
     "PrusaSlicer",
     "FDM 3D 列印"
    ],
-   "has_image": false
-  },
-  {
-   "id": "F03-04",
-   "cc": false,
-   "title": "徑向漸變 TPMS 骨骼支架",
-   "creator": "骨組織工程研究（綜述論文）",
-   "year": "",
-   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664",
-   "category": "performance",
-   "scale": "物件",
-   "tools": [
-    "3D 列印"
-   ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F03-05",
@@ -214,7 +200,7 @@
     "3D 列印",
     "分子模擬"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F03-07",
@@ -255,34 +241,7 @@
    "tools": [
     "砂印（binder jetting）"
    ],
-   "has_image": false
-  },
-  {
-   "id": "F03-10",
-   "cc": false,
-   "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
-   "creator": "Benjamin Dillenburger、Robert Flatt、Joseph Schwartz 等（ETH Zurich，DFAB HOUSE）",
-   "year": "2018",
-   "url": "https://dbt.arch.ethz.ch/project/smart-slab/",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [
-    "砂印（binder jetting）",
-    "混凝土"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "F03-11",
-   "cc": false,
-   "title": "Minimal Complexity 極小曲面裝置",
-   "creator": "Vlad Tenu",
-   "year": "2010",
-   "url": "",
-   "category": "art-installation",
-   "scale": "構件",
-   "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F03-12",
@@ -311,37 +270,116 @@
     "積層製造"
    ],
    "has_image": false
+  },
+  {
+   "id": "F03-51",
+   "cc": true,
+   "title": "Corollaria Gyroid（阿爾巴尼國際機場公共藝術）",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2023",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9386",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自訂生成軟體",
+    "雷射切割",
+    "金屬"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F03-52",
+   "cc": true,
+   "title": "Porifera：3D 列印陶瓷首飾系列",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2018",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8115",
+   "category": "fabrication",
+   "scale": "物件",
+   "tools": [
+    "自訂生成軟體",
+    "陶瓷 SLA 3D 列印"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F03-53",
+   "cc": true,
+   "title": "Puzzle Cell Complex：Construct3D 協作拼裝雕塑",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2020",
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8521",
+   "category": "art-installation",
+   "scale": "物件",
+   "tools": [
+    "自訂生成軟體",
+    "雷射切割",
+    "手工組裝"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
    "fabrication": 4,
-   "performance": 4,
+   "art-installation": 3,
+   "performance": 3,
    "modeling": 2,
-   "art-installation": 2,
    "2d-pattern": 1
   },
   "scale": {
-   "物件": 7,
-   "構件": 5,
+   "物件": 9,
+   "構件": 3,
    "建築": 1
   },
   "tools": {
+   "自訂生成軟體": 3,
    "金屬 3D 列印": 2,
-   "3D 列印": 2,
-   "砂印（binder jetting）": 2,
+   "雷射切割": 2,
    "Mathematica": 1,
    "Surface Evolver": 1,
    "PrusaSlicer": 1,
    "FDM 3D 列印": 1,
    "CFD": 1,
+   "3D 列印": 1,
    "分子模擬": 1,
    "Grasshopper": 1,
    "Python": 1,
-   "混凝土": 1,
+   "砂印（binder jetting）": 1,
    "DLP 3D 列印": 1,
-   "積層製造": 1
+   "積層製造": 1,
+   "金屬": 1,
+   "陶瓷 SLA 3D 列印": 1,
+   "手工組裝": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:F03-11",
+   "algo": "F03",
+   "kind": "RES",
+   "title": "Minimal Complexity 極小曲面裝置",
+   "url_norm": "",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F03-10",
+   "algo": "F03",
+   "kind": "RES",
+   "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
+   "url_norm": "dbt.arch.ethz.ch/project/smart-slab",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F03-04",
+   "algo": "F03",
+   "kind": "RES",
+   "title": "徑向漸變 TPMS 骨骼支架",
+   "url_norm": "pmc.ncbi.nlm.nih.gov/articles/pmc11283664",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

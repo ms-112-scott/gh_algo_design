@@ -265,21 +265,6 @@
    "has_image": false
   },
   {
-   "id": "E02-11",
-   "cc": false,
-   "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
-   "creator": "Peter Krattenmacher（McNeel 論壇）",
-   "year": "2020",
-   "url": "https://discourse.mcneel.com/t/poisson-disk-sampling-component/109884",
-   "category": "modeling",
-   "scale": "構件",
-   "tools": [
-    "Grasshopper",
-    "C#"
-   ],
-   "has_image": false
-  },
-  {
    "id": "E02-12",
    "cc": false,
    "title": "玻璃纖維立體字的有機纖維分布",
@@ -304,20 +289,6 @@
    "scale": "物件",
    "tools": [
     "Processing"
-   ],
-   "has_image": true
-  },
-  {
-   "id": "E02-52",
-   "cc": true,
-   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
-   "creator": "Marcel Ruegenberg",
-   "year": "2015",
-   "url": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
-   "category": "2d-pattern",
-   "scale": "物件",
-   "tools": [
-    "openFrameworks"
    ],
    "has_image": true
   },
@@ -362,38 +333,83 @@
     "Unity"
    ],
    "has_image": true
+  },
+  {
+   "id": "E02-56",
+   "cc": true,
+   "title": "Recursive Scatter：影像位移驅動的 Poisson 點 Voronoi 花紋",
+   "creator": "benjamin-white（GitHub）",
+   "year": "",
+   "url": "https://github.com/benjamin-white/recursive-scatter",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E02-57",
+   "cc": true,
+   "title": "ImageTriangulation：藍噪點三角化重繪名畫",
+   "creator": "pxv8270（GitHub）",
+   "year": "",
+   "url": "https://github.com/pxv8270/ImageTriangulation",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 5,
-   "modeling": 4,
+   "2d-pattern": 6,
    "drawing": 4,
+   "modeling": 3,
    "urban-landscape": 2,
    "fabrication": 1,
    "art-installation": 1
   },
   "scale": {
-   "物件": 12,
+   "物件": 13,
    "地景": 3,
-   "群體／都市": 1,
-   "構件": 1
+   "群體／都市": 1
   },
   "tools": {
-   "JavaScript": 5,
+   "JavaScript": 6,
    "Processing": 3,
    "研究原型": 2,
    "D3.js": 2,
-   "Grasshopper": 2,
    "Inkscape": 1,
    "C++": 1,
    "p5.js": 1,
    "WebGL": 1,
    "Blender": 1,
-   "C#": 1,
-   "openFrameworks": 1,
-   "Unity": 1
+   "Grasshopper": 1,
+   "Unity": 1,
+   "Python": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:E02-11",
+   "algo": "E02",
+   "kind": "RES",
+   "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
+   "url_norm": "discourse.mcneel.com/t/poisson-disk-sampling-component/109884",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:E02-52",
+   "algo": "E02",
+   "kind": "CC",
+   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
+   "url_norm": "github:mruegenberg/ofxpoissondisksampling",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

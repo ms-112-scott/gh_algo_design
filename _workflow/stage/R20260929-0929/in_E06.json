@@ -1,0 +1,271 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "E06",
+  "name_zh": "力密度法（FDM）",
+  "name_en": "Force Density Method (FDM)",
+  "one_liner": "替索網裡每一根索指定「拉力 ÷ 長度」的力密度 q，整張網的平衡形狀就變成一組線性方程式，一次解出來，不必像動態鬆弛那樣慢慢晃到靜止。",
+  "how_it_works": [
+   "把輸入 Mesh 轉成圖：TopologyVertices 當節點、TopologyEdges 當邊，每條邊記下兩端節點編號。",
+   "決定固定點（指定錨點或裸邊頂點），其餘為自由點，並替每條邊指定力密度 q（裸邊邊索再乘 edgeCableFactor）。",
+   "組出稀疏矩陣 D = Cnᵀ·Q·Cn：每條邊把 q 加到兩端自由點的對角線，兩端都自由時在非對角位置填 −q；只接到固定點的邊則把 q × 固定點座標移到右手邊。",
+   "對 x、y、z 三個方向各解一次 D·u = p + 固定點貢獻（p 只有 z 向的 load），用共軛梯度法迭代到殘差夠小。",
+   "把解出的座標寫回網格，並以「內力 = q × 長度」算出每根桿件的力，依大小由藍到紅上色輸出。"
+  ]
+ },
+ "final_total": 11,
+ "target_art": 5,
+ "target_research": 6,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "E06-01",
+   "title": "慕尼黑奧林匹克屋頂：力密度法的誕生",
+   "creator": "H.-J. Schek、Klaus Linkwitz（找形計算）；Frei Otto、Günter Behnisch（屋頂設計）",
+   "year": "1972",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "找形",
+    "線性方程組",
+    "預力索網"
+   ],
+   "tools": [
+    "早期電腦找形",
+    "實體模型"
+   ],
+   "url": "https://blockresearchgroup.gitbook.io/compas-fofin/theoretical-background/force-densities-method",
+   "summary": "慕尼黑奧林匹克屋頂的索網必須精確施工，只靠實體模型與攝影測量不夠，Schek 因此提出力密度法，把每根索預先指定 q = 力 ÷ 長度，讓平衡方程變成線性、可以一次解出。本案只談 FDM 在此案中的起源（屋頂本身已在 E04 收錄）；和基礎範例相比，真實屋頂是多片馬鞍索網、由桅杆吊點與邊索組成，而且 q 要依施工需求再做非線性調整。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-02",
+   "title": "Design process for prototype concrete shells using a hybrid cable-net and fabric formwork",
+   "creator": "Diederik Veenendaal、Philippe Block（ETH Zurich BLOCK Research Group）",
+   "year": "2014",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "找形",
+    "逆向設計",
+    "數位製造",
+    "織物模板"
+   ],
+   "tools": [
+    "自寫程式",
+    "攝影測量"
+   ],
+   "url": "https://block.arch.ethz.ch/brg/files/2014-veendendaal-engstruct-design-process-for-prototype-concrete-shells-using-a-hybrid-cable-net-and-fabric-formwork_1402752074.pdf",
+   "summary": "Engineering Structures 75 期的論文，為 NEST HiLo 屋頂開發可重複使用的索網加織物模板，建造兩座原型混凝土殼。文中實作非線性延伸的力密度法，把力密度 q 當未知數，以高斯—牛頓最小平方法讓網逼近目標殼形，收斂後用「力密度 × 索長」直接得到灌漿後所需的預力。基礎範例是給 q 求形，這裡反過來是給形求 q，並要考慮濕混凝土的載重。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-03",
+   "title": "COMPAS FD：以力密度法做約束找形",
+   "creator": "Tom Van Mele、Block Research Group（ETH Zurich）",
+   "year": "2021",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "找形",
+    "約束",
+    "開源"
+   ],
+   "tools": [
+    "Python",
+    "COMPAS",
+    "Rhino"
+   ],
+   "url": "https://github.com/blockresearchgroup/compas_fd",
+   "summary": "BRG 以 Python 撰寫的開源套件，提供力密度法的平衡求解器與各種約束（例如節點限制在曲線或曲面上），可直接呼叫或透過 COMPAS FormFinder 圖形介面在 Rhino 中使用；PyPI 首個公開版本於 2021 年發布。基礎範例只做一次線性求解，這個套件則在求解之間交替套用幾何約束，讓自由節點同時滿足平衡與位置限制。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-04",
+   "title": "Adaptive force density method for form-finding problem of tensegrity structures",
+   "creator": "J. Y. Zhang、M. Ohsaki",
+   "year": "2006",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "張拉整體",
+    "線性代數",
+    "找形"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S0020768305005858",
+   "summary": "刊於 International Journal of Solids and Structures 的論文，把力密度法用在張拉整體：受壓桿的力密度為負，力密度矩陣必須有足夠的秩缺陷才有非退化的平衡形，作者以特徵值分析與譜分解反覆修正可行的力密度，再由指定的獨立節點座標決定唯一形狀。基礎範例的 q 全為正、矩陣正定，這裡則必須處理不定矩陣與零特徵值。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-05",
+   "title": "Ariadne：Grasshopper 力密度逆向設計外掛",
+   "creator": "Adam Burke（MIT）",
+   "year": "2024",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "找形",
+    "逆向設計",
+    "最佳化"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Rhino 8",
+    "Rust"
+   ],
+   "url": "https://github.com/adam-t-burke/Ariadne",
+   "summary": "Adam Burke 在 MIT 開發的 Rhino 8 Grasshopper 外掛，以力密度法建立並求解索網，再搭配 Theseus 求解器做正向與逆向最佳化，可指定目標長度、內力或支承反力，最佳化過程中即時串流預覽。基礎範例只做正向求解；Ariadne 把 FDM 包在最佳化迴圈裡，自動找出滿足多個設計目標的 q。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-06",
+   "title": "Grasshopper component for Force Density Method",
+   "creator": "ocabitza",
+   "year": "2023",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "找形",
+    "Grasshopper 元件"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.food4rhino.com/en/app/force-density-method",
+   "summary": "Food4Rhino 上的 Grasshopper 元件，輸入初始幾何、束制條件、載重與各桿件的力密度比例，求出索網與離散殼的平衡形。它和基礎範例同樣以 FDM 一次求解，差別在於以「力密度比例」作為輸入，並把載重與束制拆成獨立的資料，方便在 Grasshopper 中與其他元件串接。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-07",
+   "title": "FDMremote：Grasshopper 連接 Julia 的力密度求解與最佳化",
+   "creator": "Keith J. Lee",
+   "year": "2022",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "找形",
+    "最佳化",
+    "逆向設計"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Julia"
+   ],
+   "url": "https://github.com/keithjlee/FDMremote",
+   "summary": "由 Grasshopper 端元件與 Julia 端伺服器組成的工具，Grasshopper 把網路資料傳給本機的 Julia 伺服器，由 FDM 套件做力密度求解與逆向最佳化，再把結果送回 Rhino 顯示。基礎範例在 C# 裡自己組矩陣與求解；這裡示範把求解器外移到數值計算語言，以處理較大的網與最佳化。",
+   "currently_cc": false,
+   "photo": {
+    "source": "GitHub：keithjlee/FDMremote",
+    "page": "https://github.com/keithjlee/FDMremote",
+    "note": "README 最佳化示範動畫（optim_lowertol）最後一格：找形後的索網、力密度梯度與損失收斂曲線"
+   }
+  },
+  {
+   "id": "E06-08",
+   "title": "Programming the Force Density Method",
+   "creator": "Krešimir Fresl、Petra Gidak（University of Zagreb）",
+   "year": "2012",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "找形",
+    "線性方程組",
+    "預力索網"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.academia.edu/18363187/Programming_the_Force_Density_Method",
+   "summary": "論文指出力密度法中的力密度與位移法中的勁度係數在數學上相對應，因此把既有位移法分析程式稍加修改就能做力密度找形；文中以四個預力索網例子迭代求得最小網，並與實體縮尺模型比較，發現第一次求解的形狀常比最終收斂解更接近實體模型。基礎範例是固定 q 一次求解，這裡則進一步以迭代調整 q 逼近最小網。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E06-51",
+   "title": "Shell Form Finding：瀏覽器中的受壓殼找形工具",
+   "creator": "Amanda Ghassaei",
+   "year": "2016",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "WebGL",
+    "找形",
+    "互動"
+   ],
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "url": "https://amandaghassaei.com/projects/shell_form_finding/",
+   "summary": "在 MIT Computational Structural Design and Optimization（2016 秋）中開發的網頁工具：靜態模擬以力密度法解線性方程組得到平衡位置，動態模擬則以 GPU 片段著色器平行計算質點彈簧阻尼系統，可調整網格拓樸、固定點與外力，並匯出 STL 3D 列印。和 Grasshopper C# 基礎範例相比，它把 FDM 與動態鬆弛放在同一介面並排切換，並以 JavaScript／WebGL 在瀏覽器中即時互動。",
+   "currently_cc": true,
+   "photo": {
+    "source": "amandaghassaei.com",
+    "page": "https://amandaghassaei.com/projects/shell_form_finding/",
+    "note": "Shell Form Finding 作品頁主圖：3D 列印的殼狀網格實體"
+   }
+  },
+  {
+   "id": "E06-52",
+   "title": "ForceDensityAPI：Processing 力密度格殼探索程式",
+   "creator": "Alexandros Haridis（MIT）",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Java",
+    "找形",
+    "互動"
+   ],
+   "tools": [
+    "Processing",
+    "Java"
+   ],
+   "url": "https://github.com/alexHaridis/ForceDensityAPI",
+   "summary": "以 Java／Processing 寫成的獨立程式，實作力密度法求解 36 個節點、25 個面、60 條邊的格網，理論依據來自 Klaus Linkwitz 的 FDM 著作，並附有以質點彈簧系統做動態找形的模式，用互動介面探索格殼的設計空間。基礎範例是 Grasshopper 元件；這裡把找形寫成即時繪圖的 Processing 草稿，重點在互動與設計空間探索。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "E06-53",
+   "title": "Force_Density_Method：Python 實作與參數化力密度",
+   "creator": "Vahid Moosavi",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "creative coding",
+    "Python",
+    "Jupyter",
+    "找形",
+    "圖"
+   ],
+   "tools": [
+    "Python",
+    "Jupyter Notebook",
+    "NetworkX"
+   ],
+   "url": "https://github.com/sevamoo/Force_Density_Method",
+   "summary": "依 Schek（1974）原始寫法以 Python 實作的力密度法，輸入連接圖（可用 NetworkX 格式）、固定點、節點外力與邊的力密度即可解出平衡座標；範例筆記本示範網格殼、依網路中心性指標指定力密度，以及固定點在圓上的屋頂。和基礎範例相比，它把 q 當成可由圖論指標計算的欄位，並大量產生形狀做比較。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub：sevamoo/Force_Density_Method",
+    "page": "https://github.com/sevamoo/Force_Density_Method",
+    "note": "README 範例圖：固定點位於圓形邊界的屋頂，不同力密度分布求得的多組平衡形平面圖"
+   }
+  }
+ ]
+}

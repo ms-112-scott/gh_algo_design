@@ -545,6 +545,7 @@
         "performance",
         "fabrication"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "SIGGRAPH Asia 2009 論文，提出一種三角網格，其每個三角面的內切圓彼此相切形成 packing，可延伸出曲面上的圓形圖樣、球體堆疊、帶無扭轉支撐結構的六角網格等，專為自由曲面建築設計。演算法角色是「以最佳化讓網格達到內切圓相切」，和基礎範例的互推同屬收斂型鬆弛。",
       "variations": [
@@ -587,6 +588,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "為 2008 北京奧運興建，立面與屋頂靈感來自肥皂泡的自然排列（Weaire-Phelan 泡沫結構），以鋼構空間桁架與 ETFE 氣枕構成，看似隨機卻高度重複、可施工。它是「3D 球體／泡泡堆疊再切成多面體」的經典建築案例。",
       "variations": [
@@ -625,6 +627,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 在自由形狀邊界內排圓，做成參數化立面，並用點吸引子控制最小與最大半徑。與基礎範例幾乎同構，只是把互推交給 Kangaroo 求解。",
       "variations": [
@@ -665,6 +668,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "Kangaroo 作者 Daniel Piker 在論壇與示範中展示結合 Plankton（可動態改變網格連接）與 Kangaroo（鬆弛最佳化）的 circle packing，包含變動半徑、固定半徑與尺寸族等版本，並可在曲面上進行。",
       "variations": [
@@ -698,41 +702,6 @@
       "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23"
     },
     {
-      "id": "E01-05",
-      "algo": "E01",
-      "title": "Circle Packing T-Shirt（服裝曲面上的圓）",
-      "creator": "Parametric House",
-      "year": "",
-      "category": "fabrication",
-      "categories_extra": [
-        "modeling"
-      ],
-      "scale": "物件",
-      "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 元件在 T 恤模型上鋪滿圓，示範曲面上 packing 如何用在服裝與穿戴物件。",
-      "variations": [
-        {
-          "name": "曲面拉回",
-          "how": "每輪互推後把圓心投影回服裝網格，圓平面採用該點法向量。",
-          "effect": "圓均勻貼在不可展的身體曲面上。"
-        },
-        {
-          "name": "展開成布片",
-          "how": "把網格展開成 2D 版型後，再把圓映射回平面輸出。",
-          "effect": "可雷切布料或皮革的開孔版型。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "曲面上",
-        "物理模擬"
-      ],
-      "tools": [
-        "Grasshopper",
-        "Kangaroo"
-      ],
-      "url": "https://parametrichouse.com/circle-packing-t-shirt/"
-    },
-    {
       "id": "E01-06",
       "algo": "E01",
       "title": "A Randomized Approach to Circle Packing",
@@ -742,6 +711,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "生成藝術家 Tyler Hobbs 的文章：不用數學最佳化，而是暴力地在隨機位置試放圓，放得下就收，連續失敗 2000 次就換下一個較小的尺寸（例如 10 個半徑 50、300 個半徑 10）。是基礎範例「互推」法之外最直觀的替代規則。",
       "variations": [
@@ -783,6 +753,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "p5.js／Processing 教學影片，示範「成長式」circle packing：每幀在空位產生新圓，圓持續長大直到碰到其他圓；後續部分用影像決定圓出現的位置，拼出文字或圖像。",
       "variations": [
@@ -824,6 +795,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "OpenProcessing 上的 Apollonian gasket 互動作品，按數字鍵顯示 0–9 層遞迴，並可切換顯示與 Apollonian 圓正交的圓。Apollonian gasket 是三個互切圓出發、不斷在空隙填入相切圓的分形，是 circle packing 的「精確遞迴版」。",
       "variations": [
@@ -859,6 +831,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Bridges 2022 數學與藝術研討會論文，把 Apollonian gasket 轉成可用於時尚設計的單筆線圖樣，探討如何讓圓形分形能以連續路徑製作。",
       "variations": [
@@ -891,6 +864,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "研究論文，以計算設計工具互動且有效率地求解複雜的 circle packing 問題，用來排列可展開的自由形 auxetic（負泊松比）單元，使超材料能貼合人體曲面並調整性能。",
       "variations": [
@@ -923,6 +897,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "期刊論文，以 circle packing 作為工具微調離散化的建築曲面（網格面板），讓面板尺寸與排列更規則，承接 Schiftner 等人的 CP mesh 研究方向。",
       "variations": [
@@ -956,6 +931,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Processing 教學文章，示範可控制的 circle packing：以互推力讓圓分開並加入控制條件，用來做有設計意圖的圓形構圖。",
       "variations": [
@@ -990,6 +966,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "SIGGRAPH 1998 論文 Realistic Modeling and Rendering of Plant Ecosystems，以圓代表每株植物的影響範圍，透過圓的重疊競爭（較弱者死亡）與成長模擬出自然的植被分布，再放置 L-System 植物模型。是 circle packing 應用在地景配置的經典做法。",
       "variations": [
@@ -1019,41 +996,6 @@
       "url": ""
     },
     {
-      "id": "E01-14",
-      "algo": "E01",
-      "title": "d3.pack 階層式圓形圖（circle packing 資料視覺化）",
-      "creator": "Mike Bostock（D3.js）",
-      "year": "",
-      "category": "drawing",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "D3.js 的 pack 版面以圓的面積代表數值、以圓套圓代表階層，是資訊圖表中最常見的 circle packing 用法。可轉用於建築計畫書的空間需求（各空間面積）視覺化。",
-      "variations": [
-        {
-          "name": "半徑 = √面積",
-          "how": "輸入 List<double> areas（空間需求表），半徑設為 √(area/π)，再做 packing。",
-          "effect": "一眼看出各空間需求大小的泡泡圖（bubble diagram）。"
-        },
-        {
-          "name": "巢狀邊界",
-          "how": "先 pack 各樓層或分區的大圓，再以每個大圓為邊界 pack 其中的房間。",
-          "effect": "空間計畫的階層式泡泡圖。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "遞迴",
-        "DataTree"
-      ],
-      "tools": [
-        "D3.js",
-        "JavaScript"
-      ],
-      "url": ""
-    },
-    {
       "id": "E02-01",
       "algo": "E02",
       "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
@@ -1063,6 +1005,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "SIGGRAPH 2007 短文，提出只要對傳統 dart throwing 做小修改（在既有點的 r–2r 環內試放、用網格加速），就能以 O(N) 時間在任意維度產生 Poisson 圓盤取樣，正是基礎範例的原始演算法。",
       "variations": [
@@ -1098,6 +1041,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "NPAR 2002 論文，模仿傳統點描畫以點的疏密表現色調：以影像亮度為權重反覆做加權 Voronoi 重心鬆弛（Lloyd），把點移到暗處較密的位置。常以 Poisson 或隨機點作為初始點，是變密度藍噪點取樣的代表作。",
       "variations": [
@@ -1138,6 +1082,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 Processing 寫成的免費開源軟體，實作 Secord 的點描演算法，並能把點串成旅行推銷員（TSP）單一路徑，輸出 SVG 給繪圖機、Egg-Bot 或 CNC 使用，最多約 10,000 點。",
       "variations": [
@@ -1173,6 +1118,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Eurographics 2015 論文，先撒出大量隨機點，再以加權方式逐一刪除最擠的點，直到剩下目標數量的 Poisson 取樣；因只需要距離計算，可直接用在 3D 網格表面，論文示範了在兔子模型上放頭髮與在樹枝上放葉子。",
       "variations": [
@@ -1208,6 +1154,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "D3.js 作者的長文，以動畫比較純隨機、Mitchell 最佳候選法與 Bridson 的 Poisson-disc 取樣，展示新點如何從既有點逐步向外長出；是把基礎範例視覺化最好的參考。",
       "variations": [
@@ -1243,6 +1190,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以動畫展示 Bridson 的 O(n) 演算法如何產生「緊密但不小於最小距離」的點，作者並提到曾把 Poisson-disc 取樣用在球面上。",
       "variations": [
@@ -1278,6 +1226,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "p5.js 現場寫程式教學，一步步建立網格、活躍名單與鄰格檢查，實作 Bridson 演算法；結構與基礎 C# 範例幾乎一一對應，適合自學對照。",
       "variations": [
@@ -1312,6 +1261,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "互動式程序化地圖產生器，以 poisson-disk-sampling 函式庫產生點，再建立 Delaunay／Voronoi 結構，於其上計算高程、河流與降雨，最後渲染成手繪風地圖。",
       "variations": [
@@ -1347,6 +1297,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "比較抖動格點與 Poisson disc 兩種產生不規則點的方法，說明 Poisson disc 沒有群聚、空洞較少、角度分布較佳，並指出把 tries 從預設 30 降到 5–10 可加速 2–4 倍而品質仍可接受。",
       "variations": [
@@ -1381,6 +1332,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "Blender 幾何節點中的點分布節點提供 Random 與 Poisson Disk 兩種模式，後者在網格表面上以最小距離與密度（可用權重貼圖控制）撒點，常用於散佈植物、石頭等實例。",
       "variations": [
@@ -1406,42 +1358,6 @@
       "url": "https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/point/distribute_points_on_faces.html"
     },
     {
-      "id": "E02-11",
-      "algo": "E02",
-      "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
-      "creator": "Peter Krattenmacher（McNeel 論壇）",
-      "year": "2020",
-      "category": "modeling",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "構件",
-      "summary": "論壇使用者分享自製的 Grasshopper Poisson 取樣元件，一個做標準 2D 取樣，另一個在 3D 空間中以球代替圓盤，並計畫開發測地距離（geodesic）版本以用於曲面。",
-      "variations": [
-        {
-          "name": "測地距離版",
-          "how": "在網格上以測地距離（沿表面最短距離，可用 Dijkstra 在網格邊上近似）取代直線距離判斷。",
-          "effect": "在強烈彎曲的曲面上間距仍然一致。"
-        },
-        {
-          "name": "3D 點當空間桁架節點",
-          "how": "3D 取樣後以固定半徑連接鄰近點成桿件，輸出 Line 清單。",
-          "effect": "不規則但桿長接近的空間桁架。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D",
-        "曲面上",
-        "空間索引"
-      ],
-      "tools": [
-        "Grasshopper",
-        "C#"
-      ],
-      "url": "https://discourse.mcneel.com/t/poisson-disk-sampling-component/109884"
-    },
-    {
       "id": "E02-12",
       "algo": "E02",
       "title": "玻璃纖維立體字的有機纖維分布",
@@ -1452,6 +1368,7 @@
         "modeling",
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "論壇上一個以大量纖維構成、帶放射狀動態模糊感的 3D 字體案例，回覆者建議以 Poisson 圓盤取樣取代 Populate Geometry，讓纖維起點分布更有機、不群聚，再以 Pipe 與網格化轉成 3D 物件。",
       "variations": [

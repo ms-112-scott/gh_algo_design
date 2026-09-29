@@ -219,20 +219,6 @@
    "has_image": false
   },
   {
-   "id": "E03-07",
-   "cc": false,
-   "title": "Adaptive Voronoi Facade（光感應動態立面）",
-   "creator": "諾維薩德大學 Digital Techniques, Design and Production 課程",
-   "year": "",
-   "url": "https://www.arhns.uns.ac.rs/digital/adaptive-voronoi-facade/",
-   "category": "performance",
-   "scale": "立面／表皮",
-   "tools": [
-    "Grasshopper"
-   ],
-   "has_image": false
-  },
-  {
    "id": "E03-08",
    "cc": false,
    "title": "Upsilon Pavilion：木構 Voronoi 殼體",
@@ -310,32 +296,6 @@
    "has_image": false
   },
   {
-   "id": "E03-14",
-   "cc": false,
-   "title": "埃及 Qena 市公共服務的演算法空間規劃",
-   "creator": "arXiv 論文作者群",
-   "year": "",
-   "url": "https://arxiv.org/pdf/2512.06431",
-   "category": "urban-landscape",
-   "scale": "群體／都市",
-   "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "E03-15",
-   "cc": false,
-   "title": "景觀建築的生成式設計（Voronoi 鋪面與分區）",
-   "creator": "Digital Landscape Architecture 2022 論文作者",
-   "year": "2022",
-   "url": "https://gispoint.de/fileadmin/user_upload/paper_gis_open/DLA_2022/537724058.pdf",
-   "category": "urban-landscape",
-   "scale": "地景",
-   "tools": [
-    "Grasshopper"
-   ],
-   "has_image": false
-  },
-  {
    "id": "E03-51",
    "cc": true,
    "title": "Coding Challenge 181：Weighted Voronoi Stippling",
@@ -406,40 +366,117 @@
     "d3.js"
    ],
    "has_image": true
+  },
+  {
+   "id": "E03-56",
+   "cc": true,
+   "title": "2D Voronoi Experiments：Phyllotaxis（葉序點陣的 Voronoi 圖）",
+   "creator": "Jason Webb",
+   "year": "",
+   "url": "https://jasonwebb.github.io/2d-voronoi-experiments/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js",
+    "d3-delaunay"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-57",
+   "cc": true,
+   "title": "Moore Voronoi（沿 Moore 曲線移動點的 Voronoi 動畫）",
+   "creator": "Étienne Jacob（bleuje）",
+   "year": "2024",
+   "url": "https://bleuje.com/gifanimationsite/single/moorevoronoi/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing",
+    "GLSL shader"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "E03-58",
+   "cc": true,
+   "title": "Medieval Fantasy City Generator（中世紀奇幻城市生成器）",
+   "creator": "watabou（@watawatabou）",
+   "year": "",
+   "url": "https://watabou.itch.io/medieval-fantasy-city-generator",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tools": [
+    "JavaScript",
+    "Delaunator"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 4,
+   "2d-pattern": 6,
    "3d-architecture": 3,
    "fabrication": 3,
-   "performance": 3,
    "drawing": 2,
+   "performance": 2,
    "modeling": 2,
-   "urban-landscape": 2,
-   "art-installation": 1
+   "art-installation": 1,
+   "urban-landscape": 1
   },
   "scale": {
-   "物件": 7,
+   "物件": 9,
    "構件": 4,
-   "立面／表皮": 4,
    "建築": 3,
-   "群體／都市": 1,
-   "地景": 1
+   "立面／表皮": 3,
+   "群體／都市": 1
   },
   "tools": {
-   "Grasshopper": 4,
    "CNC": 2,
+   "Grasshopper": 2,
+   "p5.js": 2,
    "d3.js": 2,
    "GLSL": 2,
    "MicroStation": 1,
    "Bentley Structural": 1,
    "3D 混凝土列印": 1,
    "C#": 1,
-   "p5.js": 1,
    "Shadertoy": 1,
-   "openFrameworks": 1
+   "openFrameworks": 1,
+   "d3-delaunay": 1,
+   "Processing": 1,
+   "GLSL shader": 1,
+   "JavaScript": 1,
+   "Delaunator": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:E03-15",
+   "algo": "E03",
+   "kind": "RES",
+   "title": "景觀建築的生成式設計（Voronoi 鋪面與分區）",
+   "url_norm": "gispoint.de/fileadmin/user_upload/paper_gis_open/dla_2022/537724058.pdf",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:E03-07",
+   "algo": "E03",
+   "kind": "RES",
+   "title": "Adaptive Voronoi Facade（光感應動態立面）",
+   "url_norm": "arhns.uns.ac.rs/digital/adaptive-voronoi-facade",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:E03-14",
+   "algo": "E03",
+   "kind": "RES",
+   "title": "埃及 Qena 市公共服務的演算法空間規劃",
+   "url_norm": "arxiv:2512.06431",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

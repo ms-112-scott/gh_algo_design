@@ -1,0 +1,69 @@
+{
+  "reviewer": "BALREV",
+  "algos": {
+    "C01": {
+      "reject_new": [
+        {"index": 3, "reason": "摘要與 variations 說使用 WebGL2 多重渲染目標（MRT），但原始碼（ReactionDiffusion.html）只是一般的雙紋理 ping-pong，查無 MRT，屬不實描述；「慕尼黑工業大學計算設計講師」也查無佐證（GitHub 個人資料寫 Austria/Graz）；年份空白（程式註明 2018）；且與 C01-52、C01-54 同屬網頁 GPU 版 Gray-Scott 加滑桿，重複性高"}
+      ],
+      "image_fix": [
+        {"index": 2, "image": {
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrj5g1uC9QgGO3E2oALqOZQ66ui-Gxafm8dGnmXYSjDYx28a0dk3XSDiiWDG-IZDNlWSH-5a7atR5C79TIb5DN6F7vDXH-_c-DZ6edjIhAmbD_SFYOudrBY9ij7SH2nyDigFPQTuf5QGEx7FheQlcYEi5Cu_4KSNZo1iCqd0so1EDqA82GADA3lg/s480/0101.jpg",
+          "page": "https://www.deconbatch.com/2022/04/turingpattern.html",
+          "verified": true,
+          "checked": "審查者重新預覽：深藍底上布滿鮭橘色的迷宮狀反應擴散花紋，是文章程式的生成畫面（原填「橘黑相間」與實際配色不符，已更正）",
+          "source": "deconbatch's Land of 1000 Creative Codings",
+          "author": "deconbatch",
+          "license": "網頁預覽圖，教學引用",
+          "license_url": "",
+          "note": "文章以 p5.js／Processing 生成的深藍底橘色迷宮狀反應擴散花紋"
+        }}
+      ],
+      "fix_class": [],
+      "protect": [
+        {"id": "C01-10", "why": "各向異性反應擴散直接產生加勁肋，和本演算法關係很強；是本演算法唯一的建築結構構件應用。撰寫者說「連結薄弱」不正確，缺的只是作者資訊（建議日後補查）。保護後改移除 C01-09（論壇討論串，與 C01-08 內容重疊）"}
+      ],
+      "notes": "McCabe《Vcsinet_1》（StandardVision 2021-04-01 文章）、piellardj、deconbatch（2022-04-01）的作品頁與生成畫面都查證合格。piellardj 的年份應補 2021（repo 建立於 2021-05），「法國獨立開發者」查無佐證。diwi 的案例含不實技術描述，已 reject。分類都合理。"
+    },
+    "C02": {
+      "reject_new": [
+        {"index": 2, "reason": "Bridges 2013 展覽頁寫明 fPDP 的圖樣是用 Processing 的遞迴演算法生成（靈感來自 Cantor 集合），完全沒有提到細胞自動機；摘要說的「一維 CA、五種顏色狀態」查無根據。圖片也以模特兒人像為主"},
+        {"index": 3, "reason": "標題與圖說含「備援」字樣，合併工具會直接把它放上網站。作品和 index 1《Dual》同作者、同系列、同一套一維 CA，重複性高。image.checked 照抄 Dual，與實際畫面（右側水平色帶、左下多彩三角拼貼）不符"},
+        {"index": 4, "reason": "標題與圖說含「備援」字樣，合併後會直接出現在網站；和 index 1《Dual》同作者、同系列、同演算法，重複性高"}
+      ],
+      "image_fix": [],
+      "fix_class": [
+        {"id": "C02-12", "source": "research", "why": "網址是 arXiv 學術論文〈Lenia — Biology of Artificial Life〉，主要成果是人工生命型態的分類研究，依準則屬學術論文（和 C01-06、C01-07 的處理一致）"}
+      ],
+      "protect": [],
+      "notes": "Reben《puritan_communion》（Artnome 對世代歷史配色的說明與摘要相符）和 Golid《Dual》（Kate Vass 2020 展覽頁）查證合格，圖片也是作品的生成畫面。Dual 的規則描述要修正：Artnome 說是在六角格上、每條線依它的三條「前導線」決定，不是只看左上與正上兩格。Reben 案例的 tools 空白。C02-12 改為 research 後 need=3，但只有 2 個合格。"
+    },
+    "C03": {
+      "reject_new": [
+        {"index": 0, "reason": "作品頁說明的演算法是曲線演化：沿曲線把每一點以切線加副切線（長度正比曲率）的混合向量推移。作者明確沒有計算向量場，也沒有從起點沿著場追蹤流線，所以本演算法不是作品核心（較接近曲線演化／差分生長）"},
+        {"index": 1, "reason": "Art Blocks 作品頁只寫到氣象主題、紙與蠟筆質感，以及用鍵盤逐層檢視，沒有提到流場或向量場；摘要說的「用向量場引導帶狀線條」無法查證，無法確認本演算法是核心"},
+        {"index": 2, "reason": "延續 Meander 的曲線演化演算法，再加上 Houdini／Gaea 的侵蝕模擬；作品頁沒有使用向量場流線，和本演算法關係薄弱"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "notes": "need=0，本演算法不受影響。三個備援的圖片都是合格的生成畫面，但演算法都對不上，全部 reject，所以本演算法沒有備援。分類都合理。"
+    },
+    "C04": {
+      "reject_new": [
+        {"index": 1, "reason": "和 C03-53 是同一篇 sighack 文章（網址相同），balance 規格不收其他演算法已經收錄的同一件作品；而且作品是用 noise 決定角度的流場，較屬 C03"},
+        {"index": 2, "reason": "和 C03-51 是同一個 Coding Train 挑戰 #24（網址相同），屬重複"},
+        {"index": 3, "reason": "作品頁 https://thecodingtrain.com/noc/perlin/perlin-noise-2d 回傳 404（這支影片不在 Nature of Code 2 課程頁上）；年份寫 2021，但影片資料是 2016-06-24；畫面只是灰階 noise 本身，作品性薄弱"},
+        {"index": 4, "reason": "和 index 1 是同一篇 sighack 文章，也與 C03-53 重複"},
+        {"index": 5, "reason": "網址 https://thecodingtrain.com/noc/perlin/graphing-1d-perlin-noise 回傳 404（正確頁在 /tracks/the-nature-of-code-2/ 之下）；畫面是一維函數曲線圖，屬數學說明，不是藝術作品"}
+      ],
+      "image_fix": [],
+      "fix_class": [
+        {"id": "C04-09", "source": "art", "why": "生成藝術家 Tyler Hobbs 的 flow field 技法文章，成果是生成畫面；同一篇文章在 C03-01 已分為 art，兩邊應一致"}
+      ],
+      "protect": [
+        {"id": "C04-11", "why": "Red Blob Games〈Making maps with noise functions〉正好講用 noise 做地形高度、疊 octaves、重新分配高度、用高度加濕度決定生物群系，是和本演算法關係最強的經典教材。只缺網址，已查證為 https://www.redblobgames.com/maps/terrain-from-noise/（Amit J. Patel，2015 年起持續更新），請補上"}
+      ],
+      "notes": "只有 Quilez 的 fBm 文章／《Rainforest》合格：圖說確認 2016 年的《Rainforest》用 fBM 生成地形、雲與樹木分布。C04-09 改為 art 後 need=2，本演算法只補得到 1 個，缺口要靠其他演算法的備援補。保護 C04-11 後，移除順序是 C04-08、C04-06。"
+    }
+  }
+}

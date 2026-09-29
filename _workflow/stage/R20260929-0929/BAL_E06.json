@@ -1,0 +1,156 @@
+{
+ "algo": "E06",
+ "classification": [
+  {"id": "E06-01", "source": "research", "why": "力密度法起源案例，慕尼黑奧運屋頂找形歷史"},
+  {"id": "E06-02", "source": "research", "why": "工程期刊論文，索網織物模板混凝土殼研究"},
+  {"id": "E06-03", "source": "research", "why": "BRG開源Python套件，約束找形工具"},
+  {"id": "E06-04", "source": "research", "why": "學術論文，張拉整體找形的理論推廣"},
+  {"id": "E06-05", "source": "research", "why": "MIT開發的Grasshopper逆向設計外掛工具"},
+  {"id": "E06-06", "source": "research", "why": "food4rhino泛用Grasshopper力密度元件工具"},
+  {"id": "E06-07", "source": "research", "why": "Grasshopper連Julia的求解與最佳化工具"},
+  {"id": "E06-08", "source": "research", "why": "位移法對應力密度法的程式撰寫論文"},
+  {"id": "E06-51", "source": "research", "why": "MIT工程課程開發的瀏覽器結構找形工具"},
+  {"id": "E06-52", "source": "research", "why": "MIT研究者寫的格殼設計空間探索程式"},
+  {"id": "E06-53", "source": "research", "why": "依學術原始寫法實作的力密度法研究筆記本"}
+ ],
+ "art_count": 0,
+ "need": 5,
+ "removal_order": ["E06-06", "E06-52", "E06-08", "E06-05", "E06-03", "E06-53", "E06-51", "E06-07"],
+ "removal_reasons": {
+  "E06-06": "food4rhino泛用力密度元件，作者資訊薄弱且無真實圖片，功能與COMPAS FD、Ariadne等工具重複",
+  "E06-52": "MIT研究用探索程式，長期無法取得真實截圖，功能與其他Grasshopper／Python力密度實作重複",
+  "E06-08": "academia.edu論文難以查證版本真偽，其位移法對應概念已被COMPAS FD等現代開源實作取代",
+  "E06-05": "2024年新工具但無真實圖片，逆向最佳化功能與FDMremote高度重疊",
+  "E06-03": "開源Python套件雖具代表性但無真實圖片，且與E06-53同屬Python力密度實作，內容重複",
+  "E06-53": "雖有README示範圖，但仍是眾多力密度程式實作之一，與COMPAS FD、Ariadne等工具型案例性質重複",
+  "E06-51": "雖有真實照片，但屬於通用瀏覽器找形工具，與E04已收錄的動態鬆弛比較案例概念重疊",
+  "E06-07": "有真實動畫截圖且具Julia最佳化特色，但仍屬於Grasshopper力密度工具集群中的一員"
+ },
+ "new_art": [
+  {
+   "title": "Cloth Simulation with Toxiclibs（懸垂布料模擬）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Coding Train 挑戰 #20 的作業，用 toxiclibs 函式庫在 Processing／p5.js 中建立一片由粒子與彈簧組成的網格，兩個頂角釘住、其餘節點在重力與彈簧力下以 Verlet 積分逐步鬆弛，收斂成懸垂的布料曲面。力密度法「一群靠彈簧（索段）相連的節點，在固定點與外力下找到平衡形狀」的核心概念在這裡完整重現，差別是這裡用逐步疊代的物理模擬逼近平衡，而不是像基礎範例那樣一次解線性方程式直接得到答案。",
+   "variations": [
+    {"name": "從2D到3D版本", "how": "把2D粒子網格改用VerletParticle3D，加入z軸重力與第三維度的彈簧連接", "effect": "從平面上的擾動曲線變成真正立體下垂的布，接近懸垂殼的3D效果"},
+    {"name": "材質貼圖（Challenge #63旗幟版本）", "how": "對每個四邊形面呼叫texture()貼上圖片，而不只畫線框", "effect": "從純粒子網格線框變成有具體圖案的可視化布料"},
+    {"name": "改變釘點數量與位置", "how": "把固定的整排頂點改成只釘兩個角，或改成環狀分布的釘點", "effect": "從整排懸掛的簾幕形狀變成吊床或降落傘般的曲面"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Processing", "彈簧網格", "懸垂模擬"],
+   "tools": ["p5.js", "Processing", "toxiclibs"],
+   "url": "https://thecodingtrain.com/challenges/20-3d-cloth-simulation",
+   "evidence": "WebFetch讀取頁面確認標題為「#20 — 3D Cloth with Toxiclibs」，列出Cloth Simulation in 2D／3D兩個範例，說明用toxiclibs以Verlet physics模擬布料",
+   "nearest_existing": "無（E06目前無以懸垂網格為主視覺的案例；E04-51等為其他演算法的創意編碼案例，非同一作品）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/20-3d-cloth-simulation/images/processing-p2d.jpg",
+    "page": "https://thecodingtrain.com/challenges/20-3d-cloth-simulation",
+    "verified": true,
+    "checked": "圖上看到深色背景中一塊白色線框網格，上緣兩個尖角固定，網格因重力自然下垂成類似懸垂布幕或索網的曲面",
+    "source": "The Coding Train（GitHub原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "2D布料範例：粒子彈簧網格由兩個頂角固定，受重力下垂成弧形懸垂曲面"
+   }
+  },
+  {
+   "title": "Force Directed Graph（力導向圖網絡）",
+   "creator": "Daniel Shiffman（The Coding Train／Nature of Code）",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Nature of Code 第5章「物理函式庫」的練習，用 toxiclibs 把一組節點與連線建成彈簧網路：相連的節點互相以彈簧拉近、不相連的節點互相推開，反覆疊代後整張圖收斂成佈局均衡、看得出群聚關係的網絡圖。這和力密度法「用彈簧（索段）的力密度決定節點平衡位置」的邏輯幾乎一致，差別是這裡的邊沒有固定端點、也不是解線性方程式，而是所有節點互相動態調整，常用在資料視覺化而非結構找形。",
+   "variations": [
+    {"name": "調整彈簧靜止長度與勁度", "how": "把每條連線的彈簧常數與靜止長度依節點間的關係權重設定", "effect": "圖的鬆緊與節點間距會依權重呈現，社群或關係強弱一眼看出"},
+    {"name": "加入節點間排斥力", "how": "額外對所有節點兩兩加上反向的最小距離彈簧或排斥力", "effect": "避免節點重疊，佈局更均勻鋪滿整個畫面"},
+    {"name": "資料驅動的圖", "how": "改成讀取外部的edge list（CSV／JSON）動態建立節點與連線，而非寫死在程式裡", "effect": "同一支程式可以視覺化任何網路資料集，從教學範例變成通用的資料視覺化工具"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Processing", "力導向圖", "資料視覺化"],
+   "tools": ["p5.js", "Processing", "toxiclibs"],
+   "url": "https://github.com/nature-of-code/noc-examples-processing/tree/master/chp05_physicslibraries/toxiclibs/Exercise_5_15_ForceDirectedGraph",
+   "evidence": "WebFetch讀取GitHub儲存庫nature-of-code/noc-examples-processing的Exercise_5_15_ForceDirectedGraph資料夾，確認內容為「force-directed graph visualization using toxiclibs」，節點依連線與鄰近度互相吸引排斥排列",
+   "nearest_existing": "無（E06目前無以網絡圖為主視覺的案例；概念上與E06-52等工具型案例不同，本案是視覺化作品而非結構找形工具）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/physics-libraries/toxiclibs/3-connected-systems/images/img2.png",
+    "page": "https://github.com/nature-of-code/noc-examples-processing/tree/master/chp05_physicslibraries/toxiclibs/Exercise_5_15_ForceDirectedGraph",
+    "verified": true,
+    "checked": "圖上看到約30個黑色節點，彼此以大量交錯的直線連接，呈現力導向圖收斂後的網絡佈局",
+    "source": "The Coding Train／Nature of Code（GitHub原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "力導向圖範例：節點間以彈簧狀連線互相拉扯，收斂成佈局均衡的網絡"
+   }
+  },
+  {
+   "title": "Matter.js Constraints：懸垂鏈約束",
+   "creator": "Daniel Shiffman（The Coding Train／Nature of Code）",
+   "year": "2017",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Nature of Code 用 Matter.js 物理引擎示範 constraint（約束）的教學，把一串圓形物件用短距離約束首尾相連、只固定最上端的一顆，其餘物件在重力下自然垂成一條彎曲的鏈狀曲線。這條鏈的形狀就是最簡單的一維力密度平衡解──只有一種力密度（約束的張力）與一個固定點，和基礎範例的多節點索網相比，少了矩陣求解與多個固定點，是理解「固定點＋內力＝平衡形」最精簡的示範。",
+   "variations": [
+    {"name": "多節鏈條（懸垂鏈）", "how": "用迴圈建立一串圓形body，相鄰兩兩用Constraint連接，只固定最上端一顆", "effect": "得到一條受重力自然下垂的鏈子，形狀接近懸鏈線"},
+    {"name": "滑鼠拖曳端點", "how": "加入MouseConstraint讓使用者可以抓住鏈條末端拖曳", "effect": "即時看到鏈形隨拖曳位置重新達到平衡，類似力密度法重新求解一次"},
+    {"name": "多鏈並排交叉連接", "how": "建立多條鏈並在中段加入共用的節點或額外Constraint交叉連接", "effect": "從單一鏈條變成互相牽制的鏈網，分布外力後呈現更複雜的平衡形"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "Matter.js", "約束", "懸垂鏈"],
+   "tools": ["p5.js", "Matter.js"],
+   "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/6-physics-libraries/4-matterjs-constraints",
+   "evidence": "WebFetch讀取頁面確認標題為「6.4 Matter.js - Constraints」，說明示範如何用constraint做出鏈條（chain）等連接結構",
+   "nearest_existing": "無（E06目前無以剛體約束鏈為主視覺的案例）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/6-physics-libraries/4-matterjs-constraints/images/img1.png",
+    "page": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/6-physics-libraries/4-matterjs-constraints",
+    "verified": true,
+    "checked": "圖上看到約10個灰色圓形物件以短線依序相連，排成一條受重力自然彎曲下垂的鏈狀曲線",
+    "source": "The Coding Train（GitHub原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Matter.js約束鏈範例：多個剛體以constraint相連，固定一端後因重力垂成鏈狀曲線"
+   }
+  },
+  {
+   "title": "Simple Cluster（簡單節點群集）",
+   "creator": "Daniel Shiffman（The Coding Train／Nature of Code）",
+   "year": "2015",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "同樣出自 Nature of Code 第5章，用 toxiclibs 讓一組節點彼此以彈簧相連並互相吸引，經過反覆疊代後收斂成一個內聚的環狀群集，是「Force Directed Graph」的簡化版本：節點數更少、連接更密集。與基礎範例把索網拉開成殼或屋頂不同，這裡的彈簧力把節點往中心拉攏，展示力密度法的另一種可能結果──力密度夠大時網會收縮聚攏，而不是撐開鋪平。",
+   "variations": [
+    {"name": "調整連接密度", "how": "把每個節點只連到最近的k個鄰居，而不是與所有節點互連", "effect": "從密集的完全圖收斂成稀疏但仍平衡的網絡，線條更稀疏易讀"},
+    {"name": "多重群集", "how": "建立多個Cluster物件，各自有不同的中心吸引子", "effect": "從單一團塊變成多個分開但內部緊實的群集，像多個小社群"},
+    {"name": "3D化", "how": "改用VerletParticle3D與Spring3D，節點座標含z軸", "effect": "從平面圓形分布變成立體球狀分布的節點雲"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Processing", "節點群集", "彈簧網路"],
+   "tools": ["p5.js", "Processing", "toxiclibs"],
+   "url": "https://github.com/nature-of-code/noc-examples-processing/tree/master/chp05_physicslibraries/toxiclibs/NOC_5_12_SimpleCluster",
+   "evidence": "WebFetch讀取GitHub儲存庫nature-of-code/noc-examples-processing的NOC_5_12_SimpleCluster資料夾，確認內容為「particle clustering behavior using toxiclibs」，節點以彈簧與吸引力群聚成團",
+   "nearest_existing": "無，但與同批新增的Force Directed Graph視覺概念相近（本案節點更少、更收攏成團，Force Directed Graph則鋪滿畫面）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/physics-libraries/toxiclibs/3-connected-systems/images/img1.png",
+    "page": "https://github.com/nature-of-code/noc-examples-processing/tree/master/chp05_physicslibraries/toxiclibs/NOC_5_12_SimpleCluster",
+    "verified": true,
+    "checked": "圖上看到約15個黑色節點排列成環狀並互相以大量直線連接，中心特別密集，呈現一個緊實的節點群集",
+    "source": "The Coding Train／Nature of Code（GitHub原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "簡單群集範例：節點以彈簧互相牽引，收斂成一個內聚的環狀群集"
+   }
+  }
+ ],
+ "notes": "分類：把E06-51、52、53三個原本currently_cc=true的案例改判為research──它們的實際內容都是工程找形工具或研究探索程式（MIT課程作品、研究者的設計空間探索程式、學術實作筆記本），符合『明顯屬於research』的例外，而非以視覺表現為目的的作品；因此art_count=0、need=5。找新藝術案例時，本輪WebSearch額度已被其他agent用完（200/200）、改用的Parallel Search MCP也已達免費額度上限，之後兩者皆無法再查詢新關鍵字，因此改用本機的tools/ct_index.py（The Coding Train範例索引，不耗用查詢額度）與GitHub直接瀏覽找候選，只確認到4個合格藝術案例（需要5個，短少1個）：Cloth Simulation with Toxiclibs（懸垂布料）、Force Directed Graph（力導向圖）、Matter.js Constraints（懸垂鏈約束）、Simple Cluster（節點群集），四者皆來自The Coding Train／Nature of Code但分屬不同影片、不同物理函式庫（toxiclibs／Matter.js）與不同視覺風格（懸垂網、力導向圖、鏈條、群集），並非同一作品重複。建議協調者：若可補足網路查詢額度，之後可再找1個非Coding Train來源的案例讓需求全部到位；若暫時湊不齊，removal_order可能只需先移除4個研究案例（保留E06-07），待補齊第5個藝術案例後再移除E06-07。"
+}

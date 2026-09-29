@@ -1,0 +1,157 @@
+{
+ "algo": "F03",
+ "classification": [
+  {"id": "F03-01", "source": "research", "why": "NASA技術報告與數學文獻，屬數位研究史料"},
+  {"id": "F03-02", "source": "art", "why": "數學雕塑家手作生成雕塑，藝術設計"},
+  {"id": "F03-03", "source": "research", "why": "切片軟體填充功能，屬製造工具研究"},
+  {"id": "F03-04", "source": "research", "why": "骨組織工程綜述論文，數位研究"},
+  {"id": "F03-05", "source": "research", "why": "熱交換器工程論文，數位研究"},
+  {"id": "F03-06", "source": "research", "why": "材料科學研究，數位研究"},
+  {"id": "F03-07", "source": "research", "why": "自然現象科普說明，非創作作品"},
+  {"id": "F03-08", "source": "research", "why": "Grasshopper外掛工具，數位研究"},
+  {"id": "F03-09", "source": "art", "why": "美術館／藝術節展出的沉浸裝置，藝術設計"},
+  {"id": "F03-10", "source": "research", "why": "建築構件研究計畫，數位研究"},
+  {"id": "F03-11", "source": "research", "why": "TEX-FAB競圖裝置，屬競賽性數位研究"},
+  {"id": "F03-12", "source": "research", "why": "生醫工程論文，數位研究"},
+  {"id": "F03-13", "source": "research", "why": "積層製造最佳化論文，數位研究"}
+ ],
+ "art_count": 2,
+ "need": 4,
+ "removal_order": ["F03-11", "F03-10", "F03-04", "F03-13", "F03-08", "F03-07", "F03-05"],
+ "removal_reasons": {
+  "F03-11": "沒有網址、細節未能查證，證據最薄弱",
+  "F03-10": "說明中自陳此案本身不是TPMS，只是製造路徑參考",
+  "F03-04": "泛用綜述、沒有具體命名案例，和12、13號主題重複",
+  "F03-13": "同屬TPMS結構最佳化論文，和04號主題重疊、也沒有照片",
+  "F03-08": "Grasshopper外掛工具頁，和本演算法的連結偏工具而非案例",
+  "F03-07": "自然現象很難找到可查證且能拍到的生成畫面照片",
+  "F03-05": "和04、06、12、13同屬工程應用論文，保留代表性更強者即可"
+ },
+ "new_art": [
+  {
+   "title": "Corollaria Gyroid（阿爾巴尼國際機場公共藝術）",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2023",
+   "category": "art-installation",
+   "categories_extra": ["fabrication"],
+   "scale": "物件",
+   "summary": "Nervous System 為美國 Albany 國際機場設計的公共藝術，主體是一段裁切過的 Gyroid 曲面，表面再疊上仿生細胞狀鏤空紋理，靈感來自植物細胞、多孔菌與苔蘚蟲。和基礎範例只輸出單一等值面不同，這件作品在 Gyroid 骨架上又長出第二層有機孔洞場，並放大到公共藝術尺度。",
+   "variations": [
+    {"name": "雙層紋理疊加", "how": "先用 Gyroid 公式生成主體曲面骨架，再依曲面法線與局部曲率長出第二層仿生細胞狀鏤空場", "effect": "從單一光滑等值面變成兼具結構與裝飾紋理的鏤空表皮"},
+    {"name": "大尺度金屬雷射切割", "how": "曲面攤平分件後用金屬雷射切割／彎折成形，取代基礎範例的整塊 3D 列印輸出", "effect": "讓 TPMS 幾何可以放大到公共藝術尺度並降低製造成本"},
+    {"name": "依場館採光調整孔隙", "how": "依現場天窗光線與觀看角度局部調整鏤空密度", "effect": "白天讓光線篩落、夜晚被燈光點亮，呼應機場天窗環境"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "generative design", "gyroid", "公共藝術"],
+   "tools": ["自訂生成軟體", "雷射切割", "金屬"],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9386",
+   "evidence": "WebFetch 開啟 n-e-r-v-o-u-s.com 部落格文章《Corollaria Gyroid for Albany Airport》，確認標題、2023 年、Albany International Airport 委託公共藝術的說明",
+   "nearest_existing": "F03-02 Gyroid 金屬雕塑（同為 Gyroid 雕塑，但 F03-02 是小型手作雕塑，沒有第二層仿生鏤空紋理也非公共藝術裝置）",
+   "image": {
+    "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2023/10/mxsage_Photo-Nov-24-2023-4-49-06-AM-850x1133.jpg",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=9386",
+    "verified": true,
+    "checked": "從天花板圓形開口往上仰視，白色鏤空 Gyroid 曲面雕塑，表面布滿仿生細胞狀孔洞紋理",
+    "source": "Nervous System 部落格（攝影：Sage Jenson）",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "從下方仰視的 Corollaria Gyroid 公共藝術裝置，鏤空紋理清晰可見"
+   }
+  },
+  {
+   "title": "Yellow Moon Gyroid",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2022",
+   "category": "art-installation",
+   "categories_extra": ["fabrication"],
+   "scale": "物件",
+   "summary": "Nervous System 為紀念 Gyroid 發現者 Alan Schoen（見 F03-01）而做的懸吊雕塑，永久展示於機構空間。沿用 Corollaria 的「Gyroid 骨架＋仿生鏤空紋理」作法，改用金色調材料並設計成可懸吊展示的球型輪廓。",
+   "variations": [
+    {"name": "紀念性造型調整", "how": "調整 Gyroid 的 periods 與裁切邊界，讓成品呈現柔和的球型輪廓", "effect": "抽象數學曲面被賦予紀念性的圓潤造型"},
+    {"name": "懸吊結構設計", "how": "在曲面內縮處預留頂部懸吊點與鋼索接點，基礎範例的 Mesh 輸出並未處理支撐方式", "effect": "作品可用鋼索垂掛在挑高空間中央展示"},
+    {"name": "色彩分區噴塗", "how": "依曲面分件位置分別處理金色與原色塗裝", "effect": "強化曲面的凹凸層次與量體感"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "generative design", "gyroid", "紀念雕塑"],
+   "tools": ["自訂生成軟體", "金屬／木料切割"],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9176",
+   "evidence": "WebFetch 開啟 n-e-r-v-o-u-s.com 部落格文章《Yellow Moon Gyroid》，確認標題、2022 年、向數學家 Alan Schoen 致敬並永久展示的說明",
+   "nearest_existing": "F03-02 Gyroid 金屬雕塑（同為紀念性 Gyroid 雕塑，但這件明確向 Schoen 本人致敬，尺度與色彩處理也不同）",
+   "image": {
+    "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2022/10/P8270297-850x638.jpg",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=9176",
+    "verified": true,
+    "checked": "懸吊展示的金黃與米白鏤空 Gyroid 曲面雕塑，垂掛在挑高白色展廳中央",
+    "source": "Nervous System 部落格",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "懸吊展示的 Yellow Moon Gyroid 紀念雕塑"
+   }
+  },
+  {
+   "title": "Porifera：3D 列印陶瓷首飾系列",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2018",
+   "category": "fabrication",
+   "categories_extra": ["modeling"],
+   "scale": "物件",
+   "summary": "以深海玻璃海綿為靈感的 3D 列印陶瓷首飾系列。Nervous System 用近似 Gyroid／Schwarz-D 的週期極小曲面生成「薄壁 3D 泡沫」骨架，再以陶瓷 SLA 列印、手工上釉並兩次窯燒，做成項鍊、耳環與手鍊。",
+   "variations": [
+    {"name": "用 Voronoi 骨架取代公式場", "how": "先以重心最佳化 Voronoi 圖產生骨架點，再計算骨架兩側的 Voronoi 面並做均曲率流平滑，取代基礎範例直接代入三角函數公式的做法", "effect": "得到不規則卻仍具極小曲面特性的有機孔洞紋理"},
+    {"name": "依配戴造型調整密度函數", "how": "用自訂密度函數控制骨架點在項鍊、耳環外形內的疏密", "effect": "同一套演算法能生出項鍊、耳環等不同首飾造型"},
+    {"name": "陶瓷列印與後製", "how": "SLA 列印陶瓷生坯，再經打磨、上釉、兩次窯燒", "effect": "展示 TPMS 薄殼幾何從數位模型走到可配戴陶瓷成品的完整製程"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "generative design", "TPMS", "首飾"],
+   "tools": ["自訂生成軟體", "陶瓷 SLA 3D 列印"],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8115",
+   "evidence": "WebFetch 開啟 n-e-r-v-o-u-s.com 部落格文章《Porifera》，確認標題、2018 年，以及文中對 Gyroid／Schwarz-D 週期極小曲面生成方式的說明",
+   "nearest_existing": "F03-12 Gyroid 水凝膠支架（同樣把 TPMS 用在細胞尺度多孔結構，但 Porifera 是首飾產品而非生醫支架）",
+   "image": {
+    "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2018/05/IMGP3171.jpg",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=8115",
+    "verified": true,
+    "checked": "白色光澤陶瓷項鍊局部特寫，呈現海綿狀分支鏤空的極小曲面造型",
+    "source": "Nervous System 部落格",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Porifera 陶瓷項鍊局部，展現週期極小曲面的分支鏤空紋理"
+   }
+  },
+  {
+   "title": "Puzzle Cell Complex：Construct3D 協作拼裝雕塑",
+   "creator": "Nervous System（Jessica Rosenkrantz、Jesse Louis-Rosenberg）",
+   "year": "2020",
+   "category": "art-installation",
+   "categories_extra": ["fabrication"],
+   "scale": "物件",
+   "summary": "為 Construct3D 數位製造研討會設計的可拆組雕塑：把一段 Gyroid 曲面裁切成 69 片獨特平面拼片，附組裝說明，讓與會者現場協力組裝成約 5 呎大小的鏤空曲面雕塑。",
+   "variations": [
+    {"name": "曲面展開成平面拼片", "how": "把 Gyroid 曲面依三角化面片攤平（unroll／flatten），每片標號並設計互扣卡榫", "effect": "原本要用列印機做的雙曲曲面，改成雷射切割平面材料再手工組裝"},
+    {"name": "可拆組的接合設計", "how": "在攤平的每片邊緣加上榫接與編號系統", "effect": "曲面可拆解裝箱運輸，一般人不需專業工具就能協力組裝"},
+    {"name": "縮小取樣範圍", "how": "只取 Gyroid 大範圍曲面中的一小段裁切區域，而非完整週期單元", "effect": "保留曲面的有機起伏，又能控制在展場可承受的尺度"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "generative design", "gyroid", "參與式製作"],
+   "tools": ["自訂生成軟體", "雷射切割", "手工組裝"],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8521",
+   "evidence": "WebFetch 開啟 n-e-r-v-o-u-s.com 部落格文章《Puzzle Cell Complex: a sculpture for Construct3D》，確認標題、2020 年、69 片拼裝與 Construct3D 研討會的說明",
+   "nearest_existing": "F03-09 Digital Grotesque（同樣是分件、可拆組的製造參考，但這件才是真正以 Gyroid TPMS 為本體，且用平面拼片而非砂印整塊）",
+   "image": {
+    "url": "https://n-e-r-v-o-u-s.com/blog/wp-content/uploads/2020/02/P2140460-2.jpg",
+    "page": "https://n-e-r-v-o-u-s.com/blog/?p=8521",
+    "verified": true,
+    "checked": "紅白配色的鏤空 Gyroid 曲面雕塑，有人站在鏤空開口中展示尺度",
+    "source": "Nervous System 部落格",
+    "author": "Nervous System",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Puzzle Cell Complex 拼裝完成後的鏤空 Gyroid 雕塑，內有真人展示尺度"
+   }
+  }
+ ],
+ "notes": "13 筆既有案例中只有 2 筆屬於藝術設計（F03-02 手作雕塑、F03-09 美術館／藝術節裝置），need=4。因本次 WebSearch 額度在流程一開始就被其他並行 agent 用完、改用的 Parallel Search 也很快碰到免費額度上限，只查證到 Nervous System 一家生成設計工作室的 4 件明確以 Gyroid／TPMS 為核心的作品（皆已下載並親眼確認生成畫面），未能補滿規格要求的 3 個備援；在 Shadertoy 上也找到多個以 Gyroid SDF 為主體的 raymarching shader（如 tubeman 的《tm gyroid 2》、MacSlow 的《Gyroid SDF》），但畫面是即時 WebGL 運算、抓不到頁面上明確列出的靜態圖片網址（不可以用猜的網址格式），所以沒有收錄；也因此這次新案例未能達到「p5.js／Processing 至少占一半」，全數是 Nervous System 的生成設計實體作品，建議協調者之後補查 Shadertoy 或 OpenProcessing 的截圖來源。"
+}

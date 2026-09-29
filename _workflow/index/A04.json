@@ -306,21 +306,6 @@
    "has_image": false
   },
   {
-   "id": "A04-14",
-   "cc": false,
-   "title": "Recursive image subdivision（Grasshopper 論壇範例）",
-   "creator": "Grasshopper3d 社群",
-   "year": "",
-   "url": "https://www.grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples",
-   "category": "drawing",
-   "scale": "立面／表皮",
-   "tools": [
-    "Grasshopper",
-    "Anemone"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A04-51",
    "cc": true,
    "title": "Coding Challenge #77：Recursion（遞迴）",
@@ -375,38 +360,64 @@
     "Houdini"
    ],
    "has_image": false
+  },
+  {
+   "id": "A04-55",
+   "cc": true,
+   "title": "Grid Paintings à la Mondrian with JavaScript",
+   "creator": "Max Halford",
+   "year": "2017",
+   "url": "https://maxhalford.github.io/blog/mondrian/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "HTML5 Canvas"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 5,
+   "2d-pattern": 6,
    "3d-architecture": 3,
    "urban-landscape": 3,
    "art-installation": 2,
    "modeling": 2,
-   "drawing": 2,
-   "fabrication": 1
+   "fabrication": 1,
+   "drawing": 1
   },
   "scale": {
-   "物件": 6,
+   "物件": 7,
    "建築": 4,
    "群體／都市": 4,
-   "立面／表皮": 3,
+   "立面／表皮": 2,
    "構件": 1
   },
   "tools": {
    "p5.js": 3,
    "CityEngine": 3,
    "3D 列印": 2,
-   "Grasshopper": 2,
    "Java": 1,
    "Processing": 1,
    "Go": 1,
+   "Grasshopper": 1,
    "Weaverbird": 1,
-   "Anemone": 1,
    "Clojure": 1,
-   "Houdini": 1
+   "Houdini": 1,
+   "JavaScript": 1,
+   "HTML5 Canvas": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:A04-14",
+   "algo": "A04",
+   "kind": "RES",
+   "title": "Recursive image subdivision（Grasshopper 論壇範例）",
+   "url_norm": "grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

@@ -143,7 +143,7 @@
     "Grasshopper",
     "Kangaroo"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F08-02",
@@ -185,7 +185,7 @@
     "Grasshopper",
     "VB.NET"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F08-05",
@@ -212,7 +212,7 @@
     "Grasshopper",
     "LeafVein"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F08-51",
@@ -271,7 +271,7 @@
     "Houdini",
     "VEX"
    ],
-   "has_image": false
+   "has_image": true
   }
  ],
  "distribution": {

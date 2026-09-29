@@ -1,0 +1,221 @@
+{
+ "algo": "E02",
+ "classification": [
+  {"id": "E02-01", "source": "research", "why": "SIGGRAPH 原始論文，學術研究成果"},
+  {"id": "E02-02", "source": "research", "why": "NPAR 學術論文，點描演算法原始出處"},
+  {"id": "E02-03", "source": "research", "why": "開源軟體工具，用於製作繪圖機路徑"},
+  {"id": "E02-04", "source": "research", "why": "Eurographics 論文，3D 取樣消除法研究"},
+  {"id": "E02-05", "source": "research", "why": "演算法解說長文，屬教學說明非藝術創作"},
+  {"id": "E02-06", "source": "research", "why": "演算法互動說明，屬解說而非藝術創作"},
+  {"id": "E02-07", "source": "art", "why": "p5.js 現場教學，成果是生成畫面"},
+  {"id": "E02-08", "source": "research", "why": "程序化地圖產生器，屬技術示範"},
+  {"id": "E02-09", "source": "research", "why": "技術比較部落格文章，非藝術創作"},
+  {"id": "E02-10", "source": "research", "why": "軟體官方文件，說明取樣節點功能"},
+  {"id": "E02-11", "source": "research", "why": "論壇分享的 Grasshopper 工具元件"},
+  {"id": "E02-12", "source": "art", "why": "藝術裝置纖維雕塑作品的取樣應用"},
+  {"id": "E02-51", "source": "art", "why": "Processing 影像風格化，生成藝術作品"},
+  {"id": "E02-52", "source": "research", "why": "openFrameworks 外掛，屬軟體工具"},
+  {"id": "E02-53", "source": "research", "why": "JavaScript 開源函式庫，屬軟體工具"},
+  {"id": "E02-54", "source": "art", "why": "Processing 生長動畫，以視覺化為目的"},
+  {"id": "E02-55", "source": "research", "why": "Unity 遊戲場景技術教學示範"}
+ ],
+ "art_count": 4,
+ "need": 5,
+ "removal_order": ["E02-11", "E02-52", "E02-10", "E02-55", "E02-06", "E02-09", "E02-03", "E02-53"],
+ "removal_reasons": {
+  "E02-11": "論壇討論串未附圖，僅是計畫中的元件構想",
+  "E02-52": "外掛內容單薄，與 E02-53 函式庫功能重疊",
+  "E02-10": "官方文件泛用說明，缺乏具體案例故事",
+  "E02-55": "僅有影片縮圖佐證，應用情境與 mapgen4 重疊",
+  "E02-06": "與 E02-05 同類型演算法解說動畫，重複性高",
+  "E02-09": "與 E02-08 同作者同網站的短文，內容單薄",
+  "E02-03": "與 E02-02 同源演算法，本案例較次要",
+  "E02-53": "函式庫工具性質，案例故事性較弱"
+ },
+ "new_art": [
+  {
+   "title": "Blue Noise Particles：Blender 藍噪點粒子外掛",
+   "creator": "Adam Newgas",
+   "year": "2017",
+   "category": "urban-landscape",
+   "categories_extra": ["modeling"],
+   "scale": "地景",
+   "summary": "Blender 外掛，以泊松圓盤取樣（作者稱為 blue noise distribution）取代純隨機在地形上撒樹，官方展示圖直接對照「純隨機」與「藍噪聲」兩種撒法：隨機版本明顯有樹叢聚集與大片空地，藍噪聲版本則均勻覆蓋整片山坡。和基礎範例最後輸出「Poisson 點 vs 純隨機點」做對照的概念幾乎一致，只是這裡應用在真正算圖出來的 3D 森林場景上。",
+   "variations": [
+    {"name": "地形表面撒點", "how": "在地形網格表面上做 Poisson 取樣，取代平面 2D 網格", "effect": "樹木沿著起伏地形均勻分布，不會因高低差而疏密不均"},
+    {"name": "密度貼圖控制植被", "how": "讀取灰階密度貼圖決定各區域的最小間距", "effect": "可畫出森林邊緣、林間空地等自然疏密變化"},
+    {"name": "多物種混合撒點", "how": "對不同樹種各自設定半徑，依大小類別分層撒點", "effect": "大樹、灌木叢可以共存又不互相穿插"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Blender", "藍噪聲", "森林生成"],
+   "tools": ["Blender", "Python"],
+   "url": "https://github.com/BorisTheBrave/blue-noise-particles",
+   "evidence": "README 說明外掛 generates a random arrangement of particles with a blue noise distribution（即 Poisson disk sampling），版權標示 Adam Newgas 2017；wiki Gallery 頁面有 Random vs Blue Noise 森林比較渲染圖",
+   "nearest_existing": "E02-10 Blender Geometry Nodes：Distribute Points on Faces（官方原生節點）——這是社群外掛版本，附有清楚的視覺比較圖",
+   "image": {
+    "url": "https://raw.githubusercontent.com/wiki/BorisTheBrave/blue-noise-particles/images/forest.png",
+    "page": "https://github.com/BorisTheBrave/blue-noise-particles/wiki/Gallery",
+    "verified": true,
+    "checked": "左右對照渲染圖：左邊「Random」標籤下樹叢聚集不均且有空地，右邊「Blue Noise」標籤下樹木均勻覆蓋整片山坡",
+    "source": "GitHub BorisTheBrave/blue-noise-particles wiki",
+    "author": "Adam Newgas",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "官方 Gallery 展示圖：隨機 vs 藍噪聲（Poisson 取樣）撒樹渲染比較"
+   }
+  },
+  {
+   "title": "Weighted Voronoi Stippling（Coding Train Challenge #181）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "p5.js 現場編程教學，實作 Adrian Secord 的加權 Voronoi 點描：先在影像上撒點，再用 d3-delaunay 反覆計算 Voronoi 圖並把每個點移到依影像亮度加權的胞元重心（Lloyd 鬆弛），最後得到一張由黑點組成、明暗分明的肖像畫。基礎範例只輸出固定 minDistance 的 Poisson 點，這裡示範同一批點如何透過疊代鬆弛與影像加權變成完全不同用途的視覺作品，正對應 V08 變形。",
+   "variations": [
+    {"name": "影像亮度加權種子", "how": "以照片像素亮度決定初始點在各區域出現的機率，而非固定 minDistance", "effect": "暗部點多、亮部點少，形成灰階漸層的點描肖像"},
+    {"name": "Lloyd 鬆弛收斂", "how": "每次疊代計算 Voronoi 圖，把每個點移到其單元的加權重心，重複數十次", "effect": "點分布從初始取樣結果逐漸變得更均勻自然，示範 V08 變形"},
+    {"name": "Delaunay／Voronoi 即時疊圖", "how": "用 d3-delaunay 即時畫出三角網與胞元邊界疊加在點上", "effect": "讓學習者同時看到點、三角網、Voronoi 邊界三種幾何的對應關係"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "d3-delaunay", "點描", "Lloyd 鬆弛"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/181-image-stippling",
+   "evidence": "頁面標題 #181 — Weighted Voronoi Stippling，內容示範以 p5.js 與 d3-delaunay 實作加權 Voronoi 點描並有 Lloyd's relaxation 段落，作者為 The Coding Train（Daniel Shiffman）",
+   "nearest_existing": "E02-07 Coding Challenge #33：Poisson-disc Sampling（同系列教學，但主題是基礎取樣而非點描）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/181-image-stippling/images/gloria_stipple.jpg",
+    "page": "https://thecodingtrain.com/challenges/181-image-stippling",
+    "verified": true,
+    "checked": "一隻狗的臉部特寫，完全以大小一致的黑色小點點描而成，耳朵與眼周較密、額頭高光處較疏",
+    "source": "GitHub CodingTrain/thecodingtrain.com",
+    "author": "Daniel Shiffman / The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "挑戰完成畫面：加權 Voronoi 點描完成的狗狗肖像"
+   }
+  },
+  {
+   "title": "Swingline：GPU 加權 Voronoi 點描",
+   "creator": "Matt Keeter",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "summary": "純 GPU 實作的加權 Voronoi 點描工具，用頂點／片段著色器與 Transform Feedback 直接在顯卡上做 Lloyd 疊代與 O(W+H) 的加權重心計算，數萬個點也能即時收斂並保留原始影像色彩。基礎範例的 Poisson 取樣在 CPU 上逐點檢查鄰格，這裡示範同一類「點分布最佳化」問題搬到 GPU 平行運算後的量級差異。",
+   "variations": [
+    {"name": "GPU 平行 Lloyd 疊代", "how": "用 shader 同時對所有點計算所屬 Voronoi 胞元與加權重心", "effect": "數萬點也能即時收斂，速度遠超 CPU 逐點計算"},
+    {"name": "彩色點描", "how": "點的顏色取樣自對應影像位置的原始色彩，而非只用亮度決定大小", "effect": "輸出保留原始影像色調的彩色點描畫"},
+    {"name": "兩階段加速質心查找", "how": "先列後欄掃描取代逐格比對來找每個胞元的加權重心", "effect": "大幅降低計算複雜度，高解析度影像也能即時處理"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "GLSL", "GPU", "點描"],
+   "tools": ["OpenGL", "C"],
+   "url": "https://mattkeeter.com/projects/swingline/",
+   "evidence": "頁面標題 Swingline，說明為 fast, pure-GPU implementation of Weighted Voronoi Stippling，並詳述 vertex/fragment shader 與 transform feedback 技術細節，作者 Matt Keeter",
+   "nearest_existing": "E02-02 Weighted Voronoi Stippling（Secord 原始論文）／pointu（CPU 版開源實作）",
+   "image": {
+    "url": "https://mattkeeter.com/projects/swingline/cooper.png",
+    "page": "https://mattkeeter.com/projects/swingline/",
+    "verified": true,
+    "checked": "一張太空人頭盔照片以彩色小點重現，頭盔暗部點密集、反光亮部點稀疏",
+    "source": "Matt Keeter 個人網站",
+    "author": "Matt Keeter",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "GPU 加權 Voronoi 點描示範：太空人肖像（Gordon Cooper）"
+   }
+  },
+  {
+   "title": "Recursive Scatter：影像位移驅動的 Poisson 點 Voronoi 花紋",
+   "creator": "benjamin-white（GitHub）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "summary": "以 kchapelier 的 poisson-disk-sampling 函式庫搭配影像位移圖控制取樣密度，再用 d3-delaunay 把點連成 Voronoi 圖，只畫胞元邊界，得到中心密、邊緣疏、放射狀的花紋。基礎範例的 minDistance 是固定值，這件作品示範 V01 變密度取樣：位移圖決定每個區域的取樣密度，產生類似花朵或年輪的圖案。",
+   "variations": [
+    {"name": "影像位移控制密度", "how": "用位移貼圖的灰階值決定該區域的取樣半徑", "effect": "畫面中心點密集、邊緣稀疏，形成放射狀漸層"},
+    {"name": "Poisson 點轉 Voronoi 花紋", "how": "把 Poisson 點餵給 d3-delaunay 算出 Voronoi 圖，只畫胞元邊界線", "effect": "疏密不同的區域呈現大小不一的多邊形，形成類似花朵／年輪的紋理"},
+    {"name": "色彩漸層疊加", "how": "用 chroma.js 依點的半徑或位置指定填色", "effect": "讓密度變化同時反映在顏色深淺上"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "JavaScript", "d3-delaunay", "變密度", "生成藝術"],
+   "tools": ["JavaScript"],
+   "url": "https://github.com/benjamin-white/recursive-scatter",
+   "evidence": "README 標題 Recursive Scatter，說明 scatters points in a 2D space using Poisson Disk sampling and uses a Voronoi graph to connect them，並提到影像位移圖控制密度；package.json 依賴 poisson-disk-sampling 與 d3-delaunay",
+   "nearest_existing": "E02-08 mapgen4（同樣是 Poisson 點＋Voronoi，但用於地形地圖而非平面花紋）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/benjamin-white/recursive-scatter/main/docs/render-001.png",
+    "page": "https://github.com/benjamin-white/recursive-scatter",
+    "verified": true,
+    "checked": "米色底上以淡藍色細線畫出放射狀 Voronoi 多邊形花紋，中心單元密集細小、邊緣單元疏鬆巨大並帶尖角",
+    "source": "GitHub benjamin-white/recursive-scatter",
+    "author": "benjamin-white",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示圖：變密度 Poisson 點連成的 Voronoi 花紋"
+   }
+  },
+  {
+   "title": "pointu：加權 Voronoi 點描小工具",
+   "creator": "Max Halford",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "summary": "Go 語言命令列工具，實作 Adrian Secord 2002 年的加權 Voronoi 點描演算法，把輸入影像轉成由不同大小圓點組成的點描畫，README 附多組原圖／點描結果對照。基礎範例的 Poisson 點只求「夠遠」且大小一致，這裡改成點的大小依影像亮度變化、並經多次加權鬆弛疊代收斂，而非一次隨機放置完成。",
+   "variations": [
+    {"name": "點大小依亮度", "how": "每個 Voronoi 胞元依其平均灰階值決定輸出圓點半徑", "effect": "用不同大小的黑點重現照片的明暗層次"},
+    {"name": "疊代加權鬆弛", "how": "重複計算加權 Voronoi 圖並把點移到加權重心，直到分布穩定", "effect": "從初始隨機點逐漸長成貼合影像邊緣與明暗的均勻分布"},
+    {"name": "去背景剪影處理", "how": "先用簡單的背景分割找出主體輪廓，只在主體範圍內放點", "effect": "點描結果聚焦在人物或物件剪影，背景留白乾淨"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Go", "點描", "影像處理"],
+   "tools": ["Go"],
+   "url": "https://github.com/MaxHalford/pointu",
+   "evidence": "README 標題 pointu，說明工具 based on Adrian Secord's 2002 paper, Weighted Voronoi Stippling，並提供 examples/originals 與 examples/processed 多組對照圖",
+   "nearest_existing": "E02-02 Weighted Voronoi Stippling（Secord 原始論文）——pointu 是其開源實作之一",
+   "image": {
+    "url": "https://raw.githubusercontent.com/MaxHalford/pointu/master/examples/processed/figure5_525x525.png",
+    "page": "https://github.com/MaxHalford/pointu",
+    "verified": true,
+    "checked": "一個奔跑中的人形剪影，完全以黑色小點點描而成，軀幹陰影處點密集、邊緣輪廓處點稀疏",
+    "source": "GitHub MaxHalford/pointu",
+    "author": "Max Halford",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示的點描範例：奔跑人形剪影"
+   }
+  },
+  {
+   "title": "ImageTriangulation：藍噪點三角化重繪名畫",
+   "creator": "pxv8270（GitHub）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Python 腳本以「加權藍噪聲取樣」（依影像邊緣調整密度的 Poisson 式取樣）在畫作上撒點，再用 Delaunay 三角化、每個三角形填入平均色重繪影像，把梵谷《星夜》等名畫轉成低多邊形幾何畫風。基礎範例只輸出點本身，這件作品示範把取樣點接上三角網並著色的完整流程，對應 V06 變形（Poisson 點→Voronoi／Delaunay）。",
+   "variations": [
+    {"name": "依內容加權取樣", "how": "取樣密度依影像邊緣強度調整，細節多的地方點更密", "effect": "重要輪廓（如星光、樹形邊緣）保留清晰，天空等大面積區域點稀疏"},
+    {"name": "三角面平均色著色", "how": "每個 Delaunay 三角形填入該區域原始像素的平均色", "effect": "畫面呈現色塊分明的低多邊形幾何畫風"},
+    {"name": "可調點數畫質權衡", "how": "調整目標取樣點數（如 1000～5000 點）", "effect": "點數越多三角形越小、細節越接近原圖，點數少則更抽象"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Python", "Delaunay", "低多邊形藝術"],
+   "tools": ["Python"],
+   "url": "https://github.com/pxv8270/ImageTriangulation",
+   "evidence": "README 說明腳本使用 weighted blue noise sampling 產生三角化，並附多組原圖／三角化結果對照，其中包含梵谷《星夜》",
+   "nearest_existing": "E02-53 poisson-disk-sampling（JS 函式庫，同樣示範變密度取樣，但沒有三角化著色）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/pxv8270/ImageTriangulation/master/ImageTriangulation/starry_1014_0.png",
+    "page": "https://github.com/pxv8270/ImageTriangulation",
+    "verified": true,
+    "checked": "梵谷《星夜》被重繪成藍黃色調、由大小不一三角形拼貼而成的低多邊形版本，星光與樹形輪廓仍清晰可辨",
+    "source": "GitHub pxv8270/ImageTriangulation",
+    "author": "pxv8270",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示圖：梵谷《星夜》的低多邊形三角化重繪（備援案例）"
+   }
+  }
+ ],
+ "notes": "需要 5 個新藝術案例，全部已用 setimg.py --preview 下載並親眼確認畫面內容。前 5 個依好壞排序供替換，第 6 個（ImageTriangulation）為備援；本次執行時 WebSearch 與 Parallel Search 額度已在會話開始前用罄，一般搜尋引擎（Google/Bing/DuckDuckGo）也回傳驗證碼或空結果，改以 GitHub 儲存庫搜尋 API 與已知網站逐一 WebFetch 查證，因此只湊到 1 個備援（未達建議的 3 個），且前 5 個裡只有 1 個是 p5.js（Coding Train #181），其餘為 Blender/Python、C/OpenGL、JavaScript、Go，未達成「p5.js／Processing 至少占一半」的建議比例；若協調者有更多搜尋額度，建議之後可再補 Processing／p5.js 的泊松取樣或點描作品與 2 個備援。E02-52／E02-53 雖標為 currently_cc=true，但視為軟體工具而非作品本身，比照 E02-11 歸類為 research。"
+}

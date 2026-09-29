@@ -253,30 +253,6 @@
    "has_image": false
   },
   {
-   "id": "B05-10",
-   "cc": false,
-   "title": "金繼（Kintsugi）",
-   "creator": "日本傳統修補工藝",
-   "year": "",
-   "url": "",
-   "category": "fabrication",
-   "scale": "物件",
-   "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "B05-11",
-   "cc": false,
-   "title": "油畫龜裂（Craquelure）",
-   "creator": "藝術品保存研究（自然老化現象）",
-   "year": "",
-   "url": "",
-   "category": "drawing",
-   "scale": "物件",
-   "tools": [],
-   "has_image": false
-  },
-  {
    "id": "B05-12",
    "cc": false,
    "title": "Substrate 生長過程影片",
@@ -346,15 +322,47 @@
     "OpenGL"
    ],
    "has_image": false
+  },
+  {
+   "id": "B05-55",
+   "cc": true,
+   "title": "Substrate（Python 重製版，含即時參數 GUI）",
+   "creator": "HertzVador",
+   "year": "2026",
+   "url": "https://github.com/HertzVador/substrate",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "NumPy",
+    "Numba",
+    "tkinter"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "B05-56",
+   "cc": true,
+   "title": "substrate（黑底發光互動版）",
+   "creator": "Oliver Salzburg",
+   "year": "",
+   "url": "https://oliversalzburg.github.io/substrate/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "TypeScript",
+    "Canvas API"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
    "drawing": 6,
-   "fabrication": 3,
-   "2d-pattern": 2,
+   "2d-pattern": 3,
    "urban-landscape": 2,
    "modeling": 2,
+   "fabrication": 2,
    "art-installation": 1
   },
   "scale": {
@@ -372,8 +380,33 @@
    "Houdini": 1,
    "p5.js": 1,
    "Objective-C": 1,
-   "OpenGL": 1
+   "OpenGL": 1,
+   "Python": 1,
+   "NumPy": 1,
+   "Numba": 1,
+   "tkinter": 1,
+   "TypeScript": 1,
+   "Canvas API": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:B05-11",
+   "algo": "B05",
+   "kind": "RES",
+   "title": "油畫龜裂（Craquelure）",
+   "url_norm": "",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:B05-10",
+   "algo": "B05",
+   "kind": "RES",
+   "title": "金繼（Kintsugi）",
+   "url_norm": "",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

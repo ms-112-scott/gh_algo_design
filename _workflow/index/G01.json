@@ -167,7 +167,7 @@
     "Grasshopper",
     "DeCodingSpaces"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G01-04",
@@ -178,18 +178,6 @@
    "url": "https://www.sciencedirect.com/science/article/pii/S2095263518300451",
    "category": "urban-landscape",
    "scale": "地景",
-   "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "G01-05",
-   "cc": false,
-   "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
-   "creator": "Michael J. Dawes、Michael J. Ostwald",
-   "year": "2014",
-   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0360132314001760",
-   "category": "3d-architecture",
-   "scale": "建築",
    "tools": [],
    "has_image": false
   },
@@ -221,20 +209,6 @@
    "has_image": false
   },
   {
-   "id": "G01-51",
-   "cc": true,
-   "title": "2D Visibility（2D 可視範圍互動解說）",
-   "creator": "Amit J. Patel（Red Blob Games）",
-   "year": "2012",
-   "url": "https://www.redblobgames.com/articles/visibility/",
-   "category": "drawing",
-   "scale": "物件",
-   "tools": [
-    "JavaScript"
-   ],
-   "has_image": false
-  },
-  {
    "id": "G01-52",
    "cc": true,
    "title": "Sight & Light：2D 視線與光影效果教學",
@@ -247,7 +221,7 @@
     "JavaScript",
     "HTML5 Canvas"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "G01-53",
@@ -275,46 +249,102 @@
    "tools": [
     "Houdini"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
-   "id": "G01-55",
+   "id": "G01-56",
    "cc": true,
-   "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
-   "creator": "Byron Knoll",
-   "year": "2013",
-   "url": "https://github.com/byronknoll/visibility-polygon-js",
-   "category": "modeling",
+   "title": "Isovist Sandbox：互動式可視域繪圖工具",
+   "creator": "Moxil Shah",
+   "year": "2022",
+   "url": "https://moxil-shah.github.io/Isovist-Sandbox/",
+   "category": "drawing",
    "scale": "物件",
    "tools": [
-    "JavaScript"
+    "p5.js"
    ],
-   "has_image": false
+   "has_image": true
+  },
+  {
+   "id": "G01-57",
+   "cc": true,
+   "title": "Coding Challenge #146：Rendering Ray Casting（偽 3D 射線投射渲染）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2019",
+   "url": "https://thecodingtrain.com/challenges/146-rendering-ray-casting",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "G01-58",
+   "cc": true,
+   "title": "Terminal Dungeon：終端機文字模式的射線投射迷宮",
+   "creator": "salt-die",
+   "year": "2019",
+   "url": "https://github.com/salt-die/terminal_dungeon",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Python"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "modeling": 4,
-   "drawing": 3,
+   "drawing": 5,
+   "modeling": 3,
    "performance": 2,
-   "urban-landscape": 2,
-   "3d-architecture": 1
+   "urban-landscape": 2
   },
   "scale": {
-   "建築": 4,
-   "物件": 4,
+   "物件": 5,
    "群體／都市": 3,
+   "建築": 3,
    "地景": 1
   },
   "tools": {
-   "JavaScript": 3,
+   "p5.js": 3,
    "Grasshopper": 2,
    "DeCodingSpaces": 1,
    "SYNTACTIC": 1,
+   "JavaScript": 1,
    "HTML5 Canvas": 1,
-   "p5.js": 1,
-   "Houdini": 1
+   "Houdini": 1,
+   "Python": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:G01-55",
+   "algo": "G01",
+   "kind": "CC",
+   "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
+   "url_norm": "github:byronknoll/visibility-polygon-js",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:G01-51",
+   "algo": "G01",
+   "kind": "CC",
+   "title": "2D Visibility（2D 可視範圍互動解說）",
+   "url_norm": "redblobgames.com/articles/visibility",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:G01-05",
+   "algo": "G01",
+   "kind": "RES",
+   "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
+   "url_norm": "sciencedirect.com/science/article/abs/pii/s0360132314001760",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

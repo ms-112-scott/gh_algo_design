@@ -1,0 +1,296 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F03",
+  "name_zh": "TPMS 三週期極小曲面",
+  "name_en": "Triply Periodic Minimal Surface (TPMS)",
+  "one_liner": "用一行三角函數公式定義一個會在 x、y、z 三方向無限重複的曲面（如 Gyroid），再把「公式等於 0 的地方」轉成可 3D 列印的 Mesh。",
+  "how_it_works": [
+   "把 size 邊長的立方體切成 cellCount³ 個小格，每個格點用公式算一個值（Gyroid：sin x cos y + sin y cos z + sin z cos x）。",
+   "periods 控制公式的頻率，也就是每邊重複幾個單元。",
+   "逐一掃過每個小立方體，取出 8 個角的座標與數值。",
+   "每個立方體切成 6 個四面體；依四面體中「內側角（f < isoValue）」的數量產生 0、1 或 2 個三角形。",
+   "三角形頂點用線性內插放在數值剛好等於 isoValue 的位置，並依內外側方向統一法線，最後合併重複頂點成 Mesh。"
+  ]
+ },
+ "final_total": 13,
+ "target_art": 6,
+ "target_research": 7,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F03-01",
+   "title": "Gyroid 的發現：NASA 技術報告與實體模型",
+   "creator": "Alan H. Schoen（NASA 電子研究中心）",
+   "year": "1970",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "對稱",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://schoengeometry.com/e-tpms.html",
+   "summary": "Schoen 在 1970 年 NASA 技術報告〈Infinite Periodic Minimal Surfaces Without Self-Intersections〉中描述了 Gyroid 等 12 種新的 TPMS，並以塑膠模型與電腦動畫展示；嚴格證明要到 1996 年才完成。基礎範例用的 sin·cos 三角函數式則是後來常用的近似公式。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-02",
+   "title": "Gyroid 金屬雕塑",
+   "creator": "Bathsheba Grossman",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D",
+    "對稱"
+   ],
+   "tools": [
+    "Mathematica",
+    "Surface Evolver",
+    "金屬 3D 列印"
+   ],
+   "url": "https://www.bathsheba.com/math/gyroid/",
+   "summary": "數學雕塑家 Bathsheba Grossman 以 Mathematica 與 Kenneth Brakke 的 Surface Evolver 計算 Gyroid 的一段，再以鋼材 3D 列印成約 3 吋的立方雕塑；她自述自己的創作貢獻是「開的洞」。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Bathsheba Grossman",
+    "page": "https://www.bathsheba.com/math/gyroid/",
+    "note": "鋼材 3D 列印的 Gyroid 數學雕塑"
+   }
+  },
+  {
+   "id": "F03-03",
+   "title": "3D 列印的 Gyroid 填充（Infill）",
+   "creator": "Prusa Research（PrusaSlicer）等切片軟體",
+   "year": "",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "PrusaSlicer",
+    "FDM 3D 列印"
+   ],
+   "url": "https://help.prusa3d.com/article/infill-patterns_177130",
+   "summary": "FDM 切片軟體普遍提供 Gyroid 填充樣式：各方向強度接近、同一層內不自我交叉、列印快、重量強度比佳。每一層列印路徑正是 Gyroid 在該高度的 2D 切片等值線。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Prusa Knowledge Base",
+    "page": "https://help.prusa3d.com/article/infill-patterns_177130",
+    "note": "3D 列印實測與切片預覽的 Gyroid 填充樣式"
+   }
+  },
+  {
+   "id": "F03-04",
+   "title": "徑向漸變 TPMS 骨骼支架",
+   "creator": "骨組織工程研究（綜述論文）",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D",
+    "最佳化"
+   ],
+   "tools": [
+    "3D 列印"
+   ],
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11283664",
+   "summary": "近年以 3D 列印的徑向漸變 TPMS 多孔支架修復骨缺損，常見 Gyroid、Diamond、Schwarz P；材料有 PLA、PCL、PEEK、鈦合金等，製程涵蓋 FDM、光固化、擠出與 SLM。孔隙率、孔徑與連通性直接由公式與 isoValue 控制。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-05",
+   "title": "Gyroid 積層製造熱交換器",
+   "creator": "熱流研究（International Journal of Thermal Sciences 論文）",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "3D",
+    "最佳化"
+   ],
+   "tools": [
+    "CFD",
+    "金屬 3D 列印"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S1290072925001589",
+   "summary": "Gyroid 把空間分成兩個互不相通、卻彼此緊貼的通道，正好讓冷熱兩股流體各走一邊；金屬 3D 列印可一體成形，不需傳統熱交換器的墊片與組件。研究以 CFD 與實驗分析其流動與傳熱。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-06",
+   "title": "3D 石墨烯 Gyroid：超輕高強材料",
+   "creator": "Markus Buehler 團隊（MIT）",
+   "year": "2017",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "3D 列印",
+    "分子模擬"
+   ],
+   "url": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106",
+   "summary": "MIT 研究以 Gyroid 幾何把石墨烯壓成多孔 3D 結構，密度僅鋼的 5% 卻有其 10 倍強度；團隊並把放大數千倍的 Gyroid 模型 3D 列印出來做力學測試，結論是「幾何才是主要因素」。",
+   "currently_cc": false,
+   "photo": {
+    "source": "MIT News（照片：Melanie Gonick/MIT）",
+    "page": "https://news.mit.edu/2017/3-d-graphene-strongest-lightest-materials-0106",
+    "note": "放大版 3D 列印 Gyroid 模型，用於材料力學測試"
+   }
+  },
+  {
+   "id": "F03-07",
+   "title": "蝴蝶鱗片的 Gyroid 光子晶體（結構色）",
+   "creator": "自然界（蝴蝶鱗片、鳥類羽毛）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Gyroid",
+   "summary": "部分蝴蝶翅膀鱗片與鳥類羽毛含有單一 Gyroid 網路的奈米光子晶體，靠光的干涉產生結構色，而不是色素。這說明 TPMS 不只是數學，也是自然界的材料組織方式。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-08",
+   "title": "Axolotl 的 TPMS 晶格元件",
+   "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "url": "https://github.com/GuoyingDong/Axolotl",
+   "summary": "Axolotl 把 Gyroid、Schwarz 等 TPMS 當作 SDF 物件，可與任意外形做布林並以 Marching Cubes 輸出 Mesh。開發團隊 DBT 長期研究 3D 砂印與建築構件，是基礎範例延伸成「裁進建築構件的晶格」的直接參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-09",
+   "title": "Digital Grotesque：全尺度 3D 砂印洞窟（製造路徑參考）",
+   "creator": "Michael Hansmeyer、Benjamin Dillenburger",
+   "year": "2013",
+   "category": "fabrication",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "多元件"
+   ],
+   "tools": [
+    "砂印（binder jetting）"
+   ],
+   "url": "https://michael-hansmeyer.com/digital-grotesque-I",
+   "summary": "首件可進入、全尺度、完全以砂 3D 列印的封閉空間（約 16 平方公尺，2013 年 Archilab 展出）；續作 Digital Grotesque II 以 7 噸砂岩列印。注意：此作品的形體來自細分（subdivision）演算法而非 TPMS，列在此處是作為「複雜多孔幾何可用砂印做到建築尺度」的製造參考。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Michael Hansmeyer（攝影：Demetris Shammas、Achilleas Xydis）",
+    "page": "https://michael-hansmeyer.com/digital-grotesque-I",
+    "note": "Digital Grotesque I 全尺度砂印洞窟裝置"
+   }
+  },
+  {
+   "id": "F03-10",
+   "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
+   "creator": "Benjamin Dillenburger、Robert Flatt、Joseph Schwartz 等（ETH Zurich，DFAB HOUSE）",
+   "year": "2018",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "最佳化",
+    "多元件"
+   ],
+   "tools": [
+    "砂印（binder jetting）",
+    "混凝土"
+   ],
+   "url": "https://dbt.arch.ethz.ch/project/smart-slab/",
+   "summary": "在 Empa NEST 的 DFAB HOUSE 中，以黏著劑噴印（binder jetting）的砂模當模板澆置混凝土，做出肋梁分級的輕量樓板，比一般實心樓板輕約 70%。此案本身不是 TPMS，但示範了把演算法生成的複雜多孔幾何變成建築構件的製造路徑。",
+   "currently_cc": false,
+   "photo": {
+    "source": "ETH Zurich DBT Group",
+    "page": "https://dbt.arch.ethz.ch/project/smart-slab/",
+    "note": "Smart Slab 3D 砂印模板澆置的肋梁樓板底面"
+   }
+  },
+  {
+   "id": "F03-11",
+   "title": "Minimal Complexity 極小曲面裝置",
+   "creator": "Vlad Tenu",
+   "year": "2010",
+   "category": "art-installation",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "以 Schwarz 系列極小曲面單元重複組成的可穿越金屬裝置，是 TEX-FAB 競賽的得獎作品，常被引為 TPMS 進入建築裝置尺度的早期案例。（本條細節未能於本次搜尋中取得網頁佐證，年份與材料請再查證。）",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-12",
+   "title": "Gyroid 水凝膠支架：軟組織工程",
+   "creator": "Nature Communications 論文作者群",
+   "year": "2026",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "DLP 3D 列印"
+   ],
+   "url": "https://www.nature.com/articles/s41467-026-73452-y",
+   "summary": "以 DLP 生物列印製作含細胞的 Gyroid 水凝膠支架，連續曲面與高連通性支持微血管網路在整個構造中形成。展示了 TPMS 從硬材料（骨、金屬）擴展到軟材料的製造挑戰。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F03-13",
+   "title": "依最佳化壁厚設計的 TPMS 支架",
+   "creator": "積層製造研究（PMC 論文）",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "3D",
+    "等值面"
+   ],
+   "tools": [
+    "積層製造"
+   ],
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9605549",
+   "summary": "研究以最佳化方法決定 TPMS 支架各處的壁厚，在剛度、滲透率與孔隙率之間取得平衡，並以積層製造實作驗證。對應到基礎範例，就是讓 isoValue／thickness 從常數變成一個空間場。",
+   "currently_cc": false,
+   "photo": null
+  }
+ ]
+}

@@ -1,0 +1,278 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F02",
+  "name_zh": "伊斯蘭幾何圖樣（Hankin 法）",
+  "name_en": "Islamic Star Pattern (Hankin's Polygons-in-Contact)",
+  "one_liner": "先鋪一層八角形＋小正方形的底圖，再從每條邊的中點以固定角度往內射兩條線，交會處連起來，就長出八角星與四角星交織的伊斯蘭圖樣。",
+  "how_it_works": [
+   "BuildTiling：每格中心放一個平邊朝上下左右的正八角形，格線交點補一個轉 45° 的小正方形，組成 4.8.8 半正鋪面。",
+   "對每個多邊形的每一對相鄰邊 A→B、B→C，取兩邊中點。",
+   "以外積 Z × 邊方向求得內側法向量，把邊方向與法向量按 cos/sin(contactAngle) 混合，得到朝角點 B 往內偏的兩條射線。",
+   "RaysMeet 用 2D 行列式解兩射線交點；只保留兩者都往前（distance > 0）的交點。",
+   "從兩個中點各連一條線到交點；因相鄰多邊形共用邊中點，所有星形自動連成一張連續網。"
+  ]
+ },
+ "final_total": 13,
+ "target_art": 7,
+ "target_research": 6,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F02-01",
+   "title": "Hankin 的 polygons in contact 法",
+   "creator": "Ernest Hanbury Hankin",
+   "year": "",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "對稱"
+   ],
+   "tools": [
+    "手繪／紙本"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "summary": "Hankin 在 20 世紀初研究印度等地伊斯蘭建築時提出：幾何圖樣是在「彼此接觸的多邊形」構造線上畫出來的，例如八角形網格留下正方形空隙。基礎範例的底圖就是這個八角形＋正方形組合。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-02",
+   "title": "Islamic star patterns from polygons in contact",
+   "creator": "Craig S. Kaplan",
+   "year": "2005",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "對稱",
+    "幾何轉換"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://graphicsinterface.org/proceedings/gi2005/gi2005-22/",
+   "summary": "把 Hankin 法形式化成電腦演算法：輸入任意平面鋪面與少數直覺參數（接觸角、接觸位置偏移）即可生成星形圖樣，並能做出類 parquet deformation 的漸變與新的鋪面轉換。基礎範例 F02 是此論文的最簡版本。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-03",
+   "title": "Alhambra 宮殿的 zellij 幾何磁磚",
+   "creator": "Nasrid 王朝",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "拼貼",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Alhambra",
+   "summary": "西班牙格拉納達的 Alhambra 於 1238 年起由 Nasrid 王朝興建，14 世紀達到高峰；牆裙與地面以 zellij（alicatado）馬賽克磁磚拼出繁複幾何圖樣，並與灰泥雕刻、阿拉伯書法結合。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons (Sibenka)",
+    "page": "https://commons.wikimedia.org/wiki/File:Mosaic15_alhambra.jpg",
+    "note": "西班牙格拉納達 Alhambra 宮殿牆裙的 zellij 幾何馬賽克磁磚"
+   }
+  },
+  {
+   "id": "F02-04",
+   "title": "Darb-e Imam 聖祠的準週期 girih 圖樣",
+   "creator": "Qara Qoyunlu 時期工匠",
+   "year": "1453",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "拼貼",
+    "對稱",
+    "遞迴"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Darb-e_Imam",
+   "summary": "伊朗 Isfahan 的 Darb-e Imam 建於 1453 年，其磁磚被 Peter Lu 發現與 Penrose 鋪面相似，是 girih 磁磚加自相似細分的代表作。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:Darb-i_Imam_shrine_spandrel.JPG",
+    "note": "伊朗 Isfahan Darb-e Imam 聖祠券肩的 girih 磁磚幾何圖樣"
+   }
+  },
+  {
+   "id": "F02-05",
+   "title": "中世紀伊斯蘭建築中的十重與準晶鋪面",
+   "creator": "Peter J. Lu、Paul J. Steinhardt",
+   "year": "2007",
+   "category": "drawing",
+   "scale": "立面／表皮",
+   "tags": [
+    "遞迴",
+    "分形",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://www.science.org/doi/10.1126/science.1135491",
+   "summary": "發表於 Science 的研究指出約 1200 年後 girih 圖樣被重新理解為五種等邊 girih 磁磚的鋪面，15 世紀更結合自相似轉換，做出接近完美的準週期 Penrose 圖樣。說明「底圖＋線條規則」的構造法本身就是演算法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-06",
+   "title": "Topkapı 卷軸（Topkapı Scroll）",
+   "creator": "帖木兒／薩法維時期伊朗工匠",
+   "year": "",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "對稱",
+    "拼貼"
+   ],
+   "tools": [
+    "手繪／紙本"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Topkapı_Scroll",
+   "summary": "寬 33 cm、長 29.5 m 的卷軸，收錄 114 個以墨與顏料繪製的幾何圖樣（含 girih 與 muqarnas），並以格線與配色標示對稱，是古代工匠的「圖樣函式庫」，現藏伊斯坦堡 Topkapı 宮。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:Topkapi_Scroll_p294.JPG",
+    "note": "Topkapı 卷軸中一頁 muqarnas 幾何圖樣手繪稿"
+   }
+  },
+  {
+   "id": "F02-07",
+   "title": "Akbar 陵墓的八角形網格圖樣",
+   "creator": "蒙兀兒帝國",
+   "year": "1605–1613",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "拼貼",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Islamic_geometric_patterns",
+   "summary": "Hankin 用來說明 polygons in contact 的例子：八角形排成網格、留下正方形空隙，再在上面畫出星形。與基礎範例的底圖幾乎一致。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons (Abira Dutta)",
+    "page": "https://commons.wikimedia.org/wiki/File:Lattice_screen_of_Akbar%27s_tomb.jpg",
+    "note": "印度 Sikandra Akbar 陵墓的石雕格柵（jali）幾何圖樣"
+   }
+  },
+  {
+   "id": "F02-08",
+   "title": "Louvre Abu Dhabi 多層星形穹頂",
+   "creator": "Jean Nouvel（結構：BuroHappold Engineering）",
+   "year": "2017",
+   "category": "art-installation",
+   "scale": "建築",
+   "tags": [
+    "曲面上",
+    "3D",
+    "對稱"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Louvre_Abu_Dhabi",
+   "summary": "穹頂由 7,850 顆不同尺寸的鋁製星形在 8 層中鋪排而成，形成穿孔屋頂，讓光線如穿過椰棗葉般灑落。是「多層星形圖樣＋光影」的大尺度實例。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons (Boubloub)",
+    "page": "https://commons.wikimedia.org/wiki/File:LouvreAD_tree.jpg",
+    "note": "阿布達比羅浮宮多層星形穿孔穹頂，光線灑落形成光之雨"
+   }
+  },
+  {
+   "id": "F02-09",
+   "title": "Institut du Monde Arabe 南向機械光圈立面",
+   "creator": "Jean Nouvel、Architecture-Studio",
+   "year": "1987",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "動畫",
+    "Timer",
+    "吸引子控制"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Arab_World_Institute",
+   "summary": "巴黎阿拉伯世界研究中心的玻璃帷幕後方有 240 組感光、馬達驅動的光圈，依日照自動開合，轉譯自伊斯蘭 mashrabiya 的遮陽傳統，形成會動的幾何圖樣。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-10",
+   "title": "Al Bahr Towers 動態 mashrabiya 遮陽",
+   "creator": "Aedas（現 AHR）",
+   "year": "2012",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "曲面上",
+    "吸引子控制",
+    "動畫"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Al_Bahr_Towers",
+   "summary": "阿布達比雙塔外覆約 2,000 個傘狀遮陽單元，依日照強度自動開合，靈感來自傳統 mashrabiya，可減少約 50% 日射得熱。立面以三角形幾何模組重複排列。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-11",
+   "title": "杜哈伊斯蘭藝術博物館",
+   "creator": "I. M. Pei（貝聿銘）",
+   "year": "2008",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "對稱",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Museum_of_Islamic_Art,_Doha",
+   "summary": "以抽象化的伊斯蘭幾何為語彙，外牆石灰岩的開孔與燈具呈現幾何圖樣，中庭天花採伊斯蘭圖樣，靈感來自開羅伊本圖倫清真寺的淨水亭。示範圖樣如何從平面轉為量體與天花的語言。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-12",
+   "title": "Freeform Islamic Geometric Patterns（自由形伊斯蘭圖樣）",
+   "creator": "Rebecca Lin、Craig S. Kaplan",
+   "year": "2023",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "鄰居搜尋",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/abs/2301.01471",
+   "summary": "以圓堆積（circle packing）為骨架，生成大小不一的 rosette 並填入多邊形區塊，再以傳統構造法填滿，讓伊斯蘭圖樣能脫離週期網格、自由布局又保有傳統美感。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F02-13",
+   "title": "Next Generation of Star Patterns（同心圓參數化星形）",
+   "creator": "Hadi Mansourifar、Weidong Shi",
+   "year": "2018",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tags": [
+    "對稱",
+    "拼貼"
+   ],
+   "tools": [
+    "Android App"
+   ],
+   "url": "https://arxiv.org/abs/1809.09270",
+   "summary": "以同心圓為基礎的參數化方法，只改 9 個參數就能讓不同星形與 rosette 互相轉換；並以三個相切圓與其間隙作為磁磚單元，生成新的星形圖樣，另做成 Android App。",
+   "currently_cc": false,
+   "photo": null
+  }
+ ]
+}

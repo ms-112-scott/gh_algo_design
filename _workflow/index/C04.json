@@ -238,18 +238,6 @@
    "has_image": false
   },
   {
-   "id": "C04-08",
-   "cc": false,
-   "title": "One-North Masterplan（人造地景形態的都市）",
-   "creator": "Zaha Hadid Architects",
-   "year": "2001",
-   "url": "https://www.zha.com/projects/masterplans/one-north-masterplan",
-   "category": "urban-landscape",
-   "scale": null,
-   "tools": [],
-   "has_image": false
-  },
-  {
    "id": "C04-09",
    "cc": false,
    "title": "Flow Fields 中以 noise 決定角度",
@@ -390,36 +378,61 @@
     "Shadertoy"
    ],
    "has_image": true
+  },
+  {
+   "id": "C04-57",
+   "cc": true,
+   "title": "fBm（Fractional Brownian Motion）與《Rainforest》",
+   "creator": "Inigo Quilez",
+   "year": "2016",
+   "url": "https://iquilezles.org/articles/fbm/",
+   "category": "modeling",
+   "scale": "地景",
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
    "drawing": 5,
+   "modeling": 4,
    "2d-pattern": 4,
-   "modeling": 3,
    "performance": 2,
-   "urban-landscape": 2,
    "3d-architecture": 1,
-   "art-installation": 1
+   "art-installation": 1,
+   "urban-landscape": 1
   },
   "scale": {
-   "null": 12,
+   "null": 11,
    "物件": 5,
-   "地景": 1
+   "地景": 2
   },
   "tools": {
    "Processing": 4,
+   "GLSL": 3,
    "論文": 2,
    "Java": 2,
    "JavaScript": 2,
    "World Machine": 2,
-   "GLSL": 2,
+   "Shadertoy": 2,
    "Python": 1,
    "VFX 軟體": 1,
    "p5.js": 1,
-   "TouchDesigner": 1,
-   "Shadertoy": 1
+   "TouchDesigner": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:C04-08",
+   "algo": "C04",
+   "kind": "RES",
+   "title": "One-North Masterplan（人造地景形態的都市）",
+   "url_norm": "zha.com/projects/masterplans/one-north-masterplan",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

@@ -1,0 +1,72 @@
+{
+ "algo": "F05",
+ "classification": [
+  {"id": "F05-01", "source": "research", "why": "Grasshopper 圖論與 Space Syntax 外掛，工具性質明確"},
+  {"id": "F05-02", "source": "research", "why": "曲線網路最短路元件，Grasshopper 經典工具"},
+  {"id": "F05-03", "source": "research", "why": "地形步道選線工作流程文章，實務設計應用"},
+  {"id": "F05-04", "source": "research", "why": "學術可及性分析工具箱，都市研究經典案例"},
+  {"id": "F05-05", "source": "research", "why": "都市移動模擬外掛，研究性質的分析工具"},
+  {"id": "F05-06", "source": "research", "why": "空間網路分析開源軟體，有分析畫面而非藝術作品"},
+  {"id": "F05-07", "source": "research", "why": "行人尺度網路分析 Python 套件，屬研究工具"},
+  {"id": "F05-08", "source": "research", "why": "圖—重力可及性模型論文，學術研究性質"},
+  {"id": "F05-09", "source": "research", "why": "商用人流避難模擬軟體，工程性質工具"},
+  {"id": "F05-10", "source": "research", "why": "MEP 管線自動路由開源專案，工程應用示範"},
+  {"id": "F05-11", "source": "research", "why": "物理原型實驗與論壇討論，非視覺藝術作品"}
+ ],
+ "art_count": 0,
+ "need": 5,
+ "removal_order": [
+  "F05-08",
+  "F05-11",
+  "F05-05",
+  "F05-07",
+  "F05-03",
+  "F05-01",
+  "F05-10",
+  "F05-09"
+ ],
+ "removal_reasons": {
+  "F05-08": "作者不明、僅一篇難以查證的 ResearchGate 論文，且與 F05-04／F05-05／F05-07 的都市可及性主題高度重複",
+  "F05-11": "來源是論壇留言串轉述、沒有具體的數位作品或照片，查證強度最弱",
+  "F05-05": "都市步行可及性分析，與 F05-04 Urban Network Analysis 功能高度重疊",
+  "F05-07": "行人尺度可及性指標，與 F05-04／F05-05 概念重複，屬同類型研究工具的第三筆",
+  "F05-03": "單篇廠商部落格工作流程示範，內容較薄，沒有實際照片",
+  "F05-01": "與 F05-02 同屬 Grasshopper 圖論最短路外掛，功能已被 F05-02 涵蓋",
+  "F05-10": "個人小型 GitHub 專案，非廣為人知的工程案例，但仍有具體技術示範可留作備援",
+  "F05-09": "商用避難模擬軟體雖具代表性，但路徑搜尋只是內部機制之一，非展示重點"
+ },
+ "new_art": [
+  {
+   "title": "A* Pathfinding Algorithm（A* 尋路演算法教學挑戰）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "The Coding Train 第 51 集程式挑戰，用 p5.js 在 2D 格點上實作 A* 演算法，分「基本演算法」「加入障礙物與斜走」「改善視覺化」三部分教學。畫面把所有格點、已展開（open）與已確定（closed）的格子分別上色，再用一條鋸齒折線畫出回溯得到的最短路徑，和 Grasshopper 基礎範例同樣是格點波前擴散＋回溯，但多了以「已走距離＋到終點直線距離」排序的啟發式搜尋，對應本演算法的 A* 變形（V01）。",
+   "variations": [
+    {"name": "加入障礙物與對角移動", "how": "格子隨機標記為障礙、8 方向鄰居改成含對角線並個別給權重", "effect": "路徑會繞開障礙物，且會出現斜線而非只有直角轉折"},
+    {"name": "改善視覺化：分色的 open／closed 集合", "how": "把還沒展開、已展開待評估、已確定三種狀態分別上色，而不是只畫最終路徑", "effect": "可以清楚看到搜尋波前如何一圈圈往終點方向擴散、收斂"},
+    {"name": "啟發式權重調整", "how": "把估計距離的權重從 1 調大，讓演算法更偏向直衝終點", "effect": "展開的格子數明顯變少、搜尋變快，但在有障礙時可能不是最短路"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "A*", "路徑搜尋", "教學挑戰"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm",
+   "evidence": "頁面標題為「A* Pathfinding Algorithm / The Coding Train」，內文說明以 p5.js 在 2D 格點上尋找兩點間最佳路徑，並分三部分教學（加障礙物、改善視覺化）",
+   "nearest_existing": "F05-02 ShortestWalk（同樣是路徑搜尋工具，但這是 p5.js 教學動畫、非 Grasshopper 元件，媒介與呈現方式不同）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/51-a-pathfinding-algorithm/images/a-pathfinding-algorithm.png",
+    "page": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm",
+    "verified": true,
+    "checked": "格線上滿版黑點為所有格點，粉紅／綠色區塊為已展開（open／closed）的搜尋範圍，一條洋紅色鋸齒折線從左上角穿過搜尋範圍斜向右下角，是實際程式執行畫面，不是影片縮圖",
+    "source": "The Coding Train 官方網站 GitHub 儲存庫（content/videos 內的範例執行畫面）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預設圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 格點上 A* 搜尋完成後的畫面：粉紅／綠色為已展開的搜尋範圍，洋紅色折線為回溯得到的最短路徑"
+   }
+  }
+ ],
+ "notes": "只確認到 1 個合格的藝術設計案例（Coding Train #51 A* Pathfinding，圖片已親眼確認為真實執行畫面），距離 need=5（另加 3 個備援共需 8 個）明顯不足：本次執行時 WebSearch 額度已用完，改用的 mcp Parallel Search 也因免費額度被限流而失敗，只能用 tools/ct_index.py 與 GitHub／genuary／openprocessing 的直接頁面查詢（多數站台回應 403 或只找到通用的『pathfinding visualizer』教學工具站，屬於工具而非以視覺表現為目的的創作，不符合藝術設計的收錄標準，因此沒有收錄）。建議之後在 WebSearch／Parallel Search 額度恢復後，針對 Dijkstra／A*／流場尋路的 creative coding 作品（例如 OpenProcessing、pen plotter 社群、Genuary 相關作品）再補找 4 個正式案例＋3 個備援。removal_order 已依規格列出 8 個研究案例的移除順序與理由，可供協調者使用。"
+}

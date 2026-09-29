@@ -1,0 +1,139 @@
+{
+ "algo": "A03",
+ "classification": [
+  {"id": "A03-01", "source": "research", "why": "IPv4 空間資料視覺化，以資訊說明為主要目的，非藝術創作"},
+  {"id": "A03-02", "source": "research", "why": "網路研究機構 CAIDA 的網段使用率地圖，屬資料分析"},
+  {"id": "A03-03", "source": "research", "why": "Observable 互動筆記本，技術示範工具性質"},
+  {"id": "A03-04", "source": "research", "why": "R 語言套件文件，比較空間填充曲線的軟體工具說明"},
+  {"id": "A03-05", "source": "research", "why": "IPv4 掃描資料重製 xkcd 地圖，仍屬網路研究性質資料視覺化"},
+  {"id": "A03-06", "source": "art", "why": "Séquin 的青銅／不鏽鋼雕塑作品，純藝術裝置"},
+  {"id": "A03-07", "source": "art", "why": "收錄於 SIGGRAPH 藝術展檔案的雕塑作品"},
+  {"id": "A03-08", "source": "art", "why": "以 Hilbert 曲線為題材的數學繪畫與雕塑分享"},
+  {"id": "A03-09", "source": "research", "why": "FDM 列印刀具路徑學術論文"},
+  {"id": "A03-10", "source": "research", "why": "3D 列印填充路徑的期刊論文"},
+  {"id": "A03-11", "source": "research", "why": "可調性質列印構件的學術論文"},
+  {"id": "A03-12", "source": "research", "why": "arXiv 刀具路徑最佳化論文"},
+  {"id": "A03-13", "source": "research", "why": "資料庫空間索引的經典 CS 論文"},
+  {"id": "A03-14", "source": "research", "why": "Google S2 球面格網儲存架構說明"},
+  {"id": "A03-15", "source": "research", "why": "Grasshopper 教學網站的演算法示範，工具導向"},
+  {"id": "A03-51", "source": "art", "why": "The Coding Train 教學產出生成畫面，currently_cc 預設為 art"},
+  {"id": "A03-52", "source": "research", "why": "純數學講解動畫，符合規格「3Blue1Brown → research」例外"},
+  {"id": "A03-53", "source": "art", "why": "Jason Davies 的互動視覺化網頁作品，以視覺表現為目的"},
+  {"id": "A03-54", "source": "art", "why": "Aldo Cortesi 用 3D／2D Hilbert 曲線做的抽象色塊藝術創作"}
+ ],
+ "art_count": 6,
+ "need": 3,
+ "removal_order": [
+  "A03-14",
+  "A03-05",
+  "A03-11",
+  "A03-04",
+  "A03-03",
+  "A03-10",
+  "A03-02",
+  "A03-09"
+ ],
+ "removal_reasons": {
+  "A03-14": "沒有 url 可查證，內容與 A03-13 的空間索引概念重複，最難確認真實性",
+  "A03-05": "來源是二手轉貼連結（soylentnews），概念與 A03-01、A03-02 高度重複（重製 IPv4 地圖）",
+  "A03-11": "與 A03-09、A03-10 三篇論文高度重疊（皆為 3D 列印以 Hilbert 曲線規劃填充路徑），是三者中最窄最難查證的一篇（ResearchGate）",
+  "A03-04": "R 套件文件性質，和演算法核心關係較薄弱，偏工具說明",
+  "A03-03": "Observable 互動筆記本與 A03-01/02/05 同為 IPv4 空間視覺化，內容重複度高",
+  "A03-10": "與 A03-09、A03-11 同為 3D 列印填充路徑論文，三選一即可代表此類應用",
+  "A03-02": "CAIDA 地圖與 A03-01 xkcd 地圖概念重疊，但為學術機構原始資料來源，保留優先序較高",
+  "A03-09": "3D 列印刀具路徑論文，ResearchGate 連結不易查證原文圖片，但主題與 A03-12 稍有區隔（一般 FDM vs 多準則最佳化）"
+ },
+ "new_art": [
+  {
+   "title": "HilbertDraw：以自適應 Hilbert 曲線繪製的連續單線肖像",
+   "creator": "Matthew McGonagle",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "開源 Python 函式庫，把輸入影像換成一條不交叉的連續線畫：先用近似 Hilbert 曲線遞迴細分正方形，影像顏色越深的區域細分越多，最後把所有格心連成一筆畫完的肖像（示範對象是數學家大衛．希爾伯特本人的素描）。和 Grasshopper 基礎範例固定切到某一階不同，這裡的停止條件由影像明暗驅動，格線疏密因此呈現出影像內容。",
+   "variations": [
+    {"name": "影像驅動的細分深度", "how": "把 VisitSquare 的停止條件從固定 levelsLeft 改成讀取對應影像區域的平均灰階，暗部才繼續往下切", "effect": "疏密不均的單線畫，越暗的地方線越密"},
+    {"name": "輸出成單一連續 Polyline", "how": "所有格心依走訪順序直接串接，不做任何斷開", "effect": "整張畫可以一筆畫完，適合繪圖機或雷射雕刻"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Python", "影像輸入", "單線畫", "空間填充"],
+   "tools": ["Python"],
+   "url": "https://matthewmcgonagle.github.io/HilbertDraw/",
+   "evidence": "GitHub Pages 頁面標題與 README 開頭段落確認為 Matthew McGonagle 的 HilbertDraw 專案說明",
+   "nearest_existing": "A03-08 Hilbert 曲線數學繪畫（同屬把曲線畫成藝術畫面，但這件是影像驅動的自適應演算法而非固定曲線展示）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/MatthewMcGonagle/HilbertDraw/master/Outputbw.png",
+    "page": "https://matthewmcgonagle.github.io/HilbertDraw/",
+    "verified": true,
+    "checked": "圖上是一張由密集黑色曲折線條構成的人像畫，線條疏密隨臉部明暗變化，正是 Hilbert 曲線自適應細分的輸出結果",
+    "source": "GitHub（MatthewMcGonagle/HilbertDraw）",
+    "author": "Matthew McGonagle",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "自適應 Hilbert 曲線把影像明暗轉成疏密不同的連續單線畫"
+   }
+  },
+  {
+   "title": "Hilbert Curve（P5JS 動態繪製）",
+   "creator": "JohnnyAwesome",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 p5.js 寫成的 Hilbert 曲線動畫：用 L-System 規則逐步展開路徑，畫面上綠色線條在黑底逐步長出完整的空間填充圖樣。和 Grasshopper 基礎範例用角點＋邊向量遞迴不同，這裡改用 L-System 文字重寫規則配合海龜繪圖展開，是 V03 Gosper 變體同一套思路用在標準 Hilbert 曲線上的示範。",
+   "variations": [
+    {"name": "L-System 規則展開", "how": "把 VisitSquare 遞迴改成文字規則重寫（A/B 兩種符號＋轉向指令），再用海龜繪圖逐步畫出", "effect": "同一條 Hilbert 曲線但用改寫／遞迴的另一種寫法產生"},
+    {"name": "逐步生長動畫", "how": "畫面隨畫圖進度即時更新，而非一次畫完", "effect": "像 V12 逐點生長動畫一樣，能直觀看到曲線如何依序填滿"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "L-System", "動畫", "空間填充"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/johnnyawesome/HilbertCurve",
+   "evidence": "GitHub repo 說明「The Hilbert Curve coded in P5JS」，README 確認用 L-System 產生動畫並附示範 GIF",
+   "nearest_existing": "A03-51 The Coding Train Processing 教學（同樣是 p5.js／Processing 生態的教學型示範，但這件用 L-System 改寫規則而非迭代位元運算）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/johnnyawesome/HilbertCurve/master/HilbertCurve/DemoImage/HilbertCurve.gif",
+    "page": "https://github.com/johnnyawesome/HilbertCurve",
+    "verified": true,
+    "checked": "黑底綠色的 Hilbert 曲線圖樣，畫面上方印著作者浮水印「by JohnnyAwesome」，是程式輸出的完整曲線畫面，不是編輯器截圖",
+    "source": "GitHub（johnnyawesome/HilbertCurve）",
+    "author": "JohnnyAwesome",
+    "license": "MIT License，教學引用",
+    "license_url": "https://github.com/johnnyawesome/HilbertCurve/blob/master/LICENSE",
+    "note": "p5.js 以 L-System 規則動態畫出的 Hilbert 曲線"
+   }
+  },
+  {
+   "title": "HTML5 Canvas Hilbert Curve Animation（多色分層動畫）",
+   "creator": "jirotubuyaki",
+   "year": "2022",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "用 CreateJS 與 HTML5 Canvas 寫成的互動動畫：曲線依遞迴層級用不同顏色（藍、綠、紅…）逐層疊加畫出，使用者可調整維度與色彩。和基礎範例只輸出單一顏色的最終 Polyline 不同，這裡把每一次遞迴切分的過程都用顏色分層保留下來，直接把演算法的遞迴結構變成畫面的視覺語言。",
+   "variations": [
+    {"name": "依遞迴層級上色", "how": "VisitSquare 每多遞迴一層就換一種顏色畫線，而不是等到最底層才輸出", "effect": "一張圖同時看到所有中間遞迴步驟，顏色分層呈現演算法的展開過程"},
+    {"name": "可調參數的互動介面", "how": "開放維度（階數）與色彩為使用者可調整的參數", "effect": "即時比較不同階數與配色下的圖樣密度與風格"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "HTML5 Canvas", "CreateJS", "色彩分層", "空間填充"],
+   "tools": ["HTML5 Canvas", "CreateJS"],
+   "url": "https://github.com/jirotubuyaki/HTML5-Canvas-Animation-Hilbert-Curve",
+   "evidence": "GitHub repo 說明「Simple Hilbert Curve Algorithm by HTML5 Canvas Animation. You can change dimensions and colors」，README 附截圖確認畫面內容",
+   "nearest_existing": "A03-54 Aldo Cortesi Hilbert on Hilbert（同樣用顏色呈現 Hilbert 曲線的結構，但這件是依遞迴層級分色，Cortesi 是把 RGB 色彩本身映射到曲線順序）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/jirotubuyaki/jirotubuyaki.github.io/master/createjs/Hilbert/screen.png",
+    "page": "https://github.com/jirotubuyaki/HTML5-Canvas-Animation-Hilbert-Curve",
+    "verified": true,
+    "checked": "白底上以藍、綠、紅等顏色分層畫出的 Hilbert 曲線片段，顏色對應不同遞迴層級，是程式執行畫面而非編輯器截圖",
+    "source": "GitHub（jirotubuyaki/HTML5-Canvas-Animation-Hilbert-Curve）",
+    "author": "jirotubuyaki",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "依遞迴層級分色繪製的 Hilbert 曲線動畫畫面"
+   }
+  }
+ ],
+ "notes": "need=3，僅找到 3 個親眼確認合格圖片的新藝術案例（未達規格建議的 need+3=6 備援）：OpenProcessing 上多個 Hilbert 曲線作品（Thomas Diewald、David Balash、mathfoxLab 等）因站台阻擋自動化讀取（WebFetch 回傳 403）且圖片網址無法用猜測方式取得而放棄；p5.js Web Editor 個別作品（herohamp、KobeL）與 CodePen（DonKarlssonSan）同樣無法取得可驗證的畫面網址；holynova/hilbert 的 README 引用 screenshot.png 但該檔案實際未存在於 repo 中，故排除。3 個入選案例已涵蓋 p5.js、HTML5 Canvas、Python 三種工具與三種不同視覺風格（自適應單線肖像、L-System 動態生長、遞迴分層上色），若協調者需要更多備援，建議改用人工瀏覽 OpenProcessing 或以其他管道取得截圖後再議。"
+}

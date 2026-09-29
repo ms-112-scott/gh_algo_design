@@ -1,0 +1,389 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "E02",
+  "name_zh": "Poisson 圓盤取樣",
+  "name_en": "Poisson Disk Sampling",
+  "one_liner": "撒出「均勻但不規則」的點：任兩點至少相隔 minDistance，卻不像格子那麼死板，也不像純隨機那樣擠成一團。",
+  "how_it_works": [
+   "建立邊長 minDistance/√2 的網格，保證每格最多只會有一個點，並用 int[,] 記錄每格裡是第幾個點（-1 = 空）。",
+   "隨機放第一個點，加入「還能往外長」的名單。",
+   "從名單隨機挑一個點，在它外圍 minDistance 到 2×minDistance 的圓環內隨機試放候選點。",
+   "只檢查候選點周圍 5×5 格裡的點：全部都夠遠就收下，登記到網格並加入名單。",
+   "若試了 triesPerPoint 次都失敗，就把這個點移出名單；名單空了代表整個範圍已填滿，同時輸出同點數的純隨機點做對照。"
+  ]
+ },
+ "final_total": 17,
+ "target_art": 9,
+ "target_research": 8,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "E02-01",
+   "title": "Fast Poisson Disk Sampling in Arbitrary Dimensions",
+   "creator": "Robert Bridson",
+   "year": "2007",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "空間索引",
+    "隨機",
+    "3D"
+   ],
+   "tools": [
+    "研究原型"
+   ],
+   "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf",
+   "summary": "SIGGRAPH 2007 短文，提出只要對傳統 dart throwing 做小修改（在既有點的 r–2r 環內試放、用網格加速），就能以 O(N) 時間在任意維度產生 Poisson 圓盤取樣，正是基礎範例的原始演算法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-02",
+   "title": "Weighted Voronoi Stippling（加權 Voronoi 點描）",
+   "creator": "Adrian Secord",
+   "year": "2002",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "影像輸入",
+    "收斂",
+    "最佳化"
+   ],
+   "tools": [
+    "研究原型"
+   ],
+   "url": "https://dl.acm.org/doi/abs/10.1145/508530.508537",
+   "summary": "NPAR 2002 論文，模仿傳統點描畫以點的疏密表現色調：以影像亮度為權重反覆做加權 Voronoi 重心鬆弛（Lloyd），把點移到暗處較密的位置。常以 Poisson 或隨機點作為初始點，是變密度藍噪點取樣的代表作。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-03",
+   "title": "StippleGen：加權 Voronoi 點描與 TSP 路徑",
+   "creator": "Evil Mad Scientist Laboratories（Windell Oskay 等）",
+   "year": "2012",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "影像輸入",
+    "最佳化"
+   ],
+   "tools": [
+    "Processing",
+    "Inkscape"
+   ],
+   "url": "https://www.evilmadscientist.com/2012/stipplegen-weighted-voronoi-stippling-and-tsp-paths-in-processing/",
+   "summary": "以 Processing 寫成的免費開源軟體，實作 Secord 的點描演算法，並能把點串成旅行推銷員（TSP）單一路徑，輸出 SVG 給繪圖機、Egg-Bot 或 CNC 使用，最多約 10,000 點。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-04",
+   "title": "Sample Elimination for Generating Poisson Disk Sample Sets",
+   "creator": "Cem Yuksel",
+   "year": "2015",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "空間索引",
+    "3D"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "http://www.cemyuksel.com/research/sampleelimination/",
+   "summary": "Eurographics 2015 論文，先撒出大量隨機點，再以加權方式逐一刪除最擠的點，直到剩下目標數量的 Poisson 取樣；因只需要距離計算，可直接用在 3D 網格表面，論文示範了在兔子模型上放頭髮與在樹枝上放葉子。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-05",
+   "title": "Visualizing Algorithms：Poisson-disc 取樣動畫",
+   "creator": "Mike Bostock",
+   "year": "2014",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "隨機"
+   ],
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "url": "https://bost.ocks.org/mike/algorithms/",
+   "summary": "D3.js 作者的長文，以動畫比較純隨機、Mitchell 最佳候選法與 Bridson 的 Poisson-disc 取樣，展示新點如何從既有點逐步向外長出；是把基礎範例視覺化最好的參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-06",
+   "title": "Poisson-Disc Sampling 互動視覺化",
+   "creator": "Jason Davies",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "動畫"
+   ],
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "url": "https://www.jasondavies.com/poisson-disc/",
+   "summary": "以動畫展示 Bridson 的 O(n) 演算法如何產生「緊密但不小於最小距離」的點，作者並提到曾把 Poisson-disc 取樣用在球面上。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-07",
+   "title": "Coding Challenge #33：Poisson-disc Sampling",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "空間索引"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/33-poisson-disc-sampling",
+   "summary": "p5.js 現場寫程式教學，一步步建立網格、活躍名單與鄰格檢查，實作 Bridson 演算法；結構與基礎 C# 範例幾乎一一對應，適合自學對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-08",
+   "title": "mapgen4：Poisson 點＋Voronoi 的程序化地形地圖",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "2018",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "多元件",
+    "隨機"
+   ],
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "url": "https://www.redblobgames.com/maps/mapgen4/",
+   "summary": "互動式程序化地圖產生器，以 poisson-disk-sampling 函式庫產生點，再建立 Delaunay／Voronoi 結構，於其上計算高程、河流與降雨，最後渲染成手繪風地圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-09",
+   "title": "Poisson disc vs. jittered grid 比較",
+   "creator": "Amit J. Patel（Red Blob Games）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "群體／都市",
+   "tags": [
+    "隨機",
+    "空間索引"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://www.redblobgames.com/x/1830-jittered-grid/",
+   "summary": "比較抖動格點與 Poisson disc 兩種產生不規則點的方法，說明 Poisson disc 沒有群聚、空洞較少、角度分布較佳，並指出把 tries 從預設 30 降到 5–10 可加速 2–4 倍而品質仍可接受。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-10",
+   "title": "Blender Geometry Nodes：Distribute Points on Faces（Poisson Disk 模式）",
+   "creator": "Blender Foundation",
+   "year": "",
+   "category": "modeling",
+   "scale": "地景",
+   "tags": [
+    "曲面上",
+    "3D"
+   ],
+   "tools": [
+    "Blender"
+   ],
+   "url": "https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/point/distribute_points_on_faces.html",
+   "summary": "Blender 幾何節點中的點分布節點提供 Random 與 Poisson Disk 兩種模式，後者在網格表面上以最小距離與密度（可用權重貼圖控制）撒點，常用於散佈植物、石頭等實例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-11",
+   "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
+   "creator": "Peter Krattenmacher（McNeel 論壇）",
+   "year": "2020",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "曲面上",
+    "空間索引"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://discourse.mcneel.com/t/poisson-disk-sampling-component/109884",
+   "summary": "論壇使用者分享自製的 Grasshopper Poisson 取樣元件，一個做標準 2D 取樣，另一個在 3D 空間中以球代替圓盤，並計畫開發測地距離（geodesic）版本以用於曲面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-12",
+   "title": "玻璃纖維立體字的有機纖維分布",
+   "creator": "McNeel 論壇討論（Laurent Delrieu 回覆）",
+   "year": "2025",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://discourse.mcneel.com/t/letters-in-fiberglass/198463",
+   "summary": "論壇上一個以大量纖維構成、帶放射狀動態模糊感的 3D 字體案例，回覆者建議以 Poisson 圓盤取樣取代 Populate Geometry，讓纖維起點分布更有機、不群聚，再以 Pipe 與網格化轉成 3D 物件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E02-51",
+   "title": "Fun With Poisson Disk Sampling（Processing 影像風格化）",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "影像處理",
+    "點描",
+    "生成藝術"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+   "summary": "Manohar Vanga 先用 Processing 實作 Bridson 演算法，再把 Poisson 點用在照片上，做出點描、油畫、炭筆、Voronoi 馬賽克、交叉排線、點彩等八種風格。基礎範例只輸出點與對照用的純隨機點，這裡則示範同一組藍噪點如何透過「點的大小、顏色、筆觸方向」變成完全不同的畫面。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Sighack",
+    "page": "https://sighack.com/post/fun-with-poisson-disk-sampling",
+    "note": "文章預覽圖：以 Poisson 點做成的點描肖像"
+   }
+  },
+  {
+   "id": "E02-52",
+   "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
+   "creator": "Marcel Ruegenberg",
+   "year": "2015",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "Delaunay",
+    "開源"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+   "summary": "把 Poisson 圓盤取樣包成 openFrameworks 外掛，README 以兩張 Delaunay 三角網做對照：用 ofRandom 純隨機點會出現細長三角形，改用 Poisson 點則得到大小接近、形狀勻稱的三角形。這正好延伸基礎範例的「Poisson 點 vs 純隨機點」對照，把差異放到網格品質上來看。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub mruegenberg/ofxPoissonDiskSampling",
+    "page": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
+    "note": "README 示範圖：Poisson 點的 Delaunay 三角網"
+   }
+  },
+  {
+   "id": "E02-53",
+   "title": "poisson-disk-sampling（JavaScript 任意維度與變密度）",
+   "creator": "Kevin Chapelier",
+   "year": "2015",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "開源",
+    "變密度",
+    "3D"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/kchapelier/poisson-disk-sampling",
+   "summary": "Kevin Chapelier 維護的 JavaScript 函式庫（MIT 授權），以 Bridson 演算法支援任意維度取樣，並可傳入距離函式讓最小間距隨位置變化；線上示範用影像亮度控制點的疏密。基礎範例只有固定的 minDistance，這個函式庫示範了變密度與高維度兩種延伸。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub kchapelier/poisson-disk-sampling",
+    "page": "https://github.com/kchapelier/poisson-disk-sampling",
+    "note": "README 示範圖：Poisson 取樣點分布"
+   }
+  },
+  {
+   "id": "E02-54",
+   "title": "Fast Poisson Disk Sampling in Processing（2D／3D 動畫）",
+   "creator": "Nikolai Janakiev",
+   "year": "2017",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "動畫",
+    "3D",
+    "開源"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://github.com/njanakiev/poisson-disk-sampling",
+   "summary": "以 Processing 實作 Bridson 論文的 Poisson 圓盤取樣（MIT 授權），同時提供 2D 與 3D 版本，並把「活躍點」與「已確定的點」用不同方式畫出來做成動畫。基礎範例只輸出最終點位，這個作品把演算法的生長過程本身變成可觀看的視覺。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub njanakiev/poisson-disk-sampling",
+    "page": "https://github.com/njanakiev/poisson-disk-sampling",
+    "note": "README 2D 動畫的最後一格：完成的 Poisson 點分布"
+   }
+  },
+  {
+   "id": "E02-55",
+   "title": "[Unity] Procedural Object Placement（E01: poisson disc sampling）",
+   "creator": "Sebastian Lague",
+   "year": "2018",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "Unity",
+    "C#",
+    "遊戲",
+    "程序化生成"
+   ],
+   "tools": [
+    "Unity"
+   ],
+   "url": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+   "summary": "Sebastian Lague 在 Unity（C#）中依 Bridson 論文實作 Poisson 圓盤取樣，目的是在遊戲場景裡擺放物件，使物件彼此保持最小距離又不顯得規則。和 Grasshopper C# 基礎範例語言相同，但應用從「畫點」轉成「放置場景物件」，很適合對照到地景配置。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube（Sebastian Lague）",
+    "page": "https://www.youtube.com/watch?v=7WcmyxyFO7o",
+    "note": "影片縮圖：Poisson disc sampling 標題與取樣點"
+   }
+  }
+ ]
+}

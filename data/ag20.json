@@ -804,6 +804,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "為 Autodesk 多倫多辦公室建立可產生上萬種平面配置的幾何系統，以工作型態偏好、鄰接偏好、低干擾、連通性、日光、視野六個目標評分，再用多目標基因演算法 (MOGA) 演化出高分配置，是第一個大規模生成式設計的辦公空間。",
       "variations": [
@@ -846,6 +847,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "延續 MaRS 辦公室的流程，將展場攤位與動線配置拆成「建立設計空間、以目標評估、以演化計算迭代」三步驟，用遺傳演算法搜尋同時滿足人流、曝光與實際限制的展場平面。",
       "variations": [
@@ -881,6 +883,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Frazer 在 AA 的研究與同名展覽／出版品，將建築視為人工生命，以遺傳編碼描述形態規則並透過演化機制產生建築形式，是建築界使用基因演算法的奠基性論述。",
       "variations": [
@@ -913,6 +916,7 @@
       "year": "",
       "category": "modeling",
       "categories_extra": [],
+      "source": "research",
       "scale": "物件",
       "summary": "Grasshopper 內建的通用演化求解器：把滑桿或 Gene Pool 當基因、任一數值當適應度，自動搜尋參數空間。Rutten 並撰文討論通用求解器的邏輯與限制，是學習者最常接觸的 GA 工具。",
       "variations": [
@@ -948,6 +952,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Grasshopper 外掛，操作方式類似 Galapagos，但引入 Pareto 原則同時追求多個目標，輸出一整組互相取捨的最佳解，而非單一答案。",
       "variations": [
@@ -983,6 +988,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Wallacei 是 Grasshopper 的多目標演化引擎，附分析與分群工具協助挑選方案；其研究頁收錄以規則式多尺度程序建模結合 MOEA、探討相衝突條件下都市形態變化的研究。",
       "variations": [
@@ -1009,43 +1015,6 @@
       "url": "https://www.wallacei.com/research"
     },
     {
-      "id": "F04-07",
-      "algo": "F04",
-      "title": "醫院建築日光與能耗多目標最佳化（阿爾及利亞）",
-      "creator": "",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "立面／表皮",
-      "summary": "以 Grasshopper 參數模型、Ladybug／Honeybee 模擬日光與能耗、Octopus 基因演算法組成閉迴路，最佳化開窗率、玻璃與遮陽等參數，是性能導向立面設計的典型流程。",
-      "variations": [
-        {
-          "name": "遮陽板角度當基因",
-          "how": "每片遮陽板的旋轉角度存成 genes，評分讀取模擬的日光自主率與冷房負荷。",
-          "effect": "演化出上下不同角度的遮陽排列。"
-        },
-        {
-          "name": "C# 內簡化日照評分",
-          "how": "不接 Honeybee，改在 ScoreOf 內用 Ray 與太陽向量估算被遮蔽比例。",
-          "effect": "速度大增，適合基礎範例快速迭代。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "最佳化",
-        "多元件"
-      ],
-      "tools": [
-        "Grasshopper",
-        "Ladybug",
-        "Honeybee",
-        "Octopus"
-      ],
-      "url": "https://www.academia.edu/105936985/Parametric_Based_Multi_Objective_Optimization_Workflow_Daylight_and_Energy_Performance_Study_of_Hospital_Building_in_Algeria"
-    },
-    {
       "id": "F04-08",
       "algo": "F04",
       "title": "殼體多目標最佳化基準測試（Karamba＋Octopus）",
@@ -1055,6 +1024,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以 Grasshopper 建立殼體參數模型、Karamba 做有限元素分析、Octopus 進行多目標演化，作為結構形態最佳化的簡單基準範例。",
       "variations": [
@@ -1083,42 +1053,6 @@
       "url": "https://www.albertopugnale.com/2013/03/30/multi-objective-optimization-of-shells-a-simple-benckmark-with-grasshopper-karamba-and-octopus/"
     },
     {
-      "id": "F04-09",
-      "algo": "F04",
-      "title": "IAAC 結構形態基因最佳化（Karamba＋Galapagos）",
-      "creator": "IAAC 學習者專案",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "建築",
-      "summary": "IAAC 課程將 Karamba 結構分析結果（位移）作為 Galapagos 的適應度，最佳化塔樓斜格構或屋頂的幾何參數，展示教學場景中 GA 與結構分析的整合。",
-      "variations": [
-        {
-          "name": "斜格構密度基因",
-          "how": "基因為各樓層斜撐的分割數，評分 = 位移 × 用料量。",
-          "effect": "下密上疏的斜格構分布自然浮現。"
-        },
-        {
-          "name": "即時收斂曲線",
-          "how": "把 bestScores 接 Quick Graph，比較不同 mutationRate 的收斂速度。",
-          "effect": "學習者能判斷何時該停止演化。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "最佳化",
-        "物理模擬"
-      ],
-      "tools": [
-        "Grasshopper",
-        "Karamba3D",
-        "Galapagos"
-      ],
-      "url": "https://www.iaacblog.com/programs/genetic-optimization-karamba-galapagos/"
-    },
-    {
       "id": "F04-10",
       "algo": "F04",
       "title": "NASA ST5 演化天線",
@@ -1128,6 +1062,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "為 Space Technology 5 衛星設計的 X 波段天線，由演化演算法在超級電腦上跑數天找出，形狀怪異到人類設計師不會想到，卻滿足任務要求並實際製造上太空。",
       "variations": [
@@ -1162,6 +1097,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以基因演算法同時演化積木生物的形態與神經控制，讓牠們在物理模擬中比賽游泳、行走、跳躍，最成功的個體被複製、交配、突變，是演化計算在圖學與藝術中的經典作品。",
       "variations": [
@@ -1197,6 +1133,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "觀眾在展場中挑選喜歡的抽象影像，被選中的影像基因被複製、組合與突變產生下一代，由人的審美當適應度；曾在龐畢度中心與 Ars Electronica 展出。",
       "variations": [
@@ -1231,6 +1168,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "在 Grasshopper 中由幾何建立圖、計算單源最短路與點對點最短路，並能把 Space Syntax 指標當成設計約束放進參數流程。",
       "variations": [
@@ -1265,6 +1203,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "給一組曲線網路與起終點線段，以拓撲計算加上 A* 搜尋找出網路上的最短路線，是 Grasshopper 最早普及的最短路工具之一。",
       "variations": [
@@ -1299,6 +1238,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "先把起伏地形細分成含斜撐的網格曲線網路，再以 Shortest Walk 找點與點之間最短步道，用於景觀設計中減少材料、整地與施工成本。",
       "variations": [
@@ -1332,6 +1272,7 @@
       "year": "2012",
       "category": "urban-landscape",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以街道網路上的最短路為基礎，計算 Reach、Gravity、Betweenness、Closeness、Straightness 等可及性指標，並把建築物當成網路的第三種元素；有 ArcGIS 與 Rhino 版本。",
       "variations": [
@@ -1367,6 +1308,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Rhino／Grasshopper 的都市移動模擬外掛，可從 GIS 與 OpenStreetMap 載入資料，計算步行至設施與大眾運輸的可及性，協助以移動性為導向的都市設計。",
       "variations": [
@@ -1402,6 +1344,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Space Syntax 研究常用的開源軟體，源自 Alasdair Turner，做可視圖（visibility graph）、軸線與圖分析；其核心是在空間圖上計算步數或角度的最短路深度。",
       "variations": [
@@ -1434,6 +1377,7 @@
       "year": "2021",
       "category": "urban-landscape",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Python 套件，以網路上的最短路距離計算行人尺度的中心性、土地使用可及性與混合度，強調在細緻街道網路上的局部分析。",
       "variations": [
@@ -1458,39 +1402,6 @@
       "url": "https://arxiv.org/pdf/2106.15314"
     },
     {
-      "id": "F05-08",
-      "algo": "F05",
-      "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
-      "creator": "",
-      "year": "",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "群體／都市",
-      "summary": "在 Grasshopper 中實作的圖—重力整合可及性模型，針對資料稀缺地區，示範改善可及性如何影響多模式交通、就業可達性與行人頻率潛力。",
-      "variations": [
-        {
-          "name": "重力權重",
-          "how": "每個目的地有吸引力 w，起點可及性 = Σ w / 距離²。",
-          "effect": "可比較方案改造前後的可及性差異。"
-        },
-        {
-          "name": "設計前後比較",
-          "how": "同一組起終點在兩組障礙配置下跑兩次，輸出差值熱圖。",
-          "effect": "直觀看出新開道路帶來的改善範圍。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "鄰居搜尋"
-      ],
-      "tools": [
-        "Grasshopper"
-      ],
-      "url": "https://www.researchgate.net/publication/335827215_Applied_Spatial_Accessibility_Analysis_for_Urban_Design_An_integrated_graph-gravity_model_implemented_in_Grasshopper"
-    },
-    {
       "id": "F05-09",
       "algo": "F05",
       "title": "Pathfinder 人流與避難模擬",
@@ -1500,6 +1411,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "商用人員移動模擬軟體，處理入場排隊、動線、緊急避難與法規逃生檢討；每個人依門是否可用、標示與警報等調整路線，路線選擇建立在空間中的路徑搜尋上。",
       "variations": [
@@ -1534,6 +1446,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以 A* 路徑搜尋求解機電管線（MEP）路由的開源專案，示範把建築設備空間離散化後，自動找出避開障礙的管線路線。",
       "variations": [
@@ -1573,6 +1486,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Frei Otto 以浸水羊毛線讓路徑自我聚合成「最小路徑系統」的類比實驗；Grasshopper 論壇上討論以 ShortestWalk 求網路最短路、以 Kangaroo 物理模擬重現羊毛線聚合的做法。",
       "variations": [
@@ -1609,6 +1523,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Bourke 以本範例相同的 Clifford 公式產生八組不同係數的吸子，並用 32 位元格子累計每格被點落入的次數（二維直方圖），再後製映射成漸層色，得到細膩的明暗圖像。",
       "variations": [
@@ -1642,6 +1557,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 x' = sin(a·y) − cos(b·x)、y' = sin(c·x) − cos(d·y) 迭代的 de Jong 吸子（出自 1987 年《Scientific American》），同樣以佔有密度直方圖再上色，並可額外編碼曲率等性質。",
       "variations": [
@@ -1666,41 +1582,6 @@
       "url": "https://paulbourke.net/fractals/peterdejong/"
     },
     {
-      "id": "F06-03",
-      "algo": "F06",
-      "title": "Lorenz 水車（混沌的實體模型）",
-      "creator": "Willem Malkus、Lou Howard（原型）",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "物件",
-      "summary": "Bourke 的 Lorenz 頁面介紹一種會漏水的杯子水車，其轉動方向會混沌地反覆切換，行為與 Lorenz 方程等價；並記錄有人為物理教師研討會實際製作水車。",
-      "variations": [
-        {
-          "name": "以 x 值驅動旋轉",
-          "how": "把 Lorenz 的 x 當成轉速，每一步累加角度並旋轉一組物件，接 Timer 播放。",
-          "effect": "看到物件忽左忽右不規則地轉動。"
-        },
-        {
-          "name": "時間序列圖",
-          "how": "輸出 (step, x) 點畫成折線圖。",
-          "effect": "看出兩翼之間無規則跳躍的時間訊號。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "混沌",
-        "動畫",
-        "物理模擬"
-      ],
-      "tools": [
-        "實體模型"
-      ],
-      "url": "https://paulbourke.net/fractals/lorenz/"
-    },
-    {
       "id": "F06-04",
       "algo": "F06",
       "title": "鉤織 Lorenz 流形",
@@ -1710,6 +1591,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "兩位數學家以電腦計算出 Lorenz 系統的穩定流形曲面，轉成逐圈的鉤織指示，共 25,511 針、約 85 小時手工完成，讓混沌系統的幾何變成可觸摸的實體。",
       "variations": [
@@ -1746,6 +1628,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以電腦自動挑選二次映射與微分方程的係數，篩出會產生混沌吸子的組合，產生超過 350 個範例圖樣，並附原始碼與 3D 立體、聲音化等延伸。",
       "variations": [
@@ -1782,6 +1665,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Grasshopper 外掛，提供約 70 個碎形與混沌元件，包含 Lorenz、Rössler、Chen、Halvorsen、Burke-Shaw 等吸子系統，可直接在參數流程中產生吸子軌跡。",
       "variations": [
@@ -1817,6 +1701,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "在 Processing 中逐步推進 Lorenz 方程並即時畫出軌跡，加上顏色漸變與 PeasyCam 3D 旋轉，是最常被引用的吸子入門教學，有 p5.js 版本。",
       "variations": [
@@ -1853,6 +1738,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "art",
       "scale": "建築",
       "summary": "Aycock 以旋風、亂流為題的大型金屬公共雕塑之一，設置於堪薩斯市國際機場；她的同系列作品以 3D 建模後切割、滾彎金屬板製作，可作為「以混沌意象轉成大尺度雕塑」的參照。",
       "variations": [
@@ -1879,41 +1765,6 @@
       "url": "https://en.wikipedia.org/wiki/Alice_Aycock"
     },
     {
-      "id": "F06-09",
-      "algo": "F06",
-      "title": "vpype-fractal 筆繪機碎形與吸子外掛",
-      "creator": "mreierson（GitHub）",
-      "year": "",
-      "category": "drawing",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "物件",
-      "summary": "vpype 的外掛，產生 L-System、IFS、奇異吸子等碎形並輸出成 pen plotter 可繪製的向量線條，是吸子轉成實體繪圖的典型流程。",
-      "variations": [
-        {
-          "name": "點雲轉短筆畫",
-          "how": "Clifford 每個點輸出成極短線段（或把相鄰落點連成小段），避免筆繪機只打點。",
-          "effect": "點描風格的筆繪作品。"
-        },
-        {
-          "name": "單線化輸出",
-          "how": "Lorenz 投影到 XY，Polyline.ReduceSegments 後匯出 SVG／DXF。",
-          "effect": "一筆畫到底、筆繪機效率高。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "混沌"
-      ],
-      "tools": [
-        "Python",
-        "vpype",
-        "Pen plotter"
-      ],
-      "url": "https://github.com/mreierson/vpype-fractal"
-    },
-    {
       "id": "F06-10",
       "algo": "F06",
       "title": "Strange Attractors WebGL 互動繪圖",
@@ -1923,6 +1774,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 WebGL 在瀏覽器中高速繪製二維奇異吸子，圖像由大量隨機起點的軌跡疊加而成，可即時調整公式與係數。",
       "variations": [
@@ -1947,40 +1799,6 @@
         "TypeScript"
       ],
       "url": "https://github.com/piellardj/strange-attractors-webgl"
-    },
-    {
-      "id": "F06-11",
-      "algo": "F06",
-      "title": "Visions of Chaos 混沌探索軟體",
-      "creator": "Softology",
-      "year": "",
-      "category": "drawing",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "物件",
-      "summary": "涵蓋大量混沌與生成系統的免費軟體，內含 2D 與 3D 奇異吸子模式，讓使用者不必處理方程式就能調參探索，也是找靈感與係數的資料庫。",
-      "variations": [
-        {
-          "name": "3D 點雲體積渲染",
-          "how": "3D 吸子點落入 3D 體素格累計密度，再以密度門檻輸出 Mesh（接 Marching Cubes）。",
-          "effect": "得到雲霧狀、可 3D 列印的吸子體積。"
-        },
-        {
-          "name": "預設係數庫",
-          "how": "把好看的係數組存成 List，用 Value List 切換。",
-          "effect": "快速展示不同吸子。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "混沌",
-        "3D"
-      ],
-      "tools": [
-        "Visions of Chaos"
-      ],
-      "url": "https://softology.pro/voc.htm"
     }
   ]
 }

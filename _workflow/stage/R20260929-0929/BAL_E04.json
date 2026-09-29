@@ -1,0 +1,102 @@
+{
+ "algo": "E04",
+ "classification": [
+  {"id": "E04-01", "source": "research", "why": "慕尼黑奧運屋頂，經典建成工程找形案例"},
+  {"id": "E04-02", "source": "research", "why": "曼海姆木格殼，懸垂鏈找形建成代表作"},
+  {"id": "E04-03", "source": "research", "why": "Gaudí懸垂模型，動態鬆弛的歷史原型"},
+  {"id": "E04-04", "source": "research", "why": "Isler薄殼，倒吊布找形建成案例"},
+  {"id": "E04-05", "source": "research", "why": "Armadillo Vault，研究型受壓拱裝置"},
+  {"id": "E04-06", "source": "research", "why": "NEST HiLo，研究型索網模板混凝土屋頂"},
+  {"id": "E04-07", "source": "research", "why": "Striatus，研究型3D列印受壓拱橋"},
+  {"id": "E04-08", "source": "research", "why": "圖解靜力學方法與RhinoVAULT工具"},
+  {"id": "E04-09", "source": "research", "why": "Kangaroo，Grasshopper物理求解外掛"},
+  {"id": "E04-10", "source": "research", "why": "Barnes動態鬆弛學術論文"},
+  {"id": "E04-11", "source": "research", "why": "KnitCandela，針織模板混凝土研究案例"},
+  {"id": "E04-12", "source": "art", "why": "Echelman懸浮漁網雕塑，公共藝術裝置"},
+  {"id": "E04-13", "source": "art", "why": "Ark Nova，藝術節委託的藝術裝置"},
+  {"id": "E04-14", "source": "research", "why": "Savill Building，建成木格殼建築"},
+  {"id": "E04-51", "source": "art", "why": "Coding Train挑戰，生成畫面的creative coding教學"},
+  {"id": "E04-52", "source": "art", "why": "Nature of Code章節，生成畫面的creative coding教學"},
+  {"id": "E04-53", "source": "art", "why": "three.js官方範例，用引擎做出的視覺化布料作品"},
+  {"id": "E04-54", "source": "research", "why": "MSAPhysics，通用物理函式庫工具"},
+  {"id": "E04-55", "source": "research", "why": "Houdini Vellum教學，工具外掛示範"}
+ ],
+ "art_count": 5,
+ "need": 5,
+ "removal_order": ["E04-55", "E04-54", "E04-10", "E04-11", "E04-08", "E04-09", "E04-14", "E04-06"],
+ "removal_reasons": {
+  "E04-55": "圖片是Vimeo影片縮圖、畫質差，且與MSAPhysics同屬「其他求解器工具」重複",
+  "E04-54": "通用物理函式庫，非特定作品，與Kangaroo概念重複",
+  "E04-10": "無照片，純學術論文難以圖像化查證",
+  "E04-11": "無網址，且與Armadillo/HiLo/Striatus同屬BRG受壓殼案例重複",
+  "E04-08": "圖解靜力學是另一種找形方法，非動態鬆弛本身，關係較薄弱",
+  "E04-09": "Kangaroo概念直接相關但長期無照片",
+  "E04-14": "無網址難查證，與Multihalle木格殼類型重複",
+  "E04-06": "與Armadillo/Striatus同屬BRG受壓殼案例，稍嫌重複"
+ },
+ "new_art": [
+  {
+   "title": "Coding Challenge #160：Spring Forces（Soft Spring 版本）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "The Coding Train 的挑戰影片，用 p5.js 向量與力寫出彈簧振盪：一顆球用彈簧連到固定錨點，依伸長量 × stiffness 算回復力，加上阻尼後畫出球的軌跡。與基礎範例同樣是「彈簧力 + 阻尼 + 積分」的核心迴圈，差別是這裡只有一條彈簧、且保留運動軌跡讓振盪過程可見，而不是整張網格收斂成殼。",
+   "variations": [
+    {"name": "多彈簧並列（Spring Vector／Spring OOP 版本）", "how": "把單一彈簧改寫成 Spring 物件／class，可同時生成多條、不同 stiffness 的彈簧", "effect": "從單一振盪變成一整排彈簧同時擺動，方便比較不同硬度的收斂速度"},
+    {"name": "滑鼠拖曳錨點", "how": "把固定錨點改成滑鼠座標，每幀更新彈簧另一端位置", "effect": "從自動播放變成互動教具，直接用手感受伸長量與回復力的關係"},
+    {"name": "擴充成 2D 網格", "how": "把單一彈簧擴充成 n×n 質點網格，四角固定、其餘互相以彈簧相連", "effect": "從一維振盪走向二維鬆弛網，逐步逼近基礎範例的懸垂殼"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "彈簧力", "向量"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/160-spring-forces",
+   "evidence": "WebFetch 讀取頁面確認標題為「Challenge #160: Spring Forces」，範例列表包含 Simple Spring、Spring Vector、Spring OOP、Soft Spring 四個版本，示範以向量與力模擬彈簧振盪",
+   "nearest_existing": "E04-51 Coding Challenge 177：Soft Body Physics（同為 The Coding Train 教學，但 E04-51 是多彈簧撐起的軟體角色，本案例是最基礎的單一彈簧振盪示範）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/160-spring-forces/images/softspring.png",
+    "page": "https://thecodingtrain.com/challenges/160-spring-forces",
+    "verified": true,
+    "checked": "圖上看到紫色背景中一顆藍色球，用黃色鋸齒狀曲線（彈簧的運動軌跡）連到左下角，是即時彈簧振盪留下的視覺化路徑",
+    "source": "The Coding Train（GitHub 原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Soft Spring 範例：球體受彈簧力與重力拉扯，運動軌跡呈鋸齒狀曲線"
+   }
+  },
+  {
+   "title": "Coding Challenge #63：Texturing Cloth Simulation（Unikitty 旗幟）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": ["art-installation"],
+   "scale": "物件",
+   "summary": "用 Toxiclibs 的 Verlet 物理模擬一面由彈簧網格構成的旗幟：格點之間以彈簧相連、旗桿那排格點固定，側向風力加重力讓網格擺動，再把手繪圖案當材質貼到每個四邊形面上。與基礎範例同樣是「質點＋彈簧網格＋外力→收斂形狀」，差別是這裡外力是側向風力而非重力垂直下拉，且輸出的是貼了材質的曲面而非純線段。",
+   "variations": [
+    {"name": "貼圖來源改成攝影機串流", "how": "把 texture() 的來源從靜態圖片換成 createCapture() 的即時影像", "effect": "旗幟上的畫面即時變成使用者的臉或現場畫面，適合互動裝置"},
+    {"name": "多面旗幟排列成旗海", "how": "建立多個獨立的布料網格，指定不同的固定列與間距排開", "effect": "從單一旗幟變成隨風飄動、材質各異的一整排旗海"},
+    {"name": "風力隨時間與位置變化", "how": "把固定方向的側向力改成用 noise(x, y, t) 產生的向量場", "effect": "旗幟飄動更接近真實陣風，也能模擬布料在亂流中的皺褶"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "toxiclibs.js", "布料模擬", "材質貼圖"],
+   "tools": ["p5.js", "toxiclibs.js"],
+   "url": "https://thecodingtrain.com/challenges/63-texturing-cloth-simulation",
+   "evidence": "WebFetch 讀取頁面確認標題為「Texturing Cloth Simulation」，說明用 Toxiclibs Verlet Physics 模擬旗幟並以 beginShape/texture 貼上材質",
+   "nearest_existing": "E04-51 Coding Challenge 177：Soft Body Physics（同為 Coding Train 的 toxiclibs 彈簧網格應用，但 E04-51 是撐住角色輪廓的軟體，本案例是貼材質的旗幟布料）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/63-texturing-cloth-simulation/images/unikitty-flag.jpg",
+    "page": "https://thecodingtrain.com/challenges/63-texturing-cloth-simulation",
+    "verified": true,
+    "checked": "圖上看到一面由彈簧網格構成、貼著兒童手繪風格獨角貓圖案的旗幟，因風力與重力形成波浪起伏的曲面，左側可見旗桿",
+    "source": "The Coding Train（GitHub 原始碼庫）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "貼了手繪圖案材質的彈簧網格旗幟，因風力模擬呈現波浪起伏"
+   }
+  }
+ ],
+ "notes": "need=5 但只確認到 2 個合格藝術案例：OpenProcessing 上多個彈簧網／懸垂模擬草圖（Spring mass surface、Mass-Spring Snake 等）因該站封鎖 WebFetch 爬取（403）且頁面為前端渲染，無法取得真實圖片網址（依規則不可猜網址格式），Mass-Spring Snake 更明示無縮圖；verlet-js（subprotocol）的 spiderweb／cloth 示範圖實際下載僅 300×180，未達最小尺寸判定為縮圖等級；p5-matter-examples（Benedikt Groß）僅有的動畫縮圖第一幀是全黑畫面，看不出模擬內容；本回合 WebSearch 額度已用完、改用的 Parallel Search 之後也達到免費額度上限，無法再查證更多候選（例如 Generative Design 書中 P_3 彈簧章節、Karsten Schmidt 的 toxiclibs 藝術作品）。已將其餘 6 個 removal_order 備援（E04-08、E04-09、E04-14、E04-06）留給協調者，若之後找到更多合格藝術案例可再補上。"
+}

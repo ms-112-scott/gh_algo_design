@@ -39,14 +39,6 @@
     "page": "https://sighack.com/post/fun-with-poisson-disk-sampling",
     "note": "文章預覽圖：以 Poisson 點做成的點描肖像"
   },
-  "E02-52": {
-    "source": "GitHub mruegenberg/ofxPoissonDiskSampling",
-    "author": "Marcel Ruegenberg",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://github.com/mruegenberg/ofxPoissonDiskSampling",
-    "note": "README 示範圖：Poisson 點的 Delaunay 三角網"
-  },
   "E02-53": {
     "source": "GitHub kchapelier/poisson-disk-sampling",
     "author": "Kevin Chapelier",
@@ -142,13 +134,5 @@
     "license_url": "",
     "page": "https://www.memo.tv/msaphysics",
     "note": "作品圖：以彈簧相連的 3D 粒子網絡"
-  },
-  "E04-55": {
-    "source": "Vimeo（Entagma）",
-    "author": "Moritz Schwind",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://vimeo.com/294379827",
-    "note": "影片縮圖：Vellum 軟體模擬"
   }
 }

@@ -1,0 +1,190 @@
+{
+ "algo": "F02",
+ "classification": [
+  {"id": "F02-01", "source": "research", "why": "Hankin本人於20世紀提出的幾何研究方法，屬學術理論來源"},
+  {"id": "F02-02", "source": "research", "why": "Kaplan 2005年學術論文，把Hankin法形式化為演算法"},
+  {"id": "F02-03", "source": "research", "why": "西班牙Alhambra宮殿建成建築，磁磚拼貼為歷史建材工藝"},
+  {"id": "F02-04", "source": "research", "why": "伊朗Darb-e Imam聖祠建成建築，磁磚圖樣為歷史考證對象"},
+  {"id": "F02-05", "source": "research", "why": "Lu與Steinhardt發表於Science的學術研究論文"},
+  {"id": "F02-06", "source": "research", "why": "Topkapı卷軸為古代工匠圖樣手稿檔案，屬歷史工藝紀錄"},
+  {"id": "F02-07", "source": "research", "why": "蒙兀兒帝國Akbar陵墓建成建築，石雕格柵為歷史工藝"},
+  {"id": "F02-08", "source": "research", "why": "Jean Nouvel設計的羅浮宮分館建成建築，屬結構與採光工程案例"},
+  {"id": "F02-09", "source": "research", "why": "巴黎阿拉伯世界研究中心建成建築，機械光圈為工程性能案例"},
+  {"id": "F02-10", "source": "research", "why": "Al Bahr Towers建成建築，遮陽系統為工程性能分析案例"},
+  {"id": "F02-11", "source": "research", "why": "貝聿銘設計的杜哈博物館建成建築，語彙轉譯為建築設計案例"},
+  {"id": "F02-12", "source": "research", "why": "Lin與Kaplan 2023年學術論文，圓堆積演算法研究"},
+  {"id": "F02-13", "source": "research", "why": "Mansourifar與Shi 2018年學術論文暨App，參數化研究"}
+ ],
+ "art_count": 0,
+ "need": 7,
+ "removal_order": [
+  "F02-13", "F02-12", "F02-11", "F02-10", "F02-09", "F02-07", "F02-06",
+  "F02-03", "F02-08", "F02-04", "F02-05", "F02-02", "F02-01"
+ ],
+ "removal_reasons": {
+  "F02-13": "與Hankin接觸角法關聯薄弱，屬同心圓參數化的獨立研究，也難找到清楚生成畫面",
+  "F02-12": "圓堆積骨架法與Kaplan核心論文（F02-02）高度重疊，屬其延伸研究",
+  "F02-11": "杜哈博物館幾何語彙已抽象化，與Hankin兩線構造法關聯薄弱，尚無照片",
+  "F02-10": "三角模組電動遮陽，與星形圖樣構造法關聯薄弱，偏工程機構",
+  "F02-09": "與Al Bahr Towers概念重複（同為mashrabiya動態遮陽），留一個即可",
+  "F02-07": "八角形網格底圖與F02-01示範重複，未提供額外構造資訊",
+  "F02-06": "手繪圖樣檔案角色與F02-01、F02-04的歷史紀錄重疊，非獨立案例",
+  "F02-03": "Alhambra為泛用經典案例，其他演算法可能同樣引用，特殊性低於Darb-e Imam",
+  "F02-08": "多層星形穹頂為獨特大尺度案例，僅在需要進一步移除時才考慮",
+  "F02-04": "與Lu、Steinhardt準晶研究直接對應，是唯一的準週期實例，盡量保留",
+  "F02-05": "Science期刊重要研究，說明演算法本質，盡量保留",
+  "F02-02": "本演算法的直接學術出處，核心保留",
+  "F02-01": "Hankin本人方法，演算法命名依據，絕對保留"
+ },
+ "new_art": [
+  {
+   "title": "Islamic Star Pattern（The Coding Train #54 Part 1）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "The Coding Train 的直播教學挑戰，直接依 Hankin 的「接觸多邊形」法在 p5.js 建立八角形加正方形底圖，從每條邊中點射出兩條線並在交會處連起來成星形；程式結構與 Grasshopper C# 基礎範例幾乎一一對應，是本演算法最貼近的 creative coding 版本。",
+   "variations": [
+    {"name": "滑鼠即時調角度", "how": "用滑鼠 X、Y 位置即時決定接觸角與偏移距離，取代固定參數", "effect": "即時看到星芒從鈍變尖的連續變化，等同互動版的吸引子漸變"},
+    {"name": "深色配色示範", "how": "改用橘色線條搭配深藍底色，取代預設灰階線稿", "effect": "星形圖樣在畫面上更醒目，適合作為教學展示的第一張圖"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Hankin法", "互動"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
+   "evidence": "WebFetch 確認頁面標題為「#54 — Islamic Star Patterns」，內容說明以 p5.js 示範 Hankin 方法、正弦函式與幾何交點計算",
+   "nearest_existing": "F02-02 Kaplan 論文（此為其教學實作版本，非同一件作品）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/54-islamic-star-patterns/images/islamic.jpg",
+    "page": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
+    "verified": true,
+    "checked": "看到橘色線條在深藍背景上交織成連續的八角星與四角星圖樣，與基礎範例的底圖幾乎一致",
+    "source": "The Coding Train（GitHub）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 產生的伊斯蘭星形圖樣，橘色線條交織於深藍背景"
+   }
+  },
+  {
+   "title": "Islamic Star Pattern（The Coding Train #54 Part 2：正弦調變版）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "同一挑戰的第二部分，改用 sin() 函式讓接觸角隨畫面位置週期變化，呈現紫白配色的菱形交織帶；示範「輸入規則改一行、圖樣風格整個改變」，呼應 Kaplan 論文提到的漸變效果。",
+   "variations": [
+    {"name": "正弦調變角度", "how": "contactAngle 改成 sin(x)、sin(y) 的函式輸出而非固定常數", "effect": "星形沿畫面產生週期性粗細變化，出現波浪狀的漸層節奏"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Hankin法", "正弦函式"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
+   "evidence": "同一頁面第二個範例連結至 p5.js 編輯器 sketch，程式碼以 sin 函式調整接觸角度",
+   "nearest_existing": "本表中的 Part 1（同系列教學的正弦函式變形版）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/54-islamic-star-patterns/images/sine.jpg",
+    "page": "https://thecodingtrain.com/challenges/54-islamic-star-patterns",
+    "verified": true,
+    "checked": "看到白色菱形交織線條在紫色背景上，呈現週期性粗細變化的星形帶",
+    "source": "The Coding Train（GitHub）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 以正弦函式調變接觸角後的星形交織帶，紫底白線"
+   }
+  },
+  {
+   "title": "Mirror：伊斯蘭幾何鑲嵌實驗",
+   "creator": "Ben Andrew",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "受 Keith Critchlow《Islamic Patterns: An Analytical and Cosmological Approach》啟發的生成藝術實驗，用 cairo 向量繪圖函式庫畫出重複的多邊形鑲嵌與星形交織帶；repo 標註 generative-art、islamic-geometric-patterns、tiling 標籤，畫面呈現八角形與六角格交織的密集黑白線稿。",
+   "variations": [
+    {"name": "多層鑲嵌疊合", "how": "同一底圖用不同旋轉角與縮放比例疊加多層構造線", "effect": "產生比單層更密集複雜的交織紋理，接近多層疊合的效果"},
+    {"name": "玫瑰窗單元構圖", "how": "以中心對稱的多邊形花朵狀單元取代連續鋪面輸出", "effect": "畫面聚焦成單一玫瑰窗圖案，而非無限延伸的鋪面"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "cairo", "幾何鑲嵌", "黑白線稿"],
+   "tools": ["Python", "cairo"],
+   "url": "https://github.com/benmandrew/mirror",
+   "evidence": "README 說明「Experiments with repeating geometric patterns, inspired by Islamic Patterns: An Analytical and Cosmological Approach by Keith Critchlow」，並標註 islamic-geometric-patterns 標籤",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/benmandrew/mirror/main/examples/output_d.png",
+    "page": "https://github.com/benmandrew/mirror",
+    "verified": true,
+    "checked": "看到黑底白線的密集八角形與六角形交織鋪面，中央可見清楚的星形節點",
+    "source": "GitHub（benmandrew/mirror）README",
+    "author": "Ben Andrew",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Python cairo 產生的黑白伊斯蘭幾何鑲嵌線稿"
+   }
+  },
+  {
+   "title": "Pattern Collider：準週期鑲嵌互動生成器",
+   "creator": "Aatish Bhatia、Henry Reich",
+   "year": "2021",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 p5.js 開發的網頁互動工具，讓使用者即時調整對稱重數、線條粗細與縮放，生成 Penrose 等準週期鑲嵌圖樣；官方說明特別提到可做出「中世紀伊斯蘭藝術」風格的圖樣，畫面由多邊形交織成不重複的星形鑲嵌，呼應本演算法準週期底圖的延伸方向。",
+   "variations": [
+    {"name": "對稱重數切換", "how": "從5折切到6至12折對稱，改變底圖多邊形種類", "effect": "星形圖樣從五角、十角星換成六角或十二角星家族"},
+    {"name": "線條與磁磚雙模式", "how": "可切換顯示鑲嵌的邊線骨架或填色磁磚", "effect": "骨架模式凸顯構造線邏輯，磁磚模式呈現最終視覺效果"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "Penrose", "準週期鑲嵌"],
+   "tools": ["p5.js", "Vue.js"],
+   "url": "https://github.com/aatishb/patterncollider",
+   "evidence": "README 說明作者為 Aatish Bhatia 與 Henry Reich，工具用 p5.js 繪圖，可產生 Penrose 鑲嵌與中世紀伊斯蘭藝術風格圖樣",
+   "nearest_existing": "F02-05 Lu、Steinhardt準晶研究（此為其可互動生成版本，非同一件作品）",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/1878638/115279244-73d9bf00-a114-11eb-9105-1cad80515a5e.png",
+    "page": "https://github.com/aatishb/patterncollider",
+    "verified": true,
+    "checked": "看到紫色底上米色與紫紅色交織的準週期星形鑲嵌圓形構圖，中心對稱放射",
+    "source": "GitHub（aatishb/patterncollider）README",
+    "author": "Aatish Bhatia、Henry Reich",
+    "license": "MIT License（依repo授權）",
+    "license_url": "https://github.com/aatishb/patterncollider/blob/main/LICENSE",
+    "note": "p5.js 生成的準週期星形鑲嵌，紫色與米色交織的圓形圖樣"
+   }
+  },
+  {
+   "title": "Girih 1：種子式伊斯蘭幾何紡織圖樣",
+   "creator": "Reyhaneh Daneshdoost（Reyrove Studio）",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["fabrication"],
+   "scale": "物件",
+   "summary": "以純 JavaScript 撰寫的種子式生成系統，把 girih 磁磚傳統轉譯成可重現的演算法構圖；同一個數字種子永遠對應同一張圖樣，設計目的是授權給紡織、印刷與家飾應用，示範圖為印在抱枕上的金色細線星形圖樣。",
+   "variations": [
+    {"name": "種子驅動配色", "how": "以單一整數種子同時決定星形骨架與配色線條的隨機分布", "effect": "每個種子產生獨一無二但風格一致的圖樣，方便量產不重複的紡織品"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "JavaScript", "girih", "紡織圖樣"],
+   "tools": ["JavaScript", "Canvas 2D"],
+   "url": "https://github.com/reyrove/Girih-1-Generative-Art",
+   "evidence": "README 說明這是「Seed-based generative system for Islamic geometric ornament — reproducible computational textile compositions」，作者為 Reyhaneh Daneshdoost",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/reyrove/Girih-1-Generative-Art/main/images/cushion.png",
+    "page": "https://github.com/reyrove/Girih-1-Generative-Art",
+    "verified": true,
+    "checked": "看到抱枕上印製的金色細線交織星形圖樣，藍色星形外框，背景為淺灰牆面與木地板",
+    "source": "GitHub（reyrove/Girih-1-Generative-Art）README",
+    "author": "Reyhaneh Daneshdoost",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "印在抱枕產品上的種子生成girih星形圖樣，金色細線交織"
+   }
+  }
+ ],
+ "notes": "13筆既有案例全部判為research（歷史建築、學術論文或工程遮陽案例），art_count為0，need=7；只找到5個核心相關且圖片經肉眼確認為生成畫面本身的creative coding候選（The Coding Train官方教學兩版、Mirror、Pattern Collider、Girih 1），未達need+3=10個備援；其餘查到的候選（OpenProcessing的Jim Bumgardner《Islamic Stars》、Shadertoy的《Islamic Fourfold Pattern》、Londirin的five-constructions）主題完全吻合，但因網站封鎖WebFetch或找不到可下載的直接圖片網址而放棄，Girih 1的圖片為印刷成品照片（非純畫面截圖）屬次佳選擇；建議協調者視情況以其他演算法的備援藝術案例補足缺口，或允許F02維持較多research案例。"
+}

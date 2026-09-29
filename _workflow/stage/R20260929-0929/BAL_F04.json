@@ -1,0 +1,242 @@
+{
+ "algo": "F04",
+ "classification": [
+  {"id": "F04-01", "source": "research", "why": "建成專案的生成式設計流程，多目標最佳化辦公空間平面"},
+  {"id": "F04-02", "source": "research", "why": "延續同一團隊生成式設計流程，應用在展場配置"},
+  {"id": "F04-03", "source": "research", "why": "建築理論論述與研究計畫，非單一視覺作品"},
+  {"id": "F04-04", "source": "research", "why": "Grasshopper 內建通用演化求解器工具"},
+  {"id": "F04-05", "source": "research", "why": "Grasshopper 多目標演化外掛工具"},
+  {"id": "F04-06", "source": "research", "why": "外掛工具頁附都市形態學術研究"},
+  {"id": "F04-07", "source": "research", "why": "工程性能模擬（日光與能耗）最佳化流程研究"},
+  {"id": "F04-08", "source": "research", "why": "結構最佳化基準測試，工程導向"},
+  {"id": "F04-09", "source": "research", "why": "課程中的結構最佳化教學案例"},
+  {"id": "F04-10", "source": "research", "why": "NASA 工程任務的天線設計案例"},
+  {"id": "F04-11", "source": "art", "why": "以演化計算同時生成形態與行為的生成藝術經典，曾於藝術展覽展出"},
+  {"id": "F04-12", "source": "art", "why": "互動式影像演化藝術裝置，曾在龐畢度中心與 Ars Electronica 展出"}
+ ],
+ "art_count": 2,
+ "need": 4,
+ "removal_order": ["F04-09", "F04-07", "F04-08", "F04-02", "F04-05", "F04-06", "F04-04"],
+ "removal_reasons": {
+  "F04-09": "IAAC 課程部落格文章，作者不具名難查證，且與 F04-07、F04-08 同質（結構性能最佳化流程展示）",
+  "F04-07": "作者不明、僅有 academia.edu 論文可查，內容與 F04-08 同質（性能導向多目標最佳化流程）",
+  "F04-08": "與 F04-07、F04-09 同質的結構／性能最佳化基準展示，沒有真實案例照片",
+  "F04-02": "與 F04-01 同一團隊、同一流程高度重複，缺乏獨特性，也沒有照片",
+  "F04-05": "純外掛介紹頁，功能與 F04-06 Wallacei 重疊",
+  "F04-06": "外掛加研究頁，仍與 F04-05 功能重疊，但涵蓋唯一的都市尺度案例而排在較後",
+  "F04-04": "雖為學習者最常接觸的核心工具，仍可視需要替換，優先順序排最後"
+ },
+ "new_art": [
+  {
+   "title": "EvoLisa：以基因演算法逼近蒙娜麗莎（Genetic Programming: Evolution of Mona Lisa）",
+   "creator": "Roger Johansson",
+   "year": "2008",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 C# 寫成的基因演算法：染色體是一組半透明多邊形（顏色與頂點座標），適應度是畫出的圖與蒙娜麗莎原圖逐像素的顏色差異，透過選擇、交配與突變一代代逼近原圖。和 Grasshopper 基礎範例同樣是「族群＋適應度＋世代」的核心結構，但基因編碼換成多邊形圖層，適應度換成影像相似度而非點的分散程度。",
+   "variations": [
+    {"name": "多邊形數量", "how": "增加或減少多邊形數（原作用 50 個）", "effect": "多邊形越多逼近越精細，但收斂速度變慢"},
+    {"name": "目標影像", "how": "換成任何一張照片或圖樣", "effect": "同一套演算法可逼近任意影像，不限人像"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "基因演算法", "影像逼近"],
+   "tools": ["C#", "自製程式"],
+   "url": "https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/",
+   "evidence": "WebFetch 開啟頁面確認標題「Genetic Programming: Evolution of Mona Lisa」，作者 Roger Johansson，發表於 2008 年 12 月",
+   "nearest_existing": "F04-12 Genetic Images（同為影像導向的演化，但 Genetic Images 由觀眾當適應度，EvoLisa 用像素差異當適應度）",
+   "image": {
+    "url": "https://rogerjohansson.blog/wp-content/uploads/2008/12/evolutionofmonalisa1.gif?w=782",
+    "page": "https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/",
+    "verified": true,
+    "checked": "多張蒙娜麗莎逼近過程縮圖排成格狀，隨世代數增加從模糊色塊逐漸變清晰",
+    "source": "rogerjohansson.blog",
+    "author": "Roger Johansson",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "基因演算法以半透明多邊形逐代逼近蒙娜麗莎原畫的過程"
+   }
+  },
+  {
+   "title": "Smart Rockets（智慧火箭）",
+   "creator": "Daniel Shiffman（The Coding Train，概念源自 Jer Thorp）",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "基因演算法版本的火箭導航：每個個體的基因是一串固定長度的推力向量，族群裡的火箭同時發射，適應度依火箭最終離目標的距離與是否撞到障礙物計算，透過選擇、交配、突變逐代演化出能繞過障礙抵達目標的推力序列。與 Grasshopper 基礎範例一樣用「族群→評分→精英＋交配＋突變」的迴圈，但基因是連續推力向量而非點座標，且會即時畫出飛行軌跡。",
+   "variations": [
+    {"name": "障礙物形狀", "how": "換成任意多邊形或多個障礙", "effect": "演化出的最佳路徑會跟著繞過新的障礙"},
+    {"name": "基因長度（飛行時間）", "how": "改變推力向量陣列長度", "effect": "太短會讓火箭來不及抵達，演化不出成功個體"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "路徑演化"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/29-smart-rockets-in-p5js",
+   "evidence": "WebFetch 開啟頁面確認標題「#29 — Smart Rockets in p5.js」，The Coding Train 製作，主題含 genetic algorithms／DNA／evolutionary algorithm",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/29-smart-rockets-in-p5js/images/smart-rockets-in-p5js.png",
+    "page": "https://thecodingtrain.com/challenges/29-smart-rockets-in-p5js",
+    "verified": true,
+    "checked": "畫面上方為目標白點與一道障礙橫線，下方是剛發射、尚未演化的火箭群（灰色小線段散開）",
+    "source": "GitHub CodingTrain/thecodingtrain.com",
+    "author": "Daniel Shiffman／The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Smart Rockets 範例執行畫面：目標點、障礙與剛發射的火箭族群"
+   }
+  },
+  {
+   "title": "Electric Sheep（電子羊）",
+   "creator": "Scott Draves",
+   "year": "1999",
+   "category": "art-installation",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "全球參與者的電腦螢幕保護程式共同演化的分形火焰藝術：每隻「羊」是一組分形轉換函式的參數（基因），使用者對喜歡的羊投票，得票高的存活更久，再依基因演算法互相交配、突變產生下一代，算繪成動畫分享給所有參與者。把 Grasshopper 基礎範例「族群＋適應度＋世代」的結構搬到大規模群眾外包場景，適應度不是公式而是人類集體品味。",
+   "variations": [
+    {"name": "適應度來源", "how": "適應度改成使用者按讚次數而非數學公式", "effect": "示範「人當評審」的互動式演化如何擴大到群眾規模"},
+    {"name": "基因型", "how": "基因換成分形轉換函式的係數而非點座標", "effect": "演化出的表現型是連續流動的抽象分形動畫，而非離散幾何"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "群眾外包", "分形藝術"],
+   "tools": ["自製程式"],
+   "url": "https://electricsheep.org/",
+   "evidence": "WebFetch 開啟頁面確認說明文字「the genetic algorithm with mutation and cross-over」，創辦人 Scott Draves",
+   "nearest_existing": "F04-12 Genetic Images（同樣是人當評審的互動式演化，這裡規模擴大到全球群眾外包）",
+   "image": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Electricsheep-3404_Large.jpg",
+    "page": "https://en.wikipedia.org/wiki/Electric_Sheep",
+    "verified": true,
+    "checked": "藍綠色調的分形火焰圖案，多條發光線條捲繞成漩渦並向外流動",
+    "source": "Wikimedia Commons",
+    "author": "Scott Draves／Electric Sheep 專案",
+    "license": "Wikimedia Commons，詳見檔案頁授權",
+    "license_url": "https://commons.wikimedia.org/wiki/File:Electricsheep-3404_Large.jpg",
+    "note": "Electric Sheep 演化產生的分形火焰動畫畫面"
+   }
+  },
+  {
+   "title": "Evolutionary Bloops：連續演化系統",
+   "creator": "Daniel Shiffman（The Nature of Code）",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "把基因演算法從「一代一代整批更新」改成即時、重疊世代的連續系統：畫面中圓形與方形兩個物種各自帶有大小、速度等基因，吃到食物就得分、分數夠高就即時複製並突變出小孩，個體也會自然老死，不用等整批族群跑完才進下一代。用來對照 Grasshopper 基礎範例「先跑完一整代再選拔」的離散世代制。",
+   "variations": [
+    {"name": "物種基因", "how": "圓形、方形各自的大小、速度基因獨立演化", "effect": "可觀察到兩個物種各自往不同方向演化，例如一個變快、一個變大"},
+    {"name": "死亡與繁殖規則", "how": "改成依年齡或能量即時死亡、複製", "effect": "呈現連續、重疊世代的演化過程，而非一批一批的世代制"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "連續演化"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/noc/9-genetic-algorithms/10-continuous-evolutionary-systems",
+   "evidence": "tools/ct_index.py 列出《The Nature of Code》第九章 10 節「Continuous Evolutionary System」範例（Evolutionary Bloops）的執行畫面與頁面網址",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/9-genetic-algorithms/10-continuous-evolutionary-systems/images/image1.png",
+    "page": "https://thecodingtrain.com/noc/9-genetic-algorithms/10-continuous-evolutionary-systems",
+    "verified": true,
+    "checked": "黑白畫面上散佈大小不一的圓形與方形，代表兩個正在即時演化的物種",
+    "source": "GitHub CodingTrain/thecodingtrain.com",
+    "author": "Daniel Shiffman／The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Evolutionary Bloops 連續演化系統執行畫面：兩個物種的個體散佈其中"
+   }
+  },
+  {
+   "title": "Evolutionary Steering Behaviors（演化式轉向行為）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "category": "modeling",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "把 Craig Reynolds 的轉向行為（尋找食物、逃避掠食者）參數化成基因：每個三角形個體的基因決定牠對食物與掠食者的反應權重，吃到食物或活得夠久加分，被掠食者吃掉就淘汰，族群逐代演化出更擅長覓食避敵的轉向策略。示範基因演算法如何用來調校「代理人行為」的參數，而不只是幾何座標。",
+   "variations": [
+    {"name": "角色設定", "how": "綠色（獵物）與紫色（掠食者）各自獨立演化基因", "effect": "可觀察獵物與掠食者像軍備競賽般互相演化"},
+    {"name": "基因內容", "how": "基因改成任意轉向行為的權重（避障、群聚、追逐…）", "effect": "可延伸成群體行為的多目標演化"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "代理人行為"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/69-evolutionary-steering-behaviors",
+   "evidence": "WebFetch 開啟頁面確認範例名稱「Evolutionary Steering Behavior」與其執行畫面圖片網址",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://thecodingtrain.com/static/dfff110d52d3e69f02a00add4374b323/a2850/index.jpg",
+    "page": "https://thecodingtrain.com/challenges/69-evolutionary-steering-behaviors",
+    "verified": true,
+    "checked": "黑色背景上散佈綠色小圓點（食物）與綠色、紫色三角形（獵物與掠食者代理人）",
+    "source": "thecodingtrain.com",
+    "author": "Daniel Shiffman／The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "演化式轉向行為範例執行畫面：三角形代理人追逐或逃避彼此"
+   }
+  },
+  {
+   "title": "Interactive Selection（互動式選擇演化）",
+   "creator": "Daniel Shiffman（The Nature of Code）",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "把 ScoreOf 換成人的喜好：畫面同時顯示一整代由基因決定顏色、五官形狀的簡單卡通臉，使用者點選喜歡的幾張當父母，程式再對這些基因交配、突變產生下一代，重複多代直到長出使用者喜歡的臉。是課堂上重現 Karl Sims《Genetic Images》概念最直接的教學版本。",
+   "variations": [
+    {"name": "表現型", "how": "基因改畫成其他圖形（例如色塊拼貼、簡單插畫）", "effect": "同一套互動演化機制可套用在任何「由基因決定外觀」的東西上"},
+    {"name": "選擇人數", "how": "允許多人各自打分再加權平均", "effect": "示範群眾決策如何取代單一使用者的審美"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "互動演化"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/noc/9-genetic-algorithms/9-interactive-selection",
+   "evidence": "tools/ct_index.py 列出《The Nature of Code》第九章 9 節「Interactive Selection」範例的執行畫面與頁面網址",
+   "nearest_existing": "F04-12 Genetic Images（同樣是人當評審的互動演化，這是教學重現版本）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/9-genetic-algorithms/9-interactive-selection/images/image1.png",
+    "page": "https://thecodingtrain.com/noc/9-genetic-algorithms/9-interactive-selection",
+    "verified": true,
+    "checked": "一列 8 張卡通臉孔，臉色與表情略有差異，下方標示 Generation 14",
+    "source": "GitHub CodingTrain/thecodingtrain.com",
+    "author": "Daniel Shiffman／The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "互動式選擇演化範例執行畫面：一整代卡通臉孔供使用者挑選"
+   }
+  },
+  {
+   "title": "Evolving Shakespeare（演化出莎士比亞金句）",
+   "creator": "Daniel Shiffman（The Nature of Code）",
+   "year": "2019",
+   "category": "modeling",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "經典「無限猴子定理」的基因演算法版本：把目標句子（例如 To be or not to be）拆成字元當基因，隨機字串族群依「和目標句逐字元相符的比例」評分，透過選擇、交配、突變快速逼近目標句，通常幾百代內就能演化出完全正確的句子，示範離散字元基因與逐字元適應度的寫法。",
+   "variations": [
+    {"name": "目標句子", "how": "換成任意文字（例如中文或程式碼片段）", "effect": "字元集不同，收斂速度也會不同"},
+    {"name": "突變率", "how": "調整突變率觀察收斂速度", "effect": "突變率太低收斂慢，太高則難以固定住已經正確的字元"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "文字演化"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/noc/9-genetic-algorithms/3-shakespeare-monkey-example",
+   "evidence": "tools/ct_index.py 列出《The Nature of Code》第九章 3 節「Shakespeare Monkey Example」範例的執行畫面與頁面網址",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/9-genetic-algorithms/3-shakespeare-monkey-example/images/image1.png",
+    "page": "https://thecodingtrain.com/noc/9-genetic-algorithms/3-shakespeare-monkey-example",
+    "verified": true,
+    "checked": "畫面顯示「Best phrase: To be or not to be.」，以及世代數、平均適應度與突變率等統計數字",
+    "source": "GitHub CodingTrain/thecodingtrain.com",
+    "author": "Daniel Shiffman／The Coding Train",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "演化出莎士比亞金句範例的最終結果畫面與統計數字"
+   }
+  }
+ ],
+ "notes": "既有 12 筆中僅 2 筆（F04-11、F04-12，皆 Karl Sims）明顯屬於藝術設計，need=4；已找到 4 個核心新增 art 案例（EvoLisa、Smart Rockets、Electric Sheep、Evolutionary Bloops）外加 3 個備援（Evolutionary Steering Behaviors、Interactive Selection、Evolving Shakespeare），全部已下載預覽並親眼確認為作品本身的演算法生成畫面；removal_order 已列出 7 個研究案例供協調者挑選替換。"
+}

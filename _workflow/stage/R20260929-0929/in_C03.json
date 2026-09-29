@@ -1,0 +1,398 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "C03",
+  "name_zh": "向量場流線",
+  "name_en": "Vector Field Streamlines",
+  "one_liner": "在基地上每一點用公式算出一個方向（被吸引點拉＋繞著轉），再從格子起點順著方向一步步走，畫出像風、水、磁力線的流線。",
+  "how_it_works": [
+   "在正方形範圍內排出 seedsPerSide × seedsPerSide 個格子起點。",
+   "FieldDirection：對每個吸引點算「指向它的方向 × pullStrength」加「轉 90° 的方向 × swirlStrength」，乘上 1/(1+距離) 的衰減後全部相加，得到該點的場方向。",
+   "TraceStreamline：從起點取場方向、單位化、前進 stepSize，重複 streamlineSteps 次，走出範圍、場為零或碰到吸引點就停，記成 Polyline。",
+   "另外在每個起點輸出一段短線（arrows）顯示場的方向，方便對照場與流線。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "C03-01",
+   "title": "Flow Fields（生成藝術教學文章）",
+   "creator": "Tyler Hobbs",
+   "year": "2020",
+   "category": "drawing",
+   "scale": "",
+   "tags": [
+    "隨機",
+    "可重現種子"
+   ],
+   "tools": [
+    "Processing",
+    "Clojure/Quil"
+   ],
+   "url": "https://www.tylerxhobbs.com/words/flow-fields",
+   "summary": "Hobbs 系統整理 flow field 的做法：在畫面上鋪一張角度格網，讓曲線順著角度前進，並討論起點分布、碰撞檢查、線寬與色彩等讓成品好看的技巧。是本元件「場＋流線」最直接的藝術版本。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-02",
+   "title": "Fidenza",
+   "creator": "Tyler Hobbs",
+   "year": "2021",
+   "category": "art-installation",
+   "scale": "",
+   "tags": [
+    "隨機",
+    "可重現種子"
+   ],
+   "tools": [
+    "JavaScript",
+    "p5.js"
+   ],
+   "url": "https://www.artblocks.io/collection/fidenza-by-tyler-hobbs",
+   "summary": "在 Art Blocks 發表的 999 件長篇生成藝術，以 flow field 引導大量帶狀曲線形狀排列，亂流程度（none／low／medium／high）是可變特徵之一。展示同一演算法如何透過參數空間產生整個作品系列。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-03",
+   "title": "Wind Map",
+   "creator": "Fernanda Viégas, Martin Wattenberg（HINT.FM）",
+   "year": "2012",
+   "category": "drawing",
+   "scale": "",
+   "tags": [
+    "動畫",
+    "Timer"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "http://hint.fm/projects/wind/",
+   "summary": "讀取美國國家數位預報資料庫的風速風向，把全美的風畫成持續流動的細線。場不是公式而是實測資料，流線則以動畫粒子呈現。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-04",
+   "title": "Wind of Boston: Data Paintings",
+   "creator": "Refik Anadol Studio",
+   "year": "",
+   "category": "art-installation",
+   "scale": "",
+   "tags": [
+    "動畫",
+    "3D"
+   ],
+   "tools": [
+    "客製軟體"
+   ],
+   "url": "https://refikanadol.com/works/wind-of-boston-data-paintings/",
+   "summary": "以波士頓洛根機場一年、每 20 秒一筆的風速、風向、陣風資料，在 1.8 m × 4 m 的數位畫布上生成四個章節的動態「資料繪畫」，設於 Fan Pier 100 Northern Avenue 大廳。風場資料成為建築室內的公共藝術。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-05",
+   "title": "Butterfly：Grasshopper 中的 OpenFOAM 風場模擬",
+   "creator": "Ladybug Tools",
+   "year": "",
+   "category": "performance",
+   "scale": "",
+   "tags": [
+    "空間索引"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Butterfly",
+    "OpenFOAM"
+   ],
+   "url": "https://www.ladybug.tools/butterfly.html",
+   "summary": "Butterfly 把 Grasshopper 幾何匯出到 OpenFOAM 做 CFD，可模擬戶外都市風場與室內通風；結果常以速度向量與流線視覺化。本元件的公式場可以視為 CFD 速度場的簡化替身。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-06",
+   "title": "Rheotomic Surfaces 流線曲面",
+   "creator": "Daniel Piker",
+   "year": "",
+   "category": "modeling",
+   "scale": "",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.grasshopper3d.com/profiles/blogs/rheotomic-surfaces-and-flowline-generation-tool",
+   "summary": "以複數函數的虛部建立曲面，其等高線就是位勢流的流線，實部則是正交的等位線；Piker 把它包成 Grasshopper 工具，可由渦旋與源點配置產生可行走、互相連通的曲面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-07",
+   "title": "等間距流線演算法",
+   "creator": "Bruno Jobard, Wilfrid Lefer",
+   "year": "1997",
+   "category": "drawing",
+   "scale": "",
+   "tags": [
+    "空間索引",
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "C",
+    "MATLAB"
+   ],
+   "url": "https://link.springer.com/chapter/10.1007/978-3-7091-6876-9_5",
+   "summary": "科學視覺化的經典方法：只設定流線間距 dsep，就能產生從紋理到手繪風格的均勻流線圖，且比先前方法計算更便宜。是把本元件從「格子起點」升級成「漂亮構圖」的關鍵。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-08",
+   "title": "evenly_spaced_streamlines（MATLAB 實作）",
+   "creator": "keithfma",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "",
+   "tags": [
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "MATLAB"
+   ],
+   "url": "https://github.com/keithfma/evenly_spaced_streamlines",
+   "summary": "以 MATLAB 實作 Jobard & Lefer 1997 等間距流線，提供可直接閱讀的程式碼，適合學習者對照改寫成 C#。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-09",
+   "title": "Curl-Noise for Procedural Fluid Flow",
+   "creator": "Robert Bridson, Jim Hourihan, Marcus Nordenstam",
+   "year": "2007",
+   "category": "modeling",
+   "scale": "",
+   "tags": [
+    "物理模擬",
+    "隨機"
+   ],
+   "tools": [
+    "Houdini 等 VFX 軟體"
+   ],
+   "url": "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf",
+   "summary": "SIGGRAPH 2007 論文，以 Perlin noise 的旋度（curl）產生恰好不可壓縮、可尊重固體邊界的亂流速度場，廣泛用於煙、火等特效。它說明了如何從 noise 得到「不會聚成一點」的好流場。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-10",
+   "title": "Kartal-Pendik Masterplan（場域式都市設計）",
+   "creator": "Zaha Hadid Architects",
+   "year": "2006",
+   "category": "urban-landscape",
+   "scale": "",
+   "tags": [
+    "吸引子控制",
+    "多元件"
+   ],
+   "tools": [],
+   "url": "https://www.zaha-hadid.com/masterplans/kartal-pendik-masterplan",
+   "summary": "伊斯坦堡競圖首獎案，以既有東西向道路與主軸交織出「soft grid」，再以 urban script 依位置生成不同建築類型；Schumacher 以此為 Parametric Urbanism 的代表，強調「場的規律性差異化」。注意：此案是場的概念與網格變形，並非直接以本元件的流線追蹤產生。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-11",
+   "title": "StreamLines3D 元件（FlowLines 外掛）",
+   "creator": "FlowLines",
+   "year": "",
+   "category": "modeling",
+   "scale": "",
+   "tags": [
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "FlowLines"
+   ],
+   "url": "https://grasshopperdocs.com/components/flowlines/streamLines3D.html",
+   "summary": "Grasshopper 外掛元件，以 RK4 計算 3D 向量場的流線。可與本課程元件對照：本範例用最簡單的 Euler 法，外掛用 RK4 取得更準的路徑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-12",
+   "title": "Grasshopper 參數化鋪面教學",
+   "creator": "Landscape Architecture Store",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "",
+   "tags": [
+    "吸引子控制",
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://landscapearchitecture.store/blogs/news/how-to-design-a-parametric-paving-pattern-using-rhino-grasshopper",
+   "summary": "以 Grasshopper 設計動態鋪面圖樣的逐步教學。可把本元件的流線當分割線，將鋪面切成隨流向彎曲的條帶，是流線直接落地成施工圖的應用方向。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-13",
+   "title": "Grasshopper 論壇：用向量場畫流線",
+   "creator": "McNeel Forum 使用者",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "",
+   "tags": [],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://discourse.mcneel.com/t/draw-streamline-with-vector-field/104056",
+   "summary": "McNeel 論壇上關於在 Grasshopper 以向量場繪製流線的討論，展示原生元件與腳本兩種做法，常見困難是流線均勻分布。適合學習者遇到問題時查閱。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C03-51",
+   "title": "Coding Challenge #24：Perlin Noise Flow Field",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Perlin noise",
+    "粒子",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+   "summary": "用 p5.js 以 Perlin noise 產生隨時間變化的向量格，讓大量粒子依所在格的向量加速前進，並以半透明線條累積軌跡。與 Grasshopper 範例的逐條追蹤流線不同，這裡是很多粒子同時被場推動，畫面由累積的筆觸構成。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+    "note": "挑戰頁預覽圖：流場粒子累積的半透明線條"
+   }
+  },
+  {
+   "id": "C03-52",
+   "title": "The Nature of Code 第 5 章：Autonomous Agents（Flow Fields 小節）",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "自主代理人",
+    "線上教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "summary": "《The Nature of Code》2024 年版把流場放在「自主代理人」脈絡中：流場是一張向量格，每個 vehicle 查詢所在格的向量當作「期望速度」，再以轉向力（desired − velocity，限制最大力）逐步修正方向。和直接沿向量積分的流線相比，多了速度與轉向的慣性。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/autonomous-agents/",
+    "note": "書中 Figure 5.16：以 Perlin noise 計算的流場向量格"
+   }
+  },
+  {
+   "id": "C03-53",
+   "title": "Getting Creative with Perlin Noise Fields",
+   "creator": "Manohar Vanga（Sighack）",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "Perlin noise",
+    "生成藝術"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+   "summary": "作者用幾個 Processing 類別快速迭代 Perlin noise 力場中粒子的畫法：從白底低透明度黑色粒子開始，陸續嘗試黑白反轉、手選色盤分層、1% 透明度、方形筆觸端點、黃金比例配色、改畫弧線，以及依粒子壽命改變飽和度與線寬，逐步衍生出大量不同風格；程式與圖檔公開在 GitHub。重點在「同一演算法的設計變化」。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Sighack",
+    "page": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+    "note": "文章範例圖：彩色 Perlin noise 流場筆觸"
+   }
+  },
+  {
+   "id": "C03-54",
+   "title": "Particle system with 2D vector field in TouchDesigner",
+   "creator": "exsstas",
+   "year": "2020",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "粒子",
+    "即時影像",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+   "summary": "TouchDesigner 教學影片：把「建立向量場並用它驅動粒子」這個生成藝術常見手法搬進 TouchDesigner，主要工作由兩個 GLSL 節點完成，程式碼簡短並逐行講解，適合 GLSL 初學者。專案檔（2D vector fields - full.toe）公開在作者的 GitHub；2021 年另有進階續集。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=Dke6OCePR6E",
+    "note": "教學影片縮圖：TouchDesigner 2D 向量場粒子"
+   }
+  },
+  {
+   "id": "C03-55",
+   "title": "GLSL Particle Simulations in TouchDesigner Tutorial",
+   "creator": "Dean Cheesman",
+   "year": "2024",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "curl noise",
+    "粒子",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+   "summary": "TouchDesigner 教學影片：以 GLSL 搭配 Feedback 迴圈建立 GPU 粒子系統，章節包含 Flow Field 設定、Curl Noise、以速度控制深度、高度衰減、上色、打光、旋轉縮放與壽命重映射，最後以 Instancing 渲染成立體粒子。把平面流場延伸到三維、並加入渲染設計。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=Tc0BuhlrWbM",
+    "note": "教學影片縮圖：GLSL 粒子流場"
+   }
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+  "reviewer": "BALREV",
+  "algos": {
+    "F03": {
+      "reject_new": [
+        {"index": 1, "reason": "Yellow Moon Gyroid 與 index 3 Puzzle Cell Complex 是同一套作法（Gyroid＋Variational Surface Cutting 分片＋Voronoi 鏤空、薄木片拼裝、社群協力組裝），高度重複；且文字與原文不符：原文是 93 片雷射切割薄夾板、置於 SIU Morris Library，並無金屬、噴塗分色或調整 periods 的說明"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "notes": "保留 3 件：Corollaria（2023，已對照原文：121 片鋁板、1789 顆鉚釘）、Porifera（2018）與 Puzzle Cell Complex（2020），三張圖都是作品實拍。待修正的文字：Corollaria 第 3 條變形「依天窗採光調整孔隙」原文沒有；Puzzle Cell 的接合方式是塑膠推入式鉚釘，不是卡榫；分片用的是 Variational Surface Cutting，不是逐面攤平；Porifera 是把週期極小曲面推廣到不規則格點（CVT＋均曲率流），成品並非三週期。另外 4 件全是 Nervous System 的作品，沒有 p5.js／Processing 案例，多樣性不足"
+    },
+    "F04": {
+      "reject_new": [
+        {"index": 0, "reason": "EvoLisa 原文的做法是複製 DNA、突變後比原圖更像就取代，屬於族群只有 1 個、沒有交配的爬山法，摘要卻寫成「選擇、交配與突變」「族群＋適應度＋世代」，把演算法講錯了；圖片也是 157×900 帶檔名的細長縮圖條"},
+        {"index": 3, "reason": "網址 thecodingtrain.com/noc/… 會 404（實際頁面在 /tracks/the-nature-of-code-2/noc/…）；頁面寫明是單一物種 Bloops，畫面裡的方形是食物，摘要、變形、checked 卻寫成「圓形與方形兩個物種各自演化」，內容錯誤"},
+        {"index": 4, "reason": "頁面寫的是個體靠吃食物、避開毒物來演化（food／poison），摘要、變形與圖說卻寫成「獵物與掠食者」「被掠食者吃掉」，屬於捏造的內容"},
+        {"index": 5, "reason": "網址 /noc/… 會 404（實際頁面在 /tracks/the-nature-of-code-2/noc/…）；摘要含禁用字「課堂」；原作是滑鼠移過去就累加適應度（rollover），不是點選父母"},
+        {"index": 6, "reason": "畫面只有文字與統計數字，不是視覺作品，不符合藝術設計；網址 /noc/… 同樣會 404"}
+      ],
+      "image_fix": [
+        {"index": 2, "image": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Electricsheep-3404_Large.jpg",
+          "page": "https://commons.wikimedia.org/wiki/File:Electricsheep-3404_Large.jpg",
+          "verified": true,
+          "checked": "深藍底的分形火焰，發光的黃綠色與青色曲線捲成漩渦與小圓圈，向四周流動",
+          "source": "Wikimedia Commons",
+          "author": "Inductiveload（以 Electric Sheep 第 3404 號羊的參數算繪）",
+          "license": "CC BY-SA 2.5",
+          "license_url": "https://creativecommons.org/licenses/by-sa/2.5/",
+          "note": "Electric Sheep 第 198 代第 3404 號「羊」算繪出的分形火焰畫面"
+        }}
+      ],
+      "fix_class": [],
+      "protect": [],
+      "notes": "只保留 Smart Rockets（2016，頁面註明源自 Jer Thorp）與 Electric Sheep（官網寫明 genetic algorithm with mutation and cross-over）。Electric Sheep 原本把圖片作者寫成 Scott Draves、授權寫得含糊，已用 image_fix 改成實際的 Inductiveload 與 CC BY-SA 2.5。其餘 5 件，被退的原因有：演算法講錯、內容捏造、網址失效、禁用字、不是視覺作品。ct_index.py 給的 NOC 頁面網址少了 /tracks/the-nature-of-code-2/ 前綴，會 404，其他演算法用到 NOC 網址的案例也要一併檢查；Bloops、Interactive Selection 本身是好案例，修正網址與文字後可以重提"
+    },
+    "F05": {
+      "reject_new": [],
+      "image_fix": [
+        {"index": 0, "image": {
+          "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/51-a-pathfinding-algorithm/images/a-pathfinding-algorithm.png",
+          "page": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm",
+          "verified": true,
+          "checked": "白底格點上散佈黑色圓點（障礙物），粉紅色是已確定的格子、淺綠色是待評估的邊界，一條洋紅色折線從左上角繞過障礙斜向右下角",
+          "source": "GitHub CodingTrain/thecodingtrain.com",
+          "author": "Daniel Shiffman／The Coding Train",
+          "license": "網頁預覽圖，教學引用",
+          "license_url": "",
+          "note": "p5.js 格點上 A* 搜尋完成後的畫面：黑點是障礙物，粉紅色與淺綠色是已展開與待評估的格子，洋紅色折線是回溯得到的最短路徑"
+        }}
+      ],
+      "fix_class": [],
+      "protect": [],
+      "notes": "A* Pathfinding（Coding Challenge #51）已查證：分三部分、使用 p5.js，圖是真的執行畫面，保留。image_fix 修正授權錯字（「網頁預設圖」改為「網頁預覽圖」），並把圖說改成「黑點是障礙物」（原本寫成格點）。只有 1 件，離 need=5 還差很多"
+    },
+    "F06": {
+      "reject_new": [
+        {"index": 0, "reason": "出處薄弱：匿名帳號，2026 年 5 月建立，只有 4 次 commit、1 顆星，年份空白；公式（de Jong）與密度累加渲染都和既有 F06-02（Bourke de Jong 圖像）相同，保留後會和既有案例重複"}
+      ],
+      "image_fix": [
+        {"index": 1, "image": {
+          "url": "https://raw.githubusercontent.com/QC20/fractured-entropy/main/src/assets/img/clifford-attractor.png",
+          "page": "https://github.com/QC20/fractured-entropy",
+          "verified": true,
+          "checked": "白底、圓形構圖的灰階 Clifford 吸子密度圖，多層半透明曲面帶交疊出深淺漸層",
+          "source": "GitHub repo src/assets/img/clifford-attractor.png",
+          "author": "QC20",
+          "license": "MIT License（README 聲明）",
+          "license_url": "https://github.com/QC20/fractured-entropy",
+          "note": "Clifford 吸子灰階密度圖，圓形構圖"
+        }},
+        {"index": 3, "image": {
+          "url": "https://github.com/breadloafsky/phase-space/raw/master/res/1.PNG?raw=true",
+          "page": "https://github.com/breadloafsky/phase-space",
+          "verified": true,
+          "checked": "黑底上並排五組不同吸子的霓虹漸層軌跡，有環面、雙螺旋、點雲與錐形等形態",
+          "source": "GitHub repo res/1.PNG",
+          "author": "breadloafsky",
+          "license": "MIT License",
+          "license_url": "https://github.com/breadloafsky/phase-space/blob/master/LICENSE",
+          "note": "多組吸子並排的霓虹色相空間軌跡展示圖"
+        }}
+      ],
+      "fix_class": [],
+      "protect": [
+        {"id": "F06-06", "why": "Chimpanzee 是本演算法唯一的 Grasshopper 實作，直接提供 Lorenz、Rössler 等吸子元件，和本站的學習者最相關；排在它後面的 F06-03 水車並沒有畫出吸子，比較適合移除"}
+      ],
+      "notes": "保留 Fractured Entropy（p5.js，2025）、Lorenz Sonified（Processing）與 Phase Space（備援遞補，2023，屬互動相空間繪圖器，介於工具和作品之間，但與既有 F06-10 同類）。四張圖都親眼確認是生成畫面。image_fix 把兩個 repo 的授權改成 MIT（原本寫「未標示授權」）。index 1 與 3 的年份空白，依 commit 與授權檔推得分別是 2025 與 2023"
+    }
+  }
+}

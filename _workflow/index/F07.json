@@ -159,20 +159,6 @@
    "has_image": false
   },
   {
-   "id": "F07-03",
-   "cc": false,
-   "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
-   "creator": "Kristina Shea、Jonathan Cagan",
-   "year": "1997",
-   "url": "https://www.cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32D86929FF89B256F5483E354CDA0156",
-   "category": "3d-architecture",
-   "scale": "建築",
-   "tools": [
-    "自寫程式"
-   ],
-   "has_image": false
-  },
-  {
    "id": "F07-04",
    "cc": false,
    "title": "eifForm：以形狀退火生成結構的設計系統",
@@ -198,36 +184,7 @@
    "tools": [
     "自寫程式"
    ],
-   "has_image": false
-  },
-  {
-   "id": "F07-06",
-   "cc": false,
-   "title": "Galapagos 的模擬退火求解器（論壇說明）",
-   "creator": "David Rutten（McNeel）",
-   "year": "2016",
-   "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
-   "category": "modeling",
-   "scale": "建築",
-   "tools": [
-    "Grasshopper",
-    "Galapagos"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "F07-07",
-   "cc": false,
-   "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
-   "creator": "Jonathan Cagan",
-   "year": "1994",
-   "url": "https://doi.org/10.1016/0010-4485(94)90014-0",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [
-    "自寫程式"
-   ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F07-51",
@@ -242,7 +199,7 @@
     "R",
     "Shiny"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F07-52",
@@ -256,7 +213,7 @@
    "tools": [
     "Go"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F07-53",
@@ -271,7 +228,7 @@
     "Python",
     "C"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F07-54",
@@ -287,7 +244,7 @@
     "NumPy",
     "Matplotlib"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F07-55",
@@ -301,37 +258,109 @@
    "tools": [
     "Go"
    ],
-   "has_image": false
+   "has_image": true
+  },
+  {
+   "id": "F07-56",
+   "cc": true,
+   "title": "Data Morph：用模擬退火把資料點變形成目標圖案",
+   "creator": "Stefanie Molin",
+   "year": "2023",
+   "url": "https://github.com/stefmolin/data-morph",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Python",
+    "matplotlib"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F07-57",
+   "cc": true,
+   "title": "Simulated Annealing：以退火求解法國城市 TSP 路徑（Processing）",
+   "creator": "Nikolai Janakiev",
+   "year": "2017",
+   "url": "https://github.com/njanakiev/simulated-annealing",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F07-58",
+   "cc": true,
+   "title": "Shapeme：以模擬退火演化三角形重建圖片（蒙娜麗莎）",
+   "creator": "Salvatore Sanfilippo（antirez）",
+   "year": "2014",
+   "url": "https://github.com/antirez/shapeme",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "C",
+    "SDL"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "drawing": 4,
-   "modeling": 2,
-   "3d-architecture": 2,
+   "drawing": 5,
+   "2d-pattern": 3,
    "urban-landscape": 1,
+   "modeling": 1,
    "performance": 1,
-   "fabrication": 1,
-   "2d-pattern": 1
+   "3d-architecture": 1
   },
   "scale": {
-   "物件": 5,
-   "建築": 3,
-   "群體／都市": 2,
-   "構件": 2
+   "物件": 7,
+   "群體／都市": 3,
+   "構件": 1,
+   "建築": 1
   },
   "tools": {
-   "自寫程式": 5,
-   "Python": 3,
+   "Python": 4,
+   "自寫程式": 3,
    "Go": 2,
-   "Grasshopper": 1,
-   "Galapagos": 1,
+   "C": 2,
    "R": 1,
    "Shiny": 1,
-   "C": 1,
    "NumPy": 1,
-   "Matplotlib": 1
+   "Matplotlib": 1,
+   "matplotlib": 1,
+   "Processing": 1,
+   "SDL": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:F07-06",
+   "algo": "F07",
+   "kind": "RES",
+   "title": "Galapagos 的模擬退火求解器（論壇說明）",
+   "url_norm": "grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F07-07",
+   "algo": "F07",
+   "kind": "RES",
+   "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
+   "url_norm": "doi:10.1016/0010-4485(94)90014-0",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F07-03",
+   "algo": "F07",
+   "kind": "RES",
+   "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
+   "url_norm": "cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32d86929ff89b256f5483e354cda0156",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

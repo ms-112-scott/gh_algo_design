@@ -1,0 +1,151 @@
+{
+ "algo": "F06",
+ "classification": [
+  {"id": "F06-01", "source": "research", "why": "Paul Bourke 的數學視覺化網站，密度直方圖上色屬技術性圖庫說明"},
+  {"id": "F06-02", "source": "research", "why": "同一作者的公式與程式碼說明頁面，屬科學視覺化參考而非藝術創作"},
+  {"id": "F06-03", "source": "research", "why": "水車物理教具示範混沌原理，重點在物理教學而非視覺表現"},
+  {"id": "F06-04", "source": "research", "why": "兩位數學家為呈現研究結果所做的科學外展模型，目的是說明流形而非藝術創作"},
+  {"id": "F06-05", "source": "research", "why": "Sprott 的混沌數學專書與自製程式，屬學術研究文獻"},
+  {"id": "F06-06", "source": "research", "why": "Grasshopper 吸子與碎形外掛，屬工具／元件說明"},
+  {"id": "F06-07", "source": "art", "why": "The Coding Train 教學成果是一張即時生成的吸子軌跡畫面，依規則歸為 art"},
+  {"id": "F06-08", "source": "art", "why": "機場公共藝術委託的大型雕塑裝置，屬藝術設計作品"},
+  {"id": "F06-09", "source": "research", "why": "vpype 的碎形／吸子繪圖外掛，屬泛用工具而非特定作品"},
+  {"id": "F06-10", "source": "art", "why": "個人開發的 WebGL 互動吸子視覺作品，以視覺表現為目的"},
+  {"id": "F06-11", "source": "research", "why": "泛用混沌探索軟體，屬工具型資源庫而非特定作品"}
+ ],
+ "art_count": 3,
+ "need": 3,
+ "removal_order": ["F06-11", "F06-09", "F06-06", "F06-03", "F06-05", "F06-04"],
+ "removal_reasons": {
+  "F06-11": "泛用商業混沌探索軟體，涵蓋範圍太廣、與奇異吸子本身的關係最薄弱，也沒有可查證的真實畫面",
+  "F06-09": "小眾個人 GitHub 外掛，吸子只是其眾多碎形功能之一，作者僅有帳號難以查證來歷",
+  "F06-06": "Grasshopper 元件列表頁面，與本演算法所在平台重複、缺乏具體案例敘事",
+  "F06-03": "水車只是類比示範混沌行為，並非真的畫出吸子曲線，也沒有可查證的實際照片",
+  "F06-05": "1993 年的舊書與 BASIC 程式，是重要文獻但難找到可用的現代代表圖版",
+  "F06-04": "鉤織模型雖獨特，但屬單一物件的科學外展案例，重要性略低於前兩者的公式範例"
+ },
+ "new_art": [
+  {
+   "title": "Strange Equilibria（奇異均衡）",
+   "creator": "DENGYUFAN0",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "p5.js 網頁互動生成藝術，反覆迭代 de Jong 型的點對應公式上百萬次，並用 Lyapunov 指數先行測試篩掉發散或塌縮的係數組合，才把落點累積成密度圖像。和 Grasshopper 基礎範例固定係數、只輸出點清單不同，這裡使用者可重複產生新的隨機係數並得到可重現的種子，畫面本身就是累加明暗的「畫作」而不是原始幾何。",
+   "variations": [
+    {"name": "Lyapunov 篩選係數", "how": "正式繪製前先短跑測試 Lyapunov 指數，排除發散或收斂成單點的係數組合", "effect": "每次隨機產生的係數都能得到看起來『成形』的吸子圖樣，不必手動試係數"},
+    {"name": "密度堆疊上色", "how": "用累加格子紀錄同一格被經過的次數，再做漸層映射", "effect": "從稀疏點雲變成有層次明暗的類水墨畫面"},
+    {"name": "可重現種子", "how": "亂數種子可記錄與分享，輸入同一組種子會重建同一張圖", "effect": "生成結果能像作品編號一樣被收藏與重現"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "de Jong", "混沌", "密度渲染"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/DENGYUFAN0/strange-equilibria",
+   "evidence": "GitHub README 標題與展示圖 docs/preview.png 顯示 de Jong 吸子密度渲染畫面，並說明用 Lyapunov 指數把關的可重現係數與純 p5.js CDN 架構",
+   "nearest_existing": "F06-01 Clifford Attractors 圖像（同屬密度直方圖吸子圖像，但這件是互動生成藝術網頁而非科學圖庫頁面）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/DENGYUFAN0/strange-equilibria/main/docs/preview.png",
+    "page": "https://github.com/DENGYUFAN0/strange-equilibria",
+    "verified": true,
+    "checked": "米白色背景上，深藍灰與少量暗紅色的細線層層纏繞出流線形的 de Jong 吸子密度畫面",
+    "source": "GitHub repo docs/preview.png",
+    "author": "DENGYUFAN0",
+    "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+    "license_url": "",
+    "note": "de Jong 吸子密度渲染畫面，米白底、深色曲線束"
+   }
+  },
+  {
+   "title": "Fractured Entropy — Clifford Attractor",
+   "creator": "QC20",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "p5.js 即時互動數學藝術作品，內建 Lorenz、Rössler、Chua、Chen、Aizawa、Clifford、de Jong 七組經典吸子公式，可切換觀看並看著畫面即時堆疊生成。這裡選用的 Clifford 範例把上百萬次迭代累積成圓形裁切的灰階密度圖，和 Grasshopper 基礎範例只輸出單一係數、單一公式的點清單不同，是把吸子圖鑑做成一支可互動切換的作品。",
+   "variations": [
+    {"name": "七種吸子公式切換", "how": "內建多組吸子的下一步公式與係數，介面可即時切換", "effect": "一支作品就是吸子圖鑑，方便比較不同混沌系統的畫面差異"},
+    {"name": "圓形遮罩構圖", "how": "畫布用圓形遮罩裁切、疊加半透明筆觸", "effect": "畫面從單純演算輸出變成有構圖感的平面設計"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Clifford", "混沌", "即時渲染"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/QC20/fractured-entropy",
+   "evidence": "GitHub README 說明這是用 p5.js 即時視覺化的混沌吸子互動數學藝術，列出 Lorenz、Rössler、Chua、Chen、Aizawa、Clifford、de Jong 等公式並各附展示圖",
+   "nearest_existing": "F06-01 Clifford Attractors 圖像（同一公式，但這裡是圓形構圖的互動 p5.js 作品而非科學圖庫頁面）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/QC20/fractured-entropy/main/src/assets/img/clifford-attractor.png",
+    "page": "https://github.com/QC20/fractured-entropy",
+    "verified": true,
+    "checked": "灰階、圓形裁切構圖的 Clifford 吸子密度圖，多層螺旋曲面交疊出柔和明暗漸層",
+    "source": "GitHub repo src/assets/img/clifford-attractor.png",
+    "author": "QC20",
+    "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+    "license_url": "",
+    "note": "Clifford 吸子灰階密度圖，圓形構圖"
+   }
+  },
+  {
+   "title": "Lorenz Sonified",
+   "creator": "cvarier",
+   "year": "2017",
+   "category": "2d-pattern",
+   "categories_extra": ["performance"],
+   "scale": "物件",
+   "summary": "Processing 程式，即時畫出 Lorenz 系統的軌跡動畫，並把相鄰節點間的距離、與吸子中點的距離，映射成音高與速度輸出聲音，讓混沌軌跡「被聽見」。相對於 Grasshopper 基礎範例只輸出靜態 Polyline，這裡把同一條演算法算出的軌跡同時變成即時動畫與聲音演出的雙重媒介。",
+   "variations": [
+    {"name": "軌跡轉聲音", "how": "把相鄰節點距離與到吸子中心的距離，映射成音高與音序器速度", "effect": "同一條混沌軌跡同時是視覺動畫與一段會隨參數改變的聲音演出"},
+    {"name": "互動係數（sigma／beta／rho）", "how": "使用者可即時調整三個 Lorenz 係數觀察軌跡改變", "effect": "能直接聽/看出係數變動如何讓蝴蝶形狀與聲音跟著改變"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "Lorenz", "混沌", "聲音化"],
+   "tools": ["Processing"],
+   "url": "https://github.com/cvarier/Lorenz-Sonified",
+   "evidence": "GitHub README 說明這是用 Processing 寫成、根據 Lorenz 吸子位置產生聲音化的程式，包含 Lorenz.pde 視覺化與 CreatePiece.pde 聲音化兩部分，並附展示截圖（檔名內嵌 2017 年時間戳記）",
+   "nearest_existing": "F06-07 Coding Train Lorenz Attractor 教學（同樣即時畫 Lorenz 軌跡，但這件多了把軌跡轉成聲音演出的層次）",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/16710726/30725059-f872e918-9f0f-11e7-9921-07bca5fcd5a8.png",
+    "page": "https://github.com/cvarier/Lorenz-Sonified",
+    "verified": true,
+    "checked": "Processing 視窗即時畫出的彩色 Lorenz 蝴蝶形軌跡，線條由節點間漸層著色",
+    "source": "GitHub repo README 展示截圖",
+    "author": "cvarier",
+    "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+    "license_url": "",
+    "note": "Processing 即時繪製的彩色 Lorenz 吸子軌跡"
+   }
+  },
+  {
+   "title": "Phase Space",
+   "creator": "breadloafsky",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "用 Svelte 與 WebGL 寫成的即時三維相空間繪圖器，使用者可在側欄用類似 JavaScript 的語法自訂微分方程並即時看到軌跡展開，內部以四階 Runge–Kutta 積分。展示頁把多組吸子並排成一列霓虹色軌跡，和 Grasshopper 基礎範例固定兩種公式、用歐拉法積分不同，這裡把積分方法與公式都開放給使用者自訂。",
+   "variations": [
+    {"name": "自訂方程式介面", "how": "側欄用類似程式碼的語法輸入任意 ODE，取代寫死的 Lorenz／Clifford 公式", "effect": "同一支工具可以探索任何相空間系統，不限於奇異吸子"},
+    {"name": "RK4 積分", "how": "內部用四階 Runge–Kutta 取代簡單歐拉法推進", "effect": "軌跡在大步長下依然平滑準確，呼應把歐拉法換成 RK4 的變形方向"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "WebGL", "Svelte", "混沌", "RK4"],
+   "tools": ["WebGL", "Svelte"],
+   "url": "https://github.com/breadloafsky/phase-space",
+   "evidence": "GitHub README 說明這是用 RK4 數值積分即時繪製三維相空間軌跡的互動應用，並附展示圖 res/1.PNG 顯示多組彩色吸子軌跡並排",
+   "nearest_existing": "F06-10 Strange Attractors WebGL 互動繪圖（同樣是 WebGL 即時吸子繪圖，但這件開放使用者自訂方程式並用 RK4 積分）",
+   "image": {
+    "url": "https://github.com/breadloafsky/phase-space/raw/master/res/1.PNG?raw=true",
+    "page": "https://github.com/breadloafsky/phase-space",
+    "verified": true,
+    "checked": "黑色背景上並排五組不同吸子的霓虹漸層彩色軌跡，包含螺旋、環狀與破碎點雲等不同形態",
+    "source": "GitHub repo res/1.PNG",
+    "author": "breadloafsky",
+    "license": "網頁預覽圖，教學引用（repo 未標示明確授權）",
+    "license_url": "",
+    "note": "多組吸子並排的霓虹色相空間軌跡展示圖"
+   }
+  }
+ ],
+ "notes": "分類後 art=3、research=8，need=3；removal_order 已列 6 個研究案例供協調者選用。新增 4 個藝術設計案例（3 個為 need、1 個備援），全部已下載預覽並親眼確認畫面；因 WebSearch 與 Parallel Search 額度已用盡、且 OpenProcessing／Shadertoy／CodePen 等站對 WebFetch 回傳 403 或頁面無可驗證截圖，未能湊滿建議的 3 個備援，只找到 1 個（Phase Space），其餘嘗試的候選（gnss-creative-lab、QC20/Colourful-Attraction、keuhdall/Rossler、johnnyawesome/HalvorsenAttractor 等）因找不到真正的作品畫面或畫面帶有文字標題卡而放棄。"
+}

@@ -1,0 +1,249 @@
+{
+ "algo": "D01",
+ "classification": [
+  {"id": "D01-01", "source": "research", "why": "Boids 起源的研究級動畫示範"},
+  {"id": "D01-02", "source": "research", "why": "商業電影特效應用範例"},
+  {"id": "D01-03", "source": "research", "why": "都市尺度群體智能設計研究"},
+  {"id": "D01-04", "source": "research", "why": "複合材料構件製造研究原型"},
+  {"id": "D01-05", "source": "research", "why": "空中機器人編織構造研究"},
+  {"id": "D01-06", "source": "research", "why": "Nature 發表的無人機營造研究"},
+  {"id": "D01-07", "source": "research", "why": "AD 期刊行為式生產學術論文"},
+  {"id": "D01-08", "source": "research", "why": "實驗展亭與機器人製造研究"},
+  {"id": "D01-09", "source": "art", "why": "藝術節與公共空間展演的無人機裝置"},
+  {"id": "D01-10", "source": "research", "why": "高層立面性能化系統研究"},
+  {"id": "D01-11", "source": "research", "why": "Grasshopper 代理人模擬外掛工具"},
+  {"id": "D01-12", "source": "research", "why": "Grasshopper 代理人設計外掛工具"},
+  {"id": "D01-13", "source": "research", "why": "代理人形態研究系列物件"},
+  {"id": "D01-14", "source": "research", "why": "代理人形態研究系列物件"},
+  {"id": "D01-51", "source": "art", "why": "p5.js 教學實作，成果是一張生成畫面"},
+  {"id": "D01-52", "source": "art", "why": "Processing 官方範例生成畫面"},
+  {"id": "D01-53", "source": "art", "why": "GPU 即時運算的視覺展示範例"},
+  {"id": "D01-54", "source": "art", "why": "即時視覺演出用途的節點式作品"},
+  {"id": "D01-55", "source": "art", "why": "節點式程式的即時視覺展示"}
+ ],
+ "art_count": 6,
+ "need": 4,
+ "removal_order": ["D01-14", "D01-13", "D01-05", "D01-07", "D01-04", "D01-02", "D01-12"],
+ "removal_reasons": {
+  "D01-14": "與 D01-13 同屬 Kokkugia 代理人物件研究系列，內容高度重複，且黃銅／金屬小物件難找到可查證的清楚實體照片",
+  "D01-13": "與 D01-04、D01-14 同系列重複，出處頁面幾乎沒有製作脈絡與清楚照片可查證",
+  "D01-05": "沒有年份，AA DRL 內部研究出處薄弱，找不到可查證的清楚實作畫面",
+  "D01-07": "AD 期刊論文需付費閱覽，只有摘要頁，找不到可公開查證的展示圖片",
+  "D01-04": "與其他 Kokkugia／Snooks 案例（D01-03、08、13、14）題材高度重複，本演算法的核心角色相對稀薄",
+  "D01-02": "與 D01-01 同樣是好萊塢電影應用 Boids 的案例，兩者重複，且找不到非宣傳劇照、能看出演算法的畫面",
+  "D01-12": "與 D01-11 同為 Grasshopper 代理人外掛，功能高度重疊，保留其一即可"
+ },
+ "new_art": [
+  {
+   "title": "Flocks, Herds and Schools",
+   "creator": "Brendan Dawes",
+   "year": "2025",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "英國藝術家 Brendan Dawes 向 Craig Reynolds 1987 年 boids 演算法致敬的限量筆繪作品，用 Processing 模擬鳥群行為、再以 AxiDraw 繪圖機把軌跡畫在手工棉紙上，鳥群飛行時會避開標題文字的幾何外框。與 Grasshopper C# 範例即時算繪 3D 軌跡不同，這裡的模擬結果最終變成一張獨一無二的實體版畫。",
+   "variations": [
+    {"name": "避字軌跡", "how": "把標題文字外框當成排斥物件，boids 的分離規則同時要避開文字幾何", "effect": "鳥群繞過字母留白，畫面與文字共構出構圖"},
+    {"name": "筆繪輸出", "how": "把模擬出的路徑用 AxiDraw 直接畫在 230gsm 手工棉紙上，而非螢幕即時算繪", "effect": "線條帶有實體筆觸的粗細與壓力變化，每張都是獨一無二的實體版畫"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "pen plotter", "AxiDraw", "boids"],
+   "tools": ["Processing", "AxiDraw"],
+   "url": "https://brendandawes.com/projects/flocksherdsschools",
+   "evidence": "作品頁標題為「Flocks, Herds and Schools」，作者 Brendan Dawes，內文標示 2025 年、Processing 模擬、以 AxiDraw 繪圖機於 230gsm 手工棉紙上繪製，148×210mm",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://brendandawes.com/media/pages/projects/flocksherdsschools/6cdfcd5d57-1742223950/pfu-016_main_alt_b-1600x-q80.jpg",
+    "page": "https://brendandawes.com/projects/flocksherdsschools",
+    "verified": true,
+    "checked": "灰色背景上一張米白手工紙，紙上是筆繪的黑色曲線群交織成鳥群飛行軌跡，並印有 FLOCKS、HERDS、and、SCHOOLS 字樣",
+    "source": "Brendan Dawes 官網",
+    "author": "Brendan Dawes",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "限量筆繪作品照片，黑色曲線在米白手工紙上交織出鳥群軌跡，穿插 FLOCKS/HERDS/SCHOOLS 字樣"
+   }
+  },
+  {
+   "title": "Spatial Partitioned Boids",
+   "creator": "Olaf Visker",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以 JavaScript 搭配空間分割（spatial partitioning）加速鄰居搜尋的 boids 實作，每個 boid 依速度上色並保留殘影、不清除畫布，數百條軌跡疊加成一叢發光的抽象紋理。與 Grasshopper C# 範例逐格清空重畫不同，這裡刻意保留過程本身，讓軌跡疊加就是最終畫面。",
+   "variations": [
+    {"name": "速度上色", "how": "boid 顏色隨速度大小或方向變化", "effect": "畫面出現冷暖漸層，一眼就能看出群體裡哪裡流動快、哪裡聚集慢"},
+    {"name": "軌跡殘影", "how": "畫布不清除，每一步只疊加半透明短線段", "effect": "個體路徑疊成叢狀的發光紋理，而不是乾淨的即時動畫"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "JavaScript", "boids", "空間分割", "殘影"],
+   "tools": ["JavaScript", "HTML5 Canvas"],
+   "url": "https://github.com/olafvisker/boids",
+   "evidence": "GitHub 頁面 olafvisker/boids，說明為「A JavaScript implementation of Craig Reynolds BOIDS algorithm using spatial partitioning. It generates mesmerizing patterns (colour is dependent on velocity)」，repo 建立於 2019 年",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/olafvisker/boids/master/img/boids.png",
+    "page": "https://github.com/olafvisker/boids",
+    "verified": true,
+    "checked": "黑色背景上大量綠、黃、紅、藍相間的發光短線交織成一叢毛絨狀的紋理，是數百個 boid 軌跡疊加的殘影",
+    "source": "GitHub（olafvisker/boids）",
+    "author": "Olaf Visker",
+    "license": "MIT（程式碼）；圖片為專案展示圖，教學引用",
+    "license_url": "https://github.com/olafvisker/boids/blob/master/LICENSE",
+    "note": "boid 依速度上色並保留殘影，疊加成一叢發光紋理"
+   }
+  },
+  {
+   "title": "Swarm",
+   "creator": "Daniel Shiffman",
+   "year": "2004",
+   "category": "art-installation",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Daniel Shiffman（後來的 The Coding Train 創辦人）在 SIGGRAPH 2004 Emerging Technologies 展出的互動影像裝置：觀眾站在攝影機前，畫面即時擷取的顏色被大量依 boids 規則移動的虛擬筆刷塗抹成一幅不斷變化的肖像，靈感取自 Jackson Pollock 的潑灑技法。與 Grasshopper C# 範例輸出乾淨的軌跡線不同，這裡群聚規則被當成即時繪畫的筆刷分佈邏輯。",
+   "variations": [
+    {"name": "即時影像取色", "how": "boid 移動時從攝影機畫面對應位置取樣顏色，畫在自己的筆刷路徑上", "effect": "畫面顏色來自站在裝置前的觀眾即時影像，而非固定色票"},
+    {"name": "群體筆刷", "how": "每個 boid 本身是一小段筆刷、依分離／對齊／聚集規則移動並持續作畫、不清除畫布", "effect": "顏色隨群體流動暈染，產生像油畫潑濺又像雲霧的有機肌理"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "互動裝置", "即時影像", "boids", "SIGGRAPH"],
+   "tools": ["自訂軟體", "即時影像"],
+   "url": "https://history.siggraph.org/experience/swarm-by-shiffman/",
+   "evidence": "ACM SIGGRAPH History Archives 頁面標題「Swarm by Shiffman」，作者 Daniel Shiffman，2004 年於 SIGGRAPH Emerging Technologies 展出，內文說明以 Reynolds 的 boids 模型驅動不斷移動的筆觸，靈感來自 Jackson Pollock",
+   "nearest_existing": "D01-51（Daniel Shiffman 在 The Coding Train 的教學範例）——同一人，但這是他 2004 年的互動裝置藝術作品，並非教學程式",
+   "image": {
+    "url": "https://history.siggraph.org/wp-content/uploads/2021/12/2004-ETech-25-Shiffman_Swarm-01.jpg",
+    "page": "https://history.siggraph.org/experience/swarm-by-shiffman/",
+    "verified": true,
+    "checked": "畫面呈現綠、橘、棕色調交織的暈染筆觸肌理，右下角小圖是站在裝置前擺出動作的表演者",
+    "source": "ACM SIGGRAPH History Archives",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Swarm 裝置畫面：攝影機影像顏色被 boids 群體筆刷即時暈染成有機肌理"
+   }
+  },
+  {
+   "title": "Boids",
+   "creator": "tumati",
+   "year": "",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "itch.io 上以 p5.js 製作的瀏覽器 boids 模擬，鳥群以三角形圖示表示、依分離、對齊、聚集規則飛行，背景維持單一淺藍色，讓群體聚散的路徑本身成為畫面主角。與 Grasshopper C# 範例輸出 3D 軌跡線不同，這裡強調 2D 鳥群圖形化造型與群聚後的負空間構圖。",
+   "variations": [
+    {"name": "鳥形圖示", "how": "每個 boid 畫成三角形／鳥形圖案並依速度方向旋轉，而非單純的點或箭頭", "effect": "畫面更像真實的鳥群空拍照，而不是抽象粒子圖"},
+    {"name": "單色背景", "how": "背景固定為淺藍色，只用深淺藍區分個體", "effect": "觀者的注意力集中在群體聚散形成的形狀，而非顏色變化"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "boids", "itch.io"],
+   "tools": ["p5.js"],
+   "url": "https://tumati.itch.io/boids",
+   "evidence": "itch.io 頁面標題「Boids by tumati」，說明為「Implementation of a flocking behavior using p5.js.」",
+   "nearest_existing": "D01-51（The Coding Train 的 Flocking Simulation）——同樣用 p5.js，但這是獨立作者的作品，鳥形圖示與單色構圖不同",
+   "image": {
+    "url": "https://img.itch.zone/aW1nLzIxODA4MzI1LnBuZw==/original/G7fuhB.png",
+    "page": "https://tumati.itch.io/boids",
+    "verified": true,
+    "checked": "淺藍色背景上大量深藍與青色三角形鳥群圖示，聚散成數股流動的群聚路徑",
+    "source": "itch.io",
+    "author": "tumati",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 瀏覽器版 boids，鳥形圖示在淺藍背景上聚散成群"
+   }
+  },
+  {
+   "title": "Boids",
+   "creator": "Juan Uys",
+   "year": "2019",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "以 three.js 寫成的瀏覽器 3D boids 展示，箭頭狀個體在黑色場景裡繞著數個灰色方塊障礙物飛行，加入了 Reynolds 的避障轉向。與 Grasshopper C# 範例把障礙物當成場景元素不同，這裡刻意用低彩度的幾何方塊當背景，讓觀者專注在群體繞障的路徑本身。",
+   "variations": [
+    {"name": "方塊障礙物", "how": "場景中散置數個灰階立方體，boid 的 Steer 函式加入避障力", "effect": "群體軌跡會像水流一樣繞過方塊，形成分流與重新匯合的畫面"},
+    {"name": "可互動視角", "how": "用滑鼠滾輪縮放、拖曳旋轉、雙擊平移攝影機", "effect": "觀者可以自由選角度觀察群體繞過障礙物的立體路徑"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "three.js", "boids", "避障"],
+   "tools": ["three.js"],
+   "url": "https://github.com/juanuys/boids",
+   "evidence": "GitHub 頁面 juanuys/boids，說明為「Boids with THREE.js」，作者 Juan Uys，repo 建立於 2019 年，README 附上 Reynolds 原始論文與避障、追蹤等特性說明",
+   "nearest_existing": "D01-53（three.js GPU boids 官方範例）——同樣用 three.js，但那是 GPGPU 平行運算範例，這個是加入方塊避障的獨立作品",
+   "image": {
+    "url": "https://repository-images.githubusercontent.com/210620137/86145c80-dee1-11e9-8f21-289b8f145371",
+    "page": "https://github.com/juanuys/boids",
+    "verified": true,
+    "checked": "黑色背景中藍色箭頭狀 boid 群聚集、繞著數個灰色立方體飛行",
+    "source": "GitHub repository 展示圖",
+    "author": "Juan Uys",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "three.js boids 展示畫面，箭頭狀個體繞著方塊障礙物群聚飛行"
+   }
+  },
+  {
+   "title": "Boids Flocking Simulation",
+   "creator": "gstarch",
+   "year": "2023",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "p5.js 寫成的精簡 boids 練習作品，個體畫成彩色半透明三角形、依隨機色相分群，黑色背景上呈現數股分散的彩色群聚。原作者說明這是從一個更大的資料視覺化作業裡抽出的簡化版，拿掉了 Perlin noise 與掠食者等進階功能，只留下分離、對齊、聚集三條核心規則。",
+   "variations": [
+    {"name": "彩色分群", "how": "每個 boid 初始化時隨機給一個色相，畫成半透明三角形", "effect": "即使群體混在一起也能從顏色分辨大致的子群來源"},
+    {"name": "邊界置中力", "how": "boid 接近畫布邊界時額外加一個朝中心的力，而不是直接反彈或穿越", "effect": "群體會平滑地被推回可視範圍，不會有生硬的反彈動作"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "boids", "入門"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/gstarch/boids",
+   "evidence": "GitHub 頁面 gstarch/boids，README 標題「Boids Flocking Simulation」，說明為 p5.js 的 boids 簡化實作，repo 建立於 2023 年 10 月",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/gstarch/boids/main/boids.png",
+    "page": "https://github.com/gstarch/boids",
+    "verified": true,
+    "checked": "黑色背景上多組藍、紫、洋紅色的三角形鳥群，分成數股鬆散的群聚",
+    "source": "GitHub（gstarch/boids）",
+    "author": "gstarch",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js boids 簡化版畫面，彩色三角形分成數股群聚"
+   }
+  },
+  {
+   "title": "Flocking",
+   "creator": "Aiden Burgess",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "依 The Coding Train 教學延伸的 p5.js boids 練習，畫面疊加對齊、內聚、分離三個即時滑桿，以及一個「排斥／吸引」切換鈕，個體畫成白色水滴狀。跟基礎教學範例不同的地方，是額外加了一股會排斥（或吸引）滑鼠游標的外力，可以即時把整群鳥往旁邊撥開或吸過來。",
+   "variations": [
+    {"name": "滑鼠排斥／吸引力", "how": "在 Steer 裡加一項力，方向由 boid 指向滑鼠（吸引）或背離滑鼠（排斥），可用切換鈕反轉", "effect": "滑鼠變成可即時操控群體的虛擬吸子或推子"},
+    {"name": "參數即時滑桿", "how": "畫面疊加 alignment／cohesion／separation 三個滑桿，直接改對應力的權重", "effect": "不用改程式碼就能一邊看畫面一邊比較三條規則各自的影響"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "boids", "互動控制"],
+   "tools": ["p5.js"],
+   "url": "https://github.com/AidenBurgess/Flocking-p5js",
+   "evidence": "GitHub 頁面 AidenBurgess/Flocking-p5js，README 說明「This p5js project demonstrates flocking...I have also added an external force which repels the boids away from the mouse」，repo 建立於 2019 年",
+   "nearest_existing": "D01-51（The Coding Train 的 Flocking Simulation）——README 註明以該教學為基礎，但加了滑鼠排斥力與參數滑桿",
+   "image": {
+    "url": "https://user-images.githubusercontent.com/5440199/59647254-958f5580-91ce-11e9-83d7-cc9527ca4cdc.PNG",
+    "page": "https://github.com/AidenBurgess/Flocking-p5js",
+    "verified": true,
+    "checked": "深灰背景上白色水滴狀的 boid 群聚成數團，左上角疊加 Alignment／Cohesion／Separation 滑桿與一個排斥／吸引切換鈕",
+    "source": "GitHub README",
+    "author": "Aiden Burgess",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js boids 加上互動滑桿與滑鼠排斥力的畫面"
+   }
+  }
+ ],
+ "notes": "need=4，已找到 4 個正式＋3 個備援共 7 個藝術設計案例，全部親眼確認過生成畫面。p5.js／Processing 佔 4/7。OpenProcessing 上多筆舊版 boids 草圖（Erin Gunn、William Nemitoff、Matthew Wetmore、StungEye 等）頁面顯示「No Thumbnail」，找不到可用縮圖，故未收錄；Tim Holman 的 Generative Boids 與 jeloi/flocking 也因找不到靜態生成畫面（僅互動頁面或 Vimeo 影片）而放棄。"
+}

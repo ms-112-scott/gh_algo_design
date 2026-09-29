@@ -202,20 +202,6 @@
    "has_image": false
   },
   {
-   "id": "F01-05",
-   "cc": false,
-   "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
-   "creator": "George Hart",
-   "year": "2012",
-   "url": "https://makezine.com/article/home/fun-games/math-monday-truchet-tiles/",
-   "category": "fabrication",
-   "scale": "物件",
-   "tools": [
-    "雷射切割"
-   ],
-   "has_image": false
-  },
-  {
    "id": "F01-06",
    "cc": false,
    "title": "Truchet 吸音磚",
@@ -237,33 +223,6 @@
    "category": "3d-architecture",
    "scale": "立面／表皮",
    "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "F01-08",
-   "cc": false,
-   "title": "以 Truchet 鋪排的織物模板預鑄面板",
-   "creator": "Nexus Network Journal 論文",
-   "year": "2023",
-   "url": "https://link.springer.com/article/10.1007/s00004-023-00657-9",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "F01-09",
-   "cc": false,
-   "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
-   "creator": "dchant design",
-   "year": "",
-   "url": "https://sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3",
-   "category": "modeling",
-   "scale": "立面／表皮",
-   "tools": [
-    "Rhino",
-    "Grasshopper"
-   ],
    "has_image": false
   },
   {
@@ -295,18 +254,6 @@
    "has_image": false
   },
   {
-   "id": "F01-12",
-   "cc": false,
-   "title": "Truchet blocks 數學互動教具",
-   "creator": "MathsCity（Leeds）",
-   "year": "",
-   "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/",
-   "category": "art-installation",
-   "scale": "物件",
-   "tools": [],
-   "has_image": false
-  },
-  {
    "id": "F01-13",
    "cc": false,
    "title": "Truchet 密碼卡片（以磁磚編碼訊息）",
@@ -319,47 +266,146 @@
    "has_image": false
   },
   {
-   "id": "F01-14",
-   "cc": false,
-   "title": "可 3D 列印的磁吸 Truchet 磁磚",
-   "creator": "moebio（Printables）",
-   "year": "",
-   "url": "https://www.printables.com/model/220630-truchet-tiles",
-   "category": "fabrication",
+   "id": "F01-51",
+   "cc": true,
+   "title": "Truchet Images（以照片驅動的半色調 Truchet 圖樣）",
+   "creator": "Ned Batchelder",
+   "year": "2022",
+   "url": "https://nedbatchelder.com/blog/202208/truchet_images.html",
+   "category": "drawing",
    "scale": "物件",
    "tools": [
-    "OpenSCAD",
-    "3D 列印"
+    "Python"
    ],
-   "has_image": false
+   "has_image": true
+  },
+  {
+   "id": "F01-52",
+   "cc": true,
+   "title": "GenTruchet（無限展開的多尺度 Truchet 鋼筆繪圖作品）",
+   "creator": "Marc Dunand",
+   "year": "2024",
+   "url": "https://marcdunand.com/work/major-works/gentruchet",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F01-53",
+   "cc": true,
+   "title": "TruchetArt（互動式細分 Truchet 產生器）",
+   "creator": "ESikich",
+   "year": "",
+   "url": "https://github.com/ESikich/TruchetArt",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F01-54",
+   "cc": true,
+   "title": "Masked and Weighted Truchet Tiles（遮罩與線寬雙重影像驅動）",
+   "creator": "Dan Royer（i-make-robots）",
+   "year": "2020",
+   "url": "https://www.marginallyclever.com/2020/06/masked-and-weighted-truchet-tiles-in-processing/",
+   "category": "drawing",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "F01-55",
+   "cc": true,
+   "title": "Truchet Pattern Explorer（磁磚配對探索器）",
+   "creator": "dmackinnon1",
+   "year": "",
+   "url": "https://dmackinnon1.github.io/truchet/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 3,
-   "drawing": 3,
-   "fabrication": 3,
-   "modeling": 2,
+   "drawing": 6,
+   "2d-pattern": 5,
    "performance": 1,
    "3d-architecture": 1,
-   "art-installation": 1
+   "modeling": 1
   },
   "scale": {
-   "構件": 8,
-   "物件": 4,
-   "立面／表皮": 2
+   "構件": 7,
+   "物件": 6,
+   "立面／表皮": 1
   },
   "tools": {
-   "Grasshopper": 2,
+   "Processing": 2,
    "手繪／紙本": 1,
    "Wolfram Language": 1,
    "BASIC": 1,
-   "雷射切割": 1,
-   "Rhino": 1,
+   "Grasshopper": 1,
    "C#": 1,
-   "OpenSCAD": 1,
-   "3D 列印": 1
+   "Python": 1,
+   "p5.js": 1,
+   "JavaScript": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:F01-09",
+   "algo": "F01",
+   "kind": "RES",
+   "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
+   "url_norm": "sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F01-14",
+   "algo": "F01",
+   "kind": "RES",
+   "title": "可 3D 列印的磁吸 Truchet 磁磚",
+   "url_norm": "printables.com/model/220630-truchet-tiles",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F01-12",
+   "algo": "F01",
+   "kind": "RES",
+   "title": "Truchet blocks 數學互動教具",
+   "url_norm": "newsroom.hlf-foundation.org/blog/article/truchet-tilings",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F01-08",
+   "algo": "F01",
+   "kind": "RES",
+   "title": "以 Truchet 鋪排的織物模板預鑄面板",
+   "url_norm": "doi:10.1007/s00004-023-00657-9",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:F01-05",
+   "algo": "F01",
+   "kind": "RES",
+   "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
+   "url_norm": "makezine.com/article/home/fun-games/math-monday-truchet-tiles",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

@@ -1,0 +1,66 @@
+{
+ "reviewer": "BALREV",
+ "algos": {
+  "A05": {
+   "reject_new": [
+    {"index": 1, "reason": "Apollonian Gasket 的核心是笛卡兒圓定理的相切圓填充，屬 E01 圓填充（E01-08、E01-09 已收 Apollonian Gasket，E01 變形也列有「Apollonian 遞迴填充」），形狀文法不是作品核心。"},
+    {"index": 3, "reason": "thi.ng Font 的 README 說明每個字母只是一串直線、橫線、斜線、點的筆畫編碼（EBNF 格式字串），單次直接對應筆畫，沒有任何形狀替換規則；摘要稱「正式的形狀文法」與實際不符。"},
+    {"index": 5, "reason": "Coding Challenge #77 Recursion 已收錄為 A04-51（同一網址），重複。"}
+   ],
+   "image_fix": [],
+   "fix_class": [
+    {"id": "A05-55", "source": "research", "why": "CGAjs 是 CGA 文法的解析與 3D 視覺化編輯工具，內建房屋、教堂、城堡範例，和 A05-54 ShapeML 同屬建築程序化建模工具；依準則軟體工具屬 research，「非產業工具」不是改判 art 的理由。"}
+   ],
+   "protect": [
+    {"id": "A05-13", "why": "移除理由不成立：NIST PDF 可正常下載（Kirsch & Kirsch 1986〈The structure of paintings: formal grammar and design〉，EPB 13:163–176）；這是形狀文法用於繪畫風格的經典，也是本演算法唯一的繪畫類案例。"}
+   ],
+   "notes": "6 個新案例留 3 個（CT #14 碎形樹、piebro 格子替換、Leon Rische 文法龜圖），網址、作者、年份與圖片都已查證；其餘 3 個因重複或本演算法不是核心而 reject。A05-55 改回 research 後 need 變成 7，本演算法的藝術案例缺口很大，要靠全站配額或下一輪補。CT #14 用的是遞迴而不是明文的形狀文法，但「一個枝段換成一段線加兩個縮小旋轉的枝段」正好是基礎範例畢氏樹的同一條規則，勉強接受。"
+  },
+  "A06": {
+   "reject_new": [
+    {"index": 1, "reason": "摘要、變形與標籤都說 Blatt 01「特別為繪圖機輸出設計」「線段收斂成適合筆繪的封閉路徑」，但作品頁、README、NOTIZEN.md 都沒有繪圖機、SVG 或匯出功能，只有「Zwei-Stift-Palette」（雙色筆配色）這種視覺風格，屬不實描述；而且 repo 是 2026-08 新建、0 星的個人專案。"},
+    {"index": 2, "reason": "krychu/wfc 的 README 自述是「Single-file Wave Function Collapse library in C, plus a command-line tool」，屬軟體函式庫／工具，依準則是 research（撰寫者也因同樣理由把 A06-52 JS 函式庫判成 research），不是藝術設計作品。"},
+    {"index": 5, "reason": "圖片不是 WFC 生成畫面：3c5a71…png 是 solub 用 Processing 畫的兩張輸入小圖（盆栽與小島，右圖的棕色根本不在盆栽範例裡）；貼文中真正的群島輸出是 i.stack.imgur 的 GIF，下載回 403，也找不到其他合格圖。論壇示範貼文作為作品也偏弱。"}
+   ],
+   "image_fix": [
+    {"index": 0, "image": {
+     "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/186-wfc-overlapping-model/images/wfc_rot_reflect.png",
+     "page": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model",
+     "verified": true,
+     "checked": "p5.js 重疊模型塌縮中的畫面：左下已塌縮的區域長出綠色枝條與黃色十字小花的點陣紋理，其餘還沒決定的格子以候選圖樣的平均色顯示成淡綠色的模糊區。",
+     "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+     "author": "Daniel Shiffman",
+     "license": "網頁預覽圖，教學引用",
+     "license_url": "",
+     "note": "WFC 重疊模型（含旋轉、鏡射圖樣）塌縮到一半：已決定的區域長出綠枝黃花紋理，未決定的格子顯示候選平均色。"
+    }}
+   ],
+   "fix_class": [],
+   "protect": [],
+   "notes": "留 3 個（CT 186、noahbuddy 的 Processing 版、Pascal Stoll 的 Java 版），need 5 還缺 2。CT 186 的原圖 wfc_view.jpg 是「擷取出來的圖樣一覽」，不是生成畫面，已改用 wfc_rot_reflect.png（已預覽確認）；影片日期是 2025-01-26，和撰寫者寫的相符。已確認 BitwiseSupernova 就是 noahbuddy（2019-10-06 在 Processing 論壇貼出這個 repo），Shiffman 2022 年也在同一討論串感謝 solub 與 noahbuddy；不過程式實際是用 createGraphics 畫一張內建圖當範例（loadImage 那行被註解掉），變形「直接讀取點陣圖」寫得不太精確。Pascal Stoll 版 README 列的參數（StartConfiguration、延遲毫秒、EdgeType、機率分布）都和摘要相符。"
+  },
+  "B01": {
+   "reject_new": [
+    {"index": 2, "reason": "Squigglies 唯一的圖是 GIF，setimg 取第一格：畫面幾乎空白，只有一個剛開始起皺的小圓加上右側滑桿介面，看不出差異生長的成果；repo 沒有其他圖，也沒有線上 demo。"},
+    {"index": 4, "reason": "唯一的圖是 localhost 瀏覽器截圖，帶分頁、網址列、擴充功能圖示與 FPS 文字，曲線還在生長初期，不合格；摘要中「方便送進雷切機或繪圖機」「以 Mugenosu 為名經營生成藝術」在 README 都查不到（README 只寫 SVG 匯出與 dat.gui）。"}
+   ],
+   "image_fix": [],
+   "fix_class": [
+    {"id": "B01-02", "source": "art", "why": "這是 Anders Hoff 作品網站 generative 區的 3D 差異生長作品頁，展示的是算圖作品，和同站的 B01-51 Differential Line 同性質，不是技術文件。"}
+   ],
+   "protect": [],
+   "notes": "留 3 個（mikolalysenko 的 regl／WebGL 法線上色版、adrianton3 的 PixiJS 發光版、nowickam 的 openFrameworks＋raymarching 版），來源、內容和圖片都已查證。B01-02 改成 art 後 need 變成 2，第 3 個就成為備援。要注意：撰寫者把 B01-01、03、04、05、11 判成 research，理由都是「和 5x 重複」，不是依作品性質；04、05 會被移除，但 B01-01（就是 B01-51）和 B01-11（和 B01-55 是同一個 Entagma 網址）如果沒被移除，會以 research 的身分留在網站上，建議協調者另外用 wf_remove 刪掉這兩個重複案例。另外，nowickam 圖的 checked 寫「紅白相間」，但選的網址其實是藍紫色的 raymarching 畫面；網站上顯示的 note 是對的，不影響使用。"
+  },
+  "B02": {
+   "reject_new": [
+    {"index": 1, "reason": "內容不實：README 說 buzz 是作者自己寫的光線追蹤器（r3d repo），dla-2k-buzz 是用它算出來的圖；撰寫者卻把 buzz 寫成「調整參數讓黏著更緊密的版本」當成一條變形，圖片說明也誤標成「POV-Ray 算圖」。"}
+   ],
+   "image_fix": [],
+   "fix_class": [
+    {"id": "B02-55", "source": "art", "why": "Entagma 的 Houdini VEX 教學，成果是用 Mantra／Redshift 算出來的 DLA 生成畫面；依「教學成果是生成畫面就算 art」的準則，B01-55 同系列的教學也判成 art，本來就預設 creative coding。B02-08 是同一篇教學，已排在移除清單第 1 位，維持 research 讓它被移除。"}
+   ],
+   "protect": [],
+   "notes": "FORM+CODE DLA 範例查證無誤、圖片合格，可以用；但摘要裡的「本課 C# 版本」建議在合併時改成「Grasshopper C# 基礎範例」，兩條變形偏重教材形式，不是演算法的改法。B02-55 改成 art 後 need 變成 1，由 FORM+CODE 補足即可。另外，B02-02 和 B02-53、B02-03 和 B02-51 是網址完全相同的重複案例，都判成 art，本流程不會移除它們，建議協調者另外刪除。"
+  }
+ }
+}

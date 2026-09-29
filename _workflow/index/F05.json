@@ -217,7 +217,7 @@
    "tools": [
     "depthmapX"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "F05-07",
@@ -230,20 +230,6 @@
    "scale": "群體／都市",
    "tools": [
     "Python"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "F05-08",
-   "cc": false,
-   "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
-   "creator": "",
-   "year": "",
-   "url": "https://www.researchgate.net/publication/335827215_Applied_Spatial_Accessibility_Analysis_for_Urban_Design_An_integrated_graph-gravity_model_implemented_in_Grasshopper",
-   "category": "urban-landscape",
-   "scale": "群體／都市",
-   "tools": [
-    "Grasshopper"
    ],
    "has_image": false
   },
@@ -290,24 +276,40 @@
     "Kangaroo"
    ],
    "has_image": false
+  },
+  {
+   "id": "F05-51",
+   "cc": true,
+   "title": "A* Pathfinding Algorithm（A* 尋路演算法教學挑戰）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2017",
+   "url": "https://thecodingtrain.com/challenges/51-a-pathfinding-algorithm",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "urban-landscape": 5,
+   "urban-landscape": 4,
    "modeling": 2,
    "performance": 2,
    "3d-architecture": 1,
-   "fabrication": 1
+   "fabrication": 1,
+   "2d-pattern": 1
   },
   "scale": {
-   "群體／都市": 6,
+   "群體／都市": 5,
    "建築": 3,
    "地景": 1,
-   "構件": 1
+   "構件": 1,
+   "物件": 1
   },
   "tools": {
-   "Grasshopper": 6,
+   "Grasshopper": 5,
    "ShortestWalk": 2,
    "Rhino": 2,
    "Python": 2,
@@ -317,8 +319,19 @@
    "Urbano": 1,
    "depthmapX": 1,
    "Pathfinder": 1,
-   "Kangaroo": 1
+   "Kangaroo": 1,
+   "p5.js": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:F05-08",
+   "algo": "F05",
+   "kind": "RES",
+   "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
+   "url_norm": "researchgate.net/publication/335827215_applied_spatial_accessibility_analysis_for_urban_design_an_integrated_graph-gravity_model_implemented_in_grasshopper",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

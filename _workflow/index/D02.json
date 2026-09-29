@@ -236,20 +236,6 @@
    "has_image": false
   },
   {
-   "id": "D02-09",
-   "cc": false,
-   "title": "3D Physarum 產生 3D 列印內部支撐",
-   "creator": "ACM 論文研究團隊（arXiv 2212.11527）",
-   "year": "2022",
-   "url": "https://arxiv.org/pdf/2212.11527",
-   "category": "fabrication",
-   "scale": "物件",
-   "tools": [
-    "3D 列印"
-   ],
-   "has_image": false
-  },
-  {
    "id": "D02-10",
    "cc": false,
    "title": "PolyPhy：開源 3D 列印仿生物件生成器",
@@ -293,35 +279,6 @@
    "tools": [
     "Grasshopper",
     "C#"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "D02-13",
-   "cc": false,
-   "title": "黏菌分步生長作為都市設計樣板",
-   "creator": "Scientific Reports 論文研究團隊",
-   "year": "2022",
-   "url": "https://www.nature.com/articles/s41598-022-05439-w",
-   "category": "urban-landscape",
-   "scale": "群體／都市",
-   "tools": [
-    "生物實驗"
-   ],
-   "has_image": false
-  },
-  {
-   "id": "D02-14",
-   "cc": false,
-   "title": "受黏菌生長啟發的非均質建築材料",
-   "creator": "PubMed 收錄論文研究團隊",
-   "year": "",
-   "url": "https://pubmed.ncbi.nlm.nih.gov/31412323/",
-   "category": "performance",
-   "scale": "構件",
-   "tools": [
-    "數值模擬",
-    "3D 列印"
    ],
    "has_image": false
   },
@@ -411,33 +368,77 @@
     "Houdini"
    ],
    "has_image": true
+  },
+  {
+   "id": "D02-56",
+   "cc": true,
+   "title": "Physarum Simulation",
+   "creator": "Michael Fogleman",
+   "year": "2020",
+   "url": "https://www.michaelfogleman.com/projects/physarum/",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Go",
+    "OpenGL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-57",
+   "cc": true,
+   "title": "physarum（JS／WebGL 互動黏菌）",
+   "creator": "Nicolas Barradeau",
+   "year": "2019",
+   "url": "https://github.com/nicoptere/physarum",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "D02-58",
+   "cc": true,
+   "title": "Slime Mold: Emergent Pattern Simulator",
+   "creator": "Jonas Kjeldmand Jensen（QC20）",
+   "year": "2024",
+   "url": "https://github.com/QC20/SlimeMolds",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 4,
+   "2d-pattern": 7,
    "art-installation": 3,
-   "fabrication": 3,
-   "urban-landscape": 3,
    "modeling": 3,
-   "performance": 2,
+   "fabrication": 2,
+   "urban-landscape": 2,
+   "performance": 1,
    "drawing": 1
   },
   "scale": {
-   "物件": 7,
+   "物件": 9,
    "地景": 5,
-   "群體／都市": 3,
-   "構件": 3,
+   "群體／都市": 2,
+   "構件": 2,
    "建築": 1
   },
   "tools": {
-   "生物實驗": 4,
-   "3D 列印": 3,
+   "生物實驗": 3,
    "openFrameworks": 3,
    "Python": 2,
    "Grasshopper": 2,
    "C#": 2,
    "GLSL": 2,
+   "p5.js": 2,
    "數學模型": 1,
    "Processing": 1,
    "Java": 1,
@@ -448,13 +449,16 @@
    "衛星資料": 1,
    "多代理人模型": 1,
    "GPU": 1,
+   "3D 列印": 1,
    "Anemone": 1,
    "Kangaroo": 1,
-   "數值模擬": 1,
    "Unity": 1,
    "HLSL": 1,
-   "p5.js": 1,
-   "Houdini": 1
+   "Houdini": 1,
+   "Go": 1,
+   "OpenGL": 1,
+   "JavaScript": 1,
+   "WebGL": 1
   }
  },
  "rejected": [
@@ -466,6 +470,33 @@
    "title": "GAN-Physarum: La Dérive Numérique",
    "url_norm": "ecologicstudio.com/projects/gan-physarum-la-derive-numerique",
    "reason": "神經網路相關，超出教學難度"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:D02-14",
+   "algo": "D02",
+   "kind": "RES",
+   "title": "受黏菌生長啟發的非均質建築材料",
+   "url_norm": "pubmed.ncbi.nlm.nih.gov/31412323",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:D02-13",
+   "algo": "D02",
+   "kind": "RES",
+   "title": "黏菌分步生長作為都市設計樣板",
+   "url_norm": "nature.com/articles/s41598-022-05439-w",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:D02-09",
+   "algo": "D02",
+   "kind": "RES",
+   "title": "3D Physarum 產生 3D 列印內部支撐",
+   "url_norm": "arxiv:2212.11527",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
   }
  ]
 }

@@ -1,0 +1,423 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "B02",
+  "name_zh": "DLA 擴散限制聚集",
+  "name_en": "Diffusion-Limited Aggregation",
+  "one_liner": "讓粒子一顆一顆隨機亂走，碰到群集就黏住，慢慢長出像珊瑚、閃電、礦物結晶一樣的樹枝狀結構。",
+  "how_it_works": [
+   "在原點放一顆種子點，當作群集的起點。",
+   "每顆新粒子從比群集稍大的圓上出發，每一步往隨機方向走 stepSize；離群集越遠就走越大步以加速。",
+   "走到群集附近時用格子空間索引找 stickDistance 內最近的已黏點，找到就黏住，並把位置對齊到剛好 stickDistance，讓枝段等長。",
+   "走出逃逸圓就回到出發圓重來；超過 MaxWalkSteps 就停止整個模擬。",
+   "每顆黏住的粒子記錄它黏在哪一顆上（stuckToIndex），最後輸出點與父子連線形成樹。"
+  ]
+ },
+ "final_total": 19,
+ "target_art": 10,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "B02-01",
+   "title": "Aggregation 系列",
+   "creator": "Andy Lomas",
+   "year": "2005",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "物理模擬",
+    "開放生長",
+    "空間索引"
+   ],
+   "tools": [
+    "自製軟體"
+   ],
+   "url": "https://andylomas.com/aggregation.html",
+   "summary": "數學家兼視覺特效藝術家 Andy Lomas 以 DLA 變體模擬數百萬顆粒子在力場中流動並沉積在初始種子曲面上，長出類似珊瑚與植物的雕塑形態，並於 SIGGRAPH 2005 發表「Aggregation: Complexity out of Simplicity」。DLA 是整個形態的生成核心。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-02",
+   "title": "2D Diffusion-Limited Aggregation Experiments",
+   "creator": "Jason Webb",
+   "year": "2019",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "開放生長",
+    "空間索引"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "summary": "Jason Webb 以 JavaScript 做了一系列 DLA 視覺實驗：基本 DLA、方向偏移、不同粒子大小、不同形狀、以 SVG 形狀作為邊界或種子，並著重輸出可供數位製造的向量 SVG。示範了同一演算法換輸入與約束後的多樣性。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-03",
+   "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "對稱",
+    "隨機",
+    "動畫"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation/",
+   "summary": "The Coding Train 以 p5.js 現場寫出 DLA：隨機行走者圍繞中心種子聚集成樹枝狀圖樣，是最常被引用的入門教學之一，另有雪花（Brownian Tree Snowflake）延伸。適合對照本課 C# 版本理解相同邏輯。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-04",
+   "title": "Urban Growth and Form：以 DLA 模擬都市擴張",
+   "creator": "Michael Batty, Paul Longley, Stewart Fotheringham",
+   "year": "1989",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "隨機",
+    "開放生長",
+    "分形"
+   ],
+   "tools": [],
+   "url": "https://discovery.ucl.ac.uk/10053169/",
+   "summary": "Batty 等人把 DLA 用來解釋都市形態：人口像粒子從外圍移入，碰到已開發區就定居，模擬出具負密度梯度與碎形維度的都市，與真實城市形態相似，是後來《Fractal Cities》研究的基礎。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-05",
+   "title": "Modeling Urban Morphology by Unifying DLA and Stochastic Gravitation",
+   "creator": "",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "吸引子控制",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://findingspress.org/article/22296-modeling-urban-morphology-by-unifying-diffusion-limited-aggregation-and-stochastic-gravitation",
+   "summary": "發表於 Findings 期刊的研究，將 DLA 與隨機重力模型結合來模擬都市形態，讓遠方中心的吸引力影響粒子行走，補足純 DLA 只有單一中心的限制。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-06",
+   "title": "IaaC MRAC Diffusion-Limited Aggregation 亭",
+   "creator": "Abdullah Sheikh, Andreea Bunica, Anna Batalle Garcia（IaaC MRAC，指導 Alessio Erioli, Eugenio Bettucchi）",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "吸引子控制",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo2",
+    "Anemone",
+    "Galapagos"
+   ],
+   "url": "https://github.com/MRAC-IAAC/Diffusion-Limited-Aggregation",
+   "summary": "IaaC 機器人與先進營造碩士的研究，在 Grasshopper 中以 DLA 生成亭子結構：先在 2D 測試種子數、黏著距離、吸引子與邊界，再到 3D 引入點電荷、旋轉力、曲線吸引子等場，最後寫後處理讓節點與接頭可建造。結論是需選擇易於合理化的生長方式。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-07",
+   "title": "Paul Bourke 的 3D DLA 與約束生長",
+   "creator": "Paul Bourke",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "網格擴散",
+    "隨機"
+   ],
+   "tools": [
+    "自製軟體"
+   ],
+   "url": "https://paulbourke.net/fractals/dla/",
+   "summary": "Paul Bourke 長期整理 DLA：3D 體素 DLA（26 方向）、黏著機率從 1 到 0.01 的形態差異、在盒子、圓柱、球、頭像等形體內生長，並有處理成 3D 列印模型的流程，以及與藝術家合作的容器、雕塑作品。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-08",
+   "title": "VEX in Houdini：Diffusion Limited Aggregation",
+   "creator": "Entagma",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "動畫"
+   ],
+   "tools": [
+    "Houdini",
+    "VEX"
+   ],
+   "url": "https://entagma.com/vex-in-houdini-diffusion-limited-aggregation-plus-rendering-in-mantra-redshift/",
+   "summary": "Entagma 的教學示範在 Houdini 以 VEX 寫 DLA，並用 Mantra 與 Redshift 渲染。呈現 DLA 在影視與動態設計建模流程中的用法，可與本課 C# 實作互相對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-09",
+   "title": "Exploring Diffusion Limited Aggregation in Geometry Nodes",
+   "creator": "Blender Artists 社群作者",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "曲面上"
+   ],
+   "tools": [
+    "Blender"
+   ],
+   "url": "https://blenderartists.org/t/exploring-diffusion-limited-aggregation-in-geometry-nodes/1589322",
+   "summary": "Blender 使用者以 Geometry Nodes 的節點式模擬實作 DLA 並分享成果，顯示 DLA 不一定要寫程式，也能在節點環境中以模擬迴圈完成。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-10",
+   "title": "Lichtenberg 圖形與介電崩潰模型",
+   "creator": "自然現象（DBM：Niemeyer, Pietronero, Wiesmann）",
+   "year": "1984",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "物理模擬",
+    "分形"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Lichtenberg_figure",
+   "summary": "高壓放電在壓克力或木材中留下的 Lichtenberg 圖形、閃電分枝，其形態與 DLA 相關；1984 年提出的介電崩潰模型（DBM）把電場與 DLA 結合來描述這類放電。可作為閃電紋表皮或木作燒紋設計的依據。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-11",
+   "title": "以 DLA 模擬鋰電池枝晶生長（MRI 驗證）",
+   "creator": "",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "物理模擬",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://www.researchgate.net/publication/384758624_Simulation_of_Dendrite_Growth_with_a_Diffusion-Limited_Aggregation_Model_Validated_by_MRI_of_a_Lithium_Symmetric_Cell_during_Charging",
+   "summary": "電化學研究以 DLA 模型模擬鋰對稱電池充電時的枝晶（dendrite）生長，並以 MRI 觀測驗證，顯示 DLA 除了造形，也是材料性能與失效分析的工具。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-12",
+   "title": "Grasshopper Swarm Intelligence IV：Diffuse Limited Aggregation",
+   "creator": "Grasshopper3d 社群",
+   "year": "",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "空間索引",
+    "動畫"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.grasshopper3d.com/video/swarm-intelligence-iv-diffuse-limited-aggregation",
+   "summary": "Grasshopper3d 社群的影片教學與討論串示範在 GH 裡以腳本實作 DLA，是建築領域使用者接觸 DLA 的主要入口之一，可作為本課範例的延伸參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-13",
+   "title": "OPENFUSE DLA 草稿（openFrameworks）",
+   "creator": "Fuse*",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "隨機"
+   ],
+   "tools": [
+    "openFrameworks",
+    "C++"
+   ],
+   "url": "https://fusefactory.github.io/openfuse/r&d/laboratory/openframeworks/DLA-Draft/",
+   "summary": "義大利數位藝術工作室 Fuse* 在其研發實驗室以 openFrameworks 實作 DLA 草稿，作為即時影像與裝置作品的生成素材，示範 DLA 在即時互動藝術中的應用。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-14",
+   "title": "珊瑚、礦物樹枝石與電沉積結晶",
+   "creator": "自然現象",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Diffusion-limited_aggregation",
+   "summary": "DLA 被用來描述珊瑚、地衣、礦物樹枝石（dendrite）、硫酸銅電沉積結晶與雪花等自然樹枝狀形態，是學習者觀察自然、蒐集參考影像並對照模擬結果的好題材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B02-51",
+   "title": "Coding Challenge #34：Diffusion-Limited Aggregation",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "Processing",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+   "summary": "The Coding Train 的程式挑戰影片，以 p5.js 從零寫出擴散限制聚集：隨機漫步的粒子碰到已固定的團簇就黏上去，逐漸長成布朗樹。影片同時提供 p5.js 與 Processing 程式碼。適合作為把 Grasshopper C# 範例移植到網頁的入門對照。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/34-diffusion-limited-aggregation",
+    "note": "Coding Challenge #34 影片縮圖，DLA 團簇"
+   }
+  },
+  {
+   "id": "B02-52",
+   "title": "Coding Challenge #127：Brownian Tree Snowflake（布朗樹雪花）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2018",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "對稱",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+   "summary": "這一集把 DLA 限制在一個 30° 的楔形區域中生長：粒子從外側沿水平方向往中心漂移，黏住後再把這一片鏡射、旋轉 6 次，組成六重對稱的雪花。它示範了「只算一小塊，再用對稱性複製」的做法。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/127-brownian-tree-snowflake",
+    "note": "Coding Challenge #127 影片縮圖，布朗樹雪花"
+   }
+  },
+  {
+   "id": "B02-53",
+   "title": "2D Diffusion-Limited Aggregation Experiments（2D DLA 實驗）",
+   "creator": "Jason Webb",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "SVG",
+    "數位製造"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+   "summary": "Jason Webb 以 JavaScript 做的一系列 DLA 實驗，採用「非網格（off-lattice）」的粒子方式而非像素格點，以便輸出適合數位製造的向量 SVG。實驗包含方向偏移、不同粒子大小與形狀、以 SVG 圖形作為種子或障礙等。相較於基礎範例，它著重可調參數與向量輸出。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（jasonwebb/2d-diffusion-limited-aggregation-experiments）",
+    "page": "https://github.com/jasonwebb/2d-diffusion-limited-aggregation-experiments",
+    "note": "README 中「方向偏移」實驗的預覽圖"
+   }
+  },
+  {
+   "id": "B02-54",
+   "title": "dlaf：Diffusion-limited aggregation, fast",
+   "creator": "Michael Fogleman",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "C++",
+    "3D",
+    "高效能",
+    "開源"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://github.com/fogleman/dlaf",
+   "summary": "Michael Fogleman 以 C++ 與 Boost 空間索引寫成的高速 DLA 程式，支援 2D 與 3D，單核心約 35 秒可算出一百萬個粒子；README 中展示了一千萬粒子的 3D 光線追蹤成果。程式輸出每個粒子的 id、父節點與座標，並提供黏附距離、黏性（Stickiness）等參數。和基礎範例相比，它示範空間索引如何把 DLA 推到百萬級規模。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（fogleman/dlaf）README",
+    "page": "https://github.com/fogleman/dlaf",
+    "note": "一千萬粒子 3D DLA 光線追蹤算圖"
+   }
+  },
+  {
+   "id": "B02-55",
+   "title": "VEX in Houdini：Diffusion Limited Aggregation",
+   "creator": "Entagma",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "3D",
+    "教學",
+    "影片"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://vimeo.com/218372128",
+   "summary": "Entagma 的影片教學先講解 DLA 理論，再用 Houdini 的 VEX 實作基本演算法、調整模擬形態，最後分別以 Mantra 與 Redshift 算圖，並提供專案檔下載。相較於基礎範例，它把 DLA 放進 3D 視覺特效流程，從模擬直接接到高品質渲染。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Vimeo（Entagma）",
+    "page": "https://vimeo.com/218372128",
+    "note": "Houdini VEX DLA 教學影片縮圖"
+   }
+  }
+ ]
+}

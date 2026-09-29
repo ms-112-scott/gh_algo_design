@@ -178,7 +178,7 @@
     "實體模型",
     "早期電腦找形"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-02",
@@ -193,7 +193,7 @@
     "懸垂鏈模型",
     "攝影測量"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-03",
@@ -208,7 +208,7 @@
     "懸垂模型",
     "攝影"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-04",
@@ -223,7 +223,7 @@
     "懸吊布模型",
     "石膏模型"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-05",
@@ -239,7 +239,7 @@
     "Rhino",
     "CNC"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-06",
@@ -254,7 +254,7 @@
     "COMPAS",
     "Rhino"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-07",
@@ -269,7 +269,7 @@
     "COMPAS",
     "3D 混凝土列印"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-08",
@@ -284,7 +284,7 @@
     "RhinoVAULT",
     "Rhino"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-09",
@@ -328,7 +328,7 @@
     "COMPAS",
     "電腦針織"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-12",
@@ -352,7 +352,7 @@
    "category": "art-installation",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-14",
@@ -364,7 +364,7 @@
    "category": "3d-architecture",
    "scale": "建築",
    "tools": [],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E04-51",
@@ -428,16 +428,17 @@
    "has_image": true
   },
   {
-   "id": "E04-55",
+   "id": "E04-56",
    "cc": true,
-   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
-   "creator": "Moritz Schwind（Entagma）",
-   "year": "2018",
-   "url": "https://entagma.com/houdini-17-is-here-a-quickstart-to-vellum/",
-   "category": "modeling",
-   "scale": "構件",
+   "title": "Coding Challenge #63：Texturing Cloth Simulation（Unikitty 旗幟）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "url": "https://thecodingtrain.com/challenges/63-texturing-cloth-simulation",
+   "category": "drawing",
+   "scale": "物件",
    "tools": [
-    "Houdini"
+    "p5.js",
+    "toxiclibs.js"
    ],
    "has_image": true
   }
@@ -445,24 +446,24 @@
  "distribution": {
   "category": {
    "fabrication": 4,
-   "modeling": 4,
    "performance": 3,
    "3d-architecture": 3,
+   "modeling": 3,
    "art-installation": 3,
-   "drawing": 2
+   "drawing": 3
   },
   "scale": {
    "建築": 9,
-   "物件": 5,
-   "構件": 3,
-   "群體／都市": 2
+   "物件": 6,
+   "群體／都市": 2,
+   "構件": 2
   },
   "tools": {
    "Rhino": 3,
    "COMPAS": 3,
+   "p5.js": 3,
+   "toxiclibs.js": 3,
    "RhinoVAULT": 2,
-   "p5.js": 2,
-   "toxiclibs.js": 2,
    "實體模型": 1,
    "早期電腦找形": 1,
    "懸垂鏈模型": 1,
@@ -481,9 +482,18 @@
    "three.js": 1,
    "WebGPU": 1,
    "openFrameworks": 1,
-   "Cinder": 1,
-   "Houdini": 1
+   "Cinder": 1
   }
  },
- "rejected": []
+ "rejected": [
+  {
+   "run": "removed",
+   "unit": "REMOVE:E04-55",
+   "algo": "E04",
+   "kind": "CC",
+   "title": "Houdini 17 Is Here – A Quickstart to Vellum",
+   "url_norm": "entagma.com/houdini-17-is-here-a-quickstart-to-vellum",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  }
+ ]
 }

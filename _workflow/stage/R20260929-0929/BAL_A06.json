@@ -1,0 +1,165 @@
+{
+ "algo": "A06",
+ "classification": [
+  {"id": "A06-01", "source": "research", "why": "WFC最原始實作，overlapping與tiled model的起點"},
+  {"id": "A06-02", "source": "research", "why": "WFC前身，學術提出的3D模組相鄰限制生成法"},
+  {"id": "A06-03", "source": "research", "why": "商業遊戲的3D WFC關卡生成技術說明"},
+  {"id": "A06-04", "source": "research", "why": "造鎮玩具，WFC結合marching cubes的遊戲系統"},
+  {"id": "A06-05", "source": "research", "why": "Procjam作品，線上版WFC的技術文章"},
+  {"id": "A06-06", "source": "research", "why": "商業遊戲用WFC補生成遺跡平面的技術講解"},
+  {"id": "A06-07", "source": "research", "why": "Grasshopper模組化組合外掛，屬軟體工具"},
+  {"id": "A06-08", "source": "research", "why": "數位製造實習，工具開發性質的研究活動"},
+  {"id": "A06-09", "source": "research", "why": "碩士論文提出的建築量體生成框架"},
+  {"id": "A06-10", "source": "research", "why": "研究論文，WFC生成社會住宅平面並連結BIM"},
+  {"id": "A06-11", "source": "research", "why": "GitHub研究專案，階層式WFC平面生成"},
+  {"id": "A06-13", "source": "research", "why": "期刊論文，WFC生成鄉村住宅配置並評估"},
+  {"id": "A06-14", "source": "research", "why": "期刊論文，WFC用於原木升級再利用的結構分析"},
+  {"id": "A06-15", "source": "research", "why": "期刊論文，WFC生成材料晶粒方向的科學應用"},
+  {"id": "A06-51", "source": "art", "why": "Coding Train挑戰，成果是p5.js生成畫面"},
+  {"id": "A06-52", "source": "research", "why": "npm函式庫／軟體工具，非以視覺表現為目的"},
+  {"id": "A06-53", "source": "art", "why": "Stålberg互動WFC瀏覽器demo，成果是可操作視覺畫面"},
+  {"id": "A06-54", "source": "art", "why": "Houdini創作示範，成果是3D生成畫面展示"},
+  {"id": "A06-55", "source": "art", "why": "教學文章但成果是終端機生成的視覺畫面"}
+ ],
+ "art_count": 4,
+ "need": 5,
+ "removal_order": ["A06-08", "A06-10", "A06-13", "A06-09", "A06-11", "A06-06", "A06-05", "A06-03"],
+ "removal_reasons": {
+  "A06-08": "沒有可查證的網址與圖片，實習性質敘述空泛，最難查證",
+  "A06-10": "無作者與年份資訊，內容單薄，且與09、11、13同樣是住宅平面生成主題，重複度高",
+  "A06-13": "2026年新出的期刊論文，內容與09、10、11的住宅配置生成高度重疊，資訊也最少",
+  "A06-09": "academia.edu論文不易存取查證，主題與10、11、13的建築平面生成重複",
+  "A06-11": "GitHub研究專案但主題與09、10、13的樓層平面生成重疊，資訊也較簡略",
+  "A06-06": "只能連到GDC影片頁，找不到真實截圖或代表畫面，難以查證與展示",
+  "A06-05": "個人網誌型作品，重要性不如同樣是Stålberg作品的Bad North與Townscaper",
+  "A06-03": "雖是知名商業遊戲，但和04 Townscaper同一位創作者、性質類似，保留04即可代表"
+ },
+ "new_art": [
+  {
+   "title": "Coding Challenge 186：Wave Function Collapse - Overlapping Model",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2025",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Coding Train在171之後推出的第二支WFC挑戰，改用「重疊模型（overlapping model）」：不是手動定義tile相鄰規則，而是從一張小範例點陣圖逐格擷取N×N圖樣（含旋轉、鏡射），統計圖樣間的重疊相容性與出現頻率，再以Shannon熵挑格塌縮。與基礎範例最大差別是規則來自「學習」而非手寫。",
+   "variations": [
+    {"name": "從範例圖自動擷取規則", "how": "新增取樣範例點陣圖輸入，掃描每個N×N視窗當一種圖樣，兩個圖樣重疊處顏色相同就視為相容，取代原本手寫的四方向0/1相鄰表。", "effect": "設計者只要畫一張小範例圖，就能長出風格一致的大圖，不用自己列開口規則"},
+    {"name": "以出現頻率加權熵", "how": "用Shannon entropy公式，依每種圖樣在範例中出現的次數計算每格的不確定性，取代單純數候選項目數。", "effect": "塌縮順序更貼近範例的統計特性，生成結果更像原圖的紋理"},
+    {"name": "加入旋轉與鏡射變體", "how": "把每個擷取到的圖樣再產生90度旋轉與鏡射版本一併加入圖樣庫。", "effect": "用同一張小範例就能長出方向更多變、不死板的紋理"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "重疊模型", "Shannon熵", "教學影片"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model",
+   "evidence": "頁面標題與內容為Wave Function Collapse: Overlapping Model，示範從範例圖擷取圖樣、計算熵並塌縮",
+   "nearest_existing": "A06-51（Coding Challenge 171：Wave Function Collapse，同頻道但為tiled model，非重疊模型）",
+   "image": {"url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/186-wfc-overlapping-model/images/wfc_view.jpg", "page": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model", "verified": true, "checked": "畫面顯示從範例點陣圖依N×N視窗擷取出的多種圖樣色塊網格（含旋轉鏡射版本）", "source": "The Coding Train", "author": "Daniel Shiffman", "license": "教學引用（Coding Train圖片）", "license_url": "", "note": "重疊模型擷取圖樣視覺化"}
+  },
+  {
+   "title": "Plotterblätter — Blatt 01: Kollaps",
+   "creator": "ssims437",
+   "year": "2026",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "四張互動「繪圖機圖紙（Plotterblätter）」系列的第一張，同時提供手寫tile相鄰規則與「從手繪點陣圖學出的重疊模型」兩種模式，並支援時序回溯（chronological backtracking）。畫面即時疊加顯示已觀察格數、塌縮完成度與矛盾次數等統計，完成後的管線圖案是特別為繪圖機（pen plotter）輸出設計的封閉線稿，把演算法過程本身變成一頁可觀察的介面。",
+   "variations": [
+    {"name": "即時顯示塌縮統計", "how": "介面疊加「觀察格數、已塌縮比例、最小熵、矛盾次數、亂數種子」等即時數值，取代單純輸出線段。", "effect": "學習者可以一邊看塌縮過程、一邊理解熵與傳播如何運作"},
+    {"name": "支援影像學習規則", "how": "提供從手繪點陣圖萃取相鄰規則的重疊模型，和手寫tile相鄰表的模式並存、可切換。", "effect": "不用自己寫規則，畫一張小圖就能生成風格相似的大圖"},
+    {"name": "輸出設計給繪圖機", "how": "線段收斂成適合筆繪的封閉路徑，並可切換亮、暗兩種筆色模式。", "effect": "塌縮結果可以直接送繪圖機畫成實體圖紙，而不只是螢幕畫面"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "JavaScript", "繪圖機", "互動視覺", "約束滿足"],
+   "tools": ["JavaScript", "Canvas2D"],
+   "url": "https://ssims437.github.io/plotterblaetter/",
+   "evidence": "專案頁與README顯示Blatt 01: Kollaps使用tile相鄰規則與從點陣圖學出的重疊模型，含時序回溯",
+   "nearest_existing": "無",
+   "image": {"url": "https://raw.githubusercontent.com/ssims437/plotterblaetter/main/bilder/blatt-01-kollaps.png", "page": "https://ssims437.github.io/plotterblaetter/", "verified": true, "checked": "畫面顯示塌縮完成的紫色管線／接頭圖案，底部資訊列顯示觀察數863、塌縮100%、矛盾0、種子1337", "source": "ssims437 / plotterblaetter（GitHub）", "author": "ssims437", "license": "MIT", "license_url": "https://github.com/ssims437/plotterblaetter", "note": "Blatt 01 Kollaps塌縮完成畫面"}
+  },
+  {
+   "title": "wfc：C語言WFC函式庫與命令列工具",
+   "creator": "Krystian Samp（krychu）",
+   "year": "2022",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "單一標頭檔的C語言重疊模型函式庫，附命令列工具，輸入一張小範例點陣圖就能輸出任意大小、局部相似的紋理；README並排展示多組「輸入圖樣→生成大圖」的比較（迷宮、噪點、地形等）。和基礎範例的差別在於規則完全來自影像統計，並提供函式庫化的API讓其他程式呼叫。",
+   "variations": [
+    {"name": "輸入輸出並排比較", "how": "README直接把每種小範例圖樣與生成的大圖並排呈現，用色塊網格展示多種紋理。", "effect": "一眼看出同一演算法套用在不同範例上會長出差異很大的紋理"},
+    {"name": "函式庫化API", "how": "包成單一標頭檔C函式庫，暴露初始化、執行、輸出等函式，可被其他程式引用而非只能跑範例程式。", "effect": "方便嵌入到遊戲引擎或其他工具鏈，而不是獨立執行檔"},
+    {"name": "命令列批次生成", "how": "提供wfctool命令列工具，可指定輸入圖、輸出尺寸、圖樣大小等參數批次執行。", "effect": "能快速對同一張範例圖跑出大量不同尺寸與種子的變化版本"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "C", "紋理合成", "重疊模型"],
+   "tools": ["C"],
+   "url": "https://github.com/krychu/wfc",
+   "evidence": "README圖片並排顯示六組輸入圖樣與對應生成的大圖紋理",
+   "nearest_existing": "無",
+   "image": {"url": "https://user-images.githubusercontent.com/947457/150605257-ba54c0fe-734d-4458-89d6-7fd54ea99495.png", "page": "https://github.com/krychu/wfc", "verified": true, "checked": "六格並排圖：每格左上角為小張輸入圖樣、右側為生成的大張同風格紋理（迷宮、噪點、地形等）", "source": "GitHub krychu/wfc", "author": "Krystian Samp", "license": "MIT", "license_url": "https://github.com/krychu/wfc/blob/main/LICENSE", "note": "六組輸入樣本與生成紋理的並排比較"}
+  },
+  {
+   "title": "Wave Function Collapse：Processing重疊模型實作",
+   "creator": "noahbuddy（BitwiseSupernova）",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "在Processing論壇的WFC討論串裡，noahbuddy把社群分享的Python重疊模型改寫成物件導向的Processing（.pde）版本並公開在GitHub；輸入一張小範例圖就能生成局部相似的等大紋理，矛盾時以填色作為容錯處理。這則討論串後來也是Daniel Shiffman製作Coding Train WFC挑戰的靈感來源。",
+   "variations": [
+    {"name": "物件導向重構", "how": "把演算法拆成Pattern、PatternLibrary、Field、Wave等類別，取代單一函式的寫法。", "effect": "規則、狀態與求解邏輯分開，較容易讀懂與擴充"},
+    {"name": "矛盾容錯處理", "how": "求解失敗（某格候選歸零）時不整張重來，而是把未決定的區域直接填上預設色。", "effect": "永遠有輸出可看，方便偵錯與示範，但畫面會留下明顯的補色區塊"},
+    {"name": "重疊模型輸入輸出", "how": "直接讀取點陣圖當範例，輸出等比例放大的生成圖。", "effect": "和基礎範例的手寫tile規則不同，規則完全來自影像本身"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "重疊模型", "論壇作品"],
+   "tools": ["Processing"],
+   "url": "https://github.com/BitwiseSupernova/wave-function-collapse",
+   "evidence": "README說明為Processing實作的Wave Function Collapse，並附輸出範例waveOut.png",
+   "nearest_existing": "A06-51（同一討論串啟發了Coding Challenge 171，但此為不同作者的獨立實作）",
+   "image": {"url": "https://raw.githubusercontent.com/BitwiseSupernova/wave-function-collapse/master/waveOut.png", "page": "https://github.com/BitwiseSupernova/wave-function-collapse", "verified": true, "checked": "黑底白色等寬線條構成的連續彎曲管線／等高線紋理，填滿整張畫面", "source": "GitHub BitwiseSupernova/wave-function-collapse", "author": "noahbuddy", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "重疊模型生成的黑白管線紋理"}
+  },
+  {
+   "title": "Wave Function Collapse：Java生成藝術工具（Labyrinth圖樣）",
+   "creator": "Pascal Stoll",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "用Java／Swing寫成、明確定位為生成視覺演算法的WFC工具，內建Labyrinth、Wavy、Carcassonne三種tile組，並暴露起始位置、塌縮速度、隨機程度、邊界開口等參數。其中Labyrinth tile組長出的線稿和基礎範例的水管tile精神相同，但改以多種邊型（EdgeType）比對取代單純0/1開口。",
+   "variations": [
+    {"name": "可切換多套tile組", "how": "提供LabyrinthTileSet、WavyTiles、CarcassoneTileSet三個內建TileSet子類別可切換，並可自行擴充新的TileSet。", "effect": "同一套程式在迷宮、波浪線、卡卡頌拼貼等截然不同的風格間切換"},
+    {"name": "起始塌縮位置與速度可調", "how": "提供隨機、置中、多起點（multistart）等起始設定，以及每步塌縮的毫秒延遲參數。", "effect": "可以控制圖樣是從一點長出還是多點同時生長，並放慢速度做逐步示範"},
+    {"name": "自訂tile出現機率", "how": "可為每個TileType指定機率分佈，取代預設的均勻隨機。", "effect": "讓某些造型的tile出現得更頻繁或更稀少，調整畫面的疏密感"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Java", "生成藝術", "tile組"],
+   "tools": ["Java"],
+   "url": "https://github.com/pascal-stoll/wave-function-collapse",
+   "evidence": "README自述為Java生成視覺演算法，並附Labyrinth tile組生成的線稿圖片",
+   "nearest_existing": "無",
+   "image": {"url": "https://raw.githubusercontent.com/pascal-stoll/wave-function-collapse/master/src/main/resources/image3.png", "page": "https://github.com/pascal-stoll/wave-function-collapse", "verified": true, "checked": "白底黑線的管線／迷宮線稿，帶有端點小圓點，填滿整張畫面", "source": "GitHub pascal-stoll/wave-function-collapse", "author": "Pascal Stoll", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "Labyrinth tile組生成的線稿圖樣"}
+  },
+  {
+   "title": "WFC重疊模型：手繪點陣圖生成的群島地圖",
+   "creator": "solub",
+   "year": "2019",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "Processing論壇使用者solub在WFC討論串中示範：先用Processing逐像素畫一張迷你盆栽範例圖，再用Python版WFC重疊模型把它放大成一張群島地圖（陸地、海岸、海洋），說明重疊模型如何把「畫一張小範例」變成入門Processing點陣繪圖的練習。這則討論後來促成Daniel Shiffman製作Coding Train的WFC挑戰。",
+   "variations": [
+    {"name": "手繪範例驅動", "how": "範例圖用Processing一格一格畫成點陣圖，而非套用現成的水管tile組。", "effect": "適合當作先學畫點陣圖、再讓演算法放大的入門練習"},
+    {"name": "重疊模型代替手寫相鄰表", "how": "用小範例圖的N×N視窗統計相容關係，取代四方向0/1開口規則。", "effect": "畫一張圖就能定義規則，不用寫程式列出所有相鄰組合"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Python", "Processing", "重疊模型", "論壇作品"],
+   "tools": ["Python", "Processing"],
+   "url": "https://discourse.processing.org/t/wave-collapse-function-algorithm-in-processing/12983",
+   "evidence": "討論串貼文（2019/8/1，使用者solub）展示由Processing手繪範例圖生成的群島地圖，並說明範例圖用Processing繪製",
+   "nearest_existing": "A06-51（同一討論串後來促成Coding Challenge 171，但此為原始社群貼文而非Shiffman的實作）",
+   "image": {"url": "https://canada1.discourse-cdn.com/flex036/uploads/processingfoundation1/original/2X/3/3c5a71b5b082caca19ccb97a6eadd99f99e035f8.png", "page": "https://discourse.processing.org/t/wave-collapse-function-algorithm-in-processing/12983", "verified": true, "checked": "左為迷你盆栽點陣範例圖，右為放大生成的群島地圖：綠色陸地、棕色海岸、藍色海洋", "source": "Processing Foundation Discourse", "author": "solub", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "手繪範例圖生成的群島地圖"}
+  }
+ ],
+ "notes": "need=5已全部找到並親眼確認圖片（含1個備援，共6筆）；本次執行WebSearch額度用完、Parallel Search MCP被限流，且多個候選頁面（OpenProcessing單一草圖頁、Shadertoy搜尋、Observable、DuckDuckGo/Bing一般搜尋）遭CAPTCHA或403封鎖，改用GitHub search API與r.jina.ai代理搜尋才找齊；因此備援只有1個而非3個，且p5.js／Processing類（Coding Train 186為p5.js、noahbuddy為Processing、solub備援為Python+Processing）未達新增案例一半，其餘為C／Java／JavaScript等其他creative coding工具，其中多個更理想的p5.js候選（D-T-666重疊模型、paigefangrad等）因圖片是gif且第一格為空白畫面、或demo-*.png其實是輸入樣本而非輸出，直接網址不會被setimg.py判為合格畫面而放棄。"
+}

@@ -1,0 +1,214 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "G03",
+  "name_zh": "地表逕流與集水區（D8 流向累積）",
+  "name_en": "Flow Accumulation & Watershed Delineation (D8)",
+  "one_liner": "讓地形上的每一格把雨水交給八個鄰居中最陡的下坡那格，再從高到低把水量一路累加，累積量大的格子連起來就是河網，流向同一出口的格子就是一個集水區。",
+  "how_it_works": [
+   "取樣：把 Surface／Brep 轉成 Mesh，在 cellCount 決定的格點上由上往下打射線（Intersection.MeshRay），得到高程陣列 z。",
+   "填窪：Priority-Flood 把所有邊界格放進優先佇列，每次取出最低的一格往內淹，比它低的鄰居抬到它的高度再加一點 ε，封閉窪地因此都有出路。",
+   "流向（D8）：每格比較八個鄰居的「高差 ÷ 距離」，取最大的那個當下游指標 down[k]；找不到更低鄰居的就是出口。",
+   "累積：依高程由高到低排序（Array.Sort），每格把自己的水量加到下游格，同時由上游河段的河序推出 Strahler 河序。",
+   "河網：累積量 ≥ streamThreshold 的格子是河道，從源頭或匯流點沿箭頭追到下一個匯流點，輸出一段段 Polyline 與河序。",
+   "集水區：依高程由低到高，每格繼承下游格的出口編號；把面積最大的 basinCount 個集水區上色，輸出格子 Mesh 與流向箭頭。"
+  ]
+ },
+ "final_total": 8,
+ "target_art": 4,
+ "target_research": 4,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "G03-01",
+   "title": "Groundhog：景觀建築的 Grasshopper 外掛與知識庫",
+   "creator": "Philip Belesky（RMIT 大學景觀建築）",
+   "year": "2018",
+   "category": "modeling",
+   "scale": "地景",
+   "tags": [
+    "景觀分析",
+    "外掛",
+    "地形",
+    "教學資源"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Groundhog"
+   ],
+   "url": "https://philipbelesky.com/projects/groundhog",
+   "summary": "Groundhog 是為景觀建築設計的 Grasshopper 外掛，提供坡度計算、地表逕流路徑（Flow Paths）與集水區（Flow Catchments）等分析元件，並附上以參數化方式重建知名地景作品的教學。它的逕流是從取樣點沿最陡下坡一路追蹤，集水區則依各路徑的終點分組、以 Voronoi 細胞合併而成；和基礎範例「每一格都有下游指標、依高程排序累加」相比，Groundhog 是逐條追線的做法，較直觀但不會得到整張累積量場。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Groundhog 文件（Flow Catchments）",
+    "page": "https://groundhog.philipbelesky.com/documentation/flows-catchments/",
+    "note": "Groundhog Flow Catchments 元件的地形模型：流路與依終點合併的集水區；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
+  },
+  {
+   "id": "G03-02",
+   "title": "MAX IV 實驗室地景（Groundhog 參數化重建）",
+   "creator": "Snøhetta（原設計）；Philip Belesky（Groundhog 重建）",
+   "year": "2016",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "地形",
+    "整地",
+    "雨水管理",
+    "景觀分析"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Groundhog"
+   ],
+   "url": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+   "summary": "Snøhetta 為 MAX IV 同步輻射實驗室設計的波紋狀土丘地景，Groundhog 的專案頁以參數化方式重建其地形，並說明如此起伏的整地附帶管理地表逕流的效益，另以 Grasshopper 定義量測雨水的排放與滯留。它示範了地景設計中「地形形狀先決定、再用水文分析檢查」的流程；若把重建的地形接到基礎範例，可以看到每條溝谷的累積量與各低窪處的集水範圍。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Groundhog 專案頁（MAX IV Laboratory Landscape）",
+    "page": "https://groundhog.philipbelesky.com/projects/max-iv-laboratory/",
+    "note": "以 Grasshopper 重建的 MAX IV 波紋地形模型；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
+  },
+  {
+   "id": "G03-03",
+   "title": "Rainwater+：整合進設計軟體的都市雨水管理工具",
+   "creator": "Yujiao Chen, Holly W. Samuelson, Zheming Tong",
+   "year": "2016",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tags": [
+    "雨水管理",
+    "低衝擊開發",
+    "性能分析",
+    "早期設計"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Rainwater+"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S0301479716302468",
+   "summary": "刊於 Journal of Environmental Management 的研究，開發以 Rhino＋Grasshopper 為平台的開源雨水工具 Rainwater+，讓建築與景觀設計者在早期設計就能估算逕流量，並視覺化逕流的流向，協助配置低衝擊開發（LID）設施，文中附兩個案例示範。基礎範例只處理地形上的流向與累積，Rainwater+ 則把逕流量計算與設計工作流程結合；可把它的逕流係數概念加到基礎範例的初始水量上。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "G03-04",
+   "title": "支援永續都市綠地設計的整合雨水分析模型",
+   "creator": "J. Jia, S. Zlatanova, K. Zhang, H. Liu",
+   "year": "2022",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tags": [
+    "雨水管理",
+    "都市綠地",
+    "粒子模擬",
+    "性能分析"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper"
+   ],
+   "url": "https://isprs-annals.copernicus.org/articles/X-4-W2-2022/153/2022/",
+   "summary": "發表於 ISPRS Annals（第 17 屆 3D GeoInfo 研討會）的論文，指出傳統水文模型對設計者門檻太高，因此在 Rhino＋Grasshopper 中以粒子系統模擬並量化都市綠地的雨水逕流，輸入包含地形、建築腳印等都市物件，並檢驗迭代次數、降雨事件與粒子大小的敏感度。論文本身是粒子模擬，並非 D8 實作；它的角色是把逕流分析整合進綠地設計，和基礎範例比較可以看出「粒子沿坡滾動」與「每格一個下游指標再排序累加」兩種做法的差異。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "G03-05",
+   "title": "結合水文與土方成本效益的地形改造多目標最佳化",
+   "creator": "Hanwen Xu, Mark Randall, Lei Li, Yuyi Tan, Thomas Balstrøm",
+   "year": "2024",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "最佳化",
+    "整地",
+    "雨水管理",
+    "多目標"
+   ],
+   "tools": [
+    "DEM 水文分析",
+    "NSGA-II"
+   ],
+   "url": "https://arxiv.org/abs/2401.02698",
+   "summary": "以 DEM 水文分析結合 NSGA-II 多目標最佳化來改造地形，同時追求最小化最大流速、最大化逕流路徑長度與最小化土方成本，用於降低降雨侵蝕與逕流動能的雨水管理。它把流向與逕流路徑當成地形設計的評估函數；基礎範例只算一次分析，這裡則是每個候選地形都要重跑一次流向，再交給演算法篩選。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "G03-51",
+   "title": "Fantasy map generator（terrain.js）",
+   "creator": "Martin O'Leary",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "D3.js",
+    "程序地圖",
+    "Voronoi",
+    "地形"
+   ],
+   "tools": [
+    "JavaScript",
+    "D3.js"
+   ],
+   "url": "https://github.com/mewo2/terrain",
+   "summary": "Martin O'Leary 為推特機器人 @unchartedatlas 寫的奇幻地圖生成程式，以 JavaScript＋D3.js 在 Voronoi 不規則網格上生成地形：每個點找最低的鄰居當下坡（downhill），用反覆迭代填平窪地（fillSinks），再依高度排序把水量（flux）往下游累加，流量大的地方畫成河流並用來侵蝕地形。它和基礎範例是同一套流向累積邏輯，但網格是不規則的 Voronoi 點而不是方格，輸出是手繪風格的地圖。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "G03-52",
+   "title": "Fantasy Map Generator（C++ 實作）",
+   "creator": "Ryan L. Guy",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "C++",
+    "程序地圖",
+    "填窪",
+    "地形"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "https://rlguy.com/map_generation/",
+   "summary": "以 C++ 實作 Martin O'Leary 的奇幻地圖方法：先用 Planchon-Darboux 演算法填平窪地，確保每個點都有下坡路徑，再追蹤水往地圖邊緣流的流向圖（flow map），以流量（flux）決定河流位置並依流量與坡度侵蝕地形，最後加上城市、國界與地名標註。和基礎範例相比，它用不同的填窪法（Planchon-Darboux 迭代而非優先佇列），並把流量結果延伸到城市選址等後續規則。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Ryan L. Guy 作品頁",
+    "page": "https://rlguy.com/map_generation/",
+    "note": "地圖生成過程中的流向圖（flow map）；整合時尚未確認圖片內容，下載後請人工檢查畫面再上線"
+   }
+  },
+  {
+   "id": "G03-53",
+   "title": "HeightField Flow Field 節點",
+   "creator": "SideFX",
+   "year": "2018",
+   "category": "modeling",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "高度場",
+    "多流向",
+    "地形"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/docs/houdini/nodes/sop/heightfield_flowfield.html",
+   "summary": "Houdini 17.0 起提供的高度場節點，依高度圖產生累積流量（flow）與平均流向（flow dir）圖層：先在部分格子降雨，再讓水沿下坡散開（Smooth 模式向所有下坡方向擴散、Granular 模式保持成束），可選擇依流量刻出谷地。它相當於多流向版本的流量累積，常用來當地形材質與植被分布的遮罩；和基礎範例的單一方向 D8 相比，結果較柔和，但沒有明確的樹狀河網與集水區編號。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

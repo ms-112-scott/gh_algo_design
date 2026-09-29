@@ -1,0 +1,129 @@
+{
+ "algo": "C03",
+ "classification": [
+  {"id": "C03-01", "source": "art", "why": "Hobbs 的 flow field 技法文章，成果是視覺構圖手法"},
+  {"id": "C03-02", "source": "art", "why": "Art Blocks 生成藝術系列，以流場驅動線條為主要成果"},
+  {"id": "C03-03", "source": "art", "why": "以真實風場資料做成的公共資料藝術地圖，非工程分析"},
+  {"id": "C03-04", "source": "art", "why": "Refik Anadol 大廳委託裝置，屬藝術節／館舍委託作品"},
+  {"id": "C03-05", "source": "research", "why": "Grasshopper／OpenFOAM CFD 工程模擬工具"},
+  {"id": "C03-06", "source": "research", "why": "Piker 包裝成 Grasshopper 工具的等勢面演算法"},
+  {"id": "C03-07", "source": "research", "why": "科學視覺化學術論文（1997）"},
+  {"id": "C03-08", "source": "research", "why": "學術演算法的 MATLAB 程式碼實作"},
+  {"id": "C03-09", "source": "research", "why": "SIGGRAPH 學術論文，說明 curl noise 場的構造"},
+  {"id": "C03-10", "source": "research", "why": "建成競圖案，摘要自陳非直接以本元件產生"},
+  {"id": "C03-11", "source": "research", "why": "Grasshopper 外掛元件文件頁"},
+  {"id": "C03-12", "source": "research", "why": "鋪面設計技術教學，工具導向而非視覺作品"},
+  {"id": "C03-13", "source": "research", "why": "McNeel 論壇技術討論串"},
+  {"id": "C03-51", "source": "art", "why": "The Coding Train 挑戰，成果為生成視覺畫面"},
+  {"id": "C03-52", "source": "art", "why": "The Nature of Code 教科書章節，成果為流場視覺化"},
+  {"id": "C03-53", "source": "art", "why": "Sighack 生成藝術風格衍生文章"},
+  {"id": "C03-54", "source": "art", "why": "TouchDesigner 教學，成果是即時生成視覺畫面"},
+  {"id": "C03-55", "source": "art", "why": "TouchDesigner GLSL 粒子教學，成果為生成視覺畫面"}
+ ],
+ "art_count": 9,
+ "need": 0,
+ "removal_order": ["C03-13", "C03-10", "C03-12", "C03-08", "C03-11"],
+ "removal_reasons": {
+  "C03-13": "McNeel 論壇討論串，非正式作品，沒有代表性畫面，難以找到真實圖片",
+  "C03-10": "摘要自陳「並非直接以本元件的流線追蹤產生」，與本元件關聯薄弱",
+  "C03-12": "泛用鋪面設計部落格教學，出處籠統、非本元件核心示範，難查證",
+  "C03-08": "與 C03-07 高度重疊，都是 Jobard–Lefer 等間距流線演算法的重述／實作",
+  "C03-11": "外掛文件頁內容單薄，且與 C03-06 同屬 Grasshopper 流線工具主題重複"
+ },
+ "new_art": [
+  {
+   "title": "Meander（虛構河流蜿蜒地圖）",
+   "creator": "Robert Hodgin",
+   "year": "2020",
+   "category": "urban-landscape",
+   "categories_extra": ["drawing"],
+   "scale": "地景",
+   "summary": "Robert Hodgin 用「切線」與「修改後副切線（長度正比曲率、指向曲線外側）」混合成的向量場，讓虛構河流逐步彎曲；自我相交處切出牛軛湖並逐漸消失，另疊加地形與河谷引導線控制彎曲強度。和 Grasshopper 範例的固定吸引點＋旋轉場不同，這裡的「場」由曲線自身局部曲率即時算出，示範「場依賴自身歷史」的做法。",
+   "variations": [
+    {"name": "依曲率動態算場", "how": "場方向不是查表，而是每一步用當前曲線的切線與副切線（長度正比曲率）混合算出", "effect": "彎道會自我強化，產生更自然的河曲節奏"},
+    {"name": "自相交偵測與剪除", "how": "追蹤中持續做距離檢查，偵測到自我相交就把封閉段切成牛軛湖並逐步移除", "effect": "避免流線纏繞打結，同時多一層「歷史痕跡」"},
+    {"name": "地形回饋彎曲強度", "how": "用引導線在隨機地形上刻出河谷，河谷深淺回頭影響場的彎曲強度", "effect": "平原蜿蜒、山區筆直，一張圖呈現地貌對流動的影響"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "Houdini", "向量場", "程序式地圖", "曲率"],
+   "tools": ["Houdini"],
+   "url": "https://roberthodgin.com/project/meander",
+   "evidence": "作品頁標題與內文：Meander, Robert Hodgin, 2020 年 5 月, 以 tangent 與 modified bitangent 向量混合生成虛構河流演化地圖",
+   "nearest_existing": "C03-06 Rheotomic Surfaces（同樣把向量場包成曲線生成工具，但 Piker 版本用複數函數等勢線，這裡用曲率驅動路徑）",
+   "image": {
+    "url": "https://roberthodgin-website.s3.us-east-2.amazonaws.com/meander/meander_v33_a_resize.jpg",
+    "page": "https://roberthodgin.com/project/meander",
+    "verified": true,
+    "checked": "仿古地圖『Ancient Courses of the Baldknob River Meander Belt』，用多層彩色同心弧線畫出河流歷年彎曲軌跡與圖例",
+    "source": "Robert Hodgin 個人網站",
+    "author": "Robert Hodgin",
+    "license": "網頁作品展示圖，教學引用",
+    "license_url": "",
+    "note": "仿古地圖風格版畫，疊色弧線呈現河流隨時間蜿蜒的多個歷史路徑"
+   }
+  },
+  {
+   "title": "Anticyclone",
+   "creator": "William Mapan",
+   "year": "2022",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Art Blocks 上發行的 800 件生成藝術系列，以高氣壓、旋轉、氣流等氣象概念為主題，用向量場引導帶狀線條，刻意模仿紙張與蠟筆的類比手感，探討「電腦能不能畫得像人手」；作品內建鍵盤互動，可逐層檢視場如何一步步構成畫面。和 Grasshopper 範例相比，這裡的場方向被賦予材質與筆觸雜訊，讓數學上乾淨的流線變成手繪感的紋理。",
+   "variations": [
+    {"name": "分層可互動檢視", "how": "鍵盤操作可顯示流線生成的中間步驟（場→骨架→上色分層）", "effect": "讓觀者看到流線如何一層層疊加成最終畫面，適合教學拆解"},
+    {"name": "類比材質模擬", "how": "線條渲染時加入紙張紋理與蠟筆邊緣雜訊，取代乾淨的向量線", "effect": "數學生成的流線多了手繪、類比質感"},
+    {"name": "氣象語彙的場設計", "how": "場的來源被命名為高壓、旋轉、氣流等氣象概念，而非抽象的吸引點", "effect": "讓抽象的場公式有敘事與可讀性"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "JavaScript", "Art Blocks", "流場", "生成藝術"],
+   "tools": ["JavaScript"],
+   "url": "https://www.artblocks.io/collection/anticyclone-by-william-mapan",
+   "evidence": "Art Blocks 作品頁：Anticyclone by William Mapan，2022 年 4 月發行，描述 high pressure, rotation, air flow 與固定 800 件版本",
+   "nearest_existing": "C03-02 Fidenza（同為 Art Blocks 上以流場驅動線條的生成藝術系列，但 Fidenza 是滑順色帶，Anticyclone 走類比手繪質感）",
+   "image": {
+    "url": "https://media-proxy.artblocks.io/1/0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270/304000180.png",
+    "page": "https://www.artblocks.io/collection/anticyclone-by-william-mapan",
+    "verified": true,
+    "checked": "暖色調、類似蠟筆與水彩暈染的曲流紋理，像被風吹過的木紋或編織圖案",
+    "source": "Art Blocks",
+    "author": "William Mapan",
+    "license": "作品官方展示圖，教學引用",
+    "license_url": "",
+    "note": "橘紅暖色調的手繪感曲流紋理，呈現高壓氣流的向量場"
+   }
+  },
+  {
+   "title": "River Scars",
+   "creator": "Robert Hodgin",
+   "year": "2024",
+   "category": "urban-landscape",
+   "categories_extra": ["drawing"],
+   "scale": "地景",
+   "summary": "Meander 的延伸作品：在隨機生成的地形與生態帶上模擬河流蜿蜒與侵蝕，新增支流與分岔；把追蹤到的河道路徑當作持續切割地表的「侵蝕源」，配合 Houdini 高度場侵蝕與 Gaea 侵蝕節點反覆疊代，畫出宛如衛星空照的河谷地景版畫系列。示範同一套向量場流線邏輯如何從「畫一條線」升級成「持續改變環境的迴圈」。",
+   "variations": [
+    {"name": "分岔與支流", "how": "流線推進時依機率或坡度長出新的分支流線，各自延續自己的場追蹤", "effect": "單一起點長出樹狀水系，而不只是一條孤立的線"},
+    {"name": "流線即侵蝕源", "how": "把追蹤到的路徑回填成高度場的侵蝕輸入，逐輪疊代讓地形跟著流線下切", "effect": "流線不只是畫出來的線，還會回頭改變它所在的地形"},
+    {"name": "生態帶配色系統", "how": "依地形高度與濕度分區上色（冰原、硫磺地、黃石地熱等主題）", "effect": "同一套流線演算法套上不同生態帶材質就變成一整個系列"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "Houdini", "侵蝕模擬", "地形", "向量場"],
+   "tools": ["Houdini", "Gaea"],
+   "url": "https://roberthodgin.com/project/river-scars",
+   "evidence": "作品頁：River Scars, 2024，描述探索隨機地形與生態帶上的河流侵蝕痕跡，使用 Houdini 高度場侵蝕與 Gaea 侵蝕節點",
+   "nearest_existing": "本次新增的 Meander（本作在其向量場路徑基礎上加入分岔與地形侵蝕回饋，屬同一系列延伸）",
+   "image": {
+    "url": "https://roberthodgin.com/v2/wp-content/uploads/iceland_erosion4.png",
+    "page": "https://roberthodgin.com/project/river-scars",
+    "verified": true,
+    "checked": "衛星空照風格版畫，黃綠色河道蜿蜒切過深棕色山地地形",
+    "source": "Robert Hodgin 個人網站",
+    "author": "Robert Hodgin",
+    "license": "網頁作品展示圖，教學引用",
+    "license_url": "",
+    "note": "衛星空照風格版畫，黃綠色河道切過深色山地地形"
+   }
+  }
+ ],
+ "notes": "既有 18 案例分類後 art／research 剛好各 9 個，need=0，不需替換；仍依規格提供 3 個備援藝術案例（皆已下載預覽並親眼確認畫面），其中 2 個出自 Robert Hodgin（Meander／River Scars）因今日搜尋工具（WebSearch、Parallel Search 皆額度用盡，多個 OpenProcessing／inconvergent 等頁面被擋 403）取得受限，未能再找到第三位不同創作者的合格作品；removal_order 供協調者在其他演算法缺口時參考。"
+}

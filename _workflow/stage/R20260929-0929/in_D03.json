@@ -1,0 +1,402 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "D03",
+  "name_zh": "Pedestrian 人流模擬",
+  "name_en": "Pedestrian Simulation (Social Force Model)",
+  "one_liner": "每個人都被「想去目的地」的力拉著走、被旁人和障礙物推開，幾十個人一起算，就能看到繞行、排隊與瓶頸壅塞。",
+  "how_it_works": [
+   "在每個出發點周圍隨機站 peoplePerStart 個人，全部投影到 XY 平面。",
+   "目標力：（想要的速度 − 現在的速度）÷ 反應時間，讓人逐漸加速到 walkSpeed 並朝向目的地。",
+   "人推人：對 6 倍半徑內的每個人，依身體間空隙 gap 以 exp(−gap / PushRange) 計算推開的力。",
+   "障礙力：靠近圓形障礙時被推開，並加上一個垂直分量，往目的地那一側繞過去。",
+   "先算完所有人的力，再一起更新：速度 += 力 × 時間步，限制最高速度，位置 += 速度 × 時間步，並記錄軌跡。",
+   "到達目的地附近就停下；全部抵達或跑完 steps 就結束，輸出每個人的軌跡 Polyline。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "D03-01",
+   "title": "社會力模型（Social Force Model）",
+   "creator": "Dirk Helbing, Péter Molnár",
+   "year": "1995",
+   "category": "performance",
+   "scale": "群體／都市",
+   "tags": [
+    "物理模擬",
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "數學模型"
+   ],
+   "url": "",
+   "summary": "基礎範例的理論來源：把行人看成受「想去目的地的驅動力」與「他人、牆面排斥力」作用的粒子。模型能自然重現對向人流自動分成車道、門口雙向交替通行等現象。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-02",
+   "title": "逃生恐慌模擬與「越急越慢」",
+   "creator": "Dirk Helbing, Illés Farkas, Tamás Vicsek",
+   "year": "2000",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "最佳化"
+   ],
+   "tools": [
+    "數學模型"
+   ],
+   "url": "",
+   "summary": "在社會力模型中加入身體擠壓與摩擦，模擬緊急疏散時出口前的拱形堵塞；結果顯示人越急反而越慢，並提出在出口前方適當位置放柱子可以減少堵塞。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-03",
+   "title": "草地上的捷徑：人類步道系統的演化",
+   "creator": "Dirk Helbing, Joachim Keltsch, Péter Molnár",
+   "year": "1997",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "網格擴散",
+    "開放生長"
+   ],
+   "tools": [
+    "數學模型"
+   ],
+   "url": "",
+   "summary": "以「主動行走者」模型解釋公園草地上被踩出的捷徑：行人偏好走已被踩過的路，路徑又會因少人走而恢復。模型與黏菌的「留痕跡—跟隨痕跡」機制非常相似，可用來預測慾望路徑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-04",
+   "title": "自然移動理論與軸線圖（Space Syntax）",
+   "creator": "Bill Hillier, Alan Penn 等",
+   "year": "1993",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "DepthmapX"
+   ],
+   "url": "",
+   "summary": "Space syntax 認為街道網絡的空間構成（整合度）本身就能解釋大部分的步行人流，並以軸線圖和可見度圖呈現。它不模擬個人，而是用圖論分析空間，常與代理人模擬互補。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-05",
+   "title": "Trafalgar Square 步行化改造中的人流分析",
+   "creator": "Space Syntax Ltd × Foster + Partners",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "吸引子控制"
+   ],
+   "tools": [
+    "Space syntax 分析",
+    "現場觀測"
+   ],
+   "url": "",
+   "summary": "倫敦 World Squares for All 計畫中，Space Syntax 以人流觀測與空間分析支持把廣場北側道路步行化並新增大階梯，是以人流分析直接影響公共空間設計的代表案例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-06",
+   "title": "麥加朝覲 Jamarat 橋的人潮災害研究",
+   "creator": "Dirk Helbing, Anders Johansson, Habib Z. Al-Abideen",
+   "year": "2007",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "鄰居搜尋"
+   ],
+   "tools": [
+    "影像追蹤",
+    "數學模型"
+   ],
+   "url": "",
+   "summary": "分析 2006 年朝覲人潮事故的影像資料，發現高密度下人流從停走波轉為「群眾湍流」，研究成果被用於改善動線管理與設施設計，是人流研究影響真實建築與營運的重要例子。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-07",
+   "title": "MassMotion 行人模擬軟體",
+   "creator": "Oasys（Arup）",
+   "year": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "物理模擬"
+   ],
+   "tools": [
+    "MassMotion"
+   ],
+   "url": "",
+   "summary": "由 Arup 發展、Oasys 發行的商業級 3D 行人模擬軟體，常用於車站、機場、體育場的動線與疏散評估，能處理樓梯、電扶梯與排隊等設施，並輸出密度熱圖與服務水準。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-08",
+   "title": "Pathfinder 疏散模擬",
+   "creator": "Thunderhead Engineering",
+   "year": "",
+   "category": "performance",
+   "scale": "建築",
+   "tags": [
+    "物理模擬",
+    "最佳化"
+   ],
+   "tools": [
+    "Pathfinder"
+   ],
+   "url": "",
+   "summary": "常用於防火與建築法規檢討的代理人疏散模擬軟體，可匯入建築模型，計算每個出口與樓梯的疏散時間，並以動畫呈現。展示了人流模擬在建築性能設計中的實務角色。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Thunderhead Engineering：Pathfinder 產品頁",
+    "page": "https://www.thunderheadeng.com/pathfinder",
+    "note": "Pathfinder 疏散模擬畫面：車站大廳樓梯與電扶梯上的人流"
+   }
+  },
+  {
+   "id": "D03-09",
+   "title": "Arnhem Centraal 轉運站",
+   "creator": "UNStudio",
+   "year": "2015",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "吸引子控制"
+   ],
+   "tools": [
+    "動線分析"
+   ],
+   "url": "",
+   "summary": "UNStudio 以轉乘旅客在火車、公車、停車與步行之間的動線分析作為設計主軸，最後形成連續扭轉、無明確樓層分界的大廳空間。是人流研究直接決定建築形體的代表案例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-10",
+   "title": "Quelea：Grasshopper 代理人外掛",
+   "creator": "Alex Fischer",
+   "year": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "多元件",
+    "曲面上"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Quelea"
+   ],
+   "url": "",
+   "summary": "Grasshopper 上的代理人模擬外掛，提供分離、對齊、聚集、尋找、環境邊界等行為元件，可以組合出人流、群集與路徑追蹤，適合與基礎 C# 範例互相對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-11",
+   "title": "DecodingSpaces Toolbox",
+   "creator": "Reinhard König 等（Bauhaus-Universität Weimar）",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "鄰居搜尋",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "",
+   "summary": "Grasshopper 的都市分析工具組，提供街道網絡中心性、可見度（isovist）等 space syntax 類型的分析，可與代理人模擬搭配，把空間分析與人流評估整合在同一個參數化流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-12",
+   "title": "視覺啟發式行人模型",
+   "creator": "Mehdi Moussaïd, Dirk Helbing, Guy Theraulaz",
+   "year": "2011",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tags": [
+    "鄰居搜尋",
+    "搜尋"
+   ],
+   "tools": [
+    "數學模型"
+   ],
+   "url": "",
+   "summary": "以兩條簡單的視覺規則（選擇最快不受阻擋的方向、與前方障礙保持反應時間距離）取代力的相加，更貼近實驗觀察，並能重現高密度下的人潮湍流。是社會力模型之後的重要改良方向。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-13",
+   "title": "PEDSIM 開源行人模擬函式庫",
+   "creator": "Christian Gloor",
+   "year": "",
+   "category": "modeling",
+   "scale": "群體／都市",
+   "tags": [
+    "自訂 class"
+   ],
+   "tools": [
+    "C++"
+   ],
+   "url": "",
+   "summary": "以社會力模型為核心的開源 C++ 行人模擬函式庫，提供代理人、障礙、路徑點等基本物件，程式結構與基礎範例相近，適合想把範例擴充成完整模擬器的學習者參考。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "D03-51",
+   "title": "Steering Behaviors For Autonomous Characters",
+   "creator": "Craig Reynolds",
+   "year": "1999",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "steering behaviors",
+    "人流",
+    "自主代理",
+    "經典論文",
+    "Java"
+   ],
+   "tools": [
+    "Java"
+   ],
+   "url": "https://www.red3d.com/cwr/steer/gdc99/",
+   "summary": "Reynolds 在 GDC 1999 發表的論文線上版，定義 seek／flee、pursue／evade、arrival、wander、path following、wall following、collision avoidance、flow field following 等轉向行為，網站另附 Java 動畫圖示，後來成為遊戲與 creative coding 中人流、角色移動的共同基礎。與 GH C# 範例相比，這是把「人流」拆解成可組合轉向力模組的原始來源。",
+   "currently_cc": true,
+   "photo": {
+    "source": "red3d.com",
+    "page": "https://www.red3d.com/cwr/steer/gdc99/",
+    "note": "論文 Figure 9：路徑跟隨（path following）示意圖"
+   }
+  },
+  {
+   "id": "D03-52",
+   "title": "5.7 Path Following（Nature of Code 影片）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2021",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "路徑跟隨",
+    "steering behaviors",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/tracks/the-nature-of-code-2/noc/5-autonomous-agents/7-path-following",
+   "summary": "Nature of Code 第 5 章的影片教學，以 p5.js 實作 Reynolds 的路徑跟隨：用純量投影（scalar projection）找出未來位置在路徑上的最近點，偏離時才轉向。這正是把 GH 中的動線曲線當作行人導引的核心計算。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=rlZYT-uvmGQ",
+    "note": "5.7 Path Following 影片縮圖，代理沿河道狀路徑移動"
+   }
+  },
+  {
+   "id": "D03-53",
+   "title": "The Nature of Code 第 5 章：Autonomous Agents",
+   "creator": "Daniel Shiffman",
+   "year": "2024",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "自主代理",
+    "steering behaviors",
+    "人流",
+    "教科書"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/autonomous-agents/",
+   "summary": "Nature of Code（2024 年 No Starch 出版，全文在網站上以 Creative Commons 公開）第 5 章，以 p5.js 講解轉向代理、flow field、path following 與 flocking 等群體行為，並討論演算法效率（空間分格）。可視為把 GH C# 人流範例拆成一個個可單獨練習的積木。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/autonomous-agents/",
+    "note": "第 5 章章首圖，魚群照片"
+   }
+  },
+  {
+   "id": "D03-54",
+   "title": "Simple Crowd Simulation（Houdini 人群模擬）",
+   "creator": "bubble pins",
+   "year": "2020",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "人群模擬",
+    "crowd",
+    "3D"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/",
+   "summary": "SideFX 官網收錄的 Houdini 18 入門教學，以 Crowds 工具架建立代理並模擬大量行走角色。與 GH C# 範例的抽象點粒子不同，Houdini 的 crowd 系統把轉向行為接到帶骨架動畫的角色上，適合做街道、廣場的人流視覺化。",
+   "currently_cc": true,
+   "photo": {
+    "source": "SideFX",
+    "page": "https://www.sidefx.com/tutorials/simple-crowd-simulation-in-houdini/",
+    "note": "教學封面，Houdini 人群模擬中大量行走角色"
+   }
+  },
+  {
+   "id": "D03-55",
+   "title": "People in a Crowd",
+   "creator": "Sonia Martin",
+   "year": "2014",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "OpenProcessing",
+    "人流",
+    "障礙迴避"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://openprocessing.org/sketch/139678/",
+   "summary": "OpenProcessing 上的 Processing 作品，以向量、物件與陣列模擬人群穿越場地並嘗試閃避放置的障礙物。作者自述行人仍會互相碰撞、路徑被推偏，正好示範只有排斥力而缺乏目標導向與預測迴避時的人流問題（程式需貼回 Processing 執行）。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

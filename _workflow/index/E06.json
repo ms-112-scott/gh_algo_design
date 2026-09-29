@@ -232,7 +232,7 @@
     "Grasshopper",
     "Julia"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E06-08",
@@ -261,7 +261,7 @@
     "JavaScript",
     "WebGL"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "E06-52",
@@ -292,7 +292,7 @@
     "Jupyter Notebook",
     "NetworkX"
    ],
-   "has_image": false
+   "has_image": true
   }
  ],
  "distribution": {

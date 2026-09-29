@@ -1,0 +1,481 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "A01",
+  "name_zh": "L-System",
+  "name_en": "L-System",
+  "one_liner": "用幾條「字母換成字串」的規則反覆改寫，再讓一支畫筆照字串前進、轉彎、分岔，長出樹、草、分枝柱等結構。",
+  "how_it_works": [
+   "把規則文字（如 F=F[+F]F[-F]F）拆成 Dictionary<char,string> 規則表。",
+   "從起始字串開始，每一代把每個字元「同時」換成規則右邊的字串（沒規則的字元原樣保留），重複 generations 次；字串超過 50 萬字就停止。",
+   "畫筆（Pen = Plane + 步長）逐字讀最終字串：F 前進畫線、f 前進不畫、+ - & ^ \\ / 繞三個軸旋轉。",
+   "遇到 [ 把目前畫筆壓進 Stack 並把步長乘上 branchScale；遇到 ] 從 Stack 取回，回到分岔點繼續畫。",
+   "輸出所有線段與（截斷後的）最終字串。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "A01-01",
+   "title": "L-Systems in Architecture",
+   "creator": "Michael Hansmeyer",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "字串改寫",
+    "遞迴"
+   ],
+   "tools": [],
+   "url": "https://michael-hansmeyer.com/l-systems",
+   "summary": "Hansmeyer 探討將 L-system 從植物模擬轉用到建築形態生成，以字串改寫產生具遞迴與模組性的空間結構。展示了極少的規則如何產生空間上高度複雜的建築構成。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Michael Hansmeyer 官網",
+    "page": "https://michael-hansmeyer.com/l-systems",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-02",
+   "title": "以 L-system 進行分枝柱的形態生成與最佳化",
+   "creator": "研究論文（Journal of Building Engineering）",
+   "year": "2025",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "吸引子控制",
+    "最佳化"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.sciencedirect.com/science/article/pii/S2352710225030542",
+   "summary": "提出以參數化 L-system 在設計早期生成分枝柱，並以吸引與排斥向量影響生長，再串接拓撲修正、結構分析與斷面最佳化（應力與挫屈約束）。比較不同規則所得分枝的剛度、重量與變形。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:Sagrada-familia-arches2.jpg",
+    "note": "相關實例：聖家堂的分枝柱（非論文原圖）"
+   }
+  },
+  {
+   "id": "A01-03",
+   "title": "Stuttgart 機場航廈樹狀柱／以參數工具重探 Frei Otto 分枝柱",
+   "creator": "Semra Arslan Selçuk, Nur Banu Gülle, Güneş Mutlu Avinç（研究）；原作 gmp 與 Frei Otto 樹狀柱原理",
+   "year": "2022",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "對稱",
+    "遞迴"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://journals.sagepub.com/doi/10.1177/21582440221119479",
+   "summary": "Stuttgart 機場航廈以多層級分枝的鋼管樹狀柱支撐單坡屋頂，源自 Frei Otto 的分枝結構研究。Selçuk 等人的論文以參數化工具重新建構這類分枝柱，正是 L-system 的「幾層分枝、每層角度與長度縮放」邏輯。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:Stuttgart_Airport_Interior_2005-06-02.jpg",
+    "note": "斯圖加特機場航廈的樹狀柱"
+   }
+  },
+  {
+   "id": "A01-04",
+   "title": "Rabbit：Grasshopper 的 L-system 與 3D Turtle 外掛",
+   "creator": "Morphocode",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "字串改寫",
+    "3D",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Rabbit",
+    "C#"
+   ],
+   "url": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+   "summary": "Rabbit 為 Grasshopper 提供 L-system 與 3D Turtle 直譯元件，支援確定性與隨機 L-system，並可視化為 3D 結構。與基礎範例幾乎是同一套邏輯，適合作為對照與延伸。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Morphocode",
+    "page": "https://morphocode.com/rabbit-grasshopper-3d-l-systems-3d-cellular-automata/",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-05",
+   "title": "Houdini L-System SOP 與 LsystemBuilding 範例",
+   "creator": "SideFX",
+   "year": "",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "字串改寫",
+    "3D"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://www.sidefx.com/docs/houdini/examples/nodes/sop/lsystem/LsystemBuilding.html",
+   "summary": "Houdini 內建 L-System 節點，以迭代字串改寫生成幾何；官方 LsystemBuilding 範例示範以 L-system 生成帶有窗戶的建築物，說明 L-system 不只用於植物。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "A01-06",
+   "title": "Procedural Modeling of Cities（CityEngine 前身）",
+   "creator": "Yoav I. H. Parish, Pascal Müller",
+   "year": "2001",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "影像輸入",
+    "約束滿足",
+    "字串改寫"
+   ],
+   "tools": [
+    "CityEngine"
+   ],
+   "url": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/",
+   "summary": "以擴充的 L-system 生成整座城市：輸入水陸邊界、人口密度等影像，長出高速公路與街道網，再切分地塊並生成建築。加入「全域目標」與「局部約束」降低規則複雜度，成為程序化城市生成的經典。",
+   "currently_cc": false,
+   "photo": {
+    "source": "ACM SIGGRAPH History Archive",
+    "page": "https://history.siggraph.org/learning/procedural-modeling-of-cities-by-parish-and-muller/",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-07",
+   "title": "植物生態系的真實建模與算圖",
+   "creator": "Oliver Deussen, Pat Hanrahan, Bernd Lintermann, Radomír Měch, Matt Pharr, Przemyslaw Prusinkiewicz",
+   "year": "1998",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "隨機",
+    "鄰居搜尋",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf",
+   "summary": "SIGGRAPH 98 論文，結合 L-system 植物模型與植物分布模擬，生成含大量植株的自然景觀並算圖。示範了從單株 L-system 到群落地景的尺度跳躍。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Deussen et al., SIGGRAPH 1998",
+    "page": "https://algorithmicbotany.org/papers/ecosys.sig98.pdf",
+    "note": "論文算圖：程序化生成的植物生態系"
+   }
+  },
+  {
+   "id": "A01-08",
+   "title": "以 L-system 與參數最佳化設計 3D 列印輕量結構",
+   "creator": "研究論文（Applied Sciences）",
+   "year": "2022",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "最佳化",
+    "物理模擬"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.3390/app12115530",
+   "summary": "沿主應力線方向生成與分布 L-system 樹狀結構，作為積層製造用的輕量化內部構造；以數值模擬評估並將分枝粗細作為設計變數最佳化。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Applied Sciences (MDPI)",
+    "page": "https://doi.org/10.3390/app12115530",
+    "note": "論文圖：不同 L-system 規則生成的輕量結構"
+   }
+  },
+  {
+   "id": "A01-09",
+   "title": "分枝幾何的機械手臂空間列印路徑生成",
+   "creator": "研究論文（Buildings）",
+   "year": "2022",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "約束滿足"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.3390/buildings12122247",
+   "summary": "針對仿生分枝結構的機械手臂空間列印（spatial printing），提出自動生成列印路徑的方法（圖生成、圖走訪、曲線調整等）。L-system 產生的分枝線正是這類流程的上游輸入。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Buildings (MDPI)",
+    "page": "https://doi.org/10.3390/buildings12122247",
+    "note": "論文圖：分枝節點的列印路徑成果"
+   }
+  },
+  {
+   "id": "A01-10",
+   "title": "L-System User Notes（L-system 規則範例集）",
+   "creator": "Paul Bourke",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "字串改寫",
+    "分形"
+   ],
+   "tools": [],
+   "url": "https://paulbourke.net/fractals/lsys/",
+   "summary": "Paul Bourke 整理的 L-system 說明與大量規則範例（植物、分形曲線、圖樣），被許多程式與教學引用，是替基礎範例找新規則最直接的素材庫。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Paul Bourke",
+    "page": "https://paulbourke.net/fractals/lsys/",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-11",
+   "title": "L-System 與分形的繪圖機（Pen Plotter）作品",
+   "creator": "Pen Plotter Kit（部落格）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "分形",
+    "字串改寫"
+   ],
+   "tools": [
+    "繪圖機"
+   ],
+   "url": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/",
+   "summary": "介紹以 L-system 生成樹、蕨類、珊瑚與空間填充曲線，並用繪圖機畫出。烏龜繪圖（turtle）本身就類似繪圖機筆頭移動，輸出線段可直接轉成繪圖路徑。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Pen Plotter Kit",
+    "page": "https://penplotterkit.com/blog/l-systems-and-fractal-art-for-plotters/",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-12",
+   "title": "Mutiertes L-System（突變的 L-System）",
+   "creator": "Lotta Stöver",
+   "year": "",
+   "category": "art-installation",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "約束滿足"
+   ],
+   "tools": [],
+   "url": "https://lotta-stoever.net/works/mutiertes-l-system",
+   "summary": "將 L-system 演算法從軟體搬到實體世界「長出來」的裝置作品，讓結構依所在空間環境調整。展示 L-system 作為空間裝置的可能。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Lotta Stöver 官網",
+    "page": "https://lotta-stoever.net/works/mutiertes-l-system",
+    "note": ""
+   }
+  },
+  {
+   "id": "A01-13",
+   "title": "以計算方法解構巴塔克族 Gorga 裝飾紋樣",
+   "creator": "Hokky Situngkir",
+   "year": "2015",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "對稱",
+    "拼貼",
+    "字串改寫"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/1510.01140",
+   "summary": "以 L-system 等計算方法分析並重建印尼巴塔克族傳統建築上的 Gorga 紋樣，說明傳統裝飾圖樣可被規則化描述與生成。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Wikimedia Commons",
+    "page": "https://commons.wikimedia.org/wiki/File:Gorga_boraspati_dan_adop-adop.jpg",
+    "note": "巴塔克族傳統住屋的 Gorga 雕刻紋樣"
+   }
+  },
+  {
+   "id": "A01-14",
+   "title": "Riemannian L-systems：在彎曲空間中生長的形態",
+   "creator": "研究論文（arXiv）",
+   "year": "2024",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2404.03270",
+   "summary": "將 L-system 的烏龜繪圖擴展到曲面等彎曲空間，讓生長形態沿曲面的幾何前進。對應到建築上就是讓分枝圖樣貼附在自由曲面屋頂或立面上。",
+   "currently_cc": false,
+   "photo": {
+    "source": "arXiv:2404.03270",
+    "page": "https://arxiv.org/abs/2404.03270",
+    "note": "論文圖：在球面上生長的分枝"
+   }
+  },
+  {
+   "id": "A01-15",
+   "title": "SpeedTree 程序化植物建模",
+   "creator": "SpeedTree",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "動畫",
+    "3D",
+    "隨機"
+   ],
+   "tools": [
+    "SpeedTree"
+   ],
+   "url": "https://en.wikipedia.org/wiki/SpeedTree",
+   "summary": "業界標準的程序化植物建模工具，廣泛用於遊戲、電影與建築表現（Archviz），以規則化方式生成樹木、枝葉與風動。可視為 L-system 思想在商業工具中的延伸。",
+   "currently_cc": false,
+   "photo": {
+    "source": "SpeedTree 官網",
+    "page": "https://www.speedtree.com/",
+    "note": "SpeedTree 程序化生成的樹"
+   }
+  },
+  {
+   "id": "A01-51",
+   "title": "Coding Challenge #16：L-System Fractal Trees（L-System 分形樹）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "字串改寫",
+    "分形",
+    "教學影片"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
+   "summary": "Daniel Shiffman 在 p5.js 裡從零寫出 L-System：先做字串改寫，再用 turtle（translate／rotate／push／pop）把字串畫成樹。流程與 Grasshopper 範例幾乎一一對應，差別在 p5.js 用畫布座標變換取代 Plane，而且用一個按鈕觸發 generate()，每按一次長一代，可以逐代觀察字串與圖形一起變長。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/16-l-system-fractal-trees",
+    "note": "Coding Challenge #16 影片縮圖"
+   }
+  },
+  {
+   "id": "A01-52",
+   "title": "ofxLSystem：openFrameworks 的 3D L-System 網格樹",
+   "creator": "Davide Prati（edap）",
+   "year": "2016",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "3D",
+    "網格"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/edap/ofxLSystem",
+   "summary": "openFrameworks 外掛，搭配同作者的 ofxLSystemGrammar（實作《The Algorithmic Beauty of Plants》中多數改寫文法），把 L-System 字串用 3D turtle 轉成帶材質的網格，可以做出森林、環狀結構與動畫。和基礎範例只輸出線段不同，它直接生成可著色、可即時算圖的實體枝幹。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub edap/ofxLSystem",
+    "page": "https://github.com/edap/ofxLSystem",
+    "note": "README 示範圖：以 ofxLSystem 生成的 3D 森林"
+   }
+  },
+  {
+   "id": "A01-53",
+   "title": "lindenmayer：可把 JavaScript 函式當規則的 L-System 函式庫",
+   "creator": "Tom Brewe（nylki）",
+   "year": "2015",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "字串改寫",
+    "函式庫"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://github.com/nylki/lindenmayer",
+   "summary": "JavaScript 的 L-System 函式庫，支援經典的分枝、上下文相關與參數化 L-System，也允許直接用 JavaScript 函式當改寫規則；它只負責改寫，繪圖交給使用者（範例用 canvas 畫出 Koch 雪花，另有 A-Frame 的 3D／VR 元件）。對照基礎範例，重點是把「改寫」與「畫筆解讀」徹底分開。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub nylki/lindenmayer",
+    "page": "https://github.com/nylki/lindenmayer",
+    "note": "README 範例結果：以 L-System 函式庫畫出的 Koch 雪花"
+   }
+  },
+  {
+   "id": "A01-54",
+   "title": "TouchDesigner LSystem SOP",
+   "creator": "Derivative",
+   "year": "",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "即時影像",
+    "節點式"
+   ],
+   "tools": [
+    "TouchDesigner"
+   ],
+   "url": "https://docs.derivative.ca/LSystem_SOP",
+   "summary": "TouchDesigner 內建的 L-System 節點，支援上下文相關規則、機率、參數符號與管狀（Tube）輸出。官方文件指出 Generations 可以放時間函式來驅動生長動畫，適合在即時影像與演出中讓樹、閃電或雪花隨時間長出來；它是節點參數化，而不是像基礎範例那樣自己寫改寫迴圈。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "A01-55",
+   "title": "The Nature of Code 第 8 章：L-systems",
+   "creator": "Daniel Shiffman",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "教科書",
+    "分形"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://natureofcode.com/fractals/#l-systems",
+   "summary": "《The Nature of Code》p5.js 版第 8 章「Fractals」的 L-systems 小節，先用程式產生 L-System 句子（Example 8.8），再把句子交給 turtle 畫成樹（Example 8.9），並從遞迴樹、隨機樹一路銜接。適合當作基礎範例的前導閱讀：同一個樹形先用遞迴寫、再改用字串改寫寫，比較兩種思路。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Nature of Code",
+    "page": "https://natureofcode.com/fractals/",
+    "note": "第 8 章 Figure 8.17：依產生規則逐代長出的分形樹"
+   }
+  }
+ ]
+}

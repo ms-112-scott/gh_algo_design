@@ -1,0 +1,277 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F01",
+  "name_zh": "Truchet 磁磚",
+  "name_en": "Truchet Tiles",
+  "one_liner": "把同一片「兩段四分之一圓弧」的方磚隨機轉 0° 或 90° 鋪滿網格，弧線在邊中點自動接成連續的蜿蜒曲線。",
+  "how_it_works": [
+   "以 columns × rows 建立正方形網格，每格左下角 = (column × tileSize, row × tileSize)。",
+   "每格用 Random(seed) 擲硬幣：決定用「左下＋右上」或「右下＋左上」這組對角當圓心。",
+   "以兩個對角為圓心、半格為半徑各畫一段 90° 圓弧；弧線端點都落在邊的中點。",
+   "因為所有弧都停在邊中點，相鄰格的弧必然首尾相接，整體浮現連續曲線與封閉圈。",
+   "輸出所有圓弧（arcs）與每格外框（tiles）。"
+  ]
+ },
+ "final_total": 14,
+ "target_art": 7,
+ "target_research": 7,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F01-01",
+   "title": "Mémoire sur les combinaisons（Truchet 原始論文）",
+   "creator": "Sébastien Truchet",
+   "year": "1704",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "對稱"
+   ],
+   "tools": [
+    "手繪／紙本"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Truchet_tile",
+   "summary": "法國神父兼數學家 Truchet 研究一片沿對角線切成雙色三角形的方磚，以四種方向組合出大量圖樣，是組合學與色彩對稱的早期表述。基礎範例的「每格選方向」正是這個想法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-02",
+   "title": "Smith 圓弧 Truchet 與結構層級拓樸",
+   "creator": "Cyril Stanley Smith、Pauline Boucher",
+   "year": "1987",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://www.jstor.org/stable/1578535",
+   "summary": "Smith 在 Leonardo 期刊翻譯 Truchet 論文並提出「兩段四分之一圓」的變體，弧線連成連續曲線且把平面分成可兩色著色的區域。基礎範例 F01 就是 Smith 版本。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-03",
+   "title": "Multi-Scale Truchet Patterns（多尺度 Truchet）",
+   "creator": "Christopher Carlson",
+   "year": "2018",
+   "category": "2d-pattern",
+   "scale": "構件",
+   "tags": [
+    "遞迴",
+    "分形",
+    "拼貼"
+   ],
+   "tools": [
+    "Wolfram Language"
+   ],
+   "url": "https://christophercarlson.com/portfolio/multi-scale-truchet-patterns/",
+   "summary": "Carlson 把 Smith 磁磚推廣到以 1/2 縮放的無限組，並加入「翼」使小磚能疊在大磚上接續；邊界在邊長 1/3、2/3 處相接，顏色逐層反轉，產生豐富的湧現形。發表於 Bridges 2018，並附 Wolfram Language 套件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-04",
+   "title": "10 PRINT CHR$(205.5+RND(1)); : GOTO 10",
+   "creator": "Nick Montfort 等 10 位作者（MIT Press）",
+   "year": "2012",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "隨機",
+    "拼貼"
+   ],
+   "tools": [
+    "BASIC"
+   ],
+   "url": "https://10print.org/",
+   "summary": "一整本書探討一行 Commodore 64 BASIC 程式：每次隨機印出「╱」或「╲」就生成無盡迷宮。這是對角線版 Truchet，也是生成藝術與隨機性的經典教材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-05",
+   "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
+   "creator": "George Hart",
+   "year": "2012",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "拼貼"
+   ],
+   "tools": [
+    "雷射切割"
+   ],
+   "url": "https://makezine.com/article/home/fun-games/math-monday-truchet-tiles/",
+   "summary": "兩種帶四分之一圓弧的雷射切割小磚，上層弧形片黏在底層方塊上，規則是「高接高、低接低」，可以拼出圓島或圓湖等圖樣，表面凸起還能拓印。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-06",
+   "title": "Truchet 吸音磚",
+   "creator": "Steelcase",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "吸引子控制"
+   ],
+   "tools": [],
+   "url": "https://www.steelcase.com/eu-en/products/acoustic-solutions/truchet-acoustic-tiles/",
+   "summary": "以 Truchet 命名的吸音牆面／天花模組，54 × 54 cm、五種形狀（平面方塊、曲面方塊、雙曲面方塊、平面四分之一圓、曲面四分之一圓），靠組合方式拼出無限多種牆面。示範 Truchet 在室內聲學產品上的模組化思維。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-07",
+   "title": "Truchet 作為立面的計算式視覺編碼",
+   "creator": "Deena El-Mahdy",
+   "year": "2025",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tags": [
+    "拼貼",
+    "鄰居搜尋"
+   ],
+   "tools": [],
+   "url": "https://journals.sagepub.com/doi/abs/10.1177/14780771241270265",
+   "summary": "研究以 Truchet 磁磚作為模組化參數立面的視覺編碼方法，流程分為探索鋪排、測試連續性、製造與組裝四階段，並結合 shape grammar 回應氣候條件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-08",
+   "title": "以 Truchet 鋪排的織物模板預鑄面板",
+   "creator": "Nexus Network Journal 論文",
+   "year": "2023",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "拼貼",
+    "物理模擬"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/article/10.1007/s00004-023-00657-9",
+   "summary": "結合軟質織物模板、計算式形態找尋與 Truchet 鋪排概念的預鑄面板設計方法，織物模板成本低、製作快且易運輸，少量模板就能組出多變牆面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-09",
+   "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
+   "creator": "dchant design",
+   "year": "",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "曲面上",
+    "拼貼",
+    "3D"
+   ],
+   "tools": [
+    "Rhino",
+    "Grasshopper"
+   ],
+   "url": "https://sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3",
+   "summary": "公開於 Sketchfab 的 3D 模型，把 Truchet 圖樣以可變參數鋪在曲面立面上，並融入伊斯蘭圖樣語彙，示範從平面圖樣到曲面立面的轉換。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-10",
+   "title": "Truchet Tiles Grasshopper 教學",
+   "creator": "Parametric House",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.grasshopper3d.com/video/truchet-tiles-grasshopper-tutorial",
+   "summary": "以原生 Grasshopper 元件用 Dispatch 把方格分成兩組，再從邊中點畫圓弧形成 Truchet 圖樣；另有 Advanced Truchet Tiles 版本可依順時針、逆時針或隨機序列旋轉底磚。可和 C# 版本對照比較。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-11",
+   "title": "C# 多尺度 Truchet 圖樣產生器",
+   "creator": "mostlynobody（GitHub）",
+   "year": "",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "遞迴",
+    "可重現種子",
+    "隨機"
+   ],
+   "tools": [
+    "C#"
+   ],
+   "url": "https://github.com/mostlynobody/truchet",
+   "summary": "以 C# 實作 Carlson 多尺度 Truchet 的命令列工具，預設用 Perlin noise 決定細分與方向，支援色盤、細分層數與種子控制。語言與基礎範例相同，適合學習者直接參考演算法結構。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-12",
+   "title": "Truchet blocks 數學互動教具",
+   "creator": "MathsCity（Leeds）",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "3D",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/",
+   "summary": "Leeds 的 MathsCity 探索中心以每一面都印有 Truchet 圖案的立方塊作為互動教具，讓觀眾以堆疊與旋轉方塊來拼出圖樣，是 3D Truchet 的實體化。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-13",
+   "title": "Truchet 密碼卡片（以磁磚編碼訊息）",
+   "creator": "Ayliean MacDonald",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://www.newsroom.hlf-foundation.org/blog/article/truchet-tilings/",
+   "summary": "數學藝術家以帶折線的 Truchet 磁磚設計賀卡，磁磚方向編碼秘密訊息；同篇文章也提到以 Truchet 編碼點字。說明方向不一定要隨機，也可以承載資料。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F01-14",
+   "title": "可 3D 列印的磁吸 Truchet 磁磚",
+   "creator": "moebio（Printables）",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "拼貼"
+   ],
+   "tools": [
+    "OpenSCAD",
+    "3D 列印"
+   ],
+   "url": "https://www.printables.com/model/220630-truchet-tiles",
+   "summary": "以 OpenSCAD 撰寫的可客製化 Truchet 磁磚，可預留圓形或矩形磁鐵孔，列印後可在桌面或磁板上自由重新排列。",
+   "currently_cc": false,
+   "photo": null
+  }
+ ]
+}

@@ -287,6 +287,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "刊於 Nexus Network Journal 的論文，用圖論重讀 Team X 成員 Candilis–Josic–Woods 的都市與建築設計，先定義最小生成樹（minimum spanning tree）、最短步行樹與 Steiner 樹，再以柏林自由大學這類 mat-building 的動線邏輯為對照。作者在 Rhino／Grasshopper 中以演算法近似歐氏 Steiner 樹，並用 Kangaroo 鬆弛點位，主張 Steiner 點可以成為「可被活化成空間、又方便步行」的節點；和基礎範例相同都是 MST＋Steiner 點，但端點來自建築配置、Steiner 點被詮釋成廣場與聚集空間。",
       "variations": [
@@ -330,6 +331,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "論文與同名 Grasshopper 外掛 Ivy，把 Mesh 轉成加權的對偶圖（每個面是節點、相鄰面之間是帶權重的邊），再以 Kruskal 等建樹程序做網格分割（segmentation）與展開，外掛提供 MST Kruskal 元件計算網格圖的最小生成樹或森林。和基礎範例不同，這裡的節點是網格面而不是散點，邊權重是面與面之間的折角或其他分析值，生成樹決定哪些邊保留相連、哪些剪開，用來製作可展開的板片。",
       "variations": [
@@ -372,6 +374,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "刊於 International Journal of Geographical Information Science 的研究，以建築物為單元建立延伸的最小生成樹，用樹上邊的長度、方向與分布來量化建築群的局部都市形態，進而辨識不同的街區類型。和基礎範例相比，端點是建築物（而非單點），MST 在這裡是分析工具而不是設計成果：用來衡量密度、排列與群聚程度。",
       "variations": [
@@ -408,6 +411,7 @@
       "year": "2012",
       "category": "modeling",
       "categories_extra": [],
+      "source": "research",
       "scale": "物件",
       "summary": "designcoding 網站上的 Grasshopper 教學工具，輸入一組相連的線段網路，以 VB.NET 程式計算其最小生成樹並逐步說明。作者比較過 Kruskal、Prim 等做法後改用「反向刪除」（reverse-delete）：從最長的連線開始，若刪掉後兩端仍然相連就刪除。和基礎範例相反：不是由短到長加邊，而是由長到短刪邊，且輸入是既有的曲線網路而不是散點。",
       "variations": [
@@ -447,6 +451,7 @@
       "year": "2025",
       "category": "urban-landscape",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "arXiv 上的研究論文，比較大量城市街道網路的共同性質後提出一個精簡的生成模型：先以一棵生成樹當骨幹，再逐步加邊，使節點度數分布符合實測資料。和基礎範例相比，生成樹在這裡是街網的起點而不是最終結果；在樹上再補邊，就從「最省」走向有迴路、較好走的真實街網。",
       "variations": [
@@ -485,6 +490,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Food4Rhino 上的 Grasshopper 圖論外掛，可從幾何物件或地圖建立有向、無向或混合圖，提供最小生成樹、最短路徑（Dijkstra、A*）、連通元件、割點與割邊、TSP 啟發式等演算法，定位於建築與都市規劃的應用。和基礎範例相比，它把 MST 包成現成元件，能與其他圖論分析串接；自己寫的版本則能修改加邊規則（障礙、度數上限、Steiner 點）。",
       "variations": [
@@ -521,6 +527,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Buckblog 迷宮生成系列文章之一，把格網上相鄰格子之間的牆當成隨機權重的邊，用 Kruskal 演算法與集合合併（以樹狀結構判斷兩格是否同一集合）打通牆面，得到每兩格之間恰好一條路的完美迷宮，並附互動示範。和基礎範例相比，點是規則格網、邊權重是亂數，MST 的「不成環又全連通」直接變成迷宮的「沒有迴圈、每格都到得了」。",
       "variations": [
@@ -559,6 +566,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Mike Bostock 的互動長文，以動畫說明取樣、洗牌、排序與迷宮生成等演算法；迷宮一節指出所有做法都是在二維格網上生成一棵生成樹，並比較隨機 Prim（最小生成樹）與 Wilson 演算法（loop-erased random walk 產生均勻生成樹）等做法。和基礎範例相比，重點不在最短總長，而在不同建樹方法留下的紋理差異。",
       "variations": [
@@ -595,6 +603,7 @@
       "year": "2016",
       "category": "2d-pattern",
       "categories_extra": [],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 的 p5.js 教學影片，用 Prim 演算法把畫布上的一組點連成最小生成樹：維持「已連接」與「未連接」兩組點，每次找出兩組之間最短的一條邊加入。和基礎範例的 Kruskal 不同，Prim 從一個點往外長，不需要排序全部邊與並查集。",
       "variations": [
@@ -631,6 +640,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "構件",
       "summary": "Sergen Eren 的 Houdini 教學文章，以 VEX 遞迴程式在幾何的連接關係上建立生成樹，文中以 Prim 演算法、點與點之間的距離為成本求最小成本生成樹，並作為後續網格展開（unfolding）教學的基礎。和基礎範例相比，它在 Houdini 的點與圖元屬性上直接操作，生成樹連接的是網格圖元而不是散點。",
       "variations": [

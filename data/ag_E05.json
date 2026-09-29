@@ -284,6 +284,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "300 公尺鐵塔的主要設計者 Koechlin 在蘇黎世師承圖解靜力學創始人 Culmann，用圖解方法決定塔身曲線，讓塔腳在風力與自重下成為各段受力均衡的懸臂。和基礎範例不同，這裡的主要載重是水平風力，塔身輪廓等於把索多邊形轉九十度立起來。",
       "variations": [
@@ -320,6 +321,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "這篇論文從 Maillart 的計算書重建瑞士 Salginatobel 三鉸拱橋的設計過程，指出他以圖解靜力學畫出半座橋的推力線，並用推力線在不同載重情況下的包絡決定拱與橋面的形狀。和基礎範例相比，它多了三鉸條件（推力線必須通過三個鉸）與多種活載重的比較。",
       "variations": [
@@ -361,6 +363,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "從 Hooke「如懸垂的柔索，倒過來就是剛性的拱」出發，用推力線與圖解靜力學說明砌體拱的平衡與穩定：只要找得到一條落在拱厚內的推力線，拱就站得住。論文示範最小、最大推力兩種極端推力線，以及支承移動時鉸接的形成；和基礎範例相比，它把索多邊形放進有厚度的拱裡評估安全。",
       "variations": [
@@ -398,6 +401,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "把推力線分析做成可即時操作的參數模型：拱與扶壁等構件的幾何一改，推力線與力圖立刻更新，馬上看出推力是否留在石材斷面內。和基礎範例相比，它把索多邊形串接到多個構件（拱推力傳到扶壁再傳到地面），並用於既有砌體建築的安全評估。",
       "variations": [
@@ -434,6 +438,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "把圖解靜力學的形狀圖與交互力圖和結構最佳化結合：以力圖的幾何表達桿件內力，在保持平衡的前提下調整結構幾何，以材料量（載重路徑）為目標尋找較佳的形狀。和基礎範例相比，它不是只畫一條索，而是把力圖當成最佳化流程的一部分。",
       "variations": [
@@ -468,6 +473,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以形狀文法的規則逐步改寫結構拓樸（加桿、分叉、移動節點），每一步都用圖解靜力學的力圖維持平衡，自動產生大量彼此不同、但都平衡的橋與桁架候選。和基礎範例相比，拓樸不再固定，力圖成為篩選「可以站得住」設計的工具。",
       "variations": [
@@ -502,6 +508,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "以圖解靜力學為基礎的找形方法：把結構拆成「軌跡」與「偏移邊」，由上而下逐節點做向量加法求出平衡形狀，可以同時控制受拉與受壓構件；作者並釋出 Grasshopper 外掛。和基礎範例相比，它把一條索多邊形擴充成任意拓樸的 3D 桿件網，並可指定部分構件的內力或長度。",
       "variations": [
@@ -539,6 +546,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "以多面體（3D）圖解靜力學找出純受壓的桿件框架，再把形狀拆成預鑄混凝土模組、做模板並組裝成實體原型。和基礎範例相比，形狀圖與力圖都升到三維：力圖是多面體，桿件垂直於力多面體的面，內力由面積決定。",
       "variations": [
@@ -567,41 +575,6 @@
       "url": "https://psl.design.upenn.edu/wp-content/uploads/2018/06/IASS17_Materializing_3D_graphic_statics_MA.pdf"
     },
     {
-      "id": "E05-09",
-      "algo": "E05",
-      "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
-      "creator": "Lorenz Lachauer、Philippe Block（ETH Zurich Block Research Group）",
-      "year": "2014",
-      "category": "modeling",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "構件",
-      "summary": "蘇黎世聯邦理工學院的線上學習平台，每一課都是一個可拖曳的圖解靜力學模型：移動支承、載重或極點，形狀圖與力圖同步更新。對應的論文 Interactive Equilibrium Modelling 說明以平衡為核心的互動建模。和基礎範例相比，它把作圖流程包成一系列由淺入深的互動課程。",
-      "variations": [
-        {
-          "name": "同色對應形狀圖與力圖",
-          "how": "每段索與對應射線用相同顏色輸出（Grasshopper 的 Custom Preview 接顏色清單）。",
-          "effect": "學習者一眼看出哪一條射線控制哪一段索。"
-        },
-        {
-          "name": "課程式參數鎖定",
-          "how": "把部分輸入（例如 loadCount）鎖住，只開放一兩個滑桿，做成一系列逐步開放的練習。",
-          "effect": "由淺入深的互動練習，適合自學。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "教學工具",
-        "互動",
-        "對偶圖"
-      ],
-      "tools": [
-        "網頁互動平台"
-      ],
-      "url": "https://block.arch.ethz.ch/eq/"
-    },
-    {
       "id": "E05-51",
       "algo": "E05",
       "title": "Active Statics：互動圖解靜力學示範",
@@ -611,6 +584,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "八個可拖曳的互動示範（索、拱、桁架等），拖動形狀或載重時，力多邊形即時更新，並以顏色區分拉力與壓力。是早期以程式碼把圖解靜力學變成即時互動的經典，後來被許多結構教學引用；和 Grasshopper 範例相比，它在瀏覽器中以 Java applet 即時重畫，重點是手感與即時回饋。",
       "variations": [
@@ -647,6 +621,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "在瀏覽器中操作的 3D 圖解靜力學教學平台，以一組互為對偶的多面體形狀圖與力圖說明三維平衡，可旋轉、改變力多面體並看到形狀跟著變化。和 Grasshopper 範例相比，它把 2D 的索多邊形推廣到 3D，重點在直觀理解「面積代表內力」。",
       "variations": [
@@ -684,6 +659,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 GeoGebra 的動態幾何建出參數化的圖解靜力學作圖：載重、極點與支承都是可拖曳的點，索多邊形與力多邊形用平行線與交點工具即時連動。和 Grasshopper 範例相比，它完全用作圖工具（不寫程式）表達同一套「平行線＋交點」邏輯，很適合當寫 C# 前的草稿。",
       "variations": [
@@ -720,6 +696,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "在瀏覽器中執行的 3D 互動程式，依 Juney Lee、Tom Van Mele、Philippe Block 2018 年的 Disjointed force polyhedra 方法，以延伸高斯影像（EGI）與面積追蹤演算法產生分離的力多面體。和 Grasshopper 範例相比，它展示創作程式如何把 3D 圖解靜力學的論文方法重寫成可即時操作的視覺化。",
       "variations": [

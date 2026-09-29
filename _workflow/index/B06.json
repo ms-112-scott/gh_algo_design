@@ -169,7 +169,7 @@
    "tools": [
     "Common-hood（遊戲模擬）"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "B06-04",
@@ -184,7 +184,7 @@
     "Grasshopper",
     "C#"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "B06-05",
@@ -238,7 +238,7 @@
    "tools": [
     "Minecraft"
    ],
-   "has_image": false
+   "has_image": true
   },
   {
    "id": "B06-52",
@@ -269,7 +269,7 @@
     "Unity",
     "Unreal Engine"
    ],
-   "has_image": false
+   "has_image": true
   }
  ],
  "distribution": {

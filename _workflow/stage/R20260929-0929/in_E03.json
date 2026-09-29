@@ -1,0 +1,434 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "E03",
+  "name_zh": "Voronoi 圖＋Lloyd 鬆弛",
+  "name_en": "Voronoi + Lloyd Relaxation",
+  "one_liner": "把平面切成「離哪個點最近就歸誰」的細胞，再反覆把每個點搬到自己細胞的重心，讓大小不一的亂格子慢慢變成均勻的蜂巢。",
+  "how_it_works": [
+   "用種子在矩形內撒 pointCount 個隨機點（site）。",
+   "Voronoi：每個點都從整個矩形開始，對每一個其他點畫垂直平分線，用內積判斷角點在哪一側，只留下靠近自己的那一半（半平面切割），切完就是它的細胞。",
+   "Lloyd：用鞋帶公式算每個細胞的面積重心，把點移到重心。",
+   "用新的點重新切一次 Voronoi，重複 iterations 次；點間距越來越平均，細胞越來越接近六角形（CVT，重心 Voronoi 鑲嵌）。",
+   "輸出封閉 polyline 細胞與最終點位，並印出面積總和，用來檢查細胞有沒有剛好鋪滿矩形。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "E03-01",
+   "title": "北京國家游泳中心（水立方）",
+   "creator": "PTW Architects、Arup、CSCEC",
+   "year": "2008",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "拼貼",
+    "最佳化"
+   ],
+   "tools": [
+    "MicroStation",
+    "Bentley Structural"
+   ],
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube",
+   "summary": "以 Weaire-Phelan 泡沫（兩種多面體組成、表面積極小的空間分割）為原型，將 3D 陣列旋轉後以建築外框切割，得到看似隨機的立面；約 22,000 根鋼構件與 4,000 片 ETFE 氣枕。它是規則的泡沫結構，而非隨機 Voronoi，但與 3D Voronoi／CVT 同屬「細胞分割空間」的概念，是最常被拿來對照的案例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-02",
+   "title": "On the Disappearance of Clouds（威尼斯雙年展）",
+   "creator": "Tomás Saraceno",
+   "year": "2019",
+   "category": "art-installation",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://studiotomassaraceno.org/on-the-disappearance-of-clouds/",
+   "summary": "第 58 屆威尼斯雙年展的漂浮雕塑，由受 Weaire-Phelan 泡沫幾何啟發的叢集多面體組成。展示「泡沫細胞分割」如何變成可以組裝的空間雕塑。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-03",
+   "title": "Let's Join：Weaire-Phelan 空間鑲嵌展亭",
+   "creator": "Nexus Network Journal 論文作者群",
+   "year": "2021",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://link.springer.com/article/10.1007/s00004-020-00544-7",
+   "summary": "以 Weaire-Phelan 空間鑲嵌實際建造的人體尺度展亭，論文討論如何把理論上略彎的極小曲面細胞以平面多面體近似、並轉成可施工構件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-04",
+   "title": "Voronoi Shelf（大理石層架）",
+   "creator": "Marc Newson",
+   "year": "2006",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "可重現種子",
+    "拼貼"
+   ],
+   "tools": [
+    "CNC"
+   ],
+   "url": "https://marc-newson.com/voronoi-shelf/",
+   "summary": "以單一塊 Carrara 大理石用 CNC 石材銑削挖出 Voronoi 細胞格架，版次 8 件。平面 Voronoi 直接成為家具的結構格線，是「細胞縮孔→CNC」的經典例子。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-05",
+   "title": "Radiolaria 首飾系列",
+   "creator": "Nervous System",
+   "year": "2007",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "吸引子控制",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "https://n-e-r-v-o-u-s.com/projects/albums/radiolaria/",
+   "summary": "以放射蟲與植物細胞為靈感的演算法首飾，用蝕刻不鏽鋼與雷切矽膠製作，細胞圖樣在方向與尺度上漸變。Nervous System 也把生成器做成線上 app 讓使用者自行設計。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-06",
+   "title": "Voronoi Wall：3D 列印混凝土綠牆",
+   "creator": "Saxion Industrial Design Research Group、De Witte van der Heijden Architecten、Vertico",
+   "year": "",
+   "category": "fabrication",
+   "scale": "立面／表皮",
+   "tags": [
+    "約束滿足",
+    "拼貼"
+   ],
+   "tools": [
+    "Grasshopper",
+    "3D 混凝土列印"
+   ],
+   "url": "https://www.vertico.com/projects/voronoi-wall",
+   "summary": "荷蘭 Twente 地區第一件 3D 列印混凝土構造物，以參數化 Voronoi 切出每塊形狀都不同的構件，限制每塊須放得進棧板、重量低於 50 公斤，讓兩個人就能堆疊組裝，並作為植栽綠牆。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-07",
+   "title": "Adaptive Voronoi Facade（光感應動態立面）",
+   "creator": "諾維薩德大學 Digital Techniques, Design and Production 課程",
+   "year": "",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "吸引子控制",
+    "動畫",
+    "Timer"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.arhns.uns.ac.rs/digital/adaptive-voronoi-facade/",
+   "summary": "立面開孔由點分布產生的 Voronoi 細胞決定，構件會依光線強度移動，調整進入室內的光量，外觀類似細胞組織。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-08",
+   "title": "Upsilon Pavilion：木構 Voronoi 殼體",
+   "creator": "",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "曲面上",
+    "最佳化",
+    "3D"
+   ],
+   "tools": [
+    "CNC"
+   ],
+   "url": "https://www.researchgate.net/figure/The-Upsilon-pavilion-as-a-timber-Voronoi-shell_fig7_338584125",
+   "summary": "以 Voronoi 細胞邊作為木梁的殼體展亭，梁件以 CNC 製造；最佳化後用料約減少 12.9%，結構能力大致維持。示範曲面上 Voronoi 如何轉成構件並最佳化。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-09",
+   "title": "Weighted Voronoi Stippling（加權 Voronoi 點描）",
+   "creator": "Adrian Secord",
+   "year": "2002",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "影像輸入",
+    "收斂",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://www.cs.ubc.ca/labs/imager/tr/2002/secord2002b/",
+   "summary": "NPAR 2002 論文，以灰階影像為密度的加權重心 Voronoi 迭代產生點描畫，點的疏密呈現明暗、又避免規則格或團塊的瑕疵。是 Lloyd 鬆弛在繪圖上最經典的應用。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-10",
+   "title": "多層級 Voronoi 晶格骨支架",
+   "creator": "ACS Biomaterials Science & Engineering 論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "物理模擬",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://pubs.acs.org/doi/10.1021/acsbiomaterials.1c01482",
+   "summary": "以週期排列的 Voronoi 單元設計積層製造的骨支架，用多面體體積與兩個縮放因子控制局部細胞形狀，使力學性質接近骨骼。說明 3D Voronoi 在仿生輕量結構的用途。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-11",
+   "title": "Voronoi 多孔晶格結構的參數化設計",
+   "creator": "Materials & Design 論文作者群",
+   "year": "2020",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "3D",
+    "隨機",
+    "可重現種子"
+   ],
+   "tools": [],
+   "url": "https://www.sciencedirect.com/science/article/pii/S0264127520301416",
+   "summary": "提出以參數控制 Voronoi 晶格多孔結構的建模方法，讓孔隙率與細胞規則度可被調整，供積層製造使用。對應基礎範例「點分布 → 細胞 → 實體化」的建模流程。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-12",
+   "title": "Cellular Topology Optimization on Differentiable Voronoi Diagrams",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "收斂"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2204.10313",
+   "summary": "把 Voronoi 細胞結構做成可微分的形式，讓點位能被結構最佳化直接調整，得到兼具細胞外觀與力學性能的結構。可看成 Lloyd「移動點」的延伸：移動方向改由結構目標決定。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-13",
+   "title": "PowerDiagrams：Grasshopper 加權 Voronoi 外掛",
+   "creator": "Daniel Abalde",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "鄰居搜尋",
+    "自訂 class"
+   ],
+   "tools": [
+    "Grasshopper",
+    "C#"
+   ],
+   "url": "https://github.com/DanielAbalde/PowerDiagrams",
+   "summary": "開源的 Grasshopper 2D 加權 Voronoi／Power diagram 元件，也能輸出最小生成樹、相對鄰域圖等結構，處理退化情形。可作為自寫版本的對照與延伸。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-14",
+   "title": "埃及 Qena 市公共服務的演算法空間規劃",
+   "creator": "arXiv 論文作者群",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "最佳化",
+    "收斂",
+    "影像輸入"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2512.06431",
+   "summary": "以演算法方法評估城市公共服務設施的分布，Voronoi 常用來劃出每個設施的服務範圍，檢查是否有覆蓋不足的區域。對應 Lloyd「把設施移到服務區重心」的資源配置意義（CVT 原論文也列出資源分配應用）。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-15",
+   "title": "景觀建築的生成式設計（Voronoi 鋪面與分區）",
+   "creator": "Digital Landscape Architecture 2022 論文作者",
+   "year": "2022",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "吸引子控制",
+    "拼貼",
+    "約束滿足"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://gispoint.de/fileadmin/user_upload/paper_gis_open/DLA_2022/537724058.pdf",
+   "summary": "數位景觀建築研討會論文，探討以生成式方法產生景觀配置；Voronoi 在景觀中常用於鋪面分割、植栽分區與廣場圖樣，可在短時間產生多種鋪面方案比較。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E03-51",
+   "title": "Coding Challenge 181：Weighted Voronoi Stippling",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "d3.js",
+    "點描",
+    "影像處理"
+   ],
+   "tools": [
+    "p5.js",
+    "d3.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/181-image-stippling",
+   "summary": "Daniel Shiffman 用 p5.js 搭配 d3-delaunay 套件，從 Delaunay 三角化與 Voronoi 圖講起，逐步實作 Lloyd 鬆弛，再把重心改成「以影像暗度加權的重心」，做出點描肖像。基礎範例的 Lloyd 用的是細胞的幾何面積重心，這裡則把影像當成密度場，讓點聚集到暗部。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/181-image-stippling",
+    "note": "頁面預覽圖：加權 Voronoi 點描肖像"
+   }
+  },
+  {
+   "id": "E03-52",
+   "title": "Voronoi edges（精確 Voronoi 邊界著色器）",
+   "creator": "Inigo Quilez",
+   "year": "2012",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "Shadertoy",
+    "著色器",
+    "程序化紋理"
+   ],
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "url": "https://iquilezles.org/articles/voronoilines/",
+   "summary": "Inigo Quilez 的文章與 Shadertoy 範例，用 GLSL 片段著色器逐像素計算 Voronoi：一般 F2−F1 近似會讓細胞邊線粗細不均，他改用第二輪搜尋算出到細胞邊界的真正距離，得到線寬一致、等距線正確的程序化 Voronoi 紋理。與基礎範例用半平面切出多邊形不同，這裡從「每個像素找最近點」的角度計算，而且完全在 GPU 上即時執行。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Inigo Quilez 個人網站",
+    "page": "https://iquilezles.org/articles/voronoilines/",
+    "note": "文章插圖：以著色器算出的 Voronoi 細胞與邊界"
+   }
+  },
+  {
+   "id": "E03-53",
+   "title": "The Book of Shaders 第 12 章：Cellular Noise",
+   "creator": "Patricio Gonzalez Vivo、Jen Lowe",
+   "year": "2015",
+   "category": "2d-pattern",
+   "scale": "立面／表皮",
+   "tags": [
+    "creative coding",
+    "GLSL",
+    "著色器",
+    "雜訊",
+    "教學"
+   ],
+   "tools": [
+    "GLSL"
+   ],
+   "url": "https://thebookofshaders.com/12/",
+   "summary": "The Book of Shaders 的細胞雜訊章節，從 Steven Worley 的 cellular texture 講起，用 GLSL 在網格中每格放一點、只檢查鄰近 9 格，最後導出 Voronoi 演算法並延伸到 Gustavson 的優化與 Quilez 的精確邊界。書中可直接在網頁上修改並即時預覽。與基礎範例的多邊形 Voronoi 相比，它把 Voronoi 當成連續的「距離場」來上色。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Book of Shaders",
+    "page": "https://thebookofshaders.com/12/",
+    "note": "章節插圖（GIF 第一格）：著色器產生的 Voronoi 細胞與距離場"
+   }
+  },
+  {
+   "id": "E03-54",
+   "title": "ofxVoronoi（openFrameworks Voronoi 與 Lloyd 鬆弛外掛）",
+   "creator": "Matthias Esterl、Todd Vanderlin 等",
+   "year": "2015",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "開源",
+    "Lloyd 鬆弛"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/madc/ofxVoronoi",
+   "summary": "openFrameworks 的 Voronoi 外掛，使用 Voro++ 中改寫的 Fortune 掃描線演算法產生 2D Voronoi 圖；2015 年加入 relax() 方法，可反覆執行 Lloyd 鬆弛，讓細胞變得均勻，README 也提到可用於點描效果。基礎範例用 O(n²) 半平面切割自行計算，這裡則示範採用較快的掃描線演算法，並把鬆弛包成一行呼叫。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub madc/ofxVoronoi",
+    "page": "https://github.com/madc/ofxVoronoi",
+    "note": "README 截圖：圓形範圍內的 Voronoi 圖"
+   }
+  },
+  {
+   "id": "E03-55",
+   "title": "Lloyd’s Relaxation（d3.js 互動示範）",
+   "creator": "Jason Davies",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "d3.js",
+    "JavaScript",
+    "互動",
+    "動畫"
+   ],
+   "tools": [
+    "d3.js"
+   ],
+   "url": "https://www.jasondavies.com/lloyd/",
+   "summary": "Jason Davies 用 d3.js 在畫布上即時展示 Lloyd 鬆弛：1000 個點一開始擠在滑鼠點擊處，每一步計算 Voronoi 後把點移到細胞重心，直到總位移小於門檻才停；每次點擊會換一組色調重新開始。基礎範例從均勻隨機分布出發，這裡刻意從「全部擠在一點」開始，讓擴散與收斂過程更戲劇化。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Jason Davies 個人網站",
+    "page": "https://www.jasondavies.com/lloyd/",
+    "note": "作品縮圖：Lloyd 鬆弛後由中心擴散的 Voronoi 細胞"
+   }
+  }
+ ]
+}

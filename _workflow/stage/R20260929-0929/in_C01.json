@@ -1,0 +1,475 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "C01",
+  "name_zh": "反應擴散",
+  "name_en": "Reaction-Diffusion (Gray-Scott)",
+  "one_liner": "在一張方格紙上放兩種虛擬化學物質 A 與 B，讓它們互相吃、各自以不同速度擴散，幾千步後自己長出斑點、迷宮、指紋般的花紋。",
+  "how_it_works": [
+   "建立兩張 gridSize×gridSize 的濃度表：A 全部設為 1（原料），B 只在中央放一小塊 1（種子）。",
+   "每一步對每一格計算反應量 A·B²（兩個 B 吃掉一個 A 變成 B）。",
+   "用 3×3 卷積（上下左右 0.2、斜角 0.05、自己 −1）算出擴散量，A 擴散速度 1.0、B 只有 0.5。",
+   "A 加上 feed·(1−A) 補充原料；B 扣掉 (kill+feed)·B 被移除；結果寫進 next 陣列並夾在 0–1 之間。",
+   "整張算完後交換新舊陣列（雙緩衝），重複 steps 次；邊界左右、上下相接（像甜甜圈）。",
+   "最後把 B 濃度輸出為點與數值，並用灰階頂點色建成 Mesh，B 越濃越黑。"
+  ]
+ },
+ "final_total": 20,
+ "target_art": 10,
+ "target_research": 10,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "C01-01",
+   "title": "Reaction Jewelry 反應擴散珠寶系列",
+   "creator": "Nervous System",
+   "year": "2023",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "週期邊界",
+    "曲面上",
+    "3D 列印"
+   ],
+   "tools": [
+    "客製模擬軟體",
+    "金屬 3D 列印"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=9442",
+   "summary": "從一對客製婚戒發展出的整個珠寶系列，戒指、莫比烏斯環、貝殼形耳環表面布滿 RD 生成的凹凸脊谷，以不鏽鋼、銀、黃銅金屬 3D 列印。RD 在平面上模擬，再包覆到環形；莫比烏斯款利用「兩面各一份花紋等於兩倍長的環」的性質避開非定向曲面的模擬。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-02",
+   "title": "Reaction Lamps 反應擴散燈具",
+   "creator": "Nervous System",
+   "year": "2010",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "網格擴散",
+    "多尺度",
+    "3D 列印"
+   ],
+   "tools": [
+    "Processing",
+    "SLS 3D 列印"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=1009",
+   "summary": "以 Processing 自寫的 RD 模擬，讓一顆球「長」成有雕刻感的燈罩，再以 SLS 選擇性雷射燒結列印。Seed 系列同時疊加大尺度（整體起伏）與小尺度（壁厚變化）兩層 RD，點燈時薄處透光形成細胞紋理。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-03",
+   "title": "Coral Cup 珊瑚杯（瓷器）",
+   "creator": "Nervous System（陶藝：Kevin Cieplensky）",
+   "year": "2018",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "各向異性",
+    "翻模",
+    "曲面上"
+   ],
+   "tools": [
+    "客製模擬軟體",
+    "3D 列印",
+    "注漿成型"
+   ],
+   "url": "https://n-e-r-v-o-u-s.com/blog/?p=8222",
+   "summary": "受腦珊瑚啟發的瓷杯，表面深溝般的蜿蜒脊谷由 RD 生成，調整反應速率、尺度與擴散方向可得不同花紋。製程為 3D 列印原型→矽膠翻模→石膏模→注漿成型，分模線刻意對齊花紋脊線。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-04",
+   "title": "New Balance Kawhi Leonard 球鞋 RD 花紋合作",
+   "creator": "Nervous System × New Balance",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "吸引子控制",
+    "網格擴散",
+    "產品設計"
+   ],
+   "tools": [],
+   "url": "https://www.newbalance.com/pd/kawhi/BBKLSQUA-D-10.html",
+   "summary": "Nervous System 在其 Reaction Jewelry 文章中提到與 New Balance 合作，將 RD 花紋用在 Kawhi Leonard 系列球鞋上，是 RD 圖樣進入量產產品設計的例子。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-05",
+   "title": "Reaction-Diffusion Tutorial 與 RD Tool",
+   "creator": "Karl Sims",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "參數探索"
+   ],
+   "tools": [
+    "網頁互動工具"
+   ],
+   "url": "https://karlsims.com/rd.html",
+   "summary": "最常被引用的 Gray-Scott 圖解教學：本課範例的 DA=1.0、DB=0.5、f=0.055、k=0.062 與 3×3 卷積權重（中心 −1、上下左右 0.2、斜角 0.05）都出自此頁。另提供 k–f 參數圖與線上 RD Tool 互動實驗。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-06",
+   "title": "Complex Patterns in a Simple System（Gray-Scott 參數圖）",
+   "creator": "John E. Pearson",
+   "year": "1993",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "網格擴散",
+    "混沌",
+    "參數探索",
+    "DataTree"
+   ],
+   "tools": [
+    "數值模擬"
+   ],
+   "url": "https://arxiv.org/abs/patt-sol/9304003",
+   "summary": "Pearson 以數值模擬系統性掃描 Gray-Scott 模型的 (F, k) 平面，發現十餘種不同的時空圖樣類型（斑點分裂、條紋、混沌等），並指出擴散係數相等時不會出現花紋。是理解範例中 feed／kill 為何如此敏感的經典依據。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-07",
+   "title": "Generating Textures on Arbitrary Surfaces Using Reaction-Diffusion",
+   "creator": "Greg Turk",
+   "year": "1991",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "多階段",
+    "網格擴散"
+   ],
+   "tools": [
+    "C",
+    "電腦圖學"
+   ],
+   "url": "https://sites.cc.gatech.edu/home/turk/reaction_diffusion/reaction_diffusion.html",
+   "summary": "SIGGRAPH 91 論文，直接在任意 3D 模型表面上模擬 RD，讓紋理貼合幾何而不需 UV 展開；並用多個 RD 系統級聯（先鋪底圖再細化）生成花豹玫瑰斑、長頸鹿網紋等。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-08",
+   "title": "三角網格上的反應擴散（花瓶與兔子）",
+   "creator": "Laurent Delrieu",
+   "year": "2015",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "鄰居搜尋",
+    "網格擴散",
+    "效能最佳化"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo",
+    "C#"
+   ],
+   "url": "https://www.grasshopper3d.com/forum/topics/reaction-diffusion-on-triangular-mesh",
+   "summary": "在 Grasshopper 論壇分享以 Kangaroo 重新網格化、再在 40 萬個三角面的花瓶上跑 RD 的流程；拉普拉斯改用相鄰頂點的正規化權重。後來以自寫 C# 取代 Sandbox 拓樸運算，速度提升約 14 倍；兔子模型示範調整 B 擴散係數改變花紋尺度。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-09",
+   "title": "把反應擴散變成曲線（Nautilus iso-split）",
+   "creator": "McNeel 論壇討論（Laurent Delrieu、Peter Davis 等）",
+   "year": "2023",
+   "category": "drawing",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "網格擴散",
+    "多元件"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Nautilus",
+    "Kangaroo",
+    "C#"
+   ],
+   "url": "https://discourse.mcneel.com/t/reaction-diffusion-curves/160082",
+   "summary": "使用者詢問如何把 RD 結果輸出成曲線而不是密集 Mesh；回覆建議用 Nautilus 外掛的 RD 元件與 Mesh 等值切割，再用 Catmull-Clark 細分平滑；另有人結合 Kangaroo 的圓堆積非均勻網格與自寫 C# 做六角形 RD 花紋。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-10",
+   "title": "以各向異性反應擴散生成等應力肋板樓板",
+   "creator": "",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "各向異性",
+    "最佳化",
+    "結構",
+    "網格擴散"
+   ],
+   "tools": [],
+   "url": "https://www.researchgate.net/publication/372165602_Generative_design_of_isostatic_ribbed_slabs_using_anisotropic_Reaction-Diffusion",
+   "summary": "研究以各向異性 RD 系統設計等應力（isostatic）肋板樓板：系統會自發沿主應力與彎矩場形成條紋，條紋再轉成加勁肋，並可調控肋的密度與厚度。是 RD 從裝飾走向結構性能的代表。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-11",
+   "title": "Turing 圖樣設計的充氣變形結構",
+   "creator": "Masato Tanaka、S. Macrae Montgomery、Liang Yue、Yaochi Wei、Yuyang Song、Tsuyoshi Nomura、H. Jerry Qi",
+   "year": "2023",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "各向異性",
+    "最佳化",
+    "多材料",
+    "3D 列印"
+   ],
+   "tools": [
+    "有限元素分析",
+    "DLP 3D 列印"
+   ],
+   "url": "https://www.science.org/doi/10.1126/sciadv.ade4381",
+   "summary": "發表於 Science Advances。先以最佳化求出各處材料的各向異性分布，再用 Turing 圖樣把它轉成只有兩種材料的離散分布，以灰階 DLP 3D 列印製作，充氣後可變形為指定形狀。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-12",
+   "title": "具 Turing 圖樣紋理的織物氣動致動器",
+   "creator": "Masato Tanaka、Yuyang Song、Tsuyoshi Nomura",
+   "year": "2024",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "各向異性",
+    "紡織",
+    "軟性結構"
+   ],
+   "tools": [
+    "有限元素分析",
+    "雷射切割",
+    "刺繡"
+   ],
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11333703/",
+   "summary": "發表於 Scientific Reports。以方向最佳化結合殼元素分析求出材料方向，再以各向異性 RD 生成 Turing 紋理；製作時雷射切割 Dyneema 硬布熱壓到 TPU 軟布，或以 Kevlar 線刺繡，做出 C 形、S 形彎曲與扭轉的充氣元件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-13",
+   "title": "Morphogenetic Metasurfaces：以 Turing 圖樣設計天線超表面",
+   "creator": "Thomas Fromenteze、Okan Yurduseven、Chidinma Uche、Eric Arnaud、David R. Smith、Cyril Decroze",
+   "year": "2023",
+   "category": "performance",
+   "scale": "立面／表皮",
+   "tags": [
+    "各向異性",
+    "性能導向",
+    "自組織"
+   ],
+   "tools": [
+    "數值模擬",
+    "電磁模擬"
+   ],
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10558543/",
+   "summary": "發表於 Nature Communications。把 Turing 反應擴散模型加入各向異性擴散，讓橢圓形單元自組織排列以滿足局部電磁需求，程序化生成可控制波束方向與極化的超表面，不需手工排版網格。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-14",
+   "title": "以各向異性反應擴散做影像風格化",
+   "creator": "Ming-Te Chi、Wei-Ching Liu、Shu-Hsuan Hsu",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "影像輸入",
+    "各向異性",
+    "網格擴散"
+   ],
+   "tools": [
+    "C++",
+    "GitHub 開源"
+   ],
+   "url": "https://github.com/cglabnccu/stylizationRD",
+   "summary": "發表於 The Visual Computer。把照片轉成 RD 自組織圖樣：以各向異性擴散與流場引導花紋方向，搭配邊緣偵測、分區與門檻、上色後處理，產生剪紙、風格化網點、運動錯視等效果；GitHub 公開實作。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-15",
+   "title": "Red Blob Games 互動反應擴散（WebGL）",
+   "creator": "Amit Patel（Red Blob Games）",
+   "year": "2019",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer",
+    "互動",
+    "網格擴散"
+   ],
+   "tools": [
+    "WebGL",
+    "JavaScript"
+   ],
+   "url": "https://www.redblobgames.com/x/1905-reaction-diffusion",
+   "summary": "依 Karl Sims 公式寫成的 WebGL 即時互動頁面，可調 feed／kill，也可用滑鼠或觸控在畫布上塗抹干擾系統；作者提到受 Jonathan McCabe 多尺度 Turing 圖樣作品啟發。適合當作互動裝置或教學展示的原型。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C01-51",
+   "title": "Coding Challenge #13：Reaction Diffusion Algorithm in p5.js",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "JavaScript",
+    "Gray-Scott",
+    "教學影片",
+    "動畫"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+   "summary": "以 p5.js 逐像素實作 Gray-Scott 反應擴散：兩個二維陣列存 A、B 濃度，用 3×3 卷積核算拉普拉斯，再把結果寫回畫布像素。邏輯和 Grasshopper C# 基礎範例相同，但輸出直接是即時動畫的像素，而不是網格點或曲面，適合先看懂 feed／kill 參數怎麼改變圖樣。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/13-reaction-diffusion",
+    "note": "挑戰頁預覽圖：紫黃相間的反應擴散迷宮紋"
+   }
+  },
+  {
+   "id": "C01-52",
+   "title": "Reaction-Diffusion Playground 反應擴散遊樂場",
+   "creator": "Jason Webb",
+   "year": "2020",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "three.js",
+    "GLSL",
+    "WebGL",
+    "互動",
+    "Gray-Scott"
+   ],
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "url": "https://github.com/jasonwebb/reaction-diffusion-playground",
+   "summary": "瀏覽器上的互動式反應擴散模擬：用 three.js 的 data texture 當格點，GLSL 片段著色器以 ping-pong 方式每幀迭代多次，再由另一個著色器把濃度映射成顏色。提供 f、k、dA、dB 參數、筆刷、預設樣式與可空間變化的參數地圖，比 Grasshopper 的 CPU 迴圈快上數個量級。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub jasonwebb/reaction-diffusion-playground",
+    "page": "https://github.com/jasonwebb/reaction-diffusion-playground",
+    "note": "README 中的 12 張模擬截圖拼貼"
+   }
+  },
+  {
+   "id": "C01-53",
+   "title": "Gray-Scott Reaction Diffusion in TouchDesigner（Part 1）",
+   "creator": "Lake Heckaman",
+   "year": "2024",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "即時影像",
+    "教學影片"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+   "summary": "TouchDesigner 教學影片：用 GLSL 著色器在 GPU 上模擬 Gray-Scott 系統，說明數學基礎、著色器實作、無縫拼接（tiling），以及如何用任意色盤替模擬上色。和 Grasshopper 的離線計算不同，這是即時視覺表演的做法，模擬結果可直接接到其他影像節點或互動輸入。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube",
+    "page": "https://www.youtube.com/watch?v=1k_uPHcV6BA",
+    "note": "教學影片縮圖：TouchDesigner 中的 Gray-Scott 斑塊"
+   }
+  },
+  {
+   "id": "C01-54",
+   "title": "Reaction diffusion simulation（WebGL Gray-Scott 實驗）",
+   "creator": "Pablo Márquez Neila（pmneila）",
+   "year": "2012",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "three.js",
+    "GLSL",
+    "WebGL",
+    "互動",
+    "開源"
+   ],
+   "tools": [
+    "three.js",
+    "GLSL"
+   ],
+   "url": "https://pmneila.github.io/jsexp/grayscott/",
+   "summary": "早期的網頁版 Gray-Scott 模擬，用 three.js 建立兩張紋理互相渲染，GLSL 著色器計算擴散與反應，並以五段顏色漸層顯示。提供 Solitons、Worms、Mazes、Holes、Chaos、Moving spots、Waves 等預設參數，可用滑鼠直接在畫面上畫入 B 物質。原始碼以 BSD-3-Clause 公開，是很多後續網頁 RD 作品的參考。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "C01-55",
+   "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+   "creator": "Robert Munafo",
+   "year": "2009",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "C",
+    "OpenGL",
+    "參數空間",
+    "視覺化"
+   ],
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "url": "https://www.mrob.com/pub/comp/xmorphia/",
+   "summary": "把 Gray-Scott 模型在 k–F 參數平面上逐格計算，做成可點選的參數地圖，每一格連到該組參數的圖片、動畫與說明，並延伸 Pearson 的圖樣分類與命名。作者也記錄了多核心與 GPU 的加速實作方法。對 Grasshopper 使用者而言，它是挑選 feed／kill 數值的視覺索引。",
+   "currently_cc": true,
+   "photo": {
+    "source": "MROB（mrob.com）",
+    "page": "https://www.mrob.com/pub/comp/xmorphia/",
+    "note": "Gray-Scott 模型 k–F 參數平面的圖樣地圖"
+   }
+  }
+ ]
+}

@@ -1,0 +1,232 @@
+{
+ "algo": "A05",
+ "classification": [
+  {"id": "A05-01", "source": "research", "why": "形狀文法起源的學術論文，理論貢獻而非視覺作品。"},
+  {"id": "A05-02", "source": "research", "why": "學術論文，推導帕拉底歐別墅平面的參數化文法。"},
+  {"id": "A05-03", "source": "research", "why": "學術理論推導，萊特住宅風格的建築研究。"},
+  {"id": "A05-04", "source": "research", "why": "真實合院住宅客製化系統的建築研究。"},
+  {"id": "A05-05", "source": "research", "why": "學術論文與 CityEngine 核心語言，都市尺度程序化生成研究。"},
+  {"id": "A05-06", "source": "research", "why": "CityEngine 官方工具教學，業界軟體示範。"},
+  {"id": "A05-07", "source": "research", "why": "窗格構成慣例的學術分析論文。"},
+  {"id": "A05-08", "source": "research", "why": "Grasshopper 實作教學，工具導向文章。"},
+  {"id": "A05-09", "source": "research", "why": "蒙兀兒花園設計慣例的學術論文。"},
+  {"id": "A05-10", "source": "research", "why": "住宅風格文法的學術論文。"},
+  {"id": "A05-11", "source": "research", "why": "構築文法與快速原型的研究論文。"},
+  {"id": "A05-12", "source": "research", "why": "結構最佳化系統，工程研究性質。"},
+  {"id": "A05-13", "source": "research", "why": "電腦科學家撰寫的學術論文，非藝術家自身創作發表。"},
+  {"id": "A05-14", "source": "research", "why": "古籍營造制度的學術形狀文法解讀。"},
+  {"id": "A05-15", "source": "research", "why": "大學實驗室的 CAD 形狀比對研究工具。"},
+  {"id": "A05-51", "source": "art", "why": "CFDG 生成藝術社群平台，成果就是視覺作品本身。"},
+  {"id": "A05-52", "source": "art", "why": "設計文法生成藝術程式，成果是抽象雕塑量體。"},
+  {"id": "A05-53", "source": "art", "why": "個人 creative coding 專案，以視覺生成畫面為主。"},
+  {"id": "A05-54", "source": "research", "why": "以學術論文為基礎的程序化建模框架／工具。"},
+  {"id": "A05-55", "source": "art", "why": "個人瀏覽器小工具，展示文法生成量體的實驗性 demo，非產業工具。"}
+ ],
+ "art_count": 4,
+ "need": 6,
+ "removal_order": [
+  "A05-03",
+  "A05-08",
+  "A05-13",
+  "A05-15",
+  "A05-12",
+  "A05-14",
+  "A05-10",
+  "A05-11",
+  "A05-06"
+ ],
+ "removal_reasons": {
+  "A05-03": "沒有網址也沒有照片，內容完全無法查證或找到真實圖片。",
+  "A05-08": "和 A05-07 冰裂紋文法高度重疊，只是把同一套規則重製成 Grasshopper 教學。",
+  "A05-13": "只有一份難以取得的 NIST PDF，找不到可信的生成結果圖片。",
+  "A05-15": "實驗室網站內容單薄，缺乏具體案例與可查證的畫面。",
+  "A05-12": "老舊會議論文，找不到清楚可用的生成結果照片。",
+  "A05-14": "MIT 論文檔案不易取得，圖片來源難以查證。",
+  "A05-10": "老舊期刊論文，內容與其他住宅風格文法案例（A05-02、A05-03）性質重複。",
+  "A05-11": "與 A05-02、A05-04 同樣圍繞帕拉底歐系統，內容重疊度高。",
+  "A05-06": "CGA／CityEngine 系列已有 A05-05、A05-54 代表，此教學內容重複。"
+ },
+ "new_art": [
+  {
+   "title": "遞迴碎形樹（The Coding Train Coding Challenge #14）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "用一個遞迴函式畫一段樹枝，樹枝末端呼叫自己畫出兩段更短、角度偏轉的子樹枝，一路遞迴到夠短為止。這和基礎範例「正方形 A 換成 B 加上兩個縮小旋轉的 A」是同一種「一個元素被換成多個變形子元素」的邏輯，只是元素從標籤正方形換成線段樹枝，是「演算法植物學」系列教學的第一支。",
+   "variations": [
+    {"name": "滑桿控制分岔角與長度比", "how": "把分岔角度與縮放比接上 slider 即時調整", "effect": "從細瘦分岔到誇張展開的樹形連續變化"},
+    {"name": "隨機分岔角", "how": "每次遞迴呼叫前為角度加入 random 偏移", "effect": "樹形不再左右對稱，更接近自然植物"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "遞迴", "分岔"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/14-fractal-trees-recursive",
+   "evidence": "頁面標題為 Recursive Fractal Trees，內文寫「I'll implement fractal trees with recursion in p5.js. This is the first part of a series on algorithmic botany.」，版權年份標示 2016。",
+   "nearest_existing": "無（既有案例都是文獻或建築案例，沒有教學型 creative coding 範例）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/14-fractal-trees-recursive/images/fractal.jpg",
+    "page": "https://thecodingtrain.com/challenges/14-fractal-trees-recursive",
+    "verified": true,
+    "checked": "藍底畫面，紫色線稿的樹從單一樹幹分岔成左右兩大枝，逐層再分岔，末端呈雪花狀細碎分枝。",
+    "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 遞迴畫出的碎形樹，是形狀文法「一換多」邏輯最精簡的教學示範。"
+   }
+  },
+  {
+   "title": "阿波羅尼奧斯墊圈（Apollonian Gasket，Coding Challenge #182）",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "用笛卡爾圓定理與複數運算，把三個互切的圓形成的空隙持續塞入新的內切圓，一路遞迴下去。每個「空隙」被換成一個新圓加上三個更小的空隙，和基礎範例「形狀換成新形狀組合」邏輯一致，只是替換對象從方形換成圓形空隙，呈現細密漸層的圓形鑲嵌。",
+   "variations": [
+    {"name": "多層著色", "how": "依遞迴深度或圓的大小分段上色", "effect": "墊圈呈現漸層或彩虹分層的視覺效果"},
+    {"name": "改寫成 GH 幾何運算", "how": "把複數版的圓心／半徑公式改寫成平面與距離運算", "effect": "同樣的墊圈邏輯可以搬進 Grasshopper 用純幾何重建"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "p5.js", "圓形packing", "遞迴"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/182-apollonian-gasket",
+   "evidence": "頁面寫「Happy Pi Day 2024! In this video, I attempt to create an Apollonian Gasket using the Descartes Circle Theorem and complex numbers.」",
+   "nearest_existing": "無（既有案例沒有圓形 packing 類型）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/182-apollonian-gasket/images/gasket2.png",
+    "page": "https://thecodingtrain.com/challenges/182-apollonian-gasket",
+    "verified": true,
+    "checked": "深紫色圓形畫布內，由大到小遞迴排列黃、藍、紫三色相切圓形，形成細密漸層的圓形鑲嵌圖案。",
+    "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Colorful Recursive Gaskets in Gaskets 範例，圓形版本的遞迴形狀替換。"
+   }
+  },
+  {
+   "title": "Substitution System：格子替換生成藝術與繪圖機輸出",
+   "creator": "piebro",
+   "year": "2024",
+   "category": "2d-pattern",
+   "categories_extra": ["fabrication"],
+   "scale": "物件",
+   "summary": "網頁互動生成藝術：從一個 2×2 色塊格子出發，隨機產生一組「每格換成 2×2 新色塊」的替換規則，反覆套用讓網格邊長加倍、細節加倍，最後輸出像素風格圖樣；並提供指令用 vpype 轉成路徑交給繪圖機（pen plotter）實際畫出來。和基礎範例「一個形狀換成一組新形狀」邏輯完全一致，只是替換對象是色塊格子而不是標籤正方形。",
+   "variations": [
+    {"name": "限制色板與規則數", "how": "把調色盤與規則組數縮小到 2–3 色、1–2 條規則", "effect": "圖案從隨機雜訊變成清楚可讀的條紋或棋盤結構"},
+    {"name": "繪圖機分層輸出", "how": "用 vpype pixelart 外掛把每個顏色圖層拆開分別畫", "effect": "實體筆繪的分層套色作品，刻意不完全對齊會有手繪感"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "JavaScript", "pen plotter", "替換系統"],
+   "tools": ["JavaScript", "vpype"],
+   "url": "https://github.com/piebro/substitution-system",
+   "evidence": "README 開頭寫「Interactive generative art implementation using a substitution system, along with commands for plotting the artwork with a pen plotter.」，repo 建立於 2024-02-01。",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/piebro/substitution-system/main/images/merged_01_09.png",
+    "page": "https://github.com/piebro/substitution-system",
+    "verified": true,
+    "checked": "左圖是橘藍相間的規則條紋格子圖案，右圖是同一套替換規則跑更多代之後變成密集雜訊狀的像素圖案，兩張並排對照不同代數的效果。",
+    "source": "GitHub piebro/substitution-system",
+    "author": "piebro",
+    "license": "MIT License",
+    "license_url": "https://github.com/piebro/substitution-system/blob/main/LICENSE",
+    "note": "README 展示圖：同一套格子替換規則在不同迭代代數下的視覺效果對照。"
+   }
+  },
+  {
+   "title": "thi.ng Font：形狀文法生成的模組化字體",
+   "creator": "Karsten Schmidt（thi.ng）",
+   "year": "2020",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "用一套正式的形狀文法定義每個字母：先在固定的格線（N 欄 M 列）上，把每個字母拆成直線、橫線、斜線、圓點等基本形狀代號組成的文法字串，再依代號畫出筆畫並拼成一整套小寫字母、數字與標點。和基礎範例一樣是「形狀代號 → 具體幾何」的直接替換，只是規則庫更大、輸出對象是可重複使用的字體。",
+   "variations": [
+    {"name": "改變格線比例", "how": "調整 N×M 格線的欄列比例", "effect": "整套字體變得更寬扁或更窄高，但筆畫邏輯不變"},
+    {"name": "同一符號的多套寫法", "how": "為同一個字母代號準備兩三種筆畫文法字串", "effect": "同一句話可隨機混用不同「手寫變體」，產生手感差異"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Clojure", "字體設計", "形狀文法"],
+   "tools": ["Clojure", "thi.ng"],
+   "url": "https://github.com/thi-ng/font",
+   "evidence": "README 說明這是「Generated, modular font based on thi.ng wordmark」，並用文法字串（如 hb3、/4a）定義每個字母的筆畫組成，版權標示 2020 Karsten Schmidt。",
+   "nearest_existing": "無（既有案例沒有字體設計類型）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/thi-ng/font/master/assets/0.0.7.png",
+    "page": "https://github.com/thi-ng/font",
+    "verified": true,
+    "checked": "白底黑色等寬斜體字型，顯示全部小寫字母與數字，筆畫由直線與斜角切線組成，帶有俐落的幾何感。",
+    "source": "GitHub thi-ng/font",
+    "author": "Karsten Schmidt",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示圖：以形狀文法生成的完整字母與數字集。"
+   }
+  },
+  {
+   "title": "Generative Art with Context Free Grammars：龜圖文法生成的分岔樹",
+   "creator": "Leon Rische",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "用一個小型 Python 文法框架，把「非終端符號」定義成一串龜圖動作（前進、轉彎、縮放）再展開成路徑；文章示範同一套文法規則反覆展開三百層，就能長出對稱的愛心狀分岔樹或螺旋線。這是把「形狀換成一組新形狀」的邏輯換成「符號換成一串龜圖指令」，剛好介於 A01 L-System 與 A05 形狀文法之間，可對照展示改寫系統的異同。",
+   "variations": [
+    {"name": "角度連續改變", "how": "把固定轉角角度換成隨參數連續變化", "effect": "同一條規則從螺旋線連續變化成分岔樹"},
+    {"name": "加入隨機非終端", "how": "同一個符號名稱註冊多條規則，展開時隨機選一條", "effect": "樹形不再完全對稱，每次展開結果都不同"}
+   ],
+   "difficulty": 3,
+   "tags": ["creative coding", "Python", "龜圖", "文法"],
+   "tools": ["Python"],
+   "url": "https://www.leonrische.me/pages/generative_art_with_cfgs.html",
+   "evidence": "文章標題為「Generative Art with Context Free Grammars」，內文展示 turtle rule system 的程式碼與生成的 spiral、tree 圖形，並附上原始碼連結 github.com/l3kn/generative_cfg（該 repo 已封存為唯讀，2020-09-18）。",
+   "nearest_existing": "A05-51 Context Free Art（不同實作：A05-51 是文字化 CFDG 程式，本作品是作者自寫的 Python 龜圖文法框架）",
+   "image": {
+    "url": "https://www.leonrische.me/pages/images/generative_art_with_cfgs/tree.png",
+    "page": "https://www.leonrische.me/pages/generative_art_with_cfgs.html",
+    "verified": true,
+    "checked": "白底黑色線稿，樹幹分岔成愛心形的左右兩大枝，每一枝再往上分岔出更細的小樹枝，末端呈現細密捲曲的分岔。",
+    "source": "leonrische.me 文章內嵌圖片",
+    "author": "Leon Rische",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "文章展示圖：龜圖文法展開 300 層後畫出的分岔樹。"
+   }
+  },
+  {
+   "title": "Recursion（Coding Challenge #77）：遞迴圓形",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "寫一個 drawCircle 函式，在圓心兩側呼叫自己畫出更小的圓，並設一個停止條件避免無限遞迴。是形狀文法最精簡的示範版本——一個圓形直接被換成兩個更小的圓形，重複到夠小為止，和基礎範例「A 換成兩個縮小的 A」幾乎是同一句話的最短示範，適合當入門對照。",
+   "variations": [
+    {"name": "加入隨機性", "how": "讓子圓的位置或縮放比例加入 random 偏移", "effect": "從整齊排列的圓串變成疏密不一的分佈"},
+    {"name": "圓形換成方形", "how": "把 drawCircle 換成 drawSquare 並改變位移方向", "effect": "變成更接近基礎範例的「方形換方形」遞迴版本"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "遞迴", "入門"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/challenges/77-recursion",
+   "evidence": "頁面說明「探索遞迴的概念來創建分形圖案」，並示範 drawCircle 函式的遞迴呼叫、退出條件與隨機性加入。",
+   "nearest_existing": "無",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/77-recursion/images/recursion.png",
+    "page": "https://thecodingtrain.com/challenges/77-recursion",
+    "verified": true,
+    "checked": "黑底白色線稿，一個大圓左右兩側對稱地遞迴縮小出一串越來越小的圓，形成中間細密、兩端由大圓包覆的波浪狀圖案。",
+    "source": "The Coding Train（thecodingtrain.com GitHub repo）",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "p5.js 遞迴圓形範例，入門版的形狀替換示範。"
+   }
+  }
+ ],
+ "notes": "need=6，本次找到的 6 個新藝術案例皆已親眼確認過生成畫面圖片並可直接使用；WebSearch／Parallel Search 額度在本輪用盡，沒有多餘時間再找 3 個備援藝術案例，故未提供備援（0 個）。removal_order 列了 9 個研究案例（need 6 ＋ 3 個備選），前 6 個建議實際移除。A05-55（CGAjs）因屬個人瀏覽器實驗小工具而非產業工具，改判為 art，使 need 從原估的 7 降為 6。"
+}

@@ -1,0 +1,66 @@
+{
+  "reviewer": "BALREV",
+  "algos": {
+    "A01": {
+      "reject_new": [
+        {"index": 3, "reason": "Jordan Santell〈L-systems〉是原理解說文章（接近數學說明，偏 research）；summary 與 variations 宣稱的「互動參數面板、迭代次數／角度／步長可即時調整、多規則並排比較」在頁面上都不存在（頁面只有自動播放的動畫圖），描述失實"}
+      ],
+      "image_fix": [
+        {"index": 0, "image": {"url": "https://raw.githubusercontent.com/kfahn22/L-System-Pattern-Generator/main/assets/readme/adh231a-flower-supershape.jpg", "page": "https://github.com/kfahn22/L-System-Pattern-Generator", "verified": true, "checked": "審查親眼確認：黑底上以紫、藍、橘色畫出四方對稱的齒輪狀花紋，中央留空，是 L-system 規則疊加超級形狀的生成畫面", "source": "GitHub kfahn22/L-System-Pattern-Generator", "author": "kfahn22", "license": "CC0-1.0（依 repo 授權）", "license_url": "https://github.com/kfahn22/L-System-Pattern-Generator/blob/main/LICENSE", "note": "L-system 規則疊加極坐標形狀所產生的對稱花紋（ADH231a 規則＋超級形狀）"}},
+        {"index": 1, "image": {"url": "https://raw.githubusercontent.com/FrancescoGradi/L-System-Trees/master/demoImages/preset4.png", "page": "https://github.com/FrancescoGradi/L-System-Trees", "verified": true, "checked": "審查親眼確認：草地上一棵即時算圖的 3D 樹，彎折的褐色枝幹末端開滿白色與淡粉色花朵，地面有枝影（原本的 preset3 是無葉的光禿樹，與撰寫者寫的「橘紅色秋葉」不符，改用這張能看出季節材質的圖）", "source": "GitHub FrancescoGradi/L-System-Trees", "author": "Francesco Gradi", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "L-system 文法生成的 3D 開花樹，以 Three.js 即時算圖（preset4）"}}
+      ],
+      "fix_class": [],
+      "protect": [
+        {"id": "A01-04", "why": "唯一的 Grasshopper L-system 外掛（Rabbit），有實際畫面，對本站 Grasshopper 學習者最直接可用；應優先移除與演算法關係更薄弱的 A01-15 SpeedTree、A01-09 列印路徑"},
+        {"id": "A01-10", "why": "Paul Bourke L-System User Notes 是被大量引用的經典規則範例集，與演算法關係最直接且有圖"}
+      ],
+      "text_fix": [
+        {"index": 0, "field": "year", "value": "2024", "why": "GitHub repo 建立於 2024-07-12，不是 2022"},
+        {"index": 1, "field": "year", "value": "2019", "why": "GitHub repo 建立於 2019-08-11"},
+        {"index": 2, "field": "year", "value": "2018", "why": "GitHub repo 建立於 2018-04-26"},
+        {"index": 4, "field": "year", "value": "2017", "why": "GitHub repo 建立於 2017-07-15；另外 script.js 的公理固定為 F，summary 的「可自行輸入公理」應改為「可自行輸入規則與角度」"},
+        {"index": 5, "field": "year", "value": "2024", "why": "Coding Train 官方 index.json 的日期是 2024-08-18，不是 2023"}
+      ],
+      "notes": "6 個新案例全部審過：jsantell 文章描述失實而 reject，其餘 5 個作品與圖都成立（仍多於 need=4）；kfahn 授權是 CC0 不是 MIT、L-System-Trees 原圖的說明寫錯，都已用 image_fix 修正；年份錯誤寫在 text_fix（合併工具不會讀，要請協調者在合併後手動改）；保護 A01-04、A01-10，讓移除改落在 SpeedTree 與列印路徑論文。"
+    },
+    "A02": {
+      "reject_new": [
+        {"index": 1, "reason": "fractal_viewer 是通用 IFS／SDF 分形算圖器原型（Menger、Jerusalem Cube、Koch 三種並列），Koch 不是作品核心，偏軟體工具；summary 寫的「三等分、三角面推出四面體」與 koch_curve.glsl 實際的 2/3 縮放 IFS（依〈The Koch curve in three dimensions〉）不符"},
+        {"index": 2, "reason": "repo 裡所有圖（snowflake／antisnowflake 1–5）都是帶滑桿與按鈕的網頁介面截圖，雪花只是極淡的細線，找不到合格的作品畫面；作品本身只有 2 次 commit，是附數學公式說明的教學小工具，偏 research"},
+        {"index": 3, "reason": "summary 與 variations 說它是「只對一條線段呼叫 SplitEdge 遞迴、C# 遞迴移植成 JavaScript」，但 sketch.js 實際是 L-system 字串改寫（F→F+F--F+F，每 2 秒重畫一代），描述錯在演算法本身；作品也只是極簡示範，圖只有 400×247 而且有大浮水印"}
+      ],
+      "image_fix": [
+        {"index": 0, "image": {"url": "https://piratefsh.github.io/assets/images/uncommon-fractals/koch-tessel/koch-tessel-v1-4.png", "page": "https://piratefsh.github.io/2020/08/07/koch-tesselation-uncommon-fractal-implementations.html", "verified": true, "checked": "審查親眼確認：深綠底上滿版的淺綠 Koch 雪花鑲嵌紋理，雪花中心有紅、黃小圓點；文章圖說為 2015 版的 4 層鑲嵌", "source": "piratefsh 個人部落格", "author": "Sher Minn Chong（piratefsh）", "license": "網頁預覽圖，教學引用", "license_url": "", "note": "2015 版（面積估算法）Koch 雪花鑲嵌遞迴 4 層的輸出，滿版重複的碎形紋理"}}
+      ],
+      "fix_class": [],
+      "protect": [],
+      "text_fix": [
+        {"index": 0, "field": "summary", "value": "把開頭的「紐約軟體工程師 Sher Minn Chong」改為「創意程式設計者 Sher Minn Chong（piratefsh）」", "why": "文章沒有提到作者所在地，「紐約」無法查證"}
+      ],
+      "notes": "4 個新案例只有 piratefsh 的 Koch 雪花鑲嵌成立；另外 3 個分別因為不是作品核心或屬於工具、只有介面截圖、以及演算法描述錯誤而 reject。A02 的藝術缺口仍大，下一輪要找真正以 Koch 為核心、有生成畫面的 p5.js／Processing 作品。分類與移除順序沒有明顯問題。"
+    },
+    "A03": {
+      "reject_new": [
+        {"index": 2, "reason": "summary 與 variations 說它「依遞迴層級分色、每多一層換一種顏色」「有可調維度與色彩的互動介面」，但 Main.js 實際是依 A／B／C／D 四個互相遞迴的方向函式固定上紅、黑、綠、藍色，也沒有互動介面（要改程式碼）；演算法角色寫錯，而且圖是動畫中途、只畫一部分的截圖"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "text_fix": [
+        {"index": 0, "field": "summary", "value": "「最後把所有格心連成一筆畫」改為「最後把各格左下角依序連成一筆畫」", "why": "HilbertDraw 頁面說明連接的是方格左下角"},
+        {"index": 1, "field": "variations[1]", "value": "逐代重畫動畫：每 2 秒改寫一代並把步長減半後整張重畫（setInterval），可以逐代看到曲線變密", "why": "sketch.js 是逐代重畫，不是逐點生長"}
+      ],
+      "notes": "3 個新案例中，HilbertDraw（影像驅動的自適應單線畫）與 JohnnyAwesome 的 L-system Hilbert 都查證無誤，圖也合格；jirotubuyaki 因上色規則與互動介面寫錯而 reject，所以只剩 2 個，少於 need=3。分類與移除順序合理。"
+    },
+    "A04": {
+      "reject_new": [
+        {"index": 0, "reason": "summary 與 variations 寫的「依細分層級與位置決定填色」「隨機或依位置提前停止、局部深度不均」「檢查條件→切開→丟回同一函式的遞迴」都和 sketch_2026_02_16.py 不符：程式是每按一次空白鍵，就把全部形狀依規則整代切開（四邊形沿較短對角線切成 2 個三角形，三角形取中點切成 3 塊），顏色是 viridis 色表的（頂點數×面積）mod 255，沒有停止條件。演算法描述錯誤（本演算法 need=0，這一個只是備援）"}
+      ],
+      "image_fix": [],
+      "fix_class": [],
+      "protect": [],
+      "text_fix": [],
+      "notes": "need=0。分類 9 個 art、9 個 research，全部合理；備援只剩 Max Halford 的 Mondrian（內容與程式相符，圖合格）。"
+    }
+  }
+}

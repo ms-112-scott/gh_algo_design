@@ -299,6 +299,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Stiny 與 Gips 首次提出形狀文法，主張規則直接作用在形狀上而非符號，並用一組規則生成一系列抽象繪畫與雕塑。這是基礎範例「形狀→形狀」改寫概念的源頭。",
       "variations": [
@@ -334,6 +335,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "以參數化形狀文法定義帕拉底歐別墅的平面風格，從網格格線開始，經過多個階段的規則逐步生成房間配置、牆、柱廊與門窗，並成功推導出 Villa Malcontenta 的平面。",
       "variations": [
@@ -365,37 +367,6 @@
       "url": "https://journals.sagepub.com/doi/10.1068/b050005"
     },
     {
-      "id": "A05-03",
-      "algo": "A05",
-      "title": "The Language of the Prairie：萊特草原住宅文法",
-      "creator": "Hank Koning、Julie Eizenberg",
-      "year": "1981",
-      "category": "3d-architecture",
-      "categories_extra": [],
-      "scale": "建築",
-      "summary": "以壁爐為起始形狀，用參數化形狀文法生成萊特草原住宅的量體組合與機能分區，證明形狀文法能處理三維建築語彙，並能推導出新的「萊特風格」住宅。",
-      "variations": [
-        {
-          "name": "以核心為種子",
-          "how": "起始形狀改成一個標籤為 Core 的方塊（壁爐），規則讓各翼量體沿十字軸向外長出。",
-          "effect": "形成以壁爐為中心的十字形平面。"
-        },
-        {
-          "name": "3D 量體＋屋頂",
-          "how": "把正方形擠出成 Box，最後一階段依標籤加上出挑的低斜屋頂板。",
-          "effect": "得到有水平延伸感的草原風格量體模型。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D"
-      ],
-      "tools": [
-        "理論"
-      ],
-      "url": ""
-    },
-    {
       "id": "A05-04",
       "algo": "A05",
       "title": "Siza Malagueira 住宅文法與大量客製化",
@@ -405,6 +376,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Duarte 從 Álvaro Siza 在 Malagueira 設計的 35 棟合院住宅歸納出形狀文法，目標是做出讓住戶參與設計的客製化集合住宅系統。文法把「建築師的風格」與「住戶的需求」同時寫進規則裡。",
       "variations": [
@@ -445,6 +417,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "CGA shape 把形狀文法轉成以量體、分割（split）、重複（repeat）與構件取代為核心的電腦文法，可大量生成具細節的建築外殼，並以龐貝古城的虛擬重建展示其效率。後來發展為 CityEngine 的核心語言。",
       "variations": [
@@ -485,6 +458,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "CityEngine 官方教學示範以 CGA 規則把立面水平切成樓層、以重複分割讓中間樓層自動填滿高度，再插入窗、門、線腳等構件。是分割文法最直接的業界工具範例。",
       "variations": [
@@ -519,6 +493,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "Stiny 分析中式冰裂紋窗格的構成慣例，提出以一條線把多邊形切成兩個多邊形的參數化遞迴規則。簡單的切割規則就能生成大小遞減、看似自然的窗花。",
       "variations": [
@@ -550,40 +525,6 @@
       "url": "https://journals.sagepub.com/doi/10.1068/b040089"
     },
     {
-      "id": "A05-08",
-      "algo": "A05",
-      "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
-      "creator": "designcoding",
-      "year": "",
-      "category": "modeling",
-      "categories_extra": [
-        "2d-pattern"
-      ],
-      "scale": "立面／表皮",
-      "summary": "以 Grasshopper 重新實作冰裂紋格柵的生成，把 Stiny 的切割文法轉成可調參數的視覺程式。是學習者從論文走向 GH 實作的好參考。",
-      "variations": [
-        {
-          "name": "改為 C# 一元件完成",
-          "how": "把 GH 元件串接改寫進 A05 的 LOOP 架構，用 List<Polyline> 每代整批替換。",
-          "effect": "可控制世代數與終止面積，運算更集中。"
-        },
-        {
-          "name": "吸引子密度",
-          "how": "終止面積改為隨多邊形中心到吸引子距離變化。",
-          "effect": "窗格在吸引子附近變得細碎，遠處開闊。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "吸引子控制",
-        "拼貼"
-      ],
-      "tools": [
-        "Grasshopper"
-      ],
-      "url": "https://www.designcoding.net/revisiting-chinese-ice-ray-lattices/"
-    },
-    {
       "id": "A05-09",
       "algo": "A05",
       "title": "The Grammar of Paradise：蒙兀兒花園文法",
@@ -593,6 +534,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "以參數化形狀文法描述蒙兀兒四分花園（char-bagh）的設計慣例：正方形基地被水道與步道十字分割，四個象限再遞迴細分並加上邊界。泰姬瑪哈陵的花園平面可由此推導。",
       "variations": [
@@ -628,6 +570,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Flemming 為 1880 年代美國 Queen Anne 風格住宅寫出形狀文法，從平面配置、量體外推到複雜屋頂組合逐步生成，說明規則的組合能產生「大於部分總和」的整體風格。",
       "variations": [
@@ -662,6 +605,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Sass 把帕拉底歐文法延伸為「構築文法」，從平面圖出發，用規則生成可以實際製造組裝的構件，並透過快速原型製作實體模型，讓文法直接連到數位製造。",
       "variations": [
@@ -696,6 +640,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "eifForm 結合參數化形狀文法、結構分析與隨機最佳化（shape annealing），用規則增刪桁架節點與桿件，並以結構性能與成本評估引導搜尋，生成有效率又新穎的平面桁架與空間桁架。",
       "variations": [
@@ -732,6 +677,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "電腦科學家 Russell Kirsch 與藝術史學者 Joan Kirsch 為 Richard Diebenkorn 的《Ocean Park》抽象畫系列寫出形狀文法，以水平與垂直分割規則描述畫面結構，並能生成風格相似的新構圖。",
       "variations": [
@@ -765,6 +711,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "以形狀文法解讀北宋李誡《營造法式》，將單一建築類型的平面、剖面與材分制度寫成可生成的規則，並用於教學，讓學習者自己判斷生成結果是否屬於宋式風格並調整文法。",
       "variations": [
@@ -788,40 +735,6 @@
         "電腦程式"
       ],
       "url": "https://dspace.mit.edu/handle/1721.1/8631"
-    },
-    {
-      "id": "A05-15",
-      "algo": "A05",
-      "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
-      "creator": "Athanassios Economou（Georgia Tech Shape Computation Lab）",
-      "year": "",
-      "category": "modeling",
-      "categories_extra": [
-        "drawing"
-      ],
-      "scale": "物件",
-      "summary": "Shape Machine 是一套在 CAD 系統中做向量形狀「搜尋與取代」的工具，能在任意線稿中辨識出規則左側的形狀（包含子形狀），再換成右側的形狀，是真正「視覺計算」式的形狀文法直譯器。",
-      "variations": [
-        {
-          "name": "輸入任意線稿",
-          "how": "把起始形狀改成 Rhino 裡畫好的曲線集合，規則改成「找到符合的正方形就替換」，用端點距離容差比對。",
-          "effect": "讓學習者在自己的手繪線稿上套用規則。"
-        },
-        {
-          "name": "子形狀辨識",
-          "how": "先把所有線段在交點打斷，再搜尋任意四條能組成正方形的線段。",
-          "effect": "發現畫面中原本沒有被「畫出來」的隱藏正方形，這是形狀文法與符號文法的核心差異。"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "鄰居搜尋"
-      ],
-      "tools": [
-        "Shape Machine",
-        "Rhino"
-      ],
-      "url": "https://shape.gatech.edu/Research/index.html"
     }
   ]
 }

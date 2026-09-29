@@ -567,6 +567,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "summary": "Hobbs 系統整理 flow field 的做法：在畫面上鋪一張角度格網，讓曲線順著角度前進，並討論起點分布、碰撞檢查、線寬與色彩等讓成品好看的技巧。是本元件「場＋流線」最直接的藝術版本。",
       "variations": [
         {
@@ -606,6 +607,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "summary": "在 Art Blocks 發表的 999 件長篇生成藝術，以 flow field 引導大量帶狀曲線形狀排列，亂流程度（none／low／medium／high）是可變特徵之一。展示同一演算法如何透過參數空間產生整個作品系列。",
       "variations": [
         {
@@ -645,6 +647,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "art",
       "summary": "讀取美國國家數位預報資料庫的風速風向，把全美的風畫成持續流動的細線。場不是公式而是實測資料，流線則以動畫粒子呈現。",
       "variations": [
         {
@@ -683,6 +686,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "art",
       "summary": "以波士頓洛根機場一年、每 20 秒一筆的風速、風向、陣風資料，在 1.8 m × 4 m 的數位畫布上生成四個章節的動態「資料繪畫」，設於 Fan Pier 100 Northern Avenue 大廳。風場資料成為建築室內的公共藝術。",
       "variations": [
         {
@@ -716,6 +720,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "summary": "Butterfly 把 Grasshopper 幾何匯出到 OpenFOAM 做 CFD，可模擬戶外都市風場與室內通風；結果常以速度向量與流線視覺化。本元件的公式場可以視為 CFD 速度場的簡化替身。",
       "variations": [
         {
@@ -755,6 +760,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "summary": "以複數函數的虛部建立曲面，其等高線就是位勢流的流線，實部則是正交的等位線；Piker 把它包成 Grasshopper 工具，可由渦旋與源點配置產生可行走、互相連通的曲面。",
       "variations": [
         {
@@ -788,6 +794,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "summary": "科學視覺化的經典方法：只設定流線間距 dsep，就能產生從紋理到手繪風格的均勻流線圖，且比先前方法計算更便宜。是把本元件從「格子起點」升級成「漂亮構圖」的關鍵。",
       "variations": [
         {
@@ -827,6 +834,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "summary": "以 MATLAB 實作 Jobard & Lefer 1997 等間距流線，提供可直接閱讀的程式碼，適合學習者對照改寫成 C#。",
       "variations": [
         {
@@ -859,6 +867,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "summary": "SIGGRAPH 2007 論文，以 Perlin noise 的旋度（curl）產生恰好不可壓縮、可尊重固體邊界的亂流速度場，廣泛用於煙、火等特效。它說明了如何從 noise 得到「不會聚成一點」的好流場。",
       "variations": [
         {
@@ -892,6 +901,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "summary": "伊斯坦堡競圖首獎案，以既有東西向道路與主軸交織出「soft grid」，再以 urban script 依位置生成不同建築類型；Schumacher 以此為 Parametric Urbanism 的代表，強調「場的規律性差異化」。注意：此案是場的概念與網格變形，並非直接以本元件的流線追蹤產生。",
       "variations": [
         {
@@ -923,6 +933,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "summary": "Grasshopper 外掛元件，以 RK4 計算 3D 向量場的流線。可與本課程元件對照：本範例用最簡單的 Euler 法，外掛用 RK4 取得更準的路徑。",
       "variations": [
         {
@@ -956,6 +967,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "summary": "以 Grasshopper 設計動態鋪面圖樣的逐步教學。可把本元件的流線當分割線，將鋪面切成隨流向彎曲的條帶，是流線直接落地成施工圖的應用方向。",
       "variations": [
         {
@@ -994,6 +1006,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "summary": "McNeel 論壇上關於在 Grasshopper 以向量場繪製流線的討論，展示原生元件與腳本兩種做法，常見困難是流線均勻分布。適合學習者遇到問題時查閱。",
       "variations": [
         {
@@ -1024,6 +1037,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "summary": "SIGGRAPH 1985 論文，提出以非線性函數組合產生自然複雜度的「solid texture」，用來做雲、火、水、大理石、木紋、岩石等效果。本元件的 PerlinNoise class 就源自這一系列工作。",
       "variations": [
         {
@@ -1062,6 +1076,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "summary": "修正原版 noise 的兩個缺點：二階導數不連續（改用 6t⁵−15t⁴+10t³ 平滑曲線）與梯度選擇不佳（改用固定的 12 個方向）。本課程範例的 SmoothStep 與 CornerSlope 正是這篇的 2D 簡化版。",
       "variations": [
         {
@@ -1095,6 +1110,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "summary": "Minecraft 最早以 Perlin noise 生成地形，並以多層疊加的 fractal noise 增加細節；後期版本以 Continentalness、Erosion、Peaks & Valleys 等多張 noise 圖共同決定地形。是 noise 生成可探索 3D 空間的代表。",
       "variations": [
         {
@@ -1133,6 +1149,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "summary": "以 noise 生成類 Minecraft 地圖並做網頁渲染的實驗，附開源程式碼（minecraft.js）。適合學習者對照看 noise 值如何轉成高度與材質顏色。",
       "variations": [
         {
@@ -1165,6 +1182,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "summary": "專業程序化地形軟體，以 fractal（多層 Perlin）產生基礎地形，再以流水侵蝕與熱侵蝕模擬雕刻出沖溝與崖錐，輸出高度圖給遊戲與影視。展示了「noise 只是第一步」的完整管線。",
       "variations": [
         {
@@ -1203,6 +1221,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "summary": "World Machine 中的進階 Perlin noise 產生器說明頁，列出可調的 noise 參數（尺度、細節層數、各層衰減等），可與本元件的 scale／octaves 一一對照。",
       "variations": [
         {
@@ -1235,6 +1254,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "summary": "開源專案比較三種生成帶侵蝕特徵地形的方法（含以 noise 為起點的模擬式侵蝕）。可作為本元件往「環境過程模擬」延伸的參考。",
       "variations": [
         {
@@ -1259,36 +1279,6 @@
       "url": "https://github.com/dandrino/terrain-erosion-3-ways"
     },
     {
-      "id": "C04-08",
-      "algo": "C04",
-      "title": "One-North Masterplan（人造地景形態的都市）",
-      "creator": "Zaha Hadid Architects",
-      "year": "2001",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "summary": "新加坡 one-north 總體規劃，把整個街區當作起伏如沙丘的人造地景處理，街廓尺寸差異化、天際線像地形。注意：官方並未說明使用 Perlin noise，此處作為「平滑連續起伏場」的都市尺度類比。",
-      "variations": [
-        {
-          "name": "低頻 noise 當天際線",
-          "how": "octaves 設 1–2、scale 很大，在每個街廓中心取值映射成建築高度。",
-          "effect": "連續起伏、有整體感的天際線。"
-        },
-        {
-          "name": "公園處強制下凹",
-          "how": "以公園範圍曲線做距離遮罩，把高度壓低。",
-          "effect": "中央谷地與周邊高起的地景式配置。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "吸引子控制"
-      ],
-      "tools": [],
-      "url": "https://www.zha.com/projects/masterplans/one-north-masterplan"
-    },
-    {
       "id": "C04-09",
       "algo": "C04",
       "title": "Flow Fields 中以 noise 決定角度",
@@ -1298,6 +1288,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "summary": "Hobbs 的 flow field 文章指出常見做法是以 Perlin noise 決定格網上每點的角度，再讓曲線順著走。這正是 C04 與 C03 最自然的組合方式。",
       "variations": [
         {
@@ -1331,6 +1322,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "summary": "以 Perlin noise 為基礎、取其旋度產生不可壓縮的亂流場，用於影視特效的煙與粒子。對 C04 而言，是把「高度場」轉成「流動場」的經典方法。",
       "variations": [
         {
@@ -1364,6 +1356,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "summary": "以互動網頁示範如何用 noise 做地圖：頻率、振幅疊加、重新分配高度、以高度與濕度兩張 noise 決定生物群系等。是理解本元件參數最友善的教材。（網址未於本次搜尋中取得）",
       "variations": [
         {
@@ -1394,6 +1387,7 @@
       "year": "",
       "category": "drawing",
       "categories_extra": [],
+      "source": "research",
       "summary": "回顧 Perlin noise 1985 原版、2002 改良版（三次→五次平滑曲線、固定梯度表）與 Simplex noise 的差異，附圖比較未內插與內插的 2D noise。適合寫研究報告時引用演算法演進。",
       "variations": [
         {

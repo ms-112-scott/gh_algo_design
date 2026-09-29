@@ -305,6 +305,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "WFC 的起點：從一張小範例圖產生局部相似的大圖，分成 overlapping model（從像素範例學 N×N 圖樣）與 tiled model（像基礎範例一樣用 tile 相鄰規則）。README 整理了後續遊戲、3D 與研究的延伸。",
       "variations": [
@@ -347,6 +348,7 @@
         "3d-architecture",
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "WFC 的前身。Merrell 從使用者給的小型 3D 範例模型中推導模組間的相鄰限制，再用約束傳播（AC-3）生成大很多的建築群、橋、管線等模型；並提出分區逐塊修改以降低失敗率。",
       "variations": [
@@ -382,6 +384,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "策略遊戲 Bad North 用 3D WFC 把手工製作的 tile 組拼成小島地景（崖壁、階梯、房屋、沙灘），並加入「每一步都保持可通行」的啟發式選 tile。Stålberg 在 Everything Procedural 2018 講解了整套流程。",
       "variations": [
@@ -425,6 +428,7 @@
         "modeling",
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "使用者點一下就長出房子的造鎮玩具。底層把六角網格切成四邊形並擾動成不規則網格，再結合 WFC 與 marching cubes 決定每個角落該放哪種屋頂、牆、拱、樓梯模組，讓任意點擊都能得到合理的建築形。",
       "variations": [
@@ -466,6 +470,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Procjam 2018 作品：玩家在城市中行走時，城市用 3D 方塊模組與帶回溯的 WFC 即時長出來。作者撰文說明如何設定模組接頭、回溯與「邊走邊生成」的線上版 WFC，後續又寫了更快、可決定、可平行化的無限世界版本。",
       "variations": [
@@ -508,6 +513,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "第一個商業使用 WFC 的遊戲。在多階段生成流程的中段用 WFC 補上遺跡、建築平面的細節，並討論過度擬合、單調與連通性問題，以及如何與其他建構式生成方法混用。",
       "variations": [
@@ -543,6 +549,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "把 WFC 包成 Grasshopper 元件：使用者定義包絡（Envelope）切成 Slot、自訂 Module 與面對面的 Rule，外掛負責把模組填滿空間並保證相鄰合法，用於離散聚合的建築與都市設計。",
       "variations": [
@@ -576,42 +583,6 @@
       "url": "https://monoceros.sub.digital/"
     },
     {
-      "id": "A06-08",
-      "algo": "A06",
-      "title": "Subdigital 離散實體化實習",
-      "creator": "Subdigital（Ján Pernecký 等）",
-      "year": "2020",
-      "category": "fabrication",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "構件",
-      "summary": "Subdigital 2020 年舉辦的暑期實習，以既有數位製造技術探索「資料驅動設計的離散實體化」，並為此開發了後來成為 Monoceros 的工具，讓學習者以 WFC 組合可製造的模組。",
-      "variations": [
-        {
-          "name": "模組即料件",
-          "how": "每個 tile 對應一種可切割或列印的實體構件，輸出時統計每種 tile 數量作為料件表。",
-          "effect": "生成結果直接變成下料與組裝清單"
-        },
-        {
-          "name": "限制模組種類數",
-          "how": "tile 清單刻意精簡到 3–5 種並加權控制比例，檢查是否能在少量模具下完成組合。",
-          "effect": "降低製造成本、提高重複性"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D",
-        "拼貼",
-        "約束滿足"
-      ],
-      "tools": [
-        "Grasshopper",
-        "Monoceros"
-      ],
-      "url": ""
-    },
-    {
       "id": "A06-09",
       "algo": "A06",
       "title": "以編碼建築 tile 組做量體設計（Gameplay with encoded architectural tilesets）",
@@ -621,6 +592,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "碩士論文提出以 WFC 做建築量體設計的四步驟框架：把建築 tile 幾何編碼成二進位字串，在 Grasshopper 中重新實作兩種不需回溯的 WFC 變體，再把結果解碼回量體。",
       "variations": [
@@ -647,38 +619,6 @@
       "url": "https://www.academia.edu/44870033/Gameplay_with_encoded_architectural_tilesets_A_computational_framework_for_building_massing_design_using_the_Wave_Function_Collapse_algorithm"
     },
     {
-      "id": "A06-10",
-      "algo": "A06",
-      "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
-      "creator": "",
-      "year": "",
-      "category": "3d-architecture",
-      "categories_extra": [
-        "modeling"
-      ],
-      "scale": "建築",
-      "summary": "研究以 WFC 生成社會住宅的房間配置，把 WFC 輸出的整數矩陣解讀為 BIM 結構區塊（IFC 格式）之間的關係，產生符合巴西最大社會住宅計畫最低需求的平面。",
-      "variations": [
-        {
-          "name": "房間類型當 tile",
-          "how": "tile 改成客廳、臥室、衛浴、廚房、走廊，接頭表示牆、門、開放邊；再加入每種房間數量上下限的全域檢查。",
-          "effect": "自動產生合法的住宅單元平面"
-        },
-        {
-          "name": "輸出成 BIM 物件",
-          "how": "把 tileNumbers 整數矩陣對應到牆、門、樓板物件，而非只畫線。",
-          "effect": "結果可直接進入 BIM 流程做後續設計"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "約束滿足",
-        "拼貼"
-      ],
-      "tools": [],
-      "url": "https://link.springer.com/chapter/10.1007/978-3-031-71008-7_28"
-    },
-    {
       "id": "A06-11",
       "algo": "A06",
       "title": "階層式 WFC 平面生成（HWFC floor plan generation）",
@@ -688,6 +628,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "用階層式 WFC 產生建築平面：從粗略的建築結構開始，經過多層細化一路做到房間內部配置，每一層的結果成為下一層的約束。",
       "variations": [
@@ -712,39 +653,6 @@
       "url": "https://github.com/qin2500/HWFC_floor_plan_generation"
     },
     {
-      "id": "A06-13",
-      "algo": "A06",
-      "title": "以 WFC 生成與評估鄉村住宅配置",
-      "creator": "Yin Zhang、Zhen Xu、Hanlin Li 等",
-      "year": "2026",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "群體／都市",
-      "summary": "以 WFC 生成鄉村住宅群的配置，能適應不同基地條件與居住需求，並對生成結果進行評估。",
-      "variations": [
-        {
-          "name": "基地條件當預先約束",
-          "how": "輸入河道、既有道路、保留樹曲線，落在其上的格子預先塌縮成對應 tile 再傳播。",
-          "effect": "配置自動避開並呼應基地既有元素"
-        },
-        {
-          "name": "生成後評估篩選",
-          "how": "每個 seed 跑出結果後計算日照、戶數、道路長度等指標，只保留分數前幾名。",
-          "effect": "從大量隨機解中挑出性能較佳的配置"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "約束滿足",
-        "最佳化",
-        "拼貼"
-      ],
-      "tools": [],
-      "url": "https://doi.org/10.1177/14780771251326773"
-    },
-    {
       "id": "A06-14",
       "algo": "A06",
       "title": "WFC 結合 AR／MR 的不規則原木升級再利用",
@@ -754,6 +662,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "把原木、樹枝分岔等不規則木材 3D 掃描後，用 WFC 當作數位聚合方法自動排出空間組合，再以有限元素分析檢查結構可行性，並以 AR 輔助組裝，目標是循環設計。",
       "variations": [
@@ -787,6 +696,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "把 WFC 用在材料科學，生成多晶材料的晶粒方向分布，作為材料微結構與性能模擬的輸入，是 WFC 跨出遊戲與設計的例子。",
       "variations": [

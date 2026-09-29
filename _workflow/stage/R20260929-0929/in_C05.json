@@ -1,0 +1,414 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "C05",
+  "name_zh": "Marching Squares 等值線",
+  "name_en": "Marching Squares",
+  "one_liner": "先在方格網每個格點算一個「場值」（像地形高度），再逐格找出剛好等於某個數值的位置，連成一圈圈等高線。",
+  "how_it_works": [
+   "依中心點與半徑決定取樣範圍，切成 cellSize 大小的方格網。",
+   "每個格點用 metaball 公式 Σ(半徑² ÷ 距離²) 算場值，存進 double[,]。",
+   "逐格檢查 4 個角是否 ≥ threshold，用 1、2、4、8 相加得到 0–15 的情況編號。",
+   "情況 5、10 是對角（鞍點），用 4 角平均值決定要不要把兩個內側角連起來。",
+   "查 EdgePairs 表得知要連哪兩條邊，在邊上依數值比例線性內插出端點，輸出 Line。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "C05-01",
+   "title": "Marching Cubes：CT／MRI 醫學影像重建",
+   "creator": "William E. Lorensen、Harvey E. Cline（General Electric）",
+   "year": "1987",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D",
+    "查表",
+    "影像輸入"
+   ],
+   "tools": [
+    "C"
+   ],
+   "url": "https://dl.acm.org/doi/10.1145/37402.37422",
+   "summary": "SIGGRAPH 1987 論文，把 CT、MRI 等 3D 醫學掃描資料中「密度相同」的位置轉成三角形模型，是 Marching Squares 的 3D 版本，也是電腦圖學引用最多的論文之一。基礎範例的查表＋邊上內插就是它在 2D 的縮小版。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-02",
+   "title": "Metaballs：Carl Sagan《Cosmos》的原子模型",
+   "creator": "Jim Blinn",
+   "year": "1982",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "吸引子控制"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Metaballs",
+   "summary": "Blinn 為電視節目《Cosmos》模擬原子交互作用而發展出 blobby 模型，1982 年發表於 ACM TOG。每個球貢獻一個隨距離衰減的場，相加後取等值面，形體會自然融合——正是基礎範例 FieldValue 的原型。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-03",
+   "title": "Blob Architecture（泡泡建築）",
+   "creator": "Greg Lynn",
+   "year": "1995",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "等值面",
+    "吸引子控制",
+    "3D"
+   ],
+   "tools": [],
+   "url": "https://en.wikipedia.org/wiki/Blob_architecture",
+   "summary": "Greg Lynn 在 1995 年以 metaball 圖學軟體實驗設計並提出 blob architecture 一詞，影響了一整代以數位工具生成有機曲面的建築。其形體生成邏輯即為多個場源加總後取等值面。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-04",
+   "title": "AR Sandbox 擴增實境沙盤",
+   "creator": "Oliver Kreylos（UC Davis）",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "影像輸入",
+    "動畫",
+    "網格擴散"
+   ],
+   "tools": [
+    "Kinect",
+    "開源軟體"
+   ],
+   "url": "https://datalab.ucdavis.edu/arsandbox/",
+   "summary": "用 Kinect 深度相機即時掃描沙盤高度，再以投影機把高程色帶、地形等高線與模擬水流投回沙面，讓人用手堆沙就能看懂等高線地形圖。全世界已有數千處安裝，軟體開源。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-05",
+   "title": "等高線地形圖與氣象等壓線",
+   "creator": "地圖與氣象製圖通用做法",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "等值面",
+    "影像輸入"
+   ],
+   "tools": [
+    "GIS"
+   ],
+   "url": "https://en.wikipedia.org/wiki/Marching_squares",
+   "summary": "Marching Squares 最典型的用途：從規則格網的高程或氣壓資料畫出等高線（isoline）與等值帶（isoband）。建築系做基地模型時的分層等高線，背後就是同一件事。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-06",
+   "title": "d3-contour：網頁資料視覺化的等值線",
+   "creator": "D3（Mike Bostock 與貢獻者）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "資料視覺化"
+   ],
+   "tools": [
+    "JavaScript",
+    "D3"
+   ],
+   "url": "https://github.com/d3/d3-contour",
+   "summary": "D3 的 d3-contour 模組對矩形數值陣列套用 Marching Squares 計算等值多邊形，常用於密度圖、地形圖等資料視覺化。它輸出的是封閉多邊形，是基礎範例「散線段」的進階版。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-07",
+   "title": "Coding Train C5 — Marching Squares",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "影像輸入",
+    "動畫"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/c5-marching-squares",
+   "summary": "以 p5.js 逐步講解 Marching Squares，示範把 Open Simplex 雜訊、metaballs、Worley 雜訊、攝影機畫面與影像等各種輸入描成平滑等值線，是自學最好上手的教材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-08",
+   "title": "Dendro：OpenVDB 體素建模外掛",
+   "creator": "ryein（Dendro 開發者）",
+   "year": "",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "3D",
+    "空間索引"
+   ],
+   "tools": [
+    "Grasshopper",
+    "OpenVDB",
+    "C#",
+    "C++"
+   ],
+   "url": "https://github.com/ryein/dendro",
+   "summary": "Grasshopper 外掛，建構於 OpenVDB，把點、曲線、Mesh 包成體積資料後做布林、平滑、偏移、形變，再轉回 Mesh。本質是 3D 場＋等值面擷取，等於基礎範例的工業強度版。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-09",
+   "title": "Millipede：結構分析與等值面擷取",
+   "creator": "Panagiotis Michalatos",
+   "year": "",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "最佳化",
+    "曲面上"
+   ],
+   "tools": [
+    "Grasshopper"
+   ],
+   "url": "https://www.grasshopper3d.com/group/millipede",
+   "summary": "Millipede 是 Grasshopper 的結構分析與拓樸最佳化外掛，同時提供從體積純量場擷取等值面 Mesh，以及在 Mesh 上畫曲線等值線的功能。拓樸最佳化得到的密度場，就是靠等值面變成可建造的形。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-10",
+   "title": "Axolotl：SDF 體積建模元件",
+   "creator": "Mathias Bernhard、Benjamin Dillenburger（ETH Zurich DBT）",
+   "year": "2019",
+   "category": "modeling",
+   "scale": "構件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Python"
+   ],
+   "url": "https://dbt.arch.ethz.ch/project/axolotl/",
+   "summary": "ETH Zurich 數位建築技術研究室開發的 Grasshopper 元件集，以有號距離函數（SDF）表示形體，支援布林、晶格與 TPMS，並用 Marching Cubes 轉成 Mesh。多數元件為 Python 腳本，定位偏向教學。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-11",
+   "title": "Modeling with Distance Functions（SDF 建模）",
+   "creator": "Inigo Quilez",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "對稱"
+   ],
+   "tools": [
+    "GLSL",
+    "Shadertoy"
+   ],
+   "url": "https://iquilezles.org/articles/distfunctions/",
+   "summary": "Shadertoy 共同創辦人 Inigo Quilez 整理的 SDF 基本形與平滑組合公式集，是 demoscene 與程式化建模的重要參考。這些公式可直接貼進基礎範例的 FieldValue，再由 Marching Squares／Cubes 轉成幾何。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-12",
+   "title": "Marching Cubes 程式化地形（Coding Adventure）",
+   "creator": "Sebastian Lague",
+   "year": "",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "等值面",
+    "3D",
+    "隨機",
+    "動畫"
+   ],
+   "tools": [
+    "Unity",
+    "C#",
+    "Compute Shader"
+   ],
+   "url": "https://github.com/SebLague/Marching-Cubes",
+   "summary": "以 Unity 與 compute shader 實作 Marching Cubes 產生可挖掘、可有洞穴的程式化地形，並附教學影片與 MIT 授權原始碼。展示了等值面方法能處理高度圖做不到的懸崖與洞穴。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-13",
+   "title": "Monolith：多材料體素設計工具",
+   "creator": "Panagiotis Michalatos、Andrew O. Payne（Autodesk）",
+   "year": "2018",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "等值面",
+    "3D"
+   ],
+   "tools": [
+    "Monolith"
+   ],
+   "url": "https://www.monolith.zone/",
+   "summary": "Autodesk 研究團隊開發的體素化設計工具，以體積場而非邊界曲面描述物件，適合多材料 3D 列印與漸變材質。場的思維與基礎範例一致，最後同樣需要等值面把場轉成可輸出的幾何。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "C05-51",
+   "title": "Coding Challenge #28：Metaballs",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "metaballs",
+    "純量場",
+    "教學影片"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://thecodingtrain.com/challenges/28-metaballs",
+   "summary": "以 Processing 對每個像素計算多顆移動圓的距離倒數總和，得到會互相融合的「變形球」純量場並依數值上色。它示範的是等值線要擷取的那個純量場本身；後續 C5 Marching Squares 挑戰再把同類場轉成輪廓線。",
+   "currently_cc": true,
+   "photo": {
+    "source": "The Coding Train",
+    "page": "https://thecodingtrain.com/challenges/28-metaballs",
+    "note": "挑戰頁預覽圖：metaball 純量場上色"
+   }
+  },
+  {
+   "id": "C05-52",
+   "title": "Metaballs and Marching Squares",
+   "creator": "Jamie Wong",
+   "year": "2014",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "Canvas",
+    "metaballs",
+    "互動文章"
+   ],
+   "tools": [
+    "JavaScript",
+    "HTML Canvas"
+   ],
+   "url": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+   "summary": "互動式文章，在 HTML canvas 上逐步說明 metaball 的場函數、marching squares 的 16 種角點情況對應表，以及用線性內插讓輪廓頂點落在正確位置，每一步都有可操作的 JavaScript 示範。是 Grasshopper C# 範例背後演算法的圖解版。",
+   "currently_cc": true,
+   "photo": {
+    "source": "jamie-wong.com",
+    "page": "https://jamie-wong.com/2014/08/19/metaballs-and-marching-squares/",
+    "note": "文章圖：兩顆 metaball 逐步融合的過程"
+   }
+  },
+  {
+   "id": "C05-53",
+   "title": "Polygonising a scalar field（Marching Cubes 參考實作）",
+   "creator": "Paul Bourke（表格來自 Cory Gene Bloyd）",
+   "year": "1994",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "C",
+    "marching cubes",
+    "等值面",
+    "參考實作"
+   ],
+   "tools": [
+    "C",
+    "OpenGL"
+   ],
+   "url": "https://paulbourke.net/geometry/polygonise/",
+   "summary": "把 marching squares 延伸到三維：對每個立方體的 8 個角點判斷內外，查 256 種情況的邊表與三角形表，在跨越等值的邊上內插頂點並輸出三角面。這份網頁附短小的 C 程式與查表，被後來無數 creative coding 與遊戲的 marching cubes 實作沿用。",
+   "currently_cc": true,
+   "photo": {
+    "source": "paulbourke.net",
+    "page": "https://paulbourke.net/geometry/polygonise/",
+    "note": "立方體頂點與邊的編號圖（查表用）"
+   }
+  },
+  {
+   "id": "C05-54",
+   "title": "ofxMetaballs：openFrameworks 變形球外掛",
+   "creator": "Kyle McDonald",
+   "year": "2012",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "marching cubes",
+    "3D 列印"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/kylemcdonald/ofxMetaballs",
+   "summary": "openFrameworks 的 addon，提供 marching cubes（MC）與 marching tetrahedrons（MT）兩種三維等值面擷取實作，附以 noise 為場的範例。README 說明兩者差異：MT 產生的網格一定可 3D 列印，MC 較快但不一定是流形。適合比較兩種擷取法在可製造性上的取捨。",
+   "currently_cc": true,
+   "photo": null
+  },
+  {
+   "id": "C05-55",
+   "title": "Smooth Voxel Terrain（Part 2）：Marching Cubes 與 Surface Nets",
+   "creator": "Mikola Lysenko（0 FPS）",
+   "year": "2012",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "WebGL",
+    "marching cubes",
+    "surface nets",
+    "體素"
+   ],
+   "tools": [
+    "JavaScript",
+    "WebGL"
+   ],
+   "url": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+   "summary": "比較三種從體素純量場擷取網格的方法：marching cubes、marching tetrahedra 與 surface nets，說明 marching cubes 的歷史、查表結構與實作難處，並提供可在瀏覽器執行的 JavaScript 示範。適合了解 marching 系列之外的等值面替代做法。",
+   "currently_cc": true,
+   "photo": {
+    "source": "0fps.net",
+    "page": "https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/",
+    "note": "文章預覽圖：marching cubes 的立方體情況"
+   }
+  }
+ ]
+}

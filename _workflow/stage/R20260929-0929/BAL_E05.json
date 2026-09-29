@@ -1,0 +1,40 @@
+{
+ "algo": "E05",
+ "classification": [
+  {"id": "E05-01", "source": "research", "why": "艾菲爾鐵塔為建成歷史建築案例，非視覺藝術作品"},
+  {"id": "E05-02", "source": "research", "why": "學術論文重建歷史橋梁設計過程，屬工程研究"},
+  {"id": "E05-03", "source": "research", "why": "結構力學學術論文，說明砌體拱平衡理論"},
+  {"id": "E05-04", "source": "research", "why": "學術論文的互動分析模型，用於既有建築安全評估"},
+  {"id": "E05-05", "source": "research", "why": "結構最佳化學術論文，非以視覺表現為目的"},
+  {"id": "E05-06", "source": "research", "why": "形狀文法結構生成的學術論文研究"},
+  {"id": "E05-07", "source": "research", "why": "Grasshopper 外掛與找形方法論文，屬工具與研究"},
+  {"id": "E05-08", "source": "research", "why": "學術實驗室的預鑄結構原型與製造研究"},
+  {"id": "E05-09", "source": "research", "why": "大學研究團隊的線上教學平台，對應學術論文"},
+  {"id": "E05-51", "source": "art", "why": "currently_cc=true，早期互動式程式視覺化示範，預設歸類 art"},
+  {"id": "E05-52", "source": "art", "why": "currently_cc=true，網頁式 3D 互動視覺化，非建成或論文本體"},
+  {"id": "E05-53", "source": "art", "why": "currently_cc=true，GeoGebra 動態幾何互動作圖，非工程分析工具"},
+  {"id": "E05-54", "source": "art", "why": "currently_cc=true，瀏覽器互動視覺化重製學術方法，屬創作程式"}
+ ],
+ "art_count": 4,
+ "need": 2,
+ "removal_order": [
+  "E05-09",
+  "E05-06",
+  "E05-04",
+  "E05-02",
+  "E05-07",
+  "E05-05",
+  "E05-01"
+ ],
+ "removal_reasons": {
+  "E05-09": "無真實照片，且教學平台性質與新增的互動式藝術案例概念重疊，最容易被取代",
+  "E05-06": "無真實照片，與 E05-07 CEM 同樣是「生成多樣平衡結構」主題，內容重疊",
+  "E05-04": "與 E05-03 同作者、同主題（砌體推力線安全評估），內容高度重疊",
+  "E05-02": "無真實照片，單一橋梁歷史案例，獨特性低於塔（E05-01）與拱（E05-08）",
+  "E05-07": "無真實照片，但有 Grasshopper 外掛與獨特 3D 找形貢獻，優先順序較後",
+  "E05-05": "有真實照片，結構最佳化應用場景在既有案例中獨特，盡量保留",
+  "E05-01": "有真實照片，是唯一的都市地標／高塔尺度歷史經典案例，盡量保留"
+ },
+ "new_art": [],
+ "notes": "本次執行時 WebSearch 額度已用罄（200/200，疑似同批次其他 agent 共用配額）、Parallel Search MCP 也回報 free-tier rate limit，改用 GitHub API／Bing／DuckDuckGo 直接查詢皆受阻或只找到 BlockResearchGroup 等研究單位的工具（compas_ags、i3DGS 同源等），找不到任何『圖解靜力學』主題、以視覺表現為主、可親眼驗證圖片的 p5.js／Processing／繪圖機等創作程式作品，依規則寧缺勿濫、不捏造，new_art 留空；已完成 13 筆既有案例的 art／research 分類（art 4、research 9）與 removal_order／removal_reasons，need=2（另有 must_remove_extra=1 需額外移除不補），建議待搜尋工具額度恢復後另派 agent 專門為 E05 補找藝術案例。"
+}

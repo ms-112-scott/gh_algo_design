@@ -317,6 +317,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Boids 模型最早的應用之一，在 SIGGRAPH '87 Electronic Theater 首映的動畫短片。片中鳥群與魚群分別在被冰層隔開的球體兩半中游動，群體運動全由每隻個體的局部規則產生，而不是逐隻打關鍵格。",
       "variations": [
@@ -356,6 +357,7 @@
       "year": "1992",
       "category": "drawing",
       "categories_extra": [],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "第一部使用 Boids 模型的劇情長片，以修改過的 Symbolics Boids 程式產生電腦模擬的蝙蝠群，企鵝大軍則以基於 Reynolds 研究的工具製作。說明群聚規則可以從研究原型直接變成大規模視覺表現工具。",
       "variations": [
@@ -396,6 +398,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Kokkugia 以群體智能（swarm intelligence）為核心的都市設計研究，把都市元素視為依局部規則互動的代理人，以自下而上的方式生成都市紋理，取代傳統由上而下的總體規劃。",
       "variations": [
@@ -425,82 +428,6 @@
       "url": "https://www.kokkugia.com/swarm-urbanism"
     },
     {
-      "id": "D01-04",
-      "algo": "D01",
-      "title": "Composite Swarm",
-      "creator": "Kokkugia／Roland Snooks（與 James Pazzi、Marc Gibson）",
-      "year": "",
-      "category": "fabrication",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "構件",
-      "summary": "以複合材料製作的原型，裝飾性構件的分布由模仿螞蟻以身體相連搭橋邏輯的多代理人演算法決定，屬於 Snooks 的 Behavioral Formation 設計流程，用來測試日後可放大到建築尺度的複合材料構造。",
-      "variations": [
-        {
-          "name": "代理人互相連結搭橋",
-          "how": "當兩隻鳥距離小於 linkRadius 且持續 k 步，就把兩者之間記一條 Line 並降低兩者速度（黏住）。",
-          "effect": "代理人逐漸串成跨越空間的橋狀纖維束"
-        },
-        {
-          "name": "只在兩支點間生成",
-          "how": "輸入兩個錨點作吸引子，代理人從一端出發、被另一端吸引。",
-          "effect": "形成跨距型的纖維構件，可評估跨越能力"
-        },
-        {
-          "name": "纖維加厚輸出",
-          "how": "依每段軌跡附近的鄰居數決定 Pipe 半徑，最後 BooleanUnion。",
-          "effect": "得到可 3D 列印或翻模成複合材料的實體構件"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "鄰居搜尋",
-        "3D",
-        "物理模擬"
-      ],
-      "tools": [],
-      "url": "https://www.kokkugia.com/Composite-Swarm"
-    },
-    {
-      "id": "D01-05",
-      "algo": "D01",
-      "title": "AADRL Aerial Robot Thread Construction",
-      "creator": "Robert Stuart-Smith（Kokkugia／AA DRL）",
-      "year": "",
-      "category": "fabrication",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "構件",
-      "summary": "在 AA DRL 進行的研究，讓空中機器人依行為式生產（behavioural production）與 swarm-printing 邏輯拉線編織空間結構，機器人的路徑不是預先排好，而是由群體互動與回饋決定。",
-      "variations": [
-        {
-          "name": "軌跡即拉線路徑",
-          "how": "把 trails 重新取樣成等距點，並限制轉角角度，輸出為機器人可執行的航點清單。",
-          "effect": "群聚軌跡直接變成可飛行、可拉線的施工路徑"
-        },
-        {
-          "name": "防碰撞的最小間距",
-          "how": "把 separationRadius 設成機體尺寸加安全距離，並把分離權重拉高到遠大於聚集。",
-          "effect": "群體保持安全間距，軌跡互不相交過近"
-        },
-        {
-          "name": "錨點間往返",
-          "how": "設多個固定錨點輪流作為吸引子，鳥到達一個就換下一個目標。",
-          "effect": "線在錨點間來回纏繞，形成張力網結構"
-        }
-      ],
-      "difficulty": 4,
-      "tags": [
-        "3D",
-        "吸引子控制",
-        "動畫"
-      ],
-      "tools": [],
-      "url": "https://www.kokkugia.com/AADRL-aerial-robot-thread-construction"
-    },
-    {
       "id": "D01-06",
       "algo": "D01",
       "title": "Aerial Additive Manufacturing（多台自主無人機空中 3D 列印）",
@@ -510,6 +437,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "發表於 Nature 的研究，模仿蜂群分工，由 BuilDrone 在飛行中擠出材料、ScanDrone 持續量測成果並決定下一步，多台無人機依同一份藍圖協作建造與修補結構，目標是高處或災後等難以到達的現場施工。",
       "variations": [
@@ -539,39 +467,6 @@
       "url": "https://www.nature.com/articles/s41586-022-04988-4"
     },
     {
-      "id": "D01-07",
-      "algo": "D01",
-      "title": "Behavioural Production: Autonomous Swarm-Constructed Architecture",
-      "creator": "Robert Stuart-Smith",
-      "year": "2016",
-      "category": "3d-architecture",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "建築",
-      "summary": "刊於 AD（Architectural Design）的論文，探討以多代理人行為式運算做建築設計，並延伸到個體與群體機器人的積層製造，讓機器人以即時回饋參與設計，而不只是照預設指令施工。",
-      "variations": [
-        {
-          "name": "邊飛邊建",
-          "how": "每隻鳥走過的位置寫入 3D 網格作為已建成材料，之後的鳥把這些格子當障礙物並沿其表面爬行。",
-          "effect": "結構在模擬中逐步長出，形態由群體與既有構造互動決定"
-        },
-        {
-          "name": "性能寫入規則",
-          "how": "加一個結構或日照的評估值場，讓代理人往應力高或需要遮陽處聚集。",
-          "effect": "材料自動多放在需要的位置，形成性能導向的密度分布"
-        }
-      ],
-      "difficulty": 5,
-      "tags": [
-        "3D",
-        "物理模擬",
-        "最佳化"
-      ],
-      "tools": [],
-      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/ad.2024"
-    },
-    {
       "id": "D01-08",
       "algo": "D01",
       "title": "Ghost Tectonics",
@@ -582,6 +477,7 @@
         "fabrication",
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "實驗性展亭，形體由代理人群互動產生的湧現空間形態生成；再以大尺度 3D 列印的半透明外殼作為犧牲模板，搭配 Tailored Fibre Placement 將連續碳纖維依有限元素分析的應力流向配置。",
       "variations": [
@@ -620,6 +516,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "地景",
       "summary": "數百台自主飛行的發光無人機模擬椋鳥群的群飛（murmuration），演算法源自團隊十多年對椋鳥飛行行為的研究；每台無人機的燈光強度與顏色依與其他無人機的距離變化，凸顯群體密度。2017 年於邁阿密海灘首演，之後在紐約中央公園以一千台演出。",
       "variations": [
@@ -661,6 +558,7 @@
         "3d-architecture",
         "fabrication"
       ],
+      "source": "research",
       "scale": "立面／表皮",
       "summary": "高層建築的機器人 3D 列印立面系統，以 stigmergy（代理人留痕跡、再依痕跡行動）在立面場中分配資料，其痕跡反映在幾何密度上，控制不同孔隙率以回應光、熱等性能需求，並以 octree 產生多解析度面板。",
       "variations": [
@@ -701,6 +599,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 C# 撰寫、包裝 Culebra Java 函式庫的 Grasshopper 即時代理人外掛，提供 2D／3D 的 flocking 與 noise 行為、網格吸引與排斥，以及把軌跡或曲線網自我組織化的功能，是在 GH 裡做群聚軌跡建模最常見的工具之一。",
       "variations": [
@@ -743,6 +642,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Grasshopper 的代理人建模與模擬元件庫，可建立 flocking 模擬，也用於模擬人與車輛等群體，並附有教學影片，是學習者從基礎範例 Boids 延伸到更多行為的入門工具。",
       "variations": [
@@ -766,70 +666,6 @@
         "Grasshopper"
       ],
       "url": "https://www.food4rhino.com/en/app/quelea-agent-based-design-grasshopper"
-    },
-    {
-      "id": "D01-13",
-      "algo": "D01",
-      "title": "Brass Swarm",
-      "creator": "Kokkugia／Roland Snooks",
-      "year": "",
-      "category": "art-installation",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "物件",
-      "summary": "Kokkugia「agent bodies」研究系列中的黃銅作品，以群體代理人互動生成形體，再轉為金屬實體，示範群聚演算法如何在物件尺度成為裝飾與構造合一的形態。",
-      "variations": [
-        {
-          "name": "小範圍高密度",
-          "how": "boxSize 縮小、步數與鳥數增加、分離半徑壓小，讓軌跡在小空間內密集纏繞。",
-          "effect": "得到像金屬鑄件般緻密的纖維團塊"
-        },
-        {
-          "name": "軌跡轉實體鑄造模型",
-          "how": "軌跡 Pipe 後用 Mesh Boolean 合併，並檢查最小厚度以符合鑄造或金屬列印。",
-          "effect": "可輸出成可製造的小型金屬物件"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D",
-        "自訂 class"
-      ],
-      "tools": [],
-      "url": "https://www.kokkugia.com/brass-swarm"
-    },
-    {
-      "id": "D01-14",
-      "algo": "D01",
-      "title": "RMIT Mace",
-      "creator": "Kokkugia／Roland Snooks",
-      "year": "",
-      "category": "fabrication",
-      "categories_extra": [
-        "art-installation"
-      ],
-      "scale": "物件",
-      "summary": "同屬 Kokkugia「agent bodies」系列的物件作品，以代理人群互動生成的複雜形體包覆在一個物件軸線周圍，說明群聚演算法在小尺度物件上也能產生豐富細節。",
-      "variations": [
-        {
-          "name": "沿軸線群聚",
-          "how": "輸入一條中心軸 Curve，加吸引力讓鳥保持在距軸線某半徑內，並給一個沿軸線方向的推進力。",
-          "effect": "軌跡沿著軸線螺旋纏繞，形成桿狀的纖維包覆"
-        },
-        {
-          "name": "半徑隨高度變化",
-          "how": "吸引半徑依鳥在軸線上的參數 t 用函數（如 sin）變化。",
-          "effect": "包覆體出現膨脹與收束的節奏"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "3D",
-        "吸引子控制"
-      ],
-      "tools": [],
-      "url": "https://www.kokkugia.com/RMIT-Mace"
     }
   ]
 }

@@ -1,0 +1,305 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "F07",
+  "name_zh": "模擬退火（以房間鄰接配置為例）",
+  "name_en": "Simulated Annealing (with Quadratic-Assignment Room Layout)",
+  "one_liner": "只拿一個方案反覆小改：變好就收，變差也有機會收，但「溫度」越降越低、越來越不肯接受變差，於是能跳出小山谷找到更好的配置。",
+  "how_it_works": [
+   "準備 n 個房間與 cols × rows 個格位，把鄰接需求（例如「廚房,餐廳,5」）讀進對稱矩陣 w[i,j]。",
+   "成本 = Σ w[i,j] × 兩房間所在格位的曼哈頓距離（二次指派問題 QAP）；用洗牌產生一個隨機配置當起點，溫度 T ← startTemp。",
+   "每一步隨機挑兩個格位交換內容（空格也能換），重算成本得到差值 Δ。",
+   "Δ ≤ 0 直接接受；Δ > 0 以機率 exp(−Δ／T) 接受（Metropolis 準則），否則換回來；同時記住目前為止最好的配置。",
+   "每做 StepsPerTemp 步就把溫度乘上 coolingRate，直到 iterations 用完或溫度低於門檻。",
+   "輸出最佳配置的房間矩形、名稱、鄰接連線，以及從抖動到收斂的成本曲線。"
+  ]
+ },
+ "final_total": 12,
+ "target_art": 6,
+ "target_research": 6,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "F07-01",
+   "title": "Architectural Layout Design through Simulated Annealing Algorithm（以模擬退火做建築配置設計）",
+   "creator": "Hao Zheng、Yue Ren",
+   "year": "2020",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "最佳化",
+    "平面配置",
+    "多目標",
+    "住宅"
+   ],
+   "tools": [
+    "Python"
+   ],
+   "url": "https://scholars.cityu.edu.hk/en/publications/publication(1549ded9-f19e-49b8-92b5-45803eaca025).html",
+   "summary": "CAADRIA 2020 論文，把住宅區配置中建築師憑直覺判斷的準則寫成六個懲罰與獎勵函數，再用模擬退火反覆移動建築物、以溫度控制是否接受變差的配置，並測試不同權重得出建議參數。和 Grasshopper C# 基礎範例相比，狀態是連續座標而非格位排列，成本是多項準則的加權和。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-02",
+   "title": "Optimally Directed Shape Generation by Shape Annealing（形狀退火）",
+   "creator": "Jonathan Cagan、William J. Mitchell",
+   "year": "1993",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "最佳化",
+    "形狀文法",
+    "遞迴"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://doi.org/10.1068/b200005",
+   "summary": "提出「形狀退火」：把形狀文法的規則當成模擬退火的鄰域，每一步隨機套用一條規則產生新形狀，再依目標函數與溫度決定是否接受，使文法生成被引導向較佳的設計。和基礎範例交換兩個格位不同，這裡的狀態是一個形狀、鄰域是文法規則。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-03",
+   "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
+   "creator": "Kristina Shea、Jonathan Cagan",
+   "year": "1997",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "形狀文法",
+    "結構",
+    "3D"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32D86929FF89B256F5483E354CDA0156",
+   "summary": "把測地線圓頂的分割圖樣寫成形狀文法，再以形狀退火搜尋；改變目標（最大內部體積、最小表面積、構件種類最少、視覺一致）就得到不同風格的圓頂家族，既能重現傳統最佳解，也能找到新的空間形式。和基礎範例相比，成本來自結構與幾何評估，而非房間鄰接。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-04",
+   "title": "eifForm：以形狀退火生成結構的設計系統",
+   "creator": "Kristina Shea（University of Cambridge）",
+   "year": "2000",
+   "category": "performance",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "結構",
+    "形狀文法",
+    "桁架"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.acsa-arch.org/proceedings/Technology%20Proceedings/ACSA.Tech.2000/ACSA.Tech.2000.13.pdf",
+   "summary": "eifForm 的搜尋引擎就是結構形狀退火：每一步用有限元素分析評估目前設計、依過去表現挑一條文法規則套在隨機位置，較好的設計一定接受、較差的則依機率接受以跳出局部最佳，用來生成屋頂桁架、單層空間網架與圓頂。本演算法在其中扮演「決定要不要保留這一步」的角色；和基礎範例的差別是成本來自結構分析。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-05",
+   "title": "Make it Home: Automatic Optimization of Furniture Arrangement（自動家具配置）",
+   "creator": "Lap-Fai Yu、Sai-Kit Yeung、Chi-Keung Tang、Demetri Terzopoulos、Tony F. Chan、Stanley J. Osher",
+   "year": "2011",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "室內",
+    "家具配置"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://www.saikit.org/static/projects/furniture/index.html",
+   "summary": "SIGGRAPH 2011 論文：從範例室內場景學出家具之間的空間關係，組成包含可及性、可視性、動線等項目的成本函數，再以模擬退火（搭配 Metropolis–Hastings 狀態搜尋）自動產生客廳、臥室、餐廳等家具擺法。和基礎範例相比，鄰域是家具的連續移動與旋轉，而不是格位交換。",
+   "currently_cc": false,
+   "photo": {
+    "source": "Make it Home 專案頁",
+    "page": "https://www.saikit.org/static/projects/furniture/index.html",
+    "note": "專案頁 teaser：自動最佳化後的室內家具配置"
+   }
+  },
+  {
+   "id": "F07-06",
+   "title": "Galapagos 的模擬退火求解器（論壇說明）",
+   "creator": "David Rutten（McNeel）",
+   "year": "2016",
+   "category": "modeling",
+   "scale": "建築",
+   "tags": [
+    "最佳化",
+    "Galapagos",
+    "黑盒求解"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Galapagos"
+   ],
+   "url": "https://www.grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+   "summary": "Grasshopper 內建的 Galapagos 除了演化求解器之外，還有一個模擬退火求解器；David Rutten 在論壇說明它從最高溫開始、溫度以對數速率下降、跳躍機率依標準模擬退火計算。它對滑桿參數做黑盒最佳化，和基礎範例自己寫排列與成本不同，但可以拿來對照同一題目的結果與收斂速度。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-07",
+   "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
+   "creator": "Jonathan Cagan",
+   "year": "1994",
+   "category": "fabrication",
+   "scale": "構件",
+   "tags": [
+    "最佳化",
+    "排版",
+    "打包"
+   ],
+   "tools": [
+    "自寫程式"
+   ],
+   "url": "https://doi.org/10.1016/0010-4485(94)90014-0",
+   "summary": "刊於 Computer-Aided Design 的研究，用形狀退火處理受約束的幾何背包問題：在有限的板面或容器裡放入形狀，使放入的價值最大且彼此不重疊。模擬退火負責在放置、移動、移除等操作之間決定是否接受變差的排法；和基礎範例相比，問題從鄰接成本變成排版與材料利用率，是數位製造中板材排版的前身。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "F07-51",
+   "title": "The Traveling Salesman with Simulated Annealing, R, and Shiny",
+   "creator": "Todd W. Schneider",
+   "year": "2014",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "R",
+    "Shiny",
+    "互動",
+    "動畫",
+    "TSP"
+   ],
+   "tools": [
+    "R",
+    "Shiny"
+   ],
+   "url": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+   "summary": "用 R 與 Shiny 做的互動網頁：在地圖上挑城市、設定冷卻排程，就能看模擬退火一步步找出最短巡迴路線，旁邊同步畫出目前路徑長度與溫度的曲線，並用 1,000 次試驗比較退火與爬山法。和 Grasshopper C# 基礎範例相比，狀態是城市走訪順序，重點在把溫度、接受變差與成本曲線視覺化。",
+   "currently_cc": true,
+   "photo": {
+    "source": "toddwschneider.com（og:image）",
+    "page": "https://toddwschneider.com/posts/traveling-salesman-with-simulated-annealing-r-and-shiny/",
+    "note": "文章 og:image：退火求 TSP 路徑的動畫"
+   }
+  },
+  {
+   "id": "F07-52",
+   "title": "Traveling Pixel（像素的旅行推銷員）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Go",
+    "像素畫",
+    "TSP",
+    "動畫"
+   ],
+   "tools": [
+    "Go"
+   ],
+   "url": "https://www.michaelfogleman.com/projects/traveling-pixel/",
+   "summary": "用 Go 寫的小工具：以模擬退火找出走訪像素畫中所有黑色像素的最短路徑，再輸出成動畫 GIF，讓人看到一筆畫依序走過整張圖的順序。和基礎範例相比，點是影像像素、狀態是走訪順序，輸出是動畫而不是配置平面。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Michael Fogleman｜Traveling Pixel",
+    "page": "https://www.michaelfogleman.com/projects/traveling-pixel/",
+    "note": "專案頁動畫 GIF 的最後一格：以退火求得的單一路徑走完整張像素畫"
+   }
+  },
+  {
+   "id": "F07-53",
+   "title": "Graph Layout（以模擬退火排版圖形）",
+   "creator": "Michael Fogleman",
+   "year": "2014",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Python",
+    "C",
+    "圖",
+    "資訊視覺化"
+   ],
+   "tools": [
+    "Python",
+    "C"
+   ],
+   "url": "https://www.michaelfogleman.com/projects/graph-layout/",
+   "summary": "用 Python 與 C 實驗以模擬退火排出節點連線圖：成本加權了節點互相重疊、節點壓到連線、連線交叉、連線長度、總面積與節點階層違規等項，作者想做出比 Graphviz 預設更好看的版面。和基礎範例的房間鄰接配置概念最接近，只是目標是圖面好讀，而不是動線短。",
+   "currently_cc": true,
+   "photo": {
+    "source": "michaelfogleman.com",
+    "page": "https://www.michaelfogleman.com/projects/graph-layout/",
+    "note": "以模擬退火排出的節點連線圖"
+   }
+  },
+  {
+   "id": "F07-54",
+   "title": "Travelling Salesman Art With Simulated Annealing（模擬退火單線畫）",
+   "creator": "Matthew McGonagle",
+   "year": "2018",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Python",
+    "NumPy",
+    "單線畫",
+    "TSP"
+   ],
+   "tools": [
+    "Python",
+    "NumPy",
+    "Matplotlib"
+   ],
+   "url": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing",
+   "summary": "部落格教學：先依影像亮度做拒絕取樣撒點，再用模擬退火求一條封閉巡迴路線，鄰域是反轉兩個索引之間的路段、以 exp(−Δ／T) 接受變差、幾何降溫，最後畫出由一條線構成的肖像與字母。和基礎範例相比，狀態是點的順序，並示範只計算被改動兩條邊的 O(1) 成本差。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Matthew McGonagle｜Travelling Salesman Art With Simulated Annealing",
+    "page": "https://matthewmcgonagle.github.io/blog/2018/04/15/TSPArtWithAnnealing",
+    "note": "部落格文中的 von Neumann 肖像最終路徑：一條封閉曲線畫出整張臉"
+   }
+  },
+  {
+   "id": "F07-55",
+   "title": "Primitive（以幾何圖形重建照片）",
+   "creator": "Michael Fogleman",
+   "year": "2016",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "Go",
+    "影像",
+    "向量圖"
+   ],
+   "tools": [
+    "Go"
+   ],
+   "url": "https://github.com/fogleman/primitive",
+   "summary": "用 Go 寫的工具，一次加入一個三角形、橢圓或矩形，讓畫面和目標照片的均方根誤差最小；每個圖形由隨機產生再反覆微調頂點、半徑或位置，最佳化可選爬山法或模擬退火（作者實測此題兩者效果接近、爬山法較快）。和基礎範例相比，成本來自像素誤差，鄰域是連續參數的小幅突變，並可對照爬山法與退火的差異。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub fogleman/primitive README",
+    "page": "https://github.com/fogleman/primitive",
+    "note": "README 首圖：以幾何圖形重建的照片"
+   }
+  }
+ ]
+}

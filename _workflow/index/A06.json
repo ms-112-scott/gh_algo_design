@@ -240,21 +240,6 @@
    "has_image": false
   },
   {
-   "id": "A06-08",
-   "cc": false,
-   "title": "Subdigital 離散實體化實習",
-   "creator": "Subdigital（Ján Pernecký 等）",
-   "year": "2020",
-   "url": "",
-   "category": "fabrication",
-   "scale": "構件",
-   "tools": [
-    "Grasshopper",
-    "Monoceros"
-   ],
-   "has_image": false
-  },
-  {
    "id": "A06-09",
    "cc": false,
    "title": "以編碼建築 tile 組做量體設計（Gameplay with encoded architectural tilesets）",
@@ -269,18 +254,6 @@
    "has_image": false
   },
   {
-   "id": "A06-10",
-   "cc": false,
-   "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
-   "creator": "",
-   "year": "",
-   "url": "https://link.springer.com/chapter/10.1007/978-3-031-71008-7_28",
-   "category": "3d-architecture",
-   "scale": "建築",
-   "tools": [],
-   "has_image": false
-  },
-  {
    "id": "A06-11",
    "cc": false,
    "title": "階層式 WFC 平面生成（HWFC floor plan generation）",
@@ -289,18 +262,6 @@
    "url": "https://github.com/qin2500/HWFC_floor_plan_generation",
    "category": "drawing",
    "scale": "建築",
-   "tools": [],
-   "has_image": false
-  },
-  {
-   "id": "A06-13",
-   "cc": false,
-   "title": "以 WFC 生成與評估鄉村住宅配置",
-   "creator": "Yin Zhang、Zhen Xu、Hanlin Li 等",
-   "year": "2026",
-   "url": "https://doi.org/10.1177/14780771251326773",
-   "category": "urban-landscape",
-   "scale": "群體／都市",
    "tools": [],
    "has_image": false
   },
@@ -397,36 +358,79 @@
     "Python"
    ],
    "has_image": true
+  },
+  {
+   "id": "A06-56",
+   "cc": true,
+   "title": "Coding Challenge 186：Wave Function Collapse - Overlapping Model",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2025",
+   "url": "https://thecodingtrain.com/challenges/186-wfc-overlapping-model",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "p5.js"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A06-57",
+   "cc": true,
+   "title": "Wave Function Collapse：Processing重疊模型實作",
+   "creator": "noahbuddy（BitwiseSupernova）",
+   "year": "2019",
+   "url": "https://github.com/BitwiseSupernova/wave-function-collapse",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Processing"
+   ],
+   "has_image": true
+  },
+  {
+   "id": "A06-58",
+   "cc": true,
+   "title": "Wave Function Collapse：Java生成藝術工具（Labyrinth圖樣）",
+   "creator": "Pascal Stoll",
+   "year": "2024",
+   "url": "https://github.com/pascal-stoll/wave-function-collapse",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tools": [
+    "Java"
+   ],
+   "has_image": true
   }
  ],
  "distribution": {
   "category": {
-   "2d-pattern": 6,
-   "urban-landscape": 3,
-   "3d-architecture": 3,
+   "2d-pattern": 9,
    "modeling": 2,
-   "fabrication": 2,
+   "urban-landscape": 2,
+   "3d-architecture": 2,
    "art-installation": 1,
    "drawing": 1,
+   "fabrication": 1,
    "performance": 1
   },
   "scale": {
-   "建築": 6,
-   "物件": 5,
-   "群體／都市": 4,
-   "構件": 3,
+   "物件": 8,
+   "建築": 5,
+   "群體／都市": 3,
+   "構件": 2,
    "地景": 1
   },
   "tools": {
    "C#": 5,
    "Unity": 4,
-   "Grasshopper": 3,
+   "Grasshopper": 2,
+   "p5.js": 2,
    "C++": 1,
-   "Monoceros": 1,
-   "p5.js": 1,
    "JavaScript": 1,
    "Houdini": 1,
-   "Python": 1
+   "Python": 1,
+   "Processing": 1,
+   "Java": 1
   }
  },
  "rejected": [
@@ -438,6 +442,33 @@
    "title": "以 WFC 與 CNN 模擬都市空間",
    "url_norm": "doi:10.5555/3465085.3465103",
    "reason": "神經網路相關，超出教學難度"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A06-08",
+   "algo": "A06",
+   "kind": "RES",
+   "title": "Subdigital 離散實體化實習",
+   "url_norm": "",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A06-10",
+   "algo": "A06",
+   "kind": "RES",
+   "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
+   "url_norm": "doi:10.1007/978-3-031-71008-7_28",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+  },
+  {
+   "run": "removed",
+   "unit": "REMOVE:A06-13",
+   "algo": "A06",
+   "kind": "RES",
+   "title": "以 WFC 生成與評估鄉村住宅配置",
+   "url_norm": "doi:10.1177/14780771251326773",
+   "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
   }
  ]
 }

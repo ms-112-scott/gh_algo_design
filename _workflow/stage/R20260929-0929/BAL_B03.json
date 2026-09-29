@@ -1,0 +1,136 @@
+{
+ "algo": "B03",
+ "classification": [
+  {"id": "B03-01", "source": "research", "why": "空間殖民演算法的原始學術論文"},
+  {"id": "B03-02", "source": "research", "why": "論文延伸建樹，基礎範例出處"},
+  {"id": "B03-03", "source": "art", "why": "生成式設計燈具，視覺是主要成果"},
+  {"id": "B03-04", "source": "art", "why": "演算法生成的視覺草圖相簿"},
+  {"id": "B03-05", "source": "art", "why": "瀏覽器互動生成藝術實驗"},
+  {"id": "B03-06", "source": "art", "why": "教學影片，成果是一張生成畫面"},
+  {"id": "B03-07", "source": "research", "why": "都市路網生成的學術論文"},
+  {"id": "B03-08", "source": "research", "why": "技術部落格，都市街道模擬分析"},
+  {"id": "B03-09", "source": "research", "why": "建築剖面生成用的軟體工具"},
+  {"id": "B03-10", "source": "research", "why": "專利文件，血管通道製造技術"},
+  {"id": "B03-11", "source": "research", "why": "生醫組織工程學術預印本"},
+  {"id": "B03-12", "source": "research", "why": "Blender 樹木生成外掛工具"},
+  {"id": "B03-13", "source": "research", "why": "Sverchok 節點式外掛工具"},
+  {"id": "B03-14", "source": "art", "why": "Houdini 教學，成果是生成動畫畫面"},
+  {"id": "B03-15", "source": "research", "why": "Grasshopper 範例，軟體工具教學"},
+  {"id": "B03-51", "source": "art", "why": "既有創意程式標記，教學生成畫面"},
+  {"id": "B03-52", "source": "art", "why": "既有創意程式標記，互動生成藝術"},
+  {"id": "B03-53", "source": "art", "why": "既有創意程式標記，生成設計燈具"},
+  {"id": "B03-54", "source": "art", "why": "既有創意程式標記，即時 3D 生成"},
+  {"id": "B03-55", "source": "art", "why": "既有創意程式標記，GPU 生成視覺"}
+ ],
+ "art_count": 10,
+ "need": 0,
+ "removal_order": [
+  "B03-15", "B03-13", "B03-07", "B03-11", "B03-10",
+  "B03-08", "B03-12", "B03-09", "B03-02", "B03-01"
+ ],
+ "removal_reasons": {
+  "B03-15": "與基礎範例同為 Grasshopper 平台，區隔度最低，最先可換",
+  "B03-13": "小眾個人部落格的節點外掛，和 B03-12、B03-15 同屬「換平台重製」性質，內容重複",
+  "B03-07": "作者欄位空白、出處不明，且與 B03-08 同樣是都市路網主題，內容重疊",
+  "B03-11": "生醫組織工程應用，摘要自承只是「概念類比」，和建築設計關聯薄弱",
+  "B03-10": "專利文件圖面多為法律示意圖，真實生成畫面難以取得",
+  "B03-08": "非正式出版的部落格文章，與 B03-07 同樣是都市街道路網主題，內容重疊",
+  "B03-12": "Blender 外掛，具體可查證，但與 B03-13、B03-15 同屬「換平台重製」性質",
+  "B03-09": "目前是唯一「建築」尺度、3d-architecture 類別的案例，且有具體 GitHub 工具可查證，保留價值高",
+  "B03-02": "基礎範例演算法的直接出處論文，強保留",
+  "B03-01": "空間殖民演算法最初的原始論文，最強、必留"
+ },
+ "new_art": [
+  {
+   "title": "Tree（瀏覽器空間殖民生長樹）",
+   "creator": "Lucio Paiva",
+   "year": "2018",
+   "category": "drawing",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "以原生 JavaScript 與 HTML5 Canvas 寫成的瀏覽器空間殖民樹生成器，依 Runions 等人 2007 年論文與 Daniel Shiffman 的教學實作。README 特別記錄了吸引點幾乎正對分枝時會造成無限遞迴分岔的邊界情況，並用「子枝與父枝夾角需大於門檻」的規則修正。相較於 Grasshopper C# 基礎範例，這裡把樹畫成有粗細漸變的實心咖啡色剪影，而不是單純線段。",
+   "variations": [
+    {"name": "最小夾角限制", "how": "新枝生成前檢查子枝方向與父枝方向的夾角，太小就不允許生成", "effect": "避免吸引點幾乎正對枝端時造成的無限遞迴分岔，讓演算法穩定收斂"},
+    {"name": "實心剪影渲染", "how": "依枝條粗細規則把線段畫成填色多邊形，而不是單純線段", "effect": "呈現接近插畫風格的樹木剪影，而非工程用的細線示意圖"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "JavaScript", "Canvas API", "邊界案例除錯"],
+   "tools": ["JavaScript", "HTML5 Canvas"],
+   "url": "https://github.com/luciopaiva/tree",
+   "evidence": "GitHub README 標題「Tree」，內文寫 A growing tree based on the space colonization algorithm described here, also implemented by Daniel Shiffman",
+   "nearest_existing": "B03-05／B03-52 2D Space Colonization Experiments（同樣是 JS 瀏覽器實作，但本作多了無限遞迴修正的除錯記錄與實心剪影渲染風格，非重複作品）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/luciopaiva/tree/master/img/20181118-2139.png",
+    "page": "https://github.com/luciopaiva/tree",
+    "verified": true,
+    "checked": "米黃色背景上一棵咖啡色實心枝幹、細線分岔的樹木剪影，親眼在 README 首圖看到",
+    "source": "GitHub（luciopaiva/tree）README",
+    "author": "Lucio Paiva",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示的樹木生成畫面，實心枝幹剪影風格"
+   }
+  },
+  {
+   "title": "3d-space-colonization（3D 點雲空間殖民分枝生成器）",
+   "creator": "pszczolo-jamnik（GitHub）",
+   "year": "2025",
+   "category": "modeling",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "以 Rust 撰寫、可平行運算的 3D 空間殖民演算法實作，讀入 PLY 點雲作為吸引點分布，輸出帶有節點屬性的分枝網路 PLY 檔。相較於 Grasshopper C# 基礎範例，它讓吸引點來源可以是任意掃描或生成的 3D 點雲，並用 Rust 多執行緒平行處理大量吸引點以維持效能，README 附上多張渲染結果。",
+   "variations": [
+    {"name": "點雲驅動吸引點", "how": "讀入外部 PLY 點雲檔取代方塊內隨機撒點，把既有掃描或生成幾何當作 attractors", "effect": "分枝網路可以精準對齊任意掃描或生成物件的表面形狀"},
+    {"name": "平行化最近枝端搜尋", "how": "用 Rust 多執行緒同時處理每個吸引點的最近枝端查詢", "effect": "可承受更高密度的吸引點，長出更細密茂密的分枝網路而不卡頓"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "Rust", "點雲", "3D"],
+   "tools": ["Rust"],
+   "url": "https://github.com/pszczolo-jamnik/3d-space-colonization",
+   "evidence": "GitHub README 標題與說明：Optimized, parallel implementation of space colonization algorithm in 3D. Accepts PLY point cloud as input and writes PLY output",
+   "nearest_existing": "B03-05／B03-52 皆為 2D 瀏覽器版本；本作是 3D 點雲驅動的 Rust 實作，無直接重複",
+   "image": {
+    "url": "https://github.com/user-attachments/assets/0f02b4fe-42e3-4ad7-a4bb-8217bccada1c",
+    "page": "https://github.com/pszczolo-jamnik/3d-space-colonization",
+    "verified": true,
+    "checked": "全黑背景上藍綠色、由細密放射狀分枝構成的立體網路，親眼在 README「Pictures」段落看到",
+    "source": "GitHub（pszczolo-jamnik/3d-space-colonization）README",
+    "author": "pszczolo-jamnik",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示的 3D 點雲分枝生成結果"
+   }
+  },
+  {
+   "title": "2d_tree_generation（簡化版 2D 空間殖民樹）",
+   "creator": "Parham Mohammad Panahi",
+   "year": "2021",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "以 Python／Jupyter Notebook 實作的簡化版 2D 空間殖民演算法，直接依據 Runions 等人的論文寫成，未實作論文中的節點淘汰與 Voronoi 加速，是最貼近演算法核心邏輯的精簡教材。README 附上多張「最終結果」的生成畫面，畫出綠色分枝樹狀圖。",
+   "variations": [
+    {"name": "省略加速結構的精簡版", "how": "拿掉論文中的 Voronoi 空間分割與節點淘汰機制，只保留核心的吸引、生長、消去三步驟", "effect": "程式碼行數大幅減少，適合作為理解演算法最小可行版本的教材"},
+    {"name": "Notebook 逐格展示", "how": "在 Jupyter Notebook 中逐步印出每個生長階段的畫面", "effect": "可以像教學投影片一樣，一格一格看樹從吸引點雲長成分枝結構的過程"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "Python", "Jupyter Notebook", "精簡教材"],
+   "tools": ["Python"],
+   "url": "https://github.com/panahiparham/2d_tree_generation",
+   "evidence": "GitHub README 標題「2d_tree_generation」，內文寫 simplified implementation of space colonization algorithm for tree generation，並附生成結果圖",
+   "nearest_existing": "無（Python 精簡教材版本，與既有 JS／C++／論文案例皆不重複）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/panahiparham/2d_tree_generation/main/assets/3.png",
+    "page": "https://github.com/panahiparham/2d_tree_generation",
+    "verified": true,
+    "checked": "白底畫面，標題「Final Result」下方是一棵綠色線條的分枝樹狀圖，親眼在 README 看到",
+    "source": "GitHub（panahiparham/2d_tree_generation）README",
+    "author": "Parham Mohammad Panahi",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "README 展示的簡化版空間殖民樹生成結果"
+   }
+  }
+ ],
+ "notes": "分類結果恰好 10 art／10 research，need=0，不需移除或新增，仍依規格提供 10 個 research 的完整移除順序與 3 個備援藝術案例（皆已下載預覽並親眼確認畫面）。提醒：既有資料裡 B03-05 與 B03-52（Jason Webb 2D Space Colonization Experiments）是同一件作品的重複收錄，B03-06 與 B03-51（The Coding Train Challenge #17）也是同一件作品的重複收錄，兩組重複都落在 art 分類，不影響本次 need 計算，但建議協調者後續合併時各留一筆即可。3 個備援皆為 JavaScript／Rust／Python 實作，找不到能通過 WebFetch 驗證圖片的 p5.js／Processing／OpenProcessing 新案例（openprocessing.org 與 inconvergent.net 對自動化工具回傳 403，多個 Processing 版本專案的 README 沒有附生成畫面圖或圖片來源有誤，已捨棄），未達成「p5.js／Processing 至少占一半」的偏好，請協調者知悉。"
+}

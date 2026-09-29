@@ -1,0 +1,401 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "E01",
+  "name_zh": "圓填充",
+  "name_en": "Circle Packing",
+  "one_liner": "先把一堆大小不一的圓隨便丟在一起，再讓重疊的圓互相推開、超出邊界的拉回來，推到幾乎不重疊為止。",
+  "how_it_works": [
+   "隨機產生 circleCount 個圓：圓心散在邊界中心附近，半徑介於 minRadius 與 maxRadius 之間（一開始一定大量重疊）。",
+   "每一輪檢查所有圓的配對：兩圓重疊量 = r1 + r2 − 距離，若大於 0，兩個圓沿連線各往反方向退一半重疊量。",
+   "檢查每個圓是否超出外圍邊界圓，超出多少就往圓心拉回多少。",
+   "把這一輪累積的位移一次套用（先算完再移動，避免順序影響結果）。",
+   "重複直到總重疊量小於 0.001（收斂）或迭代次數用完，輸出圓與剩餘重疊量。"
+  ]
+ },
+ "final_total": 18,
+ "target_art": 9,
+ "target_research": 9,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "E01-01",
+   "title": "Packing Circles and Spheres on Surfaces（CP mesh）",
+   "creator": "Alexander Schiftner, Mathias Höbinger, Johannes Wallner, Helmut Pottmann",
+   "year": "2009",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tags": [
+    "曲面上",
+    "最佳化",
+    "收斂",
+    "3D"
+   ],
+   "tools": [
+    "研究原型",
+    "數值最佳化"
+   ],
+   "url": "https://www.geometrie.tuwien.ac.at/geom/ig/pottmann/oldpub/2009/packing09/packing09.html",
+   "summary": "SIGGRAPH Asia 2009 論文，提出一種三角網格，其每個三角面的內切圓彼此相切形成 packing，可延伸出曲面上的圓形圖樣、球體堆疊、帶無扭轉支撐結構的六角網格等，專為自由曲面建築設計。演算法角色是「以最佳化讓網格達到內切圓相切」，和基礎範例的互推同屬收斂型鬆弛。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-02",
+   "title": "北京國家游泳中心「水立方」泡泡立面",
+   "creator": "PTW Architects、Arup、CSCEC、CCDI",
+   "year": "2008",
+   "category": "3d-architecture",
+   "scale": "建築",
+   "tags": [
+    "3D",
+    "物理模擬",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "https://www.arup.com/en-us/projects/national-aquatics-center-water-cube/",
+   "summary": "為 2008 北京奧運興建，立面與屋頂靈感來自肥皂泡的自然排列（Weaire-Phelan 泡沫結構），以鋼構空間桁架與 ETFE 氣枕構成，看似隨機卻高度重複、可施工。它是「3D 球體／泡泡堆疊再切成多面體」的經典建築案例。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-03",
+   "title": "Circle-Pack Facade（Kangaroo 自由邊界立面開孔）",
+   "creator": "Parametric House",
+   "year": "",
+   "category": "3d-architecture",
+   "scale": "立面／表皮",
+   "tags": [
+    "吸引子控制",
+    "物理模擬"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "url": "https://parametrichouse.com/parametric/circle-pack-facade/",
+   "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 在自由形狀邊界內排圓，做成參數化立面，並用點吸引子控制最小與最大半徑。與基礎範例幾乎同構，只是把互推交給 Kangaroo 求解。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-04",
+   "title": "Kangaroo 2 不同大小圓的曲面 circle packing",
+   "creator": "Daniel Piker（McNeel 論壇討論）",
+   "year": "",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "曲面上",
+    "物理模擬",
+    "收斂"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo",
+    "Plankton"
+   ],
+   "url": "https://discourse.mcneel.com/t/kangaroo2-circle-packing-different-sized-circles/89878/23",
+   "summary": "Kangaroo 作者 Daniel Piker 在論壇與示範中展示結合 Plankton（可動態改變網格連接）與 Kangaroo（鬆弛最佳化）的 circle packing，包含變動半徑、固定半徑與尺寸族等版本，並可在曲面上進行。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-05",
+   "title": "Circle Packing T-Shirt（服裝曲面上的圓）",
+   "creator": "Parametric House",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "物理模擬"
+   ],
+   "tools": [
+    "Grasshopper",
+    "Kangaroo"
+   ],
+   "url": "https://parametrichouse.com/circle-packing-t-shirt/",
+   "summary": "Grasshopper 教學：用 Kangaroo 的 circle packing 元件在 T 恤模型上鋪滿圓，示範曲面上 packing 如何用在服裝與穿戴物件。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-06",
+   "title": "A Randomized Approach to Circle Packing",
+   "creator": "Tyler Hobbs",
+   "year": "2016",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "可重現種子",
+    "遞迴"
+   ],
+   "tools": [
+    "Processing",
+    "Quil／Clojure"
+   ],
+   "url": "https://tylerxhobbs.com/essays/2016/a-randomized-approach-to-cicle-packing",
+   "summary": "生成藝術家 Tyler Hobbs 的文章：不用數學最佳化，而是暴力地在隨機位置試放圓，放得下就收，連續失敗 2000 次就換下一個較小的尺寸（例如 10 個半徑 50、300 個半徑 10）。是基礎範例「互推」法之外最直觀的替代規則。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-07",
+   "title": "Coding Challenge #50：Animated Circle Packing",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "影像輸入",
+    "開放生長"
+   ],
+   "tools": [
+    "p5.js",
+    "Processing"
+   ],
+   "url": "https://www.youtube.com/watch?v=QHEQuoIKgNE",
+   "summary": "p5.js／Processing 教學影片，示範「成長式」circle packing：每幀在空位產生新圓，圓持續長大直到碰到其他圓；後續部分用影像決定圓出現的位置，拼出文字或圖像。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-08",
+   "title": "Apollonian Gasket 互動草稿",
+   "creator": "Malin Christersson（OpenProcessing）",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "分形",
+    "DataTree"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://openprocessing.org/sketch/147596/",
+   "summary": "OpenProcessing 上的 Apollonian gasket 互動作品，按數字鍵顯示 0–9 層遞迴，並可切換顯示與 Apollonian 圓正交的圓。Apollonian gasket 是三個互切圓出發、不斷在空隙填入相切圓的分形，是 circle packing 的「精確遞迴版」。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-09",
+   "title": "Single Line Apollonian Gaskets for Fashion",
+   "creator": "Loe Feijs, Marina Toeters",
+   "year": "2022",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "分形"
+   ],
+   "tools": [],
+   "url": "http://www.m.archive.bridgesmathart.org/2022/bridges2022-119.pdf",
+   "summary": "Bridges 2022 數學與藝術研討會論文，把 Apollonian gasket 轉成可用於時尚設計的單筆線圖樣，探討如何讓圓形分形能以連續路徑製作。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-10",
+   "title": "以 Freeform Auxetics 做可穿戴、可調的 MRI 超材料",
+   "creator": "Ke Wu, Xia Zhu, Thomas G. Bifano, Stephan W. Anderson, Xin Zhang",
+   "year": "2023",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "最佳化"
+   ],
+   "tools": [],
+   "url": "https://arxiv.org/pdf/2311.13611",
+   "summary": "研究論文，以計算設計工具互動且有效率地求解複雜的 circle packing 問題，用來排列可展開的自由形 auxetic（負泊松比）單元，使超材料能貼合人體曲面並調整性能。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-11",
+   "title": "Finetuning Discrete Architectural Surfaces by use of Circle Packing",
+   "creator": "Journal of Asian Architecture and Building Engineering 期刊論文（作者待查）",
+   "year": "2023",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "最佳化",
+    "曲面上",
+    "收斂"
+   ],
+   "tools": [],
+   "url": "https://doi.org/10.1080/13467581.2023.2229407",
+   "summary": "期刊論文，以 circle packing 作為工具微調離散化的建築曲面（網格面板），讓面板尺寸與排列更規則，承接 Schiftner 等人的 CP mesh 研究方向。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-12",
+   "title": "Controlled Circle Packing with Processing",
+   "creator": "CodePlastic",
+   "year": "2017",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "吸引子控制",
+    "物理模擬"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "http://www.codeplastic.com/2017/09/09/controlled-circle-packing-with-processing/",
+   "summary": "Processing 教學文章，示範可控制的 circle packing：以互推力讓圓分開並加入控制條件，用來做有設計意圖的圓形構圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-13",
+   "title": "植物生態系的建模與渲染（以圓的競爭決定植株分布）",
+   "creator": "Oliver Deussen, Pat Hanrahan, Bernd Lintermann, Radomír Měch, Matt Pharr, Przemyslaw Prusinkiewicz",
+   "year": "1998",
+   "category": "urban-landscape",
+   "scale": "地景",
+   "tags": [
+    "物理模擬",
+    "隨機",
+    "多元件"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "SIGGRAPH 1998 論文 Realistic Modeling and Rendering of Plant Ecosystems，以圓代表每株植物的影響範圍，透過圓的重疊競爭（較弱者死亡）與成長模擬出自然的植被分布，再放置 L-System 植物模型。是 circle packing 應用在地景配置的經典做法。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-14",
+   "title": "d3.pack 階層式圓形圖（circle packing 資料視覺化）",
+   "creator": "Mike Bostock（D3.js）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "遞迴",
+    "DataTree"
+   ],
+   "tools": [
+    "D3.js",
+    "JavaScript"
+   ],
+   "url": "",
+   "summary": "D3.js 的 pack 版面以圓的面積代表數值、以圓套圓代表階層，是資訊圖表中最常見的 circle packing 用法。可轉用於建築計畫書的空間需求（各空間面積）視覺化。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "E01-51",
+   "title": "Packing The Torus（Houdini 曲面圓填充）",
+   "creator": "Manuel Casasola Merkle（Entagma）",
+   "year": "2017",
+   "category": "modeling",
+   "scale": "立面／表皮",
+   "tags": [
+    "creative coding",
+    "Houdini",
+    "VEX",
+    "曲面",
+    "模擬",
+    "動畫"
+   ],
+   "tools": [
+    "Houdini"
+   ],
+   "url": "https://entagma.com/packing-the-torus/",
+   "summary": "Entagma 在 Houdini 裡用模擬的方式，把半徑各不相同的粒子緊密排在甜甜圈（torus）曲面上：粒子彼此推開，同時藉由符號距離場（SDF）與其梯度被投影回曲面。和 Grasshopper C# 基礎範例在平面圓形邊界內互推不同，這裡的「邊界」換成任意 3D 曲面，而且整個鬆弛過程本身就是可以輸出的動畫。",
+   "currently_cc": true,
+   "photo": {
+    "source": "YouTube（Entagma）",
+    "page": "https://www.youtube.com/watch?v=OkiwsuFo_gA",
+    "note": "影片縮圖：甜甜圈曲面上大小不一的粒子緊密排列"
+   }
+  },
+  {
+   "id": "E01-52",
+   "title": "Circle packing with compute shaders（TouchDesigner）",
+   "creator": "noones_img（Derivative 社群轉載）",
+   "year": "2021",
+   "category": "performance",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "TouchDesigner",
+    "GLSL",
+    "GPU",
+    "即時互動"
+   ],
+   "tools": [
+    "TouchDesigner",
+    "GLSL"
+   ],
+   "url": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+   "summary": "這是 TouchDesigner 社群的教學，用 GLSL compute shader 在 GPU 上實作圓填充，讓大量圓能即時生成、推擠並用於視覺表演。基礎範例用 C# 雙層迴圈兩兩比對（N²），這裡則把每個圓的碰撞檢查平行分給 GPU 執行緒，換取即時互動的效能。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Derivative（TouchDesigner 社群）",
+    "page": "https://derivative.ca/community-post/tutorial/circle-packing-compute-shaders/63846",
+    "note": "文章預覽圖：GPU 即時生成的圓填充"
+   }
+  },
+  {
+   "id": "E01-53",
+   "title": "A Recursive Circle Packing Algorithm for Organic Growth Patterns",
+   "creator": "Ahmad Moussa（Gorilla Sun）",
+   "year": "2023",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "遞迴",
+    "生長",
+    "生成藝術"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+   "summary": "Ahmad Moussa 以 p5.js 寫的圓填充變體：新圓不是隨機散落，而是從一個起始節點開始，在已有圓的旁邊找空位放置，成為它的子節點；放不下時就遞迴往子節點、孫節點找空間，長成樹狀分枝的圓群（靈感來自 Happy Coding 的 Bonsai Tree 範例）。與基礎範例「一次撒滿再互推」不同，它是逐一放置、不重疊的生長式填充。",
+   "currently_cc": true,
+   "photo": {
+    "source": "Gorilla Sun",
+    "page": "https://www.gorillasun.de/blog/a-recursive-circle-packing-strategy-for-organic-growth-patterns/",
+    "note": "文章預覽圖：遞迴生長的彩色圓群"
+   }
+  },
+  {
+   "id": "E01-54",
+   "title": "circlepack-cpp：openFrameworks 圓填充編輯器",
+   "creator": "Joseff（jn3008）",
+   "year": "2023",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "creative coding",
+    "openFrameworks",
+    "C++",
+    "互動",
+    "拓樸"
+   ],
+   "tools": [
+    "openFrameworks"
+   ],
+   "url": "https://github.com/jn3008/circlepack-cpp",
+   "summary": "以 openFrameworks（C++）寫的互動應用，使用者編輯一張三角化的圖（刪點、翻邊、加點），程式依 Collins 與 Stephenson 的方法算出每個頂點對應圓的半徑，讓相鄰的圓剛好相切。和基礎範例「隨機圓互推到不重疊」不同，這是由拓樸（誰和誰相鄰）決定幾何的「相切型」圓填充，可固定邊界圓半徑或邊界角度和。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub jn3008/circlepack-cpp",
+    "page": "https://github.com/jn3008/circlepack-cpp",
+    "note": "README 示範圖：三角網與對應的相切圓填充"
+   }
+  }
+ ]
+}

@@ -1,0 +1,180 @@
+{
+ "algo": "C02",
+ "classification": [
+  {"id": "C02-01", "source": "research", "why": "已建成的車站立面，屬建成建築案例"},
+  {"id": "C02-02", "source": "research", "why": "學術研討會論文提出的裝飾系統研究"},
+  {"id": "C02-03", "source": "research", "why": "建築量體生成方法的學術論文"},
+  {"id": "C02-04", "source": "research", "why": "大學研究團隊的建築量體生成研究"},
+  {"id": "C02-05", "source": "research", "why": "設計工作室教學法的學術論文"},
+  {"id": "C02-06", "source": "research", "why": "整理建築設計改造方式的學術論文"},
+  {"id": "C02-07", "source": "research", "why": "大學建築學院的研究性點景建築專案"},
+  {"id": "C02-08", "source": "art", "why": "以 Processing 生成圖樣織成圍巾的紡織設計"},
+  {"id": "C02-09", "source": "research", "why": "都市土地使用模擬的經典學術模型"},
+  {"id": "C02-10", "source": "research", "why": "Grasshopper 外掛工具"},
+  {"id": "C02-11", "source": "art", "why": "以 three.js 製作的世代疊層視覺化創作"},
+  {"id": "C02-12", "source": "art", "why": "連續狀態生命遊戲的生成視覺作品"},
+  {"id": "C02-13", "source": "research", "why": "建築立面動態遮陽控制的學術研究"},
+  {"id": "C02-14", "source": "research", "why": "演化建築的奠基學術著作"},
+  {"id": "C02-15", "source": "research", "why": "歷史街區填充設計的學術論文"},
+  {"id": "C02-51", "source": "art", "why": "Coding Train 教學，成果是生命遊戲生成畫面"},
+  {"id": "C02-52", "source": "art", "why": "Processing 官方互動範例，成果是生成畫面"},
+  {"id": "C02-53", "source": "art", "why": "Nature of Code 教學，成果是生成畫面"},
+  {"id": "C02-54", "source": "art", "why": "TouchDesigner 生成視覺工作坊"},
+  {"id": "C02-55", "source": "art", "why": "Coding Train 一維 CA 教學，成果是生成畫面"}
+ ],
+ "art_count": 8,
+ "need": 2,
+ "removal_order": ["C02-13", "C02-15", "C02-06", "C02-05", "C02-14"],
+ "removal_reasons": {
+  "C02-13": "作者、年份都未查證，僅有一篇 academia.edu 文章，與本演算法關係薄弱又難找真實圖片",
+  "C02-15": "作者本身在條目裡就標註未查證，出處單薄，難以確認可信度與圖片",
+  "C02-06": "與 C02-05 同一作者（Herr），主題都是「如何把 CA 改造成建築設計工具」，內容高度重疊",
+  "C02-05": "偏概念性的教學圖解論文，沒有具體量體或建成成果，難找到對應的真實圖片",
+  "C02-14": "url 欄位是空的，缺乏可直接查證的原始出處，也難找到對應的真實圖片"
+ },
+ "new_art": [
+  {
+   "title": "puritan_communion（生命遊戲的世代歷史配色）",
+   "creator": "Alexander Reben",
+   "year": "2020",
+   "category": "2d-pattern",
+   "categories_extra": ["art-installation"],
+   "scale": "物件",
+   "summary": "Reben 保留 Conway 生命遊戲原本的存活／死亡規則（B3/S23），但額外記錄每一格「上次改變狀態」的世代數：剛誕生的格子先顯示黃色，死亡後顏色隨時間慢慢變暗回到黑色，讓原本非黑即白的棋盤變成會隨時間演變的彩色畫面。和基礎範例用的是同一套規則，差別在輸出時多讀一份世代歷史來決定顏色，而不是只分活／死兩色。作品於 2020 年『The Game of Life – Emergence in Generative Art』聯展展出，是向 John Conway 致敬的展覽之一。",
+   "variations": [
+    {"name": "世代歷史配色", "how": "另開一個陣列記錄每格上次改變狀態的世代數，輸出的顏色（或本例中方塊的材質／高度）依這個數值做漸層，而不是只用活／死兩種顏色", "effect": "畫面從純黑白棋盤變成帶有時間深淺層次的彩色構圖，單張靜態圖也能讀出格子的存活／死亡歷史"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "生命遊戲", "世代歷史配色", "生成藝術"],
+   "tools": [],
+   "url": "https://www.katevassgalerie.com/alexander-reben",
+   "evidence": "Kate Vass Galerie 展覽頁與 Artnome 文章皆確認作品名稱、作者，以及 2020 年『The Game of Life』聯展展出",
+   "nearest_existing": "無（既有研究案例中沒有直接使用標準 Conway 規則、以配色記錄歷史的藝術作品）",
+   "image": {
+    "url": "https://images.squarespace-cdn.com/content/v1/59413d96e6f2e1c6837c7ecd/1592655559038-CM7DZVFLDG0YMVMDD67V/ke17ZwdGBToddI8pDm48kJK4Mm1kch8SFO9ZNkN1NT97gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QHyNOqBUUEtDDsRWrJLTmN9YSRtfoTLg6dUq-6F17A0FFZK5fArcnK1IqGweyunyWChwIwkIJ_P7MaZif-uMs/puritan_communion-1080.png?format=2500w",
+    "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+    "verified": true,
+    "checked": "已下載預覽並親眼確認：黑色底上佈滿黃色像素噪點，是生命遊戲某一世代的畫面截圖，不是影片縮圖或人像",
+    "source": "Kate Vass Galerie（Artnome 文章轉載）",
+    "author": "Alexander Reben",
+    "license": "畫廊網頁作品圖片，教學引用",
+    "license_url": "",
+    "note": "生命遊戲以顏色記錄世代歷史後的畫面截圖"
+   }
+  },
+  {
+   "title": "Dual（一維細胞自動機限量版畫）",
+   "creator": "Kjetil Golid",
+   "year": "2020",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "summary": "Golid 把二維生命遊戲換成一維細胞自動機：畫面每一列的每一格顏色，只由左上、正上方鄰居的顏色依規則決定，逐列往下疊代畫出整張圖。與基礎範例同樣是『看鄰居狀態決定下一格狀態、一代代疊代』的邏輯，只是把二維 8 鄰居的 Moore 鄰域換成一維鄰居，成品是 25×35 公分的限量版畫，於 2020 年『The Game of Life』聯展展出。",
+   "variations": [
+    {"name": "降維為一維細胞自動機", "how": "網格改成一列，鄰居只看左上、正上兩格（或左右上三格），組成索引後查規則表決定顏色", "effect": "疊代方向從『世代往上長成量體』變成『一列一列往下畫成平面』，形成類似旗幟、織品的條紋圖樣"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "一維細胞自動機", "生成藝術", "限量版畫"],
+   "tools": [],
+   "url": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+   "evidence": "Kate Vass Galerie 展覽頁確認《dual》(2020) 為 Kjetil Golid 作品，25×35 公分限量版畫",
+   "nearest_existing": "C02-55 Coding Train 一維 CA 教學（同屬一維細胞自動機，但這件是獨立藝術家的限量版畫作品，非教學範例）",
+   "image": {
+    "url": "https://images.squarespace-cdn.com/content/v1/63a2ce0664014f2264b055d4/9a4fbe16-7c63-45e9-a043-256b98ef249f/hatch_dual.jpeg",
+    "page": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+    "verified": true,
+    "checked": "已下載預覽並親眼確認：綠色底上有紅、黃、藍、白色的鋸齒狀斜向條紋，是一維細胞自動機逐列疊代的圖樣，不是人像或標題卡",
+    "source": "Kate Vass Galerie",
+    "author": "Kjetil Golid",
+    "license": "畫廊網頁作品圖片，教學引用",
+    "license_url": "",
+    "note": "一維細胞自動機逐列生成的斜向條紋圖樣"
+   }
+  },
+  {
+   "title": "fPDP：碎形 Pied-de-poule 男裝夾克",
+   "creator": "Loe Feijs、Marina Toeters",
+   "year": "2013",
+   "category": "fabrication",
+   "categories_extra": ["2d-pattern"],
+   "scale": "物件",
+   "summary": "Feijs 與 Toeters 設計一套一維細胞自動機，用五種顏色狀態逐列生成傳統千鳥格（pied-de-poule）紋樣的碎形版本，再把圖案雷射切割、拼接成一件男裝夾克，於 2013 年 Bridges 數學藝術年會展出。演算法角色和基礎範例相同（依規則逐代／逐列生成狀態），差別是輸出從『世代疊高的量體』換成『逐列生成的平面紋理』，直接印製或裁切在布料上做成服裝。",
+   "variations": [
+    {"name": "降維＋多色規則的紡織應用", "how": "用一維細胞自動機取代二維生命遊戲，並把生／死兩態擴充成 5 種顏色狀態，逐列生成碎形千鳥格圖案後輸出成布料裁片", "effect": "輸出變成可直接雷射切割、拼接成服裝的平面紋樣，而非疊層量體"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "一維細胞自動機", "紡織設計", "碎形圖樣"],
+   "tools": [],
+   "url": "https://gallery.bridgesmathart.org/exhibitions/2013-bridges-conference/feijs",
+   "evidence": "Bridges 數學藝術展覽頁確認《fPDP, Fractal Pied de Poule Jack》作者為 Loe Feijs 與 Marina Toeters、2013 年、材質為棉/聚酯纖維雷射切割",
+   "nearest_existing": "C02-08 KnitYak（同屬紡織／織品類的 CA 應用，但 KnitYak 用一維 Wolfram 規則織圍巾，這件用五色千鳥格自動機做成夾克）",
+   "image": {
+    "url": "https://submit.bridgesmathart.org/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6Nzc1MywicHVyIjoiYmxvYl9pZCJ9fQ%3D%3D--42bbd3e14e18d3271d0103c4ab502dfc0942101a/feijs_fractalpdp_model.jpg",
+    "page": "https://gallery.bridgesmathart.org/exhibitions/2013-bridges-conference/feijs",
+    "verified": true,
+    "checked": "已下載預覽並親眼確認：模特兒穿著灰色調千鳥格碎形圖案長袖襯衫，圖案由自動機規則生成，並非教學封面或編輯器截圖",
+    "source": "Bridges Mathematical Art Galleries",
+    "author": "Loe Feijs、Marina Toeters",
+    "license": "數學藝術展覽網頁作品圖片，教學引用",
+    "license_url": "",
+    "note": "一維細胞自動機生成的碎形千鳥格紋樣，實際裁製成夾克"
+   }
+  },
+  {
+   "title": "Complex Two（一維細胞自動機版畫．備援）",
+   "creator": "Kjetil Golid",
+   "year": "2020",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "summary": "同系列的另一件一維細胞自動機版畫，規則常數與配色不同於《Dual》，畫面呈現綠底上由紅、黃、藍、白色鋸齒條紋交織成的斜向紋理，同樣在 2020 年『The Game of Life』聯展展出，適合作為『同一演算法、不同規則參數』的第二個對照範例。",
+   "variations": [
+    {"name": "同一維 CA 規則、改配色與種子", "how": "沿用 Dual 的一維鄰居規則邏輯，但更換顏色對照表與初始種子", "effect": "同一套演算法邏輯下，畫面風格可以差異很大，示範規則參數對成果的影響"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "一維細胞自動機", "生成藝術", "限量版畫"],
+   "tools": [],
+   "url": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+   "evidence": "Artnome 文章確認《Complex Two》為 Kjetil Golid 作品，屬同一 2020 年聯展系列",
+   "nearest_existing": "本檔案中的《Dual》（同作者不同作品，此為備援對照）",
+   "image": {
+    "url": "https://images.squarespace-cdn.com/content/v1/59413d96e6f2e1c6837c7ecd/1591668496436-LGK0Q1IKF11JXAF80R8B/complex2.jpeg",
+    "page": "https://www.artnome.com/news/2020/7/12/the-game-of-life-emergence-in-generative-art",
+    "verified": true,
+    "checked": "已下載預覽並親眼確認：綠色底上有紅、黃、藍、白色鋸齒狀斜向條紋，一維細胞自動機生成圖樣",
+    "source": "Artnome",
+    "author": "Kjetil Golid",
+    "license": "藝術評論網頁作品圖片，教學引用",
+    "license_url": "",
+    "note": "一維細胞自動機生成的斜向條紋圖樣，備援用作品"
+   }
+  },
+  {
+   "title": "Complex One（一維細胞自動機等角菱形拼貼．備援）",
+   "creator": "Kjetil Golid",
+   "year": "2020",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "summary": "同系列第三件版畫，用等角投影的菱形拼貼呈現一維細胞自動機的疊代過程：畫面右側是規律的紅白棋盤紋，左側則逐漸過渡成多彩不規則的菱形拼貼，是三件『規則相同、參數不同』對照作品中視覺差異最大的一件。",
+   "variations": [
+    {"name": "同一維 CA 規則、等角菱形輸出", "how": "沿用一維 CA 的鄰居規則，但把每格輸出成等角投影的菱形色塊而非方格", "effect": "同一套演算法邏輯搭配不同的幾何輸出方式，畫面從平面棋盤變成有立體錯覺的拼貼"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "一維細胞自動機", "生成藝術", "限量版畫"],
+   "tools": [],
+   "url": "https://www.katevassgalerie.com/game-of-life-emergence-in-generative-art-1",
+   "evidence": "Artnome 文章確認《Complex One》為 Kjetil Golid 作品，屬同一 2020 年聯展系列",
+   "nearest_existing": "本檔案中的《Dual》《Complex Two》（同作者不同作品，此為第二備援）",
+   "image": {
+    "url": "https://images.squarespace-cdn.com/content/v1/59413d96e6f2e1c6837c7ecd/1591670183142-6BGCA24MZN5G0C1DNB5M/complex.jpeg",
+    "page": "https://www.artnome.com/news/2020/7/12/the-game-of-life-emergence-in-generative-art",
+    "verified": true,
+    "checked": "已下載預覽並親眼確認：右側為紅白等角菱形棋盤紋，左側為多彩不規則菱形拼貼，一維細胞自動機生成圖樣",
+    "source": "Artnome",
+    "author": "Kjetil Golid",
+    "license": "藝術評論網頁作品圖片，教學引用",
+    "license_url": "",
+    "note": "一維細胞自動機生成的等角菱形拼貼圖樣，第二備援用作品"
+   }
+  }
+ ],
+ "notes": "既有 20 筆分類為 art 8／research 12，need=2；已找到 2 個正式名額＋3 個備援（共 5 個，達到 need+3 的下限），皆已下載預覽圖並親眼確認為作品本身的生成畫面。曾嘗試找 p5.js／Processing 且有真實縮圖的作品（OpenProcessing 上多筆 Game of Life 相關 sketch，如 Denise Audirac、Farzon Lotfi、David Crooks 等），但這些頁面都顯示「No Thumbnail」，無法親眼確認生成畫面，故未收錄；改以有畫廊或數學藝術年會正式圖片佐證的作品替代（Kjetil Golid 三件皆為同一系列的一維細胞自動機版畫，Toeters/Feijs 的 fPDP 使用 Processing 以外的自製軟體）。若協調者仍需要 p5.js／Processing 的新案例，建議另外指派再查。"
+}

@@ -1,0 +1,71 @@
+{
+ "algo": "B06",
+ "classification": [
+  {"id": "B06-01", "source": "research", "why": "Grasshopper 外掛，本演算法的代表實作"},
+  {"id": "B06-02", "source": "research", "why": "建成建築案例，屬手動組裝非生成"},
+  {"id": "B06-03", "source": "research", "why": "社區參與的建成裝置，非生成藝術作品"},
+  {"id": "B06-04", "source": "research", "why": "Grasshopper 外掛工具，非藝術作品"},
+  {"id": "B06-05", "source": "research", "why": "學術論文，拓樸最佳化材料分布研究"},
+  {"id": "B06-06", "source": "research", "why": "學術論文，機械手臂協作組裝研究"},
+  {"id": "B06-07", "source": "research", "why": "學術論文，機械手臂懸挑組裝研究"},
+  {"id": "B06-51", "source": "research", "why": "遊戲系統技術說明，非視覺藝術作品"},
+  {"id": "B06-52", "source": "research", "why": "Unreal Engine 外掛工具，技術說明"},
+  {"id": "B06-53", "source": "research", "why": "Unity／Unreal 外掛工具，技術說明"}
+ ],
+ "art_count": 0,
+ "need": 5,
+ "removal_order": [
+  "B06-06",
+  "B06-53",
+  "B06-05",
+  "B06-02",
+  "B06-07",
+  "B06-04",
+  "B06-03",
+  "B06-51"
+ ],
+ "removal_reasons": {
+  "B06-06": "和 B06-05、B06-07 同一組作者（TU Darmstadt／Tessmann）主題高度重疊，出處是 academia.edu 難以查證，也沒有真實照片",
+  "B06-53": "和 B06-52 高度相似（都是遊戲引擎的房間／地城連接生成工具），目前沒有圖片，官方文件也難找到可用截圖",
+  "B06-05": "和 B06-01、B06-06、B06-07 同一批作者群重複，出處為 academia.edu 難以查證，沒有真實照片",
+  "B06-02": "作者自述是手動組裝而非演算法隨機聚合生成，和本演算法的核心機制關係較薄弱，也沒有真實照片",
+  "B06-07": "和 B06-05、B06-06 同一批作者群重複度高，雖有平衡判斷的獨特點但整體重疊仍偏多，沒有真實照片",
+  "B06-04": "和 B06-01 同為 Grasshopper 外掛工具，功能與定位重疊（都是直接實作本演算法的外掛）",
+  "B06-03": "雖是參與式設計的建成裝置，但已有候選照片來源，是研究案例中相對獨特（真人參與＋實體積木模型）的一個",
+  "B06-51": "Minecraft 拼圖方塊是清楚易懂的教學範例，接頭與規則池的概念直接對應本演算法，且圖片容易在 Minecraft Wiki 找到"
+ },
+ "new_art": [
+  {
+   "title": "Wang Tiles Grid Generator",
+   "creator": "tsoding（GitHub／Twitch 直播程式設計創作者）",
+   "year": "2021",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "以直播程式設計方式寫成的 Wang tiles 產生器：每種磚的四個邊各配一個顏色代碼（相當於「接頭」），程式先窮舉所有邊色組合、畫成磚的圖集，再從左上角開始逐格挑選「上邊、左邊顏色都和已放磚相符」的磚去填滿整張網格，選不到就回溯重挑前一格。和 Grasshopper C# 基礎範例相比，這裡的接頭是二維邊界上的顏色代碼而非三維平面，比對規則簡化成「顏色相同即相容」，但同樣是「先建規則庫、再逐格挑相容鄰居對接、卡住就回頭」的離散聚合邏輯。",
+   "variations": [
+    {"name": "邊色圖磚集", "how": "先窮舉 4 個邊、每邊 2 種顏色，共 16 種磚，畫成一張圖集（atlas）", "effect": "任何邊色組合都能直接查表取磚，不必手繪每一種花紋"},
+    {"name": "逐格回溯拼接", "how": "從左上角開始，每格只挑「上、左」已定邊色相符的磚；找不到相符磚就回溯重挑前一格", "effect": "整張網格保證每一對相鄰磚的邊都完全對齊，不會出現斷線或色塊錯位"},
+    {"name": "純函式化著色", "how": "整個產生流程包在單一 wang(bltr, uv) 函式內，不依賴特定圖形引擎", "effect": "同一套邏輯可以直接搬到別的語言或畫布，方便拆解教學"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "C", "Wang tiles", "邊界匹配", "直播程式設計"],
+   "tools": ["C"],
+   "url": "https://github.com/tsoding/wang-tiles",
+   "evidence": "GitHub 專案說明為「Wang Tiles Grid generator」，README 說明以 4 邊、每邊 2 色的位元遮罩建立磚圖集與網格，並在 imgs/ 資料夾嵌入 grid-00.png、grid-01.png、atlas-00.png、atlas-01.png 等產生結果圖片",
+   "nearest_existing": "無（本演算法目前 10 個案例都是研究／工具類，沒有既有藝術案例）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/tsoding/wang-tiles/master/imgs/grid-01.png",
+    "page": "https://github.com/tsoding/wang-tiles",
+    "verified": true,
+    "checked": "灰階棋盤狀的 Wang tiles 網格：黑、白、灰的菱形／方塊花紋在每一塊磚的邊界都和鄰居連續對接，清楚看得出邊界顏色匹配的規則",
+    "source": "GitHub README（tsoding/wang-tiles）",
+    "author": "tsoding",
+    "license": "MIT（程式碼授權；圖片為同一倉庫 README 的展示圖，教學引用）",
+    "license_url": "https://github.com/tsoding/wang-tiles/blob/master/LICENSE",
+    "note": "Wang tiles 產生器輸出的網格：每塊磚的邊界都和鄰居的邊界顏色對接吻合"
+   }
+  }
+ ],
+ "notes": "B06 既有 10 個案例（01–07、51–53）依規格重新檢視後全部歸為 research：51–53 雖標記 currently_cc，但實質是 Minecraft／Unreal／Unity 的遊戲系統外掛與技術說明文件（符合 _common 範例「遊戲系統的技術說明→research」），沒有一個是視覺藝術作品，art_count=0、need=5。本次因 WebSearch 額度在工作階段一開始就已用完、備援的 Parallel Search 也持續回報 free-tier 速率限制，只能改用 GitHub 全文搜尋與已知網址逐一 WebFetch 查證，找到並親眼確認圖片的新藝術案例只有 1 個（Wang Tiles Grid Generator，邊界顏色配對的生成邏輯與本演算法「接頭比對」精神相符），遠低於 need+3=8 的目標；嘗試過的其他方向（GH／Houdini／Unity 外掛皆判定為工具、Oskar Stålberg 的 Brick Block 積木拼接遊戲僅找到第三方重製版的截圖、無法用本尊作品畫面查證）都因找不到「本人作品且已確認」的圖片而放棄，未勉強湊數。建議協調者評估是否放寬本單元的 need（例如接受 B06 art/research 暫時不到 5:5），或由其他熟悉 creative coding 積木／模組生成社群的人力另外補找。"
+}

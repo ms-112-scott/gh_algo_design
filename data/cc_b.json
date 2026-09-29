@@ -12,6 +12,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Anders Hoff 以一條由節點串成的閉合線為起點，隨機在相鄰節點之間插入新節點，讓每個節點在「靠近鄰居、遠離其他節點」之間反覆調整位置，長出類似紅高麗菜切面、腸道般的皺褶。原始碼以 Python 撰寫並公開於 GitHub（MIT 授權）。和 Grasshopper C# 基礎範例相比，它更強調大量節點下的長時間生長與黑白細線的繪圖質感。",
       "variations": [
@@ -48,6 +49,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jason Webb 以 JavaScript 在瀏覽器中實作一系列差異生長實驗，節點遵守吸引、對齊、排斥與超距分裂等規則，可從圓形、SVG 圖形或文字開始長出皺褶曲線。作者明確以數位製造為目標，輸出以向量線與 SVG 匯出為主。相較於基礎範例，它多了邊界約束、SVG 輸入與互動參數面板。",
       "variations": [
@@ -86,6 +88,7 @@
         "3d-architecture",
         "modeling"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Nervous System 從雞冠花出發，建立一套「薄殼彈性曲面的差異生長」模擬：三角網格以 half-edge 結構表示，每步計算頂點受力並依生長速率擴張邊長，邊緣長得快就產生皺摺。成果以 3D 列印製成雕塑與首飾，工作室表示所用軟體皆為自行撰寫。它把基礎範例的 2D 曲線生長擴展為 3D 曲面生長。",
       "variations": [
@@ -123,6 +126,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "CodePlastic 的教學文章以 Processing 實作差異線生長，作者指出其行為與鳥群（flocking）相似，因此直接以 Daniel Shiffman 的 Flocking 範例為基礎，把分離與凝聚力改寫成節點規則。文章提供完整程式碼並示範如何改變參數與生長方式。和基礎範例相比，它用 Boids 的轉向力框架來組織程式。",
       "variations": [
@@ -159,6 +163,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Entagma 的 Houdini 教學以 Point Relax SOP 為核心做出簡化版差異線生長，並用雜訊場傳遞數值來控制各處的生長量。把一個幾何體接進 Relax SOP 的第二個輸入，就能讓曲線貼著曲面生長。相較於基礎範例手寫受力迴圈，它用 Houdini 的現成節點組合出相同行為並直接算圖。",
       "variations": [
@@ -195,6 +200,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 的程式挑戰影片，以 p5.js 從零寫出擴散限制聚集：隨機漫步的粒子碰到已固定的團簇就黏上去，逐漸長成布朗樹。影片同時提供 p5.js 與 Processing 程式碼。適合作為把 Grasshopper C# 範例移植到網頁的入門對照。",
       "variations": [
@@ -233,6 +239,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "這一集把 DLA 限制在一個 30° 的楔形區域中生長：粒子從外側沿水平方向往中心漂移，黏住後再把這一片鏡射、旋轉 6 次，組成六重對稱的雪花。它示範了「只算一小塊，再用對稱性複製」的做法。",
       "variations": [
@@ -270,6 +277,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jason Webb 以 JavaScript 做的一系列 DLA 實驗，採用「非網格（off-lattice）」的粒子方式而非像素格點，以便輸出適合數位製造的向量 SVG。實驗包含方向偏移、不同粒子大小與形狀、以 SVG 圖形作為種子或障礙等。相較於基礎範例，它著重可調參數與向量輸出。",
       "variations": [
@@ -311,6 +319,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Michael Fogleman 以 C++ 與 Boost 空間索引寫成的高速 DLA 程式，支援 2D 與 3D，單核心約 35 秒可算出一百萬個粒子；README 中展示了一千萬粒子的 3D 光線追蹤成果。程式輸出每個粒子的 id、父節點與座標，並提供黏附距離、黏性（Stickiness）等參數。和基礎範例相比，它示範空間索引如何把 DLA 推到百萬級規模。",
       "variations": [
@@ -348,6 +357,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Entagma 的影片教學先講解 DLA 理論，再用 Houdini 的 VEX 實作基本演算法、調整模擬形態，最後分別以 Mantra 與 Redshift 算圖，並提供專案檔下載。相較於基礎範例，它把 DLA 放進 3D 視覺特效流程，從模擬直接接到高品質渲染。",
       "variations": [
@@ -386,6 +396,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 依 Runions 等人的空間殖民演算法，在畫面上散布「葉子」吸引點，樹枝節點朝影響範圍內的吸引點平均方向長出新枝，吸引點被觸及後就移除。影片提供 p5.js 與 Processing 程式碼。適合對照 Grasshopper C# 版本的吸引距離與消除距離參數。",
       "variations": [
@@ -425,6 +436,7 @@
         "fabrication",
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jason Webb 以 JavaScript 實作空間殖民演算法的開放（open）與封閉（closed）葉脈兩種模式，並加入依末端累加的葉脈加粗（auxin flux canalization）、SVG 邊界與障礙物等功能。目標同樣是可輸出向量的數位製造用圖樣。相較於基礎範例，它多了封閉迴圈葉脈與粗細層級。",
       "variations": [
@@ -467,6 +479,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Nervous System 以葉脈形成為靈感設計的生成式燈具，每盞燈從基礎體積與一組根點出發，在充滿 auxin 吸引點的環境中反覆生長出分枝網路，再以選擇性雷射燒結 3D 列印製作。設計軟體是工作室以 C++ 與 CGAL 自行開發。部落格記錄了他們如何改成以機率讓流量大的葉脈優先生長，並以隱函數曲面產生網格。",
       "variations": [
@@ -505,6 +518,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "openFrameworks 的附加套件，實作 Runions、Lane 與 Prusinkiewicz 的論文〈Modeling Trees with a Space Colonization Algorithm〉，只要 build()、grow()、draw() 三步即可在 3D 中長出樹。可設定最大／最小吸引距離等選項，並能以包絡體（envelope）決定樹冠外形。相較於基礎範例，它著重即時 3D 繪製與可重用的 C++ 套件介面。",
       "variations": [
@@ -542,6 +556,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "mattatz 在 Unity 中以 GPU 運算實作空間殖民演算法，以輸入的點作為種子長出樹枝狀（dendrite）圖樣，並提供以 GPU marching cubes 把枝條轉成體積的渲染方式；SkinnedDendrite 還能讓分枝附著在動畫角色的蒙皮網格上。相較於基礎範例，它把演算法搬到 GPU 上以支援即時大量運算。",
       "variations": [
@@ -578,6 +593,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 以 p5.js 實作 Vogel 葉序模型：第 n 個點的角度為 n × 137.5°、半徑為 c√n，逐幀加一個點就畫出向日葵般的螺旋。是 Grasshopper C# 葉序範例最直接的網頁對照。",
       "variations": [
@@ -615,6 +631,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "openFrameworks 附加套件，只提供三個靜態方法：simple（平面圓盤）、conical（沿 y 軸推出的圓錐）與 apple（包成蘋果般的球面），傳入序號、發散角與間距就回傳位置，可用來排列任何 2D 或 3D 物件。相較於基礎範例只在平面上放點，它把葉序當成可套用在 3D 場景的排列工具。",
       "variations": [
@@ -651,6 +668,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "Entagma 的教學以 VEX 在 Houdini 中建立葉序運算子，但不只做平面圓盤模型，而是讓葉序分布在一條輪廓旋轉而成的曲面（surface of revolution）上。成果可作為可重複使用的 Houdini 工具。相較於基礎範例，它處理了曲面上面積不均時如何保持密鋪。",
       "variations": [
@@ -688,6 +706,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "一個學習 Unity ECS（Entity Component System）的練習專案，以葉序公式排列大量方塊並讓它們全部旋轉，並加入剔除（culling）以提升效能。它示範葉序排列在遊戲引擎中大量實例化時的做法。相較於基礎範例，重點是在即時引擎中處理上萬個物件。",
       "variations": [
@@ -726,6 +745,7 @@
         "urban-landscape",
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "群體／都市",
       "summary": "Jared Tarbell 以 Processing 創作的經典作品：裂紋像晶體一樣在計算「基底」上直線前進，碰到其他裂紋或邊界就停下，並從既有裂紋上以垂直方向分岔出新裂紋，簡單規則長出像城市街廓的結構，沿裂紋再加上類似水彩的「沙畫」上色。作者頁面也展示了允許裂紋彎曲的非線性版本。",
       "variations": [
@@ -762,6 +782,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "群體／都市",
       "summary": "Tom White 把 Tarbell 的 Processing 原始碼移植到 p5.js，並刻意盡量少改原程式，repo 中同時保留原始 .pde 檔以便對照。滑鼠按下即重新開始生長。適合用來對照 Processing 與 p5.js 的語法差異，以及把本圖鑑的 C# 版本移植到網頁。",
       "variations": [
@@ -798,6 +819,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "群體／都市",
       "summary": "為 CityLAB Berlin 撰寫的命令列工具，以 Tarbell 的 Substrate 演算法產生 SVG，可指定模擬時間、紙張寬高與最大裂紋數，輸出給繪圖機（plotter）畫出。相較於原作的像素渲染，它只保留裂紋的向量線，直接作為製造輸出。",
       "variations": [
@@ -835,6 +857,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "art",
       "scale": "群體／都市",
       "summary": "Jon Cooper 把 Tarbell 的 Substrate 移植到 iPad，作為學習 iOS 開發與 OpenGL 的練習。由於 iOS 沒有直接的 2D 點陣繪圖，作者自己寫了繪製層：先渲染到貼圖再貼到四邊形上，並實作反鋸齒線條與顏色混合，裂紋由另一條執行緒寫入貼圖。以 MIT 授權釋出。",
       "variations": [

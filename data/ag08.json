@@ -294,6 +294,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "空間殖民演算法的原點：在葉片中放置生長素（auxin）來源點，葉脈朝來源點生長、靠近後來源點消失，並隨葉片長大持續加入新來源點。論文同時提出開放（樹狀）與封閉（網狀）兩種葉脈，並用 Voronoi 空間分割加速。",
       "variations": [
@@ -336,6 +337,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "把 2005 年的開放式葉脈模型延伸到 3D，以樹冠包絡內的吸引點代表「可用空間」，枝條彼此競爭空間，就能長出相當逼真的樹。基礎範例就是這篇的簡化版。",
       "variations": [
@@ -377,6 +379,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "受葉脈形成啟發的 3D 列印尼龍燈具，每一盞都獨一無二。設計軟體以 C++（CGAL、Cinder）自製，從一個基底量體與一組根部點出發，讓根部往充滿 auxin 的環境生長，並依流過的量決定枝的粗細，投出分枝狀光影。",
       "variations": [
@@ -420,6 +423,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Nervous System 以 Runions 的葉脈論文為基礎，發展出 2D 的 Xylem 與 3D 的 Hyphae 兩套模擬系統；此相簿收錄大量演算法草圖，展示同一規則在不同邊界、根部配置下的網路變化。",
       "variations": [
@@ -455,6 +459,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 JavaScript 與 Canvas 實作的一系列瀏覽器互動實驗，涵蓋基本空間殖民、邊界（bounds）限制、障礙物、開放與封閉葉脈、依階層改變線寬等，是理解參數與變形最直觀的資源。",
       "variations": [
@@ -496,6 +501,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "The Coding Train 演算法植物系列第 4 集，以 p5.js／Processing 從零寫出空間殖民樹生成器，並提供原始碼。邏輯與基礎範例幾乎一一對應，是自學對照的好教材。",
       "variations": [
@@ -531,6 +537,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "把吸引點詮釋為需要被道路服務的地點，用空間殖民生成都市與城際道路網，並可結合流場、人口分布、地理與邊界地圖微調路網佈局。",
       "variations": [
@@ -571,6 +578,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "程序化世界生成部落格文章，主張未經規劃的城市街道就像植物一樣「以最經濟的方式佔滿空間」，並用空間殖民演算法生成沿地形蔓延、覆蓋可用空間的街道網。",
       "variations": [
@@ -606,6 +614,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "互動式生成設計與建築剖面工具：使用者繪製實／虛邊界、放置根部、甚至分析手繪草圖，用空間殖民生成剖面上的分枝空間網路；支援向性偏向、主次枝分級與修剪、曲直形態調整、以及產生次級連接迴圈來模擬結構斜撐與動線，並可匯出到 CAD／3D 軟體。",
       "variations": [
@@ -647,6 +656,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "專利文件描述以 Blender Python API 自製的空間殖民實作設計血管結構：先在指定邊界內隨機產生 N 個虛擬細胞當吸引點，讓血管網長到每個細胞的擴散距離內，再製造成軟材料中的通道。",
       "variations": [
@@ -683,6 +693,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "研究以 Space Colonization 作為迭代生長方法，逐步把血管網擴展到尚未被灌流的區域，用於生成可製造的血管化組織構造。可視為「以服務範圍為性能指標」的空間殖民應用，概念上可類比建築設備管線或通風路徑。",
       "variations": [
@@ -718,6 +729,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "以 Runions 演算法實作的 Blender 樹木生成外掛，參數對應景觀設計常用的樹形特徵，並特別適合建築表現：可輕易納入建築物或牆面造成的遮蔽效果，讓樹木對周邊環境做出反應。",
       "variations": [
@@ -754,6 +766,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "把空間殖民樹生成器寫成 Blender Sverchok 的腳本節點，與 Grasshopper C# Script 的使用情境非常相似：上游節點提供吸引點與根部，下游接成管或網格。",
       "variations": [
@@ -790,6 +803,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Entagma 免費教學，在 Houdini 中以 VEX 與 SOP Solver 實作 Runions 的空間殖民，利用 Houdini 內建的最近點查詢函式加速，常用於動態圖像與藝術裝置的分枝生長動畫。",
       "variations": [
@@ -815,40 +829,6 @@
         "VEX"
       ],
       "url": "https://entagma.com/1028-2/"
-    },
-    {
-      "id": "B03-15",
-      "algo": "B03",
-      "title": "Grasshopper 空間殖民範例（Parametric House）",
-      "creator": "Parametric House",
-      "year": "",
-      "category": "modeling",
-      "categories_extra": [
-        "3d-architecture"
-      ],
-      "scale": "構件",
-      "summary": "Grasshopper 教學範例網站提供的空間殖民定義，示範在 GH 中以目標點與起始點建立樹狀結構，可直接與基礎範例的 C# 版本比較元件式與程式碼式實作的差異。",
-      "variations": [
-        {
-          "name": "C# 取代元件迴圈",
-          "how": "把 Anemone 或元件式迴圈換成本課的 C# Script，一次在元件內跑完所有步驟。",
-          "effect": "運算更快、參數更集中。"
-        },
-        {
-          "name": "轉成結構構件",
-          "how": "枝段以 Pipe 成管並在節點處放置接頭球。",
-          "effect": "可作為樹狀柱或裝置構架的初步模型。"
-        }
-      ],
-      "difficulty": 2,
-      "tags": [
-        "多元件",
-        "3D"
-      ],
-      "tools": [
-        "Grasshopper"
-      ],
-      "url": "https://parametrichouse.com/space-colonization/"
     }
   ]
 }

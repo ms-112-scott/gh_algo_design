@@ -1,0 +1,214 @@
+{
+ "algo": "C04",
+ "classification": [
+  {"id": "C04-01", "source": "research", "why": "SIGGRAPH 論文，noise 演算法源頭"},
+  {"id": "C04-02", "source": "research", "why": "noise 改良論文，非藝術創作"},
+  {"id": "C04-03", "source": "research", "why": "遊戲地形生成技術說明"},
+  {"id": "C04-04", "source": "research", "why": "技術部落格實驗，非藝術創作"},
+  {"id": "C04-05", "source": "research", "why": "商用地形軟體功能介紹頁"},
+  {"id": "C04-06", "source": "research", "why": "軟體裝置說明頁，工具文件"},
+  {"id": "C04-07", "source": "research", "why": "開源侵蝕模擬研究專案"},
+  {"id": "C04-08", "source": "research", "why": "建成都市規劃案，非 noise 藝術"},
+  {"id": "C04-09", "source": "research", "why": "技術文章說明演算法應用方式"},
+  {"id": "C04-10", "source": "research", "why": "VFX 技術論文，特效管線用途"},
+  {"id": "C04-11", "source": "research", "why": "地圖生成技術教學文章"},
+  {"id": "C04-12", "source": "research", "why": "noise 演算法文獻回顧論文"},
+  {"id": "C04-51", "source": "art", "why": "Processing 生成地形動畫，creative coding"},
+  {"id": "C04-52", "source": "art", "why": "p5.js／Processing 生成藝術作品"},
+  {"id": "C04-53", "source": "art", "why": "Processing 生成循環動畫藝術"},
+  {"id": "C04-54", "source": "art", "why": "TouchDesigner 即時生成藝術"},
+  {"id": "C04-55", "source": "art", "why": "GLSL shader 生成藝術教材"},
+  {"id": "C04-56", "source": "art", "why": "Shadertoy 生成紋理藝術"}
+ ],
+ "art_count": 6,
+ "need": 3,
+ "removal_order": ["C04-11", "C04-08", "C04-06", "C04-04", "C04-05", "C04-12"],
+ "removal_reasons": {
+  "C04-11": "文中承認「網址未於本次搜尋中取得」，出處無法查證",
+  "C04-08": "官方未證實使用 Perlin noise，文中自承只是臆測類比，關聯薄弱",
+  "C04-06": "與 C04-05 同為 World Machine 說明頁，內容高度重複",
+  "C04-04": "個人部落格小實驗，與 C04-03 Minecraft 主題重複、份量較輕",
+  "C04-05": "軟體功能介紹頁，內容泛用、無實際畫面可查證",
+  "C04-12": "文獻回顧論文，與 C04-01／02 的原始論文內容重疊"
+ },
+ "new_art": [
+  {
+   "title": "fBm（Fractional Brownian Motion）與《Rainforest》",
+   "creator": "Inigo Quilez",
+   "year": "2016",
+   "category": "modeling",
+   "categories_extra": ["drawing"],
+   "scale": "地景",
+   "summary": "Quilez 的技術文章解釋 fBm：把 noise 疊很多層、每層頻率加倍、振幅減半再加總——正是本元件 LayeredNoise 的做法，並用光譜分析證明這種疊法最像真實山脈的粗糙度。文中展示的《Rainforest》（2016）是一個即時 raymarching shader，同一組 fBm 同時決定地形高度、雲層密度與樹冠分布，畫出一整片擬真雨林山谷，而不是只做出一片靜態的建築基地地形 Mesh。",
+   "variations": [
+    {"name": "per-pixel 即時 fBm 渲染", "how": "把 LayeredNoise 從逐格點離散取樣改成逐像素即時運算的 GLSL shader", "effect": "地形解析度不受格點數限制，還能疊加大氣、光照即時運算"},
+    {"name": "一組 fBm 多重用途", "how": "同一個 fBm 函式同時決定地形高度、雲霧密度、樹木分布與顏色深淺", "effect": "整個場景風格自動一致，不用分別設計多套 noise 參數"}
+   ],
+   "difficulty": 4,
+   "tags": ["creative coding", "GLSL", "Shadertoy", "fBm", "shader"],
+   "tools": ["GLSL", "Shadertoy"],
+   "url": "https://iquilezles.org/articles/fbm/",
+   "evidence": "WebFetch 確認文章標題為 Fractional Brownian Motion，圖說寫「fBM() was used to generate the terrain, the clouds, the tree distribution... 'Rainforest', 2016」",
+   "nearest_existing": "C04-56 Domain Warping（同作者 Inigo Quilez，不同作品：Domain Warping 談座標扭曲，本作談多層疊加本身如何做出擬真地形）",
+   "image": {
+    "url": "https://iquilezles.org/articles/fbm/gfx00.jpg",
+    "page": "https://iquilezles.org/articles/fbm/",
+    "verified": true,
+    "checked": "親眼確認：陽光下層疊的山脈與森林擬真渲染畫面，前景深綠色樹冠、遠景灰藍色山稜與雲層",
+    "source": "iquilezles.org",
+    "author": "Inigo Quilez",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "fBm 疊層 noise 驅動的擬真山脈與雨林渲染畫面（Rainforest，2016）"
+   }
+  },
+  {
+   "title": "Getting Creative with Perlin Noise Fields",
+   "creator": "Manohar Vanga（sighack）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "在網格上每一點取 Perlin noise 值當作角度，畫一小段線段而非設高度，成千上萬條短線順著這個方向場排列，長出像木紋、指紋或毛髮般的平面紋理。文章從同一套 noise field 出發，系統性改變 noise 尺度、步長、線條密度等參數，示範出 25 種截然不同的視覺風格，程式碼在 GitHub 公開。",
+   "variations": [
+    {"name": "noise 值轉線段方向", "how": "格點的 PerlinNoise 值乘上 2π 當角度，順著角度畫一小段線而非設高度", "effect": "從立體地形變成平面木紋／指紋狀紋理"},
+    {"name": "單一 field 展開 25 種參數", "how": "系統性改變 noise 尺度、步長、疊圖次數、線條密度", "effect": "示範同一段演算法光靠參數就能長出風格差異很大的畫面"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "noise field", "生成藝術"],
+   "tools": ["Processing"],
+   "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+   "evidence": "WebFetch 確認文章標題為 Getting Creative with Perlin Noise Fields，作者 Manohar Vanga（sighack），以 Processing 展示同一 noise field 演算法的 25 種變化，程式碼於 github.com/sighack/perlin-noise-fields",
+   "nearest_existing": "無（既有案例多為地形或立面應用，本作是平面線條紋理）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/sighack/perlin-noise-fields/master/images/png/example-1.png",
+    "page": "https://github.com/sighack/perlin-noise-fields",
+    "verified": true,
+    "checked": "親眼確認：黑白線條依 noise 向量場流動、匯聚成波浪狀紋理的畫面",
+    "source": "GitHub（sighack/perlin-noise-fields）",
+    "author": "Manohar Vanga",
+    "license": "MIT（程式碼授權；圖片為作者專案展示圖，教學引用）",
+    "license_url": "",
+    "note": "Perlin noise 向量場驅動的黑白線條紋理（25 種變化之一）"
+   }
+  },
+  {
+   "title": "Coding Challenge #24: Perlin Noise Flow Field",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "在畫面格網上，每格的 2D Perlin noise 值決定一個向量角度，大量粒子沿著這個向量場移動並留下半透明軌跡，畫出像毛線團般纏繞的流動紋理。和本元件共用同一個 PerlinNoise／ValueAt 查表，差別在於把 noise 值拿去當「方向」帶動點移動，而不是當「高度」蓋出靜態地形 Mesh，是很直接的「同一函式、兩種用法」對照教材。",
+   "variations": [
+    {"name": "noise 驅動方向而非高度", "how": "角度 = PerlinNoise 值 × 2π，粒子依角度移動並畫線，而非設高度", "effect": "從靜態地形變成隨時間累積的流動軌跡畫面"},
+    {"name": "多顆粒子疊加軌跡", "how": "數百個粒子各自留下半透明軌跡並疊圖", "effect": "同一張 noise 場被畫成綿密的毛線狀紋理"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "p5.js", "Processing", "flow field", "教學影片"],
+   "tools": ["p5.js", "Processing"],
+   "url": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+   "evidence": "python tools/ct_index.py 查得範例標題 Perlin Noise flow field，圖片為挑戰頁的程式執行畫面 flow.jpg",
+   "nearest_existing": "C04-09 Flow Fields（Tyler Hobbs 的文章說明同一技巧；本案例是可執行、有實際畫面出處的教學版本）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/challenges/24-perlin-noise-flow-field/images/flow.jpg",
+    "page": "https://thecodingtrain.com/challenges/24-perlin-noise-flow-field",
+    "verified": true,
+    "checked": "親眼確認：黑底上大量白色曲線依 noise 向量場流動、纏繞成毛線團狀的畫面",
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "Perlin noise 向量場驅動的粒子流動軌跡（黑底白線）"
+   }
+  },
+  {
+   "title": "Nature of Code I.5: Perlin Noise in Two Dimensions",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2021",
+   "category": "2d-pattern",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "把 2D Perlin noise 場逐像素取樣、直接映射成灰階亮度畫出來，是本元件 ValueAt 輸出結果在還沒轉成地形高度前的樣子：雲霧狀、平滑連續的灰階場。適合搭配本元件教學，讓學習者先看到「noise 本身長怎樣」再看它怎麼變成地形。",
+   "variations": [
+    {"name": "noise 值→灰階亮度", "how": "逐像素取 noise(x,y)，映射到 0–255 灰階畫出", "effect": "直接看到 noise 場本身的雲霧狀平滑分布，而非套用到 Mesh 之後的樣子"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "Perlin noise", "教學影片"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/noc/perlin/perlin-noise-2d",
+   "evidence": "python tools/ct_index.py 查得範例標題 Perlin Noise in 2D，圖片為該範例執行畫面 perlin2d.png",
+   "nearest_existing": "C04-51（同作者不同範例：這裡只畫 2D noise 灰階場，51 才進一步建 3D Mesh）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/perlin/perlin-noise-2d/images/perlin2d.png",
+    "page": "https://thecodingtrain.com/noc/perlin/perlin-noise-2d",
+    "verified": true,
+    "checked": "親眼確認：灰階雲霧狀的 2D Perlin noise 場畫面，深淺對應 noise 值大小",
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "2D Perlin noise 場直接映射成灰階的畫面"
+   }
+  },
+  {
+   "title": "Getting Creative with Perlin Noise Fields（變化版之一）",
+   "creator": "Manohar Vanga（sighack）",
+   "year": "2016",
+   "category": "2d-pattern",
+   "categories_extra": ["drawing"],
+   "scale": "物件",
+   "summary": "同一份 Processing 專案改變 noise 尺度與線條密度後的另一種風格，線條更密、更捲曲，呈現接近毛皮或指紋放大圖的質感，用來對照「參數不同、同一演算法」能長出多不一樣的畫面。",
+   "variations": [
+    {"name": "調高 noise 密度與捲曲程度", "how": "縮小 noise 取樣尺度、加密線條起點", "effect": "從舒展的波浪紋變成緊密捲曲的毛皮狀紋理"}
+   ],
+   "difficulty": 2,
+   "tags": ["creative coding", "Processing", "noise field", "生成藝術"],
+   "tools": ["Processing"],
+   "url": "https://sighack.com/post/getting-creative-with-perlin-noise-fields",
+   "evidence": "同上一篇文章（github.com/sighack/perlin-noise-fields），此為其中第 10 個變化版圖片",
+   "nearest_existing": "本次新增的另一件作品（同專案第 1 版變化，見上）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/sighack/perlin-noise-fields/master/images/png/example-10.png",
+    "page": "https://github.com/sighack/perlin-noise-fields",
+    "verified": true,
+    "checked": "親眼確認：類似毛皮紋理的黑白 noise 向量場線條，比第 1 版更密、更捲曲",
+    "source": "GitHub（sighack/perlin-noise-fields）",
+    "author": "Manohar Vanga",
+    "license": "MIT（程式碼授權；圖片為作者專案展示圖，教學引用）",
+    "license_url": "",
+    "note": "Perlin noise 向量場的另一種參數變化（較密、較捲曲）"
+   }
+  },
+  {
+   "title": "Nature of Code I.4: Graphing 1D Perlin Noise",
+   "creator": "Daniel Shiffman（The Coding Train）",
+   "year": "2021",
+   "category": "drawing",
+   "categories_extra": [],
+   "scale": "物件",
+   "summary": "把 noise(x) 逐點取樣連成一條平滑曲線畫出，是本元件 2D／3D noise 之前最基礎的一維示範，讓學習者先看到 noise 「平滑、連續、可重現」這個核心性質，再進一步理解它怎麼擴充成地形高度場。",
+   "variations": [
+    {"name": "1D noise 連成曲線", "how": "逐 x 取樣 noise(x) 當 y 值，連成折線", "effect": "直接看到 noise 沿一維軸的平滑起伏，對照隨機亂數的鋸齒感"}
+   ],
+   "difficulty": 1,
+   "tags": ["creative coding", "p5.js", "Perlin noise", "教學影片"],
+   "tools": ["p5.js"],
+   "url": "https://thecodingtrain.com/noc/perlin/graphing-1d-perlin-noise",
+   "evidence": "python tools/ct_index.py 查得範例標題 Noise Graph，圖片為該範例執行畫面 noise.jpg",
+   "nearest_existing": "C04-51（同作者，後續才做到 2D／3D 地形）",
+   "image": {
+    "url": "https://raw.githubusercontent.com/CodingTrain/thecodingtrain.com/main/content/videos/noc/perlin/graphing-1d-perlin-noise/images/noise.jpg",
+    "page": "https://thecodingtrain.com/noc/perlin/graphing-1d-perlin-noise",
+    "verified": true,
+    "checked": "親眼確認：粉紅底、白色連續曲線的 1D noise 折線圖",
+    "source": "The Coding Train",
+    "author": "Daniel Shiffman",
+    "license": "網頁預覽圖，教學引用",
+    "license_url": "",
+    "note": "1D Perlin noise 逐點取樣連成的平滑曲線圖"
+   }
+  }
+ ],
+ "notes": "既有 6 件 currently_cc 案例分類為 art、12 件為 research，need=3；新增 3＋3 備援皆以 WebFetch／ct_index 查證並下載預覽親眼確認，前 3 個（Inigo Quilez fbm／Rainforest、sighack Perlin Noise Fields、Coding Train Flow Field）依好壞排序，後 3 個為備援。本次因 WebSearch 額度用罄、Parallel Search 也達免費額度上限，改用 WebFetch 直接查證已知頁面與 ct_index.py，未能再擴大搜尋更多元創作者；6 件新案例中 p5.js／Processing 佔比達半數以上。"
+}

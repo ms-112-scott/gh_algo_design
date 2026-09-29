@@ -1,0 +1,341 @@
+{
+ "run": "R20260929-0929",
+ "algo": {
+  "id": "B05",
+  "name_zh": "Substrate 裂紋",
+  "name_en": "Substrate (Tarbell Crack Growth)",
+  "one_liner": "裂紋直直往前走，撞到別的裂紋或邊界就停，再從既有裂紋上垂直分岔出新裂紋，長出像都市街道或乾裂泥地的分割圖樣。",
+  "how_it_works": [
+   "把正方形範圍切成 400×400 的佔用格，每格記錄被哪條裂紋佔用（-1 表示空）。",
+   "隨機放 3 條起始裂紋，各有起點與方向。",
+   "每一輪讓所有還在走的裂紋前進半格，走過的空格記上自己的編號。",
+   "撞到邊界或別的裂紋（剛分岔時的母裂紋除外）就停下，從清單移除。",
+   "每停一條，就隨機挑一條已存在的裂紋，在其上隨機一點以垂直方向（±5 度抖動）分岔出最多 2 條新裂紋，直到總數達 crackCount。",
+   "最後把每條裂紋從起點到終點輸出成 Line。"
+  ]
+ },
+ "final_total": 16,
+ "target_art": 8,
+ "target_research": 8,
+ "must_remove_extra": 0,
+ "cases": [
+  {
+   "id": "B05-01",
+   "title": "Substrate",
+   "creator": "Jared Tarbell",
+   "year": "2003",
+   "category": "2d-pattern",
+   "scale": "物件",
+   "tags": [
+    "隨機",
+    "開放生長",
+    "動畫"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "summary": "Jared Tarbell 以 Processing 創作並開源的生成藝術：直線從其他直線上垂直長出、撞到就停，最終形成像都市街道的結晶圖樣，並沿裂紋以沙畫筆觸上色。本課範例即依其規則簡化而來。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-02",
+   "title": "substrate CLI（CityLAB Berlin）",
+   "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "隨機"
+   ],
+   "tools": [
+    "Node.js",
+    "SVG"
+   ],
+   "url": "https://github.com/technologiestiftung/substrate",
+   "summary": "為 CityLAB Berlin 開發的命令列工具，依 Tarbell 演算法產生 A0 尺寸的 SVG，可設定執行時間、最大裂紋數與最短線長過濾（1px = 1mm），用於輸出大型圖面或繪圖機。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-03",
+   "title": "ARCH 430 Networked Technologies 課程中的 Substrate 研究",
+   "creator": "ARCH 430 修課學習者",
+   "year": "2012",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "開放生長"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://networkedtechnologies.wordpress.com/tag/jared-tarbell/",
+   "summary": "建築系課程部落格記錄學習者研究 Tarbell 的 Substrate，觀察執行 1.5 小時後浮現類似都市格網的圖樣，並討論 Processing 作為建築設計工具的可能與限制。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-04",
+   "title": "Substrate JavaScript 移植（CodePen）",
+   "creator": "josazar（CodePen）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer"
+   ],
+   "tools": [
+    "JavaScript"
+   ],
+   "url": "https://codepen.io/josazar/details/wvvRKyL",
+   "summary": "社群開發者將 Substrate 移植到瀏覽器的 CodePen 版本，可即時看到裂紋生長動畫，說明此演算法已成為生成藝術的經典練習題。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-05",
+   "title": "Procedural Modeling of Cities（CityEngine 前身）",
+   "creator": "Yoav I. H. Parish, Pascal Müller",
+   "year": "2001",
+   "category": "urban-landscape",
+   "scale": "群體／都市",
+   "tags": [
+    "字串改寫",
+    "約束滿足",
+    "多元件"
+   ],
+   "tools": [
+    "CityEngine"
+   ],
+   "url": "",
+   "summary": "SIGGRAPH 2001 論文以擴充 L-System 生成街道網路，再切分街廓與地塊、以語法產生建築，後發展為 CityEngine。其「道路延伸、碰到既有道路就截止並接上」的規則與 Substrate 的撞停分岔邏輯相通，可作為對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-06",
+   "title": "Generating Surface Crack Patterns",
+   "creator": "Hayley N. Iben, James F. O'Brien",
+   "year": "2006",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "物理模擬"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "電腦圖學研究以表面應力場驅動裂紋在網格表面上生長，用來產生泥土、陶瓷釉面、老化油漆等真實裂紋。相較 Substrate 的純幾何規則，它以物理應力決定方向，是進階比較對象。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-07",
+   "title": "乾裂泥土圖樣",
+   "creator": "自然現象",
+   "year": "",
+   "category": "2d-pattern",
+   "scale": "地景",
+   "tags": [
+    "隨機",
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "泥土乾燥收縮時先出現的裂紋會成為後來裂紋的邊界，因此多形成 T 字接頭且後生裂紋常垂直於前者，與 Substrate「依序生長、撞停、垂直分岔」的規則高度吻合，是很好的觀察對照。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-08",
+   "title": "哥窯開片（冰裂紋釉）",
+   "creator": "宋代哥窯（傳統陶瓷工藝）",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "曲面上",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "釉與胎體收縮率不同，冷卻時釉面產生開片裂紋，並可能以大小兩層紋路呈現（俗稱金絲鐵線）。這是材料物理造成的裂紋圖樣，可用 Substrate 加彎曲與多世代線寬來模擬其視覺。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-09",
+   "title": "Voronoi 碎裂（Cell Fracture／RBD Material Fracture）",
+   "creator": "Blender Cell Fracture 外掛、Houdini RBD Material Fracture",
+   "year": "",
+   "category": "modeling",
+   "scale": "物件",
+   "tags": [
+    "拼貼",
+    "3D"
+   ],
+   "tools": [
+    "Blender",
+    "Houdini"
+   ],
+   "url": "",
+   "summary": "3D 軟體常用 Voronoi 分割把物件打碎做破壞模擬。Voronoi 是同時分割、接頭多為 Y 字，與 Substrate 依序生長的 T 字接頭形態不同，適合當作兩種裂紋機制的比較教材。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-10",
+   "title": "金繼（Kintsugi）",
+   "creator": "日本傳統修補工藝",
+   "year": "",
+   "category": "fabrication",
+   "scale": "物件",
+   "tags": [
+    "拼貼"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "以漆與金粉修補破碎陶瓷，讓裂縫成為視覺焦點。可作為 Substrate 輸出「裂紋即裝飾」的延伸：用演算法決定裂紋，再以數位製造（CNC 刻溝、金屬填縫）實現。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-11",
+   "title": "油畫龜裂（Craquelure）",
+   "creator": "藝術品保存研究（自然老化現象）",
+   "year": "",
+   "category": "drawing",
+   "scale": "物件",
+   "tags": [
+    "影像輸入",
+    "隨機"
+   ],
+   "tools": [],
+   "url": "",
+   "summary": "油畫顏料與底層隨時間收縮產生的細密龜裂網，形態與畫布張力方向相關，是修復與鑑定研究的對象。用 Substrate 加方向偏好可以模擬不同畫布的龜裂風格，作為繪圖表現的肌理。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-12",
+   "title": "Substrate 生長過程影片",
+   "creator": "Vimeo 影片（上傳者未確認；原作 Jared Tarbell）",
+   "year": "",
+   "category": "art-installation",
+   "scale": "物件",
+   "tags": [
+    "動畫",
+    "Timer"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "https://vimeo.com/208903786",
+   "summary": "Vimeo 上的 Substrate 動態記錄，呈現裂紋逐步延伸、分岔、填滿畫面的時間過程，說明此演算法本身的生長過程就是作品，而不只是最終靜態圖。",
+   "currently_cc": false,
+   "photo": null
+  },
+  {
+   "id": "B05-51",
+   "title": "Substrate",
+   "creator": "Jared Tarbell",
+   "year": "2003",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Processing",
+    "生成藝術",
+    "經典作品"
+   ],
+   "tools": [
+    "Processing"
+   ],
+   "url": "http://www.complexification.net/gallery/machines/substrate/",
+   "summary": "Jared Tarbell 以 Processing 創作的經典作品：裂紋像晶體一樣在計算「基底」上直線前進，碰到其他裂紋或邊界就停下，並從既有裂紋上以垂直方向分岔出新裂紋，簡單規則長出像城市街廓的結構，沿裂紋再加上類似水彩的「沙畫」上色。作者頁面也展示了允許裂紋彎曲的非線性版本。",
+   "currently_cc": true,
+   "photo": {
+    "source": "complexification.net",
+    "page": "http://www.complexification.net/gallery/machines/substrate/",
+    "note": "Substrate 作品頁主圖，城市街廓般的裂紋與沙畫上色"
+   }
+  },
+  {
+   "id": "B05-52",
+   "title": "Substrate（p5.js 移植版）",
+   "creator": "Tom White（dribnet）",
+   "year": "2021",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "p5.js",
+    "移植",
+    "開源"
+   ],
+   "tools": [
+    "p5.js"
+   ],
+   "url": "https://github.com/dribnet/substrate",
+   "summary": "Tom White 把 Tarbell 的 Processing 原始碼移植到 p5.js，並刻意盡量少改原程式，repo 中同時保留原始 .pde 檔以便對照。滑鼠按下即重新開始生長。適合用來對照 Processing 與 p5.js 的語法差異，以及把本圖鑑的 C# 版本移植到網頁。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub Pages（dribnet/substrate）",
+    "page": "https://dribnet.github.io/substrate/",
+    "note": "p5.js 移植版的預覽圖"
+   }
+  },
+  {
+   "id": "B05-53",
+   "title": "substrate CLI（繪圖機用 SVG 產生器）",
+   "creator": "Fabian Morón Zirfas（Technologiestiftung Berlin／CityLAB Berlin）",
+   "year": "2019",
+   "category": "fabrication",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "JavaScript",
+    "Node.js",
+    "SVG",
+    "繪圖機"
+   ],
+   "tools": [
+    "Node.js"
+   ],
+   "url": "https://github.com/technologiestiftung/substrate",
+   "summary": "為 CityLAB Berlin 撰寫的命令列工具，以 Tarbell 的 Substrate 演算法產生 SVG，可指定模擬時間、紙張寬高與最大裂紋數，輸出給繪圖機（plotter）畫出。相較於原作的像素渲染，它只保留裂紋的向量線，直接作為製造輸出。",
+   "currently_cc": true,
+   "photo": {
+    "source": "GitHub（technologiestiftung/substrate）README",
+    "page": "https://github.com/technologiestiftung/substrate",
+    "note": "CLI 輸出的 Substrate 向量線稿"
+   }
+  },
+  {
+   "id": "B05-54",
+   "title": "Substrate iPad 移植版",
+   "creator": "Jon Cooper",
+   "year": "2011",
+   "category": "drawing",
+   "scale": "群體／都市",
+   "tags": [
+    "creative coding",
+    "Objective-C",
+    "OpenGL",
+    "iOS",
+    "移植"
+   ],
+   "tools": [
+    "Objective-C",
+    "OpenGL"
+   ],
+   "url": "https://github.com/joncooper/Substrate",
+   "summary": "Jon Cooper 把 Tarbell 的 Substrate 移植到 iPad，作為學習 iOS 開發與 OpenGL 的練習。由於 iOS 沒有直接的 2D 點陣繪圖，作者自己寫了繪製層：先渲染到貼圖再貼到四邊形上，並實作反鋸齒線條與顏色混合，裂紋由另一條執行緒寫入貼圖。以 MIT 授權釋出。",
+   "currently_cc": true,
+   "photo": null
+  }
+ ]
+}

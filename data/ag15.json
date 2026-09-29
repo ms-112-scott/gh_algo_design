@@ -567,6 +567,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "研究者把燕麥片放在培養皿上對應東京周邊城市的位置，黏菌長出的管網在效率、容錯與成本上可與真實鐵路網相比，並據此提出一套自適應網絡的數學規則。這是「黏菌會做網絡最佳化」最常被引用的案例。",
       "variations": [
@@ -608,6 +609,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "基礎範例的原型論文：以只會感測、轉向、前進、沉積的粒子群近似黏菌管網，並系統性掃描感測角度與轉向角度，整理出網狀、斑點、迷宮紋等圖樣對照圖。",
       "variations": [
@@ -644,6 +646,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Sage Jenson 以 Jeff Jones 的模型為基礎，在 GPU 上跑數百萬粒子並混合多物種與參數切換，產生極具辨識度的發光網紋作品，後來衍生出 36 Points 等廣為流傳的生成藝術系列。",
       "variations": [
@@ -684,6 +687,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "Jenson 在 Nervous System 駐村期間，用受引導的 3D 粒子—網格混合黏菌模擬長出網狀柱體，以 Formlabs 列印可燃蠟樹脂、做石膏模，再澆鑄成青銅燭台。展示了黏菌網絡從螢幕走向實體製造的完整流程。",
       "variations": [
@@ -726,6 +730,7 @@
       "categories_extra": [
         "art-installation"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "2017 塔林建築雙年展以 bioTallinn 為題，ecoLogicStudio 的 Paljassaare 半島提案讓黏菌在代表基地資訊的地景上生長，把城市汙水基礎設施與生物基質納入總體規劃的形態生成。",
       "variations": [
@@ -761,6 +766,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "把英國十大都會區當作食物點，比較黏菌網絡與真實高速公路網；結果大致吻合，但黏菌會改以 Newcastle 直通 Glasgow。之後同一方法擴及荷蘭、比利時、加拿大、德國與羅馬古道等研究。",
       "variations": [
@@ -797,6 +803,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "天文學家把 37,000 多個星系當作食物點，用 3D 黏菌演算法（MCPM）重建連接星系的暗物質纖維網，並以哈伯太空望遠鏡的觀測資料驗證。說明同一套規則能在完全不同尺度上重建網絡結構。",
       "variations": [
@@ -824,41 +831,6 @@
       "url": "https://news.ucsc.edu/2020/03/cosmic-web/"
     },
     {
-      "id": "D02-09",
-      "algo": "D02",
-      "title": "3D Physarum 產生 3D 列印內部支撐",
-      "creator": "ACM 論文研究團隊（arXiv 2212.11527）",
-      "year": "2022",
-      "category": "fabrication",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "物件",
-      "summary": "以 Monte Carlo 版的 3D 黏菌演算法，替 3D 列印物件產生近似拓撲最佳的內部支撐網絡，並以抗衝擊自行車安全帽為案例。把黏菌網絡從紋理提升為結構與材料設計。",
-      "variations": [
-        {
-          "name": "封閉體積內生長",
-          "how": "以 Mesh.IsPointInside 產生體素遮罩，只在物件內部允許生長與擴散。",
-          "effect": "網絡填滿物件內部，形成有機格柵。"
-        },
-        {
-          "name": "受力點當食物",
-          "how": "把支撐點與載重點設為高濃度食物點。",
-          "effect": "主要傳力路徑變粗，接近拓撲最佳化的材料分布。"
-        }
-      ],
-      "difficulty": 5,
-      "tags": [
-        "3D",
-        "最佳化",
-        "等值面"
-      ],
-      "tools": [
-        "3D 列印"
-      ],
-      "url": "https://arxiv.org/pdf/2212.11527"
-    },
-    {
       "id": "D02-10",
       "algo": "D02",
       "title": "PolyPhy：開源 3D 列印仿生物件生成器",
@@ -868,6 +840,7 @@
       "categories_extra": [
         "fabrication"
       ],
+      "source": "research",
       "scale": "物件",
       "summary": "發表於 ACM 計算製造研討會的開源工具，把三角網格轉成以黏菌行為生成的網狀、可 3D 列印物件，讓設計者不用自己寫 GPU 模擬也能使用黏菌網絡建模。",
       "variations": [
@@ -903,6 +876,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "以 Jeff Jones 的 Processing 程式為基礎，擴展到 3D 並寫成 Rhino／Grasshopper 外掛，可在自訂邊界與食物源中跑黏菌代理人，常與 Anemone、Kangaroo 搭配做建築形體研究。",
       "variations": [
@@ -940,6 +914,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "research",
       "scale": "構件",
       "summary": "開源 Grasshopper 外掛「Slime」的 C# 原始碼，提出以 Voronoi 為基礎的骨架化方法產生黏菌圖樣，示範如何把網格痕跡轉換成乾淨的線性網絡。",
       "variations": [
@@ -966,75 +941,6 @@
       "url": "https://github.com/YufanX/SkeletonPhysarum"
     },
     {
-      "id": "D02-13",
-      "algo": "D02",
-      "title": "黏菌分步生長作為都市設計樣板",
-      "creator": "Scientific Reports 論文研究團隊",
-      "year": "2022",
-      "category": "urban-landscape",
-      "categories_extra": [
-        "performance"
-      ],
-      "scale": "群體／都市",
-      "summary": "研究以分步方式讓黏菌在城市節點間生長，觀察網絡在不同階段的形態，探討其作為都市設計與路網規劃樣板的可能性。",
-      "variations": [
-        {
-          "name": "分步加入節點",
-          "how": "把 foodPoints 依時間分批啟用（例如每 100 步加入一批）。",
-          "effect": "看到網絡如何隨新節點出現而重組或保留既有路徑。"
-        },
-        {
-          "name": "既有路網記憶",
-          "how": "每階段結束把痕跡場存下，下一階段以其 50% 作為初始值。",
-          "effect": "新網絡會傾向沿用舊路徑，模擬都市的路徑依賴。"
-        }
-      ],
-      "difficulty": 3,
-      "tags": [
-        "開放生長",
-        "吸引子控制"
-      ],
-      "tools": [
-        "生物實驗"
-      ],
-      "url": "https://www.nature.com/articles/s41598-022-05439-w"
-    },
-    {
-      "id": "D02-14",
-      "algo": "D02",
-      "title": "受黏菌生長啟發的非均質建築材料",
-      "creator": "PubMed 收錄論文研究團隊",
-      "year": "",
-      "category": "performance",
-      "categories_extra": [
-        "fabrication"
-      ],
-      "scale": "構件",
-      "summary": "研究以黏菌依養分分布生長的原理設計空間非均質的蜂巢／多孔材料，並量測其力學反應，示範黏菌網絡如何轉化為可調性能的結構材料。",
-      "variations": [
-        {
-          "name": "養分場＝應力場",
-          "how": "把 FEM 或 Karamba 算出的應力值柵格化成食物濃度網格。",
-          "effect": "高應力區網絡更密，形成依受力分級的格柵。"
-        },
-        {
-          "name": "密度量測回饋",
-          "how": "計算每區痕跡平均值作為孔隙率，並與目標孔隙率比較後調整 decay。",
-          "effect": "可針對指定密度分布反向調整參數。"
-        }
-      ],
-      "difficulty": 5,
-      "tags": [
-        "最佳化",
-        "網格擴散"
-      ],
-      "tools": [
-        "數值模擬",
-        "3D 列印"
-      ],
-      "url": "https://pubmed.ncbi.nlm.nih.gov/31412323/"
-    },
-    {
       "id": "D02-15",
       "algo": "D02",
       "title": "互動式黏菌裝置（遊戲手把操控）",
@@ -1044,6 +950,7 @@
       "categories_extra": [
         "2d-pattern"
       ],
+      "source": "art",
       "scale": "物件",
       "summary": "以 openFrameworks 實作、受 36 Points 啟發的黏菌模擬，讓觀眾用遊戲手把即時改變參數，作為藝術裝置展出，展現參數空間的豐富度。",
       "variations": [
@@ -1079,6 +986,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "基礎範例的理論來源：把行人看成受「想去目的地的驅動力」與「他人、牆面排斥力」作用的粒子。模型能自然重現對向人流自動分成車道、門口雙向交替通行等現象。",
       "variations": [
@@ -1118,6 +1026,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "在社會力模型中加入身體擠壓與摩擦，模擬緊急疏散時出口前的拱形堵塞；結果顯示人越急反而越慢，並提出在出口前方適當位置放柱子可以減少堵塞。",
       "variations": [
@@ -1157,6 +1066,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "地景",
       "summary": "以「主動行走者」模型解釋公園草地上被踩出的捷徑：行人偏好走已被踩過的路，路徑又會因少人走而恢復。模型與黏菌的「留痕跡—跟隨痕跡」機制非常相似，可用來預測慾望路徑。",
       "variations": [
@@ -1196,6 +1106,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Space syntax 認為街道網絡的空間構成（整合度）本身就能解釋大部分的步行人流，並以軸線圖和可見度圖呈現。它不模擬個人，而是用圖論分析空間，常與代理人模擬互補。",
       "variations": [
@@ -1229,6 +1140,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "倫敦 World Squares for All 計畫中，Space Syntax 以人流觀測與空間分析支持把廣場北側道路步行化並新增大階梯，是以人流分析直接影響公共空間設計的代表案例。",
       "variations": [
@@ -1263,6 +1175,7 @@
       "categories_extra": [
         "3d-architecture"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "分析 2006 年朝覲人潮事故的影像資料，發現高密度下人流從停走波轉為「群眾湍流」，研究成果被用於改善動線管理與設施設計，是人流研究影響真實建築與營運的重要例子。",
       "variations": [
@@ -1298,6 +1211,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "由 Arup 發展、Oasys 發行的商業級 3D 行人模擬軟體，常用於車站、機場、體育場的動線與疏散評估，能處理樓梯、電扶梯與排隊等設施，並輸出密度熱圖與服務水準。",
       "variations": [
@@ -1332,6 +1246,7 @@
       "categories_extra": [
         "modeling"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "常用於防火與建築法規檢討的代理人疏散模擬軟體，可匯入建築模型，計算每個出口與樓梯的疏散時間，並以動畫呈現。展示了人流模擬在建築性能設計中的實務角色。",
       "variations": [
@@ -1366,6 +1281,7 @@
       "categories_extra": [
         "urban-landscape"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "UNStudio 以轉乘旅客在火車、公車、停車與步行之間的動線分析作為設計主軸，最後形成連續扭轉、無明確樓層分界的大廳空間。是人流研究直接決定建築形體的代表案例。",
       "variations": [
@@ -1400,6 +1316,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "建築",
       "summary": "Grasshopper 上的代理人模擬外掛，提供分離、對齊、聚集、尋找、環境邊界等行為元件，可以組合出人流、群集與路徑追蹤，適合與基礎 C# 範例互相對照。",
       "variations": [
@@ -1436,6 +1353,7 @@
         "drawing",
         "modeling"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "Grasshopper 的都市分析工具組，提供街道網絡中心性、可見度（isovist）等 space syntax 類型的分析，可與代理人模擬搭配，把空間分析與人流評估整合在同一個參數化流程。",
       "variations": [
@@ -1470,6 +1388,7 @@
       "categories_extra": [
         "performance"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以兩條簡單的視覺規則（選擇最快不受阻擋的方向、與前方障礙保持反應時間距離）取代力的相加，更貼近實驗觀察，並能重現高密度下的人潮湍流。是社會力模型之後的重要改良方向。",
       "variations": [
@@ -1504,6 +1423,7 @@
       "categories_extra": [
         "drawing"
       ],
+      "source": "research",
       "scale": "群體／都市",
       "summary": "以社會力模型為核心的開源 C++ 行人模擬函式庫，提供代理人、障礙、路徑點等基本物件，程式結構與基礎範例相近，適合想把範例擴充成完整模擬器的學習者參考。",
       "variations": [

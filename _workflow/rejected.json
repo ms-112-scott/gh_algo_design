@@ -25,5 +25,635 @@
   "title": "form-finding：瀏覽器原生 3D 找形引擎",
   "url_norm": "github.com/damianbrenlla/form-finding",
   "reason": "2026-08 新建的個人 repo，0 星 0 fork、僅約 10 天提交紀錄，證據與代表性不足（整合時查證後刪除）"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A01-05",
+  "algo": "A01",
+  "kind": "RES",
+  "title": "Houdini L-System SOP 與 LsystemBuilding 範例",
+  "url_norm": "sidefx.com/docs/houdini/examples/nodes/sop/lsystem/lsystembuilding.html",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A01-54",
+  "algo": "A01",
+  "kind": "CC",
+  "title": "TouchDesigner LSystem SOP",
+  "url_norm": "docs.derivative.ca/lsystem_sop",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A01-15",
+  "algo": "A01",
+  "kind": "RES",
+  "title": "SpeedTree 程序化植物建模",
+  "url_norm": "en.wikipedia.org/wiki/speedtree",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A01-09",
+  "algo": "A01",
+  "kind": "RES",
+  "title": "分枝幾何的機械手臂空間列印路徑生成",
+  "url_norm": "doi:10.3390/buildings12122247",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A01-13",
+  "algo": "A01",
+  "kind": "RES",
+  "title": "以計算方法解構巴塔克族 Gorga 裝飾紋樣",
+  "url_norm": "arxiv:1510.01140",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A02-08",
+  "algo": "A02",
+  "kind": "RES",
+  "title": "方形 Koch 島熱交換器",
+  "url_norm": "researchgate.net/publication/233225229_heat_transfer_characteristics_of_a_quadratic_koch_island_fractal_heat_exchanger",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A03-14",
+  "algo": "A03",
+  "kind": "RES",
+  "title": "以 Google S2 儲存遙測影像",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A03-05",
+  "algo": "A03",
+  "kind": "RES",
+  "title": "用 Hilbert 曲線繪製整個 IPv4 網際網路",
+  "url_norm": "soylentnews.org/article.pl?sid=18%2f04%2f23%2f074207",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A04-14",
+  "algo": "A04",
+  "kind": "RES",
+  "title": "Recursive image subdivision（Grasshopper 論壇範例）",
+  "url_norm": "grasshopper3d.com/forum/topics/recursive-image-subdivision-samples-examples",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A05-03",
+  "algo": "A05",
+  "kind": "RES",
+  "title": "The Language of the Prairie：萊特草原住宅文法",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A05-08",
+  "algo": "A05",
+  "kind": "RES",
+  "title": "Chinese Ice-ray Lattices Revisited（Grasshopper 實作）",
+  "url_norm": "designcoding.net/revisiting-chinese-ice-ray-lattices",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A05-15",
+  "algo": "A05",
+  "kind": "RES",
+  "title": "Shape Machine：在 CAD 中搜尋並取代形狀",
+  "url_norm": "shape.gatech.edu/research/index.html",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A06-08",
+  "algo": "A06",
+  "kind": "RES",
+  "title": "Subdigital 離散實體化實習",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A06-10",
+  "algo": "A06",
+  "kind": "RES",
+  "title": "WFC 生成社會住宅平面並連結 BIM（IFC）",
+  "url_norm": "doi:10.1007/978-3-031-71008-7_28",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:A06-13",
+  "algo": "A06",
+  "kind": "RES",
+  "title": "以 WFC 生成與評估鄉村住宅配置",
+  "url_norm": "doi:10.1177/14780771251326773",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B01-04",
+  "algo": "B01",
+  "kind": "RES",
+  "title": "Floraform 吊燈",
+  "url_norm": "n-e-r-v-o-u-s.com/projects/sets/floraform",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B01-05",
+  "algo": "B01",
+  "kind": "RES",
+  "title": "2D Differential Growth Experiments",
+  "url_norm": "github:jasonwebb/2d-differential-growth-experiments",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B01-11",
+  "algo": "B01",
+  "kind": "RES",
+  "title": "Differential Line Growth／Differential Mesh Growth（Houdini 教學）",
+  "url_norm": "entagma.com/differential-line-growth",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B02-08",
+  "algo": "B02",
+  "kind": "RES",
+  "title": "VEX in Houdini：Diffusion Limited Aggregation",
+  "url_norm": "entagma.com/vex-in-houdini-diffusion-limited-aggregation-plus-rendering-in-mantra-redshift",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B03-15",
+  "algo": "B03",
+  "kind": "RES",
+  "title": "Grasshopper 空間殖民範例（Parametric House）",
+  "url_norm": "parametrichouse.com/space-colonization",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B04-10",
+  "algo": "B04",
+  "kind": "RES",
+  "title": "以葉序排列立面面板（Dynamo 論壇討論）",
+  "url_norm": "forum.dynamobim.com/t/phyllotaxis-for-facade-panel-pattern/32489",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B04-11",
+  "algo": "B04",
+  "kind": "RES",
+  "title": "以葉序排列的高爾夫球凹洞（Phyllotaxis-based dimple patterns 專利）",
+  "url_norm": "image-ppubs.uspto.gov/dirsearch-public/print/downloadpdf/6682441",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B04-12",
+  "algo": "B04",
+  "kind": "RES",
+  "title": "開孔非均勻分佈的研磨片（Abrasive article 專利）",
+  "url_norm": "image-ppubs.uspto.gov/dirsearch-public/print/downloadpdf/9656366",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B05-11",
+  "algo": "B05",
+  "kind": "RES",
+  "title": "油畫龜裂（Craquelure）",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:B05-10",
+  "algo": "B05",
+  "kind": "RES",
+  "title": "金繼（Kintsugi）",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C01-09",
+  "algo": "C01",
+  "kind": "RES",
+  "title": "把反應擴散變成曲線（Nautilus iso-split）",
+  "url_norm": "discourse.mcneel.com/t/reaction-diffusion-curves/160082",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C01-55",
+  "algo": "C01",
+  "kind": "CC",
+  "title": "Reaction-Diffusion by the Gray-Scott Model: Pearson's Parameterization（Xmorphia 參數地圖）",
+  "url_norm": "mrob.com/pub/comp/xmorphia",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C01-12",
+  "algo": "C01",
+  "kind": "RES",
+  "title": "具 Turing 圖樣紋理的織物氣動致動器",
+  "url_norm": "pmc.ncbi.nlm.nih.gov/articles/pmc11333703",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C02-13",
+  "algo": "C02",
+  "kind": "RES",
+  "title": "以細胞自動機控制動態遮陽立面",
+  "url_norm": "academia.edu/48830065/implementing_cellular_automata_for_dynamically_shading_a_building_facade",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C02-15",
+  "algo": "C02",
+  "kind": "RES",
+  "title": "Cellular Automata for Infill Designs in Historic Urban Quarters",
+  "url_norm": "doi:10.1007/s00004-022-00602-2",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:C04-08",
+  "algo": "C04",
+  "kind": "RES",
+  "title": "One-North Masterplan（人造地景形態的都市）",
+  "url_norm": "zha.com/projects/masterplans/one-north-masterplan",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D01-14",
+  "algo": "D01",
+  "kind": "RES",
+  "title": "RMIT Mace",
+  "url_norm": "kokkugia.com/rmit-mace",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D01-13",
+  "algo": "D01",
+  "kind": "RES",
+  "title": "Brass Swarm",
+  "url_norm": "kokkugia.com/brass-swarm",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D01-05",
+  "algo": "D01",
+  "kind": "RES",
+  "title": "AADRL Aerial Robot Thread Construction",
+  "url_norm": "kokkugia.com/aadrl-aerial-robot-thread-construction",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D01-07",
+  "algo": "D01",
+  "kind": "RES",
+  "title": "Behavioural Production: Autonomous Swarm-Constructed Architecture",
+  "url_norm": "doi:10.1002/ad.2024",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D01-04",
+  "algo": "D01",
+  "kind": "RES",
+  "title": "Composite Swarm",
+  "url_norm": "kokkugia.com/composite-swarm",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D02-14",
+  "algo": "D02",
+  "kind": "RES",
+  "title": "受黏菌生長啟發的非均質建築材料",
+  "url_norm": "pubmed.ncbi.nlm.nih.gov/31412323",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D02-13",
+  "algo": "D02",
+  "kind": "RES",
+  "title": "黏菌分步生長作為都市設計樣板",
+  "url_norm": "nature.com/articles/s41598-022-05439-w",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:D02-09",
+  "algo": "D02",
+  "kind": "RES",
+  "title": "3D Physarum 產生 3D 列印內部支撐",
+  "url_norm": "arxiv:2212.11527",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E01-14",
+  "algo": "E01",
+  "kind": "RES",
+  "title": "d3.pack 階層式圓形圖（circle packing 資料視覺化）",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E01-05",
+  "algo": "E01",
+  "kind": "RES",
+  "title": "Circle Packing T-Shirt（服裝曲面上的圓）",
+  "url_norm": "parametrichouse.com/circle-packing-t-shirt",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E02-11",
+  "algo": "E02",
+  "kind": "RES",
+  "title": "Grasshopper 的 Poisson Disk Sampling 元件（2D 與 3D 球體版）",
+  "url_norm": "discourse.mcneel.com/t/poisson-disk-sampling-component/109884",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E02-52",
+  "algo": "E02",
+  "kind": "CC",
+  "title": "ofxPoissonDiskSampling（openFrameworks 外掛）",
+  "url_norm": "github:mruegenberg/ofxpoissondisksampling",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E03-15",
+  "algo": "E03",
+  "kind": "RES",
+  "title": "景觀建築的生成式設計（Voronoi 鋪面與分區）",
+  "url_norm": "gispoint.de/fileadmin/user_upload/paper_gis_open/dla_2022/537724058.pdf",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E03-07",
+  "algo": "E03",
+  "kind": "RES",
+  "title": "Adaptive Voronoi Facade（光感應動態立面）",
+  "url_norm": "arhns.uns.ac.rs/digital/adaptive-voronoi-facade",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E03-14",
+  "algo": "E03",
+  "kind": "RES",
+  "title": "埃及 Qena 市公共服務的演算法空間規劃",
+  "url_norm": "arxiv:2512.06431",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E04-55",
+  "algo": "E04",
+  "kind": "CC",
+  "title": "Houdini 17 Is Here – A Quickstart to Vellum",
+  "url_norm": "entagma.com/houdini-17-is-here-a-quickstart-to-vellum",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F01-09",
+  "algo": "F01",
+  "kind": "RES",
+  "title": "Truchet Tile Parametric Facade（曲面上的參數化立面模型）",
+  "url_norm": "sketchfab.com/3d-models/truchet-tile-parametric-facade-cd2d6d5dbea04e2f8dbbd44dbc979fd3",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F01-14",
+  "algo": "F01",
+  "kind": "RES",
+  "title": "可 3D 列印的磁吸 Truchet 磁磚",
+  "url_norm": "printables.com/model/220630-truchet-tiles",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F01-12",
+  "algo": "F01",
+  "kind": "RES",
+  "title": "Truchet blocks 數學互動教具",
+  "url_norm": "newsroom.hlf-foundation.org/blog/article/truchet-tilings",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F01-08",
+  "algo": "F01",
+  "kind": "RES",
+  "title": "以 Truchet 鋪排的織物模板預鑄面板",
+  "url_norm": "doi:10.1007/s00004-023-00657-9",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F01-05",
+  "algo": "F01",
+  "kind": "RES",
+  "title": "雷射切割 Truchet 拼圖（Museum of Mathematics）",
+  "url_norm": "makezine.com/article/home/fun-games/math-monday-truchet-tiles",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F02-13",
+  "algo": "F02",
+  "kind": "RES",
+  "title": "Next Generation of Star Patterns（同心圓參數化星形）",
+  "url_norm": "arxiv:1809.09270",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F03-11",
+  "algo": "F03",
+  "kind": "RES",
+  "title": "Minimal Complexity 極小曲面裝置",
+  "url_norm": "",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F03-10",
+  "algo": "F03",
+  "kind": "RES",
+  "title": "Smart Slab：3D 砂印模板澆置混凝土樓板（製造路徑參考）",
+  "url_norm": "dbt.arch.ethz.ch/project/smart-slab",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F03-04",
+  "algo": "F03",
+  "kind": "RES",
+  "title": "徑向漸變 TPMS 骨骼支架",
+  "url_norm": "pmc.ncbi.nlm.nih.gov/articles/pmc11283664",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F04-09",
+  "algo": "F04",
+  "kind": "RES",
+  "title": "IAAC 結構形態基因最佳化（Karamba＋Galapagos）",
+  "url_norm": "iaacblog.com/programs/genetic-optimization-karamba-galapagos",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F04-07",
+  "algo": "F04",
+  "kind": "RES",
+  "title": "醫院建築日光與能耗多目標最佳化（阿爾及利亞）",
+  "url_norm": "academia.edu/105936985/parametric_based_multi_objective_optimization_workflow_daylight_and_energy_performance_study_of_hospital_building_in_algeria",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F05-08",
+  "algo": "F05",
+  "kind": "RES",
+  "title": "Grasshopper 空間可及性分析（圖＋重力模型）",
+  "url_norm": "researchgate.net/publication/335827215_applied_spatial_accessibility_analysis_for_urban_design_an_integrated_graph-gravity_model_implemented_in_grasshopper",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F06-11",
+  "algo": "F06",
+  "kind": "RES",
+  "title": "Visions of Chaos 混沌探索軟體",
+  "url_norm": "softology.pro/voc.htm",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F06-09",
+  "algo": "F06",
+  "kind": "RES",
+  "title": "vpype-fractal 筆繪機碎形與吸子外掛",
+  "url_norm": "github:mreierson/vpype-fractal",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F06-03",
+  "algo": "F06",
+  "kind": "RES",
+  "title": "Lorenz 水車（混沌的實體模型）",
+  "url_norm": "paulbourke.net/fractals/lorenz",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F07-06",
+  "algo": "F07",
+  "kind": "RES",
+  "title": "Galapagos 的模擬退火求解器（論壇說明）",
+  "url_norm": "grasshopper3d.com/forum/topics/about-simulated-annealing-solver-in-galapagos",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F07-07",
+  "algo": "F07",
+  "kind": "RES",
+  "title": "Shape annealing solution to the constrained geometric knapsack problem（形狀退火解幾何背包排版）",
+  "url_norm": "doi:10.1016/0010-4485(94)90014-0",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:F07-03",
+  "algo": "F07",
+  "kind": "RES",
+  "title": "Innovative dome design: Applying geodesic patterns with shape annealing（形狀退火圓頂設計）",
+  "url_norm": "cambridge.org/core/journals/ai-edam/article/abs/innovative-dome-design-applying-geodesic-patterns-with-shape-annealing/32d86929ff89b256f5483e354cda0156",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:G01-55",
+  "algo": "G01",
+  "kind": "CC",
+  "title": "visibility-polygon-js：線段集合的可視多邊形函式庫",
+  "url_norm": "github:byronknoll/visibility-polygon-js",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:G01-51",
+  "algo": "G01",
+  "kind": "CC",
+  "title": "2D Visibility（2D 可視範圍互動解說）",
+  "url_norm": "redblobgames.com/articles/visibility",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:G01-05",
+  "algo": "G01",
+  "kind": "RES",
+  "title": "展望—庇護理論與 Frank Lloyd Wright 的織物磚住宅：以 isovist 分析空間視覺特性",
+  "url_norm": "sciencedirect.com/science/article/abs/pii/s0360132314001760",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:G03-04",
+  "algo": "G03",
+  "kind": "RES",
+  "title": "支援永續都市綠地設計的整合雨水分析模型",
+  "url_norm": "isprs-annals.copernicus.org/articles/x-4-w2-2022/153/2022",
+  "reason": "gh-balance R20260929-0929：數位研究／藝術設計 1:1，替換為藝術設計案例"
+ },
+ {
+  "run": "removed",
+  "unit": "REMOVE:E05-09",
+  "algo": "E05",
+  "kind": "RES",
+  "title": "eQUILIBRIUM：互動式圖解靜力學學習平台",
+  "url_norm": "block.arch.ethz.ch/eq",
+  "reason": "gh-balance R20260929-0929：總數調為偶數，讓兩類案例相等"
  }
 ]
