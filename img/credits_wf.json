@@ -87,14 +87,6 @@
   "page": "https://link.springer.com/article/10.1007/s00004-020-00520-1",
   "note": "論文頁 og:image（Fig. 1），論文插圖"
  },
- "F08-53": {
-  "source": "YouTube（The Coding Train）",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://www.youtube.com/watch?v=BxabnKrOjT0",
-  "note": "影片縮圖"
- },
  "G01-03": {
   "source": "DeCodingSpaces Toolbox",
   "author": "Martin Bielik",
@@ -110,14 +102,6 @@
   "license_url": "",
   "page": "https://ncase.me/sight-and-light/",
   "note": "Sight & Light 教學頁的 og:image，2D 光影可視多邊形"
- },
- "G01-53": {
-  "source": "YouTube（The Coding Train）",
-  "author": "Daniel Shiffman",
-  "license": "網頁預覽圖，教學引用",
-  "license_url": "",
-  "page": "https://www.youtube.com/watch?v=TOEi6T2mtHo",
-  "note": "Coding Challenge 145 2D Raycasting 影片縮圖"
  },
  "G01-54": {
   "source": "Houdini Gubbins",

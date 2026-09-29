@@ -215,14 +215,6 @@
     "page": "https://github.com/keithjlee/FDMremote",
     "note": "README 最佳化示範動畫（optim_lowertol）最後一格：找形後的索網、力密度梯度與損失收斂曲線"
   },
-  "E06-06": {
-    "source": "YouTube：Oliviero Cabitza",
-    "author": "",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=kA2PUHG1ljk",
-    "note": "Food4Rhino 元件頁所附示範影片「Force Density Method - Grasshopper Component」的縮圖：Grasshopper 中的 FDM 元件與力密度滑桿"
-  },
   "F07-52": {
     "source": "Michael Fogleman｜Traveling Pixel",
     "author": "",
@@ -382,14 +374,6 @@
     "license_url": "",
     "page": "https://web.mit.edu/masonry/thrustNetwork/",
     "note": "Thrust Network Analysis 的形圖 Γ 與力圖 Γ* 的對偶（互易）關係"
-  },
-  "E04-09": {
-    "source": "Vimeo（Daniel Piker）",
-    "author": "",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://vimeo.com/8706003",
-    "note": "Project Kangaroo 早期示範影片縮圖：Rhino 視窗中以彈簧懸吊的質點"
   },
   "E05-51": {
     "source": "Active Statics（Simon Greenwold, MIT）",

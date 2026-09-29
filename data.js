@@ -27571,18 +27571,7 @@ window.CATALOG = {
     "Grasshopper",
     "Kangaroo2"
    ],
-   "url": "https://www.food4rhino.com/en/app/kangaroo-physics",
-   "image": {
-    "file": "img/cases/E04-09.jpg",
-    "w": 640,
-    "h": 480,
-    "source": "Vimeo（Daniel Piker）",
-    "author": "",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://vimeo.com/8706003",
-    "note": "Project Kangaroo 早期示範影片縮圖：Rhino 視窗中以彈簧懸吊的質點"
-   }
+   "url": "https://www.food4rhino.com/en/app/kangaroo-physics"
   },
   {
    "id": "E04-10",
@@ -28835,18 +28824,7 @@ window.CATALOG = {
    "tools": [
     "Grasshopper"
    ],
-   "url": "https://www.food4rhino.com/en/app/force-density-method",
-   "image": {
-    "file": "img/cases/E06-06.jpg",
-    "w": 900,
-    "h": 506,
-    "source": "YouTube：Oliviero Cabitza",
-    "author": "",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=kA2PUHG1ljk",
-    "note": "Food4Rhino 元件頁所附示範影片「Force Density Method - Grasshopper Component」的縮圖：Grasshopper 中的 FDM 元件與力密度滑桿"
-   }
+   "url": "https://www.food4rhino.com/en/app/force-density-method"
   },
   {
    "id": "E06-07",
@@ -32738,18 +32716,7 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0",
-   "image": {
-    "file": "img/cases/F08-53.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（The Coding Train）",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=BxabnKrOjT0",
-    "note": "影片縮圖"
-   }
+   "url": "https://www.youtube.com/watch?v=BxabnKrOjT0"
   },
   {
    "id": "F08-54",
@@ -33175,18 +33142,7 @@ window.CATALOG = {
    "tools": [
     "p5.js"
    ],
-   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d",
-   "image": {
-    "file": "img/cases/G01-53.jpg",
-    "w": 480,
-    "h": 360,
-    "source": "YouTube（The Coding Train）",
-    "author": "Daniel Shiffman",
-    "license": "網頁預覽圖，教學引用",
-    "license_url": "",
-    "page": "https://www.youtube.com/watch?v=TOEi6T2mtHo",
-    "note": "Coding Challenge 145 2D Raycasting 影片縮圖"
-   }
+   "url": "https://thecodingtrain.com/challenges/145-ray-casting-2d"
   },
   {
    "id": "G01-54",
